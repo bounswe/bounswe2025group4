@@ -1,3 +1,11 @@
+---
+name: 📖 Documentation Update
+about: Request changes or additions to documentation
+title: "[Docs] <Short description>"
+labels: documentation
+assignees: 
+---
+
 ## 📖 Documentation Update Template
 
 **Title:** `[Docs] <Short description>`
