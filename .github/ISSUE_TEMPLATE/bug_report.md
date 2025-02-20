@@ -1,3 +1,11 @@
+---
+name: 🐛 Bug Report
+about: Report a bug to help us improve the project
+title: "[Bug] <Short description>"
+labels: bug
+assignees: 
+---
+
 ## 🐛 Bug Report Template
 
 **Title:** `[Bug] <Short description>`

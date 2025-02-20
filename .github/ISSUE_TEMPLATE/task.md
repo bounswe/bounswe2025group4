@@ -1,3 +1,11 @@
+---
+name: ✅ Task
+about: Define a task that needs to be completed
+title: "[Task] <Short description>"
+labels: task
+assignees: 
+---
+
 ## ✅ Task Template
 
 **Title:** `[Task] <Short description>`
