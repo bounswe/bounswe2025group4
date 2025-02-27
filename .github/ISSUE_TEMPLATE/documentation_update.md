@@ -22,5 +22,11 @@ Specify the due date for this update.
 ### Estimated Workload
 Approximate time required to complete this update (e.g., 2 hours, 1 day, etc.).
 
+### Reviewer
+@someone
+
+### Review Deadline
+Specify the due date for review.
+
 ### Additional Context
 Any relevant details or links to related discussions.
