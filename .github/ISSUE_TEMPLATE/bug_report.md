@@ -35,5 +35,11 @@ Specify the due date for fixing this bug.
 ### Estimated Workload
 Approximate time required to fix this bug (e.g., 2 hours, 1 day, etc.).
 
+### Reviewer
+@someone
+
+### Review Deadline
+Specify the due date for review.
+
 ### Additional Context
 Any extra details, screenshots, or logs that may be helpful.

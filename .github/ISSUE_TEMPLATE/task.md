@@ -27,5 +27,11 @@ Approximate time required to complete this task (e.g., 2 hours, 1 day, etc.).
 ### Dependencies
 Does this task depend on other tasks or issues? If yes, list them.
 
+### Reviewer
+@someone
+
+### Review Deadline
+Specify the due date for review.
+
 ### Additional Notes
 Any extra information or links.
