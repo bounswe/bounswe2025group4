@@ -1,0 +1,17 @@
+name: Frontend
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print confirmation message
+        run: echo "This GitHub Action is running as a placeholder!"
