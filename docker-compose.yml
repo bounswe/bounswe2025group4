@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: app-backend
+    restart: unless-stopped
+    ports:
+      - "8090:8080"  # Using 8090 as mentioned to avoid conflict with OpenWebUI
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app-network
+    volumes:
+      - backend-data:/app/data
+    # Set resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: app-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"  # Using port 3000 for frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+networks:
+  app-network:
+    driver: bridge
+    name: app-network
+
+volumes:
+  backend-data:
+    name: app-backend-data
