@@ -28,6 +28,29 @@
   color: #61dafb;
 }
 
+.Server-response {
+  margin: 20px;
+  padding: 15px;
+  background-color: #3b4049;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 600px;
+}
+
+.Response-data {
+  background-color: #1e2127;
+  padding: 10px;
+  border-radius: 4px;
+  word-break: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.Error-message {
+  color: #ff6b6b;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

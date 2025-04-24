@@ -8,21 +8,20 @@ services:
     container_name: app-backend
     restart: unless-stopped
     ports:
-      - "8090:8080"  # Using 8090 as mentioned to avoid conflict with OpenWebUI
+      - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - JAVA_OPTS=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+#    healthcheck:
+#      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 40s
     networks:
       - app-network
     volumes:
       - backend-data:/app/data
-    # Set resource limits
     deploy:
       resources:
         limits:
@@ -36,10 +35,12 @@ services:
     container_name: app-frontend
     restart: unless-stopped
     ports:
-      - "3000:80"  # Using port 3000 for frontend
-    depends_on:
-      backend:
-        condition: service_healthy
+      - "80:80"
+#    depends_on:
+#      backend:
+#        condition: service_healthy
+    environment:
+      - BACKEND_URL=http://backend:8080  # Add this to make backend URL configurable
     networks:
       - app-network
     healthcheck:

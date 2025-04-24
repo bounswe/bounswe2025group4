@@ -27,9 +27,6 @@ LABEL org.opencontainers.image.title="React Frontend"
 LABEL org.opencontainers.image.description="Frontend service for the application"
 LABEL org.opencontainers.image.version="1.0.0"
 
-# Use non-root user for security (nginx already runs as nginx user)
-USER nginx
-
 # Expose port
 EXPOSE 80
 
