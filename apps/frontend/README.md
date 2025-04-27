@@ -1,135 +1,58 @@
-# Job Listing Platform – Front-end
+# React + TypeScript + Vite
 
-> A React 19 / Vite web-app that connects job-seekers with ethical employers.  
-> This README is written as a **living TODO list** — check items off as you complete them!
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
----
+Currently, two official plugins are available:
 
-## ⏱  0. Project Bootstrap
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-- [x] **Fork / clone** the repository  
-- [ ] `pnpm install` (or `npm ci`)  
-- [ ] Copy `.env.example` to `.env.local` and fill in API endpoints, JWT secret, Socket.io URL  
-- [ ] `pnpm run dev` &nbsp;▶︎ &nbsp;open <http://localhost:5173>  
+## Expanding the ESLint configuration
 
----
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## 🏗  1. Core Setup
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
 
-- [ ] Configure **ESLint flat-config** + Prettier  
-- [ ] Add **husky** pre-commit hook (`lint`, `type-check`, `test:unit`)  
-- [ ] Wire **React Router v7** data routes (see `src/app/router.tsx`)  
-- [ ] Create global **MUI v7** theme & dark-mode toggle  
-- [ ] Set up **AuthContext** (JWT access/refresh, social OAuth placeholders)  
-- [ ] Initialise **TanStack Query** client in `src/main.tsx`  
-- [ ] Create **Zustand** store for notifications and UI flags  
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
----
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## 🔑  2. Authentication Flow
-
-- [ ] `/register` → email / password + validation  
-- [ ] `/login` + remember-me  
-- [ ] Forgot-password wizard (`/reset-password`)  
-- [ ] Account deletion confirmation dialog  
-
----
-
-## 📄  3. Job Listings & Applications
-
-- [ ] **JobList** page `/jobs`  
-  - [ ] Fetch + cache jobs (`queryKey: ['jobs', filters]`)  
-  - [ ] Filter sidebar (ethical policies, salary range, company)  
-  - [ ] Skeleton loaders & empty-state illustrations  
-- [ ] **JobDetail** page `/jobs/:id`  
-  - [ ] Apply form (Router *action* + optimistic UI)  
-  - [ ] Company badge linking to `/company/:slug`  
-- [ ] Employer dashboard `/dashboard/jobs`  
-  - [ ] CRUD wizard (MUI **DataGridPro**)  
-  - [ ] Validation with `zod`  
-
----
-
-## 🎓  4. Resume Review & Mentorship
-
-- [ ] **MentorDirectory** `/mentorship`  
-  - [ ] Capacity indicator chips  
-  - [ ] Request modal → triggers Socket.io notification  
-- [ ] **ChatThread** `/mentorship/chat/:threadId`  
-  - [ ] Realtime messages (Socket.io)  
-  - [ ] “Mark review complete” button  
-- [ ] Rating dialog (+ optimistic update to mentor profile)  
-
----
-
-## 💬  5. Networking Forum
-
-- [ ] **ForumHome** `/forum`  
-  - [ ] Create thread (RHF + markdown editor)  
-  - [ ] Tag picker (predefined & custom)  
-- [ ] **ThreadDetail**  
-  - [ ] Infinite-scroll comments  
-  - [ ] Edit / delete own posts  
-  - [ ] Report inappropriate content → API  
-
----
-
-## 🏢  6. Profiles
-
-- [ ] **UserProfile** `/u/:username`  
-  - [ ] Avatar upload (S3 presigned URL)  
-  - [ ] Badges component  
-- [ ] **CompanyProfile** `/company/:slug`  
-  - [ ] Ethical-policy checklist  
-  - [ ] Aggregated workplace ratings chart  
-
----
-
-## 🚀  7. Production Readiness
-
-- [ ] Add **Sentry** for error logging  
-- [ ] PWA & offline cache (Workbox plugin)  
-- [ ] Lighthouse performance budget (< 200 kB first load)  
-- [ ] Environment-specific builds (`pnpm run build:staging`, `build:prod`)  
-- [ ] GitHub Actions CI  
-  - [ ] Vitest + React-Testing-Library suite  
-  - [ ] Cypress smoke tests  
-  - [ ] Deploy previews to Vercel  
-
----
-
-## 🧪  8. Testing Matrix
-
-- [ ] Unit tests ≥ 80 % coverage  
-- [ ] Storybook stories for every shared component  
-- [ ] a11y checks (axe-core) in CI  
-- [ ] Manual QA on latest Chrome, Firefox, Safari, Edge + Android Chrome  
-
----
-
-## 📌  9. Non-Functional Requirements Checklist
-
-- [ ] 99 % uptime monitored via Status-page badge  
-- [ ] GDPR/KVKK “Download my data” & “Erase me” flows  
-- [ ] Daily encrypted backups verified  
-- [ ] Security headers (CSP, HSTS, Referrer-Policy) via Vite plugin  
-
----
-
-## ✨  10. Nice-to-Haves (Backlog)
-
-- [ ] Dark-mode aware hero illustrations (svg)  
-- [ ] Live search suggestions for job titles  
-- [ ] Admin dashboard for forum moderation  
-- [ ] Push notifications (Web Push API)  
-- [ ] i18n Turkish 🇹🇷 & English 🇬🇧 toggle  
-
----
-
-### How to contribute
-
-1. Create a branch: `feat/<ticket-id>-short-desc`  
-2. Check off the relevant boxes above in your PR description  
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
+```
+ription  
 3. Run **all** lint / test scripts locally  
 4. Open PR → ensure Vercel preview passes Cypress tests  
 
