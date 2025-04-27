@@ -1,70 +1,136 @@
-# Getting Started with Create React App
+# Job Listing Platform – Front-end
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> A React 19 / Vite web-app that connects job-seekers with ethical employers.  
+> This README is written as a **living TODO list** — check items off as you complete them!
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## ⏱  0. Project Bootstrap
 
-### `npm start`
+- [x] **Fork / clone** the repository  
+- [ ] `pnpm install` (or `npm ci`)  
+- [ ] Copy `.env.example` to `.env.local` and fill in API endpoints, JWT secret, Socket.io URL  
+- [ ] `pnpm run dev` &nbsp;▶︎ &nbsp;open <http://localhost:5173>  
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🏗  1. Core Setup
 
-### `npm test`
+- [ ] Configure **ESLint flat-config** + Prettier  
+- [ ] Add **husky** pre-commit hook (`lint`, `type-check`, `test:unit`)  
+- [ ] Wire **React Router v7** data routes (see `src/app/router.tsx`)  
+- [ ] Create global **MUI v7** theme & dark-mode toggle  
+- [ ] Set up **AuthContext** (JWT access/refresh, social OAuth placeholders)  
+- [ ] Initialise **TanStack Query** client in `src/main.tsx`  
+- [ ] Create **Zustand** store for notifications and UI flags  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🔑  2. Authentication Flow
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- [ ] `/register` → email / password + validation  
+- [ ] `/login` + remember-me  
+- [ ] Forgot-password wizard (`/reset-password`)  
+- [ ] Account deletion confirmation dialog  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📄  3. Job Listings & Applications
 
-### `npm run eject`
+- [ ] **JobList** page `/jobs`  
+  - [ ] Fetch + cache jobs (`queryKey: ['jobs', filters]`)  
+  - [ ] Filter sidebar (ethical policies, salary range, company)  
+  - [ ] Skeleton loaders & empty-state illustrations  
+- [ ] **JobDetail** page `/jobs/:id`  
+  - [ ] Apply form (Router *action* + optimistic UI)  
+  - [ ] Company badge linking to `/company/:slug`  
+- [ ] Employer dashboard `/dashboard/jobs`  
+  - [ ] CRUD wizard (MUI **DataGridPro**)  
+  - [ ] Validation with `zod`  
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🎓  4. Resume Review & Mentorship
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- [ ] **MentorDirectory** `/mentorship`  
+  - [ ] Capacity indicator chips  
+  - [ ] Request modal → triggers Socket.io notification  
+- [ ] **ChatThread** `/mentorship/chat/:threadId`  
+  - [ ] Realtime messages (Socket.io)  
+  - [ ] “Mark review complete” button  
+- [ ] Rating dialog (+ optimistic update to mentor profile)  
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## 💬  5. Networking Forum
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- [ ] **ForumHome** `/forum`  
+  - [ ] Create thread (RHF + markdown editor)  
+  - [ ] Tag picker (predefined & custom)  
+- [ ] **ThreadDetail**  
+  - [ ] Infinite-scroll comments  
+  - [ ] Edit / delete own posts  
+  - [ ] Report inappropriate content → API  
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🏢  6. Profiles
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- [ ] **UserProfile** `/u/:username`  
+  - [ ] Avatar upload (S3 presigned URL)  
+  - [ ] Badges component  
+- [ ] **CompanyProfile** `/company/:slug`  
+  - [ ] Ethical-policy checklist  
+  - [ ] Aggregated workplace ratings chart  
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🚀  7. Production Readiness
 
-### Making a Progressive Web App
+- [ ] Add **Sentry** for error logging  
+- [ ] PWA & offline cache (Workbox plugin)  
+- [ ] Lighthouse performance budget (< 200 kB first load)  
+- [ ] Environment-specific builds (`pnpm run build:staging`, `build:prod`)  
+- [ ] GitHub Actions CI  
+  - [ ] Vitest + React-Testing-Library suite  
+  - [ ] Cypress smoke tests  
+  - [ ] Deploy previews to Vercel  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## 🧪  8. Testing Matrix
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- [ ] Unit tests ≥ 80 % coverage  
+- [ ] Storybook stories for every shared component  
+- [ ] a11y checks (axe-core) in CI  
+- [ ] Manual QA on latest Chrome, Firefox, Safari, Edge + Android Chrome  
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 📌  9. Non-Functional Requirements Checklist
 
-### `npm run build` fails to minify
+- [ ] 99 % uptime monitored via Status-page badge  
+- [ ] GDPR/KVKK “Download my data” & “Erase me” flows  
+- [ ] Daily encrypted backups verified  
+- [ ] Security headers (CSP, HSTS, Referrer-Policy) via Vite plugin  
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## ✨  10. Nice-to-Haves (Backlog)
+
+- [ ] Dark-mode aware hero illustrations (svg)  
+- [ ] Live search suggestions for job titles  
+- [ ] Admin dashboard for forum moderation  
+- [ ] Push notifications (Web Push API)  
+- [ ] i18n Turkish 🇹🇷 & English 🇬🇧 toggle  
+
+---
+
+### How to contribute
+
+1. Create a branch: `feat/<ticket-id>-short-desc`  
+2. Check off the relevant boxes above in your PR description  
+3. Run **all** lint / test scripts locally  
+4. Open PR → ensure Vercel preview passes Cypress tests  
+
+Happy coding! 🎉
