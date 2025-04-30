@@ -5,10 +5,12 @@ import '../../../core/models/user.dart'; // Adjust path
 import '../../../core/providers/auth_provider.dart'; // Adjust path
 import '../../../core/models/job_post.dart'; // Placeholder for JobPost model
 import '../../../core/services/api_service.dart'; // Placeholder for API service
+import '../../../core/utils/string_extensions.dart'; // Import shared extension
 import './job_details_screen.dart'; // Import placeholder
 import './create_job_post_screen.dart'; // Import placeholder
 import './job_applications_screen.dart'; // Import placeholder
 import '../widgets/job_filter_dialog.dart'; // Import the filter dialog
+import '../../application/screens/my_applications_screen.dart'; // Import the new screen
 
 class JobPage extends StatefulWidget {
   const JobPage({super.key});
@@ -187,7 +189,10 @@ class _JobPageState extends State<JobPage> {
       context,
       MaterialPageRoute(
         builder:
-            (context) => JobApplicationsScreen(jobId: job.id), // Pass Job ID
+            (context) => JobApplicationsScreen(
+              jobId: job.id,
+              jobTitle: job.title, // Pass the job title
+            ),
       ),
     );
     // ScaffoldMessenger.of(context).showSnackBar(
@@ -195,6 +200,13 @@ class _JobPageState extends State<JobPage> {
     //     content: Text('Navigate to applications for: ${job.title} (TBD)'),
     //   ),
     // );
+  }
+
+  void _navigateToMyApplications() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const MyApplicationsScreen()),
+    );
   }
 
   @override
@@ -228,23 +240,27 @@ class _JobPageState extends State<JobPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _userRole == UserRole.employer ? 'Manage Your Jobs' : 'Find Jobs',
-        ),
-        // Potentially add actions based on role if needed
-      ),
-      body: RefreshIndicator(
-        // Add pull-to-refresh
-        onRefresh:
-            () => _loadData(
-              searchQuery:
-                  _searchController.text.isNotEmpty
-                      ? _searchController.text
-                      : null,
+        actions: [
+          // Conditionally show the "My Applications" button for job seekers
+          if (_userRole == UserRole.jobSeeker)
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0), // Add some padding
+              child: TextButton.icon(
+                icon: const Icon(Icons.assignment_turned_in_outlined),
+                label: const Text('My Applications'),
+                onPressed: _navigateToMyApplications,
+                style: TextButton.styleFrom(
+                  // Use AppBar theme color or specify
+                  foregroundColor:
+                      Theme.of(context).appBarTheme.actionsIconTheme?.color ??
+                      Theme.of(context).primaryColor,
+                ),
+              ),
             ),
-        child: content,
+        ],
       ),
-      // Floating Action Button for Employer to create job post
+      // Remove RefreshIndicator, ListView provides scrollability
+      body: content,
       floatingActionButton:
           _userRole == UserRole.employer
               ? FloatingActionButton(
@@ -252,7 +268,7 @@ class _JobPageState extends State<JobPage> {
                 tooltip: 'Create Job Post',
                 child: const Icon(Icons.add),
               )
-              : null, // No FAB for job seekers on this screen
+              : null,
     );
   }
 

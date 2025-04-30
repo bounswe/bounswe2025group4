@@ -5,6 +5,7 @@ class User {
   final String username;
   final String email;
   final UserRole role; // Key property to differentiate views
+  final String? companyName; // Optional: Only relevant for Employer role
   // Add other fields later: profilePicUrl, bio, education, skills, etc.
 
   User({
@@ -12,6 +13,7 @@ class User {
     required this.username,
     required this.email,
     this.role = UserRole.jobSeeker, // Default role
+    this.companyName, // Add to constructor
   });
 
   // Add factory constructors for JSON parsing later

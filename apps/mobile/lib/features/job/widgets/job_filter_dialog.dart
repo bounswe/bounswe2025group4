@@ -1,17 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/services/api_service.dart'; // To get available filters
-
-// Helper extension (can be moved to a common place)
-extension StringExtension on String {
-  String capitalizeFirst() {
-    if (isEmpty) return "";
-    return "${this[0].toUpperCase()}${substring(1)}";
-  }
-
-  String formatFilterName() {
-    return replaceAll('_', ' ').capitalizeFirst();
-  }
-}
+import '../../../core/utils/string_extensions.dart'; // Import shared extension
 
 class JobFilterDialog extends StatefulWidget {
   final ApiService apiService;
