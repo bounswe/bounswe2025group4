@@ -1,6 +1,3 @@
-// router.tsx
-// author: ismail tarik erkan
-// date: 2025-05-01
 /*
 Data loading with React Router's loader functions
 Code splitting with lazy loading
