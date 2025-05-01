@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -21,6 +23,7 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.22.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
