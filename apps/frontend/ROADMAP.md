@@ -8,9 +8,9 @@
 ## ⏱  0. Project Bootstrap
 
 - [x] **Fork / clone** the repository  
-- [ ] `pnpm install` (or `npm ci`)  
-- [ ] Copy `.env.example` to `.env.local` and fill in API endpoints, JWT secret, Socket.io URL  
-- [ ] `pnpm run dev` &nbsp;▶︎ &nbsp;open <http://localhost:5173>  
+- [x] `pnpm install` (or `npm ci`)  
+- [x] Copy `.env.example` to `.env.local` and fill in API endpoints, JWT secret, Socket.io URL  
+- [x] `pnpm run dev` &nbsp;▶︎ &nbsp;open <http://localhost:5173>  
 
 ---
 
