@@ -1,17 +1,21 @@
-/*
-Data loading with React Router's loader functions
-Code splitting with lazy loading
-Error boundary for handling route errors
-A root layout with common elements
-Basic routing structure for home, jobs, login, and register pages
-
-Also, note that this is a basic setup. We'll want to:
-Add proper TypeScript types for our route data
-Implement actual API calls in the loaders
-Add proper authentication checks
-Add navigation components
-Style our layouts
-*/
+/**
+ * @fileoverview Application routing configuration using React Router v6.
+ *
+ * This module sets up the application's routing structure with features including:
+ * - Code splitting through lazy loading
+ * - Data loading with React Router loaders
+ * - Error boundary handling
+ * - Protected route management
+ * - Root layout implementation
+ *
+ * @example
+ * // Use in your main App component
+ * import { Router } from './app/router';
+ *
+ * function App() {
+ *   return <Router />;
+ * }
+ */
 
 import {
   createBrowserRouter,
@@ -32,7 +36,28 @@ const RootLayout = lazy(() => import('../layouts/Root'));
 // Error boundary component
 const ErrorBoundary = lazy(() => import('../components/ErrorBoundary'));
 
-// Define routes with data loading and error handling
+/**
+ * Router configuration with nested routes and data loading.
+ *
+ * @type {import('react-router-dom').RouteObject[]}
+ *
+ * @remarks
+ * Route Structure:
+ * - / (Home): Landing page with welcome message
+ *   - Loader provides initial welcome message
+ *
+ * - /jobs (Jobs listing): Job search and listing page
+ *   - Loader fetches available jobs
+ *
+ * - /login (Login): Authentication page
+ *   - Loader checks authentication status
+ *   - Redirects to home if already authenticated
+ *
+ * - /register (Registration): New user registration
+ *
+ * Each route is lazy-loaded for optimal performance and
+ * includes its own data loading strategy through loader functions.
+ */
 const router = createBrowserRouter([
   {
     path: '/',
@@ -75,6 +100,22 @@ const router = createBrowserRouter([
   },
 ]);
 
+/**
+ * Main Router component that provides routing functionality to the application.
+ *
+ * @component
+ * @returns {JSX.Element} Router component wrapped with Suspense for lazy loading
+ *
+ * @remarks
+ * - Implements code splitting through React.lazy
+ * - Provides loading fallback during route transitions
+ * - Handles all routing logic and navigation
+ * - Manages route-level error boundaries
+ * - Supports data loading through route loaders
+ *
+ * The Router component is the top-level routing component that should be
+ * rendered within your app's provider hierarchy (typically inside AuthProvider).
+ */
 export function Router() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
