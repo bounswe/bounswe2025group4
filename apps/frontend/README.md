@@ -20,7 +20,7 @@ cp .env.example .env.local
 # development
 pnpm run dev
 
-# format & lint
+# format & lint (before every commit)
 pnpm run format
 pnpm run lint:fix
 ```
