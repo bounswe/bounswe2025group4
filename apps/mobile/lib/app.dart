@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'core/providers/auth_provider.dart'; // Adjust path
-import 'features/auth/screens/login_screen.dart'; // Adjust path
-import 'features/main_scaffold/main_scaffold.dart'; // Adjust path
+import 'core/providers/auth_provider.dart';
+import 'features/auth/screens/welcome_screen.dart';
+import 'features/main_scaffold/main_scaffold.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,30 +10,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Job Listing Platform',
+      title: 'Ethical Job Platform',
       theme: ThemeData(
-        primarySwatch: Colors.blue, // Customize your theme
+        primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {
-          print(
-            "Auth state changed. Logged in: ${authProvider.isLoggedIn}",
-          ); // Debug print
-          // Show MainScaffold if logged in, otherwise show LoginScreen
           if (authProvider.isLoggedIn) {
             return const MainScaffold();
           } else {
-            return const LoginScreen();
+            return const WelcomeScreen();
           }
         },
       ),
-      // Optional: Define named routes if needed later
-      // routes: {
-      //   '/login': (context) => LoginScreen(),
-      //   '/register': (context) => RegisterScreen(),
-      //   '/home': (context) => MainScaffold(),
-      // },
     );
   }
 }

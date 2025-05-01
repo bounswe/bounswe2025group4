@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart'; // Adjust path
-import '../../auth/screens/login_screen.dart'; // Adjust path
+import '../../auth/screens/sign_in_screen.dart'; // Adjust path
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -19,9 +19,9 @@ class ProfilePage extends StatelessWidget {
             tooltip: 'Logout',
             onPressed: () async {
               await authProvider.logout();
-              // Navigate back to login screen and remove all previous routes
+              // Navigate back to sign in screen and remove all previous routes
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                MaterialPageRoute(builder: (_) => const SignInScreen()),
                 (Route<dynamic> route) => false, // Remove all routes
               );
             },
