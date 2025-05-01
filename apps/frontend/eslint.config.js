@@ -1,11 +1,10 @@
-// eslint.config.js
-// author: ismail tarik erkan
-// date: 2025-05-01
-// ESLint checks your code for potential errors and enforces best practices
-// TypeScript rules ensure type safety
-// React-specific rules help prevent common React and Hooks mistakes
-// Prettier ensures consistent code formatting across the project
-// The ignore files prevent formatting/linting of generated or third-party code
+/*
+ESLint checks your code for potential errors and enforces best practices
+TypeScript rules ensure type safety
+React-specific rules help prevent common React and Hooks mistakes
+Prettier ensures consistent code formatting across the project
+The ignore files prevent formatting/linting of generated or third-party code
+*/
 
 import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';

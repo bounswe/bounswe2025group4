@@ -1,6 +1,3 @@
-// .prettierrc.js
-// author: ismail tarik erkan
-// date: 2025-05-01
 export default {
   semi: true,               // Add semicolons at the end of statements
   tabWidth: 2,              // Use 2 spaces for indentation
