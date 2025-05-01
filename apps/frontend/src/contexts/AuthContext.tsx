@@ -13,6 +13,27 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Authentication Provider component that manages authentication state and operations.
+ *
+ * @component
+ * @param {AuthProviderProps} props - The component props
+ * @param {ReactNode} props.children - Child components that will have access to auth context
+ *
+ * @remarks
+ * This provider handles:
+ * - User authentication state management
+ * - Token storage and refresh
+ * - Login/Register/Logout operations
+ * - Error state management
+ * - Loading state management
+ *
+ * The provider automatically:
+ * - Restores session from localStorage on mount
+ * - Refreshes tokens periodically (every 15 minutes)
+ * - Handles token storage in localStorage
+ * - Manages loading and error states during auth operations
+ */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [tokens, setTokens] = useState<AuthTokens | null>(null);
