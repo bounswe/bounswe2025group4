@@ -19,4 +19,8 @@ cp .env.example .env.local
 ```bash
 # development
 pnpm run dev
+
+# format & lint
+pnpm run format
+pnpm run lint:fix
 ```

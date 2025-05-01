@@ -16,7 +16,7 @@
 
 ## 🏗  1. Core Setup
 
-- [ ] Configure **ESLint flat-config** + Prettier  
+- [x] Configure **ESLint flat-config** + Prettier  
 - [ ] Add **husky** pre-commit hook (`lint`, `type-check`, `test:unit`)  
 - [ ] Wire **React Router v7** data routes (see `src/app/router.tsx`)  
 - [ ] Create global **MUI v7** theme & dark-mode toggle  
