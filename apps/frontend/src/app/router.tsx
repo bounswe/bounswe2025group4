@@ -1,22 +1,3 @@
-/**
- * @fileoverview Application routing configuration using React Router v6.
- *
- * This module sets up the application's routing structure with features including:
- * - Code splitting through lazy loading
- * - Data loading with React Router loaders
- * - Error boundary handling
- * - Protected route management
- * - Root layout implementation
- *
- * @example
- * // Use in your main App component
- * import { Router } from './app/router';
- *
- * function App() {
- *   return <Router />;
- * }
- */
-
 import {
   createBrowserRouter,
   RouterProvider,
