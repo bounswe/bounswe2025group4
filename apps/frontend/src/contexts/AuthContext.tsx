@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from 'react';
+import { useEffect, useState, ReactNode, useCallback } from 'react';
 import {
   User,
   AuthTokens,
@@ -13,27 +7,7 @@ import {
   AuthError,
 } from '../types/auth';
 import { authService } from '../services/auth';
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: AuthError | null;
-  login: (credentials: LoginCredentials) => Promise<void>;
-  register: (credentials: RegisterCredentials) => Promise<void>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Custom hook to use auth context
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-}
+import { AuthContext } from './AuthContextValue';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -45,7 +19,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<AuthError | null>(null);
 
-  // Check for existing session on mount
   useEffect(() => {
     const storedTokens = localStorage.getItem('auth_tokens');
     if (storedTokens) {
@@ -56,7 +29,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLoading(false);
   }, []);
 
-  // Set up automatic token refresh
+  const logout = useCallback(async () => {
+    try {
+      if (tokens) {
+        await authService.logout();
+      }
+    } finally {
+      setUser(null);
+      setTokens(null);
+      localStorage.removeItem('auth_tokens');
+    }
+  }, [tokens]);
+
   useEffect(() => {
     if (!tokens?.refreshToken) return;
 
@@ -73,10 +57,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
       },
       15 * 60 * 1000
-    ); // Refresh every 15 minutes
+    );
 
     return () => clearInterval(refreshInterval);
-  }, [tokens?.refreshToken]);
+  }, [tokens?.refreshToken, logout]);
 
   const login = async (credentials: LoginCredentials) => {
     try {
@@ -107,18 +91,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       throw err;
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      if (tokens) {
-        await authService.logout();
-      }
-    } finally {
-      setUser(null);
-      setTokens(null);
-      localStorage.removeItem('auth_tokens');
     }
   };
 

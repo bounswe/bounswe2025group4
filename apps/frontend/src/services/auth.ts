@@ -37,7 +37,7 @@ class AuthService {
       | { refreshToken?: string }
       | Record<string, never>
   ): Promise<T> {
-    console.log(`Mock API call to ${endpoint}`, data);
+    console.error(`Mock API call to ${endpoint}`, data);
     throw new Error('API not implemented yet');
   }
 }
