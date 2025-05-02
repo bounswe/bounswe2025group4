@@ -2,6 +2,7 @@ import '../models/job_post.dart'; // Adjust path if needed
 import '../models/job_application.dart'; // Import the new model
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // Needed for actual API call example
+import '../models/user.dart';
 
 // Define ethical policies and job types (could come from API later)
 const List<String> _availableEthicalPolicies = [
@@ -713,4 +714,28 @@ class ApiService {
   }
 
   // TODO: Add other API methods as needed (createJobPost, applyToJob, getJobDetails, etc.)
+
+  Future<User> fetchUserProfile(String userId) async {
+    // Simüle edilmiş API çağrısı
+    await Future.delayed(const Duration(seconds: 1));
+    
+    return User(
+      id: userId,
+      username: 'test_user',
+      email: 'test@example.com',
+      role: UserRole.student,
+      fullName: 'Test User',
+      phone: '+90 555 123 4567',
+      location: 'İstanbul, Türkiye',
+      occupation: 'Öğrenci',
+      bio: 'Merhaba! Ben bir öğrenciyim.',
+    );
+  }
+
+  Future<User> updateUserProfile(User user) async {
+    // Simüle edilmiş API çağrısı
+    await Future.delayed(const Duration(seconds: 1));
+    
+    return user;
+  }
 }

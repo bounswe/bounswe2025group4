@@ -4,48 +4,94 @@ import '../models/user.dart'; // Adjust import path if needed
 class AuthProvider with ChangeNotifier {
   User? _currentUser;
   bool _isLoading = false;
-  // Simulate different user roles for testing
-  UserRole _simulatedRole =
-      UserRole.jobSeeker; // CHANGE THIS TO TEST DIFFERENT ROLES
+  String? _error;
 
   User? get currentUser => _currentUser;
   bool get isLoggedIn => _currentUser != null;
   bool get isLoading => _isLoading;
-  UserRole get simulatedRole =>
-      _simulatedRole; // Temporary getter for role simulation
+  String? get error => _error;
 
   // --- Simulation Methods (Replace with actual API calls later) ---
 
-  Future<bool> login(String username, String password) async {
+  Future<void> login({String? username, String? password}) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
-    print("Attempting login for: $username"); // Debug print
 
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      // TODO: Implement actual login
+      await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+      _currentUser = User(
+        id: '1',
+        username: 'johnsmith',
+        email: 'john.smith@example.com',
+        role: UserRole.student,
+        fullName: 'John Smith',
+        occupation: 'Student',
+        bio: 'Hi! I am a passionate computer engineering student who loves building mobile apps.',
+        location: 'London, UK',
+        phone: '+44 1234 567890',
+        skills: ['Flutter', 'Dart', 'Firebase', 'UI/UX'],
+        interests: ['Mobile Development', 'Open Source', 'Design'],
+        education: [
+          Education(
+            school: 'University College London',
+            degree: 'BSc',
+            field: 'Computer Engineering',
+            startDate: '2021-09',
+            endDate: null,
+          ),
+        ],
+        experience: [
+          Experience(
+            company: 'Tech Solutions Ltd.',
+            position: 'Software Engineering Intern',
+            description: 'Worked on Flutter mobile app development and UI improvements.',
+            startDate: '2023-06',
+            endDate: '2023-08',
+          ),
+        ],
+        badges: [
+          UserBadge(
+            name: 'Flutter Master',
+            description: 'Completed 10+ projects with Flutter',
+            icon: '0xe123', // MaterialIcons code point
+            earnedAt: DateTime.now().subtract(const Duration(days: 30)),
+          ),
+        ],
+        forumPostCount: 42,
+      );
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
-    // Simulate successful login
-    _currentUser = User(
-      id: 'user-123',
-      username: username,
-      email: '$username@example.com',
-      role: _simulatedRole, // Use the simulated role
-    );
-    _isLoading = false;
-    print("Login successful. User role: ${_currentUser?.role}"); // Debug print
+  Future<void> getCurrentUser() async {
+    _isLoading = true;
+    _error = null;
     notifyListeners();
-    return true;
 
-    // Simulate failed login:
-    // _isLoading = false;
-    // notifyListeners();
-    // return false;
+    try {
+      // TODO: Implement actual user fetch
+      await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+      // For now, just reuse the current user
+      if (_currentUser == null) {
+        throw Exception('Kullanıcı bulunamadı');
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<bool> register(String username, String email, String password) async {
     _isLoading = true;
     notifyListeners();
-    print("Attempting registration for: $username, $email"); // Debug print
 
     // Simulate network delay & registration + email verification
     await Future.delayed(const Duration(seconds: 2));
@@ -55,41 +101,24 @@ class AuthProvider with ChangeNotifier {
       id: 'user-456',
       username: username,
       email: email,
-      role: _simulatedRole, // Use the simulated role after registration
+      role: UserRole.student,
     );
     _isLoading = false;
-    print(
-      "Registration successful. User role: ${_currentUser?.role}",
-    ); // Debug print
     notifyListeners();
     return true;
   }
 
-  Future<void> logout() async {
-    print("Logging out"); // Debug print
-    // Simulate logout process
-    await Future.delayed(const Duration(milliseconds: 500));
+  void logout() {
     _currentUser = null;
     notifyListeners();
-  }
-
-  // Method to change the simulated role for testing UI easily
-  void setSimulatedRole(UserRole role) {
-    _simulatedRole = role;
-    // If logged in, update current user's role immediately for testing
-    if (_currentUser != null) {
-      _currentUser = User(
-        id: _currentUser!.id,
-        username: _currentUser!.username,
-        email: _currentUser!.email,
-        role: _simulatedRole,
-      );
-    }
-    print("Simulated role set to: $_simulatedRole"); // Debug print
-    notifyListeners(); // Notify listeners about the role change
   }
 
   // --- End Simulation Methods ---
 
   // Add methods for password reset, delete account later
+
+  Future<void> updateProfile(User updatedUser) async {
+    _currentUser = updatedUser;
+    notifyListeners();
+  }
 }
