@@ -1,13 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import './index.css';
 import { Router } from './app/router';
 import { AuthProvider } from './contexts/AuthContext';
-import './index.css';
+import { AppThemeProvider } from './providers/ThemeProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Create a client
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AuthProvider>
-      <Router />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppThemeProvider>
+        <AuthProvider>
+          <Router />
+        </AuthProvider>
+      </AppThemeProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
