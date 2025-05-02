@@ -63,6 +63,7 @@ public class JobPostService {
     private JobPostDto toDto(JobPost job) {
         return JobPostDto.builder()
                 .id(job.getId())
+                .employerId(job.getEmployer().getId())
                 .title(job.getTitle())
                 .description(job.getDescription())
                 .company(job.getCompany())
