@@ -17,12 +17,12 @@
 ## 🏗  1. Core Setup
 
 - [x] Configure **ESLint flat-config** + Prettier  
-- [ ] Add **husky** pre-commit hook (`lint`, `type-check`, `test:unit`)  
+- [x] Add **husky** pre-commit hook (`lint`, `type-check`, `test:unit`)  
 - [x] Wire **React Router v7** data routes (see `src/app/router.tsx`)  
-- [ ] Create global **MUI v7** theme & dark-mode toggle  
+- [x] Create global **MUI v7** theme & dark-mode toggle  
 - [x] Set up **AuthContext** (JWT access/refresh, social OAuth placeholders)  
-- [ ] Initialise **TanStack Query** client in `src/main.tsx`  
-- [ ] Create **Zustand** store for notifications and UI flags  
+- [x] Initialise **TanStack Query** client in `src/main.tsx`  
+- [x] Create **Zustand** store for notifications and UI flags  
 
 ---
 
