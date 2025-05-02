@@ -55,7 +55,7 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
           children: [
             const OnboardingProgressBar(
               currentStep: 1,
-              totalSteps: 2,
+              totalSteps: 3,
             ),
             const SizedBox(height: 24),
             Expanded(

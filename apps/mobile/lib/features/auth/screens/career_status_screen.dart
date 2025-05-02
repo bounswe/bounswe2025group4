@@ -47,7 +47,7 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
           children: [
             const OnboardingProgressBar(
               currentStep: 1,
-              totalSteps: 3,
+              totalSteps: 4,
             ),
             const SizedBox(height: 24),
             Expanded(

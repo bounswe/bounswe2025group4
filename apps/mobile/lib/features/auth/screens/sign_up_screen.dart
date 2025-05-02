@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/main_scaffold/main_scaffold.dart';
 import 'package:mobile/features/auth/screens/sign_in_screen.dart';
+import 'package:mobile/core/models/user.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  final UserRole? initialRole;
+  
+  const SignUpScreen({
+    super.key,
+    this.initialRole,
+  });
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -27,6 +33,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void _handleSignUp() {
     if (_formKey.currentState!.validate()) {
+      // TODO: Update this to use the actual role from the onboarding flow
+      final userRole = widget.initialRole ?? UserRole.jobSeeker;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -44,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Create Account'),
+        title: const Text('Sign Up'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -55,18 +63,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Join the Ethical Job Platform',
+                  'Create your account',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Create an account to start your ethical career journey',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -96,9 +96,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() {
@@ -111,8 +109,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a password';
                     }
-                    if (value.length < 8) {
-                      return 'Password must be at least 8 characters';
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
                     }
                     return null;
                   },
@@ -127,8 +125,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscureConfirmPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() {
@@ -160,7 +158,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     child: const Text(
-                      'Create Account',
+                      'Sign Up',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -175,7 +173,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const Text('Already have an account?'),
                     TextButton(
                       onPressed: () {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const SignInScreen(),

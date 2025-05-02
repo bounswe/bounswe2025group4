@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/features/auth/screens/mentorship_selection_screen.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
 
@@ -62,7 +63,7 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
           children: [
             const OnboardingProgressBar(
               currentStep: 2,
-              totalSteps: 2,
+              totalSteps: 3,
             ),
             const SizedBox(height: 24),
             Expanded(
@@ -159,7 +160,7 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const SignUpScreen(),
+                                    builder: (context) => const MentorshipSelectionScreen(isJobSeeker: false),
                                   ),
                                 );
                               }

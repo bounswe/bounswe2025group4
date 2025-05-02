@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/features/auth/screens/mentorship_selection_screen.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
 
@@ -56,7 +57,7 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
           children: [
             const OnboardingProgressBar(
               currentStep: 3,
-              totalSteps: 3,
+              totalSteps: 4,
             ),
             const SizedBox(height: 24),
             Expanded(
@@ -162,13 +163,12 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: selectedIndustries.isNotEmpty &&
-                                (!showOtherField || _otherController.text.isNotEmpty)
+                        onPressed: selectedIndustries.isNotEmpty
                             ? () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const SignUpScreen(),
+                                    builder: (context) => const MentorshipSelectionScreen(isJobSeeker: true),
                                   ),
                                 );
                               }

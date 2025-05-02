@@ -1,4 +1,4 @@
-enum UserRole { guest, jobSeeker, employer, mentor }
+enum UserRole { guest, jobSeeker, employer, mentor, mentee }
 
 class User {
   final String id;

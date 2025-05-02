@@ -66,7 +66,7 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
           children: [
             const OnboardingProgressBar(
               currentStep: 2,
-              totalSteps: 3,
+              totalSteps: 4,
             ),
             const SizedBox(height: 24),
             Expanded(
