@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart'; // Adjust path
-import '../../auth/screens/login_screen.dart'; // Adjust path
+import '../../auth/screens/welcome_screen.dart'; // Use WelcomeScreen instead of SignInScreen
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -13,15 +13,16 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Logout',
             onPressed: () async {
               await authProvider.logout();
-              // Navigate back to login screen and remove all previous routes
+              // Navigate back to welcome screen and remove all previous routes
               Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                MaterialPageRoute(builder: (_) => const WelcomeScreen()),
                 (Route<dynamic> route) => false, // Remove all routes
               );
             },

@@ -240,6 +240,7 @@ class _JobPageState extends State<JobPage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actions: [
           // Conditionally show the "My Applications" button for job seekers
           if (_userRole == UserRole.jobSeeker)
