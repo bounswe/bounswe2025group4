@@ -1,68 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:io';
 import '../../../core/models/comment.dart';
-import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/providers/auth_provider.dart';
 
-class CommentTile extends StatefulWidget {
+class CommentTile extends StatelessWidget {
   final Comment comment;
-  final void Function(int commentId, String newBody)? onUpdate;
-  final void Function(int commentId)? onDelete;
+  const CommentTile(this.comment, {super.key});
 
-  const CommentTile({
-    required this.comment,
-    this.onUpdate,
-    this.onDelete,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  State<CommentTile> createState() => _CommentTileState();
-}
-
-class _CommentTileState extends State<CommentTile> {
   @override
   Widget build(BuildContext ctx) {
-    final api = ApiService(authProvider: ctx.read<AuthProvider>());
+    final api         = ApiService();
     final currentUser = ctx.read<AuthProvider>().currentUser?.id;
-    final isOwner = widget.comment.author.id == currentUser;
+    final isOwner     = comment.authorId == currentUser;
 
     return ListTile(
-      key: ValueKey(widget.comment.id),
       leading: CircleAvatar(
         child: Text(
-          widget.comment.author.username.isNotEmpty
-              ? widget.comment.author.username[0]
-              : '?',
+          comment.authorName.isNotEmpty ? comment.authorName[0] : '?',
         ),
       ),
-      title: Text(
-        widget.comment.author.username.isNotEmpty
-            ? widget.comment.author.username
-            : 'Unknown',
-      ),
-      subtitle: Text(widget.comment.body),
+      title: Text(comment.authorName),
+      subtitle: Text(comment.body),
       trailing: PopupMenuButton<String>(
         onSelected: (action) async {
           final messenger = ScaffoldMessenger.of(ctx);
           if (action == 'Report') {
-            try {
-              await api.reportComment(widget.comment.id);
-              messenger.showSnackBar(
-                const SnackBar(content: Text('Comment reported', style: TextStyle(color: Colors.green))),
-              );
-            } on SocketException {
-              messenger.showSnackBar(
-                const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
-              );
-            } catch (e) {
-              messenger.showSnackBar(
-                const SnackBar(content: Text('Failed: This comment is no longer available.', style: TextStyle(color: Colors.red))),
-              );
-            }
+            await api.reportComment(comment.id);
+            messenger.showSnackBar(
+              const SnackBar(content: Text('Comment reported')),
+            );
           } else if (action == 'Edit' && isOwner) {
-            final controller = TextEditingController(text: widget.comment.body);
+            final controller = TextEditingController(text: comment.body);
             final edited = await showDialog<String>(
               context: ctx,
               builder: (_) => AlertDialog(
@@ -85,21 +54,10 @@ class _CommentTileState extends State<CommentTile> {
               ),
             );
             if (edited != null && edited.isNotEmpty) {
-              try {
-                await api.editComment(widget.comment.id, edited);
-                widget.onUpdate?.call(widget.comment.id, edited);
-              } on SocketException {
-                messenger.showSnackBar(
-                  const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
-                );
-              } catch (e) {
-                messenger.showSnackBar(
-                  const SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
-                );
-              }
+              await api.editComment(comment.id, edited);
             }
           } else if (action == 'Delete' && isOwner) {
-            widget.onDelete?.call(widget.comment.id);
+            await api.deleteComment(comment.id);
           }
         },
         itemBuilder: (_) => [

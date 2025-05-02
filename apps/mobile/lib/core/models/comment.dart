@@ -1,41 +1,22 @@
-import 'package:mobile/core/models/user.dart';
-
+/// A single comment on a discussion thread.
 class Comment {
-  final int id;
+  final String id;
+  final String threadId;
+  final String authorId;
+  final String authorName;
+  final String authorAvatarUrl;
   final String body;
-  final User author;
-  final bool reported;
+  final DateTime createdAt;
 
   Comment({
     required this.id,
+    required this.threadId,
+    required this.authorId,
+    required this.authorName,
+    required this.authorAvatarUrl,
     required this.body,
-    required this.author,
-    required this.reported,
+    required this.createdAt,
   });
 
-  factory Comment.fromJson(Map<String, dynamic> json) {
-    return Comment(
-      id: json['id'],
-      body: json['body'],
-      author: User.fromJson(json['author']),
-      reported: json['reported'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'body': body,
-      'author': {
-        'id': author.id,
-        'username': author.username,
-        'email': author.email,
-        'bio': author.bio ?? '',
-        'userType': author.role.name,
-        'companyName': author.companyName ?? '',
-        'employerId': author.employerId ?? '',
-      },
-      'reported': reported,
-    };
-  }
+// TODO: factory fromJson / toJson
 }
