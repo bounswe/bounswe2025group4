@@ -1,18 +1,47 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart'; // Adjust import path if needed
 
+// Enum for mentorship preference
+enum MentorshipPreference { mentor, mentee, none }
+
 class AuthProvider with ChangeNotifier {
   User? _currentUser;
   bool _isLoading = false;
-  // Simulate different user roles for testing
-  UserRole _simulatedRole =
-      UserRole.jobSeeker; // CHANGE THIS TO TEST DIFFERENT ROLES
+  // --- Onboarding State ---
+  UserRole? _onboardingUserRole; // Role selected during onboarding
+  MentorshipPreference? _onboardingMentorshipPreference; // Mentorship choice
+  // --- End Onboarding State ---
+
+  // --- Simulation / Current State (to be replaced by real API state) ---
+  // Simulate different user roles for testing - Keep separate from onboarding
+  UserRole _simulatedRole = UserRole.jobSeeker;
+  // --- End Simulation ---
 
   User? get currentUser => _currentUser;
   bool get isLoggedIn => _currentUser != null;
   bool get isLoading => _isLoading;
-  UserRole get simulatedRole =>
-      _simulatedRole; // Temporary getter for role simulation
+
+  // Getters for onboarding state
+  UserRole? get onboardingUserRole => _onboardingUserRole;
+  MentorshipPreference? get onboardingMentorshipPreference =>
+      _onboardingMentorshipPreference;
+
+  UserRole get simulatedRole => _simulatedRole;
+
+  // Setters for onboarding state
+  void setOnboardingUserRole(UserRole role) {
+    _onboardingUserRole = role;
+    print("Onboarding role set to: $_onboardingUserRole");
+    notifyListeners();
+  }
+
+  void setOnboardingMentorshipPreference(MentorshipPreference preference) {
+    _onboardingMentorshipPreference = preference;
+    print(
+      "Onboarding mentorship preference set to: $_onboardingMentorshipPreference",
+    );
+    notifyListeners();
+  }
 
   // --- Simulation Methods (Replace with actual API calls later) ---
 
@@ -42,20 +71,45 @@ class AuthProvider with ChangeNotifier {
     // return false;
   }
 
-  Future<bool> register(String username, String email, String password) async {
+  Future<bool> register(
+    String username,
+    String email,
+    String password,
+    // Add onboarding parameters
+    UserRole userRole,
+    MentorshipPreference mentorshipPreference,
+  ) async {
     _isLoading = true;
     notifyListeners();
-    print("Attempting registration for: $username, $email"); // Debug print
+    print(
+      "Attempting registration for: $username, $email, Role: $userRole, Mentorship: $mentorshipPreference",
+    ); // Debug print
 
+    // TODO: Implement actual API call here
+    // final response = await http.post(
+    //   Uri.parse('YOUR_API_ENDPOINT/register'),
+    //   headers: {'Content-Type': 'application/json'},
+    //   body: jsonEncode({
+    //     'username': username,
+    //     'email': email,
+    //     'password': password,
+    //     'role': userRole.toString().split('.').last, // e.g., 'jobSeeker'
+    //     'mentorshipPreference': mentorshipPreference.toString().split('.').last, // e.g., 'mentor'
+    //   }),
+    // );
+
+    // // Handle response (check status code, parse data, etc.)
+    // if (response.statusCode == 201) { // Assuming 201 Created for success
     // Simulate network delay & registration + email verification
     await Future.delayed(const Duration(seconds: 2));
 
-    // Simulate successful registration
+    // Simulate successful registration using the provided role
     _currentUser = User(
-      id: 'user-456',
+      id: 'user-456', // Simulate ID from backend
       username: username,
       email: email,
-      role: _simulatedRole, // Use the simulated role after registration
+      role: userRole, // Use the role determined during onboarding
+      // TODO: Add mentorship preference to User model if needed later
     );
     _isLoading = false;
     print(
@@ -63,6 +117,13 @@ class AuthProvider with ChangeNotifier {
     ); // Debug print
     notifyListeners();
     return true;
+    // } else {
+    //   // Handle registration failure
+    //   _isLoading = false;
+    //   print("Registration failed: ${response.body}");
+    //   notifyListeners();
+    //   return false;
+    // }
   }
 
   Future<void> logout() async {

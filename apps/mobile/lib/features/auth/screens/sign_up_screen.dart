@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/main_scaffold/main_scaffold.dart';
 import 'package:mobile/features/auth/screens/sign_in_screen.dart';
-import 'package:mobile/core/models/user.dart';
+import 'package:provider/provider.dart';
+import 'package:mobile/core/providers/auth_provider.dart';
 
 class SignUpScreen extends StatefulWidget {
-  final UserRole? initialRole;
-  
-  const SignUpScreen({
-    super.key,
-    this.initialRole,
-  });
+  const SignUpScreen({super.key});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -31,16 +27,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
-  void _handleSignUp() {
+  void _handleSignUp() async {
     if (_formKey.currentState!.validate()) {
-      // TODO: Update this to use the actual role from the onboarding flow
-      final userRole = widget.initialRole ?? UserRole.jobSeeker;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const MainScaffold(),
-        ),
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final email = _emailController.text;
+      final password = _passwordController.text;
+
+      final userRole = authProvider.onboardingUserRole;
+      final mentorshipPreference = authProvider.onboardingMentorshipPreference;
+
+      if (userRole == null || mentorshipPreference == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Onboarding data missing. Please restart signup.'),
+          ),
+        );
+        return;
+      }
+
+      bool success = await authProvider.register(
+        email,
+        email,
+        password,
+        userRole,
+        mentorshipPreference,
       );
+
+      if (success && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScaffold()),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sign up failed. Please try again.')),
+        );
+      }
     }
   }
 
@@ -64,10 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 const Text(
                   'Create your account',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
@@ -96,7 +115,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() {
@@ -159,10 +180,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     child: const Text(
                       'Sign Up',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ),
@@ -191,4 +209,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-} 
+}

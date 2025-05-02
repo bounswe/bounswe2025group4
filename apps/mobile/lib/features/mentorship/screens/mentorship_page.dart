@@ -10,15 +10,19 @@ class MentorshipPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Read the mentorship choice from onboarding
-    final mentorshipChoice = MentorshipChoiceStore.mentorshipChoice;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final mentorshipChoice = authProvider.onboardingMentorshipPreference;
 
     String text;
-    if (mentorshipChoice == 'mentor') {
-      text = 'You are a mentor. You can help others improve their resumes and careers.';
-    } else if (mentorshipChoice == 'mentee') {
-      text = 'You are a mentee. You can get feedback and guidance to grow professionally.';
-    } else if (mentorshipChoice == 'none') {
-      text = 'You have not joined the mentorship program yet. You can always join later from your profile settings.';
+    if (mentorshipChoice == MentorshipPreference.mentor) {
+      text =
+          'You are a mentor. You can help others improve their resumes and careers.';
+    } else if (mentorshipChoice == MentorshipPreference.mentee) {
+      text =
+          'You are a mentee. You can get feedback and guidance to grow professionally.';
+    } else if (mentorshipChoice == MentorshipPreference.none) {
+      text =
+          'You have not joined the mentorship program yet. You can always join later from your profile settings.';
     } else {
       text = 'Join our mentorship program to connect with others!';
     }
