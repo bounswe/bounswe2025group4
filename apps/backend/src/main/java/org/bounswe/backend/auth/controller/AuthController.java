@@ -53,6 +53,7 @@ public class AuthController {
                 .token(token)
                 .username(user.getUsername())
                 .userType(user.getUserType().name())
+                .id(user.getId())
                 .build());
     }
 
@@ -71,6 +72,7 @@ public class AuthController {
                 .token(token)
                 .username(user.getUsername())
                 .userType(user.getUserType().name())
+                .id(user.getId())
                 .build());
     }
 
