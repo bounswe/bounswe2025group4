@@ -8,19 +8,19 @@
 ## ⏱  0. Project Bootstrap
 
 - [x] **Fork / clone** the repository  
-- [ ] `pnpm install` (or `npm ci`)  
-- [ ] Copy `.env.example` to `.env.local` and fill in API endpoints, JWT secret, Socket.io URL  
-- [ ] `pnpm run dev` &nbsp;▶︎ &nbsp;open <http://localhost:5173>  
+- [x] `pnpm install` (or `npm ci`)  
+- [x] Copy `.env.example` to `.env.local` and fill in API endpoints, JWT secret, Socket.io URL  
+- [x] `pnpm run dev` &nbsp;▶︎ &nbsp;open <http://localhost:5173>  
 
 ---
 
 ## 🏗  1. Core Setup
 
-- [ ] Configure **ESLint flat-config** + Prettier  
+- [x] Configure **ESLint flat-config** + Prettier  
 - [ ] Add **husky** pre-commit hook (`lint`, `type-check`, `test:unit`)  
-- [ ] Wire **React Router v7** data routes (see `src/app/router.tsx`)  
+- [x] Wire **React Router v7** data routes (see `src/app/router.tsx`)  
 - [ ] Create global **MUI v7** theme & dark-mode toggle  
-- [ ] Set up **AuthContext** (JWT access/refresh, social OAuth placeholders)  
+- [x] Set up **AuthContext** (JWT access/refresh, social OAuth placeholders)  
 - [ ] Initialise **TanStack Query** client in `src/main.tsx`  
 - [ ] Create **Zustand** store for notifications and UI flags  
 
