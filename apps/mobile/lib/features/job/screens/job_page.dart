@@ -30,16 +30,19 @@ class _JobPageState extends State<JobPage> {
   Map<String, List<String>> _selectedFilters = {'policies': [], 'jobTypes': []};
   UserType? _userRole; // Changed type to UserType?
 
-  // Placeholder API service instance
-  // TODO: Replace with actual dependency injection or service locator
-  final ApiService _apiService = ApiService();
+  // Initialize ApiService late or in initState AFTER getting AuthProvider
+  late final ApiService _apiService;
 
   @override
   void initState() {
     super.initState();
+    // Get AuthProvider first
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // Initialize ApiService with AuthProvider
+    _apiService = ApiService(authProvider: authProvider);
+
     // Get the role once and store it
-    _userRole =
-        Provider.of<AuthProvider>(context, listen: false).currentUser?.role;
+    _userRole = authProvider.currentUser?.role;
     print("JobPage initState. Role: $_userRole"); // Debug print
     _loadData(); // Initial data load
   }
@@ -424,7 +427,7 @@ class _JobPageState extends State<JobPage> {
                         ),
                       ),
                       Text(
-                        job.jobType,
+                        job.jobType ?? 'N/A',
                         style: Theme.of(
                           context,
                         ).textTheme.bodySmall?.copyWith(color: Colors.blueGrey),
@@ -438,15 +441,22 @@ class _JobPageState extends State<JobPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8.0),
-                  if (job.ethicalPolicies.isNotEmpty)
+                  // Split the ethicalTags string and display as chips
+                  if (job.ethicalTags.isNotEmpty)
                     Wrap(
                       spacing: 6.0,
                       runSpacing: 4.0,
                       children:
-                          job.ethicalPolicies
+                          // Split string by comma, trim whitespace, remove empty strings
+                          job.ethicalTags
+                              .split(',')
+                              .map((e) => e.trim())
+                              .where((e) => e.isNotEmpty)
                               .map(
-                                (policy) => Chip(
-                                  label: Text(policy.formatFilterName()),
+                                (tag) => Chip(
+                                  label: Text(
+                                    tag.formatFilterName(),
+                                  ), // Assuming formatFilterName works for tags
                                   padding: EdgeInsets.zero,
                                   labelPadding: const EdgeInsets.symmetric(
                                     horizontal: 6.0,
@@ -461,15 +471,26 @@ class _JobPageState extends State<JobPage> {
                               .toList(),
                     ),
                   const SizedBox(height: 8.0),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      'Posted: ${dateFormat.format(job.datePosted)}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade600,
+                  if (job.datePosted != null)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'Posted: ${dateFormat.format(job.datePosted!)}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    )
+                  else
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'Posted: Unknown',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),

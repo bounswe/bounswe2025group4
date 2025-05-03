@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import '../../../core/models/job_application.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/string_extensions.dart';
+import 'package:provider/provider.dart';
+import '../../../core/providers/auth_provider.dart';
 
 class JobApplicationsScreen extends StatefulWidget {
   final String jobId;
@@ -22,12 +24,17 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
   Map<String, bool> _isUpdatingStatus =
       {}; // Track loading state per application
 
-  // TODO: Inject or locate service properly
-  final ApiService _apiService = ApiService();
+  // Initialize ApiService late or in initState AFTER getting AuthProvider
+  late final ApiService _apiService;
 
   @override
   void initState() {
     super.initState();
+    // Get AuthProvider first
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // Initialize ApiService with AuthProvider
+    _apiService = ApiService(authProvider: authProvider);
+
     _loadApplications();
   }
 

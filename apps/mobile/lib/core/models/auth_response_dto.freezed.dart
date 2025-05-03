@@ -22,6 +22,7 @@ AuthResponseDto _$AuthResponseDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AuthResponseDto {
   String get token => throw _privateConstructorUsedError;
+  String get userId => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
   UserType get userType => throw _privateConstructorUsedError;
 
@@ -42,7 +43,7 @@ abstract class $AuthResponseDtoCopyWith<$Res> {
     $Res Function(AuthResponseDto) then,
   ) = _$AuthResponseDtoCopyWithImpl<$Res, AuthResponseDto>;
   @useResult
-  $Res call({String token, String username, UserType userType});
+  $Res call({String token, String userId, String username, UserType userType});
 }
 
 /// @nodoc
@@ -61,6 +62,7 @@ class _$AuthResponseDtoCopyWithImpl<$Res, $Val extends AuthResponseDto>
   @override
   $Res call({
     Object? token = null,
+    Object? userId = null,
     Object? username = null,
     Object? userType = null,
   }) {
@@ -70,6 +72,11 @@ class _$AuthResponseDtoCopyWithImpl<$Res, $Val extends AuthResponseDto>
                 null == token
                     ? _value.token
                     : token // ignore: cast_nullable_to_non_nullable
+                        as String,
+            userId:
+                null == userId
+                    ? _value.userId
+                    : userId // ignore: cast_nullable_to_non_nullable
                         as String,
             username:
                 null == username
@@ -96,7 +103,7 @@ abstract class _$$AuthResponseDtoImplCopyWith<$Res>
   ) = __$$AuthResponseDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String token, String username, UserType userType});
+  $Res call({String token, String userId, String username, UserType userType});
 }
 
 /// @nodoc
@@ -114,6 +121,7 @@ class __$$AuthResponseDtoImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? token = null,
+    Object? userId = null,
     Object? username = null,
     Object? userType = null,
   }) {
@@ -123,6 +131,11 @@ class __$$AuthResponseDtoImplCopyWithImpl<$Res>
             null == token
                 ? _value.token
                 : token // ignore: cast_nullable_to_non_nullable
+                    as String,
+        userId:
+            null == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
                     as String,
         username:
             null == username
@@ -144,6 +157,7 @@ class __$$AuthResponseDtoImplCopyWithImpl<$Res>
 class _$AuthResponseDtoImpl implements _AuthResponseDto {
   const _$AuthResponseDtoImpl({
     required this.token,
+    required this.userId,
     required this.username,
     required this.userType,
   });
@@ -154,13 +168,15 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
   @override
   final String token;
   @override
+  final String userId;
+  @override
   final String username;
   @override
   final UserType userType;
 
   @override
   String toString() {
-    return 'AuthResponseDto(token: $token, username: $username, userType: $userType)';
+    return 'AuthResponseDto(token: $token, userId: $userId, username: $username, userType: $userType)';
   }
 
   @override
@@ -169,6 +185,7 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
         (other.runtimeType == runtimeType &&
             other is _$AuthResponseDtoImpl &&
             (identical(other.token, token) || other.token == token) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.userType, userType) ||
@@ -177,7 +194,8 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, token, username, userType);
+  int get hashCode =>
+      Object.hash(runtimeType, token, userId, username, userType);
 
   /// Create a copy of AuthResponseDto
   /// with the given fields replaced by the non-null parameter values.
@@ -199,6 +217,7 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
 abstract class _AuthResponseDto implements AuthResponseDto {
   const factory _AuthResponseDto({
     required final String token,
+    required final String userId,
     required final String username,
     required final UserType userType,
   }) = _$AuthResponseDtoImpl;
@@ -208,6 +227,8 @@ abstract class _AuthResponseDto implements AuthResponseDto {
 
   @override
   String get token;
+  @override
+  String get userId;
   @override
   String get username;
   @override

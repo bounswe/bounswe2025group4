@@ -8,6 +8,7 @@ part 'auth_response_dto.g.dart';
 class AuthResponseDto with _$AuthResponseDto {
   const factory AuthResponseDto({
     required String token,
+    required String userId,
     required String username,
     required UserType userType,
   }) = _AuthResponseDto;

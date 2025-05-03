@@ -4,9 +4,21 @@ import 'package:mobile/core/constants/app_constants.dart';
 import 'package:mobile/core/models/auth_response_dto.dart';
 import 'package:mobile/core/models/login_request_dto.dart';
 import 'package:mobile/core/models/register_request_dto.dart';
+import 'package:mobile/core/models/user.dart';
 
 class AuthService {
   final String _baseUrl = AppConstants.baseUrl;
+
+  Map<String, String> _getHeaders(String? token) {
+    final headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+    if (token != null) {
+      headers['Authorization'] = 'Bearer $token';
+    }
+    return headers;
+  }
 
   Future<AuthResponseDto> login(String username, String password) async {
     final url = Uri.parse('$_baseUrl/auth/login');
@@ -17,24 +29,21 @@ class AuthService {
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: _getHeaders(null),
         body: jsonEncode(requestDto.toJson()),
       );
 
-      print('Response status code: ${response.statusCode}');
+      print('Login Response status code: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         return AuthResponseDto.fromJson(responseData);
       } else {
-        // Handle non-200 responses (e.g., 401 Unauthorized, 404 Not Found)
-        // You might want to parse error messages from the response body
         throw Exception(
           'Failed to login: ${response.statusCode} ${response.reasonPhrase}',
         );
       }
     } catch (e) {
-      // Handle network errors or exceptions during the request
       print('Error during login: $e');
       throw Exception('Failed to login. Please check your connection.');
     }
@@ -46,25 +55,54 @@ class AuthService {
     try {
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: _getHeaders(null),
         body: jsonEncode(requestDto.toJson()),
       );
+      print('Register Response status code: ${response.statusCode}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Assuming 201 Created or 200 OK are success
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         return AuthResponseDto.fromJson(responseData);
       } else {
-        // Handle errors (e.g., 400 Bad Request, 409 Conflict)
-        // You might want to parse specific error messages from the backend
         throw Exception(
           'Failed to register: ${response.statusCode} ${response.reasonPhrase}',
         );
       }
     } catch (e) {
-      // Handle network errors or exceptions
       print('Error during registration: $e');
       throw Exception('Failed to register. Please try again later.');
+    }
+  }
+
+  /// Fetches user details from GET /api/users/{id}
+  /// Requires the user ID and the authentication token.
+  Future<User> getUserDetails(String userId, String token) async {
+    final url = Uri.parse('$_baseUrl/users/$userId'); // Use userId in the path
+    print('Fetching user details from: $url');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: _getHeaders(token), // Pass the token for authorization
+      );
+
+      print('User Details Response status code: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        print('User Details Response body: $responseData');
+        // Use the User.fromJson factory
+        return User.fromJson(responseData);
+      } else {
+        // Handle errors like 404 Not Found if the ID is invalid
+        throw Exception(
+          'Failed to fetch user details: ${response.statusCode} ${response.reasonPhrase}',
+        );
+      }
+    } catch (e) {
+      print('Error fetching user details: $e');
+      // Rethrow a more specific or user-friendly error if needed
+      throw Exception('Failed to fetch user details.');
     }
   }
 }

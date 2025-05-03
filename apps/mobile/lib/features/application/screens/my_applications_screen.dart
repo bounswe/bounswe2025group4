@@ -19,12 +19,17 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  // TODO: Inject or locate service properly
-  final ApiService _apiService = ApiService();
+  // Initialize ApiService late or in initState AFTER getting AuthProvider
+  late final ApiService _apiService;
 
   @override
   void initState() {
     super.initState();
+    // Get AuthProvider first
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // Initialize ApiService with AuthProvider
+    _apiService = ApiService(authProvider: authProvider);
+
     _loadApplications();
   }
 

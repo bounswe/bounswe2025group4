@@ -58,24 +58,35 @@ class AuthProvider with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final storedToken = prefs.getString('authToken');
+      final storedId = prefs.getString('userId');
       final storedUsername = prefs.getString('username');
-      final storedUserTypeName = prefs.getString('userType'); // Stored as name
+      final storedEmail = prefs.getString('email');
+      final storedUserTypeName = prefs.getString('userType');
+      final storedCompanyName = prefs.getString('companyName');
+      final storedBio = prefs.getString('bio');
+      final storedEmployerId = prefs.getString('employerId');
 
       if (storedToken != null &&
+          storedId != null &&
           storedUsername != null &&
           storedUserTypeName != null) {
-        // Find UserType by its name
         final userType = UserType.values.byName(storedUserTypeName);
         _token = storedToken;
+        // Reconstruct User from stored minimal data.
+        // Full details might need fetching elsewhere (e.g., profile page)
         _currentUser = User(
-          id: 'unknown', // Fetch properly later
+          id: storedId,
           username: storedUsername,
-          email: 'unknown', // Fetch properly later
+          email: storedEmail ?? '', // Use stored email or empty
           role: userType,
-        ); // Use UserType here
-        print("Auto-login successful for $storedUsername");
+          companyName: storedCompanyName,
+          bio: storedBio,
+          employerId:
+              storedEmployerId, // May be null if not employer or not fetched
+        );
+        print("Auto-login successful for $storedUsername (ID: $storedId)");
       } else {
-        print("No stored token found for auto-login.");
+        print("No stored token/user data found for auto-login.");
       }
     } catch (e) {
       print("Error during auto-login: $e");
@@ -92,15 +103,40 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     try {
       final authResponse = await _authService.login(username, password);
-      await _storeAuthData(authResponse);
+      String? tempToken;
+
+      // Store initial data first
+      await _storeInitialAuthData(authResponse);
+
       print(
-        "Login successful. User: ${authResponse.username}, Role: ${authResponse.userType}",
+        "Login successful (initial). User: ${authResponse.username}, Role: ${authResponse.userType}",
       );
+
+      // Now, fetch and update full details
+      if (_currentUser?.id != null && tempToken != null) {
+        try {
+          print("Fetching full user details after login...");
+          final userDetails = await _authService.getUserDetails(
+            _currentUser!.id, // Use the ID we got from login response
+            tempToken!, // Token is non-null here
+          );
+          await _updateAndPersistUserDetails(userDetails);
+          print("Successfully updated full user details.");
+        } catch (e) {
+          print(
+            "Warning: Failed to fetch/update full user details after login: $e",
+          );
+          // Continue even if detail fetch fails
+        }
+      }
+
       _isLoading = false;
-      notifyListeners();
-      return true;
+      notifyListeners(); // Notify after all updates (initial + details)
+      return true; // Return true after everything
     } catch (e) {
       print("Login failed: $e");
+      _token = null;
+      _currentUser = null;
       _isLoading = false;
       notifyListeners();
       return false;
@@ -111,33 +147,57 @@ class AuthProvider with ChangeNotifier {
     String username,
     String email,
     String password,
-    UserType userType, // Changed parameter type
-    // MentorshipPreference mentorshipPreference,
+    UserType userType,
     String? bio,
   ) async {
     _isLoading = true;
     notifyListeners();
+    String? tempToken;
     try {
       final requestDto = RegisterRequestDto(
         username: username,
         email: email,
         password: password,
         bio: bio,
-        userType: userType, // Pass UserType directly
+        userType: userType,
       );
 
       final authResponse = await _authService.register(requestDto);
-      await _storeAuthData(authResponse);
+      tempToken = authResponse.token;
+
+      // Store initial data first
+      await _storeInitialAuthData(authResponse);
+
       print(
-        "Registration successful. User: ${authResponse.username}, Role: ${authResponse.userType}",
+        "Registration successful (initial). User: ${authResponse.username}, Role: ${authResponse.userType}",
       );
+
+      // Now, fetch and update full details
+      if (_currentUser?.id != null && tempToken != null) {
+        try {
+          print("Fetching full user details after registration...");
+          final userDetails = await _authService.getUserDetails(
+            _currentUser!.id, // Use the ID we got from register response
+            tempToken, // Token is non-null here
+          );
+          await _updateAndPersistUserDetails(userDetails);
+          print("Successfully updated full user details.");
+        } catch (e) {
+          print(
+            "Warning: Failed to fetch/update full user details after registration: $e",
+          );
+          // Continue even if detail fetch fails
+        }
+      }
+
       _isLoading = false;
-      _onboardingUserType = null; // Clear onboarding state
-      // _onboardingMentorshipPreference = null;
-      notifyListeners();
-      return true;
+      _onboardingUserType = null;
+      notifyListeners(); // Notify after all updates
+      return true; // Return true after everything
     } catch (e) {
       print("Registration failed: $e");
+      _token = null;
+      _currentUser = null;
       _isLoading = false;
       notifyListeners();
       return false;
@@ -151,12 +211,18 @@ class AuthProvider with ChangeNotifier {
     _currentUser = null;
     try {
       final prefs = await SharedPreferences.getInstance();
+      // Keep removing all stored fields for consistency
       await prefs.remove('authToken');
+      await prefs.remove('userId');
       await prefs.remove('username');
+      await prefs.remove('email');
       await prefs.remove('userType');
-      print("Logged out and cleared token.");
+      await prefs.remove('companyName');
+      await prefs.remove('bio');
+      await prefs.remove('employerId');
+      print("Logged out and cleared stored user data.");
     } catch (e) {
-      print("Error clearing token on logout: $e");
+      print("Error clearing data on logout: $e");
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -164,28 +230,99 @@ class AuthProvider with ChangeNotifier {
   }
 
   // --- Helper Methods ---
+  // Updated to accept AuthResponseDto
   Future<void> _storeAuthData(AuthResponseDto authResponse) async {
     _token = authResponse.token;
+    // Create User object from the limited data in AuthResponseDto
+    // Other fields like email, bio, companyName, employerId will be null/empty initially
+    // unless the backend adds them to AuthResponseDto as well.
     _currentUser = User(
-      id: 'unknown',
+      id: authResponse.userId, // Use ID from DTO
       username: authResponse.username,
-      email: 'unknown',
-      role: authResponse.userType, // Use UserType here
+      email: '', // Not available in DTO
+      role: authResponse.userType,
+      companyName: null, // Not available in DTO
+      bio: null, // Not available in DTO
+      employerId: null, // Not available in DTO
     );
 
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('authToken', _token!);
+      await prefs.setString('userId', _currentUser!.id);
       await prefs.setString('username', _currentUser!.username);
-      await prefs.setString(
-        'userType',
-        _currentUser!.role.name,
-      ); // Store enum name
+      await prefs.setString('userType', _currentUser!.role.name);
+      // Remove storing fields not present in the initial _currentUser
+      await prefs.remove('email');
+      await prefs.remove('companyName');
+      await prefs.remove('bio');
+      await prefs.remove('employerId');
     } catch (e) {
-      print("Error saving token: $e");
+      print("Error saving auth data: $e");
     }
   }
 
-  // Remove the simulation methods
-  // void setSimulatedRole(UserRole role) { ... }
+  // Stores only the initial data from AuthResponseDto
+  Future<void> _storeInitialAuthData(AuthResponseDto authResponse) async {
+    _token = authResponse.token;
+    _currentUser = User(
+      id: authResponse.userId,
+      username: authResponse.username,
+      email: '', // Default empty
+      role: authResponse.userType,
+      companyName: null,
+      bio: null,
+      employerId: null,
+    );
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('authToken', _token!);
+      await prefs.setString('userId', _currentUser!.id);
+      await prefs.setString('username', _currentUser!.username);
+      await prefs.setString('userType', _currentUser!.role.name);
+      // Clear potentially stale detailed fields
+      await prefs.remove('email');
+      await prefs.remove('companyName');
+      await prefs.remove('bio');
+      await prefs.remove('employerId');
+    } catch (e) {
+      print("Error saving initial auth data: $e");
+    }
+  }
+
+  // Updates _currentUser and persists the additional details
+  Future<void> _updateAndPersistUserDetails(User fullDetails) async {
+    // Ensure the core ID and username match before updating
+    // This prevents potential race conditions if user logs out quickly
+    if (_currentUser != null && _currentUser!.id == fullDetails.id) {
+      _currentUser = fullDetails; // Update the in-memory user object
+
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        // Persist the newly fetched details
+        await prefs.setString('email', _currentUser!.email);
+        if (_currentUser!.companyName != null) {
+          await prefs.setString('companyName', _currentUser!.companyName!);
+        } else {
+          await prefs.remove('companyName');
+        }
+        if (_currentUser!.bio != null) {
+          await prefs.setString('bio', _currentUser!.bio!);
+        } else {
+          await prefs.remove('bio');
+        }
+        if (_currentUser!.employerId != null) {
+          await prefs.setString('employerId', _currentUser!.employerId!);
+        } else {
+          await prefs.remove('employerId');
+        }
+        print("Persisted updated user details.");
+      } catch (e) {
+        print("Error saving updated user details: $e");
+      }
+    } else {
+      print("User changed during detail fetch, aborting update.");
+    }
+  }
 }
