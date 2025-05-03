@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/jobboard
+    url: jdbc:postgresql://host.docker.internal:5433/jobboard
     username: postgres
     password:
   jpa:
@@ -13,3 +13,15 @@ spring:
 
 server:
   port: 8080
+
+app:
+  jwt:
+    secret: ThisIsASecretKeyThatIsAtLeast32Chars
+    expiration: 86400000  # 24 hours in milliseconds
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    enabled: true
+    path: /v3/api-docs

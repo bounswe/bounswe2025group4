@@ -33,6 +33,7 @@ public class UserService {
                 .username(dto.getUsername())
                 .email(dto.getEmail())
                 .bio(dto.getBio())
+                .userType(dto.getUserType())
                 .build();
         return toDto(userRepository.save(user));
     }
