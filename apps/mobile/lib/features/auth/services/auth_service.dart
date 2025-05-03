@@ -34,6 +34,7 @@ class AuthService {
       );
 
       print('Login Response status code: ${response.statusCode}');
+      print('Login Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);

@@ -22,6 +22,7 @@ AuthResponseDto _$AuthResponseDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AuthResponseDto {
   String get token => throw _privateConstructorUsedError;
+  @JsonKey(name: 'id', fromJson: _readIdAsString)
   String get userId => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
   UserType get userType => throw _privateConstructorUsedError;
@@ -43,7 +44,12 @@ abstract class $AuthResponseDtoCopyWith<$Res> {
     $Res Function(AuthResponseDto) then,
   ) = _$AuthResponseDtoCopyWithImpl<$Res, AuthResponseDto>;
   @useResult
-  $Res call({String token, String userId, String username, UserType userType});
+  $Res call({
+    String token,
+    @JsonKey(name: 'id', fromJson: _readIdAsString) String userId,
+    String username,
+    UserType userType,
+  });
 }
 
 /// @nodoc
@@ -103,7 +109,12 @@ abstract class _$$AuthResponseDtoImplCopyWith<$Res>
   ) = __$$AuthResponseDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String token, String userId, String username, UserType userType});
+  $Res call({
+    String token,
+    @JsonKey(name: 'id', fromJson: _readIdAsString) String userId,
+    String username,
+    UserType userType,
+  });
 }
 
 /// @nodoc
@@ -157,7 +168,7 @@ class __$$AuthResponseDtoImplCopyWithImpl<$Res>
 class _$AuthResponseDtoImpl implements _AuthResponseDto {
   const _$AuthResponseDtoImpl({
     required this.token,
-    required this.userId,
+    @JsonKey(name: 'id', fromJson: _readIdAsString) required this.userId,
     required this.username,
     required this.userType,
   });
@@ -168,6 +179,7 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
   @override
   final String token;
   @override
+  @JsonKey(name: 'id', fromJson: _readIdAsString)
   final String userId;
   @override
   final String username;
@@ -217,6 +229,7 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
 abstract class _AuthResponseDto implements AuthResponseDto {
   const factory _AuthResponseDto({
     required final String token,
+    @JsonKey(name: 'id', fromJson: _readIdAsString)
     required final String userId,
     required final String username,
     required final UserType userType,
@@ -228,6 +241,7 @@ abstract class _AuthResponseDto implements AuthResponseDto {
   @override
   String get token;
   @override
+  @JsonKey(name: 'id', fromJson: _readIdAsString)
   String get userId;
   @override
   String get username;

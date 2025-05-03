@@ -45,8 +45,6 @@ class ApiService {
     final token = _authProvider.token;
     if (token != null) {
       headers['Authorization'] = 'Bearer $token';
-      // Optional: Mask token in logs for security
-      // print("Using Auth Token: Bearer ${token.substring(0, 10)}...");
     } else {
       print("Warning: No auth token found for API request.");
     }
@@ -169,6 +167,7 @@ class ApiService {
   /// Fetches details for a specific job post.
   Future<JobPost> getJobDetails(String jobId) async {
     print('API: Fetching job details for $jobId');
+
     final uri = _buildUri('/jobs/$jobId');
     print('API Request: GET $uri');
 
@@ -378,8 +377,6 @@ class ApiService {
         body: body,
       );
       final dynamic data = await _handleResponse(response);
-      // TODO: Implement JobApplication.fromJson if needed
-      // Assuming API returns the updated application
       return JobApplication.fromJson(data as Map<String, dynamic>);
       // return _updateMockApplicationStatus(applicationId, newStatus, feedback); // Placeholder
     } catch (e) {
@@ -388,66 +385,7 @@ class ApiService {
     }
   }
 
-  // --- User Endpoints (Example) ---
-  // TODO: Implement User API calls based on provided specs if needed elsewhere
-
-  // --- Cleanup ---
   void dispose() {
-    _client.close(); // Close the client when the service is disposed
+    _client.close();
   }
 }
-
-// Removed placeholder models and mock generation functions
-// --- Placeholder Models (Ensure these match your actual models) ---
-/* // Moved to separate files
-enum ApplicationStatus { pending, approved, rejected }
-
-class JobPost {
-  // ... (ensure fields match JobPost.dart)
-  JobPost.fromJson(Map<String, dynamic> json) { /* ... implementation needed ... */ }
-}
-
-class JobApplication {
-  final String id;
-  final String jobId;
-  final String jobTitle;
-  final String companyName;
-  final String applicantName;
-  final ApplicationStatus status;
-  final DateTime dateApplied;
-  final String? employerFeedback;
-
-  JobApplication({
-    required this.id,
-    required this.jobId,
-    required this.jobTitle,
-    required this.companyName,
-    required this.applicantName,
-    required this.status,
-    required this.dateApplied,
-    this.employerFeedback,
-  });
-
- // TODO: Implement fromJson properly based on API response structure
- factory JobApplication.fromJson(Map<String, dynamic> json) {
-    print("Attempting to parse JobApplication from JSON: $json"); // Debug print
-    // Basic implementation - ADJUST BASED ON ACTUAL API RESPONSE
-    return JobApplication(
-      id: json['id']?.toString() ?? (throw Exception('Missing required field: id')),
-      jobId: json['jobId']?.toString() ?? (throw Exception('Missing required field: jobId')),
-      // These might need to be fetched separately or included in the application data by the API
-      jobTitle: json['jobTitle'] ?? 'N/A', // Placeholder if not directly available
-      companyName: json['companyName'] ?? 'N/A', // Placeholder if not directly available
-      applicantName: json['applicantName'] ?? 'N/A', // Placeholder if not directly available
-      status: ApplicationStatus.values.firstWhere(
-        (e) => e.name == json['status'],
-        orElse: () => ApplicationStatus.pending, // Default if status is invalid/missing
-      ),
-      dateApplied: DateTime.tryParse(json['dateApplied'] ?? '') ?? DateTime.now(), // Handle potential parse errors
-      employerFeedback: json['employerFeedback'],
-    );
-  }
-}
-*/
-
-// TODO: Add a similar class/methods for User API calls (GET/PUT/DELETE /api/users) if needed by the UI directly.
