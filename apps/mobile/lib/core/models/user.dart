@@ -1,19 +1,21 @@
-enum UserRole { guest, jobSeeker, employer, mentor, mentee }
+import './user_type.dart'; // Import the correct enum
 
 class User {
   final String id;
   final String username;
   final String email;
-  final UserRole role; // Key property to differentiate views
+  final UserType role; // Use UserType
   final String? companyName; // Optional: Only relevant for Employer role
-  // Add other fields later: profilePicUrl, bio, education, skills, etc.
+  final String? bio; // Added bio based on DTO
+  // Add other fields later: profilePicUrl, education, skills, etc.
 
   User({
     required this.id,
     required this.username,
     required this.email,
-    this.role = UserRole.jobSeeker, // Default role
-    this.companyName, // Add to constructor
+    required this.role, // Make role required
+    this.companyName,
+    this.bio,
   });
 
   // Add factory constructors for JSON parsing later

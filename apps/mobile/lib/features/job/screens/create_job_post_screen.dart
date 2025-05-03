@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/job_post.dart';
-import '../../../core/models/user.dart';
+import '../../../core/models/user_type.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/string_extensions.dart';
@@ -60,7 +60,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
 
       final currentUser =
           Provider.of<AuthProvider>(context, listen: false).currentUser;
-      if (currentUser == null || currentUser.role != UserRole.employer) {
+      if (currentUser == null || currentUser.role != UserType.EMPLOYER) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Error: Could not verify employer account.'),

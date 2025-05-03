@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/models/job_post.dart';
-import '../../../core/models/user.dart';
+import '../../../core/models/user_type.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/utils/string_extensions.dart';
@@ -266,7 +266,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     // Only show button if job loaded and user is a job seeker
     final userRole =
         Provider.of<AuthProvider>(context, listen: false).currentUser?.role;
-    if (_isLoading || _jobPost == null || userRole != UserRole.jobSeeker) {
+    if (_isLoading || _jobPost == null || userRole != UserType.JOB_SEEKER) {
       return null;
     }
 

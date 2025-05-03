@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart'; // Import for date formatting
-import '../../../core/models/user.dart'; // Adjust path
+import '../../../core/models/user_type.dart'; // Import UserType
 import '../../../core/providers/auth_provider.dart'; // Adjust path
 import '../../../core/models/job_post.dart'; // Placeholder for JobPost model
 import '../../../core/services/api_service.dart'; // Placeholder for API service
@@ -28,7 +28,7 @@ class _JobPageState extends State<JobPage> {
   final TextEditingController _searchController = TextEditingController();
   // Store selected filters as a map
   Map<String, List<String>> _selectedFilters = {'policies': [], 'jobTypes': []};
-  UserRole? _userRole; // Store user role
+  UserType? _userRole; // Changed type to UserType?
 
   // Placeholder API service instance
   // TODO: Replace with actual dependency injection or service locator
@@ -60,7 +60,7 @@ class _JobPageState extends State<JobPage> {
 
     try {
       List<JobPost> postings;
-      if (_userRole == UserRole.employer) {
+      if (_userRole == UserType.EMPLOYER) {
         // TODO: Get actual employer ID
         final employerId =
             Provider.of<AuthProvider>(context, listen: false).currentUser?.id ??
@@ -219,10 +219,10 @@ class _JobPageState extends State<JobPage> {
 
     // Display different content based on the user role
     switch (_userRole) {
-      case UserRole.jobSeeker:
+      case UserType.JOB_SEEKER:
         content = _buildJobSeekerView(context);
         break;
-      case UserRole.employer:
+      case UserType.EMPLOYER:
         content = _buildEmployerView(context);
         break;
       default:
@@ -243,7 +243,7 @@ class _JobPageState extends State<JobPage> {
         automaticallyImplyLeading: false,
         actions: [
           // Conditionally show the "My Applications" button for job seekers
-          if (_userRole == UserRole.jobSeeker)
+          if (_userRole == UserType.JOB_SEEKER)
             Padding(
               padding: const EdgeInsets.only(right: 8.0), // Add some padding
               child: TextButton.icon(
@@ -263,7 +263,7 @@ class _JobPageState extends State<JobPage> {
       // Remove RefreshIndicator, ListView provides scrollability
       body: content,
       floatingActionButton:
-          _userRole == UserRole.employer
+          _userRole == UserType.EMPLOYER
               ? FloatingActionButton(
                 onPressed: _navigateToCreateJobPost,
                 tooltip: 'Create Job Post',
@@ -380,7 +380,7 @@ class _JobPageState extends State<JobPage> {
     if (_jobPostings.isEmpty) {
       return Center(
         child: Text(
-          _userRole == UserRole.employer
+          _userRole == UserType.EMPLOYER
               ? 'You have not posted any jobs yet.'
               : 'No jobs found matching your criteria.',
           style: Theme.of(context).textTheme.bodySmall,
@@ -401,7 +401,7 @@ class _JobPageState extends State<JobPage> {
           margin: const EdgeInsets.symmetric(vertical: 6.0),
           child: InkWell(
             onTap: () {
-              if (_userRole == UserRole.employer) {
+              if (_userRole == UserType.EMPLOYER) {
                 _navigateToJobApplications(job);
               } else {
                 _navigateToJobDetails(job);

@@ -4,7 +4,7 @@ import 'package:mobile/features/auth/screens/organization_type_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
-import 'package:mobile/core/models/user.dart';
+import 'package:mobile/core/models/user_type.dart';
 
 class UserTypeScreen extends StatefulWidget {
   const UserTypeScreen({super.key});
@@ -77,11 +77,11 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                               context,
                               listen: false,
                             );
-                            final role =
+                            final type =
                                 selectedType == 'Job Seeker'
-                                    ? UserRole.jobSeeker
-                                    : UserRole.employer;
-                            authProvider.setOnboardingUserRole(role);
+                                    ? UserType.JOB_SEEKER
+                                    : UserType.EMPLOYER;
+                            authProvider.setOnboardingUserType(type);
 
                             Navigator.push(
                               context,

@@ -1,156 +1,191 @@
 import 'package:flutter/material.dart';
-import '../models/user.dart'; // Adjust import path if needed
+import 'package:shared_preferences/shared_preferences.dart'; // For simple token storage
+import '../models/user.dart'; // Keep existing User model for now
+import '../models/user_type.dart'; // Use UserType consistently
+import '../models/register_request_dto.dart';
+import '../models/auth_response_dto.dart';
+import '../../features/auth/services/auth_service.dart'; // Import the real service
 
-// Enum for mentorship preference
-enum MentorshipPreference { mentor, mentee, none }
+// Remove MentorshipPreference if not used in registration API, or keep if needed for UI flow
+// enum MentorshipPreference { mentor, mentee, none }
 
 class AuthProvider with ChangeNotifier {
+  final AuthService _authService = AuthService();
   User? _currentUser;
+  String? _token; // Store the auth token
   bool _isLoading = false;
-  // --- Onboarding State ---
-  UserRole? _onboardingUserRole; // Role selected during onboarding
-  MentorshipPreference? _onboardingMentorshipPreference; // Mentorship choice
+
+  // --- Onboarding State (If mentorship preference is part of the flow but not API) ---
+  UserType? _onboardingUserType; // Changed from UserRole
+  // MentorshipPreference? _onboardingMentorshipPreference;
   // --- End Onboarding State ---
 
-  // --- Simulation / Current State (to be replaced by real API state) ---
-  // Simulate different user roles for testing - Keep separate from onboarding
-  UserRole _simulatedRole = UserRole.jobSeeker;
-  // --- End Simulation ---
-
   User? get currentUser => _currentUser;
-  bool get isLoggedIn => _currentUser != null;
+  bool get isLoggedIn => _token != null && _currentUser != null;
   bool get isLoading => _isLoading;
+  String? get token => _token; // Allow access to token if needed
 
-  // Getters for onboarding state
-  UserRole? get onboardingUserRole => _onboardingUserRole;
-  MentorshipPreference? get onboardingMentorshipPreference =>
-      _onboardingMentorshipPreference;
+  UserType? get onboardingUserType => _onboardingUserType; // Changed getter
+  // MentorshipPreference? get onboardingMentorshipPreference =>
+  //     _onboardingMentorshipPreference;
 
-  UserRole get simulatedRole => _simulatedRole;
+  // --- Initialization ---
+  AuthProvider() {
+    _tryAutoLogin(); // Attempt to load token on provider init
+  }
 
-  // Setters for onboarding state
-  void setOnboardingUserRole(UserRole role) {
-    _onboardingUserRole = role;
-    print("Onboarding role set to: $_onboardingUserRole");
+  // --- Onboarding Setters ---
+  void setOnboardingUserType(UserType type) {
+    // Changed parameter type
+    _onboardingUserType = type;
+    print("Onboarding type set to: $_onboardingUserType");
     notifyListeners();
   }
 
-  void setOnboardingMentorshipPreference(MentorshipPreference preference) {
-    _onboardingMentorshipPreference = preference;
-    print(
-      "Onboarding mentorship preference set to: $_onboardingMentorshipPreference",
-    );
-    notifyListeners();
-  }
+  // void setOnboardingMentorshipPreference(MentorshipPreference preference) {
+  //   _onboardingMentorshipPreference = preference;
+  //   print(
+  //     "Onboarding mentorship preference set to: $_onboardingMentorshipPreference",
+  //   );
+  //   notifyListeners();
+  // }
 
-  // --- Simulation Methods (Replace with actual API calls later) ---
+  // --- Authentication Methods ---
+
+  Future<void> _tryAutoLogin() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final storedToken = prefs.getString('authToken');
+      final storedUsername = prefs.getString('username');
+      final storedUserTypeName = prefs.getString('userType'); // Stored as name
+
+      if (storedToken != null &&
+          storedUsername != null &&
+          storedUserTypeName != null) {
+        // Find UserType by its name
+        final userType = UserType.values.byName(storedUserTypeName);
+        _token = storedToken;
+        _currentUser = User(
+          id: 'unknown', // Fetch properly later
+          username: storedUsername,
+          email: 'unknown', // Fetch properly later
+          role: userType,
+        ); // Use UserType here
+        print("Auto-login successful for $storedUsername");
+      } else {
+        print("No stored token found for auto-login.");
+      }
+    } catch (e) {
+      print("Error during auto-login: $e");
+      _token = null;
+      _currentUser = null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<bool> login(String username, String password) async {
     _isLoading = true;
     notifyListeners();
-    print("Attempting login for: $username"); // Debug print
-
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Simulate successful login
-    _currentUser = User(
-      id: 'user-123',
-      username: username,
-      email: '$username@example.com',
-      role: _simulatedRole, // Use the simulated role
-    );
-    _isLoading = false;
-    print("Login successful. User role: ${_currentUser?.role}"); // Debug print
-    notifyListeners();
-    return true;
-
-    // Simulate failed login:
-    // _isLoading = false;
-    // notifyListeners();
-    // return false;
+    try {
+      final authResponse = await _authService.login(username, password);
+      await _storeAuthData(authResponse);
+      print(
+        "Login successful. User: ${authResponse.username}, Role: ${authResponse.userType}",
+      );
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print("Login failed: $e");
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 
   Future<bool> register(
     String username,
     String email,
     String password,
-    // Add onboarding parameters
-    UserRole userRole,
-    MentorshipPreference mentorshipPreference,
+    UserType userType, // Changed parameter type
+    // MentorshipPreference mentorshipPreference,
+    String? bio,
   ) async {
     _isLoading = true;
     notifyListeners();
-    print(
-      "Attempting registration for: $username, $email, Role: $userRole, Mentorship: $mentorshipPreference",
-    ); // Debug print
+    try {
+      final requestDto = RegisterRequestDto(
+        username: username,
+        email: email,
+        password: password,
+        bio: bio,
+        userType: userType, // Pass UserType directly
+      );
 
-    // TODO: Implement actual API call here
-    // final response = await http.post(
-    //   Uri.parse('YOUR_API_ENDPOINT/register'),
-    //   headers: {'Content-Type': 'application/json'},
-    //   body: jsonEncode({
-    //     'username': username,
-    //     'email': email,
-    //     'password': password,
-    //     'role': userRole.toString().split('.').last, // e.g., 'jobSeeker'
-    //     'mentorshipPreference': mentorshipPreference.toString().split('.').last, // e.g., 'mentor'
-    //   }),
-    // );
-
-    // // Handle response (check status code, parse data, etc.)
-    // if (response.statusCode == 201) { // Assuming 201 Created for success
-    // Simulate network delay & registration + email verification
-    await Future.delayed(const Duration(seconds: 2));
-
-    // Simulate successful registration using the provided role
-    _currentUser = User(
-      id: 'user-456', // Simulate ID from backend
-      username: username,
-      email: email,
-      role: userRole, // Use the role determined during onboarding
-      // TODO: Add mentorship preference to User model if needed later
-    );
-    _isLoading = false;
-    print(
-      "Registration successful. User role: ${_currentUser?.role}",
-    ); // Debug print
-    notifyListeners();
-    return true;
-    // } else {
-    //   // Handle registration failure
-    //   _isLoading = false;
-    //   print("Registration failed: ${response.body}");
-    //   notifyListeners();
-    //   return false;
-    // }
+      final authResponse = await _authService.register(requestDto);
+      await _storeAuthData(authResponse);
+      print(
+        "Registration successful. User: ${authResponse.username}, Role: ${authResponse.userType}",
+      );
+      _isLoading = false;
+      _onboardingUserType = null; // Clear onboarding state
+      // _onboardingMentorshipPreference = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print("Registration failed: $e");
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 
   Future<void> logout() async {
-    print("Logging out"); // Debug print
-    // Simulate logout process
-    await Future.delayed(const Duration(milliseconds: 500));
-    _currentUser = null;
+    _isLoading = true;
     notifyListeners();
-  }
-
-  // Method to change the simulated role for testing UI easily
-  void setSimulatedRole(UserRole role) {
-    _simulatedRole = role;
-    // If logged in, update current user's role immediately for testing
-    if (_currentUser != null) {
-      _currentUser = User(
-        id: _currentUser!.id,
-        username: _currentUser!.username,
-        email: _currentUser!.email,
-        role: _simulatedRole,
-      );
+    _token = null;
+    _currentUser = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('authToken');
+      await prefs.remove('username');
+      await prefs.remove('userType');
+      print("Logged out and cleared token.");
+    } catch (e) {
+      print("Error clearing token on logout: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    print("Simulated role set to: $_simulatedRole"); // Debug print
-    notifyListeners(); // Notify listeners about the role change
   }
 
-  // --- End Simulation Methods ---
+  // --- Helper Methods ---
+  Future<void> _storeAuthData(AuthResponseDto authResponse) async {
+    _token = authResponse.token;
+    _currentUser = User(
+      id: 'unknown',
+      username: authResponse.username,
+      email: 'unknown',
+      role: authResponse.userType, // Use UserType here
+    );
 
-  // Add methods for password reset, delete account later
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('authToken', _token!);
+      await prefs.setString('username', _currentUser!.username);
+      await prefs.setString(
+        'userType',
+        _currentUser!.role.name,
+      ); // Store enum name
+    } catch (e) {
+      print("Error saving token: $e");
+    }
+  }
+
+  // Remove the simulation methods
+  // void setSimulatedRole(UserRole role) { ... }
 }

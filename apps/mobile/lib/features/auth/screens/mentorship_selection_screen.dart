@@ -4,6 +4,7 @@ import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
 import 'package:mobile/core/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
+import 'package:mobile/core/models/user_type.dart';
 
 class MentorshipSelectionScreen extends StatefulWidget {
   final bool isJobSeeker;
@@ -100,21 +101,13 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                                         context,
                                         listen: false,
                                       );
-                                  MentorshipPreference preference;
-                                  switch (selectedChoice) {
-                                    case 'mentor':
-                                      preference = MentorshipPreference.mentor;
-                                      break;
-                                    case 'mentee':
-                                      preference = MentorshipPreference.mentee;
-                                      break;
-                                    default: // 'none' or null
-                                      preference = MentorshipPreference.none;
+                                  // If user explicitly wants to be a mentor, set the type
+                                  if (selectedChoice == 'mentor') {
+                                    authProvider.setOnboardingUserType(
+                                      UserType.MENTOR,
+                                    );
                                   }
-                                  authProvider
-                                      .setOnboardingMentorshipPreference(
-                                        preference,
-                                      );
+                                  // Otherwise, keep the UserType set previously
 
                                   Navigator.push(
                                     context,
