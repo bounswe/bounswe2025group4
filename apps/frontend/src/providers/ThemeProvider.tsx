@@ -1,4 +1,10 @@
-import React, { createContext, useState, useMemo, useContext, type ReactNode } from 'react';
+import React, {
+  createContext,
+  useState,
+  useMemo,
+  useContext,
+  type ReactNode,
+} from 'react';
 import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
 import { lightTheme } from '../styles/themes/light';
 import { darkTheme } from '../styles/themes/dark';
@@ -16,7 +22,9 @@ interface AppThemeProviderProps {
   children: ReactNode;
 }
 
-export const AppThemeProvider: React.FC<AppThemeProviderProps> = ({ children }) => {
+export const AppThemeProvider: React.FC<AppThemeProviderProps> = ({
+  children,
+}) => {
   const [mode, setMode] = useState<ThemeMode>('light'); // Default to light mode
 
   const toggleTheme = () => {
@@ -24,7 +32,10 @@ export const AppThemeProvider: React.FC<AppThemeProviderProps> = ({ children }) 
   };
 
   // Memoize the theme object to avoid unnecessary re-creations
-  const theme = useMemo(() => (mode === 'light' ? lightTheme : darkTheme), [mode]);
+  const theme = useMemo(
+    () => (mode === 'light' ? lightTheme : darkTheme),
+    [mode]
+  );
 
   const contextValue = useMemo(() => ({ mode, toggleTheme }), [mode]);
 
@@ -46,4 +57,4 @@ export const useTheme = () => {
     throw new Error('useTheme must be used within an AppThemeProvider');
   }
   return context;
-}; 
+};
