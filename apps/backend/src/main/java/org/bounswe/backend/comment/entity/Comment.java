@@ -21,6 +21,9 @@ public class Comment {
 
     private String body;
 
+    @Column(nullable = false)
+    private boolean reported = false;
+
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private User author;

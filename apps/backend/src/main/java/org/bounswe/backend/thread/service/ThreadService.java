@@ -2,6 +2,7 @@ package org.bounswe.backend.thread.service;
 
 import org.bounswe.backend.thread.dto.CreateThreadRequestDto;
 import org.bounswe.backend.thread.dto.ThreadDto;
+import org.bounswe.backend.thread.dto.UpdateThreadRequestDto;
 import org.bounswe.backend.thread.entity.Thread;
 import org.bounswe.backend.thread.repository.ThreadRepository;
 import org.bounswe.backend.tag.entity.Tag;
@@ -54,6 +55,44 @@ public class ThreadService {
     }
 
     @Transactional
+    public ThreadDto updateThread(Long threadId, Long userId, UpdateThreadRequestDto dto) {
+        Thread thread = threadRepository.findById(threadId)
+                .orElseThrow(() -> new RuntimeException("Thread not found"));
+
+        if (!thread.getCreator().getId().equals(userId)) {
+            throw new RuntimeException("Only the thread creator can update this thread");
+        }
+
+        thread.setTitle(dto.getTitle());
+        thread.setBody(dto.getBody());
+
+        if (dto.getTags() != null) {
+            Set<Tag> updatedTags = dto.getTags().stream()
+                    .map(name -> tagRepository.findByName(name)
+                            .orElseGet(() -> tagRepository.save(Tag.builder().name(name).build())))
+                    .collect(Collectors.toSet());
+            thread.setTags(updatedTags);
+        }
+
+        return toDto(threadRepository.save(thread));
+    }
+
+
+    @Transactional
+    public void deleteThread(Long threadId, Long userId) {
+        Thread thread = threadRepository.findById(threadId)
+                .orElseThrow(() -> new RuntimeException("Thread not found"));
+
+        if (!thread.getCreator().getId().equals(userId)) {
+            throw new RuntimeException("You are not authorized to delete this thread.");
+        }
+
+        threadRepository.delete(thread);
+    }
+
+
+
+    @Transactional
     public void likeThread(Long threadId, Long userId) {
         Thread thread = threadRepository.findById(threadId)
                 .orElseThrow(() -> new RuntimeException("Thread not found"));
@@ -95,6 +134,20 @@ public class ThreadService {
 
 
 
+    @Transactional
+    public void reportThread(Long threadId) {
+        Thread thread = threadRepository.findById(threadId)
+                .orElseThrow(() -> new RuntimeException("Thread not found"));
+
+        if (!thread.isReported()) {
+            thread.setReported(true);
+            threadRepository.save(thread);
+        }
+
+    }
+
+
+
 
     private ThreadDto toDto(Thread thread) {
         return ThreadDto.builder()
@@ -103,6 +156,7 @@ public class ThreadService {
                 .body(thread.getBody())
                 .creatorId(thread.getCreator().getId())
                 .tags(thread.getTags().stream().map(Tag::getName).collect(Collectors.toList()))
+                .reported(thread.isReported())
                 .build();
     }
 }

@@ -10,4 +10,5 @@ public class CommentDto {
     private Long id;
     private String body;
     private UserDto author;
+    private boolean reported;
 }

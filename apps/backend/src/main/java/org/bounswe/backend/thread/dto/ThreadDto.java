@@ -12,4 +12,5 @@ public class ThreadDto {
     private String body;
     private Long creatorId;
     private List<String> tags;
+    private boolean reported;
 }

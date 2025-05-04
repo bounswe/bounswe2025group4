@@ -47,4 +47,8 @@ public class Thread {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> likedBy = new HashSet<>();
+
+
+    @Column(nullable = false)
+    private boolean reported = false;
 }

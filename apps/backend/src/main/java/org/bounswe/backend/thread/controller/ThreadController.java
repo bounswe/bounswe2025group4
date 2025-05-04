@@ -2,9 +2,13 @@ package org.bounswe.backend.thread.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.bounswe.backend.comment.dto.CommentDto;
+import org.bounswe.backend.comment.dto.CreateCommentRequestDto;
+import org.bounswe.backend.comment.service.CommentService;
 import org.bounswe.backend.tag.service.TagService;
 import org.bounswe.backend.thread.dto.CreateThreadRequestDto;
 import org.bounswe.backend.thread.dto.ThreadDto;
+import org.bounswe.backend.thread.dto.UpdateThreadRequestDto;
 import org.bounswe.backend.thread.service.ThreadService;
 import org.bounswe.backend.user.dto.UserDto;
 import org.bounswe.backend.user.entity.User;
@@ -24,11 +28,13 @@ public class ThreadController {
     private final ThreadService threadService;
     private final UserRepository userRepository;
     private final TagService tagService;
+    private final CommentService commentService;
 
-    public ThreadController(ThreadService threadService, UserRepository userRepository, TagService tagService) {
+    public ThreadController(ThreadService threadService, UserRepository userRepository, TagService tagService, CommentService commentService) {
         this.threadService = threadService;
         this.userRepository = userRepository;
         this.tagService = tagService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -41,6 +47,23 @@ public class ThreadController {
         User user = getCurrentUser();
         return ResponseEntity.ok(threadService.createThread(user.getId(), request));
     }
+
+    @PatchMapping("/{threadId}")
+    public ResponseEntity<ThreadDto> updateThread(@PathVariable Long threadId,
+                                                  @Valid @RequestBody UpdateThreadRequestDto dto) {
+        User user = getCurrentUser();
+        ThreadDto updated = threadService.updateThread(threadId, user.getId(), dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{threadId}")
+    public ResponseEntity<Void> deleteThread(@PathVariable Long threadId) {
+        User user = getCurrentUser();
+        threadService.deleteThread(threadId, user.getId());
+        return ResponseEntity.noContent().build();
+    }
+
+
 
     @PostMapping("/{threadId}/like")
     public ResponseEntity<Void> likeThread(@PathVariable Long threadId) {
@@ -63,10 +86,36 @@ public class ThreadController {
     }
 
 
+
+    @PostMapping("/{threadId}/report")
+    public ResponseEntity<Void> reportThread(@PathVariable Long threadId) {
+        threadService.reportThread(threadId);
+        return ResponseEntity.ok().build();
+    }
+
+
+
     @GetMapping("/tags")
     public ResponseEntity<List<String>> getAvailableTags() {
         return ResponseEntity.ok(tagService.getAllTagNames());
     }
+
+
+    @GetMapping("/{threadId}/comments")
+    public ResponseEntity<List<CommentDto>> getComments(@PathVariable Long threadId) {
+        List<CommentDto> comments = commentService.getCommentsByThreadId(threadId);
+        return ResponseEntity.ok(comments);
+    }
+
+
+    @PostMapping("/{threadId}/comments")
+    public ResponseEntity<CommentDto> addComment(@PathVariable Long threadId,
+                                                 @Valid @RequestBody CreateCommentRequestDto request) {
+        User user = getCurrentUser();
+        CommentDto created = commentService.addCommentToThread(threadId, user.getId(), request);
+        return ResponseEntity.ok(created);
+    }
+
 
     private User getCurrentUser() {
         String username = getCurrentUsername();

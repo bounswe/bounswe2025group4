@@ -10,8 +10,9 @@ import org.bounswe.backend.user.dto.UserDto;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-
+import java.util.List;
 
 
 @Service
@@ -27,7 +28,19 @@ public class CommentService {
         this.commentRepository = commentRepository;
         this.threadRepository = threadRepository;
         this.userRepository = userRepository;
+
     }
+
+    public List<CommentDto> getCommentsByThreadId(Long threadId) {
+        if (!threadRepository.existsById(threadId)) {
+            throw new RuntimeException("Thread not found");
+        }
+
+        return commentRepository.findByThreadId(threadId).stream()
+                .map(this::toDto)
+                .toList();
+    }
+
 
     public CommentDto addCommentToThread(Long threadId, Long userId, CreateCommentRequestDto dto) {
         Thread thread = threadRepository.findById(threadId)
@@ -42,11 +55,41 @@ public class CommentService {
                 .thread(thread)
                 .build();
 
-        Comment saved = commentRepository.save(comment);
+        return toDto(commentRepository.save(comment));
+    }
 
+    @Transactional
+    public void reportComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        if (!comment.isReported()) {
+            comment.setReported(true);
+            commentRepository.save(comment);
+        }
+    }
+
+
+    public void deleteComment(Long commentId, Long userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        if (!comment.getAuthor().getId().equals(userId)) {
+            throw new RuntimeException("You are not authorized to delete this comment");
+        }
+
+        commentRepository.delete(comment);
+    }
+
+
+
+
+    private CommentDto toDto(Comment comment) {
+        User user = comment.getAuthor();
         return CommentDto.builder()
-                .id(saved.getId())
-                .body(saved.getBody())
+                .id(comment.getId())
+                .body(comment.getBody())
+                .reported(comment.isReported())
                 .author(UserDto.builder()
                         .id(user.getId())
                         .username(user.getUsername())
@@ -56,4 +99,5 @@ public class CommentService {
                         .build())
                 .build();
     }
+
 }
