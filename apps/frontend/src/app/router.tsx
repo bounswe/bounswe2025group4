@@ -12,9 +12,15 @@ import RegisterSuccesfull from '../pages/Auth/RegisterSuccesfull';
 
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('../pages/Home'));
-const JobsPage = lazy(() => import('../pages/Jobs'));
+// Removed placeholder JobsPage import
 const LoginPage = lazy(() => import('../pages/Auth/Login'));
 const RegisterPage = lazy(() => import('../pages/Auth/Register'));
+
+// Import new pages and their loader/action functions
+const JobListPage = lazy(() => import('../pages/JobList'));
+const JobDetailPage = lazy(() => import('../pages/JobDetail'));
+import { jobDetailLoader, applyAction } from '../pages/JobDetail';
+// Assuming JobList doesn't need a specific loader anymore as data is fetched client-side with TanStack Query
 
 // Root layout with navigation and common elements
 const RootLayout = lazy(() => import('../layouts/Root'));
@@ -59,12 +65,17 @@ const router = createBrowserRouter([
         },
       },
       {
+        // Updated jobs route - no loader needed here as page uses useQuery
         path: 'jobs',
-        element: <JobsPage />,
-        loader: async () => {
-          // This will be replaced with actual API call
-          return { jobs: [] };
-        },
+        element: <JobListPage />,
+        // loader: jobListLoader, // Removed - TanStack handles loading client-side based on URL params
+      },
+      {
+        // New job detail route
+        path: 'jobs/:id',
+        element: <JobDetailPage />,
+        loader: jobDetailLoader, // Loader to fetch job details
+        action: applyAction, // Action to handle application submission
       },
       {
         path: 'login',
