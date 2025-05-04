@@ -1,6 +1,7 @@
 package org.bounswe.backend.thread.entity;
-import lombok.*;
+
 import jakarta.persistence.*;
+import lombok.*;
 import org.bounswe.backend.comment.entity.Comment;
 import org.bounswe.backend.tag.entity.Tag;
 import org.bounswe.backend.user.entity.User;
@@ -13,8 +14,8 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"comments", "tags"})
-@EqualsAndHashCode(exclude = {"comments", "tags"})
+@ToString(exclude = {"comments", "tags", "likedBy"})
+@EqualsAndHashCode(exclude = {"comments", "tags", "likedBy"})
 @Table(name = "threads")
 public class Thread {
     @Id
@@ -38,4 +39,12 @@ public class Thread {
 
     @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "thread_likes",
+            joinColumns = @JoinColumn(name = "thread_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> likedBy = new HashSet<>();
 }
