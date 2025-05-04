@@ -1,21 +1,23 @@
 import { Outlet } from 'react-router-dom';
 import { Suspense } from 'react';
+import { Box, Container } from '@mui/material';
+import Header from '../components/layout/Header';
+import Footer from '../components/layout/Footer';
 
 export default function RootLayout() {
   return (
-    <div>
-      <header>
-        {/* Add your navigation here */}
-        <nav>{/* Add nav items */}</nav>
-      </header>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', minWidth: '100vw' }}>
+      <Header />
 
-      <main>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Outlet />
-        </Suspense>
-      </main>
+      <Box component="main" sx={{ flexGrow: 0, py: 3 }}>
+        <Container maxWidth={false}>
+          <Suspense fallback={<div>Loading page content...</div>}>
+            <Outlet />
+          </Suspense>
+        </Container>
+      </Box>
 
-      <footer>{/* Add footer content */}</footer>
-    </div>
+      <Footer />
+    </Box>
   );
 }
