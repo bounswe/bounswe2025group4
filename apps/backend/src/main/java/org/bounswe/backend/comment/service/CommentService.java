@@ -70,6 +70,21 @@ public class CommentService {
     }
 
 
+    @Transactional
+    public CommentDto updateComment(Long commentId, Long userId, String body) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        if (!comment.getAuthor().getId().equals(userId)) {
+            throw new RuntimeException("You can only edit your own comments");
+        }
+
+        comment.setBody(body);
+        return toDto(commentRepository.save(comment));
+    }
+
+
+
     public void deleteComment(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));

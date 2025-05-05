@@ -1,14 +1,11 @@
 package org.bounswe.backend.comment.controller;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.bounswe.backend.comment.dto.CommentDto;
 import org.bounswe.backend.comment.dto.CreateCommentRequestDto;
 import org.bounswe.backend.comment.service.CommentService;
-import org.bounswe.backend.tag.service.TagService;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +32,16 @@ public class CommentController {
         commentService.reportComment(commentId);
         return ResponseEntity.ok().build();
     }
+
+
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<CommentDto> updateComment(@PathVariable Long commentId,
+                                                    @RequestBody @Valid CreateCommentRequestDto request) {
+        User user = getCurrentUser();
+        CommentDto updated = commentService.updateComment(commentId, user.getId(), request.getBody());
+        return ResponseEntity.ok(updated);
+    }
+
 
 
     @DeleteMapping("/{commentId}")
