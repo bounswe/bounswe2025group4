@@ -41,4 +41,10 @@ public class JobApplicationController {
             @RequestBody @Valid JobApplicationDto dto) {
         return ResponseEntity.ok(service.updateApplicationStatus(applicationId, dto));
     }
+
+    @DeleteMapping("/{applicationId}")
+    public ResponseEntity<Void> delete(@PathVariable Long applicationId) {
+        service.delete(applicationId);
+        return ResponseEntity.noContent().build();
+    }
 }
