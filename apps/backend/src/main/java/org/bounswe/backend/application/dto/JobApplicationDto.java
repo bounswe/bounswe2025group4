@@ -2,7 +2,7 @@ package org.bounswe.backend.application.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.bounswe.backend.application.enums.JobApplicationStatus;
+import org.bounswe.backend.common.enums.JobApplicationStatus;
 
 import java.util.Date;
 

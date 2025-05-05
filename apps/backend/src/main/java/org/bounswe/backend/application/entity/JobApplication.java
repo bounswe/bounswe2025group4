@@ -2,7 +2,7 @@ package org.bounswe.backend.application.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.bounswe.backend.application.enums.JobApplicationStatus;
+import org.bounswe.backend.common.enums.JobApplicationStatus;
 import org.bounswe.backend.job.entity.JobPost;
 import org.bounswe.backend.user.entity.User;
 

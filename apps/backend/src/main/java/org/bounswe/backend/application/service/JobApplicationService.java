@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import org.bounswe.backend.application.dto.JobApplicationDto;
 import org.bounswe.backend.application.entity.JobApplication;
-import org.bounswe.backend.application.enums.JobApplicationStatus;
+import org.bounswe.backend.common.enums.JobApplicationStatus;
 
 import org.bounswe.backend.job.entity.JobPost;
 import org.bounswe.backend.job.repository.JobPostRepository;

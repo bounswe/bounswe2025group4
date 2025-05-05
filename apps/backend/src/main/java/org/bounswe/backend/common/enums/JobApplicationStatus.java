@@ -1,4 +1,4 @@
-package org.bounswe.backend.application.enums;
+package org.bounswe.backend.common.enums;
 
 public enum JobApplicationStatus {
     PENDING,
