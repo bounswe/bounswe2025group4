@@ -28,7 +28,9 @@ class User {
           (throw Exception('Missing user ID from JSON')),
       username: json['username'] ?? '',
       email: json['email'] ?? '',
-      role: UserType.values.byName(json['role'] ?? UserType.JOB_SEEKER.name),
+      role: UserType.values.byName(
+        json['userType'] ?? UserType.JOB_SEEKER.name,
+      ),
       companyName: json['companyName'],
       bio: json['bio'],
       // Assuming employerId is directly available in the user details response for employers
