@@ -28,6 +28,10 @@ public class JobPostService {
         return repo.findAll().stream().map(this::toDto).collect(Collectors.toList());
     }
 
+    public List<JobPostDto> getByEmployerId(Long employerId) {
+        return repo.findByEmployerId(employerId).stream().map(this::toDto).collect(Collectors.toList());
+    }
+
     public JobPostDto getById(Long id) {
         return repo.findById(id).map(this::toDto).orElse(null);
     }
