@@ -95,10 +95,15 @@ public class JobApplicationService {
     }
 
     private JobApplicationDto toDto(JobApplication application) {
+        JobPost jobPosting = application.getJobPosting();
+        User jobSeeker = application.getJobSeeker();
         return JobApplicationDto.builder()
                 .id(application.getId())
-                .jobSeekerId(application.getJobSeeker().getId())
-                .jobPostingId(application.getJobPosting().getId())
+                .jobSeekerId(jobSeeker.getId())
+                .jobSeekerName(jobSeeker.getUsername())
+                .jobPostingId(jobPosting.getId())
+                .title(jobPosting.getTitle())
+                .company(jobPosting.getCompany())
                 .status(application.getStatus())
                 .feedback(application.getFeedback())
                 .submissionDate(application.getSubmissionDate())
