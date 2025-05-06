@@ -279,20 +279,20 @@ class ApiService {
   }
 
   // --- Job Application Endpoints ---
-  // Assuming endpoints like /api/applications...
 
-  /// POST /api/applications (Assumed Endpoint)
+  /// POST /api/applications
   /// Applies the user to a job.
   Future<void> applyToJob(String userId, String jobId) async {
     print('API: User $userId applying to job $jobId');
-    // TODO: Confirm actual endpoint and request body structure
     final uri = _buildUri('/applications');
     final body = jsonEncode({
-      'userId': userId,
-      'jobId': jobId,
-      // Add any other required fields for application creation
+      // Match DTO: jobSeekerId, jobPostingId
+      'jobSeekerId': userId,
+      'jobPostingId': jobId,
+      // submissionDate is likely handled by backend
+      // status defaults to PENDING on backend
     });
-    print('API Request: POST $uri');
+    print('API Request: POST $uri, Body: $body');
 
     try {
       // Use dynamically generated headers
@@ -308,66 +308,69 @@ class ApiService {
     }
   }
 
-  /// GET /api/applications?jobId={jobId} (Assumed Endpoint)
+  /// GET /api/applications/{jobId}
   /// Gets applications for a specific job.
   Future<List<JobApplication>> getApplicationsForJob(String jobId) async {
     print('API: Fetching applications for job $jobId');
-    // TODO: Confirm actual endpoint
-    final uri = _buildUri('/applications', {'jobId': jobId});
+    // Endpoint updated: GET /api/applications/{jobId}
+    final uri = _buildUri('/applications/$jobId');
     print('API Request: GET $uri');
 
     try {
       // Use dynamically generated headers
       final response = await _client.get(uri, headers: _getHeaders());
       final List<dynamic> data = await _handleResponse(response);
-      // TODO: Implement JobApplication.fromJson if needed
-      // For now, returning mock data structure until JobApplication.fromJson is ready
+      // Ensure JobApplication.fromJson is implemented correctly
       return data.map((json) => JobApplication.fromJson(json)).toList();
-      // return _generateMockApplications(jobId: jobId, count: 5); // Placeholder
     } catch (e) {
       print("API Error fetching job applications: $e");
       throw Exception('Failed to load job applications. $e');
     }
   }
 
-  /// GET /api/applications?userId={userId} (Assumed Endpoint)
+  /// GET /api/applications?userId={userId}
   /// Fetches the current user's job applications.
   Future<List<JobApplication>> fetchMyApplications(String userId) async {
     print('API: Fetching applications for user $userId');
-    // TODO: Confirm actual endpoint
-    final uri = _buildUri('/applications', {'userId': userId});
+    // Endpoint confirmed: GET /api/applications?userId={userId} (Based on backend error)
+    final uri = _buildUri('/applications', {
+      'userId': userId,
+    }); // Use userId based on backend requirement
     print('API Request: GET $uri');
 
     try {
       // Use dynamically generated headers
       final response = await _client.get(uri, headers: _getHeaders());
       final List<dynamic> data = await _handleResponse(response);
-      // TODO: Implement JobApplication.fromJson if needed
+      // Ensure JobApplication.fromJson is implemented correctly
       return data.map((json) => JobApplication.fromJson(json)).toList();
-      // return _generateMockApplications(applicantId: userId, count: 3); // Placeholder
     } catch (e) {
       print("API Error fetching my applications: $e");
       throw Exception('Failed to load your applications. $e');
     }
   }
 
-  /// PUT /api/applications/{applicationId} (Assumed Endpoint)
+  /// PUT /api/applications/{applicationId} (Assumed Endpoint) -> Confirmed
   /// Updates the status of a job application.
   Future<JobApplication> updateApplicationStatus(
     String applicationId,
     ApplicationStatus newStatus, {
-    String? feedback, // Optional feedback
+    required String jobPostingId,
+    required String jobSeekerId,
+    String? feedback,
   }) async {
     print(
-      'API: Updating application $applicationId to $newStatus (Feedback: $feedback)',
+      'API: Updating application $applicationId for job $jobPostingId by seeker $jobSeekerId to $newStatus (Feedback: $feedback)',
     );
-    // TODO: Confirm actual endpoint and request body structure
+    // Endpoint confirmed: PUT /api/applications/{applicationId}
     final uri = _buildUri('/applications/$applicationId');
     final body = jsonEncode({
-      'status': newStatus.name, // Send enum name as string
-      if (feedback != null) 'employerFeedback': feedback,
+      'jobPostingId': jobPostingId,
+      'jobSeekerId': jobSeekerId,
+      'status': newStatus.name.toUpperCase(),
+      if (feedback != null) 'feedback': feedback,
     });
-    print('API Request: PUT $uri');
+    print('API Request: PUT $uri, Body: $body');
 
     try {
       // Use dynamically generated headers
@@ -377,11 +380,30 @@ class ApiService {
         body: body,
       );
       final dynamic data = await _handleResponse(response);
+      // Ensure JobApplication.fromJson is implemented correctly
       return JobApplication.fromJson(data as Map<String, dynamic>);
-      // return _updateMockApplicationStatus(applicationId, newStatus, feedback); // Placeholder
     } catch (e) {
       print("API Error updating application status: $e");
       throw Exception('Failed to update application status. $e');
+    }
+  }
+
+  /// DELETE /api/applications/{applicationId}
+  /// Deletes a job application.
+  Future<void> deleteApplication(String applicationId) async {
+    print('API: Deleting application $applicationId');
+    final uri = _buildUri('/applications/$applicationId');
+    print('API Request: DELETE $uri');
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(
+        response,
+      ); // Checks for success status code (e.g., 204 No Content)
+    } catch (e) {
+      print("API Error deleting application: $e");
+      throw Exception('Failed to delete application. $e');
     }
   }
 

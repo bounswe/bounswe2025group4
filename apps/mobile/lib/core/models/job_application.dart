@@ -7,6 +7,7 @@ class JobApplication {
   final String jobTitle;
   final String companyName;
   final String applicantName; // Name of the job seeker who applied
+  final String jobSeekerId; // ID of the job seeker who applied
   final ApplicationStatus status;
   final DateTime dateApplied;
   final String?
@@ -18,6 +19,7 @@ class JobApplication {
     required this.jobTitle,
     required this.companyName,
     required this.applicantName,
+    required this.jobSeekerId,
     required this.status,
     required this.dateApplied,
     this.employerFeedback,
@@ -58,8 +60,8 @@ class JobApplication {
           json['id']?.toString() ??
           (throw Exception('Missing required field: id')),
       jobId:
-          json['jobId']?.toString() ??
-          (throw Exception('Missing required field: jobId')),
+          json['jobPostingId']?.toString() ??
+          (throw Exception('Missing required field: jobPostingId')),
       // These fields might come directly from the application endpoint,
       // or you might need separate logic/calls to fetch related job/user details.
       // Adjust the keys ('jobTitle', 'companyName', 'applicantName') as needed.
@@ -69,6 +71,9 @@ class JobApplication {
           json['companyName'] ?? 'N/A', // Provide default or fetch separately
       applicantName:
           json['applicantName'] ?? 'N/A', // Provide default or fetch separately
+      jobSeekerId:
+          json['jobSeekerId']?.toString() ??
+          (throw Exception('Missing required field: jobSeekerId')),
       status: parseStatus(json['status']),
       dateApplied:
           parseDate(json['dateApplied']) ??

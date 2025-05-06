@@ -47,6 +47,21 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     });
 
     try {
+      // Get the current user's ID from AuthProvider
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final userId = authProvider.currentUser?.id; // Access id via currentUser
+
+      if (userId == null) {
+        // Handle case where user is not logged in or user object is missing ID
+        if (mounted) {
+          setState(() {
+            _errorMessage = "User not logged in or user ID not found.";
+            _isLoading = false;
+          });
+        }
+        return; // Stop execution if no userId
+      }
+
       final applications = await _apiService.getApplicationsForJob(
         widget.jobId,
       );
@@ -93,6 +108,8 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       final updatedApplication = await _apiService.updateApplicationStatus(
         application.id,
         newStatus,
+        jobPostingId: application.jobId,
+        jobSeekerId: application.jobSeekerId,
         feedback: feedback,
       );
 
