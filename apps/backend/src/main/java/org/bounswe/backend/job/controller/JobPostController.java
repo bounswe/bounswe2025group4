@@ -25,7 +25,7 @@ public class JobPostController {
         return ResponseEntity.ok(service.getAll());
     }
 
-    @GetMapping("/{employerId}")
+    @GetMapping("/employer/{employerId}")
     public ResponseEntity<List<JobPostDto>> getByEmployerId(@PathVariable Long employerId) {
         return ResponseEntity.ok(service.getByEmployerId(employerId));
     }
