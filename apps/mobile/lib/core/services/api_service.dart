@@ -149,7 +149,7 @@ class ApiService {
   /// Assumes filtering is done via query parameter.
   Future<List<JobPost>> fetchEmployerJobPostings(String employerId) async {
     print('API: Fetching job postings for employer $employerId');
-    final uri = _buildUri('/jobs', {'employerId': employerId});
+    final uri = _buildUri('/jobs/employer/$employerId');
     print('API Request: GET $uri');
 
     try {

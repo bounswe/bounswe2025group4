@@ -65,10 +65,9 @@ class JobApplication {
       // These fields might come directly from the application endpoint,
       // or you might need separate logic/calls to fetch related job/user details.
       // Adjust the keys ('jobTitle', 'companyName', 'applicantName') as needed.
-      jobTitle:
-          json['jobTitle'] ?? 'N/A', // Provide default or fetch separately
+      jobTitle: json['title'] ?? 'N/A', // Provide default or fetch separately
       companyName:
-          json['companyName'] ?? 'N/A', // Provide default or fetch separately
+          json['company'] ?? 'N/A', // Provide default or fetch separately
       applicantName:
           json['applicantName'] ?? 'N/A', // Provide default or fetch separately
       jobSeekerId:
