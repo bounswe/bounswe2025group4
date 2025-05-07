@@ -46,14 +46,18 @@ export const useUIStore = create<UIState & UIActions>()(
       if (notificationData.duration) {
         setTimeout(() => {
           set((state) => {
-            state.notifications = state.notifications.filter((n: Notification) => n.id !== id);
+            state.notifications = state.notifications.filter(
+              (n: Notification) => n.id !== id
+            );
           });
         }, notificationData.duration);
       }
     },
     removeNotification: (id) => {
       set((state) => {
-        state.notifications = state.notifications.filter((n: Notification) => n.id !== id);
+        state.notifications = state.notifications.filter(
+          (n: Notification) => n.id !== id
+        );
       });
     },
     toggleSidebar: () => {
@@ -81,4 +85,4 @@ export const useUIStore = create<UIState & UIActions>()(
 
 // Example basic selectors (optional, but can be useful)
 export const selectNotifications = (state: UIState) => state.notifications;
-export const selectIsSidebarOpen = (state: UIState) => state.isSidebarOpen; 
+export const selectIsSidebarOpen = (state: UIState) => state.isSidebarOpen;
