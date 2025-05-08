@@ -74,13 +74,13 @@ class ApiClient {
     params?: Record<string, unknown>
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await this.client.request<ApiResponse<T>>({
+      const response = await this.client.request<T>({
         method,
         url,
         data,
         params,
       });
-      return response.data;
+      return { data: response.data, status: response.status };
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         throw {

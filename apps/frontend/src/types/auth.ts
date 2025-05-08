@@ -16,15 +16,16 @@ export interface User {
   bio: string;
   userType: 'EMPLOYER' | 'JOB_SEEKER' | 'MENTOR';
 }
-
 export interface AuthResponse {
   token: string;
-  user: User;
+  username: string;
+  userType: 'EMPLOYER' | 'JOB_SEEKER' | 'MENTOR';
+  id: number;
 }
 
-export interface RefreshTokenResponse {
-  accessToken: string;
-}
+// export interface RefreshTokenResponse {
+//   accessToken: string;
+// }
 
 export interface AuthError {
   message: string;
