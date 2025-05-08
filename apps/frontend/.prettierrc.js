@@ -5,5 +5,5 @@ export default {
   singleQuote: true,        // Use single quotes instead of double quotes
   trailingComma: 'es5',     // Add trailing commas where valid in ES5
   bracketSpacing: true,     // Print spaces between brackets in object literals
-  endOfLine: 'lf',          // Use Linux-style line endings
+  endOfLine: 'auto',        // Use the system's line ending
 };

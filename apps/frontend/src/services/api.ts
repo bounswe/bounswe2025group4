@@ -16,9 +16,12 @@ class ApiClient {
     // Add request interceptor for auth
     this.client.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem('auth_tokens');
         if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+          const parsedToken = JSON.parse(token);
+          if (parsedToken && parsedToken.accessToken) {
+            config.headers.Authorization = `Bearer ${parsedToken.accessToken}`;
+          }
         }
         return config;
       },
@@ -32,23 +35,48 @@ class ApiClient {
         const originalRequest = error.config!;
 
         // Handle 401 and token refresh
-        if (error.response?.status === 401 && !originalRequest.headers['X-Retry']) {
+        if (
+          error.response?.status === 401 &&
+          !originalRequest.headers['X-Retry']
+        ) {
           try {
-            const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) throw new Error('No refresh token');
+            const authTokens = localStorage.getItem('auth_tokens');
+            if (!authTokens) {
+              // No tokens found, redirect to login
+              window.location.href = '/login';
+              return Promise.reject(new Error('No auth tokens found'));
+            }
 
-            const { data } = await this.client.post<{ accessToken: string }>('/auth/refresh', {
+            const parsedTokens = JSON.parse(authTokens);
+            const refreshToken = parsedTokens?.refreshToken;
+
+            if (!refreshToken) {
+              // No refresh token found, redirect to login
+              localStorage.removeItem('auth_tokens');
+              window.location.href = '/login';
+              return Promise.reject(new Error('No refresh token'));
+            }
+
+            const { data } = await this.client.post<{
+              accessToken: string;
+              refreshToken?: string;
+            }>('/auth/refresh', {
               refreshToken,
             });
 
-            localStorage.setItem('accessToken', data.accessToken);
+            // Update tokens in localStorage
+            const newAuthTokens = {
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken || refreshToken, // Keep old refresh token if new one isn't provided
+            };
+            localStorage.setItem('auth_tokens', JSON.stringify(newAuthTokens));
+
             originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
             originalRequest.headers['X-Retry'] = 'true';
 
             return this.client(originalRequest);
           } catch (refreshError) {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('auth_tokens');
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }

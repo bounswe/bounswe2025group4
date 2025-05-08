@@ -25,19 +25,24 @@ import {
 // import { useParams } from 'react-router-dom'; // If using URL params for token
 
 // New password schema
-const newPasswordSchema = z.object({
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must include at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must include at least one number')
-    .regex(/[^A-Za-z0-9]/, 'Password must include at least one special character'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
-});
+const newPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
+      .regex(/[a-z]/, 'Password must include at least one lowercase letter')
+      .regex(/[0-9]/, 'Password must include at least one number')
+      .regex(
+        /[^A-Za-z0-9]/,
+        'Password must include at least one special character'
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 export default function ResetPasswordPage() {
   const theme = useTheme();
@@ -70,9 +75,10 @@ export default function ResetPasswordPage() {
         sx={{
           borderRadius: 2,
           overflow: 'hidden',
-          boxShadow: theme.palette.mode === 'dark'
-            ? '0 8px 32px rgba(0, 0, 0, 0.5)'
-            : '0 8px 32px rgba(0, 0, 0, 0.1)'
+          boxShadow:
+            theme.palette.mode === 'dark'
+              ? '0 8px 32px rgba(0, 0, 0, 0.5)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1)',
         }}
       >
         <Box
@@ -88,8 +94,8 @@ export default function ResetPasswordPage() {
           </Typography>
           <Typography variant="body1" sx={{ mt: 1, opacity: 0.9 }}>
             {resetComplete
-              ? "Your password has been successfully reset"
-              : "Create a new secure password for your account"}
+              ? 'Your password has been successfully reset'
+              : 'Create a new secure password for your account'}
           </Typography>
         </Box>
 
@@ -104,8 +110,13 @@ export default function ResetPasswordPage() {
                 <Typography variant="h5" gutterBottom fontWeight="bold">
                   Password Reset Complete
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-                  Your password has been successfully updated. You can now use your new password to log in to your account.
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ mb: 4 }}
+                >
+                  Your password has been successfully updated. You can now use
+                  your new password to log in to your account.
                 </Typography>
                 <Button
                   variant="contained"
@@ -153,19 +164,23 @@ export default function ResetPasswordPage() {
                         startAdornment: (
                           <InputAdornment position="start">
                             <Lock />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={() => setShowPassword(!showPassword)}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    },
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      },
                     }}
                   />
                 )}
@@ -182,7 +197,9 @@ export default function ResetPasswordPage() {
                     fullWidth
                     margin="normal"
                     error={!!passwordForm.formState.errors.confirmPassword}
-                    helperText={passwordForm.formState.errors.confirmPassword?.message}
+                    helperText={
+                      passwordForm.formState.errors.confirmPassword?.message
+                    }
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -192,10 +209,16 @@ export default function ResetPasswordPage() {
                       endAdornment: (
                         <InputAdornment position="end">
                           <IconButton
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            onClick={() =>
+                              setShowConfirmPassword(!showConfirmPassword)
+                            }
                             edge="end"
                           >
-                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                            {showConfirmPassword ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -226,4 +249,4 @@ export default function ResetPasswordPage() {
       </Paper>
     </Container>
   );
-} 
+}

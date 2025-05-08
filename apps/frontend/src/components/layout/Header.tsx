@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { AppBar, Toolbar, Button, Box, Container, IconButton } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Button,
+  Box,
+  Container,
+  IconButton,
+} from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { ThemeToggle } from '../common/ThemeToggle';
@@ -42,10 +49,7 @@ const Header: React.FC = () => {
                 >
                   <AccountCircle />
                 </IconButton>
-                <Button
-                  color="inherit"
-                  onClick={logout}
-                >
+                <Button color="inherit" onClick={logout}>
                   Logout
                 </Button>
               </>

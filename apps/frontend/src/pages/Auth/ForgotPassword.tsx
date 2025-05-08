@@ -16,11 +16,7 @@ import {
   InputAdornment,
   Fade,
 } from '@mui/material';
-import {
-  ArrowForward,
-  Email,
-  CheckCircleOutline,
-} from '@mui/icons-material';
+import { ArrowForward, Email, CheckCircleOutline } from '@mui/icons-material';
 
 // Email submission schema
 const emailSchema = z.object({
@@ -31,7 +27,6 @@ export default function ForgotPasswordPage() {
   const theme = useTheme();
   const [emailSent, setEmailSent] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState('');
-
 
   // Form handling for email step
   const emailForm = useForm<z.infer<typeof emailSchema>>({
@@ -56,9 +51,10 @@ export default function ForgotPasswordPage() {
         sx={{
           borderRadius: 2,
           overflow: 'hidden',
-          boxShadow: theme.palette.mode === 'dark'
-            ? '0 8px 32px rgba(0, 0, 0, 0.5)'
-            : '0 8px 32px rgba(0, 0, 0, 0.1)'
+          boxShadow:
+            theme.palette.mode === 'dark'
+              ? '0 8px 32px rgba(0, 0, 0, 0.5)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1)',
         }}
       >
         <Box
@@ -74,8 +70,8 @@ export default function ForgotPasswordPage() {
           </Typography>
           <Typography variant="body1" sx={{ mt: 1, opacity: 0.9 }}>
             {emailSent
-              ? "Check your email for a reset link"
-              : "Enter your email to receive a password reset link"}
+              ? 'Check your email for a reset link'
+              : 'Enter your email to receive a password reset link'}
           </Typography>
         </Box>
 
@@ -90,8 +86,14 @@ export default function ForgotPasswordPage() {
                 <Typography variant="h5" gutterBottom fontWeight="bold">
                   Reset Link Sent
                 </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-                  If an account exists for <strong>{submittedEmail}</strong>, you will receive an email with instructions on how to reset your password. Please check your inbox and spam folder.
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ mb: 4 }}
+                >
+                  If an account exists for <strong>{submittedEmail}</strong>,
+                  you will receive an email with instructions on how to reset
+                  your password. Please check your inbox and spam folder.
                 </Typography>
                 <Button
                   variant="contained"
@@ -119,7 +121,8 @@ export default function ForgotPasswordPage() {
             >
               <Alert severity="info" sx={{ mb: 3 }}>
                 <AlertTitle>Information</AlertTitle>
-                Enter the email address associated with your account, and we'll send you a link to reset your password.
+                Enter the email address associated with your account, and we'll
+                send you a link to reset your password.
               </Alert>
 
               <Controller
@@ -137,10 +140,10 @@ export default function ForgotPasswordPage() {
                       input: {
                         startAdornment: (
                           <InputAdornment position="start">
-                          <Email />
-                        </InputAdornment>
+                            <Email />
+                          </InputAdornment>
                         ),
-                        },
+                      },
                     }}
                   />
                 )}

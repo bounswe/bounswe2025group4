@@ -1,5 +1,5 @@
 // All types that must be matched with backend
-export interface LoginCredentials { 
+export interface LoginCredentials {
   username: string;
   password: string;
 }
@@ -16,16 +16,18 @@ export interface User {
   bio: string;
   userType: 'EMPLOYER' | 'JOB_SEEKER' | 'MENTOR';
 }
+
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface AuthResponse {
-  token: string;
+  token: AuthTokens;
   username: string;
   userType: 'EMPLOYER' | 'JOB_SEEKER' | 'MENTOR';
   id: number;
 }
-
-// export interface RefreshTokenResponse {
-//   accessToken: string;
-// }
 
 export interface AuthError {
   message: string;

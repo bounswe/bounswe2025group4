@@ -18,21 +18,22 @@ class AuthService {
       '/auth/login',
       credentials
     );
-    console.error(response);
-    const token = response.data.token; // Correctly access token directly
-    localStorage.setItem('accessToken', token);
+    // Assuming response.data.token is { accessToken: string, refreshToken: string }
+    if (response.data && response.data.token) {
+      localStorage.setItem('auth_tokens', JSON.stringify(response.data.token));
+    }
     return response.data;
   }
 
-  async register(
-    credentials: RegisterCredentials
-  ): Promise<AuthResponse> {
+  async register(credentials: RegisterCredentials): Promise<AuthResponse> {
     const response = await apiClient.post<AuthResponse>(
       '/auth/register',
       credentials
     );
-    const token = response.data.token;
-    localStorage.setItem('token', token);
+    // Assuming response.data.token is { accessToken: string, refreshToken: string }
+    if (response.data && response.data.token) {
+      localStorage.setItem('auth_tokens', JSON.stringify(response.data.token));
+    }
     return response.data;
   }
 
@@ -51,7 +52,7 @@ class AuthService {
 
   async logout(): Promise<void> {
     await apiClient.post<ApiResponse<void>>('/auth/logout', {});
-    localStorage.removeItem('token');
+    localStorage.removeItem('auth_tokens');
   }
 }
 
@@ -63,9 +64,7 @@ export const useCurrentUser = () =>
   useQuery<User>({
     queryKey: AUTH_KEYS.user,
     queryFn: async () => {
-      const response = await apiClient.get<User>(
-        '/auth/me'
-      );
+      const response = await apiClient.get<User>('/auth/me');
       return response.data;
     },
     retry: false,

@@ -37,7 +37,12 @@ import {
 } from '@mui/icons-material';
 
 // Define user type options
-type UserType = 'jobSeeker' | 'employer' | 'mentor' | 'mentee' | 'notInterested';
+type UserType =
+  | 'jobSeeker'
+  | 'employer'
+  | 'mentor'
+  | 'mentee'
+  | 'notInterested';
 
 interface UserTypeOption {
   value: UserType;
@@ -80,25 +85,32 @@ const userTypeOptions: UserTypeOption[] = [
 ];
 
 // Define form schema with Zod
-const registerSchema = z.object({
-  firstName: z.string().min(2, 'First name must be at least 2 characters'),
-  lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must include at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must include at least one number')
-    .regex(/[^A-Za-z0-9]/, 'Password must include at least one special character'),
-  confirmPassword: z.string(),
-  agreeToTerms: z.literal(true, {
-    errorMap: () => ({ message: 'You must agree to the terms and conditions' }),
-  }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
-});
+const registerSchema = z
+  .object({
+    firstName: z.string().min(2, 'First name must be at least 2 characters'),
+    lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+    email: z.string().email('Please enter a valid email address'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[A-Z]/, 'Password must include at least one uppercase letter')
+      .regex(/[a-z]/, 'Password must include at least one lowercase letter')
+      .regex(/[0-9]/, 'Password must include at least one number')
+      .regex(
+        /[^A-Za-z0-9]/,
+        'Password must include at least one special character'
+      ),
+    confirmPassword: z.string(),
+    agreeToTerms: z.literal(true, {
+      errorMap: () => ({
+        message: 'You must agree to the terms and conditions',
+      }),
+    }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -107,8 +119,12 @@ export default function RegisterPage() {
   // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [currentStep, setCurrentStep] = useState<'credentials' | 'userType'>('credentials');
-  const [selectedUserType, setSelectedUserType] = useState<UserType | null>(null);
+  const [currentStep, setCurrentStep] = useState<'credentials' | 'userType'>(
+    'credentials'
+  );
+  const [selectedUserType, setSelectedUserType] = useState<UserType | null>(
+    null
+  );
 
   const {
     control,
@@ -155,38 +171,42 @@ export default function RegisterPage() {
 
   return (
     <Container maxWidth="md" sx={{ py: 8 }}>
-      <Paper 
-        elevation={3} 
-        sx={{ 
-          borderRadius: 2, 
+      <Paper
+        elevation={3}
+        sx={{
+          borderRadius: 2,
           overflow: 'hidden',
-          boxShadow: theme.palette.mode === 'dark' 
-            ? '0 8px 32px rgba(0, 0, 0, 0.5)' 
-            : '0 8px 32px rgba(0, 0, 0, 0.1)'
+          boxShadow:
+            theme.palette.mode === 'dark'
+              ? '0 8px 32px rgba(0, 0, 0, 0.5)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1)',
         }}
       >
-        <Box sx={{ 
-          py: 3, 
-          px: 4, 
-          bgcolor: 'primary.main', 
-          color: 'primary.contrastText',
-          position: 'relative'
-        }}>
+        <Box
+          sx={{
+            py: 3,
+            px: 4,
+            bgcolor: 'primary.main',
+            color: 'primary.contrastText',
+            position: 'relative',
+          }}
+        >
           <Typography variant="h4" fontWeight="bold">
-            {currentStep === 'credentials' ? 'Create your account' : 'Choose your role'}
+            {currentStep === 'credentials'
+              ? 'Create your account'
+              : 'Choose your role'}
           </Typography>
           <Typography variant="body1" sx={{ mt: 1, opacity: 0.9 }}>
-            {currentStep === 'credentials' 
+            {currentStep === 'credentials'
               ? 'Join our platform to connect with opportunities'
-              : 'Help us personalize your experience'
-            }
+              : 'Help us personalize your experience'}
           </Typography>
         </Box>
 
         {currentStep === 'credentials' ? (
           <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 4 }}>
             <Grid container spacing={3}>
-              <Grid size= {{xs: 12, sm: 6}}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Controller
                   name="firstName"
                   control={control}
@@ -201,7 +221,7 @@ export default function RegisterPage() {
                   )}
                 />
               </Grid>
-              <Grid size= {{xs: 12, sm: 6}}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Controller
                   name="lastName"
                   control={control}
@@ -216,7 +236,7 @@ export default function RegisterPage() {
                   )}
                 />
               </Grid>
-              <Grid size= {{xs: 12}}>
+              <Grid size={{ xs: 12 }}>
                 <Controller
                   name="email"
                   control={control}
@@ -231,7 +251,7 @@ export default function RegisterPage() {
                   )}
                 />
               </Grid>
-              <Grid size= {{xs: 12}}>
+              <Grid size={{ xs: 12 }}>
                 <Controller
                   name="password"
                   control={control}
@@ -250,7 +270,11 @@ export default function RegisterPage() {
                               onClick={() => setShowPassword(!showPassword)}
                               edge="end"
                             >
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -259,7 +283,7 @@ export default function RegisterPage() {
                   )}
                 />
               </Grid>
-              <Grid size= {{xs: 12}}>
+              <Grid size={{ xs: 12 }}>
                 <Controller
                   name="confirmPassword"
                   control={control}
@@ -275,10 +299,16 @@ export default function RegisterPage() {
                         endAdornment: (
                           <InputAdornment position="end">
                             <IconButton
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              onClick={() =>
+                                setShowConfirmPassword(!showConfirmPassword)
+                              }
                               edge="end"
                             >
-                              {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                              {showConfirmPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         ),
@@ -287,7 +317,7 @@ export default function RegisterPage() {
                   )}
                 />
               </Grid>
-              <Grid size= {{xs: 12}}>
+              <Grid size={{ xs: 12 }}>
                 <Controller
                   name="agreeToTerms"
                   control={control}
@@ -302,30 +332,35 @@ export default function RegisterPage() {
                       }
                       label={
                         <Typography variant="body2">
-                          I agree to the <a href="#terms">Terms of Service</a> and <a href="#privacy">Privacy Policy</a>
+                          I agree to the <a href="#terms">Terms of Service</a>{' '}
+                          and <a href="#privacy">Privacy Policy</a>
                         </Typography>
                       }
                     />
                   )}
                 />
                 {errors.agreeToTerms && (
-                  <Typography color="error" variant="caption" sx={{ display: 'block', ml: 2 }}>
+                  <Typography
+                    color="error"
+                    variant="caption"
+                    sx={{ display: 'block', ml: 2 }}
+                  >
                     {errors.agreeToTerms.message}
                   </Typography>
                 )}
               </Grid>
-              <Grid size= {{xs: 12}}>
+              <Grid size={{ xs: 12 }}>
                 <Button
                   type="submit"
                   variant="contained"
                   fullWidth
                   size="large"
-                  sx={{ 
-                    py: 1.5, 
+                  sx={{
+                    py: 1.5,
                     borderRadius: 2,
                     fontSize: '1rem',
                     textTransform: 'none',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
                   endIcon={<ArrowForward />}
                 >
@@ -333,7 +368,7 @@ export default function RegisterPage() {
                 </Button>
               </Grid>
             </Grid>
-            
+
             {/* <Divider sx={{ my: 4 }}>
               <Typography variant="body2" color="text.secondary">
                 OR SIGN UP WITH
@@ -386,48 +421,61 @@ export default function RegisterPage() {
             </Typography>
             <Grid container spacing={2} sx={{ mt: 1 }}>
               {userTypeOptions.map((option) => (
-                <Grid size= {{xs: 12, sm: 6, md: 4}} key={option.value}>
-                  <Card 
-                    sx={{ 
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={option.value}>
+                  <Card
+                    sx={{
                       height: '100%',
-                      border: selectedUserType === option.value ? 
-                        `2px solid ${theme.palette.primary.main}` : 
-                        '1px solid rgba(0,0,0,0.12)',
-                      bgcolor: selectedUserType === option.value ?
-                        (theme.palette.mode === 'dark' ? 'primary.900' : 'primary.50') :
-                        'background.paper',
+                      border:
+                        selectedUserType === option.value
+                          ? `2px solid ${theme.palette.primary.main}`
+                          : '1px solid rgba(0,0,0,0.12)',
+                      bgcolor:
+                        selectedUserType === option.value
+                          ? theme.palette.mode === 'dark'
+                            ? 'primary.900'
+                            : 'primary.50'
+                          : 'background.paper',
                       transition: 'all 0.2s',
                       '&:hover': {
                         transform: 'translateY(-4px)',
-                        boxShadow: 3
-                      }
+                        boxShadow: 3,
+                      },
                     }}
                   >
-                    <CardActionArea 
+                    <CardActionArea
                       onClick={() => handleUserTypeSelect(option.value)}
-                      sx={{ 
+                      sx={{
                         height: '100%',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        p: 2
+                        p: 2,
                       }}
                     >
-                      <Box 
-                        sx={{ 
-                          p: 2, 
-                          borderRadius: '50%', 
-                          bgcolor: selectedUserType === option.value ? 
-                            'primary.main' : 'action.hover',
-                          color: selectedUserType === option.value ?
-                            'primary.contrastText' : 'text.primary',
-                          mb: 2
+                      <Box
+                        sx={{
+                          p: 2,
+                          borderRadius: '50%',
+                          bgcolor:
+                            selectedUserType === option.value
+                              ? 'primary.main'
+                              : 'action.hover',
+                          color:
+                            selectedUserType === option.value
+                              ? 'primary.contrastText'
+                              : 'text.primary',
+                          mb: 2,
                         }}
                       >
                         {option.icon}
                       </Box>
                       <CardContent sx={{ p: 1, textAlign: 'center' }}>
-                        <Typography variant="h6" component="div" gutterBottom fontWeight="bold">
+                        <Typography
+                          variant="h6"
+                          component="div"
+                          gutterBottom
+                          fontWeight="bold"
+                        >
                           {option.label}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -439,7 +487,7 @@ export default function RegisterPage() {
                 </Grid>
               ))}
             </Grid>
-            
+
             <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
               <Button
                 variant="outlined"
@@ -454,14 +502,14 @@ export default function RegisterPage() {
                 disabled={!selectedUserType}
                 onClick={handleCompleteRegistration}
                 endIcon={<ArrowForward />}
-                sx={{ 
-                  py: 1.5, 
+                sx={{
+                  py: 1.5,
                   px: 4,
                   borderRadius: 2,
                   fontSize: '1rem',
                   textTransform: 'none',
                   fontWeight: 'bold',
-                  ml: 'auto'
+                  ml: 'auto',
                 }}
               >
                 Complete Registration
