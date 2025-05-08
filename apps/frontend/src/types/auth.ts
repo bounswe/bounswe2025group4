@@ -1,32 +1,31 @@
 // All types that must be matched with backend
-export interface LoginCredentials {
-  email: string;
+export interface LoginCredentials { 
+  username: string;
   password: string;
 }
 
 export interface RegisterCredentials extends LoginCredentials {
-  name: string;
+  email: string;
+  bio: string;
+  userType: 'EMPLOYER' | 'JOB_SEEKER' | 'MENTOR';
 }
-
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-}
-
 export interface User {
   id: string;
+  username: string;
   email: string;
-  name: string;
+  bio: string;
+  userType: 'EMPLOYER' | 'JOB_SEEKER' | 'MENTOR';
 }
-
 export interface AuthResponse {
-  user: User;
-  tokens: AuthTokens;
+  token: string;
+  username: string;
+  userType: 'EMPLOYER' | 'JOB_SEEKER' | 'MENTOR';
+  id: number;
 }
 
-export interface RefreshTokenResponse {
-  accessToken: string;
-}
+// export interface RefreshTokenResponse {
+//   accessToken: string;
+// }
 
 export interface AuthError {
   message: string;

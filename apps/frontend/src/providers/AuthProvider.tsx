@@ -1,13 +1,11 @@
 import { useEffect, useState, ReactNode, useCallback } from 'react';
 import {
-  User,
-  AuthTokens,
   LoginCredentials,
   RegisterCredentials,
   AuthError,
 } from '../types/auth';
-import { authService } from '../services/auth';
-import { AuthContext } from './AuthContextValue';
+import { authService } from '../services/auth.service';
+import { AuthContext } from '../contexts/AuthContext';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -35,16 +33,16 @@ interface AuthProviderProps {
  * - Manages loading and error states during auth operations
  */
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
-  const [tokens, setTokens] = useState<AuthTokens | null>(null);
+  const [id, setId] = useState<number | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<AuthError | null>(null);
 
-  useEffect(() => {
+  useEffect(() => { 
     const storedTokens = localStorage.getItem('auth_tokens');
     if (storedTokens) {
-      const parsedTokens: AuthTokens = JSON.parse(storedTokens);
-      setTokens(parsedTokens);
+      const parsedTokens: string = JSON.parse(storedTokens);
+      setToken(parsedTokens);
       // TODO: Validate tokens and fetch user data
     }
     setIsLoading(false);
@@ -52,45 +50,45 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = useCallback(async () => {
     try {
-      if (tokens) {
+      if (token) {
         await authService.logout();
       }
     } finally {
-      setUser(null);
-      setTokens(null);
+      setId(null);
+      setToken(null);
       localStorage.removeItem('auth_tokens');
     }
-  }, [tokens]);
+  }, [token]);
 
-  useEffect(() => {
-    if (!tokens?.refreshToken) return;
+  // useEffect(() => {
+  //   if (!tokens?.accessToken) return;
 
-    const refreshInterval = setInterval(
-      async () => {
-        try {
-          const response = await authService.refreshToken(tokens.refreshToken);
-          setTokens((prev) =>
-            prev ? { ...prev, accessToken: response.accessToken } : null
-          );
-        } catch (err) {
-          console.error('Token refresh failed:', err);
-          await logout();
-        }
-      },
-      15 * 60 * 1000
-    );
+  //   const refreshInterval = setInterval(
+  //     async () => {
+  //       try {
+  //         const response = await authService.refreshToken();
+  //         setTokens((prev) =>
+  //           prev ? { ...prev, accessToken: response.accessToken } : null
+  //         );
+  //       } catch (err) {
+  //         console.error('Token refresh failed:', err);
+  //         await logout();
+  //       }
+  //     },
+  //     15 * 60 * 1000 // every 15 minutes
+  //   );
 
-    return () => clearInterval(refreshInterval);
-  }, [tokens?.refreshToken, logout]);
+  //   return () => clearInterval(refreshInterval);
+  // }, [tokens?.accessToken, logout]);
 
   const login = async (credentials: LoginCredentials) => {
     try {
       setError(null);
       setIsLoading(true);
       const response = await authService.login(credentials);
-      setUser(response.user);
-      setTokens(response.tokens);
-      localStorage.setItem('auth_tokens', JSON.stringify(response.tokens));
+      setId(response.id);
+      setToken(response.token);
+      localStorage.setItem('auth_tokens', JSON.stringify(response.token));
     } catch (err) {
       setError({ message: 'Login failed. Please try again.' });
       throw err;
@@ -104,9 +102,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setError(null);
       setIsLoading(true);
       const response = await authService.register(credentials);
-      setUser(response.user);
-      setTokens(response.tokens);
-      localStorage.setItem('auth_tokens', JSON.stringify(response.tokens));
+      setId(response.id);
+      setToken(response.token);
+      localStorage.setItem('auth_tokens', JSON.stringify(response.token));
     } catch (err) {
       setError({ message: 'Registration failed. Please try again.' });
       throw err;
@@ -118,10 +116,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   return (
     <AuthContext.Provider
       value={{
-        user,
-        isAuthenticated: !!user,
+        id,
+        isAuthenticated: !!id,
         isLoading,
-        error,
+        error,  
         login,
         register,
         logout,
