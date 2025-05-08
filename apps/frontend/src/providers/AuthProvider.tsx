@@ -3,6 +3,7 @@ import {
   LoginCredentials,
   RegisterCredentials,
   AuthError,
+  AuthTokens,
 } from '../types/auth';
 import { authService } from '../services/auth.service';
 import { AuthContext } from '../contexts/AuthContext';
@@ -34,15 +35,15 @@ interface AuthProviderProps {
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const [id, setId] = useState<number | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [auth_tokens, setAuthTokens] = useState<AuthTokens | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<AuthError | null>(null);
 
-  useEffect(() => { 
+  useEffect(() => {
     const storedTokens = localStorage.getItem('auth_tokens');
     if (storedTokens) {
-      const parsedTokens: string = JSON.parse(storedTokens);
-      setToken(parsedTokens);
+      const parsedTokens: AuthTokens = JSON.parse(storedTokens);
+      setAuthTokens(parsedTokens);
       // TODO: Validate tokens and fetch user data
     }
     setIsLoading(false);
@@ -50,15 +51,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const logout = useCallback(async () => {
     try {
-      if (token) {
+      if (auth_tokens) {
         await authService.logout();
       }
     } finally {
       setId(null);
-      setToken(null);
+      setAuthTokens(null);
       localStorage.removeItem('auth_tokens');
     }
-  }, [token]);
+  }, [auth_tokens]);
 
   // useEffect(() => {
   //   if (!tokens?.accessToken) return;
@@ -87,7 +88,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(true);
       const response = await authService.login(credentials);
       setId(response.id);
-      setToken(response.token);
+      setAuthTokens(response.token);
       localStorage.setItem('auth_tokens', JSON.stringify(response.token));
     } catch (err) {
       setError({ message: 'Login failed. Please try again.' });
@@ -103,7 +104,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(true);
       const response = await authService.register(credentials);
       setId(response.id);
-      setToken(response.token);
+      setAuthTokens(response.token);
       localStorage.setItem('auth_tokens', JSON.stringify(response.token));
     } catch (err) {
       setError({ message: 'Registration failed. Please try again.' });
@@ -119,7 +120,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         id,
         isAuthenticated: !!id,
         isLoading,
-        error,  
+        error,
         login,
         register,
         logout,

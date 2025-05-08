@@ -102,7 +102,7 @@ const router = createBrowserRouter([
         //   // Fetch user profile data
         //   return { user: { name: "User Name" } };
         // },
-      }
+      },
     ],
   },
 ]);

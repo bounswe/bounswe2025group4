@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { 
-  Box, 
-  Button, 
-  TextField, 
-  Typography, 
-  Paper, 
-  Container, 
-  // Divider, 
-  IconButton, 
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  Container,
+  // Divider,
+  IconButton,
   InputAdornment,
-  Link
+  Link,
 } from '@mui/material';
 import {
   Visibility,
@@ -17,8 +17,8 @@ import {
   // Mail,
   Person,
   Lock,
-  Login
-} from '@mui/icons-material'
+  Login,
+} from '@mui/icons-material';
 import { useLogin } from '../../services/auth.service';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -37,7 +37,7 @@ export default function LoginPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    
+
     // API call
     try {
       await loginMutation.mutateAsync(
@@ -49,7 +49,7 @@ export default function LoginPage() {
           onSuccess: () => {
             // tanstack query cached
             window.location.href = '/';
-          }
+          },
         }
       );
     } catch (error) {
@@ -59,18 +59,23 @@ export default function LoginPage() {
 
   return (
     <Container maxWidth="sm" sx={{ mt: 8, mb: 8 }}>
-      <Paper 
-        elevation={3} 
-        sx={{ 
-          p: 4, 
-          display: 'flex', 
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          display: 'flex',
           flexDirection: 'column',
           borderRadius: 2,
-          border: '1px solid rgba(0, 0, 0, 0.12)'
+          border: '1px solid rgba(0, 0, 0, 0.12)',
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-          <Typography variant="h4" component="h1" fontWeight="bold" color="primary">
+          <Typography
+            variant="h4"
+            component="h1"
+            fontWeight="bold"
+            color="primary"
+          >
             Log In
           </Typography>
         </Box>
@@ -98,7 +103,7 @@ export default function LoginPage() {
               },
             }}
           />
-          
+
           <TextField
             margin="normal"
             required
@@ -124,7 +129,11 @@ export default function LoginPage() {
                       onClick={handleTogglePasswordVisibility}
                       edge="end"
                     >
-                      {showPassword ? <VisibilityOff sx={{ fontSize: 20 }} /> : <Visibility sx={{ fontSize: 20 }} />}
+                      {showPassword ? (
+                        <VisibilityOff sx={{ fontSize: 20 }} />
+                      ) : (
+                        <Visibility sx={{ fontSize: 20 }} />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -137,9 +146,9 @@ export default function LoginPage() {
             type="submit"
             fullWidth
             variant="contained"
-            sx={{ 
-              mt: 1, 
-              mb: 3, 
+            sx={{
+              mt: 1,
+              mb: 3,
               py: 1.5,
               backgroundColor: '#1976d2', // Match navbar color
             }}
@@ -148,12 +157,22 @@ export default function LoginPage() {
           >
             {isLoading ? 'Logging in...' : 'Log In'}
           </Button>
-          
+
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-            <Link component={RouterLink} to="/forgot-password" variant="body2" underline="hover">
+            <Link
+              component={RouterLink}
+              to="/forgot-password"
+              variant="body2"
+              underline="hover"
+            >
               Forgot password?
             </Link>
-            <Link component={RouterLink} to="/register" variant="body2" underline="hover">
+            <Link
+              component={RouterLink}
+              to="/register"
+              variant="body2"
+              underline="hover"
+            >
               Don't have an account? Sign Up
             </Link>
           </Box>

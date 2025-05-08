@@ -7,7 +7,14 @@ import CenteredLoader from '../components/layout/CenterLoader';
 
 export default function RootLayout() {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', minWidth: '100vw' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        minWidth: '100vw',
+      }}
+    >
       <Header />
 
       <Box component="main" sx={{ flexGrow: 0, py: 3 }}>
