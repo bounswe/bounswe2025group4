@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { Router } from './app/router';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider } from './providers/AuthProvider';
 import { AppThemeProvider } from './providers/ThemeProvider';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
