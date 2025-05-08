@@ -1,21 +1,12 @@
 import * as React from 'react';
-import { AppBar, Toolbar, Button, Box, Container } from '@mui/material';
+import { AppBar, Toolbar, Button, Box, Container, IconButton } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import { ThemeToggle } from '../common/ThemeToggle';
-// Placeholder for AuthContext/Store to determine auth status
-// import { useAuth } from '../../context/AuthContext';
-
-// Placeholder type for user - replace with actual type from auth context
-interface UserPlaceholder {
-  username?: string;
-}
+import { useAuth } from '../../hooks/useAuth';
 
 const Header: React.FC = () => {
-  // const { isAuthenticated, user } = useAuth(); // Example usage
-
-  // Placeholder logic - replace with actual auth state from context/store
-  const isAuthenticated = false;
-  const user: UserPlaceholder | null = null; // Use the placeholder type
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <AppBar position="static">
@@ -38,21 +29,22 @@ const Header: React.FC = () => {
             {/* TODO: Add Employer Dashboard link if user is an employer */}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
             {isAuthenticated ? (
               <>
-                {/* TODO: Replace with actual username and link */}
-                <Button
-                  color="inherit"
+                <IconButton
                   component={RouterLink}
-                  to={`/u/${user?.username ?? 'profile'}`}
+                  to="/profile"
+                  color="inherit"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
                 >
-                  Profile
-                </Button>
-                {/* TODO: Implement Logout functionality */}
+                  <AccountCircle />
+                </IconButton>
                 <Button
                   color="inherit"
-                  onClick={() => console.log('Logout clicked')}
+                  onClick={logout}
                 >
                   Logout
                 </Button>
@@ -67,9 +59,7 @@ const Header: React.FC = () => {
                 </Button>
               </>
             )}
-            {
-              <ThemeToggle />
-            }
+            <ThemeToggle />
           </Box>
         </Toolbar>
       </Container>
