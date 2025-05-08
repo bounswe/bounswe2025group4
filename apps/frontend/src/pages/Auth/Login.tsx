@@ -19,7 +19,8 @@ import {
   Lock,
   Login
 } from '@mui/icons-material'
-import { useLogin } from '../services/auth.service';
+import { useLogin } from '../../services/auth.service';
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -149,10 +150,10 @@ export default function LoginPage() {
           </Button>
           
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-            <Link href="#" variant="body2" underline="hover">
+            <Link component={RouterLink} to="/forgot-password" variant="body2" underline="hover">
               Forgot password?
             </Link>
-            <Link href="/register" variant="body2" underline="hover">
+            <Link component={RouterLink} to="/register" variant="body2" underline="hover">
               Don't have an account? Sign Up
             </Link>
           </Box>

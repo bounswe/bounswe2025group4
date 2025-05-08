@@ -4,12 +4,15 @@ import {
   redirect,
 } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import CenteredLoader from '../components/layout/CenterLoader';   
+import CenteredLoader from '../components/layout/CenterLoader';  
+import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
+import ResetPasswordPage from '../pages/Auth/ResetPassword';
+
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('../pages/Home'));
 const JobsPage = lazy(() => import('../pages/Jobs'));
-const LoginPage = lazy(() => import('../pages/Login'));
-const RegisterPage = lazy(() => import('../pages/Register'));
+const LoginPage = lazy(() => import('../pages/Auth/Login'));
+const RegisterPage = lazy(() => import('../pages/Auth/Register'));
 
 // Root layout with navigation and common elements
 const RootLayout = lazy(() => import('../layouts/Root'));
@@ -66,7 +69,8 @@ const router = createBrowserRouter([
         element: <LoginPage />,
         // Redirect if user is already logged in
         loader: async () => {
-          const isLoggedIn = false; // This will be replaced with actual auth check
+          const authTokens = localStorage.getItem('auth_tokens');
+          const isLoggedIn = !!authTokens; // Check if authTokens exist
           if (isLoggedIn) {
             return redirect('/');
           }
@@ -77,6 +81,28 @@ const router = createBrowserRouter([
         path: 'register',
         element: <RegisterPage />,
       },
+      {
+        path: 'forgot-password',
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPasswordPage />,
+      },
+      {
+        path: 'profile', // New Profile Route
+        element: <div>User Profile Page (Placeholder)</div>, // Placeholder element
+        // Optional: Add a loader if profile page needs data
+        // loader: async () => {
+        //   // Check auth status, redirect if not logged in
+        //   const authTokens = localStorage.getItem('auth_tokens');
+        //   if (!authTokens) {
+        //     return redirect('/login');
+        //   }
+        //   // Fetch user profile data
+        //   return { user: { name: "User Name" } };
+        // },
+      }
     ],
   },
 ]);
