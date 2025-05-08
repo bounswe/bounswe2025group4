@@ -7,9 +7,8 @@ export default function CenteredLoader() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%', // use parent height, not 100vh
-        width: '100%',
-        minHeight: '300px'
+        height: '100%',
+        width: '100vw',
       }}
     >
       <CircularProgress />
