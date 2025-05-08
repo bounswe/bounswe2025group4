@@ -1,47 +1,205 @@
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { 
+  Box, 
+  Button, 
+  TextField, 
+  Typography, 
+  Paper, 
+  Container, 
+  // Divider, 
+  IconButton, 
+  InputAdornment,
+  Link
+} from '@mui/material';
+import {
+  Visibility,
+  VisibilityOff,
+  // Mail,
+  Person,
+  Lock,
+  Login
+} from '@mui/icons-material'
+import { useLogin } from '../services/auth.service';
 
 export default function LoginPage() {
-  const { login, error, isLoading } = useAuth();
-  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const loginMutation = useLogin();
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+    
+    // API call
     try {
-      await login({ username , password });
-      navigate('/');
-    } catch (err) {
-      // Error is handled by AuthContext
-      console.error('Login error:', err);
+      await loginMutation.mutateAsync(
+        { username, password },
+        {
+          onError: (error) => {
+            console.error(error);
+          },
+          onSuccess: () => {
+            // tanstack query cached
+            window.location.href = '/';
+          }
+        }
+      );
+    } catch (error) {
+      console.error(error);
     }
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      {error && <div style={{ color: 'red' }}>{error.message}</div>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-        />
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Loading...' : 'Login'}
-        </button>
-      </form>
-    </div>
+    <Container maxWidth="sm" sx={{ mt: 8, mb: 8 }}>
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 4, 
+          display: 'flex', 
+          flexDirection: 'column',
+          borderRadius: 2,
+          border: '1px solid rgba(0, 0, 0, 0.12)'
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+          <Typography variant="h4" component="h1" fontWeight="bold" color="primary">
+            Log In
+          </Typography>
+        </Box>
+
+        <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="username"
+            label="Username"
+            name="username"
+            autoComplete="username"
+            autoFocus
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            sx={{ mb: 2 }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Person sx={{ fontSize: 20 }} />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            id="password"
+            autoComplete="current-password"
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Lock sx={{ fontSize: 20 }} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleTogglePasswordVisibility}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff sx={{ fontSize: 20 }} /> : <Visibility sx={{ fontSize: 20 }} />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+            sx={{ mb: 3 }}
+          />
+
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ 
+              mt: 1, 
+              mb: 3, 
+              py: 1.5,
+              backgroundColor: '#1976d2', // Match navbar color
+            }}
+            disabled={isLoading}
+            startIcon={<Login sx={{ fontSize: 20 }} />}
+          >
+            {isLoading ? 'Logging in...' : 'Log In'}
+          </Button>
+          
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+            <Link href="#" variant="body2" underline="hover">
+              Forgot password?
+            </Link>
+            <Link href="/register" variant="body2" underline="hover">
+              Don't have an account? Sign Up
+            </Link>
+          </Box>
+        </Box>
+
+        {/* Other login options */}
+        {/* <Divider sx={{ my: 3 }}>
+          <Typography variant="body2" color="text.secondary">
+            OR
+          </Typography>
+        </Divider>
+
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center' }}>
+          <Button
+            variant="outlined"
+            startIcon={<Mail sx={{ fontSize: 20 }} />}
+            sx={{ 
+              flex: 1,
+              py: 1
+            }}
+          >
+            Sign in with Google
+          </Button>
+          
+          <Button
+            variant="outlined"
+            startIcon={<Mail sx={{ fontSize: 20 }} />}
+            sx={{ 
+              flex: 1,
+              py: 1
+            }}
+          >
+            Sign in with GitHub
+          </Button>
+          
+          <Button
+            variant="outlined"
+            startIcon={<Mail sx={{ fontSize: 20 }} />}
+            sx={{ 
+              flex: 1,
+              py: 1
+            }}
+          >
+            Sign in with LinkedIn
+          </Button>
+        </Box> */}
+      </Paper>
+    </Container>
   );
 }
