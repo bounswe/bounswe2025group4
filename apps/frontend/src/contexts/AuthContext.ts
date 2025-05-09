@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 export interface AuthContextType {
   token: string | null;
-  setToken: (token: string | null) => void;
+  id: string | null;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(

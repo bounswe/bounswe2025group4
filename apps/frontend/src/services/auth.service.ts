@@ -17,8 +17,9 @@ class AuthService {
       '/auth/login',
       credentials
     );
-    if (response.data && response.data.token) {
+    if (response.data && response.data.token && response.data.id) {
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('id', response.data.id.toString());
     }
     return response.data;
   }
@@ -28,9 +29,6 @@ class AuthService {
       '/auth/register',
       credentials
     );
-    if (response.data && response.data.token) {
-      localStorage.setItem('token', response.data.token);
-    }
     return response.data;
   }
 
@@ -40,11 +38,15 @@ class AuthService {
 
   async getCurrentUser(): Promise<User | null> {
     const token = localStorage.getItem('token');
+    const id = localStorage.getItem('id');
     if (token) {
       try {
-        const response = await apiClient.get<User>('/auth/me', {
+        const response = await apiClient.get<User>(`/users`, {
           headers: {
             Authorization: `Bearer ${token}`,
+          },
+          params: {
+            id: id,
           },
         });
         return response.data;
