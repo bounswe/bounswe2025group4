@@ -3,8 +3,11 @@ import 'package:http/http.dart' as http;
 
 import '../models/job_post.dart';
 import '../models/job_application.dart';
+import '../models/discussion_thread.dart';
+import '../models/comment.dart';
 import '../providers/auth_provider.dart'; // Import AuthProvider
 import '../constants/app_constants.dart'; // Import AppConstants
+
 
 const List<String> _availableEthicalPolicies = [
   'fair_wage',
@@ -27,8 +30,8 @@ class ApiService {
 
   // Constructor requiring AuthProvider for token access
   ApiService({required AuthProvider authProvider, http.Client? client})
-    : _authProvider = authProvider,
-      _client = client ?? http.Client();
+      : _authProvider = authProvider,
+        _client = client ?? http.Client();
 
   // --- Available Filters (Consider fetching from API) ---
   List<String> get availableEthicalPolicies => _availableEthicalPolicies;
@@ -54,7 +57,7 @@ class ApiService {
   Uri _buildUri(String path, [Map<String, dynamic>? queryParams]) {
     // Filter out null values from queryParams
     final nonNullParams =
-        queryParams?..removeWhere((key, value) => value == null);
+    queryParams?..removeWhere((key, value) => value == null);
     // Convert all query param values to String or List<String>
     final stringParams = nonNullParams?.map((key, value) {
       if (value is List) {
@@ -87,8 +90,8 @@ class ApiService {
         final errorBody = jsonDecode(utf8.decode(response.bodyBytes));
         errorMessage =
             errorBody['message'] ??
-            errorBody['error'] ??
-            'Unknown API Error (${response.statusCode})';
+                errorBody['error'] ??
+                'Unknown API Error (${response.statusCode})';
       } catch (_) {
         // If parsing fails, use the reason phrase or a generic message
         errorMessage = response.reasonPhrase ?? errorMessage;
@@ -353,12 +356,12 @@ class ApiService {
   /// PUT /api/applications/{applicationId} (Assumed Endpoint) -> Confirmed
   /// Updates the status of a job application.
   Future<JobApplication> updateApplicationStatus(
-    String applicationId,
-    ApplicationStatus newStatus, {
-    required String jobPostingId,
-    required String jobSeekerId,
-    String? feedback,
-  }) async {
+      String applicationId,
+      ApplicationStatus newStatus, {
+        required String jobPostingId,
+        required String jobSeekerId,
+        String? feedback,
+      }) async {
     print(
       'API: Updating application $applicationId for job $jobPostingId by seeker $jobSeekerId to $newStatus (Feedback: $feedback)',
     );
@@ -406,6 +409,149 @@ class ApiService {
       throw Exception('Failed to delete application. $e');
     }
   }
+
+  // ─────────────────────────────────────────────────
+  // Forum / Discussion Endpoints (Updated via Swagger)
+  // ─────────────────────────────────────────────────
+  /// GET /api/threads
+  Future<List<DiscussionThread>> fetchDiscussionThreads() async {
+    final uri = _buildUri('/threads');
+    print('API Request: GET $uri');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+
+      return (data as List)
+          .map((e) => DiscussionThread.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print("API Error fetching discussion threads: $e");
+      throw Exception('Failed to fetch discussion threads. $e');
+    }
+  }
+
+  /// POST /api/threads
+  Future<DiscussionThread> createDiscussionThread(
+      String title,
+      String body,
+      List<String> tags,
+      ) async {
+    final uri = _buildUri('/threads');
+    final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
+    final response = await _client.post(
+      uri,
+      headers: _getHeaders(),
+      body: payload,
+    );
+    final data = await _handleResponse(response);
+    return DiscussionThread.fromJson(data);
+  }
+
+  /// GET /api/threads/{threadId}/comments
+  Future<List<Comment>> fetchComments(int threadId) async {
+    final uri = _buildUri('/threads/$threadId/comments');
+    final response = await _client.get(uri, headers: _getHeaders());
+    final data = await _handleResponse(response);
+    return (data as List)
+        .map((e) => Comment.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// POST /api/threads/{threadId}/comments
+  Future<Comment> postComment(int threadId, String body) async {
+    final uri = _buildUri('/threads/$threadId/comments');
+    final payload = jsonEncode({'body': body});
+    final response = await _client.post(
+      uri,
+      headers: _getHeaders(),
+      body: payload,
+    );
+    final data = await _handleResponse(response);
+    return Comment.fromJson(data);
+  }
+
+  /// PATCH /api/comments/{commentId}
+  Future<Comment> editComment(int commentId, String body) async {
+    final uri = _buildUri('/comments/$commentId');
+    final payload = jsonEncode({'body': body});
+    final response = await _client.patch(
+      uri,
+      headers: _getHeaders(),
+      body: payload,
+    );
+    final data = await _handleResponse(response);
+    return Comment.fromJson(data);
+  }
+
+
+
+
+  /// PATCH /api/threads/{threadId}
+  Future<DiscussionThread> editDiscussion(
+      int threadId,
+      String title,
+      String body,
+      List<String> tags,
+      ) async {
+    final uri = _buildUri('/threads/$threadId');
+    final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
+    final response = await _client.patch(
+      uri,
+      headers: _getHeaders(),
+      body: payload,
+    );
+    final data = await _handleResponse(response);
+    return DiscussionThread.fromJson(data);
+  }
+  /// GET /api/threads/tags
+  Future<List<String>> fetchDiscussionTags() async {
+    final uri = _buildUri('/threads/tags');
+    final response = await _client.get(uri, headers: _getHeaders());
+    final data = await _handleResponse(response);
+    return List<String>.from(data);
+  }
+
+
+
+
+  /// DELETE /api/comments/{commentId}
+  Future<bool> deleteComment(int commentId) async {
+    final uri = _buildUri('/comments/$commentId');
+    print('API Request: DELETE $uri');
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+      print('Comment $commentId deleted successfully');
+      return true;
+    } catch (e) {
+      print('Failed to delete comment $commentId: $e');
+      return false;
+    }
+  }
+
+
+  /// POST /api/comments/{commentId}/report
+  Future<void> reportComment(int commentId) async {
+    final uri = _buildUri('/comments/$commentId/report');
+    final response = await _client.post(uri, headers: _getHeaders());
+    await _handleResponse(response);
+  }
+
+  /// DELETE /api/threads/{threadId}
+  Future<void> deleteDiscussion(int threadId) async {
+    final uri = _buildUri('/threads/$threadId');
+    final response = await _client.delete(uri, headers: _getHeaders());
+    await _handleResponse(response);
+  }
+
+  /// POST /api/threads/{threadId}/report
+  Future<void> reportDiscussion(int threadId) async {
+    final uri = _buildUri('/threads/$threadId/report');
+    final response = await _client.post(uri, headers: _getHeaders());
+    await _handleResponse(response);
+  }
+
 
   void dispose() {
     _client.close();
