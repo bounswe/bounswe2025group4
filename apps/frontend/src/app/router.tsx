@@ -20,7 +20,6 @@ const RegisterPage = lazy(() => import('../pages/Auth/Register'));
 const JobListPage = lazy(() => import('../pages/JobList'));
 const JobDetailPage = lazy(() => import('../pages/JobDetail'));
 import { jobDetailLoader, applyAction } from '../pages/JobDetail';
-// Assuming JobList doesn't need a specific loader anymore as data is fetched client-side with TanStack Query
 
 // Root layout with navigation and common elements
 const RootLayout = lazy(() => import('../layouts/Root'));

@@ -8,11 +8,10 @@ import {
   Typography,
   Alert,
 } from '@mui/material';
-import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 
-import { fetchJobs } from '../api/jobs';
-import { JobFilters } from '../types/job';
+import { useGetJobs } from '../services/jobs.service';
+import { Job, JobFilters } from '../types/job';
 import JobFilterSidebar from '../components/jobs/JobFilterSidebar';
 import JobCard from '../components/jobs/JobCard';
 import JobListSkeleton from '../components/jobs/JobListSkeleton';
@@ -37,7 +36,7 @@ const parseFiltersFromParams = (searchParams: URLSearchParams): JobFilters => {
 };
 
 // Function to update search params from filters
-const updateSearchParams = (filters: JobFilters, setSearchParams: Function) => {
+const updateSearchParams = (filters: JobFilters, setSearchParams: (params: URLSearchParams, options?: { replace: boolean }) => void) => {
   const params = new URLSearchParams();
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
@@ -66,17 +65,7 @@ const JobListPage: React.FC = () => {
   // Debounce filters that trigger frequent re-fetches (like text input)
   const debouncedFilters = useDebounce(localFilters, 500);
 
-  const queryKey = useMemo(
-    () => ['jobs', debouncedFilters],
-    [debouncedFilters]
-  );
-
-  const { data, isLoading, isError, error, isFetching } = useQuery({
-    queryKey,
-    queryFn: () => fetchJobs(debouncedFilters),
-    placeholderData: (previousData) => previousData, // Keep showing old data while fetching new
-    // staleTime: 5 * 60 * 1000, // 5 minutes, adjust as needed
-  });
+  const { data, isLoading, isError, error, isFetching } = useGetJobs(debouncedFilters);
 
   const jobs = data?.jobs ?? [];
   const totalCount = data?.totalCount ?? 0;
@@ -163,7 +152,7 @@ const JobListPage: React.FC = () => {
                   transition: 'opacity 300ms',
                 }}
               >
-                {jobs.map((job) => (
+                {jobs.map((job: Job) => (
                   <JobCard key={job.id} job={job} />
                 ))}
               </Box>
