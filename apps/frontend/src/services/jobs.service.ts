@@ -34,17 +34,23 @@ export interface JobFilters {
   limit?: number;
 }
 
+export interface PaginatedJobsResponse {
+  jobs: Job[];
+  totalCount: number;
+  // Add other pagination fields like currentPage, totalPages if available from API
+}
+
 const JOB_KEYS = {
   all: ['jobs'] as const,
   lists: () => [...JOB_KEYS.all, 'list'] as const,
-  list: (filters: string) => [...JOB_KEYS.lists(), { filters }] as const,
+  list: (filters: JobFilters) => [...JOB_KEYS.lists(), filters] as const,
   details: () => [...JOB_KEYS.all, 'detail'] as const,
   detail: (id: string) => [...JOB_KEYS.details(), id] as const,
 };
 
 class JobsService {
-  async getAllJobs(filters: JobFilters): Promise<Job[]> {
-    const response = await apiClient.get<Job[]>('/jobs', { params: filters });
+  async getAllJobs(filters: JobFilters): Promise<PaginatedJobsResponse> {
+    const response = await apiClient.get<PaginatedJobsResponse>('/jobs', { params: filters });
     return response.data;
   }
 
@@ -71,13 +77,10 @@ class JobsService {
 export const jobsService = new JobsService();
 
 // ----- React Query Hooks -----
-export const useGetJobs = () =>
-  useQuery<Job[], Error>({
-    queryKey: JOB_KEYS.list('all'),
-    queryFn: async ({ queryKey }) => {
-      const filters = queryKey[1] as JobFilters; // Extract filters from queryKey
-      return jobsService.getAllJobs(filters);
-    },
+export const useGetJobs = (filters: JobFilters) =>
+  useQuery<PaginatedJobsResponse, Error, PaginatedJobsResponse, readonly [string, string, JobFilters]>({
+    queryKey: JOB_KEYS.list(filters),
+    queryFn: () => jobsService.getAllJobs(filters),
   });
 
 export const useCreateJob = () => {

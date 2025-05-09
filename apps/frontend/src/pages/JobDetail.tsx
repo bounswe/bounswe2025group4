@@ -12,13 +12,12 @@ import {
   Link as MuiLink,
   Button,
 } from '@mui/material';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   useParams,
   Link as RouterLink,
   useLoaderData,
   ActionFunctionArgs,
-  redirect,
   LoaderFunctionArgs,
 } from 'react-router-dom';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -26,7 +25,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import { fetchJobById, submitApplication } from '../api/jobs';
+import { jobsService } from '../services/jobs.service';
+import ApplicationsService from '../services/applications.service';
 import { Job, ApplicationData, JobFilters } from '../types/job';
 import ApplyForm from '../components/jobs/ApplyForm';
 // import useNotificationStore from '../stores/notificationStore'; // For showing success/error toasts
@@ -44,22 +44,30 @@ export const jobDetailLoader = async ({
   if (!jobId) {
     throw new Response('Not Found', { status: 404 });
   }
-  // We return the queryKey so the component can easily use it
   const queryKey = ['job', jobId];
-  // Try to fetch, return null if not found (component will handle display)
   try {
-    const job = await fetchJobById(jobId);
+    const job = await jobsService.getJobById(jobId);
     return { job, queryKey };
   } catch (error) {
     console.error('Error loading job:', error);
-    // Optionally check error type/status code
-    // throw new Response("Not Found", { status: 404 }); // Or let component handle null
     return { job: null, queryKey };
   }
 };
 
 // --- React Router Action ---
 // Handles form submission for job application
+
+// Helper function to call the application service
+async function submitApplicationToService(jobId: string, applicationData: ApplicationData) {
+  if (!applicationData.resumeFile) {
+    // Handle case where resume is required but not provided, or use a different method signature
+    throw new Error('Resume file is required.');
+  }
+  // Assuming applications.service.ts has a method like submitApplication(jobId: string, resumeFile: File, coverLetter?: string)
+  // Adjust this call based on the actual method signature in ApplicationsService
+  return ApplicationsService.submitApplication(jobId, applicationData.resumeFile);
+}
+
 export const applyAction = async ({ request, params }: ActionFunctionArgs) => {
   const jobId = params.id;
   if (!jobId) {
@@ -90,7 +98,8 @@ export const applyAction = async ({ request, params }: ActionFunctionArgs) => {
     // await submitApplication(jobId, formData);
 
     // If using JSON (ensure API handles file upload separately or via URL):
-    await submitApplication(jobId, applicationData);
+    // await submitApplication(jobId, applicationData); // Old placeholder
+    await submitApplicationToService(jobId, applicationData); // Use the new service call
 
     // Invalidate relevant queries? Maybe user applications query?
     // queryClient.invalidateQueries(['userApplications']);
@@ -120,10 +129,10 @@ const JobDetailPage: React.FC = () => {
     isError,
     error,
   } = useQuery<Job | null>({
-    queryKey: initialData.queryKey,
-    queryFn: () => fetchJobById(jobId!), // queryFn only runs if data is missing/stale
+    queryKey: initialData.queryKey as string[],
+    queryFn: () => jobsService.getJobById(jobId!),
     initialData: initialData.job,
-    enabled: !!jobId, // Only run if jobId exists
+    enabled: !!jobId,
     // staleTime: 10 * 60 * 1000, // 10 minutes
   });
 

@@ -1,5 +1,5 @@
 // Page component for displaying the list of jobs
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Box,
   Container,
@@ -62,7 +62,6 @@ const JobListPage: React.FC = () => {
     };
   });
 
-  // Debounce filters that trigger frequent re-fetches (like text input)
   const debouncedFilters = useDebounce(localFilters, 500);
 
   const { data, isLoading, isError, error, isFetching } = useGetJobs(debouncedFilters);
