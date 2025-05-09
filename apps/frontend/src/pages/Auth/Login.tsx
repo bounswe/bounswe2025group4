@@ -6,7 +6,6 @@ import {
   Typography,
   Paper,
   Container,
-  // Divider,
   IconButton,
   InputAdornment,
   Link,
@@ -14,7 +13,6 @@ import {
 import {
   Visibility,
   VisibilityOff,
-  // Mail,
   Person,
   Lock,
   Login,
@@ -177,48 +175,6 @@ export default function LoginPage() {
             </Link>
           </Box>
         </Box>
-
-        {/* Other login options */}
-        {/* <Divider sx={{ my: 3 }}>
-          <Typography variant="body2" color="text.secondary">
-            OR
-          </Typography>
-        </Divider>
-
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, justifyContent: 'center' }}>
-          <Button
-            variant="outlined"
-            startIcon={<Mail sx={{ fontSize: 20 }} />}
-            sx={{ 
-              flex: 1,
-              py: 1
-            }}
-          >
-            Sign in with Google
-          </Button>
-          
-          <Button
-            variant="outlined"
-            startIcon={<Mail sx={{ fontSize: 20 }} />}
-            sx={{ 
-              flex: 1,
-              py: 1
-            }}
-          >
-            Sign in with GitHub
-          </Button>
-          
-          <Button
-            variant="outlined"
-            startIcon={<Mail sx={{ fontSize: 20 }} />}
-            sx={{ 
-              flex: 1,
-              py: 1
-            }}
-          >
-            Sign in with LinkedIn
-          </Button>
-        </Box> */}
       </Paper>
     </Container>
   );
