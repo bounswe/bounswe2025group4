@@ -20,6 +20,8 @@ const RegisterPage = lazy(() => import('../pages/Auth/Register'));
 const JobListPage = lazy(() => import('../pages/JobList'));
 const JobDetailPage = lazy(() => import('../pages/JobDetail'));
 import { jobDetailLoader, applyAction } from '../pages/JobDetail';
+// Add JobDashboard
+const JobDashboardPage = lazy(() => import('../pages/dashboard/JobDashboard'));
 
 // Root layout with navigation and common elements
 const RootLayout = lazy(() => import('../layouts/Root'));
@@ -125,6 +127,13 @@ const router = createBrowserRouter([
         //   // Fetch user profile data
         //   return { user: { name: "User Name" } };
         // },
+      },
+      // Add employer dashboard route
+      {
+        path: 'dashboard/jobs',
+        element: <JobDashboardPage />,
+        // In a real app, this would have an auth check loader
+        // to redirect non-employers or unauthenticated users
       },
     ],
   },
