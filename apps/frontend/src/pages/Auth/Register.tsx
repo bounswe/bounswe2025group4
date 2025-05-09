@@ -362,7 +362,7 @@ export default function RegisterPage() {
       description: string;
     }[],
     selected: string | null,
-    onSelect: (val: string) => void,
+    onSelect: (val: string) => void
   ) => (
     <Box p={4}>
       <Typography variant="h6">{title}</Typography>
@@ -515,7 +515,7 @@ export default function RegisterPage() {
             'Are you offering or seeking job opportunities?',
             userTypeOptions,
             selectedUserType,
-            (val: string) => handleUserTypeSelect(val as UserType),
+            (val: string) => handleUserTypeSelect(val as UserType)
           )}
         {currentStep === 'mentorship' &&
           renderSelection(
@@ -523,7 +523,7 @@ export default function RegisterPage() {
             'Are you seeking guidance or offering help?',
             mentorshipRoleOptions,
             selectedMentorshipRole,
-            (val: string) => handleMentorshipRoleSelect(val as MentorshipRole),
+            (val: string) => handleMentorshipRoleSelect(val as MentorshipRole)
           )}
       </Paper>
     </Container>
