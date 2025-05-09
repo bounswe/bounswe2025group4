@@ -17,6 +17,7 @@ import {
   Fade,
 } from '@mui/material';
 import { ArrowForward, Email, CheckCircleOutline } from '@mui/icons-material';
+import { Link as RouterLink } from 'react-router-dom';
 
 // Email submission schema
 const emailSchema = z.object({
@@ -169,7 +170,7 @@ export default function ForgotPasswordPage() {
 
               <Box sx={{ mt: 3, textAlign: 'center' }}>
                 <Typography variant="body2">
-                  Remember your password? <Link href="/login">Sign in</Link>
+                  Remember your password? <Link component={RouterLink} to="/login">Sign in</Link>
                 </Typography>
               </Box>
             </Box>
