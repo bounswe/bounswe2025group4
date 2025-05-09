@@ -1,7 +1,5 @@
 package org.bounswe.backend.profile.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.List;
@@ -11,24 +9,12 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CreateProfileRequestDto {
-
-    @NotNull(message = "User ID is required")
-    private Long userId;
-
     private String fullName;
-
     private String phone;
-
     private String location;
-
     private String occupation;
-
-    @Size(max = 1000, message = "Bio must be at most 1000 characters")
     private String bio;
-
     private String profilePicture;
-
     private List<String> skills;
-
     private List<String> interests;
 }
