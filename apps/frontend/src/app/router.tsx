@@ -1,7 +1,7 @@
 import {
   createBrowserRouter,
   RouterProvider,
-  redirect,
+  // redirect,
 } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import CenteredLoader from '../components/layout/CenterLoader';  
@@ -69,11 +69,11 @@ const router = createBrowserRouter([
         element: <LoginPage />,
         // Redirect if user is already logged in
         loader: async () => {
-          const authTokens = localStorage.getItem('auth_tokens');
-          const isLoggedIn = !!authTokens; // Check if authTokens exist
-          if (isLoggedIn) {
-            return redirect('/');
-          }
+          // const authTokens = localStorage.getItem('auth_tokens');
+          // const isLoggedIn = !!authTokens; // Check if authTokens exist
+          // if (isLoggedIn) {
+          //   return redirect('/');
+          // }
           return null;
         },
       },
