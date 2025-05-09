@@ -4,7 +4,7 @@ import {
   redirect,
 } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-
+import CenteredLoader from '../components/layout/CenterLoader';   
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('../pages/Home'));
 const JobsPage = lazy(() => import('../pages/Jobs'));
@@ -99,7 +99,7 @@ const router = createBrowserRouter([
  */
 export function Router() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<CenteredLoader />}>
       <RouterProvider router={router} />
     </Suspense>
   );
