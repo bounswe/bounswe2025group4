@@ -1,12 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { apiClient } from './api';
-import { ApiResponse } from '../types/api';
 import {
   LoginCredentials,
   RegisterCredentials,
   AuthResponse,
-  User,
 } from '../types/auth';
+import { User } from '../types/user';
 
 const AUTH_KEYS = {
   user: ['auth', 'user'] as const,
@@ -18,10 +17,10 @@ class AuthService {
       '/auth/login',
       credentials
     );
-    // Assuming response.data.token is { accessToken: string, refreshToken: string }
     if (response.data && response.data.token) {
-      localStorage.setItem('auth_tokens', JSON.stringify(response.data.token));
+      localStorage.setItem('token', response.data.token);
     }
+    console.log(response);
     return response.data;
   }
 
@@ -30,29 +29,33 @@ class AuthService {
       '/auth/register',
       credentials
     );
-    // Assuming response.data.token is { accessToken: string, refreshToken: string }
     if (response.data && response.data.token) {
-      localStorage.setItem('auth_tokens', JSON.stringify(response.data.token));
+      localStorage.setItem('token', response.data.token);
     }
     return response.data;
   }
 
-  // async refreshToken(): Promise<RefreshTokenResponse> {
-  //   const token = localStorage.getItem('refreshToken');
-  //   if (!token) {
-  //     throw new Error('Refresh token not found');
-  //   }
-  //   const response = await apiClient.post<
-  //     ApiResponse<RefreshTokenResponse>
-  //   >('/auth/refresh', { refreshToken: token });
-  //   const { token } = response.data.data.token;
-  //   localStorage.setItem('token', token);
-  //   return response.data.data;
-  // }
-
   async logout(): Promise<void> {
-    await apiClient.post<ApiResponse<void>>('/auth/logout', {});
-    localStorage.removeItem('auth_tokens');
+    localStorage.removeItem('token');
+  }
+
+  async getCurrentUser(): Promise<User | null> {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const response = await apiClient.get<User>('/auth/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } catch (e) {
+        console.error('Failed to parse token or mock user:', e);
+        localStorage.removeItem('token');
+        return null;
+      }
+    }
+    return null;
   }
 }
 
@@ -60,22 +63,19 @@ export const authService = new AuthService();
 
 // ----- React Query Hooks -----
 
-export const useCurrentUser = () =>
-  useQuery<User>({
+export const useCurrentUser = () => {
+  return useQuery<User | null, Error>({
     queryKey: AUTH_KEYS.user,
-    queryFn: async () => {
-      const response = await apiClient.get<User>('/auth/me');
-      return response.data;
-    },
-    retry: false,
+    queryFn: () => authService.getCurrentUser(),
   });
+};
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
   return useMutation<AuthResponse, Error, LoginCredentials>({
     mutationFn: (creds: LoginCredentials) => authService.login(creds),
-    onSuccess: (data) => {
-      queryClient.setQueryData(AUTH_KEYS.user, data.id);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: AUTH_KEYS.user });
     },
   });
 };
@@ -84,23 +84,18 @@ export const useRegister = () => {
   const queryClient = useQueryClient();
   return useMutation<AuthResponse, Error, RegisterCredentials>({
     mutationFn: (creds: RegisterCredentials) => authService.register(creds),
-    onSuccess: (data) => {
-      queryClient.setQueryData(AUTH_KEYS.user, data.id);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: AUTH_KEYS.user });
     },
   });
 };
 
-// export const useRefreshToken = () =>
-//   useMutation<RefreshTokenResponse, Error>({
-//     mutationFn: () => authService.refreshToken()
-//   });
-
 export const useLogout = () => {
   const queryClient = useQueryClient();
-  return useMutation<void, Error>({
+  return useMutation<void, Error, void>({
     mutationFn: () => authService.logout(),
     onSuccess: () => {
-      queryClient.clear();
+      queryClient.setQueryData(AUTH_KEYS.user, null);
     },
   });
 };
