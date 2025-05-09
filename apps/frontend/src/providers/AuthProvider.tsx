@@ -23,6 +23,8 @@ function AuthProvider({ children }: AuthProviderProps) {
     () => ({
       token,
       id,
+      setToken,
+      setId,
     }),
     [token, id]
   );

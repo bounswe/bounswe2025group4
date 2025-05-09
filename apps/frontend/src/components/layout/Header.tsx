@@ -14,7 +14,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { Logout } from '@mui/icons-material';
 
 const Header: React.FC = () => {
-  const { token, setToken } = useAuth();
+  const { token, id, setToken } = useAuth();
 
   return (
     <AppBar position="static">
@@ -42,7 +42,7 @@ const Header: React.FC = () => {
               <>
                 <IconButton
                   component={RouterLink}
-                  to="/profile"
+                  to={`/user/${id}`}
                   color="inherit"
                   aria-label="account of current user"
                   aria-controls="menu-appbar"
