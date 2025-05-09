@@ -1,22 +1,8 @@
-import React, {
-  createContext,
-  useState,
-  useMemo,
-  useContext,
-  type ReactNode,
-} from 'react';
+import React, { useState, useMemo, type ReactNode } from 'react';
 import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
 import { lightTheme } from '../styles/themes/light';
 import { darkTheme } from '../styles/themes/dark';
-
-type ThemeMode = 'light' | 'dark';
-
-interface ThemeContextType {
-  mode: ThemeMode;
-  toggleTheme: () => void;
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+import { ThemeContext, ThemeMode } from '../contexts/ThemeContext';
 
 interface AppThemeProviderProps {
   children: ReactNode;
@@ -48,13 +34,4 @@ export const AppThemeProvider: React.FC<AppThemeProviderProps> = ({
       </MuiThemeProvider>
     </ThemeContext.Provider>
   );
-};
-
-// Custom hook to use the theme context
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within an AppThemeProvider');
-  }
-  return context;
 };
