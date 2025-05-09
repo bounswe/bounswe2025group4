@@ -67,19 +67,35 @@ const router = createBrowserRouter([
       },
       {
         path: 'login',
-        element: <RedirectIfAuth><LoginPage /></RedirectIfAuth>,
+        element: (
+          <RedirectIfAuth>
+            <LoginPage />
+          </RedirectIfAuth>
+        ),
       },
       {
         path: 'register',
-        element: <RedirectIfAuth><RegisterPage /></RedirectIfAuth>,
+        element: (
+          <RedirectIfAuth>
+            <RegisterPage />
+          </RedirectIfAuth>
+        ),
       },
       {
         path: 'forgot-password',
-        element: <RedirectIfAuth><ForgotPasswordPage /></RedirectIfAuth>,
+        element: (
+          <RedirectIfAuth>
+            <ForgotPasswordPage />
+          </RedirectIfAuth>
+        ),
       },
       {
         path: 'reset-password',
-        element: <RedirectIfAuth><ResetPasswordPage /></RedirectIfAuth>,
+        element: (
+          <RedirectIfAuth>
+            <ResetPasswordPage />
+          </RedirectIfAuth>
+        ),
       },
       {
         path: 'profile', // New Profile Route
