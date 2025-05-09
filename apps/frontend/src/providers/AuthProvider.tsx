@@ -6,24 +6,25 @@ interface AuthProviderProps {
 }
 
 function AuthProvider({ children }: AuthProviderProps) {
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem('token')
-  );
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [id, setId] = useState<string | null>(localStorage.getItem('id'));
 
   useEffect(() => {
-    if (token) {
+    if (token && id) {
       localStorage.setItem('token', token);
+      localStorage.setItem('id', id);
     } else {
       localStorage.removeItem('token');
+      localStorage.removeItem('id');
     }
-  }, [token]);
+  }, [token, id]);
 
   const contextValue = useMemo(
     () => ({
       token,
-      setToken,
+      id,
     }),
-    [token]
+    [token, id]
   );
 
   return (
