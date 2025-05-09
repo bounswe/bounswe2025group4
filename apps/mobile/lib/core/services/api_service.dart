@@ -716,7 +716,7 @@ class ApiService {
   // TODO: Add other API methods as needed (createJobPost, applyToJob, getJobDetails, etc.)
 
   Future<User> fetchUserProfile(String userId) async {
-    // Simüle edilmiş API çağrısı
+    // Simulated API call
     await Future.delayed(const Duration(seconds: 1));
     
     return User(
@@ -726,14 +726,14 @@ class ApiService {
       role: UserRole.student,
       fullName: 'Test User',
       phone: '+90 555 123 4567',
-      location: 'İstanbul, Türkiye',
-      occupation: 'Öğrenci',
-      bio: 'Merhaba! Ben bir öğrenciyim.',
+      location: 'Istanbul, Turkey',
+      occupation: 'Student',
+      bio: 'Hello! I am a student.',
     );
   }
 
   Future<User> updateUserProfile(User user) async {
-    // Simüle edilmiş API çağrısı
+    // Simulated API call
     await Future.delayed(const Duration(seconds: 1));
     
     return user;

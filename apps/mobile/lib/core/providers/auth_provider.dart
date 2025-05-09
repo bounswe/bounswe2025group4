@@ -79,7 +79,7 @@ class AuthProvider with ChangeNotifier {
       await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
       // For now, just reuse the current user
       if (_currentUser == null) {
-        throw Exception('Kullanıcı bulunamadı');
+        throw Exception('User not found');
       }
     } catch (e) {
       _error = e.toString();

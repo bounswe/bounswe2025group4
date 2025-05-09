@@ -19,6 +19,7 @@ class _ProfileEditDialogState extends State<ProfileEditDialog> {
   late final TextEditingController _locationController;
   late final TextEditingController _occupationController;
   late final TextEditingController _bioController;
+  late bool _isMentor;
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _ProfileEditDialogState extends State<ProfileEditDialog> {
     _locationController = TextEditingController(text: widget.user.location);
     _occupationController = TextEditingController(text: widget.user.occupation);
     _bioController = TextEditingController(text: widget.user.bio);
+    _isMentor = widget.user.isMentor;
   }
 
   @override
@@ -59,6 +61,7 @@ class _ProfileEditDialogState extends State<ProfileEditDialog> {
         location: _locationController.text,
         occupation: _occupationController.text,
         bio: _bioController.text,
+        isMentor: _isMentor,
       );
       Navigator.pop(context, updatedUser);
     }
@@ -109,6 +112,13 @@ class _ProfileEditDialogState extends State<ProfileEditDialog> {
                   icon: Icon(Icons.description),
                 ),
                 maxLines: 3,
+              ),
+              const SizedBox(height: 16),
+              SwitchListTile(
+                title: const Text('Mentor'),
+                value: _isMentor,
+                onChanged: (val) => setState(() => _isMentor = val),
+                secondary: const Icon(Icons.school),
               ),
               if (errorText != null) ...[
                 const SizedBox(height: 12),

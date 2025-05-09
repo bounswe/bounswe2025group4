@@ -2,18 +2,100 @@ import 'package:flutter/material.dart';
 import '../../../core/models/user.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/services/image_service.dart';
 import 'profile_edit_dialog.dart';
 
 class ProfileHeader extends StatelessWidget {
   final User user;
+  final ImageService _imageService;
 
-  const ProfileHeader({
+  ProfileHeader({
     super.key,
     required this.user,
-  });
+  }) : _imageService = ImageService();
+
+  Future<void> _pickImage(BuildContext context, bool fromCamera) async {
+    try {
+      final file = await _imageService.pickImage(fromCamera: fromCamera);
+      if (file != null) {
+        // Upload photo
+        final imageUrl = await _imageService.uploadImage(file);
+        if (imageUrl != null) {
+          Provider.of<AuthProvider>(context, listen: false)
+              .updateProfile(user.copyWith(profilePicture: imageUrl));
+        } else {
+          // Inform user in case of error
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Failed to upload image. Please try again.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _removeImage(BuildContext context) async {
+    if (user.profilePicture != null) {
+      // TODO: Delete photo from API
+      Provider.of<AuthProvider>(context, listen: false)
+          .updateProfile(user.copyWith(profilePicture: null));
+    }
+  }
+
+  void _showImagePickerDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Profile Picture'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera),
+              title: const Text('Take Photo'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(context, true);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from Gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(context, false);
+              },
+            ),
+            if (user.profilePicture != null)
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text('Remove Photo', style: TextStyle(color: Colors.red)),
+                onTap: () {
+                  Navigator.pop(context);
+                  _removeImage(context);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 
   void _editProfile(BuildContext context) async {
-    // Profile edit dialogu aç
+    // Open profile edit dialog
     final updatedUser = await showDialog<User>(
       context: context,
       builder: (context) => ProfileEditDialog(user: user),
@@ -37,17 +119,57 @@ class ProfileHeader extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: user.profilePicture != null
-                      ? NetworkImage(user.profilePicture!)
-                      : null,
-                  child: user.profilePicture == null
-                      ? Text(
-                          user.username[0].toUpperCase(),
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        )
-                      : null,
+                GestureDetector(
+                  onTap: () => _showImagePickerDialog(context),
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: user.profilePicture != null
+                            ? NetworkImage(user.profilePicture!)
+                            : null,
+                        child: user.profilePicture == null
+                            ? Text(
+                                user.username[0].toUpperCase(),
+                                style: Theme.of(context).textTheme.headlineMedium,
+                              )
+                            : null,
+                      ),
+                      if (user.isMentor)
+                        Positioned(
+                          left: 0,
+                          bottom: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.school,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.camera_alt,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 20),
                 Expanded(
@@ -57,9 +179,21 @@ class ProfileHeader extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: Text(
-                              user.fullName ?? user.username,
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                            child: Row(
+                              children: [
+                                Text(
+                                  user.fullName ?? user.username,
+                                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                if (user.isMentor) ...[
+                                  const SizedBox(width: 8),
+                                  Chip(
+                                    label: Text('Mentor', style: TextStyle(color: Colors.white)),
+                                    backgroundColor: Colors.green,
+                                    avatar: Icon(Icons.school, color: Colors.white, size: 18),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                           IconButton(

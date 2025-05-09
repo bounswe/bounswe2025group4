@@ -28,7 +28,7 @@ class ProfileTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Rozetler',
+                    'Badges',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
@@ -51,11 +51,11 @@ class ProfileTab extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Forum Gönderileri',
+                          'Forum Posts',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         Text(
-                          '${user.forumPostCount} gönderi',
+                          '${user.forumPostCount} posts',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],

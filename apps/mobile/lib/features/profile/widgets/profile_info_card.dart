@@ -175,6 +175,34 @@ class ProfileInfoCard extends StatelessWidget {
                         ))
                     .toList(),
               ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Text(
+                    'Are you a mentor?',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 10),
+                  user.isMentor
+                      ? Chip(
+                          label: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(Icons.school, color: Colors.green, size: 18),
+                              SizedBox(width: 4),
+                              Text('Yes', style: TextStyle(color: Colors.green)),
+                            ],
+                          ),
+                          backgroundColor: Colors.green.withOpacity(0.1),
+                          shape: StadiumBorder(),
+                        )
+                      : Chip(
+                          label: const Text('No', style: TextStyle(color: Colors.red)),
+                          backgroundColor: Colors.red.withOpacity(0.1),
+                          shape: const StadiumBorder(),
+                        ),
+                ],
+              ),
             ],
           ),
         ),

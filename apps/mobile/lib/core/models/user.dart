@@ -67,6 +67,7 @@ class User {
   final List<Experience> experience;
   final List<UserBadge> badges;
   final int forumPostCount;
+  final bool isMentor;
 
   User({
     required this.id,
@@ -85,6 +86,7 @@ class User {
     this.experience = const [],
     this.badges = const [],
     this.forumPostCount = 0,
+    this.isMentor = false,
   });
 
   User copyWith({
@@ -104,6 +106,7 @@ class User {
     List<Experience>? experience,
     List<UserBadge>? badges,
     int? forumPostCount,
+    bool? isMentor,
   }) {
     return User(
       id: id ?? this.id,
@@ -122,6 +125,7 @@ class User {
       experience: experience ?? this.experience,
       badges: badges ?? this.badges,
       forumPostCount: forumPostCount ?? this.forumPostCount,
+      isMentor: isMentor ?? this.isMentor,
     );
   }
 

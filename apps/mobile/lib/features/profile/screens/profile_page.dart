@@ -5,7 +5,6 @@ import '../widgets/profile_tabs/index.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_info_card.dart';
 import '../widgets/badges_grid.dart';
-import '../widgets/badge_edit_dialog.dart';
 import '../../../core/models/user.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -65,7 +64,6 @@ class ProfilePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Profil başlığı ve sayaçlar
                       ProfileHeader(user: user),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -77,39 +75,10 @@ class ProfilePage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Badges', style: Theme.of(context).textTheme.titleMedium),
-                                    IconButton(
-                                      icon: const Icon(Icons.edit, size: 20),
-                                      onPressed: () async {
-                                        final updatedBadges = await showDialog<List<UserBadge>>(
-                                          context: context,
-                                          builder: (context) => BadgeEditDialog(badges: user.badges),
-                                        );
-                                        if (updatedBadges != null) {
-                                          Provider.of<AuthProvider>(context, listen: false)
-                                            .updateProfile(user.copyWith(badges: updatedBadges));
-                                        }
-                                      },
-                                      tooltip: 'Edit badges',
-                                    ),
-                                  ],
-                                ),
+                                Text('Badges', style: Theme.of(context).textTheme.titleMedium),
                                 const SizedBox(height: 8),
                                 BadgesGrid(
                                   badges: user.badges,
-                                  onEdit: () async {
-                                    final updatedBadges = await showDialog<List<UserBadge>>(
-                                      context: context,
-                                      builder: (context) => BadgeEditDialog(badges: user.badges),
-                                    );
-                                    if (updatedBadges != null) {
-                                      Provider.of<AuthProvider>(context, listen: false)
-                                        .updateProfile(user.copyWith(badges: updatedBadges));
-                                    }
-                                  },
                                 ),
                               ],
                             ),
@@ -117,22 +86,18 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Hakkında, yetenekler, ilgi alanları
                       ProfileInfoCard(user: user),
                       const SizedBox(height: 16),
-                      // Deneyim ve Eğitim
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: ExperienceTab(user: user),
                       ),
                       const SizedBox(height: 16),
-                      // Başvurular
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: ApplicationsTab(user: user),
                       ),
                       const SizedBox(height: 16),
-                      // Aktivite
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: ActivityTab(user: user),
