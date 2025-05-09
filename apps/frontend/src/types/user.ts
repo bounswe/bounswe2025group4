@@ -1,4 +1,11 @@
-// Define user type options
-export type UserType = 'jobSeeker' | 'employer';
+export type UserType = 'EMPLOYER' | 'JOB_SEEKER';
+export type MentorshipRole = 'MENTOR' | 'MENTEE';
 
-export type MentorshipRole = 'mentor' | 'mentee' | 'notInterested';
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  bio: string;
+  userType: UserType;
+  mentorType: MentorshipRole;
+}

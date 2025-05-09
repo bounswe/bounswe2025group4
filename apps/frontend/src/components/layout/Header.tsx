@@ -13,7 +13,7 @@ import { ThemeToggle } from '../common/ThemeToggle';
 import { useAuth } from '../../hooks/useAuth';
 
 const Header: React.FC = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { token, setToken } = useAuth();
 
   return (
     <AppBar position="static">
@@ -37,7 +37,7 @@ const Header: React.FC = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
-            {isAuthenticated ? (
+            {token ? (
               <>
                 <IconButton
                   component={RouterLink}
@@ -49,7 +49,7 @@ const Header: React.FC = () => {
                 >
                   <AccountCircle />
                 </IconButton>
-                <Button color="inherit" onClick={logout}>
+                <Button color="inherit" onClick={() => setToken(null)}>
                   Logout
                 </Button>
               </>
