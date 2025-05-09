@@ -170,7 +170,10 @@ export default function ForgotPasswordPage() {
 
               <Box sx={{ mt: 3, textAlign: 'center' }}>
                 <Typography variant="body2">
-                  Remember your password? <Link component={RouterLink} to="/login">Sign in</Link>
+                  Remember your password?{' '}
+                  <Link component={RouterLink} to="/login">
+                    Sign in
+                  </Link>
                 </Typography>
               </Box>
             </Box>

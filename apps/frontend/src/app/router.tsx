@@ -4,7 +4,7 @@ import {
   // redirect,
 } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import CenteredLoader from '../components/layout/CenterLoader';  
+import CenteredLoader from '../components/layout/CenterLoader';
 import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
 import ResetPasswordPage from '../pages/Auth/ResetPassword';
 

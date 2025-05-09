@@ -44,7 +44,14 @@ export default [
         'warn',
         { allowConstantExport: true }, // Allow constant exports without warning
       ],
-      'no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          'argsIgnorePattern': '^_',
+          'varsIgnorePattern': '^_',
+          'caughtErrorsIgnorePattern': '^_',
+        },
+      ],
       // Warn about console.log, but allow console.warn and console.error
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
