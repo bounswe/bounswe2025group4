@@ -10,7 +10,6 @@ import {
   CardContent,
   Checkbox,
   Container,
-  // Divider,
   FormControlLabel,
   Grid,
   IconButton,
@@ -24,9 +23,6 @@ import {
 import {
   Visibility,
   VisibilityOff,
-  // GitHub,
-  // Google,
-  // LinkedIn,
   Work,
   School,
   Person,
@@ -368,45 +364,6 @@ export default function RegisterPage() {
                 </Button>
               </Grid>
             </Grid>
-
-            {/* <Divider sx={{ my: 4 }}>
-              <Typography variant="body2" color="text.secondary">
-                OR SIGN UP WITH
-              </Typography>
-            </Divider>
-
-            <Grid container spacing={2}>
-              <Grid size= {{xs: 12, sm: 4}}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<Google />}
-                  sx={{ py: 1, textTransform: 'none' }}
-                >
-                  Google
-                </Button>
-              </Grid>
-              <Grid size= {{xs: 12, sm: 4}}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<GitHub />}
-                  sx={{ py: 1, textTransform: 'none' }}
-                >
-                  GitHub
-                </Button>
-              </Grid>
-              <Grid size= {{xs: 12, sm: 4}}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  startIcon={<LinkedIn />}
-                  sx={{ py: 1, textTransform: 'none' }}
-                >
-                  LinkedIn
-                </Button>
-              </Grid>
-            </Grid> */}
 
             <Box sx={{ mt: 3, textAlign: 'center' }}>
               <Typography variant="body2">
