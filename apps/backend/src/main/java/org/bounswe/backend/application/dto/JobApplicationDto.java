@@ -15,7 +15,7 @@ public class JobApplicationDto {
     private Long id;
     private String title;
     private String company;
-    private String jobSeekerName;
+    private String applicantName;
     
     @NotNull(message = "Job seeker ID is required")
     private Long jobSeekerId;

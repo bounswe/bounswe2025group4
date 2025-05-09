@@ -100,7 +100,7 @@ public class JobApplicationService {
         return JobApplicationDto.builder()
                 .id(application.getId())
                 .jobSeekerId(jobSeeker.getId())
-                .jobSeekerName(jobSeeker.getUsername())
+                .applicantName(jobSeeker.getUsername())
                 .jobPostingId(jobPosting.getId())
                 .title(jobPosting.getTitle())
                 .company(jobPosting.getCompany())
