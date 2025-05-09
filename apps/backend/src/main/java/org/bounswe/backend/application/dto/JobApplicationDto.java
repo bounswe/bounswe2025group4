@@ -13,6 +13,9 @@ import java.util.Date;
 public class JobApplicationDto {
 
     private Long id;
+    private String title;
+    private String company;
+    private String applicantName;
     
     @NotNull(message = "Job seeker ID is required")
     private Long jobSeekerId;
