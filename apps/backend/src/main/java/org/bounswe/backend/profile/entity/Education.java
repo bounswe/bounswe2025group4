@@ -1,4 +1,4 @@
-package org.bounswe.backend.education.entity;
+package org.bounswe.backend.profile.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
