@@ -7,6 +7,7 @@ import { Suspense, lazy } from 'react';
 import CenteredLoader from '../components/layout/CenterLoader';
 import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
 import ResetPasswordPage from '../pages/Auth/ResetPassword';
+import { RedirectIfAuth } from '../utils/RedirectIfAuth';
 
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('../pages/Home'));
@@ -66,28 +67,19 @@ const router = createBrowserRouter([
       },
       {
         path: 'login',
-        element: <LoginPage />,
-        // Redirect if user is already logged in
-        loader: async () => {
-          // const authTokens = localStorage.getItem('auth_tokens');
-          // const isLoggedIn = !!authTokens; // Check if authTokens exist
-          // if (isLoggedIn) {
-          //   return redirect('/');
-          // }
-          return null;
-        },
+        element: <RedirectIfAuth><LoginPage /></RedirectIfAuth>,
       },
       {
         path: 'register',
-        element: <RegisterPage />,
+        element: <RedirectIfAuth><RegisterPage /></RedirectIfAuth>,
       },
       {
         path: 'forgot-password',
-        element: <ForgotPasswordPage />,
+        element: <RedirectIfAuth><ForgotPasswordPage /></RedirectIfAuth>,
       },
       {
         path: 'reset-password',
-        element: <ResetPasswordPage />,
+        element: <RedirectIfAuth><ResetPasswordPage /></RedirectIfAuth>,
       },
       {
         path: 'profile', // New Profile Route

@@ -18,7 +18,7 @@ import {
   Login,
 } from '@mui/icons-material';
 import { useLogin } from '../../services/auth.service';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +27,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const loginMutation = useLogin();
-  const navigate = useNavigate();
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -46,7 +45,7 @@ export default function LoginPage() {
             console.error(error);
           },
           onSuccess: () => {
-            navigate('/');
+            window.location.href = '/';
           },
         }
       );
