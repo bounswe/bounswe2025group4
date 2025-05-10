@@ -1,6 +1,6 @@
 // Page component for displaying the list of jobs
 import React, { useState, useCallback } from 'react';
-import { Box, Container, Grid, Typography, Alert } from '@mui/material';
+import { Box, Container, Grid, Typography, Alert, Pagination } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 
 import { useGetJobs } from '../../services/jobs.service';
@@ -51,6 +51,9 @@ const updateSearchParams = (
 const JobListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 10;
+
   const getInitialFilters = useCallback(() => {
     const parsed = parseFiltersFromParams(searchParams);
     return {
@@ -68,6 +71,20 @@ const JobListPage: React.FC = () => {
 
   const jobs = data ?? [];
 
+  // Pagination logic
+  const totalPages = Math.ceil(jobs.length / jobsPerPage);
+  const currentJobs = jobs.slice(
+    (currentPage - 1) * jobsPerPage,
+    currentPage * jobsPerPage
+  );
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setCurrentPage(value);
+  };
+
   const handleFiltersChange = useCallback(
     (newFilterValues: Partial<JobFilters>) => {
       setLocalFilters((prevFilters) => ({
@@ -81,6 +98,7 @@ const JobListPage: React.FC = () => {
   const handleApplyFilters = useCallback(() => {
     setActiveFilters(localFilters);
     updateSearchParams(localFilters, setSearchParams);
+    setCurrentPage(1); // Reset to first page
   }, [localFilters, setSearchParams]);
 
   const clearAllFilters = useCallback(() => {
@@ -88,6 +106,7 @@ const JobListPage: React.FC = () => {
     setLocalFilters(defaultFilters);
     setActiveFilters(defaultFilters);
     updateSearchParams(defaultFilters, setSearchParams);
+    setCurrentPage(1); // Reset to first page
   }, [setSearchParams]);
 
   return (
@@ -117,6 +136,15 @@ const JobListPage: React.FC = () => {
             </Typography>
           </Box>
 
+          {totalPages > 1 && (
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}
+            />
+          )}
+
           {isError && (
             <Alert severity="error" sx={{ mb: 2 }}>
               Error fetching jobs:{' '}
@@ -136,10 +164,18 @@ const JobListPage: React.FC = () => {
                   transition: 'opacity 300ms',
                 }}
               >
-                {jobs.map((job: JobPost) => (
+                {currentJobs.map((job: JobPost) => (
                   <JobCard key={job.id} job={job} />
                 ))}
               </Box>
+              {totalPages > 1 && (
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}
+                />
+              )}
             </>
           ) : (
             <EmptyJobsState onClearFilters={clearAllFilters} />
