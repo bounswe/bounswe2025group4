@@ -12,7 +12,7 @@ class DiscussionThread {
   final String body;
 
   /// ID of the user who created the thread
-  final int creatorId;
+  final String creatorId;
 
   /// List of tags associated with the thread
   final List<String> tags;
@@ -35,7 +35,7 @@ class DiscussionThread {
       id: json['id'] as int,
       title: json['title'] as String,
       body: json['body'] as String,
-      creatorId: json['creatorId'] as int,
+      creatorId: json['creatorId'].toString(),
       tags: (json['tags'] as List<dynamic>).cast<String>(),
       reported: json['reported'] as bool,
     );
