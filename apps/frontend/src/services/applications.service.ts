@@ -17,7 +17,11 @@ export class ApplicationsService {
     return response.data;
   }
 
-  async updateApplicationStatus(applicationId: string, status: ApplicationStatus, feedback?: string): Promise<Application> {
+  async updateApplicationStatus(
+    applicationId: string,
+    status: ApplicationStatus,
+    feedback?: string
+  ): Promise<Application> {
     const response = await apiClient.put<Application>(
       `/applications/${applicationId}`,
       { status, feedback }
