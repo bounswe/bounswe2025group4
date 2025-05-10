@@ -135,6 +135,39 @@ public class ProfileService {
     }
 
     @Transactional
+    public ExperienceDto updateExperience(Long userId, Long expId, UpdateExperienceRequestDto dto) {
+        Experience experience = experienceRepository.findById(expId)
+                .orElseThrow(() -> new RuntimeException("Experience not found"));
+
+        if (!experience.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized to update this experience");
+        }
+
+        if (dto.getCompany() != null) experience.setCompany(dto.getCompany());
+        if (dto.getPosition() != null) experience.setPosition(dto.getPosition());
+        if (dto.getDescription() != null) experience.setDescription(dto.getDescription());
+        if (dto.getStartDate() != null) experience.setStartDate(dto.getStartDate());
+        if (dto.getEndDate() != null) experience.setEndDate(dto.getEndDate());
+
+        return toDto(experienceRepository.save(experience));
+    }
+
+
+    @Transactional
+    public void deleteExperience(Long userId, Long expId) {
+        Experience experience = experienceRepository.findById(expId)
+                .orElseThrow(() -> new RuntimeException("Experience not found"));
+
+        if (!experience.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized to delete this experience");
+        }
+
+        experienceRepository.delete(experience);
+    }
+
+
+
+    @Transactional
     public ProfileDto updateProfilePicture(Long userId, String profilePicture) {
         Profile profile = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));

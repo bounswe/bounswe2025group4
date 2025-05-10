@@ -86,12 +86,13 @@ public class ProfileController {
 
 
     @DeleteMapping("/profile/{userId}/profile-picture")
-    public ResponseEntity<ProfileDto> deleteProfilePicture(@PathVariable Long userId) {
+    public ResponseEntity<Void> deleteProfilePicture(@PathVariable Long userId) {
         User user = getCurrentUser();
         if (!user.getId().equals(userId)) {
             return ResponseEntity.status(403).build(); // Forbidden
         }
-        return ResponseEntity.ok(profileService.deleteProfilePicture(userId));
+        profileService.deleteProfilePicture(userId);
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 
 
@@ -111,6 +112,29 @@ public class ProfileController {
         ExperienceDto createdExperience = profileService.addExperience(userId, dto);
         return ResponseEntity.ok(createdExperience);
     }
+
+    @PutMapping("/profile/{userId}/experience/{expId}")
+    public ResponseEntity<ExperienceDto> updateExperience(@PathVariable Long userId,
+                                                          @PathVariable Long expId,
+                                                          @RequestBody UpdateExperienceRequestDto dto) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        return ResponseEntity.ok(profileService.updateExperience(userId, expId, dto));
+    }
+
+    @DeleteMapping("/profile/{userId}/experience/{expId}")
+    public ResponseEntity<Void> deleteExperience(@PathVariable Long userId, @PathVariable Long expId) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        profileService.deleteExperience(userId, expId);
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
+
 
 
 
