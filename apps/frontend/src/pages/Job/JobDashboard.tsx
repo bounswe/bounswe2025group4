@@ -8,93 +8,37 @@ import {
   Paper,
   CircularProgress,
   List,
-  ListItem,
-  ListItemText,
   Divider,
 } from '@mui/material';
 import { AuthContext, AuthContextType } from '../../contexts/AuthContext'; // Adjust path and ensure AuthContextType is exported
-
-// Placeholder for actual job data type - align with your backend/API response
-export interface JobPost {
-  id: string;
-  title: string;
-  status: 'open' | 'closed' | 'draft'; // Example statuses
-  applicationCount: number;
-  // Add other relevant properties: companyName, location, datePosted, etc.
-}
-
-// Placeholder for API service to fetch employer's jobs
-// In a real app, this would be in a services/api.ts file and use TanStack Query
-const fetchEmployerJobs = async (
-  employerId: string,
-  token: string
-): Promise<JobPost[]> => {
-  console.log(
-    `Fetching jobs for employer: ${employerId} using token: ${token ? 'present' : 'absent'}`
-  );
-  // Simulate API call - Replace with actual fetch
-  // const response = await fetch(`/api/employers/${employerId}/jobs`, {
-  //   headers: { 'Authorization': `Bearer ${token}` },
-  // });
-  // if (!response.ok) {
-  //   throw new Error('Failed to fetch jobs');
-  // }
-  // return response.json();
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return [
-    {
-      id: 'job1',
-      title: 'Senior Software Engineer',
-      status: 'open',
-      applicationCount: 15,
-    },
-    {
-      id: 'job2',
-      title: 'Lead Product Manager',
-      status: 'closed',
-      applicationCount: 35,
-    },
-    {
-      id: 'job3',
-      title: 'Junior UX Designer',
-      status: 'open',
-      applicationCount: 5,
-    },
-  ];
-};
+import { JobPost } from '../../types/job';
+import { useGetJobByEmployer } from '../../services/jobs.service';
+import JobDashboardItem from './JobDashboardItem'; // Import the new component
 
 const JobDashboardPage: React.FC = () => {
   const authContext = useContext(AuthContext) as AuthContextType; // Added type assertion for simplicity
   const employerId = authContext?.id; // Assuming id is the employer's ID
   const token = authContext?.token;
 
+  const { data, isLoading, error } = useGetJobByEmployer(employerId ?? '');
   const [jobs, setJobs] = useState<JobPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(isLoading);
+  const [error_, setError_] = useState<string | null>(
+    error ? error.message : null
+  );
 
   useEffect(() => {
-    if (employerId && token) {
-      setLoading(true);
-      setError(null);
-      fetchEmployerJobs(employerId, token)
-        .then((data) => {
-          setJobs(data);
-        })
-        .catch((err) => {
-          console.error('Error fetching employer jobs:', err);
-          setError(err.message || 'Failed to load jobs. Please try again.');
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+    if (employerId && token && data) {
+      setLoading(false);
+      setJobs(data);
     } else if (!token) {
-      setError('Authentication token not found. Please log in.');
+      setError_('Authentication token not found. Please log in.');
       setLoading(false);
     } else if (!employerId) {
-      setError('Employer ID not found. Cannot fetch jobs.');
+      setError_('Employer ID not found. Cannot fetch jobs.');
       setLoading(false);
     }
-  }, [employerId, token]);
+  }, [employerId, token, data]);
 
   if (loading) {
     return (
@@ -144,7 +88,7 @@ const JobDashboardPage: React.FC = () => {
             color: 'error.contrastText',
           }}
         >
-          <Typography>{error}</Typography>
+          <Typography>{error_}</Typography>
         </Paper>
       )}
 
@@ -162,16 +106,7 @@ const JobDashboardPage: React.FC = () => {
           <List disablePadding>
             {jobs.map((job, index) => (
               <React.Fragment key={job.id}>
-                <ListItem
-                  component={Link}
-                  to={`/dashboard/jobs/${job.id}`} // Link to specific job detail page
-                  sx={{ p: 2, '&:hover': { backgroundColor: 'action.hover' } }} // Removed 'button', added hover style
-                >
-                  <ListItemText
-                    primary={job.title}
-                    secondary={`Status: ${job.status} - Applications: ${job.applicationCount}`}
-                  />
-                </ListItem>
+                <JobDashboardItem job={job} />
                 {index < jobs.length - 1 && <Divider />}
               </React.Fragment>
             ))}

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -18,161 +18,73 @@ import {
   InputLabel,
   Alert,
 } from '@mui/material';
-import { AuthContext, AuthContextType } from '../../contexts/AuthContext'; // Adjust path
-import { JobPost, JobApplication } from '../../types/job'; // Updated import
-
-// Placeholder for Application data type - REMOVE THIS
-// interface JobApplication { ... }
-
-// Mock API call to fetch job details by ID
-const fetchJobDetailsAPI = async (
-  jobId: string,
-  token: string
-): Promise<JobPost | null> => {
-  console.log(
-    `Fetching job details for ID: ${jobId}, token: ${token ? 'present' : 'absent'}`
-  );
-  // Simulate API call
-  await new Promise((resolve) => setTimeout(resolve, 700));
-  // Replace with actual API call: fetch(`/api/jobs/${jobId}`, { headers: { Authorization... } })
-  // Mock data - find a job from a mock list or return a specific one
-  const mockJobs: JobPost[] = [
-    {
-      id: 'job1',
-      title: 'Senior Software Engineer',
-      status: 'open',
-      applicationCount: 15,
-    },
-    {
-      id: 'job2',
-      title: 'Lead Product Manager',
-      status: 'closed',
-      applicationCount: 35,
-    },
-  ];
-  const job = mockJobs.find((j) => j.id === jobId);
-  return job || null;
-};
-
-// Mock API call to fetch applications for a job
-const fetchJobApplicationsAPI = async (
-  jobId: string,
-  token: string
-): Promise<JobApplication[]> => {
-  console.log(
-    `Fetching applications for job ID: ${jobId}, token: ${token ? 'present' : 'absent'}`
-  );
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  // Replace with actual API call: fetch(`/api/jobs/${jobId}/applications`, { headers: { Authorization... } })
-  // Mock data
-  if (jobId === 'job1') {
-    return [
-      {
-        id: 'app1',
-        jobId: jobId,
-        applicantName: 'Alice Wonderland',
-        applicantEmail: 'alice@example.com',
-        applicationDate: '2023-10-01',
-        status: 'Pending',
-        resumeUrl: '#',
-      },
-      {
-        id: 'app2',
-        jobId: jobId,
-        applicantName: 'Bob The Builder',
-        applicantEmail: 'bob@example.com',
-        applicationDate: '2023-10-03',
-        status: 'Viewed',
-        resumeUrl: '#',
-      },
-    ];
-  }
-  return [];
-};
-
-// Mock API call to update application status and feedback
-const updateApplicationAPI = async (
-  applicationId: string,
-  status: JobApplication['status'],
-  feedback: string | undefined,
-  token: string
-) => {
-  console.log(
-    `Updating application ${applicationId}: Status - ${status}, Feedback - ${feedback}, token: ${token ? 'present' : 'absent'}`
-  );
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  // Replace with actual API call: fetch(`/api/applications/${applicationId}`, { method: 'PATCH', body: JSON.stringify({ status, feedback }), headers: { Authorization... } })
-  return { success: true, applicationId, status, feedback };
-};
+import { AuthContext, AuthContextType } from '../../contexts/AuthContext';
+import { JobPost } from '../../types/job';
+import { ApplicationStatus } from '../../types/application';
+import { useGetJobById } from '../../services/jobs.service';
+import { useGetApplicationsByJobId } from '../../services/applications.service';
 
 const JobPostDetailDashboardView: React.FC = () => {
   const { id: jobId } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const {
+    data: jobData,
+    isLoading: isLoadingJob,
+    error: jobError,
+  } = useGetJobById(jobId as string);
   const authContext = useContext(AuthContext) as AuthContextType;
-  // Assume employerId is part of user object in AuthContext or fetched separately
-  // For this mock, we will assume the current user is the publisher if the job exists.
-  // In a real app, job details should include employerId to verify ownership.
   const currentEmployerId = authContext?.id;
   const token = authContext?.token;
 
   const [job, setJob] = useState<JobPost | null>(null);
-  const [applications, setApplications] = useState<JobApplication[]>([]);
-  const [loadingJob, setLoadingJob] = useState(true);
-  const [loadingApps, setLoadingApps] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error_, setError_] = useState<string | null>(
+    jobError ? jobError.message : null
+  );
 
   // States for managing feedback and status update for each application
   const [feedbackValues, setFeedbackValues] = useState<{
     [appId: string]: string;
   }>({});
   const [statusValues, setStatusValues] = useState<{
-    [appId: string]: JobApplication['status'];
+    [appId: string]: ApplicationStatus;
   }>({});
   const [updatingAppId, setUpdatingAppId] = useState<string | null>(null);
 
+  // Fetch applications using React Query
+  const {
+    data: applicationsData,
+    isLoading: isLoadingApps,
+    error: appsError,
+  } = useGetApplicationsByJobId(jobId as string);
+
   useEffect(() => {
-    if (!jobId || !token) {
-      setError('Job ID or authentication token is missing.');
-      setLoadingJob(false);
+    if (jobData) {
+      setJob(jobData);
+      setError_(null);
+    }
+    if (jobError) {
+      setError_(jobError.message);
+    }
+    if (!currentEmployerId || !token) {
+      setError_('Employer ID or authentication token is missing.');
       return;
     }
-    setLoadingJob(true);
-    fetchJobDetailsAPI(jobId, token)
-      .then((data) => {
-        if (data) {
-          setJob(data);
-          // TODO: Add check here: if (data.employerId !== currentEmployerId) { setError("Access Denied"); return; }
-          setLoadingApps(true);
-          return fetchJobApplicationsAPI(jobId, token);
-        }
-        throw new Error('Job not found.');
-      })
-      .then((appsData) => {
-        setApplications(appsData);
-        // Initialize status and feedback states from fetched applications
-        const initialFeedback: { [key: string]: string } = {};
-        const initialStatus: { [key: string]: JobApplication['status'] } = {};
-        appsData.forEach((app) => {
-          initialFeedback[app.id] = app.feedback || '';
-          initialStatus[app.id] = app.status;
-        });
-        setFeedbackValues(initialFeedback);
-        setStatusValues(initialStatus);
-      })
-      .catch((err) => {
-        console.error('Error fetching job details or applications:', err);
-        setError(err.message || 'Failed to load job data.');
-      })
-      .finally(() => {
-        setLoadingJob(false);
-        setLoadingApps(false);
-      });
-  }, [jobId, token, currentEmployerId]);
+  }, [token, currentEmployerId, jobData, jobError]);
 
-  const handleStatusChange = (
-    appId: string,
-    newStatus: JobApplication['status']
-  ) => {
+  // Initialize feedback and status values when applications data is loaded
+  useEffect(() => {
+    if (applicationsData) {
+      const initialFeedback: { [appId: string]: string } = {};
+      const initialStatus: { [appId: string]: ApplicationStatus } = {};
+      applicationsData.forEach((app) => {
+        initialFeedback[app.id] = app.feedback || '';
+        initialStatus[app.id] = app.status || 'PENDING';
+      });
+      setFeedbackValues(initialFeedback);
+      setStatusValues(initialStatus);
+    }
+  }, [applicationsData]);
+
+  const handleStatusChange = (appId: string, newStatus: ApplicationStatus) => {
     setStatusValues((prev) => ({ ...prev, [appId]: newStatus }));
   };
 
@@ -187,33 +99,18 @@ const JobPostDetailDashboardView: React.FC = () => {
     }
     setUpdatingAppId(appId);
     try {
-      await updateApplicationAPI(
-        appId,
-        statusValues[appId],
-        feedbackValues[appId],
-        token
+      console.log(
+        'Update logic to be implemented with React Query mutation hook.'
       );
-      // Update local state to reflect changes immediately (optimistic update can be done here too)
-      setApplications((prevApps) =>
-        prevApps.map((app) =>
-          app.id === appId
-            ? {
-                ...app,
-                status: statusValues[appId],
-                feedback: feedbackValues[appId],
-              }
-            : app
-        )
-      );
-      alert('Application updated successfully!'); // Replace with Snackbar
+      alert('Application update placeholder - implement with mutation hook!');
     } catch (err) {
       console.error('Failed to update application:', err);
-      alert('Failed to update application. Please try again.'); // Replace with Snackbar
+      alert('Failed to update application. Please try again.');
     }
     setUpdatingAppId(null);
   };
 
-  if (loadingJob) {
+  if (isLoadingJob) {
     return (
       <Container sx={{ textAlign: 'center', mt: 5 }}>
         <CircularProgress />
@@ -222,10 +119,10 @@ const JobPostDetailDashboardView: React.FC = () => {
     );
   }
 
-  if (error) {
+  if (jobError) {
     return (
       <Container sx={{ mt: 5 }}>
-        <Alert severity="error">{error}</Alert>
+        <Alert severity="error">{jobError.message}</Alert>
       </Container>
     );
   }
@@ -237,10 +134,7 @@ const JobPostDetailDashboardView: React.FC = () => {
       </Container>
     );
   }
-
-  // TODO: Add a real check to ensure current user is the publisher.
-  // const isPublisher = job.employerId === currentEmployerId;
-  const isPublisher = true; // Placeholder for publisher check
+  const isPublisher = job.employerId.toString() === currentEmployerId;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -255,138 +149,138 @@ const JobPostDetailDashboardView: React.FC = () => {
           Status: {job.status}
         </Typography>
         <Typography variant="body1" sx={{ mt: 2 }}>
-          Details will go here (e.g., description, location etc. fetched from
-          job data)
+          Description: {job.description || 'Not available'}
+          <br />
+          Location: {job.location || 'Not available'}
+          <br />
+          Salary Range:{' '}
+          {job.minSalary && job.maxSalary
+            ? `$${job.minSalary} - $${job.maxSalary}`
+            : job.minSalary
+              ? `$${job.minSalary}`
+              : job.maxSalary
+                ? `$${job.maxSalary}`
+                : 'Not specified'}
         </Typography>
-        {/* TODO: Display more job details from the 'job' object */}
       </Paper>
 
       {isPublisher && (
         <Paper elevation={2} sx={{ p: 3 }}>
           <Typography variant="h5" component="h2" gutterBottom>
-            Applications Received ({applications.length})
+            Applications Received ({applicationsData?.length || 0})
           </Typography>
-          {loadingApps && (
+          {isLoadingApps && (
             <Box sx={{ textAlign: 'center' }}>
               <CircularProgress size={24} />
               <Typography sx={{ ml: 1 }}>Loading applications...</Typography>
             </Box>
           )}
-          {!loadingApps && applications.length === 0 && (
-            <Typography>No applications received for this job yet.</Typography>
+          {appsError && (
+            <Alert severity="error">
+              Failed to load applications: {appsError.message}
+            </Alert>
           )}
-          {!loadingApps && applications.length > 0 && (
-            <List disablePadding>
-              {applications.map((app, index) => (
-                <React.Fragment key={app.id}>
-                  <ListItem
-                    alignItems="flex-start"
-                    sx={{ flexDirection: 'column', py: 2 }}
-                  >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                      }}
+          {error_ && <Alert severity="error">{error_}</Alert>}
+          {!isLoadingApps &&
+            !appsError &&
+            applicationsData &&
+            applicationsData.length === 0 && (
+              <Typography>
+                No applications received for this job yet.
+              </Typography>
+            )}
+          {!isLoadingApps &&
+            !appsError &&
+            applicationsData &&
+            applicationsData.length > 0 && (
+              <List disablePadding>
+                {applicationsData.map((app, index) => (
+                  <React.Fragment key={app.id}>
+                    <ListItem
+                      alignItems="flex-start"
+                      sx={{ flexDirection: 'column', py: 2 }}
                     >
-                      <ListItemText
-                        primary={`${app.applicantName} (${app.applicantEmail})`}
-                        secondary={`Applied on: ${new Date(app.applicationDate).toLocaleDateString()} - Current Status: ${statusValues[app.id]}`}
-                      />
-                      {app.resumeUrl && (
-                        <Button
-                          size="small"
-                          href={app.resumeUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          View Resume
-                        </Button>
-                      )}
-                    </Box>
-                    {app.coverLetter && (
-                      <Typography
-                        variant="body2"
-                        sx={{ my: 1, pl: 0, fontStyle: 'italic' }}
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          width: '100%',
+                        }}
                       >
-                        {app.coverLetter}
-                      </Typography>
-                    )}
+                        <ListItemText
+                          primary={`${app.applicantName}`}
+                          secondary={`Applied on: ${new Date(app.submissionDate).toLocaleDateString()} - Current Status: ${statusValues[app.id] || app.status}`}
+                        />
+                      </Box>
 
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 2,
-                        mt: 2,
-                        width: '100%',
-                      }}
-                    >
-                      <FormControl size="small" sx={{ minWidth: 150 }}>
-                        <InputLabel id={`status-label-${app.id}`}>
-                          Status
-                        </InputLabel>
-                        <Select
-                          labelId={`status-label-${app.id}`}
-                          value={statusValues[app.id] || 'Pending'}
-                          label="Status"
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2,
+                          mt: 2,
+                          width: '100%',
+                        }}
+                      >
+                        <FormControl size="small" sx={{ minWidth: 150 }}>
+                          <InputLabel id={`status-label-${app.id}`}>
+                            Status
+                          </InputLabel>
+                          <Select
+                            labelId={`status-label-${app.id}`}
+                            value={
+                              statusValues[app.id] || app.status || 'PENDING'
+                            }
+                            label="Status"
+                            onChange={(e) =>
+                              handleStatusChange(
+                                app.id,
+                                e.target.value as ApplicationStatus
+                              )
+                            }
+                            disabled={updatingAppId === app.id}
+                          >
+                            {['PENDING', 'APPROVED', 'REJECTED'].map((s) => (
+                              <MenuItem key={s} value={s}>
+                                {s}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <TextField
+                          label="Feedback (Optional)"
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          multiline
+                          value={feedbackValues[app.id] || ''}
                           onChange={(e) =>
-                            handleStatusChange(
-                              app.id,
-                              e.target.value as JobApplication['status']
-                            )
+                            handleFeedbackChange(app.id, e.target.value)
                           }
                           disabled={updatingAppId === app.id}
+                        />
+                        <Button
+                          variant="contained"
+                          size="small"
+                          onClick={() => handleSubmitUpdate(app.id)}
+                          disabled={updatingAppId === app.id}
+                          sx={{ whiteSpace: 'nowrap' }}
                         >
-                          {[
-                            'Pending',
-                            'Viewed',
-                            'Interviewing',
-                            'Offered',
-                            'Accepted',
-                            'Rejected',
-                          ].map((s) => (
-                            <MenuItem key={s} value={s}>
-                              {s}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <TextField
-                        label="Feedback (Optional)"
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                        multiline
-                        value={feedbackValues[app.id] || ''}
-                        onChange={(e) =>
-                          handleFeedbackChange(app.id, e.target.value)
-                        }
-                        disabled={updatingAppId === app.id}
-                      />
-                      <Button
-                        variant="contained"
-                        size="small"
-                        onClick={() => handleSubmitUpdate(app.id)}
-                        disabled={updatingAppId === app.id}
-                        sx={{ whiteSpace: 'nowrap' }}
-                      >
-                        {updatingAppId === app.id ? (
-                          <CircularProgress size={20} />
-                        ) : (
-                          'Update App'
-                        )}
-                      </Button>
-                    </Box>
-                  </ListItem>
-                  {index < applications.length - 1 && (
-                    <Divider component="li" />
-                  )}
-                </React.Fragment>
-              ))}
-            </List>
-          )}
+                          {updatingAppId === app.id ? (
+                            <CircularProgress size={20} />
+                          ) : (
+                            'Update App'
+                          )}
+                        </Button>
+                      </Box>
+                    </ListItem>
+                    {index < applicationsData.length - 1 && (
+                      <Divider component="li" />
+                    )}
+                  </React.Fragment>
+                ))}
+              </List>
+            )}
         </Paper>
       )}
       {!isPublisher && (

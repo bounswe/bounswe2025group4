@@ -8,7 +8,7 @@ import CenteredLoader from '../components/layout/CenterLoader';
 import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
 import ResetPasswordPage from '../pages/Auth/ResetPassword';
 import { RedirectIfAuth } from '../components/auth/RedirectIfAuth';
-import RegisterSuccesfull from '../pages/Auth/RegisterSuccesfull';
+import RegisterSuccesfull from '../pages/Auth/RegisterSuccesful';
 
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('../pages/Home'));

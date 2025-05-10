@@ -1,42 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
-
-import { useMutation } from '@tanstack/react-query';
-
-interface Application {
-  id: string;
-  status: string;
-  // Add other application properties as needed
-}
-
-interface SubmissionResponse {
-  success: boolean;
-  applicationId: string;
-  // Add other response properties as needed
-}
+import { apiClient } from './api';
+import { Application, ApplicationStatus } from '../types/application';
 
 export class ApplicationsService {
-  // TODO: Implement API call methods for job applications
-
-  // Example method (replace with actual API calls)
-  async getApplicationStatus(applicationId: string): Promise<Application> {
-    // Replace with actual API call logic
-    console.log(`Fetching status for application ${applicationId}`);
-    return Promise.resolve({ id: applicationId, status: 'pending' });
+  async getApplicationsByJobId(jobId: string): Promise<Application[]> {
+    const response = await apiClient.get<Application[]>(
+      `/applications/${jobId}`
+    );
+    return response.data;
   }
 
-  async submitApplication(
-    jobId: string,
-    resume: File
-  ): Promise<SubmissionResponse> {
-    // Replace with actual API call logic
-    console.log(
-      `Submitting application for job ${jobId} with resume ${resume.name}`
+  async getApplicationStatus(applicationId: string): Promise<Application> {
+    const response = await apiClient.get<Application>(
+      `/applications/${applicationId}`
     );
-    const formData = new FormData();
-    formData.append('jobId', jobId);
-    formData.append('resume', resume);
-    // Example: return await fetch('/api/applications', { method: 'POST', body: formData });
-    return Promise.resolve({ success: true, applicationId: 'new-app-id' });
+    return response.data;
+  }
+
+  async updateApplicationStatus(applicationId: string, status: ApplicationStatus, feedback?: string): Promise<Application> {
+    const response = await apiClient.put<Application>(
+      `/applications/${applicationId}`,
+      { status, feedback }
+    );
+    return response.data;
   }
 }
 
@@ -51,8 +37,15 @@ export const useGetApplicationStatus = (applicationId: string) => {
   });
 };
 
-export const useSubmitApplication = (jobId: string, resume: File) => {
-  return useMutation<SubmissionResponse, Error, readonly [string, File]>({
-    mutationFn: () => applicationsService.submitApplication(jobId, resume),
+export const useGetApplicationsByJobId = (jobId: string) => {
+  return useQuery<
+    Application[],
+    Error,
+    Application[],
+    readonly [string, string]
+  >({
+    queryKey: ['applications', jobId],
+    queryFn: () => applicationsService.getApplicationsByJobId(jobId),
+    refetchOnWindowFocus: false,
   });
 };

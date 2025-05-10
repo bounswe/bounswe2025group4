@@ -7,6 +7,8 @@ const JOB_KEYS = {
   all: ['jobs'] as const,
   lists: () => [...JOB_KEYS.all, 'list'] as const,
   list: (filters: JobFilters) => [...JOB_KEYS.lists(), filters] as const,
+  listByEmployer: (employerId: string) =>
+    [...JOB_KEYS.lists(), employerId] as const,
   details: () => [...JOB_KEYS.all, 'detail'] as const,
   detail: (id: string) => [...JOB_KEYS.details(), id] as const,
 };
@@ -47,6 +49,13 @@ class JobsService {
     };
   }
 
+  async getJobByEmployer(employerId: string): Promise<JobPost[]> {
+    const response = await apiClient.get<JobPost[]>(
+      `/jobs/employer/${employerId}`
+    );
+    return response.data;
+  }
+
   async createJob(jobData: JobPost): Promise<JobPost> {
     const response = await apiClient.post<JobPost>('/jobs', jobData);
     return response.data;
@@ -76,6 +85,12 @@ export const useGetJobById = (id: string) =>
   useQuery<JobPost, Error, JobPost, readonly [string, string, string]>({
     queryKey: JOB_KEYS.detail(id),
     queryFn: () => jobsService.getJobById(id),
+  });
+
+export const useGetJobByEmployer = (employerId: string) =>
+  useQuery<JobPost[], Error, JobPost[], readonly [string, string, string]>({
+    queryKey: JOB_KEYS.listByEmployer(employerId),
+    queryFn: () => jobsService.getJobByEmployer(employerId),
   });
 
 export const useCreateJob = () => {

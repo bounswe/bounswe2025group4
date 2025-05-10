@@ -11,6 +11,7 @@ export interface JobPost {
   ethicalTags: string[];
   minSalary: number;
   maxSalary: number;
+  status: string;
 }
 
 export interface JobFilters {
@@ -24,21 +25,4 @@ export interface JobFilters {
 
 export interface JobListResponse {
   jobs: JobPost[];
-}
-
-export type ApplicationStatus =
-  | 'PENDING'
-  | 'APPROVED'
-  | 'REJECTED';
-
-export interface JobApplication {
-  id: string;
-  title: string;
-  company: string;
-  applicantName: string;
-  jobSeekerId: number;
-  jobPostingId: number;
-  status: ApplicationStatus;
-  feedback: string;
-  submissionDate: string;
 }
