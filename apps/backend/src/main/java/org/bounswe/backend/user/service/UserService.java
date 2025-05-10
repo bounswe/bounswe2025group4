@@ -4,6 +4,7 @@ package org.bounswe.backend.user.service;
 import org.bounswe.backend.user.dto.UserDto;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
+import org.bounswe.backend.common.enums.MentorshipStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,7 @@ public class UserService {
                 .email(dto.getEmail())
                 .bio(dto.getBio())
                 .userType(dto.getUserType())
+                .mentorshipStatus(dto.getMentorshipStatus() != null ? dto.getMentorshipStatus() : MentorshipStatus.NONE)
                 .build();
         return toDto(userRepository.save(user));
     }
@@ -44,6 +46,15 @@ public class UserService {
         user.setEmail(dto.getEmail());
         user.setBio(dto.getBio());
         user.setUserType(dto.getUserType());
+        if (dto.getMentorshipStatus() != null) {
+            user.setMentorshipStatus(dto.getMentorshipStatus());
+        }
+        return toDto(userRepository.save(user));
+    }
+
+    public UserDto updateMentorshipStatus(Long userId, MentorshipStatus mentorshipStatus) {
+        User user = userRepository.findById(userId).orElseThrow();
+        user.setMentorshipStatus(mentorshipStatus);
         return toDto(userRepository.save(user));
     }
 
@@ -58,6 +69,7 @@ public class UserService {
                 .email(user.getEmail())
                 .bio(user.getBio())
                 .userType(user.getUserType())
+                .mentorshipStatus(user.getMentorshipStatus())
                 .build();
     }
 
