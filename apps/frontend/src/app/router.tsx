@@ -8,6 +8,7 @@ import CenteredLoader from '../components/layout/CenterLoader';
 import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
 import ResetPasswordPage from '../pages/Auth/ResetPassword';
 import { RedirectIfAuth } from '../utils/RedirectIfAuth';
+import RegisterSuccesfull from '../pages/Auth/RegisterSuccesfull';
 
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('../pages/Home'));
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
             <RegisterPage />
           </RedirectIfAuth>
         ),
+      },
+      {
+        path: 'register-successfull',
+        element: <RegisterSuccesfull />,
       },
       {
         path: 'forgot-password',

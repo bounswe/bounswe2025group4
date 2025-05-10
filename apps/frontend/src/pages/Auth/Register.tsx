@@ -19,21 +19,23 @@ import {
   TextField,
   Typography,
   useTheme,
+  Alert,
 } from '@mui/material';
 import {
   Visibility,
   VisibilityOff,
   Work,
-  School,
+  // School,
   Person,
   Handshake,
-  DoNotDisturb,
+  // DoNotDisturb,
   ArrowBack,
   ArrowForward,
   Hail,
 } from '@mui/icons-material';
 import { UserType, MentorshipRole } from '../../types/user';
 import { useNavigate } from 'react-router-dom';
+import { useRegister } from '../../services/auth.service';
 
 interface UserTypeOption {
   value: UserType;
@@ -51,13 +53,13 @@ interface MentorshipRoleOption {
 
 const userTypeOptions: UserTypeOption[] = [
   {
-    value: 'jobSeeker',
+    value: 'JOB_SEEKER',
     label: 'Job Seeker',
     icon: <Hail fontSize="large" />,
     description: 'Find your dream job with personalized recommendations',
   },
   {
-    value: 'employer',
+    value: 'EMPLOYER',
     label: 'Employer',
     icon: <Work fontSize="large" />,
     description: 'Post jobs and find the perfect candidates for your team',
@@ -66,30 +68,24 @@ const userTypeOptions: UserTypeOption[] = [
 
 const mentorshipRoleOptions: MentorshipRoleOption[] = [
   {
-    value: 'mentor',
+    value: 'MENTOR',
     label: 'Mentor',
     icon: <Person fontSize="large" />,
     description: 'Share your knowledge and help others grow in their career',
   },
   {
-    value: 'mentee',
+    value: 'MENTEE',
     label: 'Mentee',
     icon: <Handshake fontSize="large" />,
     description: 'Get guidance from experienced professionals in your field',
-  },
-  {
-    value: 'notInterested',
-    label: 'Not Interested',
-    icon: <DoNotDisturb fontSize="large" />,
-    description: 'Skip mentorship for now (you can apply later)',
   },
 ];
 
 // Define form schema with Zod
 const registerSchema = z
   .object({
-    firstName: z.string().min(2, 'First name must be at least 2 characters'),
-    lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+    // firstName: z.string().min(2, 'First name must be at least 2 characters'),
+    // lastName: z.string().min(2, 'Last name must be at least 2 characters'),
     username: z.string().min(2, 'Username must be at least 2 characters'),
     email: z.string().email('Please enter a valid email address'),
     password: z
@@ -120,17 +116,28 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const theme = useTheme();
   const navigate = useNavigate();
-  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const registerMutation = useRegister();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [registrationError, setRegistrationError] = useState<string | null>(
+    null
+  );
   const [currentStep, setCurrentStep] = useState<
     'credentials' | 'userType' | 'mentorship'
   >('credentials');
-  const [selectedUserType, setSelectedUserType] = useState<UserType | null>(
-    null
-  );
+
+  const [formData, setFormData] = useState<RegisterFormData>({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    agreeToTerms: true,
+  });
+  const [selectedUserType, setSelectedUserType] =
+    useState<UserType>('JOB_SEEKER');
   const [selectedMentorshipRole, setSelectedMentorshipRole] =
-    useState<MentorshipRole | null>(null);
+    useState<MentorshipRole>('MENTEE');
 
   const {
     control,
@@ -140,8 +147,8 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
     mode: 'onChange',
     defaultValues: {
-      firstName: '',
-      lastName: '',
+      // firstName: '',
+      // lastName: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -150,32 +157,36 @@ export default function RegisterPage() {
   });
 
   const onSubmit = (data: RegisterFormData) => {
-    // In a real app, you would submit both the form data and the selected user type
-    console.log('Form data:', data);
-    console.log('User type:', selectedUserType);
-    // Proceed to the user type selection step
+    setFormData(data);
     setCurrentStep('userType');
   };
 
   const handleUserTypeSelect = (userType: UserType) => {
     setSelectedUserType(userType);
-    // In a real app, you would finalize registration here with both form data and user type
-    // For demo purposes, we'll just log the selection
-    console.log(`Selected user type: ${userType}`);
   };
 
   const handleMentorshipRoleSelect = (mentorshipRole: MentorshipRole) => {
     setSelectedMentorshipRole(mentorshipRole);
-    // In a real app, you would finalize registration here with both form data and user type
-    // For demo purposes, we'll just log the selection
-    console.log(`Selected mentorship role: ${mentorshipRole}`);
   };
 
   const handleCompleteRegistration = () => {
-    // In a real app, you would make the final API call here
-    alert(`Registration complete! User type: ${selectedUserType}`);
-    // Redirect to login or dashboard with router
-    navigate('/login');
+    // API call to complete registration
+    const registerCredentials = {
+      ...formData,
+      bio: '',
+      userType: selectedUserType,
+      mentorshipRole: selectedMentorshipRole,
+    };
+    registerMutation.mutate(registerCredentials, {
+      onSuccess: () => {
+        navigate('/register-successfull');
+      },
+      onError: (error) => {
+        const errorMessage = error?.message || 'An unexpected error occurred.';
+        setRegistrationError(errorMessage);
+        console.error(error);
+      },
+    });
   };
 
   const handleBack = () => {
@@ -189,7 +200,7 @@ export default function RegisterPage() {
   const renderCredidentals = () => (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 5 }}>
       <Grid container spacing={3}>
-        {(['firstName', 'lastName'] as (keyof RegisterFormData)[]).map(
+        {/* {(['firstName', 'lastName'] as (keyof RegisterFormData)[]).map(
           (field, idx) => (
             <Grid size={{ xs: 12, sm: 6 }} key={field}>
               <Controller
@@ -207,7 +218,7 @@ export default function RegisterPage() {
               />
             </Grid>
           )
-        )}
+        )} */}
         <Grid size={{ xs: 12 }}>
           <Controller
             name="username"
@@ -452,7 +463,16 @@ export default function RegisterPage() {
             onClick={handleNext}
             endIcon={<ArrowForward />}
             disabled={!selected}
-            sx={{ textTransform: 'none', flexGrow: 1 }} // Added flexGrow to stretch the button
+            sx={{
+              py: 1.5,
+              px: 4,
+              borderRadius: 2,
+              fontSize: '1rem',
+              textTransform: 'none',
+              fontWeight: 'bold',
+              ml: 'auto',
+              flexGrow: 1,
+            }}
           >
             Continue
           </Button>
@@ -478,6 +498,11 @@ export default function RegisterPage() {
           </Button>
         )}
       </Stack>
+      {registrationError && currentStep === 'mentorship' && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {registrationError}
+        </Alert>
+      )}
     </Box>
   );
 
