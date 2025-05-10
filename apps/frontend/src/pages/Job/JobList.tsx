@@ -1,6 +1,13 @@
 // Page component for displaying the list of jobs
 import React, { useState, useCallback } from 'react';
-import { Box, Container, Grid, Typography, Alert, Pagination } from '@mui/material';
+import {
+  Box,
+  Container,
+  Grid,
+  Typography,
+  Alert,
+  Pagination,
+} from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 
 import { useGetJobs } from '../../services/jobs.service';

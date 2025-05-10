@@ -7,7 +7,7 @@ export default function CenteredLoader() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100%',
+        height: '80vh',
         width: '100vw',
       }}
     >

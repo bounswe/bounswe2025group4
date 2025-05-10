@@ -1,315 +1,185 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
+  Box,
+  Button,
   Container,
-  Alert,
-  Snackbar,
   Typography,
   Paper,
+  CircularProgress,
+  List,
+  ListItem,
+  ListItemText,
   Divider,
 } from '@mui/material';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { AuthContext, AuthContextType } from '../../contexts/AuthContext'; // Adjust path and ensure AuthContextType is exported
 
-import JobGrid from '../../components/dashboard/JobGrid';
-import JobFormDialog from '../../components/dashboard/JobFormDialog';
-import ApplicationsGrid from '../../components/dashboard/ApplicationsGrid';
-import { jobsService, useGetJobs } from '../../services/jobs.service';
-import { JobFormValues, ApplicationStatusUpdate } from '../../schemas/job';
-import { Job } from '../../types/job';
-import { JobApplication } from '../../components/dashboard/ApplicationsGrid';
-import { useAuth } from '../../hooks/useAuth';
+// Placeholder for actual job data type - align with your backend/API response
+export interface JobPost {
+  id: string;
+  title: string;
+  status: 'open' | 'closed' | 'draft'; // Example statuses
+  applicationCount: number;
+  // Add other relevant properties: companyName, location, datePosted, etc.
+}
 
-// Mock data for companies - would typically come from an API
-const COMPANIES = [
-  { id: 'company1', name: 'Ethical Tech Co.' },
-  { id: 'company2', name: 'Green Solutions Inc.' },
-  { id: 'company3', name: 'Fair Work Technologies' },
-];
-
-// Mock function to get applications - would be replaced with actual API call
-const getApplicationsForJob = async (
-  jobId: string
-): Promise<JobApplication[]> => {
-  console.log(`Fetching applications for job ${jobId}`);
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // Mock data
+// Placeholder for API service to fetch employer's jobs
+// In a real app, this would be in a services/api.ts file and use TanStack Query
+const fetchEmployerJobs = async (
+  employerId: string,
+  token: string
+): Promise<JobPost[]> => {
+  console.log(
+    `Fetching jobs for employer: ${employerId} using token: ${token ? 'present' : 'absent'}`
+  );
+  // Simulate API call - Replace with actual fetch
+  // const response = await fetch(`/api/employers/${employerId}/jobs`, {
+  //   headers: { 'Authorization': `Bearer ${token}` },
+  // });
+  // if (!response.ok) {
+  //   throw new Error('Failed to fetch jobs');
+  // }
+  // return response.json();
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   return [
     {
-      id: 'app1',
-      applicantName: 'Jane Smith',
-      applicantEmail: 'jane.smith@example.com',
-      resume: 'https://example.com/resumes/jane-smith.pdf',
-      coverLetter:
-        "I am excited to apply for this position because of your company's commitment to ethical technology practices. My background in sustainable web development aligns perfectly with your mission.",
-      status: 'Pending',
-      appliedDate: '2023-04-15T10:30:00Z',
+      id: 'job1',
+      title: 'Senior Software Engineer',
+      status: 'open',
+      applicationCount: 15,
     },
     {
-      id: 'app2',
-      applicantName: 'John Doe',
-      applicantEmail: 'john.doe@example.com',
-      resume: 'https://example.com/resumes/john-doe.pdf',
-      coverLetter:
-        "Having worked in similar roles for the past 5 years, I believe I have the exact skill set you are looking for. I am particularly impressed by your company's commitment to work-life balance.",
-      status: 'Approved',
-      appliedDate: '2023-04-10T14:45:00Z',
-      feedback:
-        'Great fit for our team. Looking forward to the interview process.',
+      id: 'job2',
+      title: 'Lead Product Manager',
+      status: 'closed',
+      applicationCount: 35,
     },
     {
-      id: 'app3',
-      applicantName: 'Alex Johnson',
-      applicantEmail: 'alex.johnson@example.com',
-      resume: 'https://example.com/resumes/alex-johnson.pdf',
-      coverLetter:
-        'I am applying for this position to contribute to your mission of creating sustainable technology solutions. My previous experience in eco-friendly tech startups has prepared me well.',
-      status: 'Rejected',
-      appliedDate: '2023-04-05T09:15:00Z',
-      feedback:
-        'Thank you for your application. While impressive, we are looking for candidates with more specific experience in our industry.',
+      id: 'job3',
+      title: 'Junior UX Designer',
+      status: 'open',
+      applicationCount: 5,
     },
   ];
 };
 
-// Mock function to update application status - would be replaced with actual API call
-const updateApplicationStatus = async (
-  applicationId: string,
-  data: ApplicationStatusUpdate
-): Promise<void> => {
-  console.log(
-    `Updating application ${applicationId} with status: ${data.status}`
-  );
-  console.log('Feedback:', data.feedback);
+const JobDashboardPage: React.FC = () => {
+  const authContext = useContext(AuthContext) as AuthContextType; // Added type assertion for simplicity
+  const employerId = authContext?.id; // Assuming id is the employer's ID
+  const token = authContext?.token;
 
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 800));
+  const [jobs, setJobs] = useState<JobPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // In a real app, this would make an API call
-  return Promise.resolve();
-};
-
-const JobDashboard: React.FC = () => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { isAuthenticated } = useAuth();
-
-  const [selectedJob, setSelectedJob] = useState<Job | undefined>(undefined);
-  const [viewingApplications, setViewingApplications] = useState<string | null>(
-    null
-  );
-  const [formDialogOpen, setFormDialogOpen] = useState(false);
-  const [notification, setNotification] = useState<{
-    open: boolean;
-    message: string;
-    severity: 'success' | 'error' | 'info' | 'warning';
-  }>({
-    open: false,
-    message: '',
-    severity: 'info',
-  });
-
-  // Get the employer's jobs
-  const { data: jobsData, isLoading: isLoadingJobs } = useGetJobs({
-    companyId: user?.id, // Filter by current user's ID if they're an employer
-  });
-
-  // Query for applications when viewing a specific job's applications
-  const { data: applications = [], isLoading: isLoadingApplications } =
-    useQuery({
-      queryKey: ['applications', viewingApplications],
-      queryFn: () => getApplicationsForJob(viewingApplications!),
-      enabled: !!viewingApplications,
-    });
-
-  // Get the selected job's title for display in applications view
-  const selectedJobTitle = viewingApplications
-    ? jobsData?.jobs.find((job) => job.id === viewingApplications)?.title ||
-      'Job'
-    : '';
-
-  // Create job mutation
-  const createJobMutation = useMutation({
-    mutationFn: (jobData: JobFormValues) => jobsService.createJob(jobData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      setFormDialogOpen(false);
-      setNotification({
-        open: true,
-        message: 'Job created successfully!',
-        severity: 'success',
-      });
-    },
-    onError: (error) => {
-      setNotification({
-        open: true,
-        message: `Failed to create job: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        severity: 'error',
-      });
-    },
-  });
-
-  // Update job mutation
-  const updateJobMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: JobFormValues }) =>
-      jobsService.updateJob(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      setFormDialogOpen(false);
-      setSelectedJob(undefined);
-      setNotification({
-        open: true,
-        message: 'Job updated successfully!',
-        severity: 'success',
-      });
-    },
-    onError: (error) => {
-      setNotification({
-        open: true,
-        message: `Failed to update job: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        severity: 'error',
-      });
-    },
-  });
-
-  // Update application status mutation
-  const updateApplicationStatusMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ApplicationStatusUpdate }) =>
-      updateApplicationStatus(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['applications', viewingApplications],
-      });
-      setNotification({
-        open: true,
-        message: 'Application status updated successfully!',
-        severity: 'success',
-      });
-    },
-    onError: (error) => {
-      setNotification({
-        open: true,
-        message: `Failed to update application: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        severity: 'error',
-      });
-    },
-  });
-
-  // Check authentication on mount
   useEffect(() => {
-    // This would be used in a real application with proper auth
-    if (!isAuthenticated) {
-      // Redirect to login page
-      navigate('/login', { state: { from: '/dashboard/jobs' } });
+    if (employerId && token) {
+      setLoading(true);
+      setError(null);
+      fetchEmployerJobs(employerId, token)
+        .then((data) => {
+          setJobs(data);
+        })
+        .catch((err) => {
+          console.error('Error fetching employer jobs:', err);
+          setError(err.message || 'Failed to load jobs. Please try again.');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else if (!token) {
+      setError('Authentication token not found. Please log in.');
+      setLoading(false);
+    } else if (!employerId) {
+      setError('Employer ID not found. Cannot fetch jobs.');
+      setLoading(false);
     }
-  }, [isAuthenticated, navigate]);
+  }, [employerId, token]);
 
-  const handleCreateJob = () => {
-    setSelectedJob(undefined);
-    setFormDialogOpen(true);
-  };
-
-  const handleEditJob = (job: Job) => {
-    setSelectedJob(job);
-    setFormDialogOpen(true);
-  };
-
-  const handleViewApplications = (jobId: string) => {
-    setViewingApplications(jobId);
-  };
-
-  const handleBackToJobs = () => {
-    setViewingApplications(null);
-  };
-
-  const handleJobFormSubmit = (data: JobFormValues) => {
-    if (selectedJob) {
-      // Update existing job
-      updateJobMutation.mutate({ id: selectedJob.id, data });
-    } else {
-      // Create new job
-      createJobMutation.mutate(data);
-    }
-  };
-
-  const handleUpdateApplicationStatus = (
-    applicationId: string,
-    data: ApplicationStatusUpdate
-  ) => {
-    updateApplicationStatusMutation.mutate({ id: applicationId, data });
-  };
-
-  const handleCloseNotification = () => {
-    setNotification((prev) => ({ ...prev, open: false }));
-  };
-
-  // Show loading indicator or error message
-  if (!isAuthenticated) {
+  if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Alert severity="info">Please log in to access this page.</Alert>
+      <Container
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '80vh',
+        }}
+      >
+        <CircularProgress />
+        <Typography sx={{ ml: 2 }}>Loading Job Dashboard...</Typography>
       </Container>
     );
   }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Employer Dashboard
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 3 }}>
-          Manage your job listings and applicants
-        </Typography>
-
-        <Divider sx={{ mb: 3 }} />
-
-        {viewingApplications ? (
-          <ApplicationsGrid
-            jobId={viewingApplications}
-            jobTitle={selectedJobTitle}
-            applications={applications}
-            isLoading={isLoadingApplications}
-            onUpdateStatus={handleUpdateApplicationStatus}
-            onBackToJobs={handleBackToJobs}
-          />
-        ) : (
-          <JobGrid
-            jobs={jobsData?.jobs || []}
-            isLoading={isLoadingJobs}
-            onEdit={handleEditJob}
-            onCreateNew={handleCreateJob}
-            onApplicationsView={handleViewApplications}
-          />
-        )}
-      </Paper>
-
-      <JobFormDialog
-        open={formDialogOpen}
-        onClose={() => setFormDialogOpen(false)}
-        onSubmit={handleJobFormSubmit}
-        initialData={selectedJob}
-        isLoading={createJobMutation.isPending || updateJobMutation.isPending}
-        companies={COMPANIES}
-      />
-
-      <Snackbar
-        open={notification.open}
-        autoHideDuration={6000}
-        onClose={handleCloseNotification}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
       >
-        <Alert
-          severity={notification.severity}
-          onClose={handleCloseNotification}
-          variant="filled"
+        <Typography variant="h4" component="h1">
+          My Job Posts
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          component={Link}
+          to="/dashboard/jobs/create" // Ensure this route is defined for job creation
         >
-          {notification.message}
-        </Alert>
-      </Snackbar>
+          Create New Job Post
+        </Button>
+      </Box>
+
+      {error && (
+        <Paper
+          sx={{
+            p: 2,
+            mb: 3,
+            backgroundColor: 'error.light',
+            color: 'error.contrastText',
+          }}
+        >
+          <Typography>{error}</Typography>
+        </Paper>
+      )}
+
+      {!error && jobs.length === 0 && !loading && (
+        <Paper sx={{ p: 3, textAlign: 'center' }}>
+          <Typography variant="h6">No job posts found.</Typography>
+          <Typography>Click "Create New Job Post" to get started.</Typography>
+        </Paper>
+      )}
+
+      {!error && jobs.length > 0 && (
+        <Paper elevation={2} sx={{ p: 0 }}>
+          {' '}
+          {/* Removed padding from Paper to allow List to control it */}
+          <List disablePadding>
+            {jobs.map((job, index) => (
+              <React.Fragment key={job.id}>
+                <ListItem
+                  component={Link}
+                  to={`/dashboard/jobs/${job.id}`} // Link to specific job detail page
+                  sx={{ p: 2, '&:hover': { backgroundColor: 'action.hover' } }} // Removed 'button', added hover style
+                >
+                  <ListItemText
+                    primary={job.title}
+                    secondary={`Status: ${job.status} - Applications: ${job.applicationCount}`}
+                  />
+                </ListItem>
+                {index < jobs.length - 1 && <Divider />}
+              </React.Fragment>
+            ))}
+          </List>
+        </Paper>
+      )}
     </Container>
   );
 };
 
-export default JobDashboard;
+export default JobDashboardPage;

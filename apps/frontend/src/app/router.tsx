@@ -23,6 +23,19 @@ const JobDetailPage = lazy(() => import('../pages/Job/JobDetail'));
 // Add JobDashboard
 const JobDashboardPage = lazy(() => import('../pages/Job/JobDashboard'));
 
+// Import the RoleBasedRedirect component
+const RoleBasedRedirect = lazy(
+  () => import('../components/auth/RoleBasedRedirect')
+);
+
+// Import the CreateJobPage component
+const CreateJobPage = lazy(() => import('../pages/Job/CreateJobPage'));
+
+// Import the JobPostDetailDashboardView component
+const JobPostDetailDashboardView = lazy(
+  () => import('../pages/Job/JobPostDetailDashboardView')
+);
+
 // Root layout with navigation and common elements
 const RootLayout = lazy(() => import('../layouts/Root'));
 
@@ -64,17 +77,6 @@ const router = createBrowserRouter([
           // Load any data needed for the homepage
           return { message: 'Welcome to the Job Platform' };
         },
-      },
-      {
-        // Updated jobs route - no loader needed here as page uses useQuery
-        path: 'jobs',
-        element: <JobListPage />,
-        // loader: jobListLoader, // Removed - TanStack handles loading client-side based on URL params
-      },
-      {
-        // New job detail route
-        path: 'jobs/:id',
-        element: <JobDetailPage />,
       },
       {
         path: 'login',
@@ -126,12 +128,37 @@ const router = createBrowserRouter([
         //   return { user: { name: "User Name" } };
         // },
       },
+      {
+        // This is the new entry point for when a user clicks "Jobs"
+        path: 'jobs',
+        element: <RoleBasedRedirect />,
+      },
+      {
+        // Renamed/Re-scoped route for job seekers to view the list of jobs
+        path: 'jobs/list',
+        element: <JobListPage />,
+      },
+      {
+        // New job detail route
+        path: 'jobs/:id',
+        element: <JobDetailPage />,
+      },
       // Add employer dashboard route
       {
         path: 'dashboard/jobs',
         element: <JobDashboardPage />,
         // In a real app, this would have an auth check loader
         // to redirect non-employers or unauthenticated users
+      },
+      {
+        path: 'dashboard/jobs/create',
+        element: <CreateJobPage />,
+        // Add auth protection: only employers can access
+      },
+      {
+        path: 'dashboard/jobs/:id',
+        element: <JobPostDetailDashboardView />,
+        // Add auth protection: only employer who owns the job can access
       },
     ],
   },
