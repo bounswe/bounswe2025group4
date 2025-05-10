@@ -1,44 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './api';
 import { ApiResponse } from '../types/api';
-import { Job } from '../types/job';
-
-export interface CreateJobDto {
-  title: string;
-  description: string;
-  location: string;
-  salaryMin?: number;
-  salaryMax?: number;
-  employmentType: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
-  ethicalPolicies: string[]; // e.g., ['fair-wage', 'equal-opportunity']
-  companyId: string;
-}
-
-export interface UpdateJobDto {
-  title?: string;
-  description?: string;
-  location?: string;
-  salaryMin?: number;
-  salaryMax?: number;
-  employmentType?: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
-  ethicalPolicies?: string[]; // e.g., ['fair-wage', 'equal-opportunity']
-  companyId?: string;
-}
-
-export interface JobFilters {
-  query?: string;
-  location?: string;
-  employmentType?: string[];
-  companyId?: string;
-  page?: number;
-  limit?: number;
-}
-
-export interface PaginatedJobsResponse {
-  jobs: Job[];
-  totalCount: number;
-  // Add other pagination fields like currentPage, totalPages if available from API
-}
+import { JobFilters, JobPost } from '../types/job';
 
 const JOB_KEYS = {
   all: ['jobs'] as const,
@@ -49,23 +12,40 @@ const JOB_KEYS = {
 };
 
 class JobsService {
-  async getAllJobs(filters: JobFilters): Promise<PaginatedJobsResponse> {
-    const response = await apiClient.get<PaginatedJobsResponse>('/jobs', { params: filters });
+  async getAllJobs(filters: JobFilters): Promise<JobPost[]> {
+    // Define a type for the raw response from the API
+    type RawJobPost = Omit<JobPost, 'ethicalTags'> & {
+      ethicalTags: string | string[];
+    };
+
+    const response = await apiClient.get<RawJobPost[]>(
+      '/jobs',
+      filters as Record<string, unknown>
+    );
+    // Transform ethicalTags from comma-separated string to string array
+    return response.data.map((job: RawJobPost) => ({
+      ...job,
+      ethicalTags:
+        typeof job.ethicalTags === 'string'
+          ? job.ethicalTags.split(',').map((tag: string) => tag.trim())
+          : Array.isArray(job.ethicalTags)
+            ? job.ethicalTags
+            : [], // Handle if it's already an array or empty
+    }));
+  }
+
+  async getJobById(id: string): Promise<JobPost> {
+    const response = await apiClient.get<JobPost>(`/jobs/${id}`);
     return response.data;
   }
 
-  async getJobById(id: string): Promise<Job> {
-    const response = await apiClient.get<Job>(`/jobs/${id}`);
+  async createJob(jobData: JobPost): Promise<JobPost> {
+    const response = await apiClient.post<JobPost>('/jobs', jobData);
     return response.data;
   }
 
-  async createJob(jobData: CreateJobDto): Promise<Job> {
-    const response = await apiClient.post<Job>('/jobs', jobData);
-    return response.data;
-  }
-
-  async updateJob(id: string, jobData: UpdateJobDto): Promise<Job> {
-    const response = await apiClient.put<Job>(`/jobs/${id}`, jobData);
+  async updateJob(id: string, jobData: JobPost): Promise<JobPost> {
+    const response = await apiClient.put<JobPost>(`/jobs/${id}`, jobData);
     return response.data;
   }
 
@@ -78,15 +58,16 @@ export const jobsService = new JobsService();
 
 // ----- React Query Hooks -----
 export const useGetJobs = (filters: JobFilters) =>
-  useQuery<PaginatedJobsResponse, Error, PaginatedJobsResponse, readonly [string, string, JobFilters]>({
+  useQuery<JobPost[], Error, JobPost[], readonly [string, string, JobFilters]>({
     queryKey: JOB_KEYS.list(filters),
     queryFn: () => jobsService.getAllJobs(filters),
+    refetchOnWindowFocus: false,
   });
 
 export const useCreateJob = () => {
   const queryClient = useQueryClient();
-  return useMutation<Job, Error, CreateJobDto>({
-    mutationFn: (jobData: CreateJobDto) => jobsService.createJob(jobData),
+  return useMutation<JobPost, Error, JobPost>({
+    mutationFn: (jobData: JobPost) => jobsService.createJob(jobData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: JOB_KEYS.lists() });
     },
@@ -95,15 +76,13 @@ export const useCreateJob = () => {
 
 export const useUpdateJob = () => {
   const queryClient = useQueryClient();
-  return useMutation<Job, Error, { id: string; data: UpdateJobDto }>({
+  return useMutation<JobPost, Error, { id: string; data: JobPost }>({
     mutationFn: ({ id, data }) => jobsService.updateJob(id, data),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: JOB_KEYS.lists() });
       queryClient.invalidateQueries({
         queryKey: JOB_KEYS.detail(variables.id),
       });
-      // Optionally, update the specific cache entry:
-      // queryClient.setQueryData(JOB_KEYS.detail(variables.id), updatedData);
     },
   });
 };
@@ -115,8 +94,6 @@ export const useDeleteJob = () => {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: JOB_KEYS.lists() });
       queryClient.invalidateQueries({ queryKey: JOB_KEYS.detail(id) });
-      // More aggressive invalidation:
-      // queryClient.invalidateQueries({ queryKey: JOB_KEYS.all });
     },
   });
 };

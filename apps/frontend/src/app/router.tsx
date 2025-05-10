@@ -21,7 +21,7 @@ const JobListPage = lazy(() => import('../pages/Job/JobList'));
 const JobDetailPage = lazy(() => import('../pages/Job/JobDetail'));
 // import { jobDetailLoader, applyAction } from '../pages/Job/JobDetail';
 // Add JobDashboard
-const JobDashboardPage = lazy(() => import('../pages/dashboard/JobDashboard'));
+const JobDashboardPage = lazy(() => import('../pages/Job/JobDashboard'));
 
 // Root layout with navigation and common elements
 const RootLayout = lazy(() => import('../layouts/Root'));

@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from '@tanstack/react-query';
 
 interface Application {
   id: string;
@@ -24,9 +24,14 @@ export class ApplicationsService {
     return Promise.resolve({ id: applicationId, status: 'pending' });
   }
 
-  async submitApplication(jobId: string, resume: File): Promise<SubmissionResponse> {
+  async submitApplication(
+    jobId: string,
+    resume: File
+  ): Promise<SubmissionResponse> {
     // Replace with actual API call logic
-    console.log(`Submitting application for job ${jobId} with resume ${resume.name}`);
+    console.log(
+      `Submitting application for job ${jobId} with resume ${resume.name}`
+    );
     const formData = new FormData();
     formData.append('jobId', jobId);
     formData.append('resume', resume);
@@ -51,6 +56,3 @@ export const useSubmitApplication = (jobId: string, resume: File) => {
     mutationFn: () => applicationsService.submitApplication(jobId, resume),
   });
 };
-
-
-

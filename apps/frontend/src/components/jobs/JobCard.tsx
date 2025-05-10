@@ -1,21 +1,14 @@
 // Component to display a single job in the list
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Chip,
-  Avatar,
-} from '@mui/material';
+import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { Job } from '../../types/job';
+import { JobPost } from '../../types/job';
 import BusinessIcon from '@mui/icons-material/Business'; // Example Icon
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 interface JobCardProps {
-  job: Job;
+  job: JobPost;
 }
 
 const JobCard: React.FC<JobCardProps> = ({ job }) => {
@@ -34,19 +27,15 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         sx={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <Avatar
-            src={job.company.logoUrl}
-            alt={job.company.name}
-            sx={{ mr: 1, width: 40, height: 40 }}
-          >
+          <Box sx={{ mr: 1 }}>
             <BusinessIcon />
-          </Avatar>
+          </Box>
           <Box>
             <Typography variant="h6" component="div">
               {job.title}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {job.company.name}
+              {job.company}
             </Typography>
           </Box>
         </Box>
@@ -63,37 +52,37 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
           <Typography variant="body2">{job.location}</Typography>
           <AttachMoneyIcon fontSize="small" sx={{ ml: 1.5, mr: 0.5 }} />
           <Typography variant="body2">
-            {formatSalary(job.salaryMin, job.salaryMax)}
+            {formatSalary(job.minSalary, job.maxSalary)}
           </Typography>
-          <Chip label={job.employmentType} size="small" sx={{ ml: 1.5 }} />
+          <Chip
+            label={job.remote ? 'Remote' : 'On-site'}
+            size="small"
+            sx={{ ml: 1.5 }}
+          />
         </Box>
 
-        {/* Consider showing a snippet of the description or key skills */}
-        {/* <Typography variant="body2" color="text.secondary" noWrap sx={{ mb: 1 }}>
-          {job.description}
-        </Typography> */}
-
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-          {job.ethicalPolicies.map((policy) => (
-            <Chip
-              key={policy}
-              label={policy.replace('-', ' ')}
-              size="small"
-              variant="outlined"
-              color="success"
-            />
-          ))}
-        </Box>
-
-        {/* Add Posted Date */}
         <Typography
-          variant="caption"
-          display="block"
+          variant="body2"
           color="text.secondary"
-          sx={{ mt: 1, textAlign: 'right' }}
+          noWrap
+          sx={{ mb: 1 }}
         >
-          Posted: {new Date(job.postedDate).toLocaleDateString()}
+          {job.description}
         </Typography>
+
+        {job.ethicalTags && job.ethicalTags.length > 0 && (
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            {job.ethicalTags.map((policy) => (
+              <Chip
+                key={policy}
+                label={policy.replace('_', ' ')}
+                size="small"
+                variant="outlined"
+                color="success"
+              />
+            ))}
+          </Box>
+        )}
       </CardContent>
     </Card>
   );

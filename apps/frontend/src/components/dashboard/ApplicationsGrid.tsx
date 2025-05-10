@@ -31,7 +31,10 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { applicationStatusSchema, ApplicationStatusUpdate } from '../../schemas/job';
+import {
+  applicationStatusSchema,
+  ApplicationStatusUpdate,
+} from '../../schemas/job';
 
 export interface JobApplication {
   id: string;
@@ -49,7 +52,10 @@ interface ApplicationsGridProps {
   jobTitle: string;
   applications: JobApplication[];
   isLoading: boolean;
-  onUpdateStatus: (applicationId: string, data: ApplicationStatusUpdate) => void;
+  onUpdateStatus: (
+    applicationId: string,
+    data: ApplicationStatusUpdate
+  ) => void;
   onBackToJobs: () => void;
 }
 
@@ -62,17 +68,23 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
   onBackToJobs,
 }) => {
   const theme = useTheme();
-  const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
+  const [selectedApplication, setSelectedApplication] =
+    useState<JobApplication | null>(null);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<ApplicationStatusUpdate>({
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ApplicationStatusUpdate>({
     resolver: zodResolver(applicationStatusSchema),
     defaultValues: {
       status: 'Pending',
       feedback: '',
-    }
+    },
   });
 
   const handleViewApplication = (application: JobApplication) => {
@@ -98,7 +110,7 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
 
   const onStatusSubmit = async (data: ApplicationStatusUpdate) => {
     if (!selectedApplication) return;
-    
+
     setIsSubmitting(true);
     try {
       await onUpdateStatus(selectedApplication.id, data);
@@ -202,7 +214,14 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          mb: 2,
+          alignItems: 'center',
+        }}
+      >
         <Button
           variant="outlined"
           startIcon={<ArrowBackIcon />}
@@ -210,11 +229,9 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
         >
           Back to Jobs
         </Button>
-        <Typography variant="h6">
-          Applications for "{jobTitle}"
-        </Typography>
+        <Typography variant="h6">Applications for "{jobTitle}"</Typography>
       </Box>
-      
+
       <DataGridPro
         rows={applications}
         columns={columns}
@@ -238,7 +255,7 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
           },
         }}
       />
-      
+
       {/* View Application Dialog */}
       <Dialog
         open={viewDialogOpen}
@@ -253,31 +270,47 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
               <Typography variant="h6" gutterBottom>
                 {selectedApplication.applicantName}
               </Typography>
-              
+
               <Typography variant="subtitle1" gutterBottom>
                 {selectedApplication.applicantEmail}
               </Typography>
-              
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Applied on: {new Date(selectedApplication.appliedDate).toLocaleDateString()}
+
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
+                Applied on:{' '}
+                {new Date(selectedApplication.appliedDate).toLocaleDateString()}
               </Typography>
-              
-              <Box sx={{ mt: 2, mb: 2 }}>{getStatusChip(selectedApplication.status)}</Box>
-              
+
+              <Box sx={{ mt: 2, mb: 2 }}>
+                {getStatusChip(selectedApplication.status)}
+              </Box>
+
               <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
                 Cover Letter
               </Typography>
-              
-              <Typography variant="body1" sx={{ mt: 1, p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
+
+              <Typography
+                variant="body1"
+                sx={{
+                  mt: 1,
+                  p: 2,
+                  border: 1,
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                }}
+              >
                 {selectedApplication.coverLetter}
               </Typography>
-              
+
               <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
                 Resume
               </Typography>
-              
-              <Button 
-                variant="outlined" 
+
+              <Button
+                variant="outlined"
                 sx={{ mt: 1 }}
                 component="a"
                 href={selectedApplication.resume}
@@ -286,13 +319,26 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
               >
                 View Resume
               </Button>
-              
+
               {selectedApplication.feedback && (
                 <>
-                  <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    sx={{ mt: 2 }}
+                  >
                     Feedback
                   </Typography>
-                  <Typography variant="body1" sx={{ mt: 1, p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      mt: 1,
+                      p: 2,
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: 1,
+                    }}
+                  >
                     {selectedApplication.feedback}
                   </Typography>
                 </>
@@ -302,8 +348,8 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseView}>Close</Button>
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             color="primary"
             onClick={() => {
               handleCloseView();
@@ -314,7 +360,7 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
           </Button>
         </DialogActions>
       </Dialog>
-      
+
       {/* Update Status Dialog */}
       <Dialog
         open={statusDialogOpen}
@@ -328,14 +374,19 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
             {selectedApplication && (
               <Box sx={{ mt: 2 }}>
                 <Typography variant="subtitle1" gutterBottom>
-                  {selectedApplication.applicantName} - {selectedApplication.applicantEmail}
+                  {selectedApplication.applicantName} -{' '}
+                  {selectedApplication.applicantEmail}
                 </Typography>
-                
+
                 <Controller
                   name="status"
                   control={control}
                   render={({ field }) => (
-                    <FormControl fullWidth sx={{ mt: 2 }} error={!!errors.status}>
+                    <FormControl
+                      fullWidth
+                      sx={{ mt: 2 }}
+                      error={!!errors.status}
+                    >
                       <InputLabel id="status-label">Status</InputLabel>
                       <Select
                         {...field}
@@ -350,7 +401,7 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
                     </FormControl>
                   )}
                 />
-                
+
                 <Controller
                   name="feedback"
                   control={control}
@@ -391,4 +442,4 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
   );
 };
 
-export default ApplicationsGrid; 
+export default ApplicationsGrid;

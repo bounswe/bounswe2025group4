@@ -46,7 +46,7 @@ const JobGrid: React.FC<JobGridProps> = ({
   const theme = useTheme();
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [jobToDelete, setJobToDelete] = useState<string | null>(null);
-  
+
   const deleteJobMutation = useDeleteJob();
 
   const handleEditClick = (job: Job) => {
@@ -118,12 +118,12 @@ const JobGrid: React.FC<JobGridProps> = ({
         return (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
             {policies.slice(0, 2).map((policy) => (
-              <Chip 
-                key={policy} 
+              <Chip
+                key={policy}
                 label={policy}
-                size="small" 
-                color="primary" 
-                variant="outlined" 
+                size="small"
+                color="primary"
+                variant="outlined"
               />
             ))}
             {policies.length > 2 && (
@@ -189,7 +189,7 @@ const JobGrid: React.FC<JobGridProps> = ({
           Create Job
         </Button>
       </Box>
-      
+
       <DataGridPro
         rows={jobs}
         columns={columns}
@@ -214,7 +214,7 @@ const JobGrid: React.FC<JobGridProps> = ({
           },
         }}
       />
-      
+
       <ConfirmDialog
         open={confirmDialogOpen}
         title="Delete Job Listing"
@@ -227,4 +227,4 @@ const JobGrid: React.FC<JobGridProps> = ({
   );
 };
 
-export default JobGrid; 
+export default JobGrid;
