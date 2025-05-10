@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'dart:io';
 
 import '../models/job_post.dart';
 import '../models/job_application.dart';
 import '../models/discussion_thread.dart';
 import '../models/comment.dart';
+import '../models/user.dart';
 import '../providers/auth_provider.dart'; // Import AuthProvider
 import '../constants/app_constants.dart'; // Import AppConstants
 
@@ -411,7 +413,7 @@ class ApiService {
   }
 
   // ─────────────────────────────────────────────────
-  // Forum / Discussion Endpoints (Updated via Swagger)
+  // Forum / Discussion Endpoints
   // ─────────────────────────────────────────────────
   /// GET /api/threads
   Future<List<DiscussionThread>> fetchDiscussionThreads() async {
@@ -425,6 +427,8 @@ class ApiService {
       return (data as List)
           .map((e) => DiscussionThread.fromJson(e as Map<String, dynamic>))
           .toList();
+    } on SocketException {
+      rethrow;
     } catch (e) {
       print("API Error fetching discussion threads: $e");
       throw Exception('Failed to fetch discussion threads. $e');
@@ -439,49 +443,74 @@ class ApiService {
       ) async {
     final uri = _buildUri('/threads');
     final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
-    final response = await _client.post(
-      uri,
-      headers: _getHeaders(),
-      body: payload,
-    );
-    final data = await _handleResponse(response);
-    return DiscussionThread.fromJson(data);
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return DiscussionThread.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to create discussion thread. $e');
+    }
   }
 
   /// GET /api/threads/{threadId}/comments
   Future<List<Comment>> fetchComments(int threadId) async {
     final uri = _buildUri('/threads/$threadId/comments');
-    final response = await _client.get(uri, headers: _getHeaders());
-    final data = await _handleResponse(response);
-    return (data as List)
-        .map((e) => Comment.fromJson(e as Map<String, dynamic>))
-        .toList();
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+      return (data as List)
+          .map((e) => Comment.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to fetch comments: $e');
+    }
   }
 
   /// POST /api/threads/{threadId}/comments
   Future<Comment> postComment(int threadId, String body) async {
     final uri = _buildUri('/threads/$threadId/comments');
     final payload = jsonEncode({'body': body});
-    final response = await _client.post(
-      uri,
-      headers: _getHeaders(),
-      body: payload,
-    );
-    final data = await _handleResponse(response);
-    return Comment.fromJson(data);
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return Comment.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to post comment: $e');
+    }
   }
 
   /// PATCH /api/comments/{commentId}
   Future<Comment> editComment(int commentId, String body) async {
     final uri = _buildUri('/comments/$commentId');
     final payload = jsonEncode({'body': body});
-    final response = await _client.patch(
-      uri,
-      headers: _getHeaders(),
-      body: payload,
-    );
-    final data = await _handleResponse(response);
-    return Comment.fromJson(data);
+    try {
+      final response = await _client.patch(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return Comment.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to edit comment: $e');
+    }
   }
 
 
@@ -496,20 +525,34 @@ class ApiService {
       ) async {
     final uri = _buildUri('/threads/$threadId');
     final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
-    final response = await _client.patch(
-      uri,
-      headers: _getHeaders(),
-      body: payload,
-    );
-    final data = await _handleResponse(response);
-    return DiscussionThread.fromJson(data);
+
+    try {
+      final response = await _client.patch(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return DiscussionThread.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to edit discussion thread. $e');
+    }
   }
   /// GET /api/threads/tags
   Future<List<String>> fetchDiscussionTags() async {
     final uri = _buildUri('/threads/tags');
-    final response = await _client.get(uri, headers: _getHeaders());
-    final data = await _handleResponse(response);
-    return List<String>.from(data);
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+      return List<String>.from(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to fetch discussion tags: $e');
+    }
   }
 
 
@@ -524,6 +567,9 @@ class ApiService {
       await _handleResponse(response);
       print('Comment $commentId deleted successfully');
       return true;
+    } on SocketException {
+      print('SocketException while deleting comment $commentId');
+      rethrow;
     } catch (e) {
       print('Failed to delete comment $commentId: $e');
       return false;
@@ -534,24 +580,58 @@ class ApiService {
   /// POST /api/comments/{commentId}/report
   Future<void> reportComment(int commentId) async {
     final uri = _buildUri('/comments/$commentId/report');
-    final response = await _client.post(uri, headers: _getHeaders());
-    await _handleResponse(response);
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to report comment: $e');
+    }
   }
 
   /// DELETE /api/threads/{threadId}
   Future<void> deleteDiscussion(int threadId) async {
     final uri = _buildUri('/threads/$threadId');
-    final response = await _client.delete(uri, headers: _getHeaders());
-    await _handleResponse(response);
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to delete discussion thread: $e');
+    }
   }
 
   /// POST /api/threads/{threadId}/report
+
   Future<void> reportDiscussion(int threadId) async {
     final uri = _buildUri('/threads/$threadId/report');
-    final response = await _client.post(uri, headers: _getHeaders());
-    await _handleResponse(response);
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to report discussion: $e');
+    }
   }
 
+  /// GET /api/users/{id}
+  Future<User> fetchUser(String userId) async {
+    final uri = _buildUri('/users/$userId');
+    print('API Request: GET $uri');
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+      return User.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to fetch user $userId: $e');
+    }
+  }
 
   void dispose() {
     _client.close();
