@@ -115,6 +115,58 @@ public class ProfileService {
     }
 
 
+    @Transactional
+    public EducationDto addEducation(Long userId, CreateEducationRequestDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Education education = Education.builder()
+                .school(dto.getSchool())
+                .degree(dto.getDegree())
+                .field(dto.getField())
+                .startDate(dto.getStartDate())
+                .endDate(dto.getEndDate())
+                .user(user)
+                .build();
+
+        return toDto(educationRepository.save(education));
+    }
+
+
+    @Transactional
+    public EducationDto updateEducation(Long userId, Long eduId, UpdateEducationRequestDto dto) {
+        Education education = educationRepository.findById(eduId)
+                .orElseThrow(() -> new RuntimeException("Education not found"));
+
+        if (!education.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized update attempt");
+        }
+
+        if (dto.getSchool() != null) education.setSchool(dto.getSchool());
+        if (dto.getDegree() != null) education.setDegree(dto.getDegree());
+        if (dto.getField() != null) education.setField(dto.getField());
+        if (dto.getStartDate() != null) education.setStartDate(dto.getStartDate());
+        if (dto.getEndDate() != null) education.setEndDate(dto.getEndDate());
+
+        return toDto(educationRepository.save(education));
+    }
+
+    @Transactional
+    public void deleteEducation(Long userId, Long eduId) {
+        Education education = educationRepository.findById(eduId)
+                .orElseThrow(() -> new RuntimeException("Education not found"));
+
+        if (!education.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Unauthorized delete attempt");
+        }
+
+        educationRepository.delete(education);
+    }
+
+
+
+
+
 
 
     @Transactional

@@ -99,6 +99,41 @@ public class ProfileController {
 
 
 
+    @PostMapping("/profile/{userId}/education")
+    public ResponseEntity<EducationDto> addEducation(@PathVariable Long userId,
+                                                     @Valid @RequestBody CreateEducationRequestDto dto) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        return ResponseEntity.ok(profileService.addEducation(userId, dto));
+    }
+
+
+    @PutMapping("/profile/{userId}/education/{eduId}")
+    public ResponseEntity<EducationDto> updateEducation(@PathVariable Long userId,
+                                                        @PathVariable Long eduId,
+                                                        @RequestBody UpdateEducationRequestDto dto) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.ok(profileService.updateEducation(userId, eduId, dto));
+    }
+
+
+    @DeleteMapping("/profile/{userId}/education/{eduId}")
+    public ResponseEntity<Void> deleteEducation(@PathVariable Long userId,
+                                                @PathVariable Long eduId) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        profileService.deleteEducation(userId, eduId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 
 
@@ -109,8 +144,7 @@ public class ProfileController {
         if (!user.getId().equals(userId)) {
             return ResponseEntity.status(403).build(); // Forbidden
         }
-        ExperienceDto createdExperience = profileService.addExperience(userId, dto);
-        return ResponseEntity.ok(createdExperience);
+        return ResponseEntity.ok(profileService.addExperience(userId, dto));
     }
 
     @PutMapping("/profile/{userId}/experience/{expId}")
