@@ -7,7 +7,7 @@ import { Suspense, lazy } from 'react';
 import CenteredLoader from '../components/layout/CenterLoader';
 import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
 import ResetPasswordPage from '../pages/Auth/ResetPassword';
-import { RedirectIfAuth } from '../utils/RedirectIfAuth';
+import { RedirectIfAuth } from '../components/auth/RedirectIfAuth';
 import RegisterSuccesfull from '../pages/Auth/RegisterSuccesfull';
 
 // Lazy load pages for better performance

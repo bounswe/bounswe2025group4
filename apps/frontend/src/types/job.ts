@@ -1,25 +1,16 @@
 // TypeScript types for Job Listing features
 
 export interface JobPost {
-  id: string;
+  id: number;
+  employerId: number;
   title: string;
-  status: 'open' | 'closed' | 'draft'; // Example statuses
-  applicationCount: number;
-  employerId?: string; // Optional: To verify ownership on detail pages
-  // Add other relevant properties: companyName, description, location, datePosted, salaryRange etc.
-  description?: string;
-  companyName?: string;
-  location?: string;
-  employmentType?:
-    | 'Full-time'
-    | 'Part-time'
-    | 'Contract'
-    | 'Internship'
-    | 'Temporary';
-  salaryMin?: number;
-  salaryMax?: number;
-  ethicalPolicies?: string[];
-  contactEmail?: string;
+  description: string;
+  company: string;
+  location: string;
+  remote: boolean;
+  ethicalTags: string[];
+  minSalary: number;
+  maxSalary: number;
 }
 
 export interface JobFilters {
@@ -35,21 +26,19 @@ export interface JobListResponse {
   jobs: JobPost[];
 }
 
+export type ApplicationStatus =
+  | 'PENDING'
+  | 'APPROVED'
+  | 'REJECTED';
+
 export interface JobApplication {
   id: string;
-  jobId: string; // To link back to the job
+  title: string;
+  company: string;
   applicantName: string;
-  applicantEmail: string;
-  applicationDate: string; // ISO date string or Date object
-  status:
-    | 'Pending'
-    | 'Viewed'
-    | 'Interviewing'
-    | 'Offered'
-    | 'Accepted'
-    | 'Rejected';
-  resumeUrl?: string;
-  coverLetter?: string;
-  feedback?: string; // Feedback given by employer to this applicant
-  // Add other relevant fields: applicantId, etc.
+  jobSeekerId: number;
+  jobPostingId: number;
+  status: ApplicationStatus;
+  feedback: string;
+  submissionDate: string;
 }
