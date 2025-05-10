@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.bounswe.backend.profile.dto.*;
 import org.bounswe.backend.profile.entity.*;
 import org.bounswe.backend.profile.repository.*;
-import org.bounswe.backend.user.dto.UserDto;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -268,42 +267,18 @@ public class ProfileService {
     }
 
     @Transactional
-    public ProfileDto deleteProfilePicture(Long userId) {
+    public void deleteProfilePicture(Long userId) {
         Profile profile = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
 
         profile.setProfilePicture(null);
-        return toDto(profileRepository.save(profile));
+        profileRepository.save(profile);
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private UserDto toDto(User user) {
-        return UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .bio(user.getBio())
-                .userType(user.getUserType())
-                .build();
-    }
 
     private ProfileDto toDto(Profile profile) {
-        return ProfileDto.builder()
+        return ProfileDto.builder() 
                 .id(profile.getId())
                 .fullName(profile.getFullName())
                 .phone(profile.getPhone())
