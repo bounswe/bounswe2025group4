@@ -25,10 +25,10 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-import { jobsService } from '../services/jobs.service';
-import ApplicationsService from '../services/applications.service';
-import { Job, ApplicationData, JobFilters } from '../types/job';
-import ApplyForm from '../components/jobs/ApplyForm';
+import { jobsService } from '../../services/jobs.service';
+import ApplicationsService from '../../services/applications.service';
+import { Job, ApplicationData, JobFilters } from '../../types/job';
+import ApplyForm from '../../components/jobs/ApplyForm';
 // import useNotificationStore from '../stores/notificationStore'; // For showing success/error toasts
 // import { useAuth } from '../contexts/AuthContext'; // To check if user is logged in
 

@@ -10,13 +10,13 @@ import {
 } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 
-import { useGetJobs } from '../services/jobs.service';
-import { Job, JobFilters } from '../types/job';
-import JobFilterSidebar from '../components/jobs/JobFilterSidebar';
-import JobCard from '../components/jobs/JobCard';
-import JobListSkeleton from '../components/jobs/JobListSkeleton';
-import EmptyJobsState from '../components/jobs/EmptyJobsState';
-import { useDebounce } from '../hooks/useDebounce';
+import { useGetJobs } from '../../services/jobs.service';
+import { Job, JobFilters } from '../../types/job';
+import JobFilterSidebar from '../../components/jobs/JobFilterSidebar';
+import JobCard from '../../components/jobs/JobCard';
+import JobListSkeleton from '../../components/jobs/JobListSkeleton';
+import EmptyJobsState from '../../components/jobs/EmptyJobsState';
+import { useDebounce } from '../../hooks/useDebounce';
 
 // Function to parse search params into filters
 const parseFiltersFromParams = (searchParams: URLSearchParams): JobFilters => {
