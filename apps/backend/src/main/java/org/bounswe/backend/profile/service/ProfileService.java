@@ -40,7 +40,6 @@ public class ProfileService {
                 .stream().map(this::toDto).collect(Collectors.toList());
 
         return FullProfileDto.builder()
-                .user(toDto(user))
                 .profile(toDto(profile))
                 .experience(experience)
                 .education(education)
@@ -91,6 +90,32 @@ public class ProfileService {
 
         return toDto(profileRepository.save(profile));
     }
+
+
+    @Transactional
+    public ProfileDto updateSkills(Long userId, List<String> skills) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        profile.setSkills(skills);
+        Profile updated = profileRepository.save(profile);
+
+        return toDto(updated);
+    }
+
+
+    @Transactional
+    public ProfileDto updateInterests(Long userId, List<String> interests) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        profile.setInterests(interests);
+        Profile updated = profileRepository.save(profile);
+        return toDto(updated);
+    }
+
+
+
 
     @Transactional
     public ExperienceDto addExperience(Long userId, CreateExperienceRequestDto dto) {

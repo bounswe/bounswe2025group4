@@ -13,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class FullProfileDto {
-    private UserDto user;
     private ProfileDto profile;
     private List<ExperienceDto> experience;
     private List<EducationDto> education;

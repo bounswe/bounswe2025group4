@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 @Tag(name = "Profile", description = "User profile endpoints")
@@ -51,15 +53,40 @@ public class ProfileController {
         return ResponseEntity.ok(profileService.updateProfile(userId, dto));
     }
 
-
-    @PostMapping("/profile/{userId}/experience")
-    public ResponseEntity<?> addExperience(@PathVariable Long userId,
-                                           @Valid @RequestBody CreateExperienceRequestDto dto) {
+    @PatchMapping("/profile/{userId}/skills")
+    public ResponseEntity<ProfileDto> updateSkills(@PathVariable Long userId,
+                                                   @RequestBody List<String> skills) {
         User user = getCurrentUser();
         if (!user.getId().equals(userId)) {
             return ResponseEntity.status(403).build(); // Forbidden
         }
-        return ResponseEntity.ok(profileService.addExperience(userId, dto));
+        return ResponseEntity.ok(profileService.updateSkills(userId, skills));
+    }
+
+    @PatchMapping("/profile/{userId}/interests")
+    public ResponseEntity<ProfileDto> updateInterests(@PathVariable Long userId, @RequestBody List<String> interests) {
+
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        return ResponseEntity.ok(profileService.updateInterests(userId, interests));
+    }
+
+
+
+
+
+
+    @PostMapping("/profile/{userId}/experience")
+    public ResponseEntity<ExperienceDto> addExperience(@PathVariable Long userId,
+                                                       @Valid @RequestBody CreateExperienceRequestDto dto) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        ExperienceDto createdExperience = profileService.addExperience(userId, dto);
+        return ResponseEntity.ok(createdExperience);
     }
 
 
