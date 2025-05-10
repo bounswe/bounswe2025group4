@@ -22,7 +22,6 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long> {
     List<JobPost> findFiltered(
             @Param("title") String title,
             @Param("company") String company,
-            @Param("ethicalPolicies") List<String> ethicalPolicies,
             @Param("minSalary") Integer minSalary,
             @Param("maxSalary") Integer maxSalary,
             @Param("isRemote") Boolean isRemote
