@@ -134,6 +134,26 @@ public class ProfileService {
         return toDto(experienceRepository.save(experience));
     }
 
+    @Transactional
+    public ProfileDto updateProfilePicture(Long userId, String profilePicture) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        profile.setProfilePicture(profilePicture);
+        return toDto(profileRepository.save(profile));
+    }
+
+    @Transactional
+    public ProfileDto deleteProfilePicture(Long userId) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        profile.setProfilePicture(null);
+        return toDto(profileRepository.save(profile));
+    }
+
+
+
 
 
 

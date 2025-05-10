@@ -55,23 +55,46 @@ public class ProfileController {
 
     @PatchMapping("/profile/{userId}/skills")
     public ResponseEntity<ProfileDto> updateSkills(@PathVariable Long userId,
-                                                   @RequestBody List<String> skills) {
+                                                   @RequestBody SkillUpdateRequestDto request) {
         User user = getCurrentUser();
         if (!user.getId().equals(userId)) {
-            return ResponseEntity.status(403).build(); // Forbidden
+            return ResponseEntity.status(403).build();
         }
-        return ResponseEntity.ok(profileService.updateSkills(userId, skills));
+        return ResponseEntity.ok(profileService.updateSkills(userId, request.getSkills()));
     }
 
     @PatchMapping("/profile/{userId}/interests")
-    public ResponseEntity<ProfileDto> updateInterests(@PathVariable Long userId, @RequestBody List<String> interests) {
+    public ResponseEntity<ProfileDto> updateInterests(@PathVariable Long userId,
+                                                      @RequestBody InterestUpdateRequestDto request) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+        return ResponseEntity.ok(profileService.updateInterests(userId, request.getInterests()));
+    }
 
+
+    @PostMapping("/profile/{userId}/profile-picture")
+    public ResponseEntity<ProfileDto> updateProfilePicture(@PathVariable Long userId,
+                                                           @Valid @RequestBody UpdateProfilePictureRequestDto dto) {
         User user = getCurrentUser();
         if (!user.getId().equals(userId)) {
             return ResponseEntity.status(403).build(); // Forbidden
         }
-        return ResponseEntity.ok(profileService.updateInterests(userId, interests));
+        return ResponseEntity.ok(profileService.updateProfilePicture(userId, dto.getProfilePicture()));
     }
+
+
+    @DeleteMapping("/profile/{userId}/profile-picture")
+    public ResponseEntity<ProfileDto> deleteProfilePicture(@PathVariable Long userId) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        return ResponseEntity.ok(profileService.deleteProfilePicture(userId));
+    }
+
+
 
 
 
