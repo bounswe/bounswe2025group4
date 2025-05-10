@@ -36,9 +36,6 @@ public class JobPostService {
                 .filter(j -> {
                     if (ethicalTags == null || ethicalTags.isEmpty()) return true;
                     for (String tag : ethicalTags) {
-                        System.out.println(tag);
-                        System.out.println(j.getEthicalTags());
-                        System.out.println(j.getEthicalTags().toLowerCase().contains(tag.toLowerCase()));
                         if (j.getEthicalTags().toLowerCase().contains(tag.toLowerCase())) return true;
                     }
                     return false;
