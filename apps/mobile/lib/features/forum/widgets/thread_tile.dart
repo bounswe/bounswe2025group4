@@ -24,89 +24,77 @@ class ThreadTile extends StatefulWidget {
 }
 
 class _ThreadTileState extends State<ThreadTile> {
+  String? _username;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsername();
+  }
+
+  Future<void> _loadUsername() async {
+    final api = ApiService(authProvider: context.read<AuthProvider>());
+    try {
+      final user = await api.fetchUser(widget.thread.creatorId);
+      setState(() => _username = user.username);
+    } catch (_) {
+      setState(() => _username = 'Unknown');
+    }
+  }
+
   @override
   Widget build(BuildContext ctx) {
     final api = ApiService(authProvider: ctx.read<AuthProvider>());
     final currentUser = ctx.read<AuthProvider>().currentUser?.id;
     final isOwner = widget.thread.creatorId.toString() == currentUser;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: InkWell(
-        onTap: widget.onTap,
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 3,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.thread.title,
-                style: Theme.of(ctx).textTheme.titleMedium,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                widget.thread.body.length > 100
-                    ? '${widget.thread.body.substring(0, 100)}...'
-                    : widget.thread.body,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: widget.thread.tags.map((t) => Chip(label: Text(t))).toList(),
-              ),
-              const SizedBox(height: 8),
               Row(
-                children: const [
-                  Icon(Icons.comment),
-                  Text(' ?'),
-                  Spacer(),
-                  Flexible(
-                    child: Text(
-                      'Unknown date',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                children: [
+                  CircleAvatar(
+                    radius: 16,
+                    child: Text(_username != null ? _username![0].toUpperCase() : '?'),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    _username ?? 'Loading...',
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ],
               ),
+              const SizedBox(height: 12),
+              Text(
+                widget.thread.title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.thread.body,
+                style: Theme.of(context).textTheme.bodyMedium,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 6,
+                children: widget.thread.tags.map((tag) => Chip(label: Text(tag))).toList(),
+              ),
+              const SizedBox(height: 8),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Spacer(),
-                  PopupMenuButton<String>(
-                    onSelected: (action) async {
-                      final messenger = ScaffoldMessenger.of(ctx);
-                      final navigator = Navigator.of(ctx);
-                      if (action == 'Report') {
-                        await api.reportDiscussion(widget.thread.id);
-                        messenger.showSnackBar(
-                          const SnackBar(content: Text('Discussion reported')),
-                        );
-                      } else if (action == 'Edit' && isOwner) {
-                        final updatedThread = await navigator.push<DiscussionThread>(
-                          MaterialPageRoute(
-                            builder: (_) => CreateThreadScreen(thread: widget.thread),
-                          ),
-                        );
-                        if (updatedThread != null && widget.onEdit != null) {
-                          widget.onEdit!(updatedThread);
-                        }
-                      } else if (action == 'Delete' && isOwner) {
-                        await api.deleteDiscussion(widget.thread.id);
-                        widget.onDelete?.call();
-                      }
-                    },
-                    itemBuilder: (_) => [
-                      const PopupMenuItem(value: 'Report', child: Text('Report')),
-                      if (isOwner) ...[
-                        const PopupMenuItem(value: 'Edit', child: Text('Edit')),
-                        const PopupMenuItem(value: 'Delete', child: Text('Delete')),
-                      ],
-                    ],
-                  ),
+                  const Icon(Icons.comment, size: 20),
+                  Text('Unknown date', style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ],
@@ -116,3 +104,4 @@ class _ThreadTileState extends State<ThreadTile> {
     );
   }
 }
+

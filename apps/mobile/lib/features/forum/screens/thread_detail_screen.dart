@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 import '../../../core/models/discussion_thread.dart';
 import '../../../core/models/comment.dart';
 import '../../../core/providers/auth_provider.dart';
@@ -21,6 +22,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
   late final ApiService _api;
   List<Comment> _comments = [];
   late DiscussionThread _currentThread;
+  String? _username;
 
   @override
   void initState() {
@@ -28,6 +30,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
     _api = ApiService(authProvider: context.read<AuthProvider>());
     _currentThread = widget.thread;
     _loadComments();
+    _loadUsername();
   }
 
   Future<void> _loadComments() async {
@@ -36,11 +39,15 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
       setState(() {
         _comments = updated;
       });
+    } on SocketException {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed: Please check your connection and refresh the page.", style: TextStyle(color: Colors.red))),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("This discussion is no longer available.")),
+        const SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
       );
-      Navigator.of(context).pop(); // 👈 go back to forum screen
+      Navigator.of(context).pop(); // Go back to forum
     }
   }
 
@@ -50,11 +57,23 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
       await _api.postComment(_currentThread.id, _commentCtrl.text.trim());
       _commentCtrl.clear();
       await _loadComments();
+    } on SocketException {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed: Please check your connection and refresh the page.", style: TextStyle(color: Colors.red))),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to post comment. Discussion might have been deleted.")),
+        SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
       );
-      Navigator.of(context).pop(); // exit screen if thread gone
+    }
+  }
+
+  Future<void> _loadUsername() async {
+    try {
+      final user = await _api.fetchUser(_currentThread.creatorId);
+      setState(() => _username = user.username);
+    } catch (_) {
+      setState(() => _username = 'Unknown');
     }
   }
 
@@ -87,29 +106,50 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                 try {
                   await _api.reportDiscussion(_currentThread.id);
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('Discussion reported')),
+                    const SnackBar(content: Text('Discussion reported', style: TextStyle(color: Colors.green))),
+                  );
+                } on SocketException {
+                  messenger.showSnackBar(
+                    const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
                   );
                 } catch (e) {
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('This discussion no longer exists.')),
+                    SnackBar(content: Text('Failed: This discussion is no longer available.', style: TextStyle(color: Colors.red))),
                   );
-                  navigator.pop();
                 }
               } else if (action == 'Edit' && isOwner) {
-                final updated = await navigator.push<DiscussionThread>(
-                  MaterialPageRoute(
-                    builder: (_) => CreateThreadScreen(thread: _currentThread),
-                  ),
-                );
-                if (updated != null) {
-                  setState(() {
-                    _currentThread = updated;
-                  });
-                  navigator.pop(updated);
+                try {
+                  final updated = await navigator.push<DiscussionThread>(
+                    MaterialPageRoute(
+                      builder: (_) => CreateThreadScreen(thread: _currentThread),
+                    ),
+                  );
+                  if (updated != null) {
+                    setState(() => _currentThread = updated);
+                    navigator.pop(updated);
+                  }
+                } on SocketException {
+                  messenger.showSnackBar(
+                    const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
+                  );
+                } catch (e) {
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Failed to create/edit discussion.', style: TextStyle(color: Colors.red))),
+                  );
                 }
               } else if (action == 'Delete' && isOwner) {
-                await _api.deleteDiscussion(_currentThread.id);
-                navigator.pop('deleted');
+                try {
+                  await _api.deleteDiscussion(_currentThread.id);
+                  navigator.pop('deleted');
+                } on SocketException {
+                  messenger.showSnackBar(
+                    const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
+                  );
+                } catch (e) {
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Failed to delete discussion.', style: TextStyle(color: Colors.red))),
+                  );
+                }
               }
             },
             itemBuilder: (_) => [
@@ -128,26 +168,46 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
             child: RefreshIndicator(
               onRefresh: _loadComments,
               child: ListView.builder(
-                key: ValueKey(_comments.map((c) => c.id).join('-')), // 💥 Force rebuild
+                key: ValueKey(_comments.map((c) => c.id).join('-')), // Force rebuild
                 itemCount: _comments.length + 2,
                 itemBuilder: (ctx, i) {
                   if (i == 0) {
                     return Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 6,
-                            children: _currentThread.tags.map((tag) => Chip(label: Text(tag))).toList(),
+                      child: Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 18,
+                                    child: Text(_username != null ? _username![0].toUpperCase() : '?'),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    _username ?? 'Unknown',
+                                    style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 6,
+                                children: _currentThread.tags.map((tag) => Chip(label: Text(tag))).toList(),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                _currentThread.body,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 12),
-                          Text(
-                            _currentThread.body,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ],
+                        ),
                       ),
                     );
                   }
@@ -174,12 +234,25 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                           });
                         },
                         onDelete: (id) async {
-                          final success = await _api.deleteComment(id);
-                          print('thread_detail_screen result: $success');
-                          if (success) {
-                            setState(() {
-                              _comments.removeWhere((c) => c.id == id);
-                            });
+                          try {
+                            final success = await _api.deleteComment(id);
+                            if (success) {
+                              setState(() {
+                                _comments.removeWhere((c) => c.id == id);
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Failed to delete comment.", style: TextStyle(color: Colors.red))),
+                              );
+                            }
+                          } on SocketException {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Failed: Please check your connection and refresh the page.", style: TextStyle(color: Colors.red))),
+                            );
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Failed to delete comment.", style: TextStyle(color: Colors.red))),
+                            );
                           }
                         },
                       ),

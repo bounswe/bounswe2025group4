@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 import '../../../core/models/comment.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
@@ -49,11 +50,15 @@ class _CommentTileState extends State<CommentTile> {
             try {
               await api.reportComment(widget.comment.id);
               messenger.showSnackBar(
-                const SnackBar(content: Text('Comment reported')),
+                const SnackBar(content: Text('Comment reported', style: TextStyle(color: Colors.green))),
+              );
+            } on SocketException {
+              messenger.showSnackBar(
+                const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
               );
             } catch (e) {
               messenger.showSnackBar(
-                const SnackBar(content: Text('This comment no longer exists.')),
+                const SnackBar(content: Text('Failed: This comment is no longer available.', style: TextStyle(color: Colors.red))),
               );
             }
           } else if (action == 'Edit' && isOwner) {
@@ -83,9 +88,13 @@ class _CommentTileState extends State<CommentTile> {
               try {
                 await api.editComment(widget.comment.id, edited);
                 widget.onUpdate?.call(widget.comment.id, edited);
+              } on SocketException {
+                messenger.showSnackBar(
+                  const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
+                );
               } catch (e) {
                 messenger.showSnackBar(
-                  const SnackBar(content: Text("Comment no longer exists.")),
+                  const SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
                 );
               }
             }

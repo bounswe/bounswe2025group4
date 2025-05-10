@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/models/discussion_thread.dart';
@@ -160,20 +161,30 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
 
                     final authProvider = context.read<AuthProvider>();
                     final api = ApiService(authProvider: authProvider);
-                    final DiscussionThread saved = isEditing
-                        ? await api.editDiscussion(
-                      widget.thread!.id,
-                      _titleCtrl.text.trim(),
-                      _bodyCtrl.text.trim(),
-                      _selectedTags,
-                    )
-                        : await api.createDiscussionThread(
-                      _titleCtrl.text.trim(),
-                      _bodyCtrl.text.trim(),
-                      _selectedTags,
-                    );
-                    if (!mounted) return;
-                    navigator.pop(saved);
+                    try {
+                      final DiscussionThread saved = isEditing
+                          ? await api.editDiscussion(
+                        widget.thread!.id,
+                        _titleCtrl.text.trim(),
+                        _bodyCtrl.text.trim(),
+                        _selectedTags,
+                      )
+                          : await api.createDiscussionThread(
+                        _titleCtrl.text.trim(),
+                        _bodyCtrl.text.trim(),
+                        _selectedTags,
+                      );
+                      if (!mounted) return;
+                      navigator.pop(saved);
+                    } on SocketException {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Failed to create/edit discussion. Please check your connection.", style: TextStyle(color: Colors.red))),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Failed to create/edit discussion.", style: TextStyle(color: Colors.red))),
+                      );
+                    }
                   },
                   child: Text(isEditing ? 'Save' : 'Post'),
                 ),
