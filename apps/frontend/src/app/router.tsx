@@ -19,7 +19,7 @@ const RegisterPage = lazy(() => import('../pages/Auth/Register'));
 // Import new pages and their loader/action functions
 const JobListPage = lazy(() => import('../pages/Job/JobList'));
 const JobDetailPage = lazy(() => import('../pages/Job/JobDetail'));
-import { jobDetailLoader, applyAction } from '../pages/Job/JobDetail';
+// import { jobDetailLoader, applyAction } from '../pages/Job/JobDetail';
 // Add JobDashboard
 const JobDashboardPage = lazy(() => import('../pages/dashboard/JobDashboard'));
 
@@ -71,13 +71,13 @@ const router = createBrowserRouter([
         element: <JobListPage />,
         // loader: jobListLoader, // Removed - TanStack handles loading client-side based on URL params
       },
-      {
-        // New job detail route
-        path: 'jobs/:id',
-        element: <JobDetailPage />,
-        loader: jobDetailLoader, // Loader to fetch job details
-        action: applyAction, // Action to handle application submission
-      },
+      // {
+      //   // New job detail route
+      //   path: 'jobs/:id',
+      //   element: <JobDetailPage />,
+      //   loader: jobDetailLoader, // Loader to fetch job details
+      //   action: applyAction, // Action to handle application submission
+      // },
       {
         path: 'login',
         element: (
