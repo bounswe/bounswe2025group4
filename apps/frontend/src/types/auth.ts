@@ -9,7 +9,7 @@ export interface RegisterCredentials extends LoginCredentials {
   email: string;
   bio: string;
   userType: UserType;
-  mentorType: MentorshipRole;
+  mentorshipRole: MentorshipRole;
 }
 
 export interface AuthResponse {
