@@ -1,293 +1,204 @@
-// // Page component for displaying job details and application form
-// import React from 'react';
-// import {
-//   Box,
-//   Container,
-//   Typography,
-//   CircularProgress,
-//   Alert,
-//   Chip,
-//   Paper,
-//   Avatar,
-//   Link as MuiLink,
-//   Button,
-// } from '@mui/material';
-// import { useQuery } from '@tanstack/react-query';
-// import {
-//   useParams,
-//   Link as RouterLink,
-//   useLoaderData,
-//   ActionFunctionArgs,
-//   LoaderFunctionArgs,
-// } from 'react-router-dom';
-// import BusinessIcon from '@mui/icons-material/Business';
-// import LocationOnIcon from '@mui/icons-material/LocationOn';
-// import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-// import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import ApplicationForm from './ApplicationForm';
+import {
+  Container,
+  Typography,
+  Paper,
+  Button,
+  Box,
+  Chip,
+  CircularProgress,
+  Alert,
+  Grid,
+  Divider,
+} from '@mui/material';
+import { JobPost } from '../../types/job';
+import { useGetJobById } from '../../services/jobs.service';
 
-// import { Job, ApplicationData, JobFilters } from '../../types/job';
-// import ApplyForm from '../../components/jobs/ApplyForm';
-// // import useNotificationStore from '../stores/notificationStore'; // For showing success/error toasts
-// // import { useAuth } from '../contexts/AuthContext'; // To check if user is logged in
-
-// // --- React Router Loader ---
-// // Fetches job data before the component renders
-// export const jobDetailLoader = async ({
-//   params,
-// }: LoaderFunctionArgs): Promise<{
-//   job: Job | null;
-//   queryKey: (string | JobFilters)[];
-// }> => {
-//   const jobId = params.id;
-//   if (!jobId) {
-//     throw new Response('Not Found', { status: 404 });
-//   }
-//   const queryKey = ['job', jobId];
-//   try {
-//     const job = await jobsService.getJobById(jobId);
-//     return { job, queryKey };
-//   } catch (error) {
-//     console.error('Error loading job:', error);
-//     return { job: null, queryKey };
-//   }
-// };
-
-// // --- React Router Action ---
-// // Handles form submission for job application
-
-// // Helper function to call the application service
-// async function submitApplicationToService(jobId: string, applicationData: ApplicationData) {
-//   if (!applicationData.resumeFile) {
-//     // Handle case where resume is required but not provided, or use a different method signature
-//     throw new Error('Resume file is required.');
-//   }
-//   // Assuming applications.service.ts has a method like submitApplication(jobId: string, resumeFile: File, coverLetter?: string)
-//   // Adjust this call based on the actual method signature in ApplicationsService
-//   return ApplicationsService.submitApplication(jobId, applicationData.resumeFile);
-// }
-
-// export const applyAction = async ({ request, params }: ActionFunctionArgs) => {
-//   const jobId = params.id;
-//   if (!jobId) {
-//     return { error: 'Job ID is missing' };
-//   }
-
-//   // TODO: Check if user is authenticated via AuthContext
-//   // const { isAuthenticated } = useAuth(); // Won't work directly in action
-//   // Need a way to access auth state here, maybe via loader data or a global state check?
-//   // if (!isAuthenticated) {
-//   //     // Redirect to login or return error
-//   //     // return redirect('/login?redirectTo=' + request.url);
-//   //     return { error: 'You must be logged in to apply.' };
-//   // }
-
-//   const formData = await request.formData();
-//   const applicationData: ApplicationData = {
-//     coverLetter: formData.get('coverLetter') as string,
-//     // Handle file upload if present
-//     resumeFile:
-//       formData.get('resumeFile') instanceof File
-//         ? (formData.get('resumeFile') as File)
-//         : undefined,
-//   };
-
-//   try {
-//     // If using FormData in API:
-//     // await submitApplication(jobId, formData);
-
-//     // If using JSON (ensure API handles file upload separately or via URL):
-//     // await submitApplication(jobId, applicationData); // Old placeholder
-//     await submitApplicationToService(jobId, applicationData); // Use the new service call
-
-//     // Invalidate relevant queries? Maybe user applications query?
-//     // queryClient.invalidateQueries(['userApplications']);
-
-//     // useNotificationStore.getState().addNotification('Application submitted successfully!', 'success');
-//     // Return success, the useFetcher in ApplyForm will see this
-//     return { success: true };
-//   } catch (error: any) {
-//     console.error('Application submission failed:', error);
-//     // useNotificationStore.getState().addNotification(`Error: ${error.message || 'Failed to submit application'}`, 'error');
-//     return { error: error.message || 'Failed to submit application' };
-//   }
-// };
-
-// // --- JobDetail Page Component ---
-// const JobDetailPage: React.FC = () => {
-//   const { jobId } = useParams<{ jobId: string }>();
-//   const initialData = useLoaderData() as Awaited<
-//     ReturnType<typeof jobDetailLoader>
-//   >;
-//   // const { user } = useAuth(); // Get user for conditional rendering
-
-//   // Use query, leveraging initial data from loader
-//   const {
-//     data: job,
-//     isLoading,
-//     isError,
-//     error,
-//   } = useQuery<Job | null>({
-//     queryKey: initialData.queryKey as string[],
-//     queryFn: () => jobsService.getJobById(jobId!),
-//     initialData: initialData.job,
-//     enabled: !!jobId,
-//     // staleTime: 10 * 60 * 1000, // 10 minutes
-//   });
-
-//   if (isLoading && !initialData.job) {
-//     return (
-//       <Container maxWidth="md" sx={{ mt: 4, textAlign: 'center' }}>
-//         <CircularProgress />
-//         <Typography>Loading job details...</Typography>
-//       </Container>
-//     );
-//   }
-
-//   if (isError || !job) {
-//     return (
-//       <Container maxWidth="md" sx={{ mt: 4 }}>
-//         <Alert severity="error">
-//           Error loading job details:{' '}
-//           {error instanceof Error
-//             ? error.message
-//             : 'Job not found or an error occurred.'}
-//         </Alert>
-//         <Button
-//           component={RouterLink}
-//           to="/jobs"
-//           startIcon={<ArrowBackIcon />}
-//           sx={{ mt: 2 }}
-//         >
-//           Back to Job List
-//         </Button>
-//       </Container>
-//     );
-//   }
-
-//   const formatSalary = (min?: number, max?: number) => {
-//     if (min && max) return `$${min / 1000}k - $${max / 1000}k`;
-//     if (min) return `From $${min / 1000}k`;
-//     if (max) return `Up to $${max / 1000}k`;
-//     return 'Not specified';
-//   };
-
-//   return (
-//     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-//       <Button
-//         component={RouterLink}
-//         to="/jobs"
-//         startIcon={<ArrowBackIcon />}
-//         sx={{ mb: 2 }}
-//       >
-//         Back to Job List
-//       </Button>
-//       <Paper elevation={3} sx={{ p: { xs: 2, md: 4 } }}>
-//         {/* Header */}
-//         <Box
-//           sx={{
-//             display: 'flex',
-//             alignItems: 'center',
-//             mb: 3,
-//             flexWrap: 'wrap',
-//           }}
-//         >
-//           <Avatar
-//             src={job.company.logoUrl}
-//             alt={job.company.name}
-//             sx={{ width: 60, height: 60, mr: 2 }}
-//           >
-//             <BusinessIcon />
-//           </Avatar>
-//           <Box sx={{ flexGrow: 1 }}>
-//             <Typography variant="h4" component="h1" gutterBottom>
-//               {job.title}
-//             </Typography>
-//             <MuiLink
-//               component={RouterLink}
-//               to={`/company/${job.company.slug}`}
-//               variant="h6"
-//               color="text.secondary"
-//               sx={{ textDecoration: 'none' }}
-//             >
-//               {job.company.name}
-//             </MuiLink>
-//           </Box>
-//           {/* Maybe add a save/bookmark button here? */}
-//         </Box>
-
-//         {/* Key Details */}
-//         <Box
-//           sx={{
-//             display: 'flex',
-//             flexWrap: 'wrap',
-//             gap: 2,
-//             mb: 3,
-//             color: 'text.secondary',
-//           }}
-//         >
-//           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-//             <LocationOnIcon fontSize="small" sx={{ mr: 0.5 }} />
-//             <Typography variant="body1">{job.location}</Typography>
-//           </Box>
-//           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-//             <AttachMoneyIcon fontSize="small" sx={{ mr: 0.5 }} />
-//             <Typography variant="body1">
-//               {formatSalary(job.salaryMin, job.salaryMax)}
-//             </Typography>
-//           </Box>
-//           <Chip label={job.employmentType} size="small" />
-//           <Typography variant="caption">
-//             Posted: {new Date(job.postedDate).toLocaleDateString()}
-//           </Typography>
-//         </Box>
-
-//         {/* Ethical Policies */}
-//         <Box sx={{ mb: 3 }}>
-//           <Typography variant="subtitle1" gutterBottom>
-//             Ethical Policies:
-//           </Typography>
-//           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-//             {job.ethicalPolicies.map((policy) => (
-//               <Chip
-//                 key={policy}
-//                 label={policy.replace('-', ' ')}
-//                 size="small"
-//                 variant="outlined"
-//                 color="success"
-//               />
-//             ))}
-//             {job.ethicalPolicies.length === 0 && (
-//               <Typography variant="body2" color="text.secondary">
-//                 No specific policies listed.
-//               </Typography>
-//             )}
-//           </Box>
-//         </Box>
-
-//         {/* Description */}
-//         <Typography variant="h6" gutterBottom>
-//           Job Description
-//         </Typography>
-//         {/* TODO: Consider using a markdown renderer if description is markdown */}
-//         <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 4 }}>
-//           {job.description}
-//         </Typography>
-
-//         {/* Apply Form - Conditionally render based on auth? */}
-//         {/* {user ? ( */}
-//         <ApplyForm jobId={job.id} />
-//         {/* ) : ( */}
-//         {/*    <Alert severity="info" sx={{ mt: 3 }}> */}
-//         {/*        <MuiLink component={RouterLink} to={"/login?redirectTo=" + window.location.pathname}>Log in</MuiLink> or <MuiLink component={RouterLink} to="/register">Register</MuiLink> to apply. */}
-//         {/*    </Alert> */}
-//         {/* )} */}
-//       </Paper>
-//     </Container>
-//   );
-// };
-
-// export default JobDetailPage;
-
-export default function JobDetailPage() {
-  return <div>JobDetailPage</div>;
+// Define a type for application data (can be moved to a shared types file)
+interface ApplicationData {
+  jobId: string;
+  name: string;
+  email: string;
+  resume: File;
+  coverLetter?: string;
 }
+
+const JobDetail: React.FC = () => {
+  const { id: jobId } = useParams<{ id: string }>();
+  const [job, setJob] = useState<JobPost | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
+
+  if (!jobId) {
+    setError('Job ID is missing.');
+    setLoading(false);
+    window.location.href = '/jobs';
+  }
+
+  const { data: jobData } = useGetJobById(jobId as string);
+
+  useEffect(() => {
+    if (jobData) {
+      setJob(jobData);
+      setLoading(false);
+      setError(null);
+    }
+  }, [jobData]);
+
+  const handleApplyClick = () => {
+    setShowApplicationForm(true);
+  };
+
+  const handleApplicationClose = () => {
+    setShowApplicationForm(false);
+  };
+
+  const handleApplicationSubmit = (applicationData: ApplicationData) => {
+    console.log('Submitting application:', applicationData);
+    // Consider using MUI Snackbar for success messages
+    alert(`Application for ${job?.title} submitted successfully!`);
+    setShowApplicationForm(false);
+  };
+
+  if (loading) {
+    return (
+      <Container
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '80vh',
+        }}
+      >
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Alert severity="error">{error}</Alert>
+      </Container>
+    );
+  }
+
+  if (!job) {
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Alert severity="info">Job details not available.</Alert>
+      </Container>
+    );
+  }
+
+  return (
+    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 3,
+          opacity: showApplicationForm ? 0.3 : 1,
+          transition: 'opacity 0.3s',
+        }}
+      >
+        <Typography variant="h3" component="h1" gutterBottom>
+          {job.title}
+        </Typography>
+        <Typography
+          variant="h6"
+          component="h2"
+          color="text.secondary"
+          gutterBottom
+        >
+          {job.company} - {job.location}
+        </Typography>
+        {/* <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Posted on: {new Date(job.postedDate).toLocaleDateString()}
+        </Typography> */}
+
+        <Divider sx={{ my: 2 }} />
+
+        <Box sx={{ my: 2 }}>
+          <Typography variant="h5" component="h3" gutterBottom>
+            Job Description
+          </Typography>
+          <Typography variant="body1" component="p">
+            {job.description}
+          </Typography>
+        </Box>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Box sx={{ my: 2 }}>
+          <Typography variant="h5" component="h3" gutterBottom>
+            Details
+          </Typography>
+          <Grid container spacing={1}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Typography variant="body1">
+                <strong>Remote:</strong> {job.remote ? 'Yes' : 'No'}
+              </Typography>
+            </Grid>
+            {job.minSalary !== undefined && job.maxSalary !== undefined && (
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Typography variant="body1">
+                  <strong>Salary:</strong>{' '}
+                  {`${job.minSalary} - ${job.maxSalary}`}
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
+        </Box>
+
+        {job.ethicalTags && job.ethicalTags.length > 0 && (
+          <>
+            <Divider sx={{ my: 2 }} />
+            <Box sx={{ my: 2 }}>
+              <Typography variant="h5" component="h3" gutterBottom>
+                Ethical Tags
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {job.ethicalTags.map((policy) => (
+                  <Chip
+                    key={policy}
+                    label={policy.replace('_', ' ')}
+                    size="small"
+                    variant="outlined"
+                    color="success"
+                  />
+                ))}
+              </Box>
+            </Box>
+          </>
+        )}
+
+        <Divider sx={{ my: 3 }} />
+
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleApplyClick}
+          >
+            Apply for this Job
+          </Button>
+        </Box>
+      </Paper>
+
+      {jobId && (
+        <ApplicationForm
+          jobId={jobId}
+          open={showApplicationForm} // Pass open state to Dialog
+          onClose={handleApplicationClose}
+          onSubmit={handleApplicationSubmit}
+        />
+      )}
+    </Container>
+  );
+};
+
+export default JobDetail;

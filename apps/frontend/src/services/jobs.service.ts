@@ -11,13 +11,13 @@ const JOB_KEYS = {
   detail: (id: string) => [...JOB_KEYS.details(), id] as const,
 };
 
+// Define a type for the raw response from the API
+type RawJobPost = Omit<JobPost, 'ethicalTags'> & {
+  ethicalTags: string | string[];
+};
+
 class JobsService {
   async getAllJobs(filters: JobFilters): Promise<JobPost[]> {
-    // Define a type for the raw response from the API
-    type RawJobPost = Omit<JobPost, 'ethicalTags'> & {
-      ethicalTags: string | string[];
-    };
-
     const response = await apiClient.get<RawJobPost[]>(
       '/jobs',
       filters as Record<string, unknown>
@@ -36,7 +36,15 @@ class JobsService {
 
   async getJobById(id: string): Promise<JobPost> {
     const response = await apiClient.get<JobPost>(`/jobs/${id}`);
-    return response.data;
+    // Transform ethicalTags from comma-separated string to string array
+    const job = response.data as RawJobPost;
+    return {
+      ...job,
+      ethicalTags:
+        typeof job.ethicalTags === 'string'
+          ? job.ethicalTags.split(',').map((tag: string) => tag.trim())
+          : [], // Handle if it's already an array or empty
+    };
   }
 
   async createJob(jobData: JobPost): Promise<JobPost> {
@@ -62,6 +70,12 @@ export const useGetJobs = (filters: JobFilters) =>
     queryKey: JOB_KEYS.list(filters),
     queryFn: () => jobsService.getAllJobs(filters),
     refetchOnWindowFocus: false,
+  });
+
+export const useGetJobById = (id: string) =>
+  useQuery<JobPost, Error, JobPost, readonly [string, string, string]>({
+    queryKey: JOB_KEYS.detail(id),
+    queryFn: () => jobsService.getJobById(id),
   });
 
 export const useCreateJob = () => {

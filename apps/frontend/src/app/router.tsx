@@ -71,13 +71,11 @@ const router = createBrowserRouter([
         element: <JobListPage />,
         // loader: jobListLoader, // Removed - TanStack handles loading client-side based on URL params
       },
-      // {
-      //   // New job detail route
-      //   path: 'jobs/:id',
-      //   element: <JobDetailPage />,
-      //   loader: jobDetailLoader, // Loader to fetch job details
-      //   action: applyAction, // Action to handle application submission
-      // },
+      {
+        // New job detail route
+        path: 'jobs/:id',
+        element: <JobDetailPage />,
+      },
       {
         path: 'login',
         element: (
