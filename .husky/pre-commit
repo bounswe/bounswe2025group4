@@ -1,0 +1,4 @@
+echo "Running pre-commit hooks..."
+cd ./apps/frontend
+pnpm run format
+pnpm run lint:fix
