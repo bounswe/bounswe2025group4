@@ -169,8 +169,33 @@ public class ProfileController {
     }
 
 
+    @GetMapping("/profile/{userId}/badges")
+    public ResponseEntity<List<BadgeDto>> getBadges(@PathVariable Long userId) {
+        return ResponseEntity.ok(profileService.getBadgesByUserId(userId));
+    }
 
 
+    @PostMapping("/profile/{userId}/badges")
+    public ResponseEntity<BadgeDto> addBadge(@PathVariable Long userId,
+                                             @Valid @RequestBody CreateBadgeRequestDto dto) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        return ResponseEntity.ok(profileService.addBadge(userId, dto));
+    }
+
+
+    @DeleteMapping("/profile/{userId}/badges/{badgeId}")
+    public ResponseEntity<Void> deleteBadge(@PathVariable Long userId,
+                                            @PathVariable Long badgeId) {
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build(); // Forbidden
+        }
+        profileService.deleteBadge(userId, badgeId);
+        return ResponseEntity.noContent().build();
+    }
 
 
 

@@ -165,6 +165,45 @@ public class ProfileService {
 
 
 
+    @Transactional(readOnly = true)
+    public List<BadgeDto> getBadgesByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return badgeRepository.findByUserId(userId)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    public BadgeDto addBadge(Long userId, CreateBadgeRequestDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UserBadge badge = UserBadge.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .icon(dto.getIcon())
+                .earnedAt(java.time.LocalDateTime.now())
+                .user(user)
+                .build();
+
+        return toDto(badgeRepository.save(badge));
+    }
+
+    @Transactional
+    public void deleteBadge(Long userId, Long badgeId) {
+        UserBadge badge = badgeRepository.findById(badgeId)
+                .orElseThrow(() -> new RuntimeException("Badge not found"));
+
+        if (!badge.getUser().getId().equals(userId)) {
+            throw new RuntimeException("You are not authorized to delete this badge.");
+        }
+
+        badgeRepository.delete(badge);
+    }
 
 
 
