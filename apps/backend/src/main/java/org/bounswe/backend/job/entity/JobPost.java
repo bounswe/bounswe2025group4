@@ -32,4 +32,8 @@ public class JobPost {
     private boolean remote;
 
     private String ethicalTags; // comma-separated for now (e.g. "open-source,remote-first")
+
+    private Integer minSalary;
+
+    private Integer maxSalary;
 }

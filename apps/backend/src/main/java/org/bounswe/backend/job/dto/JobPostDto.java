@@ -30,4 +30,8 @@ public class JobPostDto {
     private boolean remote;
 
     private String ethicalTags; // Optional
+
+    private Integer minSalary;
+
+    private Integer maxSalary;
 }
