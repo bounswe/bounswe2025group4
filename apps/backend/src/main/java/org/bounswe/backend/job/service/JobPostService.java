@@ -17,15 +17,30 @@ public class JobPostService {
 
     private final JobPostRepository repo;
     private final UserRepository userRepo;
+    private final JobPostRepository jobPostRepository;
 
-    public JobPostService(JobPostRepository repo, UserRepository userRepo) {
+    public JobPostService(JobPostRepository repo, UserRepository userRepo, JobPostRepository jobPostRepository) {
         this.repo = repo;
         this.userRepo = userRepo;
+        this.jobPostRepository = jobPostRepository;
     }
 
 
     public List<JobPostDto> getAll() {
         return repo.findAll().stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    public List<JobPostDto> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote) {
+        List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, ethicalTags, minSalary, maxSalary, isRemote);
+        return jobs.stream()
+                .filter(j -> {
+                    if (ethicalTags == null || ethicalTags.isEmpty()) return true;
+                    for (String tag : ethicalTags) {
+                        if (j.getEthicalTags().toLowerCase().contains(tag.toLowerCase())) return true;
+                    }
+                    return false;
+                })
+                .map(this::toDto).collect(Collectors.toList());
     }
 
     public List<JobPostDto> getByEmployerId(Long employerId) {
@@ -54,6 +69,8 @@ public class JobPostService {
                 .remote(dto.isRemote())
                 .ethicalTags(dto.getEthicalTags())
                 .employer(employer)
+                .minSalary(dto.getMinSalary())
+                .maxSalary(dto.getMaxSalary())
                 .build();
 
         return toDto(repo.save(job));
@@ -74,6 +91,8 @@ public class JobPostService {
                 .location(job.getLocation())
                 .remote(job.isRemote())
                 .ethicalTags(job.getEthicalTags())
+                .minSalary(job.getMinSalary())
+                .maxSalary(job.getMaxSalary())
                 .build();
     }
 
@@ -87,6 +106,8 @@ public class JobPostService {
         job.setRemote(dto.isRemote());
         job.setEthicalTags(dto.getEthicalTags());
         dto.setEmployerId(job.getEmployer().getId());
+        job.setMinSalary(dto.getMinSalary());
+        job.setMaxSalary(dto.getMaxSalary());
 
 
         return toDto(repo.save(job));
