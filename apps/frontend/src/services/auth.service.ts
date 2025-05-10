@@ -41,12 +41,9 @@ class AuthService {
     const id = localStorage.getItem('id');
     if (token) {
       try {
-        const response = await apiClient.get<User>(`/users`, {
+        const response = await apiClient.get<User>(`/users/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
-          },
-          params: {
-            id: id,
           },
         });
         return response.data;
