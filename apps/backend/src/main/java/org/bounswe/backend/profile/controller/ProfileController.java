@@ -86,7 +86,7 @@ public class ProfileController {
     }
 
 
-    @PatchMapping("/profile/{userId}/profile-picture")
+    @PutMapping("/profile/{userId}/profile-picture")
     public ResponseEntity<String> updateProfilePicture(@PathVariable Long userId,
                                                       @RequestParam("file") MultipartFile file) {         
                                                         
@@ -102,11 +102,6 @@ public class ProfileController {
                 return ResponseEntity.badRequest().body("File is too large");
             }
 
-            String fileName = "user_" + userId + "_profile_picture." + file.getOriginalFilename();
-            String filePath = Paths.get(uploadDir).resolve(fileName).normalize().toString();
-            Files.createDirectories(Paths.get(uploadDir));
-            file.transferTo(new File(filePath));
-
             // Delete old profile picture
             String oldFileName = profileService.getProfilePicture(userId);
             if(oldFileName != null && !oldFileName.contains("placeholder")){
@@ -116,6 +111,13 @@ public class ProfileController {
                     oldFile.delete();
                 }
             }
+
+            // Upload new profile picture
+            String fileName = "user_" + userId + "_profile_picture." + file.getOriginalFilename();
+            String filePath = Paths.get(uploadDir).resolve(fileName).normalize().toString();
+            Files.createDirectories(Paths.get(uploadDir));
+            file.transferTo(new File(filePath));
+
 
             // Save file name to database
             profileService.updateProfilePicture(userId, fileName);
