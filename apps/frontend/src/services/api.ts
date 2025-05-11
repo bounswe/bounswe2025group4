@@ -11,6 +11,25 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      paramsSerializer: (params) => {
+        const searchParams = new URLSearchParams();
+        for (const key in params) {
+          if (Object.prototype.hasOwnProperty.call(params, key)) {
+            const value = params[key];
+            if (Array.isArray(value)) {
+              value.forEach((item) => searchParams.append(key, String(item)));
+            } else if (
+              value !== undefined &&
+              value !== null &&
+              String(value).length > 0
+            ) {
+              // Ensure empty strings are not added
+              searchParams.set(key, String(value));
+            }
+          }
+        }
+        return searchParams.toString();
+      },
     });
 
     // Add request interceptor for auth
