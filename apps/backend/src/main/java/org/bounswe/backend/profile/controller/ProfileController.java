@@ -86,7 +86,7 @@ public class ProfileController {
     }
 
 
-    @PostMapping("/profile/{userId}/profile-picture")
+    @PatchMapping("/profile/{userId}/profile-picture")
     public ResponseEntity<String> updateProfilePicture(@PathVariable Long userId,
                                                       @RequestParam("file") MultipartFile file) {         
                                                         
@@ -106,6 +106,16 @@ public class ProfileController {
             String filePath = Paths.get(uploadDir).resolve(fileName).normalize().toString();
             Files.createDirectories(Paths.get(uploadDir));
             file.transferTo(new File(filePath));
+
+            // Delete old profile picture
+            String oldFileName = profileService.getProfilePicture(userId);
+            if(oldFileName != null){
+                Path oldFilePath = Paths.get(uploadDir).resolve(oldFileName).normalize();
+                File oldFile = oldFilePath.toFile();
+                if(oldFile.exists()){
+                    oldFile.delete();
+                }
+            }
 
             // Save file name to database
             profileService.updateProfilePicture(userId, fileName);
