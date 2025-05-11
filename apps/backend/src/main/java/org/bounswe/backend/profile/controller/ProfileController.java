@@ -115,7 +115,6 @@ public class ProfileController {
     public ResponseEntity<Resource> getProfilePicture(@PathVariable Long userId) {
         // Retreive file path from database
         String fileName = profileService.getProfilePicture(userId);
-        String fileType = fileName.split("\\.")[1];
         Path filePath = Paths.get(uploadDir, fileName);
         File file = filePath.toFile();
         if(!file.exists()){
@@ -125,15 +124,17 @@ public class ProfileController {
         Resource resource;
         try {
             resource = new UrlResource(filePath.toUri());
+            if(resource.exists() || resource.isReadable()){
+                return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(Files.probeContentType(filePath)))
+                    .body(resource);
+            }
+            else{
+                return ResponseEntity.notFound().build();
+            }
         } catch (MalformedURLException e) {
             return ResponseEntity.notFound().build();
-        }
-        if(resource.exists() || resource.isReadable()){
-            return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(fileType))
-                .body(resource);
-        }
-        else{
+        } catch (IOException e) {
             return ResponseEntity.notFound().build();
         }
     }
