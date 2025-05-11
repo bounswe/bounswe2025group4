@@ -5,6 +5,7 @@ import org.bounswe.backend.auth.dto.AuthResponse;
 import org.bounswe.backend.auth.dto.LoginRequest;
 import org.bounswe.backend.auth.dto.RegisterRequest;
 import org.bounswe.backend.auth.jwt.JwtTokenProvider;
+import org.bounswe.backend.common.exception.InvalidCredentialsException;
 import org.bounswe.backend.common.exception.UsernameAlreadyExistsException;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
@@ -60,10 +61,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody  @Valid LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+                .orElseThrow(InvalidCredentialsException::new);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid username or password");
+            throw new InvalidCredentialsException();
         }
 
         String token = jwtTokenProvider.generateToken(user.getUsername(), user.getUserType().name());

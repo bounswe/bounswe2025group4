@@ -2,6 +2,8 @@ package org.bounswe.backend.profile.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+
+import org.bounswe.backend.common.exception.InvalidAuthContextException;
 import org.bounswe.backend.profile.dto.*;
 import org.bounswe.backend.profile.service.ProfileService;
 import org.bounswe.backend.user.entity.User;
@@ -210,6 +212,6 @@ public class ProfileController {
         if (principal instanceof UserDetails userDetails) {
             return userDetails.getUsername();
         }
-        throw new RuntimeException("Invalid authentication context");
+        throw new InvalidAuthContextException();
     }
 }

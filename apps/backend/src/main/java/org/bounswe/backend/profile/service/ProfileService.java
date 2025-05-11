@@ -1,6 +1,9 @@
 package org.bounswe.backend.profile.service;
 
 import lombok.RequiredArgsConstructor;
+import org.bounswe.backend.common.exception.NotFoundException;
+import org.bounswe.backend.common.exception.UnauthorizedUserException;
+import org.bounswe.backend.common.exception.ProfileAlreadyExistsException;
 import org.bounswe.backend.profile.dto.*;
 import org.bounswe.backend.profile.entity.*;
 import org.bounswe.backend.profile.repository.*;
@@ -24,10 +27,10 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public FullProfileDto getProfileByUserId(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User"));
 
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile"));
 
         List<ExperienceDto> experience = experienceRepository.findByUserId(userId)
                 .stream().map(this::toDto).collect(Collectors.toList());
@@ -50,11 +53,11 @@ public class ProfileService {
     @Transactional
     public ProfileDto createProfile(Long userId, CreateProfileRequestDto dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User"));
 
         // Check if profile already exists
         if (profileRepository.findByUserId(userId).isPresent()) {
-            throw new RuntimeException("Profile already exists for this user");
+            throw new ProfileAlreadyExistsException(user.getUsername());
         }
 
         Profile profile = Profile.builder()
@@ -76,7 +79,7 @@ public class ProfileService {
     @Transactional
     public ProfileDto updateProfile(Long userId, UpdateProfileRequestDto dto) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile"));
 
         if (dto.getFullName() != null) profile.setFullName(dto.getFullName());
         if (dto.getPhone() != null) profile.setPhone(dto.getPhone());
@@ -94,7 +97,7 @@ public class ProfileService {
     @Transactional
     public ProfileDto updateSkills(Long userId, List<String> skills) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile"));
 
         profile.setSkills(skills);
         Profile updated = profileRepository.save(profile);
@@ -106,7 +109,7 @@ public class ProfileService {
     @Transactional
     public ProfileDto updateInterests(Long userId, List<String> interests) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile"));
 
         profile.setInterests(interests);
         Profile updated = profileRepository.save(profile);
@@ -117,7 +120,7 @@ public class ProfileService {
     @Transactional
     public EducationDto addEducation(Long userId, CreateEducationRequestDto dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User"));
 
         Education education = Education.builder()
                 .school(dto.getSchool())
@@ -135,10 +138,10 @@ public class ProfileService {
     @Transactional
     public EducationDto updateEducation(Long userId, Long eduId, UpdateEducationRequestDto dto) {
         Education education = educationRepository.findById(eduId)
-                .orElseThrow(() -> new RuntimeException("Education not found"));
+                .orElseThrow(() -> new NotFoundException("Education"));
 
         if (!education.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized update attempt");
+            throw new UnauthorizedUserException("Tried to update education of different user");
         }
 
         if (dto.getSchool() != null) education.setSchool(dto.getSchool());
@@ -153,10 +156,10 @@ public class ProfileService {
     @Transactional
     public void deleteEducation(Long userId, Long eduId) {
         Education education = educationRepository.findById(eduId)
-                .orElseThrow(() -> new RuntimeException("Education not found"));
+                .orElseThrow(() -> new NotFoundException("Education"));
 
         if (!education.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized delete attempt");
+            throw new UnauthorizedUserException("Tried to delete education of different user");
         }
 
         educationRepository.delete(education);
@@ -167,7 +170,7 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public List<BadgeDto> getBadgesByUserId(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User"));
 
         return badgeRepository.findByUserId(userId)
                 .stream()
@@ -179,7 +182,7 @@ public class ProfileService {
     @Transactional
     public BadgeDto addBadge(Long userId, CreateBadgeRequestDto dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User"));
 
         UserBadge badge = UserBadge.builder()
                 .name(dto.getName())
@@ -195,10 +198,10 @@ public class ProfileService {
     @Transactional
     public void deleteBadge(Long userId, Long badgeId) {
         UserBadge badge = badgeRepository.findById(badgeId)
-                .orElseThrow(() -> new RuntimeException("Badge not found"));
+                .orElseThrow(() -> new NotFoundException("Badge"));
 
         if (!badge.getUser().getId().equals(userId)) {
-            throw new RuntimeException("You are not authorized to delete this badge.");
+            throw new UnauthorizedUserException("Tried to delete badge of another user");
         }
 
         badgeRepository.delete(badge);
@@ -210,7 +213,7 @@ public class ProfileService {
     @Transactional
     public ExperienceDto addExperience(Long userId, CreateExperienceRequestDto dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User"));
 
         Experience experience = Experience.builder()
                 .company(dto.getCompany())
@@ -227,10 +230,10 @@ public class ProfileService {
     @Transactional
     public ExperienceDto updateExperience(Long userId, Long expId, UpdateExperienceRequestDto dto) {
         Experience experience = experienceRepository.findById(expId)
-                .orElseThrow(() -> new RuntimeException("Experience not found"));
+                .orElseThrow(() -> new NotFoundException("Experience"));
 
         if (!experience.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized to update this experience");
+            throw new UnauthorizedUserException("Tried to update experience of different user");
         }
 
         if (dto.getCompany() != null) experience.setCompany(dto.getCompany());
@@ -246,10 +249,10 @@ public class ProfileService {
     @Transactional
     public void deleteExperience(Long userId, Long expId) {
         Experience experience = experienceRepository.findById(expId)
-                .orElseThrow(() -> new RuntimeException("Experience not found"));
+                .orElseThrow(() -> new NotFoundException("Experience"));
 
         if (!experience.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Unauthorized to delete this experience");
+            throw new UnauthorizedUserException("Tried to delete experience of different user");
         }
 
         experienceRepository.delete(experience);
@@ -260,7 +263,7 @@ public class ProfileService {
     @Transactional
     public ProfileDto updateProfilePicture(Long userId, String profilePicture) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile"));
 
         profile.setProfilePicture(profilePicture);
         return toDto(profileRepository.save(profile));
@@ -269,7 +272,7 @@ public class ProfileService {
     @Transactional
     public void deleteProfilePicture(Long userId) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile"));
 
         profile.setProfilePicture(null);
         profileRepository.save(profile);

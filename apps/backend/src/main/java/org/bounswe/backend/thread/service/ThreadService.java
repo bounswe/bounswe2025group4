@@ -5,6 +5,8 @@ import org.bounswe.backend.thread.dto.ThreadDto;
 import org.bounswe.backend.thread.dto.UpdateThreadRequestDto;
 import org.bounswe.backend.thread.entity.Thread;
 import org.bounswe.backend.thread.repository.ThreadRepository;
+import org.bounswe.backend.common.exception.NotFoundException;
+import org.bounswe.backend.common.exception.UnauthorizedUserException;
 import org.bounswe.backend.tag.entity.Tag;
 import org.bounswe.backend.tag.repository.TagRepository;
 import org.bounswe.backend.user.dto.UserDto;
@@ -57,10 +59,10 @@ public class ThreadService {
     @Transactional
     public ThreadDto updateThread(Long threadId, Long userId, UpdateThreadRequestDto dto) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread"));
 
         if (!thread.getCreator().getId().equals(userId)) {
-            throw new RuntimeException("Only the thread creator can update this thread");
+            throw new UnauthorizedUserException("Only the thread creator can update this thread");
         }
 
         thread.setTitle(dto.getTitle());

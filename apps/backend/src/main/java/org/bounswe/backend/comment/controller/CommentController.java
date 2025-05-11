@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.bounswe.backend.comment.dto.CommentDto;
 import org.bounswe.backend.comment.dto.CreateCommentRequestDto;
 import org.bounswe.backend.comment.service.CommentService;
+import org.bounswe.backend.common.exception.InvalidAuthContextException;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +65,7 @@ public class CommentController {
         if (principal instanceof UserDetails userDetails) {
             return userDetails.getUsername();
         }
-        throw new RuntimeException("Invalid authentication context");
+        throw new InvalidAuthContextException();
     }
 
 
