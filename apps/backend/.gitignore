@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+uploads/profile-pictures/*.jpg
+uploads/profile-pictures/*.png
+uploads/profile-pictures/*.jpeg
