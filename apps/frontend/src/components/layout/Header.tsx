@@ -14,7 +14,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { Logout } from '@mui/icons-material';
 
 const Header: React.FC = () => {
-  const { token, id, setToken } = useAuth();
+  const { token, setToken } = useAuth();
 
   return (
     <AppBar position="static">
@@ -34,7 +34,6 @@ const Header: React.FC = () => {
             <Button color="inherit" component={RouterLink} to="/forum">
               Forum
             </Button>
-            {/* TODO: Add Employer Dashboard link if user is an employer */}
           </Box>
 
           <Box sx={{ flexGrow: 0, display: 'flex', alignItems: 'center' }}>
@@ -42,7 +41,7 @@ const Header: React.FC = () => {
               <>
                 <IconButton
                   component={RouterLink}
-                  to={`/user/${id}`}
+                  to={`/u/profile`}
                   color="inherit"
                   aria-label="account of current user"
                   aria-controls="menu-appbar"

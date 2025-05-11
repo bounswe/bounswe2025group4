@@ -33,7 +33,7 @@ import {
   ArrowForward,
   Hail,
 } from '@mui/icons-material';
-import { UserType, MentorshipRole } from '../../types/user';
+import { UserType, MentorshipRole } from '../../types/auth';
 import { useNavigate } from 'react-router-dom';
 import { useRegister } from '../../services/auth.service';
 
