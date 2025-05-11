@@ -23,6 +23,7 @@ public class QuoteService {
         String url = quoteApiUrl + "today";
         ResponseEntity<QuoteDto[]> response = restTemplate.getForEntity(url, QuoteDto[].class);
         if (response.getStatusCode().is2xxSuccessful() && response.hasBody()) {
+            assert response.getBody() != null;
             return response.getBody()[0];
         }
         throw new RuntimeException("Failed to fetch quote");

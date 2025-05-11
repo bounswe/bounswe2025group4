@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class QuoteDto {
     
-    private String quote;
+    private String q;
 
-    private String author;
+    private String a;
 }
