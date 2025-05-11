@@ -23,6 +23,10 @@ spring:
             enable: true
           ssl:
             trust: smtp.gmail.com
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
 
 server:
   port: 8080
@@ -38,3 +42,6 @@ springdoc:
   api-docs:
     enabled: true
     path: /v3/api-docs
+
+file:
+  upload-dir: uploads/profile-pictures
