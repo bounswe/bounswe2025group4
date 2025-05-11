@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { apiClient } from './api';
 import {
+  User,
   LoginCredentials,
   RegisterCredentials,
   AuthResponse,
 } from '../types/auth';
-import { User } from '../types/user';
 
 const AUTH_KEYS = {
   user: ['auth', 'user'] as const,

@@ -7,7 +7,7 @@ import {
   Profile,
   ProfileResponse,
   FullProfileResponse,
-} from '../types/user';
+} from '../types/profile';
 
 // Query keys for caching
 export const USER_KEYS = {
