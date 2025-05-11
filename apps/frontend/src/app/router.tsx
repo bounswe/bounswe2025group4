@@ -9,6 +9,7 @@ import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
 import ResetPasswordPage from '../pages/Auth/ResetPassword';
 import { RedirectIfAuth } from '../components/auth/RedirectIfAuth';
 import RegisterSuccesfull from '../pages/Auth/RegisterSuccesful';
+import UserProfileRedirect from '../pages/Profile/UserProfileRedirect';
 
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('../pages/Home'));
@@ -115,18 +116,8 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'profile', // New Profile Route
-        element: <div>User Profile Page (Placeholder)</div>, // Placeholder element
-        // Optional: Add a loader if profile page needs data
-        // loader: async () => {
-        //   // Check auth status, redirect if not logged in
-        //   const authTokens = localStorage.getItem('auth_tokens');
-        //   if (!authTokens) {
-        //     return redirect('/login');
-        //   }
-        //   // Fetch user profile data
-        //   return { user: { name: "User Name" } };
-        // },
+        path: '/u/profile',
+        element: <UserProfileRedirect />,
       },
       {
         // This is the new entry point for when a user clicks "Jobs"
