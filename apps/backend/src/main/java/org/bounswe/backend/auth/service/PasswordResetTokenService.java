@@ -2,6 +2,7 @@ package org.bounswe.backend.auth.service;
 
 import org.bounswe.backend.auth.entity.PasswordResetToken;
 import org.bounswe.backend.auth.repository.PasswordResetTokenRepository;
+import org.bounswe.backend.common.exception.InvalidResetTokenException;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,10 @@ public class PasswordResetTokenService {
 
     public void resetPassword(String token, String newPassword) {
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid or expired token."));
+                .orElseThrow(() -> new InvalidResetTokenException("Invalid or expired token."));
 
         if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Token has expired.");
+            throw new InvalidResetTokenException("Token has expired.");
         }
 
         User user = resetToken.getUser();
@@ -45,4 +46,5 @@ public class PasswordResetTokenService {
         userRepository.save(user);
         tokenRepository.delete(resetToken);
     }
+
 }
