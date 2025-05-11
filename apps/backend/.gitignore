@@ -35,3 +35,4 @@ build/
 uploads/profile-pictures/*.jpg
 uploads/profile-pictures/*.png
 uploads/profile-pictures/*.jpeg
+!uploads/profile-pictures/placeholder.png

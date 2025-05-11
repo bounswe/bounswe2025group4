@@ -64,7 +64,6 @@ public class ProfileService {
                 .location(dto.getLocation())
                 .occupation(dto.getOccupation())
                 .bio(dto.getBio())
-                .profilePicture(dto.getProfilePicture())
                 .skills(dto.getSkills())
                 .interests(dto.getInterests())
                 .build();
@@ -83,7 +82,6 @@ public class ProfileService {
         if (dto.getLocation() != null) profile.setLocation(dto.getLocation());
         if (dto.getOccupation() != null) profile.setOccupation(dto.getOccupation());
         if (dto.getBio() != null) profile.setBio(dto.getBio());
-        if (dto.getProfilePicture() != null) profile.setProfilePicture(dto.getProfilePicture());
         if (dto.getSkills() != null) profile.setSkills(dto.getSkills());
         if (dto.getInterests() != null) profile.setInterests(dto.getInterests());
 
