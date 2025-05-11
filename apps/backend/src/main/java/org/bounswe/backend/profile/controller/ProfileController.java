@@ -160,8 +160,15 @@ public class ProfileController {
         if (!user.getId().equals(userId)) {
             return ResponseEntity.status(403).build(); // Forbidden
         }
+        // Delete file from server
+        String fileName = profileService.getProfilePicture(userId);
+        Path filePath = Paths.get(uploadDir, fileName);
+        File file = filePath.toFile();
+        if(file.exists() && !fileName.contains("placeholder")){
+            file.delete();
+        }
         profileService.deleteProfilePicture(userId);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 
 
