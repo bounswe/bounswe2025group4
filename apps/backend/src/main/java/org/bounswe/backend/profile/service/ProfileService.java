@@ -275,6 +275,13 @@ public class ProfileService {
         profileRepository.save(profile);
     }
 
+    @Transactional
+    public String getProfilePicture(Long userId) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        return profile.getProfilePicture();
+    }
+
 
 
     private ProfileDto toDto(Profile profile) {
