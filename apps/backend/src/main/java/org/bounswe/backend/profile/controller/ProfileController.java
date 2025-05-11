@@ -88,7 +88,12 @@ public class ProfileController {
 
     @PostMapping("/profile/{userId}/profile-picture")
     public ResponseEntity<String> updateProfilePicture(@PathVariable Long userId,
-                                                      @RequestParam("file") MultipartFile file) {                                        
+                                                      @RequestParam("file") MultipartFile file) {         
+                                                        
+        User user = getCurrentUser();
+        if (!user.getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
         try{
             if(file.isEmpty()){
                 return ResponseEntity.badRequest().body("File is empty");
@@ -98,7 +103,7 @@ public class ProfileController {
             }
 
             String fileName = "user_" + userId + "_profile_picture." + file.getOriginalFilename();
-            String filePath = Paths.get(uploadDir, fileName).toString();
+            String filePath = Paths.get(uploadDir).resolve(fileName).normalize().toString();
             Files.createDirectories(Paths.get(uploadDir));
             file.transferTo(new File(filePath));
 
