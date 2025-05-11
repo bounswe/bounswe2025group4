@@ -17,7 +17,7 @@ const QuoteCard = styled(Card)(({ theme }) => ({
     borderRadius: '50%',
     backgroundColor: theme.palette.primary.main,
     opacity: 0.1,
-  }
+  },
 }));
 
 const QuoteIcon = styled(FormatQuoteIcon)(({ theme }) => ({
@@ -58,23 +58,23 @@ export const DailyQuote = () => {
     <QuoteCard elevation={2}>
       <QuoteIcon />
       <CardContent>
-        <Typography 
-          variant="h6" 
-          component="p" 
-          gutterBottom 
-          sx={{ 
+        <Typography
+          variant="h6"
+          component="p"
+          gutterBottom
+          sx={{
             fontStyle: 'italic',
-            pl: 2
+            pl: 2,
           }}
         >
           {quote.q}
         </Typography>
-        <Typography 
-          variant="subtitle2" 
+        <Typography
+          variant="subtitle2"
           color="text.secondary"
-          sx={{ 
+          sx={{
             textAlign: 'right',
-            mt: 1
+            mt: 1,
           }}
         >
           – {quote.a || 'Anonymous'}
@@ -82,4 +82,4 @@ export const DailyQuote = () => {
       </CardContent>
     </QuoteCard>
   );
-}; 
+};

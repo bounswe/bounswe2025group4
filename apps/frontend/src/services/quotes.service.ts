@@ -3,10 +3,10 @@ import { Quote } from '../types/quote';
 import { apiClient } from './api';
 
 class QuotesService {
-    async fetchTodayQuote(): Promise<Quote> {
-        const response = await apiClient.get<Quote>('/quote/today');
-        return response.data;
-    }
+  async fetchTodayQuote(): Promise<Quote> {
+    const response = await apiClient.get<Quote>('/quote/today');
+    return response.data;
+  }
 }
 
 export const quotesService = new QuotesService();
@@ -20,4 +20,4 @@ export const useTodayQuote = () => {
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
     gcTime: 24 * 60 * 60 * 1000, // 24 hours
   });
-}; 
+};

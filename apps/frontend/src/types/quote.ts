@@ -1,4 +1,4 @@
 export interface Quote {
-    q: string;
-    a: string;
+  q: string;
+  a: string;
 }

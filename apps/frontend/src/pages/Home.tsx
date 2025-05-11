@@ -11,10 +11,11 @@ export const HomePage = () => {
             Find Your Next Ethical Career Move
           </Typography>
           <Typography variant="h5" color="text.secondary" paragraph>
-            Connect with employers who share your values and make a positive impact through your work.
+            Connect with employers who share your values and make a positive
+            impact through your work.
           </Typography>
         </Box>
-        
+
         {/* Quote Section */}
         <Box flex="1" sx={{ position: 'sticky', top: 24 }}>
           <DailyQuote />
