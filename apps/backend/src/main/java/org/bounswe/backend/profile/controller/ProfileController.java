@@ -109,7 +109,7 @@ public class ProfileController {
 
             // Delete old profile picture
             String oldFileName = profileService.getProfilePicture(userId);
-            if(oldFileName != null){
+            if(oldFileName != null && !oldFileName.contains("placeholder")){
                 Path oldFilePath = Paths.get(uploadDir).resolve(oldFileName).normalize();
                 File oldFile = oldFilePath.toFile();
                 if(oldFile.exists()){
