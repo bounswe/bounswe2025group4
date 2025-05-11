@@ -1,12 +1,6 @@
 import { FC, useState } from 'react';
-import {
-  Avatar,
-  Box,
-  CircularProgress,
-} from '@mui/material';
-import {
-  CameraAlt as CameraIcon,
-} from '@mui/icons-material';
+import { Avatar, Box, CircularProgress } from '@mui/material';
+import { CameraAlt as CameraIcon } from '@mui/icons-material';
 import { useProfilePictureUpload } from '../../services/profile.service';
 import { useDropzone } from 'react-dropzone';
 
