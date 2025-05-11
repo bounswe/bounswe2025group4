@@ -289,14 +289,6 @@ export const useUpdateInterests = (userId: number) => {
   });
 };
 
-export const useWorkExperience = (userId: number) => {
-  return useQuery({
-    queryKey: USER_KEYS.workHistory(userId.toString()),
-    queryFn: () => userService.getProfileById(userId),
-    enabled: !!userId,
-  });
-};
-
 export const useAddWorkExperience = (userId: number) => {
   const queryClient = useQueryClient();
 
@@ -336,14 +328,6 @@ export const useDeleteWorkExperience = (userId: number) => {
         queryKey: USER_KEYS.workHistory(userId.toString()),
       });
     },
-  });
-};
-
-export const useEducation = (userId: number) => {
-  return useQuery({
-    queryKey: USER_KEYS.education(userId.toString()),
-    queryFn: () => userService.getProfileById(userId),
-    enabled: !!userId,
   });
 };
 

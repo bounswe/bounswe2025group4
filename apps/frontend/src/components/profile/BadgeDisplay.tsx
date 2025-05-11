@@ -3,6 +3,7 @@ import {
   Avatar,
   Box,
   Chip,
+  Divider,
   Paper,
   Stack,
   Tooltip,
@@ -42,42 +43,36 @@ const BadgeDisplay: FC<BadgeDisplayProps> = ({
 
   if (badges.length === 0) {
     return (
-      <Paper sx={{ p: 2, bgcolor: 'background.paper', textAlign: 'center' }}>
-        <Typography variant="body2" color="text.secondary">
-          {emptyMessage}
+      <Box>
+        <Typography variant="h5" gutterBottom>
+          Badges
         </Typography>
-      </Paper>
+        <Divider sx={{ my: 2 }} />
+        <Paper sx={{ p: 2, bgcolor: 'background.paper', textAlign: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            {emptyMessage}
+          </Typography>
+        </Paper>
+      </Box>
     );
   }
 
-  // Group badges by category for better organization
-  const badgesByCategory = badges.reduce(
-    (acc, badge) => {
-      acc[badge.category] = acc[badge.category] || [];
-      acc[badge.category].push(badge);
-      return acc;
-    },
-    {} as Record<string, Badge[]>
-  );
-
   return (
     <Box>
-      {showLabels && (
-        <Typography variant="h6" gutterBottom>
-          Badges ({badges.length})
-        </Typography>
-      )}
+      <Typography variant="h5" gutterBottom>
+        Badges
+      </Typography>
+      <Divider sx={{ my: 2 }} />
+      <Box>
+        {badges.map((badge) => (
+          <Box key={badge.id} mb={2}>
+            {showLabels && (
+              <Typography variant="subtitle2" color="text.secondary" mb={1}>
+                {badge.name}
+              </Typography>
+            )}
 
-      {Object.entries(badgesByCategory).map(([category, categoryBadges]) => (
-        <Box key={category} mb={2}>
-          {showLabels && (
-            <Typography variant="subtitle2" color="text.secondary" mb={1}>
-              {category.charAt(0) + category.slice(1).toLowerCase()}
-            </Typography>
-          )}
-
-          <Stack direction="row" flexWrap="wrap" gap={1}>
-            {categoryBadges.map((badge) => (
+            <Stack direction="row" flexWrap="wrap" gap={1}>
               <Tooltip
                 key={badge.id}
                 title={
@@ -93,7 +88,7 @@ const BadgeDisplay: FC<BadgeDisplayProps> = ({
               >
                 {showLabels ? (
                   <Chip
-                    avatar={<Avatar src={badge.iconUrl} alt={badge.name} />}
+                    avatar={<Avatar src={badge.icon} alt={badge.name} />}
                     label={badge.name}
                     color="primary"
                     variant="outlined"
@@ -102,7 +97,7 @@ const BadgeDisplay: FC<BadgeDisplayProps> = ({
                   />
                 ) : (
                   <Avatar
-                    src={badge.iconUrl}
+                    src={badge.icon}
                     alt={badge.name}
                     sx={{
                       width: getAvatarSize(),
@@ -112,10 +107,10 @@ const BadgeDisplay: FC<BadgeDisplayProps> = ({
                   />
                 )}
               </Tooltip>
-            ))}
-          </Stack>
-        </Box>
-      ))}
+            </Stack>
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 };

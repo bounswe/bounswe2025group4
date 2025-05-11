@@ -14,15 +14,13 @@ const UserProfileRedirect: React.FC = () => {
   useEffect(() => {
     // Redirect to the user's profile page
     try {
-      if (data) {
-        navigate(`/u/${data.id}`);
+      if (data !== undefined) {
+        navigate(`/u/${data.profile.userId}`);
       } else if (isError) {
         console.error('Error fetching user data:', error?.message);
-      } else {
-        navigate('/login');
       }
     } catch (e) {
-      console.error('Error redirecting to user profile:', e);
+      console.error('Client error: Error redirecting to user profile:', e);
       navigate('/');
     }
   }, [navigate, data, isLoading, error, isError]);

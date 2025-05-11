@@ -41,7 +41,7 @@ const Header: React.FC = () => {
               <>
                 <IconButton
                   component={RouterLink}
-                  to={`/u/profile`}
+                  to={`/profile`}
                   color="inherit"
                   aria-label="account of current user"
                   aria-controls="menu-appbar"

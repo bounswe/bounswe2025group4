@@ -2,7 +2,7 @@ export interface Experience {
   id: number;
   company: string;
   position: string;
-  description: string;
+  description?: string;
   startDate: string; // ISO format date
   endDate?: string; // ISO format date, can be null for current jobs
 }
@@ -40,13 +40,18 @@ export interface ProfileResponse extends Profile {
   userId: number;
 }
 
-export interface FullProfile extends Profile {
+export interface FullProfile {
+  profile: Profile;
   experience: Experience[];
   education: Education[];
   badges: Badge[];
 }
 
-export interface FullProfileResponse extends FullProfile {
+export interface FullProfileResponse {
   id: number;
+  profile: ProfileResponse;
+  experience: Experience[];
+  education: Education[];
+  badges: Badge[];
   userId: number;
 }

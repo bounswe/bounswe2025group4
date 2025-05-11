@@ -7,19 +7,17 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Paper,
+  Divider,
   Stack,
   TextField,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { Interest } from '../../types/profile';
 import { useUpdateInterests } from '../../services/profile.service';
 
 interface InterestsSectionProps {
-  userId: string;
-  interests: Interest[];
+  userId: number;
+  interests: string[];
   isEditable?: boolean;
 }
 
@@ -31,11 +29,9 @@ const InterestsSection: FC<InterestsSectionProps> = ({
   interests,
   isEditable = false,
 }) => {
-  const theme = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newInterestName, setNewInterestName] = useState('');
-  const [newInterestCategory, setNewInterestCategory] = useState('');
-  const [interestsState, setInterestsState] = useState<Interest[]>(interests);
+  const [interestsState, setInterestsState] = useState<string[]>(interests);
 
   // React Query mutation
   const updateInterests = useUpdateInterests(userId);
@@ -43,7 +39,6 @@ const InterestsSection: FC<InterestsSectionProps> = ({
   // Open the add interest modal
   const openAddModal = () => {
     setNewInterestName('');
-    setNewInterestCategory('');
     setIsModalOpen(true);
   };
 
@@ -56,48 +51,27 @@ const InterestsSection: FC<InterestsSectionProps> = ({
   const handleAddInterest = () => {
     if (!newInterestName.trim()) return;
 
-    const newInterest: Interest = {
-      id: `temp-${Date.now()}`, // Temporary ID, will be replaced by backend
-      name: newInterestName.trim(),
-      category: newInterestCategory.trim() || undefined,
-    };
-
-    const updatedInterests = [...interestsState, newInterest];
+    const updatedInterests = [...interestsState, newInterestName];
     setInterestsState(updatedInterests);
     updateInterests.mutate(updatedInterests);
     closeModal();
   };
 
   // Remove an interest
-  const handleRemoveInterest = (interestId: string) => {
-    const updatedInterests = interestsState.filter(
-      (interest) => interest.id !== interestId
-    );
+  const handleRemoveInterest = (interest: string) => {
+    const updatedInterests = interestsState.filter((i) => i !== interest);
     setInterestsState(updatedInterests);
     updateInterests.mutate(updatedInterests);
   };
 
-  // Group interests by category
-  const groupedInterests = interestsState.reduce<Record<string, Interest[]>>(
-    (acc, interest) => {
-      const category = interest.category || 'General';
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(interest);
-      return acc;
-    },
-    {}
-  );
-
   // Empty state
   if (interestsState.length === 0 && !isEditable) {
     return (
-      <Paper sx={{ p: 2, bgcolor: 'background.paper', textAlign: 'center' }}>
+      <Box sx={{ p: 2, bgcolor: 'background.paper', textAlign: 'center' }}>
         <Typography variant="body2" color="text.secondary">
           No interests added yet.
         </Typography>
-      </Paper>
+      </Box>
     );
   }
 
@@ -109,9 +83,9 @@ const InterestsSection: FC<InterestsSectionProps> = ({
         alignItems="center"
         mb={2}
       >
-        <Typography variant="h6">Interests</Typography>
+        <Typography variant="h5">Interests</Typography>
 
-        {isEditable && (
+        {isEditable && interestsState.length > 0 && (
           <Button
             startIcon={<AddIcon />}
             onClick={openAddModal}
@@ -122,45 +96,37 @@ const InterestsSection: FC<InterestsSectionProps> = ({
           </Button>
         )}
       </Box>
-
-      {Object.keys(groupedInterests).length > 0 ? (
+      <Divider sx={{ my: 2 }} />
+      {interestsState.length > 0 ? (
         <Box>
-          {Object.entries(groupedInterests).map(
-            ([category, categoryInterests]) => (
-              <Box key={category} mb={2}>
-                <Typography variant="subtitle2" color="text.secondary" mb={1}>
-                  {category}
-                </Typography>
-
-                <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-                  {categoryInterests.map((interest) => (
-                    <Chip
-                      key={interest.id}
-                      label={interest.name}
-                      variant="outlined"
-                      onDelete={
-                        isEditable
-                          ? () => handleRemoveInterest(interest.id)
-                          : undefined
-                      }
-                      deleteIcon={isEditable ? <DeleteIcon /> : undefined}
-                    />
-                  ))}
-                </Stack>
-              </Box>
-            )
-          )}
+          {interestsState.map((interest) => (
+            <Box key={interest} mb={2}>
+              <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
+                <Chip
+                  key={interest}
+                  label={interest}
+                  variant="outlined"
+                  onDelete={
+                    isEditable
+                      ? () => handleRemoveInterest(interest)
+                      : undefined
+                  }
+                  deleteIcon={isEditable ? <DeleteIcon /> : undefined}
+                />
+              </Stack>
+            </Box>
+          ))}
         </Box>
       ) : (
         isEditable && (
-          <Paper sx={{ p: 2, textAlign: 'center' }}>
+          <Box sx={{ p: 2, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
               No interests added yet
             </Typography>
             <Button startIcon={<AddIcon />} onClick={openAddModal} size="small">
               Add Your First Interest
             </Button>
-          </Paper>
+          </Box>
         )
       )}
 
@@ -169,24 +135,14 @@ const InterestsSection: FC<InterestsSectionProps> = ({
         <DialogTitle>Add Interest</DialogTitle>
 
         <DialogContent dividers>
-          <Stack spacing={2}>
-            <TextField
-              label="Interest Name"
-              fullWidth
-              value={newInterestName}
-              onChange={(e) => setNewInterestName(e.target.value)}
-              placeholder="e.g., Photography, AI, Cooking"
-              required
-            />
-
-            <TextField
-              label="Category (Optional)"
-              fullWidth
-              value={newInterestCategory}
-              onChange={(e) => setNewInterestCategory(e.target.value)}
-              placeholder="e.g., Technology, Arts, Sports"
-            />
-          </Stack>
+          <TextField
+            label="Interest Name"
+            fullWidth
+            value={newInterestName}
+            onChange={(e) => setNewInterestName(e.target.value)}
+            placeholder="e.g., Photography, AI, Cooking"
+            required
+          />
         </DialogContent>
 
         <DialogActions>

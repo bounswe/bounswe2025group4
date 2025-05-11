@@ -19,10 +19,9 @@ import { useDropzone } from 'react-dropzone';
 
 interface ProfilePictureUploadProps {
   userId: number;
-  avatarUrl?: string;
+  profilePictureUrl: string;
   size?: number;
   editable?: boolean;
-  onAvatarChange?: (newUrl: string) => void;
 }
 
 /**
@@ -30,13 +29,12 @@ interface ProfilePictureUploadProps {
  */
 const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
   userId,
-  avatarUrl,
+  profilePictureUrl,
   size = 120,
   editable = false,
-  onAvatarChange,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
-  const uploadAvatar = useProfilePictureUpload(userId);
+  const uploadProfilePicture = useProfilePictureUpload(userId);
 
   const { getRootProps, getInputProps, open } = useDropzone({
     accept: {
@@ -51,11 +49,7 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
         const file = acceptedFiles[0];
 
         try {
-          const newAvatarUrl = await uploadAvatar.mutateAsync(file);
-
-          if (onAvatarChange) {
-            onAvatarChange(newAvatarUrl);
-          }
+          await uploadProfilePicture.mutateAsync(file);
         } catch (error) {
           console.error('Avatar upload failed:', error);
         }
@@ -63,14 +57,11 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
     },
   });
 
-  // Placeholder avatar if no image URL provided
-  const avatarPlaceholder = `https://ui-avatars.com/api/?name=${userId.toString().substring(0, 2)}&background=random&size=${size}`;
-
   // No editing capabilities, just display the avatar
   if (!editable) {
     return (
       <Avatar
-        src={avatarUrl || avatarPlaceholder}
+        src={profilePictureUrl}
         alt="User Avatar"
         sx={{ width: size, height: size }}
       />
@@ -94,7 +85,7 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
       <input {...getInputProps()} />
 
       <Avatar
-        src={avatarUrl || avatarPlaceholder}
+        src={profilePictureUrl}
         alt="User Avatar"
         sx={{
           width: '100%',
@@ -124,7 +115,7 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
       )}
 
       {/* Show loading indicator when uploading */}
-      {uploadAvatar.isPending && (
+      {uploadProfilePicture.isPending && (
         <Box
           position="absolute"
           top={0}
@@ -149,7 +140,7 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
             size="small"
             variant="outlined"
             startIcon={<UploadIcon />}
-            disabled={uploadAvatar.isPending}
+            disabled={uploadProfilePicture.isPending}
           >
             Change Photo
           </Button>
