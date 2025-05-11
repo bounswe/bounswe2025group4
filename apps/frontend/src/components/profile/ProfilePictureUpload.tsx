@@ -2,17 +2,10 @@ import { FC, useState } from 'react';
 import {
   Avatar,
   Box,
-  Button,
   CircularProgress,
-  IconButton,
-  Paper,
-  Stack,
-  Tooltip,
-  Typography,
 } from '@mui/material';
 import {
   CameraAlt as CameraIcon,
-  CloudUpload as UploadIcon,
 } from '@mui/icons-material';
 import { useProfilePictureUpload } from '../../services/profile.service';
 import { useDropzone } from 'react-dropzone';
@@ -31,7 +24,7 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
   userId,
   profilePictureUrl,
   size = 120,
-  editable = false,
+  editable,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const uploadProfilePicture = useProfilePictureUpload(userId);
@@ -73,6 +66,7 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
       {...getRootProps()}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
+      onClick={() => open()}
       position="relative"
       sx={{
         width: size,
@@ -129,21 +123,6 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
           borderRadius="50%"
         >
           <CircularProgress size={size / 3} />
-        </Box>
-      )}
-
-      {/* Alternative upload button below the avatar */}
-      {editable && (
-        <Box mt={1} textAlign="center">
-          <Button
-            onClick={open}
-            size="small"
-            variant="outlined"
-            startIcon={<UploadIcon />}
-            disabled={uploadProfilePicture.isPending}
-          >
-            Change Photo
-          </Button>
         </Box>
       )}
     </Box>
