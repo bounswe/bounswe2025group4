@@ -66,6 +66,7 @@ public class ProfileService {
                 .bio(dto.getBio())
                 .skills(dto.getSkills())
                 .interests(dto.getInterests())
+                .profilePicture("placeholder.png") // default profile picture
                 .build();
 
         return toDto(profileRepository.save(profile));
