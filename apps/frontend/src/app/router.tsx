@@ -36,6 +36,10 @@ const JobPostDetailDashboardView = lazy(
   () => import('../pages/Job/JobPostDetailDashboardView')
 );
 
+// Forum part
+const ThreadListPage = lazy(() => import('../pages/Forum/ThreadList'));
+const ThreadDetailPage = lazy(() => import('../pages/Forum/ThreadDetail'));
+
 // Root layout with navigation and common elements
 const RootLayout = lazy(() => import('../layouts/Root'));
 
@@ -159,6 +163,14 @@ const router = createBrowserRouter([
         path: 'dashboard/jobs/:id',
         element: <JobPostDetailDashboardView />,
         // Add auth protection: only employer who owns the job can access
+      },
+      {
+        path: 'forum',
+        element: <ThreadListPage />,
+      },
+      {
+        path: 'forum/:id',
+        element: <ThreadDetailPage />,
       },
     ],
   },
