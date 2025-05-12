@@ -77,7 +77,7 @@ export const DailyQuote = () => {
             mt: 1,
           }}
         >
-          – {quote.a || 'Anonymous'}
+          - {quote.a || 'Anonymous'}
         </Typography>
       </CardContent>
     </QuoteCard>

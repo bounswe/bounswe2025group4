@@ -9,9 +9,9 @@ import {
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import Logout from '@mui/icons-material/Logout';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { useAuth } from '../../hooks/useAuth';
-import { Logout } from '@mui/icons-material';
 
 const Header: React.FC = () => {
   const { token, setToken } = useAuth();
@@ -40,6 +40,7 @@ const Header: React.FC = () => {
             {token ? (
               <>
                 <IconButton
+                  data-testid="profile-button"
                   component={RouterLink}
                   to={`/profile`}
                   color="inherit"
@@ -49,7 +50,11 @@ const Header: React.FC = () => {
                 >
                   <AccountCircle />
                 </IconButton>
-                <IconButton color="inherit" onClick={() => setToken(null)}>
+                <IconButton
+                  data-testid="logout-button"
+                  color="inherit"
+                  onClick={() => setToken(null)}
+                >
                   <Logout />
                 </IconButton>
               </>

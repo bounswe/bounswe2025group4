@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './api';
 import {
-  Experience,
+  WorkExperience,
   Badge,
   Education,
   Profile,
@@ -90,9 +90,9 @@ class ProfileService {
 
   async createExperience(
     userId: number,
-    experience: Omit<Experience, 'id'>
-  ): Promise<Experience> {
-    const response = await apiClient.post<Experience>(
+    experience: Omit<WorkExperience, 'id'>
+  ): Promise<WorkExperience> {
+    const response = await apiClient.post<WorkExperience>(
       `/profile/${userId}/experience`,
       experience
     );
@@ -102,9 +102,9 @@ class ProfileService {
   async updateExperience(
     userId: number,
     experienceId: number,
-    experience: Experience
-  ): Promise<Experience> {
-    const response = await apiClient.put<Experience>(
+    experience: WorkExperience
+  ): Promise<WorkExperience> {
+    const response = await apiClient.put<WorkExperience>(
       `/profile/${userId}/experience/${experienceId}`,
       experience
     );
@@ -131,7 +131,7 @@ class ProfileService {
   async updateEducation(
     userId: number,
     educationId: number,
-    education: Education
+    education: Omit<Education, 'userId'>
   ): Promise<Education> {
     const response = await apiClient.put<Education>(
       `/profile/${userId}/education/${educationId}`,
@@ -293,7 +293,7 @@ export const useAddWorkExperience = (userId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (workExp: Omit<Experience, 'id'>) =>
+    mutationFn: (workExp: Omit<WorkExperience, 'id'>) =>
       userService.createExperience(userId, workExp),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -307,7 +307,7 @@ export const useUpdateWorkExperience = (userId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (workExp: Experience) =>
+    mutationFn: (workExp: WorkExperience) =>
       userService.updateExperience(userId, workExp.id, workExp),
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -349,7 +349,7 @@ export const useUpdateEducation = (userId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (education: Education) =>
+    mutationFn: (education: Omit<Education, 'userId'>) =>
       userService.updateEducation(userId, education.id, education),
     onSuccess: () => {
       queryClient.invalidateQueries({
