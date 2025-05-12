@@ -1,12 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '../../utils/test-utils';
 import { DailyQuote } from '../DailyQuote';
-
-// Define the Quote type based on what the component expects
-interface Quote {
-  q: string;
-  a?: string;
-}
+import { Quote } from '../../types/quote';
 
 // Create mock functions with proper types
 const mockQuoteService = {
@@ -33,7 +28,7 @@ describe('DailyQuote', () => {
     render(<DailyQuote />);
 
     expect(screen.getByText('Test quote text')).toBeInTheDocument();
-    expect(screen.getByText('– Test Author')).toBeInTheDocument();
+    expect(screen.getByText('- Test Author')).toBeInTheDocument();
   });
 
   it('shows loading skeleton when data is loading', () => {
@@ -62,11 +57,11 @@ describe('DailyQuote', () => {
 
   it('shows anonymous when author is missing', () => {
     // Override the mock for this test
-    mockQuoteService.data = { q: 'A quote without an author' };
+    mockQuoteService.data = { q: 'A quote without an author' } as Quote;
 
     render(<DailyQuote />);
 
     expect(screen.getByText('A quote without an author')).toBeInTheDocument();
-    expect(screen.getByText('– Anonymous')).toBeInTheDocument();
+    expect(screen.getByText('- Anonymous')).toBeInTheDocument();
   });
 });

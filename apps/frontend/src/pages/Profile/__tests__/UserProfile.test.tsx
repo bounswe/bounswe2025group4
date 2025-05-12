@@ -33,7 +33,7 @@ describe('UserProfile', () => {
     Storage.prototype.getItem = vi.fn();
   });
 
-  test('renders loading state', () => {
+  it('renders loading state', () => {
     // Mock the hooks to return loading state
     const mockLoadingQueryResult = {
       data: undefined,
@@ -89,7 +89,7 @@ describe('UserProfile', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
-  test('renders user profile', () => {
+  it('renders user profile', () => {
     // Mock user profile data
     const mockProfile: FullProfileResponse = {
       id: 123,
@@ -242,7 +242,7 @@ describe('UserProfile', () => {
     expect(screen.getByText(/Job Seeker/)).toBeInTheDocument();
   });
 
-  test('renders error state', () => {
+  it('renders error state', () => {
     // Mock error state
     const mockErrorQueryResult = {
       data: undefined,
