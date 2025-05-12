@@ -35,8 +35,8 @@ export const DailyQuote = () => {
     return (
       <QuoteCard>
         <CardContent>
-          <Skeleton variant="text" height={40} />
-          <Skeleton variant="text" width="60%" />
+          <Skeleton data-testid="skeleton" variant="text" height={40} />
+          <Skeleton data-testid="skeleton" variant="text" width="60%" />
         </CardContent>
       </QuoteCard>
     );
