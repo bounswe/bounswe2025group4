@@ -191,23 +191,23 @@ const JobGrid: React.FC<JobGridProps> = ({
           columns={columns}
           loading={isLoading}
           disableRowSelectionOnClick
-        getRowId={(row) => row.id}
-        pageSizeOptions={[10, 25, 50]}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
+          getRowId={(row) => row.id}
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
             },
-          },
-        }}
-        sx={{
-          '& .MuiDataGrid-cell:focus': {
-            outline: 'none',
-          },
-          '& .MuiDataGrid-row:hover': {
-            backgroundColor: theme.palette.action.hover,
-          },
-        }}
+          }}
+          sx={{
+            '& .MuiDataGrid-cell:focus': {
+              outline: 'none',
+            },
+            '& .MuiDataGrid-row:hover': {
+              backgroundColor: theme.palette.action.hover,
+            },
+          }}
         />
       </Box>
 

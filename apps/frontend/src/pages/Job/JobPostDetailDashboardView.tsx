@@ -36,7 +36,7 @@ const JobPostDetailDashboardView: React.FC = () => {
     data: applicationsData,
     isLoading: isLoadingApps,
     error: appsError,
-  } = useGetApplicationsByJobId(jobId as string);;
+  } = useGetApplicationsByJobId(jobId as string);
 
   useEffect(() => {
     if (jobData) {
@@ -136,7 +136,7 @@ const JobPostDetailDashboardView: React.FC = () => {
             </Alert>
           )}
           {error_ && <Alert severity="error">{error_}</Alert>}
-          
+
           <ApplicationsGrid
             jobId={jobId as string}
             jobTitle={job.title}

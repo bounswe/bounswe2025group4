@@ -26,7 +26,10 @@ interface UpdateStatusDialogProps {
   open: boolean;
   application: Application | null;
   onClose: () => void;
-  onUpdateStatus: (applicationId: string, data: ApplicationStatusUpdate) => Promise<void>;
+  onUpdateStatus: (
+    applicationId: string,
+    data: ApplicationStatusUpdate
+  ) => Promise<void>;
 }
 
 const UpdateStatusDialog: React.FC<UpdateStatusDialogProps> = ({
@@ -143,4 +146,4 @@ const UpdateStatusDialog: React.FC<UpdateStatusDialogProps> = ({
   );
 };
 
-export default UpdateStatusDialog; 
+export default UpdateStatusDialog;

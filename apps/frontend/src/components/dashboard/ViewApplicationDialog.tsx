@@ -39,7 +39,8 @@ const ViewApplicationDialog: React.FC<ViewApplicationDialogProps> = ({
           </Typography>
 
           <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-            Applied on: {new Date(application.submissionDate).toLocaleDateString()}
+            Applied on:{' '}
+            {new Date(application.submissionDate).toLocaleDateString()}
           </Typography>
 
           <Box sx={{ mt: 2, mb: 2 }}>
@@ -86,4 +87,4 @@ const ViewApplicationDialog: React.FC<ViewApplicationDialogProps> = ({
   );
 };
 
-export default ViewApplicationDialog; 
+export default ViewApplicationDialog;

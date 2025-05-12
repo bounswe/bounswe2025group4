@@ -69,7 +69,10 @@ export const useGetApplicationsByUserId = (userId: string | null) => {
     readonly [string, string | null]
   >({
     queryKey: ['userApplications', userId],
-    queryFn: () => userId ? applicationsService.getApplicationsByUserId(userId) : Promise.resolve([]),
+    queryFn: () =>
+      userId
+        ? applicationsService.getApplicationsByUserId(userId)
+        : Promise.resolve([]),
     enabled: !!userId,
     refetchOnWindowFocus: false,
   });

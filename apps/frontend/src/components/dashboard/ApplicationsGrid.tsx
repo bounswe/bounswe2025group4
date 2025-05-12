@@ -6,13 +6,7 @@ import {
   GridRowParams,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import {
-  Box,
-  Button,
-  Chip,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, Button, Chip, Typography, useTheme } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -44,7 +38,8 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
   onBackToJobs,
 }) => {
   const theme = useTheme();
-  const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
+  const [selectedApplication, setSelectedApplication] =
+    useState<Application | null>(null);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
 
@@ -52,7 +47,7 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
     setSelectedApplication(application);
     setViewDialogOpen(true);
   };
-  
+
   const handleStatusUpdate = (application: Application) => {
     setSelectedApplication(application);
     setStatusDialogOpen(true);

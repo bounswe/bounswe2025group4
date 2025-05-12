@@ -34,8 +34,10 @@ const JobDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
-  const [userApplication, setUserApplication] = useState<Application | null>(null);
-  
+  const [userApplication, setUserApplication] = useState<Application | null>(
+    null
+  );
+
   const authContext = useContext(AuthContext) as AuthContextType;
   const userId = authContext?.id;
 
@@ -59,7 +61,7 @@ const JobDetail: React.FC = () => {
   useEffect(() => {
     if (userApplications && jobId) {
       const application = userApplications.find(
-        app => app.jobPostingId.toString() === jobId
+        (app) => app.jobPostingId.toString() === jobId
       );
       if (application) {
         setUserApplication(application);
@@ -151,15 +153,23 @@ const JobDetail: React.FC = () => {
 
         {userApplication && (
           <Box sx={{ my: 2 }}>
-            <Alert 
-              severity={getStatusColor(userApplication.status) as 'success' | 'error' | 'warning' | 'info'} 
+            <Alert
+              severity={
+                getStatusColor(userApplication.status) as
+                  | 'success'
+                  | 'error'
+                  | 'warning'
+                  | 'info'
+              }
               sx={{ mb: 2 }}
             >
               <Typography variant="subtitle1">
-                Your application status: <strong>{userApplication.status}</strong>
+                Your application status:{' '}
+                <strong>{userApplication.status}</strong>
               </Typography>
               <Typography variant="body2">
-                Applied on: {new Date(userApplication.submissionDate).toLocaleDateString()}
+                Applied on:{' '}
+                {new Date(userApplication.submissionDate).toLocaleDateString()}
               </Typography>
               {userApplication.feedback && (
                 <Typography variant="body2" sx={{ mt: 1 }}>
