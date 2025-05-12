@@ -141,4 +141,29 @@ public class ProfileControllerTest {
         assertEquals(expectedProfile, response.getBody());
         verify(profileService).updateInterests(userId, request.getInterests());
     }
+
+
+
+
+    @Test
+    void getBadges_shouldReturnListOfBadges() {
+        // Arrange
+        Long userId = 1L;
+        List<BadgeDto> mockBadges = Arrays.asList(
+                BadgeDto.builder().id(1L).name("Badge A").build(),
+                BadgeDto.builder().id(2L).name("Badge B").build()
+        );
+
+        when(profileService.getBadgesByUserId(userId)).thenReturn(mockBadges);
+
+        // Act
+        ResponseEntity<List<BadgeDto>> response = profileController.getBadges(userId);
+
+        // Assert
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(2, response.getBody().size());
+        assertEquals("Badge A", response.getBody().get(0).getName());
+        verify(profileService, times(1)).getBadgesByUserId(userId);
+    }
 }
