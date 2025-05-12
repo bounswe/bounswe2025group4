@@ -17,12 +17,10 @@ import {
   Checkbox,
   Divider,
 } from '@mui/material';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  School as SchoolIcon,
-} from '@mui/icons-material';
+import Add from '@mui/icons-material/Add';
+import Edit from '@mui/icons-material/Edit';
+import Delete from '@mui/icons-material/Delete';
+import School from '@mui/icons-material/School';
 import { Education } from '../../types/profile';
 import {
   useAddEducation,
@@ -212,7 +210,7 @@ const EducationHistory: FC<EducationHistoryProps> = ({
         </Typography>
         {isEditable && educationHistory.length > 0 && (
           <Button
-            startIcon={<AddIcon />}
+            startIcon={<Add />}
             onClick={openAddModal}
             variant="outlined"
             size="small"
@@ -234,7 +232,7 @@ const EducationHistory: FC<EducationHistoryProps> = ({
                     </Typography>
 
                     <Typography color="text.secondary" gutterBottom>
-                      <SchoolIcon
+                      <School
                         fontSize="small"
                         sx={{
                           mr: 0.5,
@@ -267,7 +265,7 @@ const EducationHistory: FC<EducationHistoryProps> = ({
                         onClick={() => openEditModal(education)}
                         aria-label="Edit"
                       >
-                        <EditIcon fontSize="small" />
+                        <Edit fontSize="small" />
                       </IconButton>
 
                       <IconButton
@@ -276,7 +274,7 @@ const EducationHistory: FC<EducationHistoryProps> = ({
                         aria-label="Delete"
                         color="error"
                       >
-                        <DeleteIcon fontSize="small" />
+                        <Delete fontSize="small" />
                       </IconButton>
                     </Box>
                   )}
@@ -292,7 +290,7 @@ const EducationHistory: FC<EducationHistoryProps> = ({
               </Typography>
               {isEditable && (
                 <Button
-                  startIcon={<AddIcon />}
+                  startIcon={<Add />}
                   onClick={openAddModal}
                   size="small"
                 >
