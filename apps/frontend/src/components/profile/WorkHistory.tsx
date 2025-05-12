@@ -18,13 +18,11 @@ import {
   Checkbox,
   Divider,
 } from '@mui/material';
-import {
-  Add as AddIcon,
-  Edit as EditIcon,
-  Delete as DeleteIcon,
-  Business as BusinessIcon,
-} from '@mui/icons-material';
-import { Experience } from '../../types/profile';
+import Add from '@mui/icons-material/Add';
+import Edit from '@mui/icons-material/Edit';
+import Delete from '@mui/icons-material/Delete';
+import Business from '@mui/icons-material/Business';
+import { WorkExperience } from '../../types/profile';
 import {
   useAddWorkExperience,
   useDeleteWorkExperience,
@@ -48,7 +46,7 @@ type WorkExperienceFormData = z.infer<typeof workExperienceSchema>;
 
 interface WorkHistoryProps {
   userId: number;
-  workHistory: Experience[];
+  workHistory: WorkExperience[];
   isEditable?: boolean;
 }
 
@@ -61,9 +59,9 @@ const WorkHistory: FC<WorkHistoryProps> = ({
   isEditable,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentExperience, setCurrentExperience] = useState<Experience | null>(
-    null
-  );
+  const [currentExperience, setCurrentExperience] = useState<
+    WorkExperience | null
+  >(null);
 
   // React Query mutations
   const addWorkExperience = useAddWorkExperience(userId);
@@ -101,7 +99,7 @@ const WorkHistory: FC<WorkHistoryProps> = ({
     setIsModalOpen(true);
   };
 
-  const openEditModal = (experience: Experience) => {
+  const openEditModal = (experience: WorkExperience) => {
     setCurrentExperience(experience);
 
     const isCurrentPosition = !experience.endDate;
@@ -212,7 +210,7 @@ const WorkHistory: FC<WorkHistoryProps> = ({
         </Typography>
         {isEditable && workHistory.length > 0 && (
           <Button
-            startIcon={<AddIcon />}
+            startIcon={<Add />}
             onClick={openAddModal}
             variant="outlined"
             size="small"
@@ -235,7 +233,7 @@ const WorkHistory: FC<WorkHistoryProps> = ({
                       </Typography>
 
                       <Typography color="text.secondary" gutterBottom>
-                        <BusinessIcon
+                        <Business
                           fontSize="small"
                           sx={{
                             mr: 0.5,
@@ -274,7 +272,7 @@ const WorkHistory: FC<WorkHistoryProps> = ({
                           onClick={() => openEditModal(experience)}
                           aria-label="Edit"
                         >
-                          <EditIcon fontSize="small" />
+                          <Edit fontSize="small" />
                         </IconButton>
 
                         <IconButton
@@ -283,7 +281,7 @@ const WorkHistory: FC<WorkHistoryProps> = ({
                           aria-label="Delete"
                           color="error"
                         >
-                          <DeleteIcon fontSize="small" />
+                          <Delete fontSize="small" />
                         </IconButton>
                       </Box>
                     )}
@@ -301,7 +299,7 @@ const WorkHistory: FC<WorkHistoryProps> = ({
             </Typography>
             {isEditable && (
               <Button
-                startIcon={<AddIcon />}
+                startIcon={<Add />}
                 onClick={openAddModal}
                 size="small"
               >
