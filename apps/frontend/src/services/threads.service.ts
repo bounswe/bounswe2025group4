@@ -184,7 +184,7 @@ export const useReportThread = () => {
 
 export const useLikeThread = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation<void, Error, number>({
     mutationFn: (threadId) => threadsService.likeThread(threadId),
     onSuccess: (_, threadId) => {
@@ -195,7 +195,7 @@ export const useLikeThread = () => {
 
 export const useUnlikeThread = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation<void, Error, number>({
     mutationFn: (threadId) => threadsService.unlikeThread(threadId),
     onSuccess: (_, threadId) => {
