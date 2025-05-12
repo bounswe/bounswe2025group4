@@ -3,6 +3,7 @@ import org.bounswe.backend.thread.entity.Thread;
 import jakarta.persistence.*;
 import lombok.*;
 import org.bounswe.backend.user.entity.User;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -31,4 +32,14 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "thread_id", nullable = false)
     private Thread thread;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime editedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

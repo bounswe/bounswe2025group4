@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 
 @Service
@@ -41,7 +42,7 @@ public class CommentService {
                 .toList();
     }
 
-
+    @Transactional
     public CommentDto addCommentToThread(Long threadId, Long userId, CreateCommentRequestDto dto) {
         Thread thread = threadRepository.findById(threadId)
                 .orElseThrow(() -> new RuntimeException("Thread not found"));
@@ -53,9 +54,15 @@ public class CommentService {
                 .body(dto.getBody())
                 .author(user)
                 .thread(thread)
+                .createdAt(LocalDateTime.now())
                 .build();
+        Comment savedComment = commentRepository.save(comment);
 
-        return toDto(commentRepository.save(comment));
+        thread.getComments().add(savedComment);
+        thread.setCommentCount(thread.getCommentCount() + 1);
+        threadRepository.save(thread);
+
+        return toDto(savedComment);
     }
 
     @Transactional
@@ -80,11 +87,12 @@ public class CommentService {
         }
 
         comment.setBody(body);
+        comment.setEditedAt(LocalDateTime.now());
         return toDto(commentRepository.save(comment));
     }
 
 
-
+    @Transactional
     public void deleteComment(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
@@ -92,6 +100,11 @@ public class CommentService {
         if (!comment.getAuthor().getId().equals(userId)) {
             throw new RuntimeException("You are not authorized to delete this comment");
         }
+        Thread thread = comment.getThread();
+
+        thread.getComments().remove(comment);
+        thread.setCommentCount(Math.max(0, thread.getCommentCount() - 1));
+        threadRepository.save(thread);
 
         commentRepository.delete(comment);
     }
@@ -105,6 +118,8 @@ public class CommentService {
                 .id(comment.getId())
                 .body(comment.getBody())
                 .reported(comment.isReported())
+                .createdAt(comment.getCreatedAt())
+                .editedAt(comment.getEditedAt())
                 .author(UserDto.builder()
                         .id(user.getId())
                         .username(user.getUsername())
