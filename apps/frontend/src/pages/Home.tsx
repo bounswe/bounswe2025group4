@@ -1,28 +1,28 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-import { AppBar, Toolbar, Typography, Container } from '@mui/material';
+import { Container, Stack, Typography, Box } from '@mui/material';
+import { DailyQuote } from '../components/DailyQuote';
 
-function HomePage() {
-  // const [count, setCount] = useState(0)
-
+export const HomePage = () => {
   return (
-    <>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Job Platform
+    <Container maxWidth="lg">
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} sx={{ mt: 4 }}>
+        {/* Hero Section */}
+        <Box flex={{ xs: '1', md: '2' }}>
+          <Typography variant="h2" component="h1" gutterBottom>
+            Find Your Next Ethical Career Move
           </Typography>
-        </Toolbar>
-      </AppBar>
-      <Container sx={{ mt: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Welcome to the Job Platform!
-        </Typography>
-        <Typography>Your main application content will go here.</Typography>
-      </Container>
-    </>
+          <Typography variant="h5" color="text.secondary" paragraph>
+            Connect with employers who share your values and make a positive
+            impact through your work.
+          </Typography>
+        </Box>
+
+        {/* Quote Section */}
+        <Box flex="1" sx={{ position: 'sticky', top: 24 }}>
+          <DailyQuote />
+        </Box>
+      </Stack>
+    </Container>
   );
-}
+};
 
 export default HomePage;
