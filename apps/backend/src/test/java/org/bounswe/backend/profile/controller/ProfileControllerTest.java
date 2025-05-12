@@ -36,12 +36,14 @@ public class ProfileControllerTest {
 
     private AutoCloseable closeable;
 
+    private final Long userId = 1L;
+
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
 
         mockUser = User.builder()
-                .id(1L)
+                .id(userId)
                 .username("john")
                 .email("john@example.com")
                 .build();
@@ -165,5 +167,41 @@ public class ProfileControllerTest {
         assertEquals(2, response.getBody().size());
         assertEquals("Badge A", response.getBody().get(0).getName());
         verify(profileService, times(1)).getBadgesByUserId(userId);
+    }
+
+
+    @Test
+    void deleteEducation_Success() {
+        // Arrange
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(mockUser));
+        ProfileController controller = spy(profileController);
+        doReturn(mockUser).when(controller).getCurrentUser();
+
+        // Act
+        Long eduId = 100L;
+        ResponseEntity<Void> response = controller.deleteEducation(userId, eduId);
+
+        // Assert
+        assertEquals(204, response.getStatusCode().value());
+        verify(profileService).deleteEducation(userId, eduId);
+    }
+
+
+
+    @Test
+    void deleteEducation_Forbidden() {
+        // Arrange
+        User anotherUser = User.builder().id(2L).username("jane").build();
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(anotherUser));
+        ProfileController controller = spy(profileController);
+        doReturn(anotherUser).when(controller).getCurrentUser();
+
+        // Act
+        Long eduId = 100L;
+        ResponseEntity<Void> response = controller.deleteEducation(userId, eduId);
+
+        // Assert
+        assertEquals(403, response.getStatusCode().value());
+        verify(profileService, never()).deleteEducation(any(), any());
     }
 }
