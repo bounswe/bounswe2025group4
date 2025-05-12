@@ -26,7 +26,11 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   void initState() {
     super.initState();
     _searchController.addListener(_filterMentors);
-    _loadMentors();
+
+    // Delay showing content to avoid UI jumps
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadMentors();
+    });
   }
 
   @override
@@ -274,7 +278,10 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // Delay showing content to avoid UI jumps
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
   }
 
   Future<void> _loadData() async {
@@ -427,6 +434,7 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
           controller: _tabController,
           tabs: const [Tab(text: 'Find Mentors'), Tab(text: 'My Mentorships')],
         ),
+        automaticallyImplyLeading: false,
       ),
       body: TabBarView(
         controller: _tabController,

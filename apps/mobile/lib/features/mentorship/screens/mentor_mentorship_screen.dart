@@ -42,28 +42,17 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
 
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
     try {
+      // Load data, the loading states are handled inside the provider methods
       await mentorProvider.fetchMentorRequests();
 
-      // Add debugging information
-      print("Mentor requests loaded: ${mentorProvider.mentorRequests.length}");
-      for (var request in mentorProvider.mentorRequests) {
-        print(
-          "Request ID: ${request.id}, Status: ${request.status}, From: ${request.mentee.username}",
-        );
-      }
-      print(
-        "Mentor profile loaded: ${mentorProvider.currentUserMentorProfile}",
-      );
-      if (mentorProvider.currentUserMentorProfile == null && mounted) {
+      if (mentorProvider.currentUserMentorProfile == null) {
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         await mentorProvider.fetchCurrentUserMentorProfile(
           int.parse(authProvider.currentUser!.id),
         );
       }
     } catch (e) {
-      if (mounted) {
-        print("Error loading mentor data: $e");
-      }
+      // Error is already handled in the provider
     }
   }
 
@@ -121,6 +110,7 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mentorship'),
+        automaticallyImplyLeading: false,
         bottom: TabBar(
           controller: _tabController,
           tabs: const [Tab(text: 'Current Mentees'), Tab(text: 'Requests')],
