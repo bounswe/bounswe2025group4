@@ -20,8 +20,6 @@ public class UpdateProfileRequestDto {
 
     private String bio;
 
-    private String profilePicture;
-
     private List<String> skills;
 
     private List<String> interests;
