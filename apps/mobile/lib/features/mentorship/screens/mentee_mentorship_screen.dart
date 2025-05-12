@@ -6,6 +6,7 @@ import '../widgets/active_mentorship_card.dart';
 import '../providers/mentor_provider.dart';
 import 'package:mobile/core/models/mentorship_request.dart';
 import './direct_message_screen.dart';
+import './mentor_profile_screen.dart';
 
 // Find Mentors tab content - updated to use real API data
 class FindMentorsTab extends StatefulWidget {
@@ -63,11 +64,23 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
     });
   }
 
-  void _navigateToMentorProfile(int mentorId, String mentorName) {
-    // TODO: Implement actual navigation to the mentor's profile page
-    ScaffoldMessenger.of(
+  void _navigateToMentorProfile(
+    String userId,
+    int mentorId,
+    String mentorName,
+  ) {
+    print('Navigating to mentor profile for $mentorId');
+    Navigator.push(
       context,
-    ).showSnackBar(SnackBar(content: Text('Navigate to profile: $mentorName')));
+      MaterialPageRoute(
+        builder:
+            (context) => MentorProfileScreen(
+              userId: userId,
+              mentorId: mentorId,
+              mentorName: mentorName,
+            ),
+      ),
+    );
   }
 
   void _showRequestMentorshipDialog(int mentorId, String mentorName) {
@@ -229,6 +242,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                       averageRating: mentor.averageRating,
                       onTap:
                           () => _navigateToMentorProfile(
+                            mentor.user.id,
                             mentor.id,
                             mentor.user.name,
                           ),

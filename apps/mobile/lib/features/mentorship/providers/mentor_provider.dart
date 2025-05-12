@@ -235,7 +235,7 @@ class MentorProvider with ChangeNotifier {
 
   // Create a review for a mentor
   Future<bool> createMentorReview({
-    required int mentorId,
+    required String userId,
     required int rating,
     String? comment,
   }) async {
@@ -243,8 +243,11 @@ class MentorProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      print(
+        'Creating mentor review for mentor $userId with rating $rating and comment $comment',
+      );
       await _apiService.createMentorReview(
-        mentorId: mentorId,
+        userId: userId,
         rating: rating,
         comment: comment,
       );

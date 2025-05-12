@@ -659,7 +659,7 @@ class ApiService {
   /// GET /api/mentor/profile/{userId}
   /// Gets a mentor profile by user ID.
   Future<MentorProfile> getMentorProfile(int userId) async {
-    print('API: Getting mentor profile for user $userId');
+    print('API: Getting mentor profile for mentor $userId');
     final uri = _buildUri('/mentor/profile/$userId');
 
     try {
@@ -829,15 +829,15 @@ class ApiService {
   /// POST /api/mentor/review
   /// Creates a mentor review.
   Future<MentorReview> createMentorReview({
-    required int mentorId,
+    required String userId,
     required int rating,
     String? comment,
   }) async {
-    print('API: Creating review for mentor $mentorId');
+    print('API: Creating review for mentor $userId');
     final uri = _buildUri('/mentor/review');
 
     final reviewData = {
-      'mentorId': mentorId,
+      'mentorId': userId,
       'rating': rating,
       if (comment != null) 'comment': comment,
     };
