@@ -22,7 +22,6 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
   late final ApiService _api;
   List<Comment> _comments = [];
   late DiscussionThread _currentThread;
-  String? _username;
 
   @override
   void initState() {
@@ -30,7 +29,6 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
     _api = ApiService(authProvider: context.read<AuthProvider>());
     _currentThread = widget.thread;
     _loadComments();
-    _loadUsername();
   }
 
   Future<void> _loadComments() async {
@@ -65,15 +63,6 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
       );
-    }
-  }
-
-  Future<void> _loadUsername() async {
-    try {
-      final user = await _api.fetchUser(_currentThread.creatorId);
-      setState(() => _username = user.username);
-    } catch (_) {
-      setState(() => _username = 'Unknown');
     }
   }
 
@@ -186,11 +175,15 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 children: [
                                   CircleAvatar(
                                     radius: 18,
-                                    child: Text(_username != null ? _username![0].toUpperCase() : '?'),
+                                    child: Text(
+                                      _currentThread.creatorUsername.isNotEmpty
+                                          ? _currentThread.creatorUsername[0].toUpperCase()
+                                          : '?',
+                                    ),
                                   ),
                                   const SizedBox(width: 10),
                                   Text(
-                                    _username ?? 'Unknown',
+                                    _currentThread.creatorUsername,
                                     style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
                                   ),
                                 ],
@@ -204,6 +197,36 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                               Text(
                                 _currentThread.body,
                                 style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 12,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.calendar_today, size: 16),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        'Created: ${_currentThread.createdAt.toLocal().toString().split(".").first}',
+                                        style: Theme.of(context).textTheme.bodySmall,
+                                      ),
+                                    ],
+                                  ),
+                                  if (_currentThread.editedAt != null)
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.edit, size: 16),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Edited: ${_currentThread.editedAt!.toLocal().toString().split(".").first}',
+                                          style: Theme.of(context).textTheme.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                ],
                               ),
                             ],
                           ),
@@ -229,6 +252,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 body: newBody,
                                 author: _comments[index].author,
                                 reported: _comments[index].reported,
+                                createdAt: _comments[index].createdAt,
                               );
                             }
                           });

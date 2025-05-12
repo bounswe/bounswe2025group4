@@ -46,7 +46,7 @@ class _ForumPageState extends State<ForumPage> {
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Forum')),
+      appBar: AppBar(automaticallyImplyLeading: false, title: const Text('Forum')),
       body: Stack(
         children: [
           if (_isLoading)
