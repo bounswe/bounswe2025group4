@@ -281,7 +281,7 @@ public class ProfileService {
     @Transactional
     public String getProfilePicture(Long userId) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new NotFoundException("Profile not found"));
         return profile.getProfilePicture();
     }
 

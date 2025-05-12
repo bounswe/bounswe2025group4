@@ -2,6 +2,8 @@ package org.bounswe.backend.user.controller;
 
 
 
+import org.bounswe.backend.common.exception.InvalidAuthContextException;
+import org.bounswe.backend.common.exception.NotFoundException;
 import org.bounswe.backend.user.dto.UserDto;
 import org.bounswe.backend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,7 @@ public class UserController {
     public ResponseEntity<UserDto> updateMentorshipStatus(@RequestBody UpdateMentorshipDto request) {
         String username = getCurrentUsername();
         org.bounswe.backend.user.entity.User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new NotFoundException("User not found"));
         UserDto updated = userService.updateMentorshipStatus(user.getId(), request.mentorshipStatus);
         return ResponseEntity.ok(updated);
     }
@@ -64,7 +66,7 @@ public class UserController {
         if (principal instanceof UserDetails userDetails) {
             return userDetails.getUsername();
         }
-        throw new RuntimeException("Invalid authentication context");
+        throw new InvalidAuthContextException();
     }
 }
 
