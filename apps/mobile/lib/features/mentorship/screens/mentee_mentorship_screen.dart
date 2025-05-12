@@ -132,25 +132,29 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   ) async {
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
 
-    final success = await mentorProvider.createMentorshipRequest(
-      mentorId: mentorId,
-      message: message,
-    );
+    try {
+      final success = await mentorProvider.createMentorshipRequest(
+        mentorId: mentorId,
+        message: message,
+      );
 
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Mentorship requested for $mentorName')),
-      );
-      // Refresh mentee requests to show the new request
-      await mentorProvider.fetchMenteeRequests();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Error: ${mentorProvider.error ?? "Failed to request mentorship"}',
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Mentorship requested for $mentorName')),
+        );
+        // Refresh mentee requests to show the new request
+        await mentorProvider.fetchMenteeRequests();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('There is an error while requesting'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 5),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -187,20 +191,21 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
             ),
             if (mentorProvider.isLoadingMentors)
               const Expanded(child: Center(child: CircularProgressIndicator()))
-            else if (mentorProvider.error != null)
+            else if (mentorProvider.error != null && mentors.isEmpty)
+              // Only show error state if there are no mentors to display
               Expanded(
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Error: ${mentorProvider.error}'),
+                      Text('Error loading mentors: ${mentorProvider.error}'),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
                           mentorProvider.clearError();
                           _loadMentors();
                         },
-                        child: const Text('Retry'),
+                        child: const Text('Retry Loading Mentors'),
                       ),
                     ],
                   ),

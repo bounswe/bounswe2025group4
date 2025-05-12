@@ -94,9 +94,6 @@ class MentorProvider with ChangeNotifier {
     required int mentorId,
     required String message,
   }) async {
-    _error = null;
-    notifyListeners();
-
     try {
       final request = await _apiService.createMentorshipRequest(
         mentorId: mentorId,
@@ -108,10 +105,9 @@ class MentorProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _error = e.toString();
-      print('Error creating mentorship request: $_error');
-      notifyListeners();
-      return false;
+      print('Error creating mentorship request: ${e.toString()}');
+      // Don't set _error here, instead throw the exception to be handled by the UI
+      throw Exception('Failed to create mentorship request: ${e.toString()}');
     }
   }
 
