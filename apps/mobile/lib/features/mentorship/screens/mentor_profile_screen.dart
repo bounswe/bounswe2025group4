@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/models/mentor_profile.dart';
 import 'package:mobile/core/services/api_service.dart';
+import 'package:mobile/core/providers/quote_provider.dart';
 import '../providers/mentor_provider.dart';
 
 class MentorProfileScreen extends StatefulWidget {
@@ -289,6 +290,44 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               ],
             ),
             const SizedBox(height: 24),
+
+            // Quote Card
+            Consumer<QuoteProvider>(
+              builder: (context, quoteProvider, child) {
+                if (quoteProvider.hasQuote) {
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '"${quoteProvider.quote!.text}"',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              '- ${quoteProvider.quote!.author}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            const SizedBox(height: 16),
 
             // Rating Section
             Card(
