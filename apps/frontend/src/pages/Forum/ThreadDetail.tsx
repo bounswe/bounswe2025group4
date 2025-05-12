@@ -26,8 +26,8 @@ import {
   useGetThreadById,
   useDeleteComment,
 } from '../../services/threads.service';
-import { useCurrentUser } from '../../services/auth.service';
-import { User } from '../../types/user';
+import { useCurrentUser } from '../../services/user.service';
+import { User } from '../../types/auth';
 
 // CommentForm component for adding new comments
 const CommentForm: React.FC<{

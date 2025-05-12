@@ -17,7 +17,6 @@ import {
   DialogActions,
   TextField,
   Snackbar,
-  Fab,
 } from '@mui/material';
 import FlagIcon from '@mui/icons-material/Flag';
 import AddIcon from '@mui/icons-material/Add';
@@ -28,11 +27,11 @@ import {
 } from '../../services/threads.service';
 import { Thread } from '../../types/thread';
 import { useNavigate } from 'react-router-dom';
-import { useCurrentUser } from '../../services/auth.service';
+import { useCurrentUser } from '../../services/user.service';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import { useDeleteThread } from '../../services/threads.service';
-import { User } from '../../types/user';
+import { User } from '../../types/auth';
 import { useEffect } from 'react';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
