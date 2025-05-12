@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 @Service
 public class ThreadService {
@@ -42,8 +43,8 @@ public class ThreadService {
 
         Set<Tag> tags = dto.getTags() == null ? new HashSet<>() :
                 dto.getTags().stream()
-                        .map(name -> tagRepository.findByName(name)
-                                .orElseGet(() -> tagRepository.save(Tag.builder().name(name).build())))
+                        .map(name -> tagRepository.findByNameIgnoreCase(name.toUpperCase())
+                                .orElseGet(() -> tagRepository.save(Tag.builder().name(name.toUpperCase()).build())))
                         .collect(Collectors.toSet());
 
         Thread thread = Thread.builder()
@@ -51,9 +52,18 @@ public class ThreadService {
                 .body(dto.getBody())
                 .creator(creator)
                 .tags(tags)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         return toDto(threadRepository.save(thread));
+    }
+
+    @Transactional
+    public ThreadDto getThreadById(Long threadId) {
+        Thread thread = threadRepository.findById(threadId)
+                .orElseThrow(() -> new RuntimeException("Thread not found"));
+
+        return toDto(thread);
     }
 
     @Transactional
@@ -70,11 +80,13 @@ public class ThreadService {
 
         if (dto.getTags() != null) {
             Set<Tag> updatedTags = dto.getTags().stream()
-                    .map(name -> tagRepository.findByName(name)
-                            .orElseGet(() -> tagRepository.save(Tag.builder().name(name).build())))
+                    .map(name -> tagRepository.findByNameIgnoreCase(name.toUpperCase())
+                            .orElseGet(() -> tagRepository.save(Tag.builder().name(name.toUpperCase()).build())))
                     .collect(Collectors.toSet());
             thread.setTags(updatedTags);
         }
+
+        thread.setEditedAt(LocalDateTime.now());
 
         return toDto(threadRepository.save(thread));
     }
@@ -157,8 +169,12 @@ public class ThreadService {
                 .title(thread.getTitle())
                 .body(thread.getBody())
                 .creatorId(thread.getCreator().getId())
+                .creatorUsername(thread.getCreator().getUsername())
                 .tags(thread.getTags().stream().map(Tag::getName).collect(Collectors.toList()))
                 .reported(thread.isReported())
+                .createdAt(thread.getCreatedAt())
+                .editedAt(thread.getEditedAt())
+                .commentCount(thread.getCommentCount())
                 .build();
     }
 }

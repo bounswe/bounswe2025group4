@@ -57,7 +57,7 @@
   - [ ] Request modal → triggers Socket.io notification  
 - [ ] **ChatThread** `/mentorship/chat/:threadId`  
   - [ ] Realtime messages (Socket.io)  
-  - [ ] “Mark review complete” button  
+  - [ ] "Mark review complete" button  
 - [ ] Rating dialog (+ optimistic update to mentor profile)  
 
 ---
@@ -76,9 +76,9 @@
 
 ## 🏢  6. Profiles
 
-- [ ] **UserProfile** `/u/:username`  
-  - [ ] Avatar upload (S3 presigned URL)  
-  - [ ] Badges component  
+- [x] **UserProfile** `/u/:username`  
+  - [x] Avatar upload (S3 presigned URL)  
+  - [x] Badges component  
 - [ ] **CompanyProfile** `/company/:slug`  
   - [ ] Ethical-policy checklist  
   - [ ] Aggregated workplace ratings chart  
@@ -110,7 +110,7 @@
 ## 📌  9. Non-Functional Requirements Checklist
 
 - [ ] 99 % uptime monitored via Status-page badge  
-- [ ] GDPR/KVKK “Download my data” & “Erase me” flows  
+- [ ] GDPR/KVKK "Download my data" & "Erase me" flows  
 - [ ] Daily encrypted backups verified  
 - [ ] Security headers (CSP, HSTS, Referrer-Policy) via Vite plugin  
 

@@ -14,7 +14,6 @@ public class CreateProfileRequestDto {
     private String location;
     private String occupation;
     private String bio;
-    private String profilePicture;
     private List<String> skills;
     private List<String> interests;
 }

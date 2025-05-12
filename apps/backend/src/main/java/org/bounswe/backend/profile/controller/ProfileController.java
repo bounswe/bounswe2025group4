@@ -3,16 +3,23 @@ package org.bounswe.backend.profile.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-import org.bounswe.backend.common.exception.InvalidAuthContextException;
 import org.bounswe.backend.profile.dto.*;
 import org.bounswe.backend.profile.service.ProfileService;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
+import java.net.MalformedURLException;
+import java.nio.file.*;
 import java.util.List;
 
 @RestController
@@ -22,6 +29,9 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final UserRepository userRepository;
+    
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     public ProfileController(ProfileService profileService, UserRepository userRepository) {
         this.profileService = profileService;
@@ -76,16 +86,75 @@ public class ProfileController {
     }
 
 
-    @PostMapping("/profile/{userId}/profile-picture")
-    public ResponseEntity<ProfileDto> updateProfilePicture(@PathVariable Long userId,
-                                                           @Valid @RequestBody UpdateProfilePictureRequestDto dto) {
+    @PutMapping("/profile/{userId}/profile-picture")
+    public ResponseEntity<String> updateProfilePicture(@PathVariable Long userId,
+                                                      @RequestParam("file") MultipartFile file) {         
+                                                        
         User user = getCurrentUser();
         if (!user.getId().equals(userId)) {
-            return ResponseEntity.status(403).build(); // Forbidden
+            return ResponseEntity.status(403).build();
         }
-        return ResponseEntity.ok(profileService.updateProfilePicture(userId, dto.getProfilePicture()));
+        try{
+            if(file.isEmpty()){
+                return ResponseEntity.badRequest().body("File is empty");
+            }
+            if(file.getSize() > 1024 * 1024 * 2){
+                return ResponseEntity.badRequest().body("File is too large");
+            }
+
+            // Delete old profile picture
+            String oldFileName = profileService.getProfilePicture(userId);
+            if(oldFileName != null && !oldFileName.contains("placeholder")){
+                Path oldFilePath = Paths.get(uploadDir).resolve(oldFileName).normalize();
+                File oldFile = oldFilePath.toFile();
+                if(oldFile.exists()){
+                    oldFile.delete();
+                }
+            }
+
+            // Upload new profile picture
+            String fileName = "user_" + userId + "_profile_picture." + file.getOriginalFilename();
+            String filePath = Paths.get(uploadDir).resolve(fileName).normalize().toString();
+            Files.createDirectories(Paths.get(uploadDir));
+            file.transferTo(new File(filePath));
+
+
+            // Save file name to database
+            profileService.updateProfilePicture(userId, fileName);
+
+            return ResponseEntity.ok("Uploaded successfully: " + fileName);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to upload file: " + e.getMessage());
+        }
     }
 
+    @GetMapping("/profile/{userId}/profile-picture")
+    public ResponseEntity<Resource> getProfilePicture(@PathVariable Long userId) {
+        // Retreive file path from database
+        String fileName = profileService.getProfilePicture(userId);
+        Path filePath = Paths.get(uploadDir, fileName);
+        File file = filePath.toFile();
+        if(!file.exists()){
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource resource;
+        try {
+            resource = new UrlResource(filePath.toUri());
+            if(resource.exists() || resource.isReadable()){
+                return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(Files.probeContentType(filePath)))
+                    .body(resource);
+            }
+            else{
+                return ResponseEntity.notFound().build();
+            }
+        } catch (MalformedURLException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @DeleteMapping("/profile/{userId}/profile-picture")
     public ResponseEntity<Void> deleteProfilePicture(@PathVariable Long userId) {
@@ -93,8 +162,15 @@ public class ProfileController {
         if (!user.getId().equals(userId)) {
             return ResponseEntity.status(403).build(); // Forbidden
         }
+        // Delete file from server
+        String fileName = profileService.getProfilePicture(userId);
+        Path filePath = Paths.get(uploadDir, fileName);
+        File file = filePath.toFile();
+        if(file.exists() && !fileName.contains("placeholder")){
+            file.delete();
+        }
         profileService.deleteProfilePicture(userId);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 
 
@@ -212,6 +288,6 @@ public class ProfileController {
         if (principal instanceof UserDetails userDetails) {
             return userDetails.getUsername();
         }
-        throw new InvalidAuthContextException();
+        throw new RuntimeException("Invalid authentication context");
     }
 }

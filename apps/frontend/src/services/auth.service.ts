@@ -1,11 +1,10 @@
-import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './api';
 import {
   LoginCredentials,
   RegisterCredentials,
   AuthResponse,
 } from '../types/auth';
-import { User } from '../types/user';
 
 const AUTH_KEYS = {
   user: ['auth', 'user'] as const,
@@ -60,13 +59,6 @@ class AuthService {
 export const authService = new AuthService();
 
 // ----- React Query Hooks -----
-
-export const useCurrentUser = () => {
-  return useQuery<User | null, Error>({
-    queryKey: AUTH_KEYS.user,
-    queryFn: () => authService.getCurrentUser(),
-  });
-};
 
 export const useLogin = () => {
   const queryClient = useQueryClient();

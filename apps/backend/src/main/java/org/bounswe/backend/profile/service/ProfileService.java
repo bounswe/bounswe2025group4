@@ -11,6 +11,7 @@ import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,9 +68,9 @@ public class ProfileService {
                 .location(dto.getLocation())
                 .occupation(dto.getOccupation())
                 .bio(dto.getBio())
-                .profilePicture(dto.getProfilePicture())
                 .skills(dto.getSkills())
                 .interests(dto.getInterests())
+                .profilePicture("placeholder.png") // default profile picture
                 .build();
 
         return toDto(profileRepository.save(profile));
@@ -86,7 +87,6 @@ public class ProfileService {
         if (dto.getLocation() != null) profile.setLocation(dto.getLocation());
         if (dto.getOccupation() != null) profile.setOccupation(dto.getOccupation());
         if (dto.getBio() != null) profile.setBio(dto.getBio());
-        if (dto.getProfilePicture() != null) profile.setProfilePicture(dto.getProfilePicture());
         if (dto.getSkills() != null) profile.setSkills(dto.getSkills());
         if (dto.getInterests() != null) profile.setInterests(dto.getInterests());
 
@@ -261,11 +261,11 @@ public class ProfileService {
 
 
     @Transactional
-    public ProfileDto updateProfilePicture(Long userId, String profilePicture) {
+    public ProfileDto updateProfilePicture(Long userId, String fileName) {
         Profile profile = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Profile"));
 
-        profile.setProfilePicture(profilePicture);
+        profile.setProfilePicture(fileName);
         return toDto(profileRepository.save(profile));
     }
 
@@ -274,13 +274,21 @@ public class ProfileService {
         Profile profile = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Profile"));
 
-        profile.setProfilePicture(null);
+        profile.setProfilePicture("placeholder.png");
         profileRepository.save(profile);
+    }
+
+    @Transactional
+    public String getProfilePicture(Long userId) {
+        Profile profile = profileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        return profile.getProfilePicture();
     }
 
 
 
     private ProfileDto toDto(Profile profile) {
+        String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         return ProfileDto.builder() 
                 .id(profile.getId())
                 .fullName(profile.getFullName())
@@ -288,7 +296,8 @@ public class ProfileService {
                 .location(profile.getLocation())
                 .occupation(profile.getOccupation())
                 .bio(profile.getBio())
-                .profilePicture(profile.getProfilePicture())
+                .profilePicture(profile.getProfilePicture() != null
+                        ? baseUrl + "/api/profile/" + profile.getUser().getId() + "/profile-picture" : null)
                 .skills(profile.getSkills())
                 .interests(profile.getInterests())
                 .userId(profile.getUser().getId())

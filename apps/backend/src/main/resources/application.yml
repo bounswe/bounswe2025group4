@@ -10,6 +10,27 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: yourmail@gmail.com # gmail: cotsezer2000@gmail.com
+    password: abcdefghijklmnop # google apps password: abcd efgh ijkl mnop
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=100,expireAfterWrite=1d
 
 server:
   port: 8080
@@ -25,3 +46,6 @@ springdoc:
   api-docs:
     enabled: true
     path: /v3/api-docs
+
+file:
+  upload-dir: /app/uploads/profile-pictures

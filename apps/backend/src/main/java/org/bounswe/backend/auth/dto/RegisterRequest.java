@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.bounswe.backend.common.enums.UserType;
+import org.bounswe.backend.common.enums.MentorshipStatus;
 import lombok.*;
 
 @Data
@@ -24,4 +25,6 @@ public class RegisterRequest {
     private String bio;
 
     private UserType userType;
-}
+
+    private MentorshipStatus mentorshipStatus;
+    }

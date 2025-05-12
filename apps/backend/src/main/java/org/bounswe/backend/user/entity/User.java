@@ -3,6 +3,7 @@ package org.bounswe.backend.user.entity;
 
 
 import org.bounswe.backend.common.enums.UserType;
+import org.bounswe.backend.common.enums.MentorshipStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,4 +30,8 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private UserType userType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MentorshipStatus mentorshipStatus;
 }
