@@ -7,6 +7,7 @@ import {
   Tag,
 } from '../types/thread';
 import { apiClient } from './api';
+import { User } from '../types/user';
 
 const THREAD_KEYS = {
   all: ['threads'] as const,
@@ -58,6 +59,27 @@ class ThreadsService {
 
   async getThreadTags(): Promise<Tag[]> {
     const response = await apiClient.get<Tag[]>('/threads/tags');
+    return response.data;
+  }
+
+  async reportThread(threadId: number): Promise<void> {
+    await apiClient.post(`/threads/${threadId}/report`, null);
+  }
+
+  async likeThread(threadId: number): Promise<void> {
+    await apiClient.post(`/threads/${threadId}/like`, null);
+  }
+
+  async unlikeThread(threadId: number): Promise<void> {
+    await apiClient.delete(`/threads/${threadId}/like`);
+  }
+
+  async reportComment(commentId: number): Promise<void> {
+    await apiClient.post(`/comments/${commentId}/report`, null);
+  }
+
+  async getThreadLikers(threadId: number): Promise<User[]> {
+    const response = await apiClient.get<User[]>(`/threads/${threadId}/likers`);
     return response.data;
   }
 }
@@ -153,3 +175,44 @@ export const useDeleteComment = () => {
     },
   });
 };
+
+export const useReportThread = () => {
+  return useMutation<void, Error, number>({
+    mutationFn: (threadId) => threadsService.reportThread(threadId),
+  });
+};
+
+export const useLikeThread = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<void, Error, number>({
+    mutationFn: (threadId) => threadsService.likeThread(threadId),
+    onSuccess: (_, threadId) => {
+      queryClient.invalidateQueries({ queryKey: THREAD_KEYS.likers(threadId) });
+    },
+  });
+};
+
+export const useUnlikeThread = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<void, Error, number>({
+    mutationFn: (threadId) => threadsService.unlikeThread(threadId),
+    onSuccess: (_, threadId) => {
+      queryClient.invalidateQueries({ queryKey: THREAD_KEYS.likers(threadId) });
+    },
+  });
+};
+
+export const useReportComment = () => {
+  return useMutation<void, Error, number>({
+    mutationFn: (commentId) => threadsService.reportComment(commentId),
+  });
+};
+
+export const useGetThreadLikers = (threadId: number) =>
+  useQuery<User[], Error>({
+    queryKey: THREAD_KEYS.likers(threadId),
+    queryFn: () => threadsService.getThreadLikers(threadId),
+    enabled: !!threadId, // Only run the query if threadId is provided
+  });

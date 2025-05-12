@@ -34,6 +34,16 @@ import IconButton from '@mui/material/IconButton';
 import { useDeleteThread } from '../../services/threads.service';
 import { User } from '../../types/user';
 import { useEffect } from 'react';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ReportIcon from '@mui/icons-material/Report';
+import { 
+  useReportThread, 
+  useLikeThread, 
+  useUnlikeThread,
+  useGetThreadLikers
+} from '../../services/threads.service';
+import Tooltip from '@mui/material/Tooltip';
 
 // Create Thread Dialog component
 const CreateThreadDialog: React.FC<{
@@ -192,13 +202,25 @@ const CreateThreadDialog: React.FC<{
 };
 
 // Simple ThreadCard component (unchanged)
-const ThreadCard: React.FC<{
-  thread: Thread;
+const ThreadCard: React.FC<{ 
+  thread: Thread; 
   currentUser: User | null;
   onDeleteThread: (threadId: number) => void;
 }> = ({ thread, currentUser, onDeleteThread }) => {
   const navigate = useNavigate();
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Get hooks for like, unlike, and report
+  const likeThread = useLikeThread();
+  const unlikeThread = useUnlikeThread();
+  const reportThread = useReportThread();
+  
+  // Get likers for this thread
+  const { data: likers = [] } = useGetThreadLikers(thread.id);
+  
+  // Check if current user has liked this thread
+  const hasLiked = currentUser ? likers.some(liker => liker.id === currentUser.id) : false;
+  
   const handleThreadClick = () => {
     navigate(`/forum/${thread.id}`);
   };
@@ -206,11 +228,60 @@ const ThreadCard: React.FC<{
   const isOwnThread =
     currentUser?.id !== undefined && // make sure we actually have an id
     Number(currentUser.id) === thread.creatorId;
-
+  
+  // Handle like/unlike
+  const handleLikeToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      // Redirect to login if not logged in
+      navigate('/login');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    try {
+      if (hasLiked) {
+        await unlikeThread.mutateAsync(thread.id);
+      } else {
+        await likeThread.mutateAsync(thread.id);
+      }
+    } catch (error) {
+      console.error('Failed to toggle like:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  // Handle report
+  const handleReport = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      // Redirect to login if not logged in
+      navigate('/login');
+      return;
+    }
+    
+    if (window.confirm('Are you sure you want to report this thread as inappropriate?')) {
+      setIsSubmitting(true);
+      try {
+        await reportThread.mutateAsync(thread.id);
+        alert('Thread reported successfully.');
+      } catch (error) {
+        console.error('Failed to report thread:', error);
+        alert('Failed to report thread. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
+  
   return (
     <Card sx={{ mb: 2 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <CardActionArea onClick={handleThreadClick} sx={{ flexGrow: 1 }}>
+        <CardActionArea 
+          onClick={handleThreadClick}
+          sx={{ flexGrow: 1 }}
+        >
           <CardContent>
             <Box
               sx={{
@@ -243,22 +314,69 @@ const ThreadCard: React.FC<{
             </Box>
           </CardContent>
         </CardActionArea>
-
-        {/* Delete button for own threads */}
-        {isOwnThread && (
-          <Box sx={{ display: 'flex', p: 1 }}>
+        
+        {/* Action buttons */}
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          p: 1, 
+          justifyContent: 'space-between' 
+        }}>
+          {/* Like button */}
+          <Tooltip title={hasLiked ? "Unlike" : "Like"}>
             <IconButton
-              color="error"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDeleteThread(thread.id);
-              }}
-              aria-label="delete thread"
+              color={hasLiked ? "primary" : "default"}
+              onClick={handleLikeToggle}
+              disabled={isSubmitting}
+              size="small"
+              aria-label={hasLiked ? "unlike thread" : "like thread"}
             >
-              <DeleteIcon />
+              {hasLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
             </IconButton>
-          </Box>
-        )}
+          </Tooltip>
+          
+          {/* Like count */}
+          <Typography 
+            variant="caption" 
+            align="center"
+            sx={{ mb: 2 }}
+          >
+            {likers.length}
+          </Typography>
+          
+          {/* Report button */}
+          {!isOwnThread && !thread.reported && (
+            <Tooltip title="Report">
+              <IconButton
+                color="default"
+                onClick={handleReport}
+                disabled={isSubmitting}
+                size="small"
+                aria-label="report thread"
+              >
+                <ReportIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          
+          {/* Delete button for own threads */}
+          {isOwnThread && (
+            <Tooltip title="Delete">
+              <IconButton
+                color="error"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteThread(thread.id);
+                }}
+                disabled={isSubmitting}
+                size="small"
+                aria-label="delete thread"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
       </Box>
     </Card>
   );
@@ -269,9 +387,12 @@ const ThreadListPage: React.FC = () => {
   const threadsPerPage = 10;
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
-  const [deleteSuccessSnackbarOpen, setDeleteSuccessSnackbarOpen] =
-    useState(false);
+  const [deleteSuccessSnackbarOpen, setDeleteSuccessSnackbarOpen] = useState(false);
   const [deletingThreadId, setDeletingThreadId] = useState<number | null>(null);
+
+  const [likeSnackbarOpen, setLikeSnackbarOpen] = useState(false);
+  const [likeSnackbarMessage, setLikeSnackbarMessage] = useState('');
+  const [reportSnackbarOpen, setReportSnackbarOpen] = useState(false);
 
   // Get current user using the same approach as in your comments section
   const currentUser = useCurrentUser();
@@ -407,21 +528,6 @@ const ThreadListPage: React.FC = () => {
         onThreadCreated={handleThreadCreated}
       />
 
-      {/* Floating Action Button for mobile */}
-      <Fab
-        color="primary"
-        aria-label="add"
-        sx={{
-          position: 'fixed',
-          bottom: 16,
-          right: 16,
-          display: { xs: 'flex', md: 'none' },
-        }}
-        onClick={handleCreateThreadClick}
-      >
-        <AddIcon />
-      </Fab>
-
       {/* Success Snackbars */}
       <Snackbar
         open={successSnackbarOpen}
@@ -429,12 +535,26 @@ const ThreadListPage: React.FC = () => {
         onClose={() => setSuccessSnackbarOpen(false)}
         message="Thread created successfully"
       />
-
+      
       <Snackbar
         open={deleteSuccessSnackbarOpen}
         autoHideDuration={5000}
         onClose={() => setDeleteSuccessSnackbarOpen(false)}
         message="Thread deleted successfully"
+      />
+      
+      <Snackbar
+        open={likeSnackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setLikeSnackbarOpen(false)}
+        message={likeSnackbarMessage}
+      />
+      
+      <Snackbar
+        open={reportSnackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setReportSnackbarOpen(false)}
+        message="Thread reported successfully"
       />
     </Container>
   );
