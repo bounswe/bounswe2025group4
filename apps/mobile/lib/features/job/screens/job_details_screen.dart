@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/models/job_post.dart';
-import '../../../core/models/user.dart';
+import '../../../core/models/user_type.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/utils/string_extensions.dart';
@@ -23,12 +23,16 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   String? _errorMessage;
   bool _isApplying = false; // State for apply button loading
 
-  // TODO: Inject or locate service properly
-  final ApiService _apiService = ApiService();
+  // Initialize ApiService late or in initState AFTER getting AuthProvider
+  late final ApiService _apiService;
 
   @override
   void initState() {
     super.initState();
+    // Get AuthProvider first
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // Initialize ApiService with AuthProvider
+    _apiService = ApiService(authProvider: authProvider);
     _loadJobDetails();
   }
 
@@ -180,7 +184,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             children: [
               Text(job.company, style: Theme.of(context).textTheme.titleMedium),
               Text(
-                job.jobType,
+                job.jobType ?? 'N/A',
                 style: Theme.of(
                   context,
                 ).textTheme.titleSmall?.copyWith(color: Colors.blueGrey),
@@ -188,12 +192,20 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             ],
           ),
           const SizedBox(height: 4.0),
-          Text(
-            'Posted: ${dateFormat.format(job.datePosted)}',
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
-          ),
+          if (job.datePosted != null)
+            Text(
+              'Posted: ${dateFormat.format(job.datePosted!)}',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+            )
+          else
+            Text(
+              'Posted: Unknown',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+            ),
 
           const Divider(height: 32.0),
 
@@ -208,20 +220,20 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           const Divider(height: 32.0),
 
           // Ethical Policies Section
-          Text(
-            'Ethical Policies',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          Text('Ethical Tags', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8.0),
-          if (job.ethicalPolicies.isNotEmpty)
+          if (job.ethicalTags.isNotEmpty)
             Wrap(
               spacing: 8.0,
               runSpacing: 4.0,
               children:
-                  job.ethicalPolicies
+                  job.ethicalTags
+                      .split(',')
+                      .map((e) => e.trim())
+                      .where((e) => e.isNotEmpty)
                       .map(
-                        (policy) => Chip(
-                          label: Text(policy.formatFilterName()),
+                        (tag) => Chip(
+                          label: Text(tag.formatFilterName()),
                           backgroundColor: Colors.teal.shade50,
                           side: BorderSide.none,
                         ),
@@ -230,7 +242,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             )
           else
             Text(
-              'No specific policies listed.',
+              'No specific tags listed.',
               style: Theme.of(context).textTheme.bodySmall,
             ),
 
@@ -253,7 +265,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           ),
           const SizedBox(height: 8.0),
           Text(
-            job.contactInfo.isNotEmpty ? job.contactInfo : 'Not specified',
+            (job.contactInfo != null && job.contactInfo!.isNotEmpty)
+                ? job.contactInfo!
+                : 'Not specified',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 24.0), // Space before apply button area
@@ -266,7 +280,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     // Only show button if job loaded and user is a job seeker
     final userRole =
         Provider.of<AuthProvider>(context, listen: false).currentUser?.role;
-    if (_isLoading || _jobPost == null || userRole != UserRole.jobSeeker) {
+    if (_isLoading || _jobPost == null || userRole != UserType.JOB_SEEKER) {
       return null;
     }
 

@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import '../../../core/models/job_application.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/string_extensions.dart';
+import 'package:provider/provider.dart';
+import '../../../core/providers/auth_provider.dart';
 
 class JobApplicationsScreen extends StatefulWidget {
   final String jobId;
@@ -22,12 +24,17 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
   Map<String, bool> _isUpdatingStatus =
       {}; // Track loading state per application
 
-  // TODO: Inject or locate service properly
-  final ApiService _apiService = ApiService();
+  // Initialize ApiService late or in initState AFTER getting AuthProvider
+  late final ApiService _apiService;
 
   @override
   void initState() {
     super.initState();
+    // Get AuthProvider first
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // Initialize ApiService with AuthProvider
+    _apiService = ApiService(authProvider: authProvider);
+
     _loadApplications();
   }
 
@@ -40,6 +47,21 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     });
 
     try {
+      // Get the current user's ID from AuthProvider
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final userId = authProvider.currentUser?.id; // Access id via currentUser
+
+      if (userId == null) {
+        // Handle case where user is not logged in or user object is missing ID
+        if (mounted) {
+          setState(() {
+            _errorMessage = "User not logged in or user ID not found.";
+            _isLoading = false;
+          });
+        }
+        return; // Stop execution if no userId
+      }
+
       final applications = await _apiService.getApplicationsForJob(
         widget.jobId,
       );
@@ -86,6 +108,8 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       final updatedApplication = await _apiService.updateApplicationStatus(
         application.id,
         newStatus,
+        jobPostingId: application.jobId,
+        jobSeekerId: application.jobSeekerId,
         feedback: feedback,
       );
 

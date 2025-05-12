@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart'; // Import for date formatting
-import '../../../core/models/user.dart'; // Adjust path
+import '../../../core/models/user_type.dart'; // Import UserType
 import '../../../core/providers/auth_provider.dart'; // Adjust path
 import '../../../core/models/job_post.dart'; // Placeholder for JobPost model
 import '../../../core/services/api_service.dart'; // Placeholder for API service
@@ -28,18 +28,21 @@ class _JobPageState extends State<JobPage> {
   final TextEditingController _searchController = TextEditingController();
   // Store selected filters as a map
   Map<String, List<String>> _selectedFilters = {'policies': [], 'jobTypes': []};
-  UserRole? _userRole; // Store user role
+  UserType? _userRole; // Changed type to UserType?
 
-  // Placeholder API service instance
-  // TODO: Replace with actual dependency injection or service locator
-  final ApiService _apiService = ApiService();
+  // Initialize ApiService late or in initState AFTER getting AuthProvider
+  late final ApiService _apiService;
 
   @override
   void initState() {
     super.initState();
+    // Get AuthProvider first
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // Initialize ApiService with AuthProvider
+    _apiService = ApiService(authProvider: authProvider);
+
     // Get the role once and store it
-    _userRole =
-        Provider.of<AuthProvider>(context, listen: false).currentUser?.role;
+    _userRole = authProvider.currentUser?.role;
     print("JobPage initState. Role: $_userRole"); // Debug print
     _loadData(); // Initial data load
   }
@@ -60,7 +63,7 @@ class _JobPageState extends State<JobPage> {
 
     try {
       List<JobPost> postings;
-      if (_userRole == UserRole.employer) {
+      if (_userRole == UserType.EMPLOYER) {
         // TODO: Get actual employer ID
         final employerId =
             Provider.of<AuthProvider>(context, listen: false).currentUser?.id ??
@@ -219,10 +222,10 @@ class _JobPageState extends State<JobPage> {
 
     // Display different content based on the user role
     switch (_userRole) {
-      case UserRole.jobSeeker:
+      case UserType.JOB_SEEKER:
         content = _buildJobSeekerView(context);
         break;
-      case UserRole.employer:
+      case UserType.EMPLOYER:
         content = _buildEmployerView(context);
         break;
       default:
@@ -243,7 +246,7 @@ class _JobPageState extends State<JobPage> {
         automaticallyImplyLeading: false,
         actions: [
           // Conditionally show the "My Applications" button for job seekers
-          if (_userRole == UserRole.jobSeeker)
+          if (_userRole == UserType.JOB_SEEKER)
             Padding(
               padding: const EdgeInsets.only(right: 8.0), // Add some padding
               child: TextButton.icon(
@@ -263,7 +266,7 @@ class _JobPageState extends State<JobPage> {
       // Remove RefreshIndicator, ListView provides scrollability
       body: content,
       floatingActionButton:
-          _userRole == UserRole.employer
+          _userRole == UserType.EMPLOYER
               ? FloatingActionButton(
                 onPressed: _navigateToCreateJobPost,
                 tooltip: 'Create Job Post',
@@ -380,7 +383,7 @@ class _JobPageState extends State<JobPage> {
     if (_jobPostings.isEmpty) {
       return Center(
         child: Text(
-          _userRole == UserRole.employer
+          _userRole == UserType.EMPLOYER
               ? 'You have not posted any jobs yet.'
               : 'No jobs found matching your criteria.',
           style: Theme.of(context).textTheme.bodySmall,
@@ -401,7 +404,7 @@ class _JobPageState extends State<JobPage> {
           margin: const EdgeInsets.symmetric(vertical: 6.0),
           child: InkWell(
             onTap: () {
-              if (_userRole == UserRole.employer) {
+              if (_userRole == UserType.EMPLOYER) {
                 _navigateToJobApplications(job);
               } else {
                 _navigateToJobDetails(job);
@@ -424,7 +427,7 @@ class _JobPageState extends State<JobPage> {
                         ),
                       ),
                       Text(
-                        job.jobType,
+                        job.jobType ?? 'N/A',
                         style: Theme.of(
                           context,
                         ).textTheme.bodySmall?.copyWith(color: Colors.blueGrey),
@@ -438,15 +441,22 @@ class _JobPageState extends State<JobPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8.0),
-                  if (job.ethicalPolicies.isNotEmpty)
+                  // Split the ethicalTags string and display as chips
+                  if (job.ethicalTags.isNotEmpty)
                     Wrap(
                       spacing: 6.0,
                       runSpacing: 4.0,
                       children:
-                          job.ethicalPolicies
+                          // Split string by comma, trim whitespace, remove empty strings
+                          job.ethicalTags
+                              .split(',')
+                              .map((e) => e.trim())
+                              .where((e) => e.isNotEmpty)
                               .map(
-                                (policy) => Chip(
-                                  label: Text(policy.formatFilterName()),
+                                (tag) => Chip(
+                                  label: Text(
+                                    tag.formatFilterName(),
+                                  ), // Assuming formatFilterName works for tags
                                   padding: EdgeInsets.zero,
                                   labelPadding: const EdgeInsets.symmetric(
                                     horizontal: 6.0,
@@ -461,15 +471,26 @@ class _JobPageState extends State<JobPage> {
                               .toList(),
                     ),
                   const SizedBox(height: 8.0),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      'Posted: ${dateFormat.format(job.datePosted)}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade600,
+                  if (job.datePosted != null)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'Posted: ${dateFormat.format(job.datePosted!)}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    )
+                  else
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        'Posted: Unknown',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),

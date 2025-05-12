@@ -2,34 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
 import 'package:mobile/core/models/user.dart';
-
-class MentorshipChoiceStore {
-  static String? mentorshipChoice; // 'mentor', 'mentee', or 'none'
-}
+import 'package:provider/provider.dart';
+import 'package:mobile/core/providers/auth_provider.dart';
+import 'package:mobile/core/models/user_type.dart';
 
 class MentorshipSelectionScreen extends StatefulWidget {
   final bool isJobSeeker;
-  
-  const MentorshipSelectionScreen({
-    super.key,
-    required this.isJobSeeker,
-  });
+
+  const MentorshipSelectionScreen({super.key, required this.isJobSeeker});
 
   @override
-  State<MentorshipSelectionScreen> createState() => _MentorshipSelectionScreenState();
+  State<MentorshipSelectionScreen> createState() =>
+      _MentorshipSelectionScreenState();
 }
 
 class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
-  String? selectedRole;
-
-  UserRole? _getUserRole() {
-    if (selectedRole == 'mentor') {
-      return UserRole.mentor;
-    } else if (selectedRole == 'mentee') {
-      return UserRole.mentee;
-    }
-    return null;
-  }
+  String? selectedChoice;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +32,7 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const SignUpScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => const SignUpScreen()),
               );
             },
             child: const Text('Skip'),
@@ -77,10 +63,7 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                     const SizedBox(height: 16),
                     const Text(
                       'You can connect with others to either receive or provide career guidance.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 32),
                     _buildMentorshipOption(
@@ -92,14 +75,16 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                     const SizedBox(height: 16),
                     _buildMentorshipOption(
                       title: 'I\'m looking for a mentor (mentee)',
-                      subtitle: 'Get feedback and guidance to grow professionally',
+                      subtitle:
+                          'Get feedback and guidance to grow professionally',
                       icon: Icons.person_outline,
                       value: 'mentee',
                     ),
                     const SizedBox(height: 16),
                     _buildMentorshipOption(
                       title: 'Not right now',
-                      subtitle: 'You can always join later from your profile settings',
+                      subtitle:
+                          'You can always join later from your profile settings',
                       icon: Icons.close,
                       value: 'none',
                     ),
@@ -108,20 +93,31 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: selectedRole != null
-                            ? () {
-                                final userRole = _getUserRole();
-                                MentorshipChoiceStore.mentorshipChoice = selectedRole;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SignUpScreen(
-                                      initialRole: userRole,
+                        onPressed:
+                            selectedChoice != null
+                                ? () {
+                                  final authProvider =
+                                      Provider.of<AuthProvider>(
+                                        context,
+                                        listen: false,
+                                      );
+                                  // If user explicitly wants to be a mentor, set the type
+                                  if (selectedChoice == 'mentor') {
+                                    authProvider.setOnboardingUserType(
+                                      UserType.MENTOR,
+                                    );
+                                  }
+                                  // Otherwise, keep the UserType set previously
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => const SignUpScreen(),
                                     ),
-                                  ),
-                                );
-                              }
-                            : null,
+                                  );
+                                }
+                                : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           shape: RoundedRectangleBorder(
@@ -130,10 +126,7 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                         ),
                         child: const Text(
                           'Continue',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),
@@ -153,12 +146,12 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
     required IconData icon,
     required String value,
   }) {
-    final isSelected = selectedRole == value;
+    final isSelected = selectedChoice == value;
 
     return InkWell(
       onTap: () {
         setState(() {
-          selectedRole = value;
+          selectedChoice = value;
         });
       },
       child: Container(
@@ -172,11 +165,7 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: isSelected ? Colors.blue : Colors.grey,
-              size: 32,
-            ),
+            Icon(icon, color: isSelected ? Colors.blue : Colors.grey, size: 32),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -193,19 +182,15 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
                 ],
               ),
             ),
-            if (isSelected)
-              const Icon(Icons.check_circle, color: Colors.blue),
+            if (isSelected) const Icon(Icons.check_circle, color: Colors.blue),
           ],
         ),
       ),
     );
   }
-} 
+}

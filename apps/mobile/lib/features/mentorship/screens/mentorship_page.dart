@@ -1,43 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/models/user.dart'; // Adjust path
-import '../../../core/providers/auth_provider.dart'; // Adjust path
-import '../../auth/screens/mentorship_selection_screen.dart'; // Import the store
+import '../../../core/models/user_type.dart'; // Import UserType
+import '../../../core/providers/auth_provider.dart';
+import './mentee_mentorship_screen.dart';
 
 class MentorshipPage extends StatelessWidget {
   const MentorshipPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Read the mentorship choice from onboarding
-    final mentorshipChoice = MentorshipChoiceStore.mentorshipChoice;
+    final authProvider = Provider.of<AuthProvider>(context);
+    final currentUser = authProvider.currentUser; // Get the current user
 
-    String text;
-    if (mentorshipChoice == 'mentor') {
-      text = 'You are a mentor. You can help others improve their resumes and careers.';
-    } else if (mentorshipChoice == 'mentee') {
-      text = 'You are a mentee. You can get feedback and guidance to grow professionally.';
-    } else if (mentorshipChoice == 'none') {
-      text = 'You have not joined the mentorship program yet. You can always join later from your profile settings.';
-    } else {
-      text = 'Join our mentorship program to connect with others!';
-    }
+    Widget bodyContent;
+    String appBarTitle = 'Mentorship';
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mentorship'),
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
+    if (currentUser == null) {
+      // User not logged in
+      bodyContent = const Center(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(24.0),
           child: Text(
-            text,
-            style: const TextStyle(fontSize: 18),
+            'Please log in to access mentorship features.',
+            style: TextStyle(fontSize: 18),
             textAlign: TextAlign.center,
           ),
         ),
+      );
+    } else if (currentUser.role == UserType.MENTOR) {
+      // User is a Mentor
+      // TODO: Implement Mentor screen
+      bodyContent = const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Text(
+            'Mentor View - Coming Soon!',
+            style: TextStyle(fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    } else {
+      // User is Job Seeker or Employer (potential Mentee)
+      // Return the MenteeMentorshipScreen directly
+      return const MenteeMentorshipScreen();
+    }
+
+    // Only build Scaffold/AppBar if not returning MenteeMentorshipScreen
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(appBarTitle),
+        automaticallyImplyLeading: false,
       ),
+      body: bodyContent,
     );
   }
 }

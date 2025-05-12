@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/job_post.dart';
-import '../../../core/models/user.dart';
+import '../../../core/models/user_type.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/string_extensions.dart';
@@ -25,8 +25,31 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
 
   bool _isLoading = false;
 
-  // TODO: Inject or locate service properly
-  final ApiService _apiService = ApiService();
+  // Initialize ApiService late or use didChangeDependencies
+  late final ApiService _apiService;
+
+  // Flag to ensure ApiService is initialized only once if using didChangeDependencies
+  // bool _isApiServiceInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Option 1: Initialize here if context is available safely
+    // (Might be problematic if AuthProvider isn't ready immediately)
+    // final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // _apiService = ApiService(authProvider: authProvider);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Option 2: Initialize here, safer as context/providers are ready
+    // if (!_isApiServiceInitialized) { // Prevent re-initialization
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _apiService = ApiService(authProvider: authProvider);
+    //   _isApiServiceInitialized = true;
+    // }
+  }
 
   @override
   void dispose() {
@@ -60,7 +83,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
 
       final currentUser =
           Provider.of<AuthProvider>(context, listen: false).currentUser;
-      if (currentUser == null || currentUser.role != UserRole.employer) {
+      if (currentUser == null || currentUser.role != UserType.EMPLOYER) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Error: Could not verify employer account.'),
@@ -77,15 +100,21 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
       try {
         final newJob = await _apiService.createJobPost(
           employerId: currentUser.id,
-          companyName:
-              currentUser.companyName ??
-              'Your Company', // Get company from user profile or default
+          company: currentUser.companyName ?? 'Your Company',
           title: _titleController.text,
           description: _descriptionController.text,
-          contactInfo: _contactInfoController.text,
-          jobType: _selectedJobType!, // Already checked for null
-          ethicalPolicies: _selectedPolicies,
-          salaryRange: _salaryRangeController.text, // Optional
+          location: 'Unknown Location',
+          remote: false,
+          ethicalTags: _selectedPolicies.join(','),
+          contactInfo:
+              _contactInfoController.text.isNotEmpty
+                  ? _contactInfoController.text
+                  : null,
+          jobType: _selectedJobType,
+          salaryRange:
+              _salaryRangeController.text.isNotEmpty
+                  ? _salaryRangeController.text
+                  : null,
         );
 
         if (mounted) {

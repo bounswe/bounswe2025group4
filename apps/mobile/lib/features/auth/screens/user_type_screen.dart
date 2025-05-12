@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/career_status_screen.dart';
 import 'package:mobile/features/auth/screens/organization_type_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:mobile/core/providers/auth_provider.dart';
+import 'package:mobile/core/models/user_type.dart';
 
 class UserTypeScreen extends StatefulWidget {
   const UserTypeScreen({super.key});
@@ -28,23 +31,18 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const OnboardingProgressBar(
-                currentStep: 1,
-                totalSteps: 5,
-              ),
+              const OnboardingProgressBar(currentStep: 1, totalSteps: 5),
               const SizedBox(height: 24),
               const Text(
                 'How will you use our platform?',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 32),
               _buildUserTypeCard(
                 context: context,
                 title: 'Job Seeker',
-                description: 'Find ethical companies and opportunities aligned with your values',
+                description:
+                    'Find ethical companies and opportunities aligned with your values',
                 icon: Icons.person_outline,
                 onTap: () {
                   setState(() {
@@ -57,7 +55,8 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
               _buildUserTypeCard(
                 context: context,
                 title: 'Employer',
-                description: 'Post jobs and find candidates who share your company\'s values',
+                description:
+                    'Post jobs and find candidates who share your company\'s values',
                 icon: Icons.business_outlined,
                 onTap: () {
                   setState(() {
@@ -71,18 +70,31 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: selectedType != null
-                      ? () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => selectedType == 'Job Seeker'
-                                  ? const CareerStatusScreen()
-                                  : const OrganizationTypeScreen(),
-                            ),
-                          );
-                        }
-                      : null,
+                  onPressed:
+                      selectedType != null
+                          ? () {
+                            final authProvider = Provider.of<AuthProvider>(
+                              context,
+                              listen: false,
+                            );
+                            final type =
+                                selectedType == 'Job Seeker'
+                                    ? UserType.JOB_SEEKER
+                                    : UserType.EMPLOYER;
+                            authProvider.setOnboardingUserType(type);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) =>
+                                        selectedType == 'Job Seeker'
+                                            ? const CareerStatusScreen()
+                                            : const OrganizationTypeScreen(),
+                              ),
+                            );
+                          }
+                          : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
                     shape: RoundedRectangleBorder(
@@ -91,10 +103,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                   ),
                   child: const Text(
                     'Continue',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),
@@ -126,11 +135,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 32,
-              color: isSelected ? Colors.blue : Colors.grey,
-            ),
+            Icon(icon, size: 32, color: isSelected ? Colors.blue : Colors.grey),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -140,26 +145,23 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                     title,
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                       color: isSelected ? Colors.blue : Colors.black,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
                 ],
               ),
             ),
-            if (isSelected)
-              const Icon(Icons.check_circle, color: Colors.blue),
+            if (isSelected) const Icon(Icons.check_circle, color: Colors.blue),
           ],
         ),
       ),
     );
   }
-} 
+}

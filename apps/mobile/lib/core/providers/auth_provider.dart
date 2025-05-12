@@ -1,95 +1,328 @@
 import 'package:flutter/material.dart';
-import '../models/user.dart'; // Adjust import path if needed
+import 'package:shared_preferences/shared_preferences.dart'; // For simple token storage
+import '../models/user.dart'; // Keep existing User model for now
+import '../models/user_type.dart'; // Use UserType consistently
+import '../models/register_request_dto.dart';
+import '../models/auth_response_dto.dart';
+import '../../features/auth/services/auth_service.dart'; // Import the real service
+
+// Remove MentorshipPreference if not used in registration API, or keep if needed for UI flow
+// enum MentorshipPreference { mentor, mentee, none }
 
 class AuthProvider with ChangeNotifier {
+  final AuthService _authService = AuthService();
   User? _currentUser;
+  String? _token; // Store the auth token
   bool _isLoading = false;
-  // Simulate different user roles for testing
-  UserRole _simulatedRole =
-      UserRole.jobSeeker; // CHANGE THIS TO TEST DIFFERENT ROLES
+
+  // --- Onboarding State (If mentorship preference is part of the flow but not API) ---
+  UserType? _onboardingUserType; // Changed from UserRole
+  // MentorshipPreference? _onboardingMentorshipPreference;
+  // --- End Onboarding State ---
 
   User? get currentUser => _currentUser;
-  bool get isLoggedIn => _currentUser != null;
+  bool get isLoggedIn => _token != null && _currentUser != null;
   bool get isLoading => _isLoading;
-  UserRole get simulatedRole =>
-      _simulatedRole; // Temporary getter for role simulation
+  String? get token => _token; // Allow access to token if needed
 
-  // --- Simulation Methods (Replace with actual API calls later) ---
+  UserType? get onboardingUserType => _onboardingUserType; // Changed getter
+  // MentorshipPreference? get onboardingMentorshipPreference =>
+  //     _onboardingMentorshipPreference;
+
+  // --- Initialization ---
+  AuthProvider() {
+    _tryAutoLogin(); // Attempt to load token on provider init
+  }
+
+  // --- Onboarding Setters ---
+  void setOnboardingUserType(UserType type) {
+    // Changed parameter type
+    _onboardingUserType = type;
+    print("Onboarding type set to: $_onboardingUserType");
+    notifyListeners();
+  }
+
+  // void setOnboardingMentorshipPreference(MentorshipPreference preference) {
+  //   _onboardingMentorshipPreference = preference;
+  //   print(
+  //     "Onboarding mentorship preference set to: $_onboardingMentorshipPreference",
+  //   );
+  //   notifyListeners();
+  // }
+
+  // --- Authentication Methods ---
+
+  Future<void> _tryAutoLogin() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final storedToken = prefs.getString('authToken');
+      final storedId = prefs.getString('userId');
+      final storedUsername = prefs.getString('username');
+      final storedEmail = prefs.getString('email');
+      final storedUserTypeName = prefs.getString('userType');
+      final storedCompanyName = prefs.getString('companyName');
+      final storedBio = prefs.getString('bio');
+      final storedEmployerId = prefs.getString('employerId');
+
+      if (storedToken != null &&
+          storedId != null &&
+          storedUsername != null &&
+          storedUserTypeName != null) {
+        final userType = UserType.values.byName(storedUserTypeName);
+        _token = storedToken;
+        // Reconstruct User from stored minimal data.
+        // Full details might need fetching elsewhere (e.g., profile page)
+        _currentUser = User(
+          id: storedId,
+          username: storedUsername,
+          email: storedEmail ?? '', // Use stored email or empty
+          role: userType,
+          companyName: storedCompanyName,
+          bio: storedBio,
+          employerId:
+              storedEmployerId, // May be null if not employer or not fetched
+        );
+        print("Auto-login successful for $storedUsername (ID: $storedId)");
+      } else {
+        print("No stored token/user data found for auto-login.");
+      }
+    } catch (e) {
+      print("Error during auto-login: $e");
+      _token = null;
+      _currentUser = null;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<bool> login(String username, String password) async {
     _isLoading = true;
     notifyListeners();
-    print("Attempting login for: $username"); // Debug print
+    try {
+      final authResponse = await _authService.login(username, password);
+      String? tempToken;
 
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+      // Store initial data first
+      await _storeInitialAuthData(authResponse);
 
-    // Simulate successful login
-    _currentUser = User(
-      id: 'user-123',
-      username: username,
-      email: '$username@example.com',
-      role: _simulatedRole, // Use the simulated role
-    );
-    _isLoading = false;
-    print("Login successful. User role: ${_currentUser?.role}"); // Debug print
-    notifyListeners();
-    return true;
+      print(
+        "Login successful (initial). User: ${authResponse.username}, Role: ${authResponse.userType}",
+      );
 
-    // Simulate failed login:
-    // _isLoading = false;
-    // notifyListeners();
-    // return false;
+      // Now, fetch and update full details
+      if (_currentUser?.id != null && tempToken != null) {
+        try {
+          print("Fetching full user details after login...");
+          final userDetails = await _authService.getUserDetails(
+            _currentUser!.id, // Use the ID we got from login response
+            tempToken!, // Token is non-null here
+          );
+          await _updateAndPersistUserDetails(userDetails);
+          print("Successfully updated full user details.");
+        } catch (e) {
+          print(
+            "Warning: Failed to fetch/update full user details after login: $e",
+          );
+          // Continue even if detail fetch fails
+        }
+      }
+
+      _isLoading = false;
+      notifyListeners(); // Notify after all updates (initial + details)
+      return true; // Return true after everything
+    } catch (e) {
+      print("Login failed: $e");
+      _token = null;
+      _currentUser = null;
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 
-  Future<bool> register(String username, String email, String password) async {
+  Future<bool> register(
+    String username,
+    String email,
+    String password,
+    UserType userType,
+    String? bio,
+  ) async {
     _isLoading = true;
     notifyListeners();
-    print("Attempting registration for: $username, $email"); // Debug print
+    String? tempToken;
+    try {
+      final requestDto = RegisterRequestDto(
+        username: username,
+        email: email,
+        password: password,
+        bio: bio,
+        userType: userType,
+      );
 
-    // Simulate network delay & registration + email verification
-    await Future.delayed(const Duration(seconds: 2));
+      final authResponse = await _authService.register(requestDto);
+      tempToken = authResponse.token;
 
-    // Simulate successful registration
-    _currentUser = User(
-      id: 'user-456',
-      username: username,
-      email: email,
-      role: _simulatedRole, // Use the simulated role after registration
-    );
-    _isLoading = false;
-    print(
-      "Registration successful. User role: ${_currentUser?.role}",
-    ); // Debug print
-    notifyListeners();
-    return true;
+      // Store initial data first
+      await _storeInitialAuthData(authResponse);
+
+      print(
+        "Registration successful (initial). User: ${authResponse.username}, Role: ${authResponse.userType}",
+      );
+
+      // Now, fetch and update full details
+      if (_currentUser?.id != null && tempToken != null) {
+        try {
+          print("Fetching full user details after registration...");
+          final userDetails = await _authService.getUserDetails(
+            _currentUser!.id, // Use the ID we got from register response
+            tempToken, // Token is non-null here
+          );
+          await _updateAndPersistUserDetails(userDetails);
+          print("Successfully updated full user details.");
+        } catch (e) {
+          print(
+            "Warning: Failed to fetch/update full user details after registration: $e",
+          );
+          // Continue even if detail fetch fails
+        }
+      }
+
+      _isLoading = false;
+      _onboardingUserType = null;
+      notifyListeners(); // Notify after all updates
+      return true; // Return true after everything
+    } catch (e) {
+      print("Registration failed: $e");
+      _token = null;
+      _currentUser = null;
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 
   Future<void> logout() async {
-    print("Logging out"); // Debug print
-    // Simulate logout process
-    await Future.delayed(const Duration(milliseconds: 500));
-    _currentUser = null;
+    _isLoading = true;
     notifyListeners();
-  }
-
-  // Method to change the simulated role for testing UI easily
-  void setSimulatedRole(UserRole role) {
-    _simulatedRole = role;
-    // If logged in, update current user's role immediately for testing
-    if (_currentUser != null) {
-      _currentUser = User(
-        id: _currentUser!.id,
-        username: _currentUser!.username,
-        email: _currentUser!.email,
-        role: _simulatedRole,
-      );
+    _token = null;
+    _currentUser = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      // Keep removing all stored fields for consistency
+      await prefs.remove('authToken');
+      await prefs.remove('userId');
+      await prefs.remove('username');
+      await prefs.remove('email');
+      await prefs.remove('userType');
+      await prefs.remove('companyName');
+      await prefs.remove('bio');
+      await prefs.remove('employerId');
+      print("Logged out and cleared stored user data.");
+    } catch (e) {
+      print("Error clearing data on logout: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
-    print("Simulated role set to: $_simulatedRole"); // Debug print
-    notifyListeners(); // Notify listeners about the role change
   }
 
-  // --- End Simulation Methods ---
+  // --- Helper Methods ---
+  // Updated to accept AuthResponseDto
+  Future<void> _storeAuthData(AuthResponseDto authResponse) async {
+    _token = authResponse.token;
+    // Create User object from the limited data in AuthResponseDto
+    // Other fields like email, bio, companyName, employerId will be null/empty initially
+    // unless the backend adds them to AuthResponseDto as well.
+    _currentUser = User(
+      id: authResponse.userId, // Use ID from DTO
+      username: authResponse.username,
+      email: '', // Not available in DTO
+      role: authResponse.userType,
+      companyName: null, // Not available in DTO
+      bio: null, // Not available in DTO
+      employerId: null, // Not available in DTO
+    );
 
-  // Add methods for password reset, delete account later
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('authToken', _token!);
+      await prefs.setString('userId', _currentUser!.id);
+      await prefs.setString('username', _currentUser!.username);
+      await prefs.setString('userType', _currentUser!.role.name);
+      // Remove storing fields not present in the initial _currentUser
+      await prefs.remove('email');
+      await prefs.remove('companyName');
+      await prefs.remove('bio');
+      await prefs.remove('employerId');
+    } catch (e) {
+      print("Error saving auth data: $e");
+    }
+  }
+
+  // Stores only the initial data from AuthResponseDto
+  Future<void> _storeInitialAuthData(AuthResponseDto authResponse) async {
+    _token = authResponse.token;
+    _currentUser = User(
+      id: authResponse.userId,
+      username: authResponse.username,
+      email: '', // Default empty
+      role: authResponse.userType,
+      companyName: null,
+      bio: null,
+      employerId: null,
+    );
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('authToken', _token!);
+      await prefs.setString('userId', _currentUser!.id);
+      await prefs.setString('username', _currentUser!.username);
+      await prefs.setString('userType', _currentUser!.role.name);
+      // Clear potentially stale detailed fields
+      await prefs.remove('email');
+      await prefs.remove('companyName');
+      await prefs.remove('bio');
+      await prefs.remove('employerId');
+    } catch (e) {
+      print("Error saving initial auth data: $e");
+    }
+  }
+
+  // Updates _currentUser and persists the additional details
+  Future<void> _updateAndPersistUserDetails(User fullDetails) async {
+    // Ensure the core ID and username match before updating
+    // This prevents potential race conditions if user logs out quickly
+    if (_currentUser != null && _currentUser!.id == fullDetails.id) {
+      _currentUser = fullDetails; // Update the in-memory user object
+
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        // Persist the newly fetched details
+        await prefs.setString('email', _currentUser!.email);
+        if (_currentUser!.companyName != null) {
+          await prefs.setString('companyName', _currentUser!.companyName!);
+        } else {
+          await prefs.remove('companyName');
+        }
+        if (_currentUser!.bio != null) {
+          await prefs.setString('bio', _currentUser!.bio!);
+        } else {
+          await prefs.remove('bio');
+        }
+        if (_currentUser!.employerId != null) {
+          await prefs.setString('employerId', _currentUser!.employerId!);
+        } else {
+          await prefs.remove('employerId');
+        }
+        print("Persisted updated user details.");
+      } catch (e) {
+        print("Error saving updated user details: $e");
+      }
+    } else {
+      print("User changed during detail fetch, aborting update.");
+    }
+  }
 }

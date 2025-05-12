@@ -1,9 +1,16 @@
-import '../models/job_post.dart'; // Adjust path if needed
-import '../models/job_application.dart'; // Import the new model
+import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'dart:convert'; // Needed for actual API call example
+import 'dart:io';
 
-// Define ethical policies and job types (could come from API later)
+import '../models/job_post.dart';
+import '../models/job_application.dart';
+import '../models/discussion_thread.dart';
+import '../models/comment.dart';
+import '../models/user.dart';
+import '../providers/auth_provider.dart'; // Import AuthProvider
+import '../constants/app_constants.dart'; // Import AppConstants
+
+
 const List<String> _availableEthicalPolicies = [
   'fair_wage',
   'diversity',
@@ -18,699 +25,615 @@ const List<String> _availableJobTypes = [
   'Internship',
 ];
 
-/// Placeholder service for API interactions.
-/// Replace with actual HTTP calls to your backend.
+/// Service for interacting with the backend API.
 class ApiService {
-  // Expose available filters
+  final http.Client _client;
+  final AuthProvider _authProvider; // Store AuthProvider instance
+
+  // Constructor requiring AuthProvider for token access
+  ApiService({required AuthProvider authProvider, http.Client? client})
+      : _authProvider = authProvider,
+        _client = client ?? http.Client();
+
+  // --- Available Filters (Consider fetching from API) ---
   List<String> get availableEthicalPolicies => _availableEthicalPolicies;
   List<String> get availableJobTypes => _availableJobTypes;
 
+  // --- Helper Methods ---
+
+  // Get headers dynamically, including auth token if available
+  Map<String, String> _getHeaders() {
+    final headers = {
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Accept': 'application/json',
+    };
+    final token = _authProvider.token;
+    if (token != null) {
+      headers['Authorization'] = 'Bearer $token';
+    } else {
+      print("Warning: No auth token found for API request.");
+    }
+    return headers;
+  }
+
+  Uri _buildUri(String path, [Map<String, dynamic>? queryParams]) {
+    // Filter out null values from queryParams
+    final nonNullParams =
+    queryParams?..removeWhere((key, value) => value == null);
+    // Convert all query param values to String or List<String>
+    final stringParams = nonNullParams?.map((key, value) {
+      if (value is List) {
+        return MapEntry(key, value.map((e) => e.toString()).toList());
+      }
+      return MapEntry(key, value.toString());
+    });
+    return Uri.parse(
+      '${AppConstants.baseUrl}$path', // Use AppConstants.baseUrl
+    ).replace(queryParameters: stringParams);
+  }
+
+  Future<dynamic> _handleResponse(http.Response response) async {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.body.isEmpty) {
+        return null; // Handle empty success responses (e.g., DELETE, PUT with no content)
+      }
+      try {
+        return jsonDecode(
+          utf8.decode(response.bodyBytes),
+        ); // Decode using UTF-8
+      } catch (e) {
+        print("Error decoding JSON response: ${response.body}");
+        throw Exception('Failed to parse server response.');
+      }
+    } else {
+      String errorMessage = 'API Error ${response.statusCode}';
+      try {
+        // Try to parse error message from backend response
+        final errorBody = jsonDecode(utf8.decode(response.bodyBytes));
+        errorMessage =
+            errorBody['message'] ??
+                errorBody['error'] ??
+                'Unknown API Error (${response.statusCode})';
+      } catch (_) {
+        // If parsing fails, use the reason phrase or a generic message
+        errorMessage = response.reasonPhrase ?? errorMessage;
+      }
+      print(
+        "API Error: ${response.statusCode} - $errorMessage. Body: ${response.body}",
+      );
+      // Throw specific error for authentication/authorization issues
+      if (response.statusCode == 401) {
+        throw Exception(
+          'Authentication failed. Please log in again.',
+        ); // Unauthorized
+      }
+      if (response.statusCode == 403) {
+        throw Exception('Permission denied.'); // Forbidden
+      }
+      throw Exception('Error: $errorMessage');
+    }
+  }
+
+  // --- Job Post Endpoints ---
+
+  /// GET /api/jobs
   /// Fetches job postings based on query and filters.
   Future<List<JobPost>> fetchJobPostings({
     String? query,
-    Map<String, List<String>>? filters, // Changed to Map
+    Map<String, List<String>>? filters,
   }) async {
     print('API: Fetching job postings (query: $query, filters: $filters)');
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
-
-    final List<String>? policyFilters = filters?['policies'];
-    final List<String>? jobTypeFilters = filters?['jobTypes'];
-
-    // --- Placeholder Data --- (Replace with actual API call)
-    final List<JobPost> allJobs = [
-      JobPost(
-        id: '1',
-        title: 'Software Engineer',
-        company: 'Ethical Corp',
-        jobType: 'Full-time',
-        datePosted: DateTime.now().subtract(const Duration(days: 2)),
-        ethicalPolicies: ['fair_wage', 'diversity'],
-        salaryRange: '\$80k - \$100k',
-        contactInfo: 'hr@ethical.com',
-      ),
-      JobPost(
-        id: '2',
-        title: 'UX Designer',
-        company: 'Green Tech',
-        jobType: 'Full-time',
-        datePosted: DateTime.now().subtract(const Duration(days: 5)),
-        ethicalPolicies: ['sustainability', 'wellbeing'],
-        salaryRange: '\$70k - \$90k',
-        contactInfo: 'careers@green.tech',
-      ),
-      JobPost(
-        id: '3',
-        title: 'Data Analyst',
-        company: 'Fair Solutions',
-        jobType: 'Part-time',
-        datePosted: DateTime.now().subtract(const Duration(days: 1)),
-        ethicalPolicies: ['fair_wage'],
-        contactInfo: 'jobs@fair.co',
-      ),
-      JobPost(
-        id: '4',
-        title: 'Marketing Specialist',
-        company: 'Ethical Corp',
-        jobType: 'Full-time',
-        datePosted: DateTime.now().subtract(const Duration(hours: 10)),
-        ethicalPolicies: ['fair_wage', 'diversity'],
-        salaryRange: '\$60k - \$75k',
-        contactInfo: 'hr@ethical.com',
-      ),
-      JobPost(
-        id: '5',
-        title: 'Project Manager',
-        company: 'Green Tech',
-        jobType: 'Contract',
-        datePosted: DateTime.now().subtract(const Duration(days: 7)),
-        ethicalPolicies: ['sustainability'],
-        contactInfo: 'pm@green.tech',
-      ),
-      JobPost(
-        id: '6',
-        title: 'Frontend Intern',
-        company: 'Fair Solutions',
-        jobType: 'Internship',
-        datePosted: DateTime.now().subtract(const Duration(days: 3)),
-        ethicalPolicies: ['fair_wage', 'transparency'],
-        contactInfo: 'intern@fair.co',
-      ),
-    ];
-
-    // Simulate filtering/searching
-    List<JobPost> filteredJobs = allJobs;
+    final queryParams = <String, dynamic>{};
     if (query != null && query.isNotEmpty) {
-      filteredJobs =
-          filteredJobs
-              .where(
-                (job) =>
-                    job.title.toLowerCase().contains(query.toLowerCase()) ||
-                    job.company.toLowerCase().contains(query.toLowerCase()),
-              )
-              .toList();
+      queryParams['search'] = query; // Assuming backend uses 'search' param
     }
-    // Filter by ethical policies
-    if (policyFilters != null && policyFilters.isNotEmpty) {
-      filteredJobs =
-          filteredJobs
-              .where(
-                (job) => policyFilters.every(
-                  (filter) => job.ethicalPolicies.contains(filter),
-                ),
-              )
-              .toList();
-    }
-    // Filter by job type
-    if (jobTypeFilters != null && jobTypeFilters.isNotEmpty) {
-      filteredJobs =
-          filteredJobs
-              .where((job) => jobTypeFilters.contains(job.jobType))
-              .toList();
+    if (filters != null) {
+      filters.forEach((key, value) {
+        if (value.isNotEmpty) {
+          queryParams[key] = value;
+        }
+      });
     }
 
-    // Simulate potential API error
-    // if (query == 'error') { throw Exception('Failed to fetch jobs from API'); }
-
-    return filteredJobs;
-    // --- End Placeholder Data ---
-
-    /* --- Actual API Call Example (using http package) ---
-    final uri = Uri.parse('YOUR_API_ENDPOINT/jobs');
-    final queryParams = <String, dynamic>{}; // Use dynamic for list values
-    if (query != null) queryParams['search'] = query;
-    if (policyFilters != null && policyFilters.isNotEmpty) queryParams['policies'] = policyFilters; // Pass list directly
-    if (jobTypeFilters != null && jobTypeFilters.isNotEmpty) queryParams['jobTypes'] = jobTypeFilters; // Pass list directly
-
-    // Adjust URI encoding based on how your backend expects list parameters
-    // Example: using Uri.https with queryParametersAll for lists
-    // final finalUri = Uri.https('your.api.domain', '/jobs', queryParams);
-    final finalUri = uri.replace(queryParameters: queryParams.map((k, v) => MapEntry(k, v.toString()))); // Simple toString, backend needs to parse
+    final uri = _buildUri('/jobs', queryParams);
+    print('API Request: GET $uri');
 
     try {
-      final response = await http.get(finalUri, headers: {'Accept': 'application/json'});
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((json) => JobPost.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load jobs: ${response.statusCode} ${response.reasonPhrase}');
-      }
+      // Use dynamically generated headers
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => JobPost.fromJson(json)).toList();
     } catch (e) {
       print("API Error fetching jobs: $e");
-      throw Exception('Failed to connect to the server.');
+      throw Exception('Failed to load jobs. $e');
     }
-    */
   }
 
+  /// GET /api/jobs (filtered by employerId)
   /// Fetches job postings created by a specific employer.
+  /// Assumes filtering is done via query parameter.
   Future<List<JobPost>> fetchEmployerJobPostings(String employerId) async {
     print('API: Fetching job postings for employer $employerId');
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+    final uri = _buildUri('/jobs/employer/$employerId');
+    print('API Request: GET $uri');
 
-    // --- Placeholder Data --- (Replace with actual API call)
-    List<JobPost> employerJobs = [
-      JobPost(
-        id: '1',
-        title: 'Software Engineer',
-        company: 'Ethical Corp',
-        jobType: 'Full-time',
-        datePosted: DateTime.now().subtract(const Duration(days: 2)),
-        ethicalPolicies: ['fair_wage', 'diversity'],
-        salaryRange: '\$80k - \$100k',
-        contactInfo: 'hr@ethical.com',
-      ),
-      JobPost(
-        id: '4',
-        title: 'Marketing Specialist',
-        company: 'Ethical Corp',
-        jobType: 'Full-time',
-        datePosted: DateTime.now().subtract(const Duration(hours: 10)),
-        ethicalPolicies: ['fair_wage', 'diversity'],
-        salaryRange: '\$60k - \$75k',
-        contactInfo: 'hr@ethical.com',
-      ),
-    ];
-    // Filter just in case (though API should do this)
-    // employerJobs = employerJobs.where((job) => job.employerId == employerId).toList();
-    return employerJobs;
-    // --- End Placeholder Data ---
-
-    /* --- Actual API Call Example ---
-    final uri = Uri.parse('YOUR_API_ENDPOINT/employers/$employerId/jobs');
     try {
-      final response = await http.get(uri, headers: {'Accept': 'application/json'});
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((json) => JobPost.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load employer jobs: ${response.statusCode} ${response.reasonPhrase}');
-      }
+      // Use dynamically generated headers
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => JobPost.fromJson(json)).toList();
     } catch (e) {
       print("API Error fetching employer jobs: $e");
-      throw Exception('Failed to connect to the server.');
+      throw Exception('Failed to load your job postings. $e');
     }
-    */
   }
 
-  /// Fetches the current user's job applications.
-  Future<List<JobApplication>> fetchMyApplications(String userId) async {
-    print('API: Fetching applications for user $userId');
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
-
-    // --- Placeholder Data --- (Replace with actual API call)
-    final List<JobApplication> myApplications = [
-      JobApplication(
-        id: 'app1',
-        jobId: '1',
-        jobTitle: 'Software Engineer',
-        companyName: 'Ethical Corp',
-        applicantName: 'Current User',
-        status: ApplicationStatus.pending,
-        dateApplied: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      JobApplication(
-        id: 'app2',
-        jobId: '3',
-        jobTitle: 'Data Analyst',
-        companyName: 'Fair Solutions',
-        applicantName: 'Current User',
-        status: ApplicationStatus.approved,
-        dateApplied: DateTime.now().subtract(const Duration(days: 4)),
-        employerFeedback: 'Good fit for the team!',
-      ),
-      JobApplication(
-        id: 'app3',
-        jobId: '5',
-        jobTitle: 'Project Manager',
-        companyName: 'Green Tech',
-        applicantName: 'Current User',
-        status: ApplicationStatus.rejected,
-        dateApplied: DateTime.now().subtract(const Duration(days: 6)),
-        employerFeedback: 'Lacking specific certifications.',
-      ),
-    ];
-    return myApplications;
-    // --- End Placeholder Data ---
-
-    /* --- Actual API Call Example ---
-    final uri = Uri.parse('YOUR_API_ENDPOINT/users/$userId/applications');
-    try {
-      // Assume authentication token is handled via interceptors or secure storage
-      final response = await http.get(uri, headers: {'Accept': 'application/json'});
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        // Assuming JobApplication has a .fromJson factory
-        return data.map((json) => JobApplication.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load applications: ${response.statusCode} ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      print("API Error fetching applications: $e");
-      throw Exception('Failed to connect to the server.');
-    }
-    */
-  }
-
-  /// Fetches details for a specific job posting.
+  /// GET /api/jobs/{id}
+  /// Fetches details for a specific job post.
   Future<JobPost> getJobDetails(String jobId) async {
-    print('API: Fetching details for job $jobId');
-    await Future.delayed(const Duration(milliseconds: 500)); // Simulate delay
+    print('API: Fetching job details for $jobId');
 
-    // --- Placeholder Data --- (Replace with actual API call)
-    // Find the job in the placeholder list (or fetch directly in real API)
-    final allJobs = _getPlaceholderJobs(); // Use a helper to avoid repetition
-    try {
-      final job = allJobs.firstWhere((j) => j.id == jobId);
-      // Add a description if missing for the placeholder
-      return JobPost(
-        id: job.id,
-        title: job.title,
-        company: job.company,
-        jobType: job.jobType,
-        datePosted: job.datePosted,
-        ethicalPolicies: job.ethicalPolicies,
-        salaryRange: job.salaryRange,
-        contactInfo: job.contactInfo,
-        description:
-            job.description.isEmpty
-                ? 'This is a detailed description for ${job.title} at ${job.company}. It involves various tasks and requires specific skills. Apply now!'
-                : job.description,
-      );
-    } catch (e) {
-      // Simulate not found
-      throw Exception('Job with ID $jobId not found.');
-    }
-    // --- End Placeholder Data ---
+    final uri = _buildUri('/jobs/$jobId');
+    print('API Request: GET $uri');
 
-    /* --- Actual API Call Example ---
-    final uri = Uri.parse('YOUR_API_ENDPOINT/jobs/$jobId');
     try {
-      final response = await http.get(uri, headers: {'Accept': 'application/json'});
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        // Assuming JobPost has a .fromJson factory
-        return JobPost.fromJson(data);
-      } else if (response.statusCode == 404) {
-         throw Exception('Job with ID $jobId not found.');
-      } else {
-        throw Exception('Failed to load job details: ${response.statusCode} ${response.reasonPhrase}');
-      }
+      // Use dynamically generated headers
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return JobPost.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       print("API Error fetching job details: $e");
-      throw Exception('Failed to connect to the server.');
+      throw Exception('Failed to load job details. $e');
     }
-    */
   }
 
-  /// Submits a job application for the user.
-  Future<void> applyToJob(String userId, String jobId) async {
-    print('API: User $userId applying to job $jobId');
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
-
-    // --- Placeholder Logic --- (Replace with actual API call)
-    // Simulate success or potential failure
-    if (jobId == 'error') {
-      // Example failure case
-      throw Exception('Failed to submit application for job $jobId');
-    }
-    // Simulate success
-    print('API: Application successful for job $jobId');
-    return;
-    // --- End Placeholder Logic ---
-
-    /* --- Actual API Call Example ---
-    final uri = Uri.parse('YOUR_API_ENDPOINT/applications');
-    try {
-       final response = await http.post(
-         uri,
-         headers: {
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Accept': 'application/json',
-            // Add Authorization header if needed
-         },
-         body: jsonEncode(<String, String>{
-           'userId': userId,
-           'jobId': jobId,
-           // Include other application details if necessary (e.g., resumeId)
-         }),
-       );
-
-       if (response.statusCode == 201 || response.statusCode == 200) { // 201 Created or 200 OK
-          print('API: Application successful for job $jobId');
-          return;
-       } else {
-         // Try to parse error message from backend if available
-         String errorMessage = 'Failed to submit application: ${response.statusCode} ${response.reasonPhrase}';
-         try {
-            final body = jsonDecode(response.body);
-            if (body['message'] != null) {
-              errorMessage = body['message'];
-            }
-         } catch (_) { /* Ignore parsing errors */ }
-         throw Exception(errorMessage);
-       }
-    } catch (e) {
-      print("API Error applying to job: $e");
-      throw Exception('Failed to connect to the server.');
-    }
-    */
-  }
-
-  // Helper to get placeholder jobs list (to reduce repetition)
-  List<JobPost> _getPlaceholderJobs() {
-    return [
-      JobPost(
-        id: '1',
-        title: 'Software Engineer',
-        company: 'Ethical Corp',
-        jobType: 'Full-time',
-        datePosted: DateTime.now().subtract(const Duration(days: 2)),
-        ethicalPolicies: ['fair_wage', 'diversity'],
-        salaryRange: '\$80k - \$100k',
-        contactInfo: 'hr@ethical.com',
-        description: 'Develop cutting-edge software.',
-      ),
-      JobPost(
-        id: '2',
-        title: 'UX Designer',
-        company: 'Green Tech',
-        jobType: 'Full-time',
-        datePosted: DateTime.now().subtract(const Duration(days: 5)),
-        ethicalPolicies: ['sustainability', 'wellbeing'],
-        salaryRange: '\$70k - \$90k',
-        contactInfo: 'careers@green.tech',
-        description: 'Design user-friendly interfaces.',
-      ),
-      JobPost(
-        id: '3',
-        title: 'Data Analyst',
-        company: 'Fair Solutions',
-        jobType: 'Part-time',
-        datePosted: DateTime.now().subtract(const Duration(days: 1)),
-        ethicalPolicies: ['fair_wage'],
-        contactInfo: 'jobs@fair.co',
-        description: 'Analyze and interpret data.',
-      ),
-      JobPost(
-        id: '4',
-        title: 'Marketing Specialist',
-        company: 'Ethical Corp',
-        jobType: 'Full-time',
-        datePosted: DateTime.now().subtract(const Duration(hours: 10)),
-        ethicalPolicies: ['fair_wage', 'diversity'],
-        salaryRange: '\$60k - \$75k',
-        contactInfo: 'hr@ethical.com',
-        description: 'Promote products and services.',
-      ),
-      JobPost(
-        id: '5',
-        title: 'Project Manager',
-        company: 'Green Tech',
-        jobType: 'Contract',
-        datePosted: DateTime.now().subtract(const Duration(days: 7)),
-        ethicalPolicies: ['sustainability'],
-        contactInfo: 'pm@green.tech',
-        description: 'Manage projects and resources.',
-      ),
-      JobPost(
-        id: '6',
-        title: 'Frontend Intern',
-        company: 'Fair Solutions',
-        jobType: 'Internship',
-        datePosted: DateTime.now().subtract(const Duration(days: 3)),
-        ethicalPolicies: ['fair_wage', 'transparency'],
-        contactInfo: 'intern@fair.co',
-        description: 'Gain practical experience.',
-      ),
-    ];
-  }
-
-  /// Fetches applications for a specific job posting.
-  Future<List<JobApplication>> getApplicationsForJob(String jobId) async {
-    print('API: Fetching applications for job $jobId');
-    await Future.delayed(const Duration(milliseconds: 700)); // Simulate delay
-
-    // --- Placeholder Data --- (Replace with actual API call)
-    // This would typically filter applications based on jobId on the backend
-    final List<JobApplication> allKnownApplications = [
-      JobApplication(
-        id: 'app1',
-        jobId: '1',
-        jobTitle: 'Software Engineer',
-        companyName: 'Ethical Corp',
-        applicantName: 'Alice Smith',
-        status: ApplicationStatus.pending,
-        dateApplied: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      JobApplication(
-        id: 'app4',
-        jobId: '1',
-        jobTitle: 'Software Engineer',
-        companyName: 'Ethical Corp',
-        applicantName: 'Bob Johnson',
-        status: ApplicationStatus.pending,
-        dateApplied: DateTime.now().subtract(const Duration(hours: 5)),
-      ),
-      JobApplication(
-        id: 'app5',
-        jobId: '4',
-        jobTitle: 'Marketing Specialist',
-        companyName: 'Ethical Corp',
-        applicantName: 'Charlie Brown',
-        status: ApplicationStatus.approved,
-        dateApplied: DateTime.now().subtract(const Duration(days: 2)),
-        employerFeedback: 'Great portfolio!',
-      ),
-      JobApplication(
-        id: 'app6',
-        jobId: '4',
-        jobTitle: 'Marketing Specialist',
-        companyName: 'Ethical Corp',
-        applicantName: 'Diana Prince',
-        status: ApplicationStatus.rejected,
-        dateApplied: DateTime.now().subtract(const Duration(days: 3)),
-        employerFeedback: 'Not enough experience.',
-      ),
-      // Add more placeholders as needed
-    ];
-    // Filter placeholder data by jobId
-    return allKnownApplications.where((app) => app.jobId == jobId).toList();
-    // --- End Placeholder Data ---
-
-    /* --- Actual API Call Example ---
-    final uri = Uri.parse('YOUR_API_ENDPOINT/jobs/$jobId/applications');
-    try {
-      // Assume employer authentication is handled
-      final response = await http.get(uri, headers: {'Accept': 'application/json'});
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        return data.map((json) => JobApplication.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load applications for job $jobId: ${response.statusCode} ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      print("API Error fetching job applications: $e");
-      throw Exception('Failed to connect to the server.');
-    }
-    */
-  }
-
-  /// Updates the status of a job application (Approve/Reject).
-  Future<JobApplication> updateApplicationStatus(
-    String applicationId,
-    ApplicationStatus newStatus, {
-    String? feedback, // Optional feedback
-  }) async {
-    print(
-      'API: Updating application $applicationId to $newStatus with feedback: \"$feedback\"',
-    );
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
-
-    // --- Placeholder Logic --- (Replace with actual API call)
-    // Simulate success: find the application and return an updated version
-    // In a real scenario, the backend would update and return the updated application
-    final List<JobApplication> allKnownApplications = [
-      JobApplication(
-        id: 'app1',
-        jobId: '1',
-        jobTitle: 'Software Engineer',
-        companyName: 'Ethical Corp',
-        applicantName: 'Alice Smith',
-        status: ApplicationStatus.pending,
-        dateApplied: DateTime.now().subtract(const Duration(days: 1)),
-      ),
-      JobApplication(
-        id: 'app4',
-        jobId: '1',
-        jobTitle: 'Software Engineer',
-        companyName: 'Ethical Corp',
-        applicantName: 'Bob Johnson',
-        status: ApplicationStatus.pending,
-        dateApplied: DateTime.now().subtract(const Duration(hours: 5)),
-      ),
-      JobApplication(
-        id: 'app5',
-        jobId: '4',
-        jobTitle: 'Marketing Specialist',
-        companyName: 'Ethical Corp',
-        applicantName: 'Charlie Brown',
-        status: ApplicationStatus.approved,
-        dateApplied: DateTime.now().subtract(const Duration(days: 2)),
-        employerFeedback: 'Great portfolio!',
-      ),
-      JobApplication(
-        id: 'app6',
-        jobId: '4',
-        jobTitle: 'Marketing Specialist',
-        companyName: 'Ethical Corp',
-        applicantName: 'Diana Prince',
-        status: ApplicationStatus.rejected,
-        dateApplied: DateTime.now().subtract(const Duration(days: 3)),
-        employerFeedback: 'Not enough experience.',
-      ),
-    ];
-    try {
-      final originalApp = allKnownApplications.firstWhere(
-        (app) => app.id == applicationId,
-      );
-      // Return a copy with the updated status and feedback
-      return JobApplication(
-        id: originalApp.id,
-        jobId: originalApp.jobId,
-        jobTitle: originalApp.jobTitle,
-        companyName: originalApp.companyName,
-        applicantName: originalApp.applicantName,
-        dateApplied: originalApp.dateApplied,
-        status: newStatus,
-        employerFeedback: feedback ?? originalApp.employerFeedback,
-      );
-    } catch (e) {
-      throw Exception(
-        'Application with ID $applicationId not found for update.',
-      );
-    }
-    // --- End Placeholder Logic ---
-
-    /* --- Actual API Call Example ---
-    final uri = Uri.parse('YOUR_API_ENDPOINT/applications/$applicationId/status');
-    try {
-      final body = <String, dynamic>{
-        'status': newStatus.toString().split('.').last, // e.g., 'approved'
-      };
-      if (feedback != null && feedback.isNotEmpty) {
-        body['feedback'] = feedback;
-      }
-
-      final response = await http.patch( // Or PUT
-        uri,
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json',
-          // Add Authorization header
-        },
-        body: jsonEncode(body),
-      );
-
-      if (response.statusCode == 200) {
-         print('API: Application $applicationId status updated successfully.');
-         final Map<String, dynamic> data = jsonDecode(response.body);
-         return JobApplication.fromJson(data); // Return the updated application
-      } else {
-        String errorMessage = 'Failed to update application status: ${response.statusCode} ${response.reasonPhrase}';
-        try {
-            final body = jsonDecode(response.body);
-            if (body['message'] != null) { errorMessage = body['message']; }
-        } catch (_) { /* Ignore parsing errors */ }
-        throw Exception(errorMessage);
-      }
-    } catch (e) {
-      print("API Error updating application status: $e");
-      throw Exception('Failed to connect to the server.');
-    }
-    */
-  }
-
-  /// Creates a new job posting.
+  /// POST /api/jobs
+  /// Creates a new job post.
   Future<JobPost> createJobPost({
+    // Required fields based on JobPostDto & UI
     required String employerId,
     required String title,
     required String description,
-    required String contactInfo,
-    required String jobType,
-    required List<String> ethicalPolicies,
+    required String company,
+    required String location,
+    required bool remote,
+    required String ethicalTags,
+
+    // Optional fields from UI
+    String? contactInfo,
+    String? jobType,
     String? salaryRange,
-    // Assume company name is fetched from employer profile or passed
-    required String companyName,
   }) async {
-    print('API: Creating job post by $employerId - Title: $title');
-    await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
+    print('API: Creating new job post');
 
-    // --- Placeholder Logic --- (Replace with actual API call)
-    // Simulate success: create a new JobPost object with a dummy ID
-    if (title.toLowerCase().contains('fail')) {
-      // Example failure case
-      throw Exception(
-        'Backend validation failed: Title cannot contain \'fail\'.',
-      );
-    }
+    final uri = _buildUri('/jobs');
+    print('API Request: POST $uri');
 
-    final newJob = JobPost(
-      // Generate a dummy ID for the placeholder
-      id: 'newJob_${DateTime.now().millisecondsSinceEpoch}',
-      title: title,
-      description: description,
-      contactInfo: contactInfo,
-      jobType: jobType,
-      ethicalPolicies: ethicalPolicies,
-      salaryRange: salaryRange?.isNotEmpty ?? false ? salaryRange : null,
-      company: companyName, // Replace with actual company if needed
-      datePosted: DateTime.now(),
-    );
-    print('API: Job post created successfully (placeholder ID: ${newJob.id})');
-    return newJob;
-    // --- End Placeholder Logic ---
+    // Construct the body based on JobPostDto structure + potentially employerId
+    final body = jsonEncode({
+      'employerId': employerId,
+      'title': title,
+      'description': description,
+      'company': company,
+      'location': location,
+      'remote': remote,
+      'ethicalTags': ethicalTags,
+      // TODO: Confirm if optional fields should be sent if null or omitted
+      // if (contactInfo != null) 'contactInfo': contactInfo,
+      // if (jobType != null) 'jobType': jobType,
+      // if (salaryRange != null) 'salaryRange': salaryRange,
+    });
 
-    /* --- Actual API Call Example ---
-    final uri = Uri.parse('YOUR_API_ENDPOINT/jobs');
     try {
-      final body = <String, dynamic>{
-        'employerId': employerId,
-        'title': title,
-        'description': description,
-        'contactInfo': contactInfo,
-        'jobType': jobType,
-        'ethicalPolicies': ethicalPolicies, // Send as list
-        // Only include salaryRange if provided
-        if (salaryRange != null && salaryRange.isNotEmpty) 'salaryRange': salaryRange,
-      };
-
-      final response = await http.post(
+      // Use dynamically generated headers
+      final response = await _client.post(
         uri,
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json',
-          // Add Authorization header if needed
-        },
-        body: jsonEncode(body),
+        headers: _getHeaders(),
+        body: body,
       );
-
-      if (response.statusCode == 201) { // 201 Created
-        print('API: Job post created successfully.');
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        return JobPost.fromJson(data); // Return the created job post from response
-      } else {
-        String errorMessage = 'Failed to create job post: ${response.statusCode} ${response.reasonPhrase}';
-        try {
-            final body = jsonDecode(response.body);
-            if (body['message'] != null) { errorMessage = body['message']; }
-        } catch (_) { /* Ignore parsing errors */ }
-        throw Exception(errorMessage);
-      }
+      final dynamic data = await _handleResponse(response);
+      // Assuming the API returns the created JobPost object
+      return JobPost.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       print("API Error creating job post: $e");
-      throw Exception('Failed to connect to the server.');
+      throw Exception('Failed to create job post. $e');
     }
-    */
   }
 
-  // TODO: Add other API methods as needed (createJobPost, applyToJob, getJobDetails, etc.)
+  /// PUT /api/jobs/{id}
+  /// Updates an existing job post.
+  Future<JobPost> updateJobPost(String jobId, JobPost jobPost) async {
+    print('API: Updating job post $jobId');
+    final uri = _buildUri('/jobs/$jobId');
+    print('API Request: PUT $uri');
+    final body = jsonEncode(
+      jobPost.toJsonForUpdate(),
+    ); // Use the dedicated toJson
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      // Assuming the API returns the updated JobPost object
+      return JobPost.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      print("API Error updating job post: $e");
+      throw Exception('Failed to update job post. $e');
+    }
+  }
+
+  /// DELETE /api/jobs/{id}
+  /// Deletes a job post.
+  Future<void> deleteJobPost(String jobId) async {
+    print('API: Deleting job post $jobId');
+    final uri = _buildUri('/jobs/$jobId');
+    print('API Request: DELETE $uri');
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response); // Checks for success status code
+    } catch (e) {
+      print("API Error deleting job post: $e");
+      throw Exception('Failed to delete job post. $e');
+    }
+  }
+
+  // --- Job Application Endpoints ---
+
+  /// POST /api/applications
+  /// Applies the user to a job.
+  Future<void> applyToJob(String userId, String jobId) async {
+    print('API: User $userId applying to job $jobId');
+    final uri = _buildUri('/applications');
+    final body = jsonEncode({
+      // Match DTO: jobSeekerId, jobPostingId
+      'jobSeekerId': userId,
+      'jobPostingId': jobId,
+      // submissionDate is likely handled by backend
+      // status defaults to PENDING on backend
+    });
+    print('API Request: POST $uri, Body: $body');
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      await _handleResponse(response); // Check for 201 Created or similar
+    } catch (e) {
+      print("API Error applying to job: $e");
+      throw Exception('Failed to submit application. $e');
+    }
+  }
+
+  /// GET /api/applications/{jobId}
+  /// Gets applications for a specific job.
+  Future<List<JobApplication>> getApplicationsForJob(String jobId) async {
+    print('API: Fetching applications for job $jobId');
+    // Endpoint updated: GET /api/applications/{jobId}
+    final uri = _buildUri('/applications/$jobId');
+    print('API Request: GET $uri');
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      // Ensure JobApplication.fromJson is implemented correctly
+      return data.map((json) => JobApplication.fromJson(json)).toList();
+    } catch (e) {
+      print("API Error fetching job applications: $e");
+      throw Exception('Failed to load job applications. $e');
+    }
+  }
+
+  /// GET /api/applications?userId={userId}
+  /// Fetches the current user's job applications.
+  Future<List<JobApplication>> fetchMyApplications(String userId) async {
+    print('API: Fetching applications for user $userId');
+    // Endpoint confirmed: GET /api/applications?userId={userId} (Based on backend error)
+    final uri = _buildUri('/applications', {
+      'userId': userId,
+    }); // Use userId based on backend requirement
+    print('API Request: GET $uri');
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      // Ensure JobApplication.fromJson is implemented correctly
+      return data.map((json) => JobApplication.fromJson(json)).toList();
+    } catch (e) {
+      print("API Error fetching my applications: $e");
+      throw Exception('Failed to load your applications. $e');
+    }
+  }
+
+  /// PUT /api/applications/{applicationId} (Assumed Endpoint) -> Confirmed
+  /// Updates the status of a job application.
+  Future<JobApplication> updateApplicationStatus(
+      String applicationId,
+      ApplicationStatus newStatus, {
+        required String jobPostingId,
+        required String jobSeekerId,
+        String? feedback,
+      }) async {
+    print(
+      'API: Updating application $applicationId for job $jobPostingId by seeker $jobSeekerId to $newStatus (Feedback: $feedback)',
+    );
+    // Endpoint confirmed: PUT /api/applications/{applicationId}
+    final uri = _buildUri('/applications/$applicationId');
+    final body = jsonEncode({
+      'jobPostingId': jobPostingId,
+      'jobSeekerId': jobSeekerId,
+      'status': newStatus.name.toUpperCase(),
+      if (feedback != null) 'feedback': feedback,
+    });
+    print('API Request: PUT $uri, Body: $body');
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      // Ensure JobApplication.fromJson is implemented correctly
+      return JobApplication.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      print("API Error updating application status: $e");
+      throw Exception('Failed to update application status. $e');
+    }
+  }
+
+  /// DELETE /api/applications/{applicationId}
+  /// Deletes a job application.
+  Future<void> deleteApplication(String applicationId) async {
+    print('API: Deleting application $applicationId');
+    final uri = _buildUri('/applications/$applicationId');
+    print('API Request: DELETE $uri');
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(
+        response,
+      ); // Checks for success status code (e.g., 204 No Content)
+    } catch (e) {
+      print("API Error deleting application: $e");
+      throw Exception('Failed to delete application. $e');
+    }
+  }
+
+  // ─────────────────────────────────────────────────
+  // Forum / Discussion Endpoints
+  // ─────────────────────────────────────────────────
+  /// GET /api/threads
+  Future<List<DiscussionThread>> fetchDiscussionThreads() async {
+    final uri = _buildUri('/threads');
+    print('API Request: GET $uri');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+
+      return (data as List)
+          .map((e) => DiscussionThread.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      print("API Error fetching discussion threads: $e");
+      throw Exception('Failed to fetch discussion threads. $e');
+    }
+  }
+
+  /// POST /api/threads
+  Future<DiscussionThread> createDiscussionThread(
+      String title,
+      String body,
+      List<String> tags,
+      ) async {
+    final uri = _buildUri('/threads');
+    final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return DiscussionThread.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to create discussion thread. $e');
+    }
+  }
+
+  /// GET /api/threads/{threadId}/comments
+  Future<List<Comment>> fetchComments(int threadId) async {
+    final uri = _buildUri('/threads/$threadId/comments');
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+      return (data as List)
+          .map((e) => Comment.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to fetch comments: $e');
+    }
+  }
+
+  /// POST /api/threads/{threadId}/comments
+  Future<Comment> postComment(int threadId, String body) async {
+    final uri = _buildUri('/threads/$threadId/comments');
+    final payload = jsonEncode({'body': body});
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return Comment.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to post comment: $e');
+    }
+  }
+
+  /// PATCH /api/comments/{commentId}
+  Future<Comment> editComment(int commentId, String body) async {
+    final uri = _buildUri('/comments/$commentId');
+    final payload = jsonEncode({'body': body});
+    try {
+      final response = await _client.patch(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return Comment.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to edit comment: $e');
+    }
+  }
+
+
+
+
+  /// PATCH /api/threads/{threadId}
+  Future<DiscussionThread> editDiscussion(
+      int threadId,
+      String title,
+      String body,
+      List<String> tags,
+      ) async {
+    final uri = _buildUri('/threads/$threadId');
+    final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
+
+    try {
+      final response = await _client.patch(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return DiscussionThread.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to edit discussion thread. $e');
+    }
+  }
+  /// GET /api/threads/tags
+  Future<List<String>> fetchDiscussionTags() async {
+    final uri = _buildUri('/threads/tags');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+      return List<String>.from(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to fetch discussion tags: $e');
+    }
+  }
+
+
+
+
+  /// DELETE /api/comments/{commentId}
+  Future<bool> deleteComment(int commentId) async {
+    final uri = _buildUri('/comments/$commentId');
+    print('API Request: DELETE $uri');
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+      print('Comment $commentId deleted successfully');
+      return true;
+    } on SocketException {
+      print('SocketException while deleting comment $commentId');
+      rethrow;
+    } catch (e) {
+      print('Failed to delete comment $commentId: $e');
+      return false;
+    }
+  }
+
+
+  /// POST /api/comments/{commentId}/report
+  Future<void> reportComment(int commentId) async {
+    final uri = _buildUri('/comments/$commentId/report');
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to report comment: $e');
+    }
+  }
+
+  /// DELETE /api/threads/{threadId}
+  Future<void> deleteDiscussion(int threadId) async {
+    final uri = _buildUri('/threads/$threadId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to delete discussion thread: $e');
+    }
+  }
+
+  /// POST /api/threads/{threadId}/report
+
+  Future<void> reportDiscussion(int threadId) async {
+    final uri = _buildUri('/threads/$threadId/report');
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to report discussion: $e');
+    }
+  }
+
+  /// GET /api/users/{id}
+  Future<User> fetchUser(String userId) async {
+    final uri = _buildUri('/users/$userId');
+    print('API Request: GET $uri');
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+      return User.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to fetch user $userId: $e');
+    }
+  }
+
+  void dispose() {
+    _client.close();
+  }
 }

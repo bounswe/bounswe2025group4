@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../forum/screens/forum_page.dart'; // Adjust path
-import '../job/screens/job_page.dart'; // Adjust path
-import '../mentorship/screens/mentorship_page.dart'; // Adjust path
-import '../profile/screens/profile_page.dart'; // Adjust path
-import '../workplaces/screens/workplaces_page.dart'; // Adjust path
-import '../../core/providers/auth_provider.dart'; // Adjust path
+import '../forum/screens/forum_page.dart';
+import '../job/screens/job_page.dart';
+import '../mentorship/screens/mentorship_page.dart';
+import '../profile/screens/profile_page.dart';
+import '../workplaces/screens/workplaces_page.dart';
+import '../../core/providers/auth_provider.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -16,13 +15,12 @@ class MainScaffold extends StatefulWidget {
 }
 
 class _MainScaffoldState extends State<MainScaffold> {
-  int _selectedIndex = 1; // Default to Job page (index 1)
+  int _selectedIndex = 1;
 
-  // List of widgets to display based on the selected index
   static const List<Widget> _widgetOptions = <Widget>[
     ForumPage(),
-    JobPage(), // Your focus area
-    MentorshipPage(), // Your focus area
+    JobPage(),
+    MentorshipPage(),
     ProfilePage(),
     WorkplacesPage(),
   ];
