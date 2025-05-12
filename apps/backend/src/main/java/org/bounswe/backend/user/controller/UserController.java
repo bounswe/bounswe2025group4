@@ -7,7 +7,7 @@ import org.bounswe.backend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.bounswe.backend.common.enums.MentorshipStatus;
+import org.bounswe.backend.user.dto.UpdateMentorshipDto;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.bounswe.backend.user.repository.UserRepository;
@@ -51,7 +51,7 @@ public class UserController {
     }
 
     @PutMapping("/mentorship-status")
-    public ResponseEntity<UserDto> updateMentorshipStatus(@RequestBody UpdateMentorshipStatusRequest request) {
+    public ResponseEntity<UserDto> updateMentorshipStatus(@RequestBody UpdateMentorshipDto request) {
         String username = getCurrentUsername();
         org.bounswe.backend.user.entity.User user = userRepository.findByUsername(username)
             .orElseThrow(() -> new RuntimeException("User not found"));
@@ -68,7 +68,3 @@ public class UserController {
     }
 }
 
-// DTO for mentorship status update
-class UpdateMentorshipStatusRequest {
-    public MentorshipStatus mentorshipStatus;
-}

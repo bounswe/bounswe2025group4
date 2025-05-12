@@ -35,7 +35,7 @@ public class UserService {
                 .email(dto.getEmail())
                 .bio(dto.getBio())
                 .userType(dto.getUserType())
-                .mentorshipStatus(dto.getMentorshipStatus() != null ? dto.getMentorshipStatus() : MentorshipStatus.MENTEE)
+                .mentorshipStatus(dto.getMentorshipStatus())
                 .build();
         return toDto(userRepository.save(user));
     }

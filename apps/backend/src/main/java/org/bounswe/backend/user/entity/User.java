@@ -33,5 +33,5 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MentorshipStatus mentorshipStatus = MentorshipStatus.MENTEE;
+    private MentorshipStatus mentorshipStatus;
 }
