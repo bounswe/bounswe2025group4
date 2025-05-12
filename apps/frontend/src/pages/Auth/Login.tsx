@@ -124,6 +124,7 @@ export default function LoginPage() {
             name="password"
             label="Password"
             id="password"
+            placeholder="Password"
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
             value={password}
@@ -138,7 +139,7 @@ export default function LoginPage() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label="toggle-password-visibility"
                       onClick={handleTogglePasswordVisibility}
                       edge="end"
                     >

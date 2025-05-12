@@ -99,7 +99,7 @@ describe('UserProfile', () => {
         userId: 123,
         fullName: 'Test User',
         bio: 'This is my test bio',
-        profilePicture: 'test.jpg',
+        profilePicture: 'placeholder.png',
         skills: [],
         interests: [],
         phone: '',
@@ -223,6 +223,16 @@ describe('UserProfile', () => {
 
     // Mock localStorage for isOwnProfile check
     vi.spyOn(Storage.prototype, 'getItem').mockReturnValue('123');
+
+    // Mock useProfilePictureUpload
+    vi.mocked(profileService.useProfilePictureUpload).mockReturnValue(
+      mockMutationResult as unknown as UseMutationResult<
+        string,
+        Error,
+        File,
+        unknown
+      >
+    );
 
     render(
       <QueryClientProvider client={queryClient}>
