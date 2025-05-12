@@ -1,61 +1,37 @@
 import React, { useState } from 'react';
 import {
-  DataGridPro,
+  DataGrid,
   GridColDef,
   GridRenderCellParams,
   GridRowParams,
   GridActionsCellItem,
-} from '@mui/x-data-grid-pro';
+} from '@mui/x-data-grid';
 import {
   Box,
   Button,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Typography,
   useTheme,
-  CircularProgress,
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-import {
-  applicationStatusSchema,
-  ApplicationStatusUpdate,
-} from '../../schemas/job';
-
-export interface JobApplication {
-  id: string;
-  applicantName: string;
-  applicantEmail: string;
-  resume: string;
-  coverLetter: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  appliedDate: string;
-  feedback?: string;
-}
+import { Application } from '../../types/application';
+import { ApplicationStatusUpdate } from '../../schemas/job';
+import ViewApplicationDialog from './ViewApplicationDialog';
+import UpdateStatusDialog from './UpdateStatusDialog';
 
 interface ApplicationsGridProps {
   jobId: string;
   jobTitle: string;
-  applications: JobApplication[];
+  applications: Application[];
   isLoading: boolean;
   onUpdateStatus: (
     applicationId: string,
     data: ApplicationStatusUpdate
-  ) => void;
+  ) => Promise<void>;
   onBackToJobs: () => void;
 }
 
@@ -68,33 +44,17 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
   onBackToJobs,
 }) => {
   const theme = useTheme();
-  const [selectedApplication, setSelectedApplication] =
-    useState<JobApplication | null>(null);
+  const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ApplicationStatusUpdate>({
-    resolver: zodResolver(applicationStatusSchema),
-    defaultValues: {
-      status: 'Pending',
-      feedback: '',
-    },
-  });
-
-  const handleViewApplication = (application: JobApplication) => {
+  const handleViewApplication = (application: Application) => {
     setSelectedApplication(application);
     setViewDialogOpen(true);
   };
-
-  const handleStatusUpdate = (application: JobApplication) => {
+  
+  const handleStatusUpdate = (application: Application) => {
     setSelectedApplication(application);
-    reset({ status: application.status, feedback: application.feedback || '' });
     setStatusDialogOpen(true);
   };
 
@@ -108,24 +68,9 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
     setSelectedApplication(null);
   };
 
-  const onStatusSubmit = async (data: ApplicationStatusUpdate) => {
-    if (!selectedApplication) return;
-
-    setIsSubmitting(true);
-    try {
-      await onUpdateStatus(selectedApplication.id, data);
-      setStatusDialogOpen(false);
-      setSelectedApplication(null);
-    } catch (error) {
-      console.error('Failed to update application status:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const getStatusChip = (status: string) => {
     switch (status) {
-      case 'Approved':
+      case 'APPROVED':
         return (
           <Chip
             icon={<CheckCircleIcon />}
@@ -134,7 +79,7 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
             size="small"
           />
         );
-      case 'Rejected':
+      case 'REJECTED':
         return (
           <Chip
             icon={<CancelIcon />}
@@ -163,12 +108,12 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
       minWidth: 180,
     },
     {
-      field: 'applicantEmail',
-      headerName: 'Email',
+      field: 'title',
+      headerName: 'Job Title',
       width: 200,
     },
     {
-      field: 'appliedDate',
+      field: 'submissionDate',
       headerName: 'Applied On',
       width: 120,
       valueFormatter: ({ value }) => {
@@ -180,7 +125,7 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
       field: 'status',
       headerName: 'Status',
       width: 150,
-      renderCell: (params: GridRenderCellParams<JobApplication>) => {
+      renderCell: (params: GridRenderCellParams<Application>) => {
         return getStatusChip(params.row.status);
       },
     },
@@ -188,14 +133,17 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
       field: 'feedback',
       headerName: 'Feedback',
       width: 200,
-      valueGetter: (params) => params.row.feedback || 'No feedback provided',
+      valueGetter: (params: { row: Application }) => {
+        if (!params?.row) return 'No feedback provided';
+        return params.row.feedback || 'No feedback provided';
+      },
     },
     {
       field: 'actions',
       type: 'actions',
       headerName: 'Actions',
       width: 120,
-      getActions: (params: GridRowParams<JobApplication>) => [
+      getActions: (params: GridRowParams<Application>) => [
         <GridActionsCellItem
           icon={<CheckCircleIcon />}
           label="Update Status"
@@ -206,7 +154,7 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
           icon={<VisibilityIcon />}
           label="View Details"
           onClick={() => handleViewApplication(params.row)}
-          color="info"
+          color="primary"
         />,
       ],
     },
@@ -232,212 +180,44 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
         <Typography variant="h6">Applications for "{jobTitle}"</Typography>
       </Box>
 
-      <DataGridPro
-        rows={applications}
-        columns={columns}
-        loading={isLoading}
-        autoHeight
-        disableRowSelectionOnClick
-        pageSizeOptions={[10, 25, 50]}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
+      <Box style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <DataGrid
+          rows={applications}
+          columns={columns}
+          loading={isLoading}
+          disableRowSelectionOnClick
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
             },
-          },
-        }}
-        sx={{
-          '& .MuiDataGrid-cell:focus': {
-            outline: 'none',
-          },
-          '& .MuiDataGrid-row:hover': {
-            backgroundColor: theme.palette.action.hover,
-          },
-        }}
+          }}
+          sx={{
+            '& .MuiDataGrid-cell:focus': {
+              outline: 'none',
+            },
+            '& .MuiDataGrid-row:hover': {
+              backgroundColor: theme.palette.action.hover,
+            },
+          }}
+        />
+      </Box>
+
+      <ViewApplicationDialog
+        open={viewDialogOpen}
+        application={selectedApplication}
+        onClose={handleCloseView}
+        onUpdateStatus={handleStatusUpdate}
       />
 
-      {/* View Application Dialog */}
-      <Dialog
-        open={viewDialogOpen}
-        onClose={handleCloseView}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Application Details</DialogTitle>
-        <DialogContent>
-          {selectedApplication && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                {selectedApplication.applicantName}
-              </Typography>
-
-              <Typography variant="subtitle1" gutterBottom>
-                {selectedApplication.applicantEmail}
-              </Typography>
-
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                gutterBottom
-              >
-                Applied on:{' '}
-                {new Date(selectedApplication.appliedDate).toLocaleDateString()}
-              </Typography>
-
-              <Box sx={{ mt: 2, mb: 2 }}>
-                {getStatusChip(selectedApplication.status)}
-              </Box>
-
-              <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
-                Cover Letter
-              </Typography>
-
-              <Typography
-                variant="body1"
-                sx={{
-                  mt: 1,
-                  p: 2,
-                  border: 1,
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                }}
-              >
-                {selectedApplication.coverLetter}
-              </Typography>
-
-              <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
-                Resume
-              </Typography>
-
-              <Button
-                variant="outlined"
-                sx={{ mt: 1 }}
-                component="a"
-                href={selectedApplication.resume}
-                target="_blank"
-                rel="noopener"
-              >
-                View Resume
-              </Button>
-
-              {selectedApplication.feedback && (
-                <>
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                    sx={{ mt: 2 }}
-                  >
-                    Feedback
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      mt: 1,
-                      p: 2,
-                      border: 1,
-                      borderColor: 'divider',
-                      borderRadius: 1,
-                    }}
-                  >
-                    {selectedApplication.feedback}
-                  </Typography>
-                </>
-              )}
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseView}>Close</Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              handleCloseView();
-              handleStatusUpdate(selectedApplication!);
-            }}
-          >
-            Update Status
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Update Status Dialog */}
-      <Dialog
+      <UpdateStatusDialog
         open={statusDialogOpen}
+        application={selectedApplication}
         onClose={handleCloseStatus}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Update Application Status</DialogTitle>
-        <form onSubmit={handleSubmit(onStatusSubmit)}>
-          <DialogContent>
-            {selectedApplication && (
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  {selectedApplication.applicantName} -{' '}
-                  {selectedApplication.applicantEmail}
-                </Typography>
-
-                <Controller
-                  name="status"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControl
-                      fullWidth
-                      sx={{ mt: 2 }}
-                      error={!!errors.status}
-                    >
-                      <InputLabel id="status-label">Status</InputLabel>
-                      <Select
-                        {...field}
-                        labelId="status-label"
-                        label="Status"
-                        disabled={isSubmitting}
-                      >
-                        <MenuItem value="Pending">Pending</MenuItem>
-                        <MenuItem value="Approved">Approved</MenuItem>
-                        <MenuItem value="Rejected">Rejected</MenuItem>
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-
-                <Controller
-                  name="feedback"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label="Feedback to Applicant"
-                      fullWidth
-                      multiline
-                      rows={4}
-                      sx={{ mt: 2 }}
-                      error={!!errors.feedback}
-                      helperText={errors.feedback?.message}
-                      disabled={isSubmitting}
-                    />
-                  )}
-                />
-              </Box>
-            )}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseStatus} disabled={isSubmitting}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={isSubmitting}
-              startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
-            >
-              {isSubmitting ? 'Updating...' : 'Update Status'}
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
+        onUpdateStatus={onUpdateStatus}
+      />
     </Box>
   );
 };

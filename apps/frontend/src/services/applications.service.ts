@@ -17,6 +17,13 @@ export class ApplicationsService {
     return response.data;
   }
 
+  async getApplicationsByUserId(userId: string): Promise<Application[]> {
+    const response = await apiClient.get<Application[]>(
+      `/applications?userId=${userId}`
+    );
+    return response.data;
+  }
+
   async updateApplicationStatus(
     applicationId: string,
     status: ApplicationStatus,
@@ -50,6 +57,20 @@ export const useGetApplicationsByJobId = (jobId: string) => {
   >({
     queryKey: ['applications', jobId],
     queryFn: () => applicationsService.getApplicationsByJobId(jobId),
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetApplicationsByUserId = (userId: string | null) => {
+  return useQuery<
+    Application[],
+    Error,
+    Application[],
+    readonly [string, string | null]
+  >({
+    queryKey: ['userApplications', userId],
+    queryFn: () => userId ? applicationsService.getApplicationsByUserId(userId) : Promise.resolve([]),
+    enabled: !!userId,
     refetchOnWindowFocus: false,
   });
 };

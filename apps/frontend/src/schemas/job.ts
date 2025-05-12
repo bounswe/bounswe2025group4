@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ApplicationStatus } from '../types/application';
 
 // Define ethical policy options
 export const ethicalPolicies = [
@@ -42,7 +43,7 @@ export const jobSchema = z.object({
 
 // Define schema for application status updates
 export const applicationStatusSchema = z.object({
-  status: z.enum(['Pending', 'Approved', 'Rejected']),
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED'] as const),
   feedback: z.string().optional(),
 });
 

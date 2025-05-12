@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import ApplicationForm from './ApplicationForm';
 import {
@@ -15,6 +15,9 @@ import {
 } from '@mui/material';
 import { JobPost } from '../../types/job';
 import { useGetJobById } from '../../services/jobs.service';
+import { useGetApplicationsByUserId } from '../../services/applications.service';
+import { AuthContext, AuthContextType } from '../../contexts/AuthContext';
+import { Application } from '../../types/application';
 
 // Define a type for application data (can be moved to a shared types file)
 interface ApplicationData {
@@ -31,6 +34,10 @@ const JobDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [userApplication, setUserApplication] = useState<Application | null>(null);
+  
+  const authContext = useContext(AuthContext) as AuthContextType;
+  const userId = authContext?.id;
 
   if (!jobId) {
     setError('Job ID is missing.');
@@ -39,6 +46,7 @@ const JobDetail: React.FC = () => {
   }
 
   const { data: jobData } = useGetJobById(jobId as string);
+  const { data: userApplications } = useGetApplicationsByUserId(userId);
 
   useEffect(() => {
     if (jobData) {
@@ -47,6 +55,17 @@ const JobDetail: React.FC = () => {
       setError(null);
     }
   }, [jobData]);
+
+  useEffect(() => {
+    if (userApplications && jobId) {
+      const application = userApplications.find(
+        app => app.jobPostingId.toString() === jobId
+      );
+      if (application) {
+        setUserApplication(application);
+      }
+    }
+  }, [userApplications, jobId]);
 
   const handleApplyClick = () => {
     setShowApplicationForm(true);
@@ -94,6 +113,17 @@ const JobDetail: React.FC = () => {
     );
   }
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'APPROVED':
+        return 'success';
+      case 'REJECTED':
+        return 'error';
+      default:
+        return 'warning';
+    }
+  };
+
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
       <Paper
@@ -118,6 +148,27 @@ const JobDetail: React.FC = () => {
         {/* <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           Posted on: {new Date(job.postedDate).toLocaleDateString()}
         </Typography> */}
+
+        {userApplication && (
+          <Box sx={{ my: 2 }}>
+            <Alert 
+              severity={getStatusColor(userApplication.status) as 'success' | 'error' | 'warning' | 'info'} 
+              sx={{ mb: 2 }}
+            >
+              <Typography variant="subtitle1">
+                Your application status: <strong>{userApplication.status}</strong>
+              </Typography>
+              <Typography variant="body2">
+                Applied on: {new Date(userApplication.submissionDate).toLocaleDateString()}
+              </Typography>
+              {userApplication.feedback && (
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  <strong>Feedback:</strong> {userApplication.feedback}
+                </Typography>
+              )}
+            </Alert>
+          </Box>
+        )}
 
         <Divider sx={{ my: 2 }} />
 
@@ -178,21 +229,27 @@ const JobDetail: React.FC = () => {
         <Divider sx={{ my: 3 }} />
 
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={handleApplyClick}
-          >
-            Apply for this Job
-          </Button>
+          {userApplication ? (
+            <Alert severity="info" sx={{ width: '100%', textAlign: 'center' }}>
+              You have already applied to this job.
+            </Alert>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleApplyClick}
+            >
+              Apply for this Job
+            </Button>
+          )}
         </Box>
       </Paper>
 
-      {jobId && (
+      {jobId && !userApplication && (
         <ApplicationForm
           jobId={jobId}
-          open={showApplicationForm} // Pass open state to Dialog
+          open={showApplicationForm}
           onClose={handleApplicationClose}
           onSubmit={handleApplicationSubmit}
         />

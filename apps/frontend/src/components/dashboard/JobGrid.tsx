@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
 import {
-  DataGridPro,
+  DataGrid,
   GridColDef,
   GridRenderCellParams,
   GridRowParams,
   GridActionsCellItem,
-  GridEventListener,
-  GridRowId,
-} from '@mui/x-data-grid-pro';
+} from '@mui/x-data-grid';
 import {
   Box,
   Button,
   Chip,
-  IconButton,
   Tooltip,
-  CircularProgress,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -22,16 +18,15 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
-import { Link } from 'react-router-dom';
 
-import { Job } from '../../types/job';
+import { JobPost } from '../../types/job';
 import { useDeleteJob } from '../../services/jobs.service';
 import ConfirmDialog from '../common/ConfirmDialog';
 
 interface JobGridProps {
-  jobs: Job[];
+  jobs: JobPost[];
   isLoading: boolean;
-  onEdit: (job: Job) => void;
+  onEdit: (job: JobPost) => void;
   onCreateNew: () => void;
   onApplicationsView: (jobId: string) => void;
 }
@@ -49,7 +44,7 @@ const JobGrid: React.FC<JobGridProps> = ({
 
   const deleteJobMutation = useDeleteJob();
 
-  const handleEditClick = (job: Job) => {
+  const handleEditClick = (job: JobPost) => {
     onEdit(job);
   };
 
@@ -96,9 +91,9 @@ const JobGrid: React.FC<JobGridProps> = ({
       field: 'salary',
       headerName: 'Salary Range',
       width: 150,
-      renderCell: (params: GridRenderCellParams<Job>) => {
-        const salaryMin = params.row.salaryMin;
-        const salaryMax = params.row.salaryMax;
+      renderCell: (params: GridRenderCellParams<JobPost>) => {
+        const salaryMin = params.row.minSalary;
+        const salaryMax = params.row.maxSalary;
         if (salaryMin && salaryMax) {
           return `$${salaryMin / 1000}k - $${salaryMax / 1000}k`;
         } else if (salaryMin) {
@@ -113,8 +108,8 @@ const JobGrid: React.FC<JobGridProps> = ({
       field: 'ethicalPolicies',
       headerName: 'Ethical Policies',
       width: 200,
-      renderCell: (params: GridRenderCellParams<Job>) => {
-        const policies = params.row.ethicalPolicies;
+      renderCell: (params: GridRenderCellParams<JobPost>) => {
+        const policies = params.row.ethicalTags;
         return (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
             {policies.slice(0, 2).map((policy) => (
@@ -153,7 +148,7 @@ const JobGrid: React.FC<JobGridProps> = ({
       type: 'actions',
       headerName: 'Actions',
       width: 120,
-      getActions: (params: GridRowParams<Job>) => [
+      getActions: (params: GridRowParams<JobPost>) => [
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Edit"
@@ -163,14 +158,14 @@ const JobGrid: React.FC<JobGridProps> = ({
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
-          onClick={() => handleDeleteClick(params.row.id)}
-          color="error"
+          onClick={() => handleDeleteClick(params.row.id.toString())}
+          color="primary"
         />,
         <GridActionsCellItem
           icon={<VisibilityIcon />}
           label="View Applications"
-          onClick={() => onApplicationsView(params.row.id)}
-          color="info"
+          onClick={() => onApplicationsView(params.row.id.toString())}
+          color="primary"
         />,
       ],
     },
@@ -190,12 +185,12 @@ const JobGrid: React.FC<JobGridProps> = ({
         </Button>
       </Box>
 
-      <DataGridPro
-        rows={jobs}
-        columns={columns}
-        loading={isLoading}
-        autoHeight
-        disableRowSelectionOnClick
+      <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <DataGrid
+          rows={jobs}
+          columns={columns}
+          loading={isLoading}
+          disableRowSelectionOnClick
         getRowId={(row) => row.id}
         pageSizeOptions={[10, 25, 50]}
         initialState={{
@@ -213,7 +208,8 @@ const JobGrid: React.FC<JobGridProps> = ({
             backgroundColor: theme.palette.action.hover,
           },
         }}
-      />
+        />
+      </Box>
 
       <ConfirmDialog
         open={confirmDialogOpen}
