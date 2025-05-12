@@ -109,4 +109,36 @@ public class ProfileControllerTest {
         assertEquals(mockProfile, response.getBody());
         verify(profileService).getProfileByUserId(mockUser.getId());
     }
+
+
+
+    @Test
+    void updateInterests_success() {
+        // Arrange
+        Long userId = 1L;
+        InterestUpdateRequestDto request = new InterestUpdateRequestDto();
+        request.setInterests(List.of("AI", "Backend"));
+
+        ProfileDto expectedProfile = ProfileDto.builder()
+                .id(1L)
+                .fullName("John Doe")
+                .interests(List.of("AI", "Backend"))
+                .userId(userId)
+                .build();
+
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(mockUser));
+        when(profileService.updateInterests(eq(userId), anyList())).thenReturn(expectedProfile);
+
+        ProfileController controller = spy(profileController);
+        doReturn(mockUser).when(controller).getCurrentUser();
+
+        // Act
+        ResponseEntity<ProfileDto> response = controller.updateInterests(userId, request);
+
+        // Assert
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(expectedProfile, response.getBody());
+        verify(profileService).updateInterests(userId, request.getInterests());
+    }
 }
