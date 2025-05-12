@@ -2,6 +2,7 @@ package org.bounswe.backend.user.dto;
 
 import lombok.*;
 import org.bounswe.backend.common.enums.UserType;
+import org.bounswe.backend.common.enums.MentorshipStatus;
 
 @Data
 @NoArgsConstructor
@@ -13,4 +14,5 @@ public class UserDto {
     private String email;
     private String bio;
     private UserType userType;
+    private MentorshipStatus mentorshipStatus;
 }

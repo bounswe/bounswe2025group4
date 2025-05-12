@@ -37,11 +37,11 @@
 
 ## 📄  3. Job Listings & Applications
 
-- [ ] **JobList** page `/jobs`  
+- [x] **JobList** page `/jobs`  
   - [ ] Fetch + cache jobs (`queryKey: ['jobs', filters]`)  
-  - [ ] Filter sidebar (ethical policies, salary range, company)  
-  - [ ] Skeleton loaders & empty-state illustrations  
-- [ ] **JobDetail** page `/jobs/:id`  
+  - [x] Filter sidebar (ethical policies, salary range, company)  
+  - [x] Skeleton loaders & empty-state illustrations  
+- [x] **JobDetail** page `/jobs/:id`  
   - [ ] Apply form (Router *action* + optimistic UI)  
   - [ ] Company badge linking to `/company/:slug`  
 - [ ] Employer dashboard `/dashboard/jobs`  
