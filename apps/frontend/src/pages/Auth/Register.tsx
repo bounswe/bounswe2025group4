@@ -22,16 +22,14 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import {
-  Visibility,
-  VisibilityOff,
-  Work,
-  Person,
-  Handshake,
-  ArrowBack,
-  ArrowForward,
-  Hail,
-} from '@mui/icons-material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Work from '@mui/icons-material/Work';
+import Person from '@mui/icons-material/Person';
+import Handshake from '@mui/icons-material/Handshake';
+import ArrowBack from '@mui/icons-material/ArrowBack';
+import ArrowForward from '@mui/icons-material/ArrowForward';
+import Hail from '@mui/icons-material/Hail';
 import { UserType, MentorshipRole } from '../../types/auth';
 import { useNavigate } from 'react-router-dom';
 import { useRegister } from '../../services/auth.service';
