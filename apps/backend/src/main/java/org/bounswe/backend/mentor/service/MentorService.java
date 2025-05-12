@@ -88,11 +88,11 @@ public class MentorService {
         User mentee = userRepository.findById(menteeId)
                 .orElseThrow(() -> new RuntimeException("Mentee not found"));
 
-        User mentor = userRepository.findById(dto.getMentorId())
-                .orElseThrow(() -> new RuntimeException("Mentor not found"));
-
-        MentorProfile mentorProfile = mentorProfileRepository.findByUser(mentor)
+        // Find the mentor profile first, then get the associated user
+        MentorProfile mentorProfile = mentorProfileRepository.findById(dto.getMentorId())
                 .orElseThrow(() -> new RuntimeException("Mentor profile not found"));
+        
+        User mentor = mentorProfile.getUser();
 
         if (!mentorProfile.getIsAvailable()) {
             throw new RuntimeException("Mentor is not available for mentorship");
