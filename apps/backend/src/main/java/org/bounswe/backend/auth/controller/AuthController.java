@@ -51,6 +51,10 @@ public class AuthController {
             throw new IllegalArgumentException("Password must be at least 6 characters long.");
         }
 
+        if (request.getMentorshipStatus() == null) {
+            throw new IllegalArgumentException("Mentorship status must be selected.");
+        }
+
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new UsernameAlreadyExistsException(request.getUsername());
         }
@@ -61,6 +65,7 @@ public class AuthController {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .bio(request.getBio())
                 .userType(request.getUserType())
+                .mentorshipStatus(request.getMentorshipStatus())
                 .build();
 
         userRepository.save(user);
