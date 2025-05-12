@@ -4,6 +4,7 @@ import 'package:mobile/features/auth/screens/sign_in_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
 import 'package:mobile/core/models/user_type.dart';
+import 'package:mobile/core/models/mentorship_status.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -41,6 +42,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final bio = _bioController.text.trim();
 
       final userType = authProvider.onboardingUserType;
+      final mentorshipStatus = authProvider.onboardingMentorshipStatus;
+      final maxMenteeCount = authProvider.onboardingMaxMenteeCount;
 
       if (userType == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -52,28 +55,53 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return;
       }
 
-      bool success = await authProvider.register(
-        username,
-        email,
-        password,
-        userType,
-        bio.isNotEmpty ? bio : null,
-      );
-
-      if (!mounted) return;
-
-      if (success) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScaffold()),
+      try {
+        bool success = await authProvider.register(
+          username,
+          email,
+          password,
+          userType,
+          bio.isNotEmpty ? bio : null,
+          mentorshipStatus: mentorshipStatus,
+          maxMenteeCount: maxMenteeCount,
         );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Sign up failed. Username or email might already exist.',
+
+        if (!mounted) return;
+
+        if (success) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScaffold()),
+          );
+        } else {
+          // This branch might not be reached since errors now throw exceptions,
+          // but keeping it for robustness
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sign up failed. Please try again later.'),
+              backgroundColor: Colors.red,
             ),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+
+        // Display specific error message
+        String errorMessage = 'Sign up failed.';
+        if (e.toString().contains('mentor profile')) {
+          errorMessage =
+              'Failed to create mentor profile. Please try again or contact support.';
+        } else if (e.toString().contains('already exist')) {
+          errorMessage = 'Username or email already exists.';
+        } else {
+          errorMessage = 'Registration failed: ${e.toString()}';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
           ),
         );
       }

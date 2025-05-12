@@ -100,7 +100,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
       try {
         final newJob = await _apiService.createJobPost(
           employerId: currentUser.id,
-          company: currentUser.companyName ?? 'Your Company',
+          company: currentUser.company ?? 'Your Company',
           title: _titleController.text,
           description: _descriptionController.text,
           location: 'Unknown Location',

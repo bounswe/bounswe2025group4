@@ -28,46 +28,58 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Future<void> _fetchQuote() async {
     try {
       print('Fetching quote from API...');
-      final uri = Uri.https('api.quotable.io', '/random', {'tags': 'motivational'});
+      final uri = Uri.https('api.quotable.io', '/random', {
+        'tags': 'motivational',
+      });
       print('Request URL: $uri');
-      
+
       // Create a client that ignores certificate errors
-      final client = HttpClient()
-        ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-      
+      final client =
+          HttpClient()
+            ..badCertificateCallback =
+                (X509Certificate cert, String host, int port) => true;
+
       final request = await client.getUrl(uri);
       final response = await request.close();
       final responseBody = await response.transform(utf8.decoder).join();
-      
+
       print('Response status code: ${response.statusCode}');
       print('Response body: $responseBody');
 
       if (response.statusCode == 200) {
         final data = json.decode(responseBody);
-        setState(() {
-          _quote = data['content'];
-          _author = data['author'];
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _quote = data['content'];
+            _author = data['author'];
+            _isLoading = false;
+          });
+        }
       } else {
         print('Error: API returned status code ${response.statusCode}');
+        if (mounted) {
+          setState(() {
+            _hasError = true;
+            _isLoading = false;
+          });
+        }
+      }
+    } on TimeoutException {
+      print('Request timed out');
+      if (mounted) {
         setState(() {
           _hasError = true;
           _isLoading = false;
         });
       }
-    } on TimeoutException {
-      print('Request timed out');
-      setState(() {
-        _hasError = true;
-        _isLoading = false;
-      });
     } catch (e) {
       print('Exception occurred: $e');
-      setState(() {
-        _hasError = true;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _hasError = true;
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -96,7 +108,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 Column(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.blue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -144,19 +159,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               const SizedBox(height: 32),
               const Text(
                 'Welcome to Ethical Job Platform',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               const Text(
                 'Connect with companies that share your values and build an ethical career path',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 16, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),
@@ -180,10 +189,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   child: const Text(
                     'Get Started',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),
@@ -208,10 +214,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   child: const Text(
                     'I already have an account',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.blue, fontSize: 16),
                   ),
                 ),
               ),
@@ -221,4 +224,4 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       ),
     );
   }
-} 
+}

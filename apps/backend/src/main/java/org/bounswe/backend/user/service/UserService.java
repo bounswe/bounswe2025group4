@@ -36,6 +36,7 @@ public class UserService {
                 .bio(dto.getBio())
                 .userType(dto.getUserType())
                 .mentorshipStatus(dto.getMentorshipStatus())
+                .maxMenteeCount(dto.getMaxMenteeCount() != null ? dto.getMaxMenteeCount() : 5)
                 .build();
         return toDto(userRepository.save(user));
     }
@@ -49,12 +50,21 @@ public class UserService {
         if (dto.getMentorshipStatus() != null) {
             user.setMentorshipStatus(dto.getMentorshipStatus());
         }
+        if (dto.getMaxMenteeCount() != null) {
+            user.setMaxMenteeCount(dto.getMaxMenteeCount());
+        }
         return toDto(userRepository.save(user));
     }
 
     public UserDto updateMentorshipStatus(Long userId, MentorshipStatus mentorshipStatus) {
         User user = userRepository.findById(userId).orElseThrow();
         user.setMentorshipStatus(mentorshipStatus);
+        return toDto(userRepository.save(user));
+    }
+
+    public UserDto updateMaxMenteeCount(Long userId, Integer maxMenteeCount) {
+        User user = userRepository.findById(userId).orElseThrow();
+        user.setMaxMenteeCount(maxMenteeCount);
         return toDto(userRepository.save(user));
     }
 
@@ -70,6 +80,7 @@ public class UserService {
                 .bio(user.getBio())
                 .userType(user.getUserType())
                 .mentorshipStatus(user.getMentorshipStatus())
+                .maxMenteeCount(user.getMaxMenteeCount())
                 .build();
     }
 

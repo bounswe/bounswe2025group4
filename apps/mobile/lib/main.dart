@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/providers/auth_provider.dart'; // Adjust path
+import 'core/services/api_service.dart';
 import 'app.dart'; // Adjust path
 
 void main() {
   runApp(
-    // Wrap the entire app with the AuthProvider
-    ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ProxyProvider<AuthProvider, ApiService>(
+          update:
+              (context, authProvider, _) =>
+                  ApiService(authProvider: authProvider),
+        ),
+      ],
       child: const MyApp(),
     ),
   );

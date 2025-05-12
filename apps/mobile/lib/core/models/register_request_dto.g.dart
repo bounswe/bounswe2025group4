@@ -14,6 +14,11 @@ _$RegisterRequestDtoImpl _$$RegisterRequestDtoImplFromJson(
   password: json['password'] as String,
   bio: json['bio'] as String?,
   userType: $enumDecode(_$UserTypeEnumMap, json['userType']),
+  mentorshipStatus: $enumDecodeNullable(
+    _$MentorshipStatusEnumMap,
+    json['mentorshipStatus'],
+  ),
+  maxMenteeCount: (json['maxMenteeCount'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$$RegisterRequestDtoImplToJson(
@@ -24,10 +29,17 @@ Map<String, dynamic> _$$RegisterRequestDtoImplToJson(
   'password': instance.password,
   'bio': instance.bio,
   'userType': _$UserTypeEnumMap[instance.userType]!,
+  'mentorshipStatus': _$MentorshipStatusEnumMap[instance.mentorshipStatus],
+  'maxMenteeCount': instance.maxMenteeCount,
 };
 
 const _$UserTypeEnumMap = {
   UserType.EMPLOYER: 'EMPLOYER',
   UserType.JOB_SEEKER: 'JOB_SEEKER',
   UserType.MENTOR: 'MENTOR',
+};
+
+const _$MentorshipStatusEnumMap = {
+  MentorshipStatus.MENTOR: 'MENTOR',
+  MentorshipStatus.MENTEE: 'MENTEE',
 };

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/models/user_type.dart'; // Import UserType
-import '../../../core/providers/auth_provider.dart';
+import 'package:mobile/core/services/api_service.dart';
+import 'package:mobile/core/providers/auth_provider.dart';
+import 'package:mobile/core/models/mentorship_status.dart';
+import '../providers/mentor_provider.dart';
 import './mentee_mentorship_screen.dart';
+import './mentor_mentorship_screen.dart';
 
 class MentorshipPage extends StatelessWidget {
   const MentorshipPage({super.key});
@@ -10,49 +13,36 @@ class MentorshipPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final currentUser = authProvider.currentUser; // Get the current user
+    final apiService = Provider.of<ApiService>(context);
 
-    Widget bodyContent;
-    String appBarTitle = 'Mentorship';
-
-    if (currentUser == null) {
-      // User not logged in
-      bodyContent = const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
+    // If the user is not logged in, show a message
+    if (!authProvider.isLoggedIn) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Mentorship')),
+        body: const Center(
           child: Text(
             'Please log in to access mentorship features.',
-            style: TextStyle(fontSize: 18),
-            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16),
           ),
         ),
       );
-    } else if (currentUser.role == UserType.MENTOR) {
-      // User is a Mentor
-      // TODO: Implement Mentor screen
-      bodyContent = const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Text(
-            'Mentor View - Coming Soon!',
-            style: TextStyle(fontSize: 18),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-    } else {
-      // User is Job Seeker or Employer (potential Mentee)
-      // Return the MenteeMentorshipScreen directly
-      return const MenteeMentorshipScreen();
     }
 
-    // Only build Scaffold/AppBar if not returning MenteeMentorshipScreen
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(appBarTitle),
-        automaticallyImplyLeading: false,
+    // Determine which screen to show
+    final isMentor =
+        authProvider.currentUser?.mentorshipStatus == MentorshipStatus.MENTOR;
+
+    // Create a MentorProvider for this screen
+    return ChangeNotifierProvider(
+      create: (_) => MentorProvider(apiService: apiService),
+      // Use Builder to access the provider in a separate build method
+      child: Builder(
+        builder: (context) {
+          return isMentor
+              ? const MentorMentorshipScreen()
+              : const MenteeMentorshipScreen();
+        },
       ),
-      body: bodyContent,
     );
   }
 }

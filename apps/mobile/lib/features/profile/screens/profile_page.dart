@@ -41,6 +41,9 @@ class ProfilePage extends StatelessWidget {
               'Role: ${authProvider.currentUser?.role.toString().split('.').last ?? 'N/A'}',
             ),
             const SizedBox(height: 20),
+            Text(
+              'Mentorship Status: ${authProvider.currentUser?.mentorshipStatus?.toString().split('.').last ?? 'N/A'}',
+            ),
             const Text('More profile details and editing TBD'),
             // TODO: Add profile editing, badges, etc. (Req 1.1.2)
           ],

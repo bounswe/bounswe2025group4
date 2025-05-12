@@ -27,4 +27,6 @@ public class RegisterRequest {
     private UserType userType;
 
     private MentorshipStatus mentorshipStatus;
+    
+    private Integer maxMenteeCount;
 }

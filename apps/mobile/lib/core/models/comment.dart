@@ -32,7 +32,7 @@ class Comment {
         'email': author.email,
         'bio': author.bio ?? '',
         'userType': author.role.name,
-        'companyName': author.companyName ?? '',
+        'companyName': author.company ?? '',
         'employerId': author.employerId ?? '',
       },
       'reported': reported,

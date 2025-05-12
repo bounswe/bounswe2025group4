@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // For simple token storage
 import '../models/user.dart'; // Keep existing User model for now
 import '../models/user_type.dart'; // Use UserType consistently
+import '../models/mentorship_status.dart'; // Import MentorshipStatus enum
 import '../models/register_request_dto.dart';
 import '../models/auth_response_dto.dart';
 import '../../features/auth/services/auth_service.dart'; // Import the real service
+import '../services/api_service.dart'; // Import the API service
 
 // Remove MentorshipPreference if not used in registration API, or keep if needed for UI flow
 // enum MentorshipPreference { mentor, mentee, none }
@@ -17,7 +19,8 @@ class AuthProvider with ChangeNotifier {
 
   // --- Onboarding State (If mentorship preference is part of the flow but not API) ---
   UserType? _onboardingUserType; // Changed from UserRole
-  // MentorshipPreference? _onboardingMentorshipPreference;
+  MentorshipStatus? _onboardingMentorshipStatus;
+  int? _onboardingMaxMenteeCount;
   // --- End Onboarding State ---
 
   User? get currentUser => _currentUser;
@@ -26,8 +29,9 @@ class AuthProvider with ChangeNotifier {
   String? get token => _token; // Allow access to token if needed
 
   UserType? get onboardingUserType => _onboardingUserType; // Changed getter
-  // MentorshipPreference? get onboardingMentorshipPreference =>
-  //     _onboardingMentorshipPreference;
+  MentorshipStatus? get onboardingMentorshipStatus =>
+      _onboardingMentorshipStatus;
+  int? get onboardingMaxMenteeCount => _onboardingMaxMenteeCount;
 
   // --- Initialization ---
   AuthProvider() {
@@ -42,13 +46,17 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // void setOnboardingMentorshipPreference(MentorshipPreference preference) {
-  //   _onboardingMentorshipPreference = preference;
-  //   print(
-  //     "Onboarding mentorship preference set to: $_onboardingMentorshipPreference",
-  //   );
-  //   notifyListeners();
-  // }
+  void setOnboardingMentorshipStatus(MentorshipStatus status) {
+    _onboardingMentorshipStatus = status;
+    print("Onboarding mentorship status set to: $_onboardingMentorshipStatus");
+    notifyListeners();
+  }
+
+  void setOnboardingMaxMenteeCount(int count) {
+    _onboardingMaxMenteeCount = count;
+    print("Onboarding max mentee count set to: $_onboardingMaxMenteeCount");
+    notifyListeners();
+  }
 
   // --- Authentication Methods ---
 
@@ -65,6 +73,8 @@ class AuthProvider with ChangeNotifier {
       final storedCompanyName = prefs.getString('companyName');
       final storedBio = prefs.getString('bio');
       final storedEmployerId = prefs.getString('employerId');
+      final storedMentorshipStatusName = prefs.getString('mentorshipStatus');
+      final storedMaxMenteeCount = prefs.getInt('maxMenteeCount');
 
       if (storedToken != null &&
           storedId != null &&
@@ -72,17 +82,31 @@ class AuthProvider with ChangeNotifier {
           storedUserTypeName != null) {
         final userType = UserType.values.byName(storedUserTypeName);
         _token = storedToken;
-        // Reconstruct User from stored minimal data.
-        // Full details might need fetching elsewhere (e.g., profile page)
+
+        // Reconstruct User from stored minimal data
+        // Convert stored mentorshipStatus string to enum value if available
+        MentorshipStatus? mentorshipStatus;
+        if (storedMentorshipStatusName != null) {
+          try {
+            mentorshipStatus = MentorshipStatus.values.byName(
+              storedMentorshipStatusName,
+            );
+          } catch (e) {
+            print("Error parsing stored mentorshipStatus: $e");
+          }
+        }
+
         _currentUser = User(
           id: storedId,
           username: storedUsername,
           email: storedEmail ?? '', // Use stored email or empty
           role: userType,
-          companyName: storedCompanyName,
+          company: storedCompanyName,
           bio: storedBio,
           employerId:
               storedEmployerId, // May be null if not employer or not fetched
+          mentorshipStatus: mentorshipStatus,
+          maxMenteeCount: storedMaxMenteeCount,
         );
         print("Auto-login successful for $storedUsername (ID: $storedId)");
       } else {
@@ -103,7 +127,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
     try {
       final authResponse = await _authService.login(username, password);
-      String? tempToken;
+      String? tempToken = authResponse.token;
 
       // Store initial data first
       await _storeInitialAuthData(authResponse);
@@ -118,8 +142,9 @@ class AuthProvider with ChangeNotifier {
           print("Fetching full user details after login...");
           final userDetails = await _authService.getUserDetails(
             _currentUser!.id, // Use the ID we got from login response
-            tempToken!, // Token is non-null here
+            tempToken, // Token is non-null here
           );
+          print("User details: $userDetails");
           await _updateAndPersistUserDetails(userDetails);
           print("Successfully updated full user details.");
         } catch (e) {
@@ -148,8 +173,10 @@ class AuthProvider with ChangeNotifier {
     String email,
     String password,
     UserType userType,
-    String? bio,
-  ) async {
+    String? bio, {
+    MentorshipStatus? mentorshipStatus,
+    int? maxMenteeCount,
+  }) async {
     _isLoading = true;
     notifyListeners();
     String? tempToken;
@@ -160,7 +187,10 @@ class AuthProvider with ChangeNotifier {
         password: password,
         bio: bio,
         userType: userType,
+        mentorshipStatus: mentorshipStatus,
+        maxMenteeCount: maxMenteeCount,
       );
+      print('RegisterRequestDto: ' + requestDto.toJson().toString());
 
       final authResponse = await _authService.register(requestDto);
       tempToken = authResponse.token;
@@ -182,16 +212,42 @@ class AuthProvider with ChangeNotifier {
           );
           await _updateAndPersistUserDetails(userDetails);
           print("Successfully updated full user details.");
+
+          // If user is a mentor, create mentor profile
+          if (userDetails.mentorshipStatus == MentorshipStatus.MENTOR) {
+            print("Creating mentor profile for new mentor user...");
+            try {
+              final apiService = ApiService(authProvider: this);
+              await apiService.createMentorProfile(
+                capacity:
+                    maxMenteeCount ??
+                    1, // Use provided maxMenteeCount or default to 1
+                isAvailable: true, // Start as available by default
+              );
+              print("Successfully created mentor profile.");
+            } catch (e) {
+              print("Error creating mentor profile: $e");
+              // Don't continue if mentor profile creation fails
+              _isLoading = false;
+              notifyListeners();
+              throw Exception('Failed to create mentor profile: $e');
+            }
+          }
         } catch (e) {
-          print(
-            "Warning: Failed to fetch/update full user details after registration: $e",
-          );
-          // Continue even if detail fetch fails
+          print("Error during registration process: $e");
+          // Now we should handle the error and not continue
+          _isLoading = false;
+          _token = null; // Clear token since registration is incomplete
+          _currentUser = null; // Clear user since registration is incomplete
+          notifyListeners();
+          throw Exception('Registration failed: $e');
         }
       }
 
       _isLoading = false;
       _onboardingUserType = null;
+      _onboardingMentorshipStatus = null;
+      _onboardingMaxMenteeCount = null;
       notifyListeners(); // Notify after all updates
       return true; // Return true after everything
     } catch (e) {
@@ -220,6 +276,8 @@ class AuthProvider with ChangeNotifier {
       await prefs.remove('companyName');
       await prefs.remove('bio');
       await prefs.remove('employerId');
+      await prefs.remove('mentorshipStatus');
+      await prefs.remove('maxMenteeCount');
       print("Logged out and cleared stored user data.");
     } catch (e) {
       print("Error clearing data on logout: $e");
@@ -241,7 +299,7 @@ class AuthProvider with ChangeNotifier {
       username: authResponse.username,
       email: '', // Not available in DTO
       role: authResponse.userType,
-      companyName: null, // Not available in DTO
+      company: null, // Not available in DTO
       bio: null, // Not available in DTO
       employerId: null, // Not available in DTO
     );
@@ -270,9 +328,11 @@ class AuthProvider with ChangeNotifier {
       username: authResponse.username,
       email: '', // Default empty
       role: authResponse.userType,
-      companyName: null,
+      company: null,
       bio: null,
       employerId: null,
+      mentorshipStatus: null, // Will be updated when full details are fetched
+      maxMenteeCount: null, // Will be updated when full details are fetched
     );
 
     try {
@@ -286,6 +346,8 @@ class AuthProvider with ChangeNotifier {
       await prefs.remove('companyName');
       await prefs.remove('bio');
       await prefs.remove('employerId');
+      await prefs.remove('mentorshipStatus');
+      await prefs.remove('maxMenteeCount');
     } catch (e) {
       print("Error saving initial auth data: $e");
     }
@@ -302,8 +364,8 @@ class AuthProvider with ChangeNotifier {
         final prefs = await SharedPreferences.getInstance();
         // Persist the newly fetched details
         await prefs.setString('email', _currentUser!.email);
-        if (_currentUser!.companyName != null) {
-          await prefs.setString('companyName', _currentUser!.companyName!);
+        if (_currentUser!.company != null) {
+          await prefs.setString('companyName', _currentUser!.company!);
         } else {
           await prefs.remove('companyName');
         }
@@ -317,7 +379,24 @@ class AuthProvider with ChangeNotifier {
         } else {
           await prefs.remove('employerId');
         }
-        print("Persisted updated user details.");
+
+        // Store mentorship status and max mentee count
+        if (_currentUser!.mentorshipStatus != null) {
+          await prefs.setString(
+            'mentorshipStatus',
+            _currentUser!.mentorshipStatus!.name,
+          );
+        } else {
+          await prefs.remove('mentorshipStatus');
+        }
+
+        if (_currentUser!.maxMenteeCount != null) {
+          await prefs.setInt('maxMenteeCount', _currentUser!.maxMenteeCount!);
+        } else {
+          await prefs.remove('maxMenteeCount');
+        }
+
+        print("Persisted updated user details including mentorship data.");
       } catch (e) {
         print("Error saving updated user details: $e");
       }

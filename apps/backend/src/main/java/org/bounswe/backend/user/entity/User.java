@@ -34,4 +34,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MentorshipStatus mentorshipStatus;
+    
+    @Column(nullable = false, columnDefinition = "integer default 5")
+    private Integer maxMenteeCount = 5;
 }
