@@ -122,19 +122,35 @@ class ApiService {
   /// Fetches job postings based on query and filters.
   Future<List<JobPost>> fetchJobPostings({
     String? query,
-    Map<String, List<String>>? filters,
+    String? title,
+    String? company,
+    String? location,
+    bool? remote,
+    String? ethicalTags,
+    double? minSalary,
+    double? maxSalary,
+    Map<String, dynamic>? additionalFilters,
   }) async {
-    print('API: Fetching job postings (query: $query, filters: $filters)');
+    print('API: Fetching job postings');
     final queryParams = <String, dynamic>{};
+
+    // Add search query if provided
     if (query != null && query.isNotEmpty) {
-      queryParams['search'] = query; // Assuming backend uses 'search' param
+      queryParams['title'] = query;
     }
-    if (filters != null) {
-      filters.forEach((key, value) {
-        if (value.isNotEmpty) {
-          queryParams[key] = value;
-        }
-      });
+
+    // Add specific filters if provided
+    if (title != null) queryParams['title'] = title;
+    if (company != null) queryParams['company'] = company;
+    if (location != null) queryParams['location'] = location;
+    if (remote != null) queryParams['remote'] = remote;
+    if (ethicalTags != null) queryParams['ethicalTags'] = ethicalTags;
+    if (minSalary != null) queryParams['minSalary'] = minSalary;
+    if (maxSalary != null) queryParams['maxSalary'] = maxSalary;
+
+    // Add any additional filters
+    if (additionalFilters != null) {
+      queryParams.addAll(additionalFilters);
     }
 
     final uri = _buildUri('/jobs', queryParams);
