@@ -26,10 +26,8 @@ import {
   Visibility,
   VisibilityOff,
   Work,
-  // School,
   Person,
   Handshake,
-  // DoNotDisturb,
   ArrowBack,
   ArrowForward,
   Hail,
@@ -415,10 +413,7 @@ export default function RegisterPage() {
       </Typography>
       <Grid container spacing={2}>
         {options.map((opt) => (
-          <Grid
-            size={{ xs: 12, sm: 6, md: options.length === 2 ? 6 : 4 }}
-            key={opt.value}
-          >
+          <Grid size={{ xs: 12, sm: 6, md: 6 }} key={opt.value}>
             <Card
               sx={{
                 height: '100%',
