@@ -85,8 +85,6 @@ public class MentorService {
 
     @Transactional
     public MentorshipRequestDto createMentorshipRequest(Long menteeId, CreateMentorshipRequestDto dto) {
-        System.out.println(menteeId);
-        System.out.println(dto.toString());
         User mentee = userRepository.findById(menteeId)
                 .orElseThrow(() -> new RuntimeException("Mentee not found"));
 

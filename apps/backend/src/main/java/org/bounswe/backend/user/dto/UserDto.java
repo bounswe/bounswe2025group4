@@ -15,5 +15,4 @@ public class UserDto {
     private String bio;
     private UserType userType;
     private MentorshipStatus mentorshipStatus;
-    private Integer maxMenteeCount;
 }

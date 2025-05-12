@@ -66,7 +66,6 @@ public class AuthController {
                 .bio(request.getBio())
                 .userType(request.getUserType())
                 .mentorshipStatus(request.getMentorshipStatus())
-                .maxMenteeCount(request.getMaxMenteeCount() != null ? request.getMaxMenteeCount() : 5)
                 .build();
 
         userRepository.save(user);
