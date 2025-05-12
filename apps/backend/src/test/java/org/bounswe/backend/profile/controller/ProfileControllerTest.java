@@ -1,9 +1,6 @@
 package org.bounswe.backend.profile.controller;
 
-import org.bounswe.backend.profile.dto.BadgeDto;
-import org.bounswe.backend.profile.dto.CreateProfileRequestDto;
-import org.bounswe.backend.profile.dto.InterestUpdateRequestDto;
-import org.bounswe.backend.profile.dto.ProfileDto;
+import org.bounswe.backend.profile.dto.*;
 import org.bounswe.backend.profile.service.ProfileService;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
@@ -35,6 +32,8 @@ public class ProfileControllerTest {
 
     private User mockUser;
 
+    private FullProfileDto mockProfile;
+
     private AutoCloseable closeable;
 
     @BeforeEach
@@ -45,6 +44,11 @@ public class ProfileControllerTest {
                 .id(1L)
                 .username("john")
                 .email("john@example.com")
+                .build();
+
+
+        mockProfile = FullProfileDto.builder()
+                .profile(null) // add mock profile info if needed
                 .build();
     }
 
@@ -82,5 +86,27 @@ public class ProfileControllerTest {
         assertEquals(200, response.getStatusCode().value());
         assertEquals(expectedDto, response.getBody());
         verify(profileService).createProfile(mockUser.getId(), requestDto);
+    }
+
+
+
+    @Test
+    void getMyProfile_success() {
+        // Spy the controller to override getCurrentUser()
+        ProfileController controller = spy(profileController);
+
+        // Stub getCurrentUser() to return our mock user
+        doReturn(mockUser).when(controller).getCurrentUser();
+
+        // Mock the service response
+        when(profileService.getProfileByUserId(mockUser.getId())).thenReturn(mockProfile);
+
+        // Act
+        ResponseEntity<FullProfileDto> response = controller.getMyProfile();
+
+        // Assert
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(mockProfile, response.getBody());
+        verify(profileService).getProfileByUserId(mockUser.getId());
     }
 }
