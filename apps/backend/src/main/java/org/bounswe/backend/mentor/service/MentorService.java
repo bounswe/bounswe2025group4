@@ -91,7 +91,7 @@ public class MentorService {
         // Find the mentor profile first, then get the associated user
         MentorProfile mentorProfile = mentorProfileRepository.findById(dto.getMentorId())
                 .orElseThrow(() -> new RuntimeException("Mentor profile not found"));
-        
+
         User mentor = mentorProfile.getUser();
 
         if (!mentorProfile.getIsAvailable()) {
@@ -165,6 +165,11 @@ public class MentorService {
             // Only mentee can cancel
             if (!request.getMentee().getId().equals(userId)) {
                 throw new RuntimeException("Only the mentee can cancel requests");
+            }
+        } else if (status == MentorshipRequestStatus.COMPLETED) {
+            // Both mentor and mentee can mark as completed, but only if the request is currently ACCEPTED
+            if (request.getStatus() != MentorshipRequestStatus.ACCEPTED) {
+                throw new RuntimeException("Only accepted mentorships can be marked as completed");
             }
         }
 
