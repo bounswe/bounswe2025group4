@@ -2,7 +2,9 @@ package org.bounswe.backend.application.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.bounswe.backend.application.dto.JobApplicationCreateDto;
 import org.bounswe.backend.application.dto.JobApplicationDto;
+import org.bounswe.backend.application.dto.JobApplicationUpdateDto;
 import org.bounswe.backend.application.service.JobApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,15 +33,15 @@ public class JobApplicationController {
     }
 
     @PostMapping
-    public ResponseEntity<JobApplicationDto> applyForJob(@RequestBody @Valid JobApplicationDto dto) {
-        return ResponseEntity.ok(service.applyForJob(dto));
+    public ResponseEntity<JobApplicationDto> applyForJob(@RequestBody @Valid JobApplicationCreateDto createDto) {
+        return ResponseEntity.ok(service.applyForJob(createDto));
     }
 
     @PutMapping("/{applicationId}")
     public ResponseEntity<JobApplicationDto> updateStatus(
             @PathVariable Long applicationId, 
-            @RequestBody @Valid JobApplicationDto dto) {
-        return ResponseEntity.ok(service.updateApplicationStatus(applicationId, dto));
+            @RequestBody @Valid JobApplicationUpdateDto updateDto) {
+        return ResponseEntity.ok(service.updateApplicationStatus(applicationId, updateDto));
     }
 
     @DeleteMapping("/{applicationId}")
