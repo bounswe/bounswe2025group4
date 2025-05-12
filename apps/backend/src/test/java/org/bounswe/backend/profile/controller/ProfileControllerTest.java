@@ -204,4 +204,56 @@ public class ProfileControllerTest {
         assertEquals(403, response.getStatusCode().value());
         verify(profileService, never()).deleteEducation(any(), any());
     }
+
+    @Test
+    void updateExperience_Success() {
+        // Arrange
+        UpdateExperienceRequestDto requestDto = new UpdateExperienceRequestDto();
+        requestDto.setCompany("ExampleCorp");
+
+
+        Long expId = 10L;
+        ExperienceDto expectedResponse = ExperienceDto.builder()
+                .id(expId)
+                .company("ExampleCorp")
+                .build();
+
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(mockUser));
+
+        ProfileController controller = spy(profileController);
+        doReturn(mockUser).when(controller).getCurrentUser();
+
+        when(profileService.updateExperience(userId, expId, requestDto))
+                .thenReturn(expectedResponse);
+
+        // Act
+        ResponseEntity<ExperienceDto> response = controller.updateExperience(userId, expId, requestDto);
+
+        // Assert
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(expectedResponse, response.getBody());
+        verify(profileService).updateExperience(userId, expId, requestDto);
+    }
+
+
+
+    @Test
+    void updateExperience_Forbidden() {
+        // Arrange
+        User otherUser = User.builder().id(99L).username("hacker").build();
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(otherUser));
+
+        ProfileController controller = spy(profileController);
+        doReturn(otherUser).when(controller).getCurrentUser();
+
+        UpdateExperienceRequestDto requestDto = new UpdateExperienceRequestDto();
+        Long expId = 10L;
+
+        // Act
+        ResponseEntity<ExperienceDto> response = controller.updateExperience(userId, expId, requestDto);
+
+        // Assert
+        assertEquals(403, response.getStatusCode().value());
+        verify(profileService, never()).updateExperience(any(), any(), any());
+    }
 }
