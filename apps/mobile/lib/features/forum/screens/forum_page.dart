@@ -70,52 +70,55 @@ class _ForumPageState extends State<ForumPage> {
             else
               RefreshIndicator(
                 onRefresh: _loadThreads,
-                child: ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 100),
-                  itemCount: _threads.length,
-                  itemBuilder: (_, i) {
-                    final t = _threads[i];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      child: ThreadTile(
-                        thread: t,
-                        onTap: () async {
-                          final result = await Navigator.push(
-                            ctx,
-                            MaterialPageRoute(
-                              builder: (_) => ThreadDetailScreen(thread: t),
-                            ),
-                          );
-                          if (result is DiscussionThread) {
-                            setState(() {
-                              final index = _threads.indexWhere((thread) => thread.id == result.id);
-                              if (index != -1) {
-                                _threads[index] = result;
+                  child: Scrollbar(
+                    thumbVisibility: true,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(bottom: 100),
+                      itemCount: _threads.length,
+                      itemBuilder: (_, i) {
+                        final t = _threads[i];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          child: ThreadTile(
+                            thread: t,
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                ctx,
+                                MaterialPageRoute(
+                                  builder: (_) => ThreadDetailScreen(thread: t),
+                                ),
+                              );
+                              if (result is DiscussionThread) {
+                                setState(() {
+                                  final index = _threads.indexWhere((thread) => thread.id == result.id);
+                                  if (index != -1) {
+                                    _threads[index] = result;
+                                  }
+                                });
+                              } else if (result == 'deleted') {
+                                setState(() {
+                                  _threads.removeWhere((thread) => thread.id == t.id);
+                                });
                               }
-                            });
-                          } else if (result == 'deleted') {
-                            setState(() {
-                              _threads.removeWhere((thread) => thread.id == t.id);
-                            });
-                          }
-                        },
-                        onEdit: (updatedThread) {
-                          setState(() {
-                            final index = _threads.indexWhere((th) => th.id == updatedThread.id);
-                            if (index != -1) {
-                              _threads[index] = updatedThread;
-                            }
-                          });
-                        },
-                        onDelete: () {
-                          setState(() {
-                            _threads.removeWhere((th) => th.id == t.id);
-                          });
-                        },
-                      ),
-                    );
-                  },
-                ),
+                            },
+                            onEdit: (updatedThread) {
+                              setState(() {
+                                final index = _threads.indexWhere((th) => th.id == updatedThread.id);
+                                if (index != -1) {
+                                  _threads[index] = updatedThread;
+                                }
+                              });
+                            },
+                            onDelete: () {
+                              setState(() {
+                                _threads.removeWhere((th) => th.id == t.id);
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
               ),
           // Always show FAB
           Positioned(
