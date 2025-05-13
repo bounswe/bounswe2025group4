@@ -8,7 +8,8 @@ import org.bounswe.backend.job.dto.JobPostDto;
 import org.bounswe.backend.job.entity.JobPost;
 import org.bounswe.backend.job.repository.JobPostRepository;
 import org.bounswe.backend.user.entity.User;
-import org.bounswe.backend.user.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +19,10 @@ import java.util.stream.Collectors;
 public class JobPostService {
 
     private final JobPostRepository repo;
-    private final UserRepository userRepo;
     private final JobPostRepository jobPostRepository;
 
-    public JobPostService(JobPostRepository repo, UserRepository userRepo, JobPostRepository jobPostRepository) {
+    public JobPostService(JobPostRepository repo, JobPostRepository jobPostRepository) {
         this.repo = repo;
-        this.userRepo = userRepo;
         this.jobPostRepository = jobPostRepository;
     }
 
@@ -61,14 +60,12 @@ public class JobPostService {
 
 
     public JobPostDto create(JobPostDto dto) {
-        User employer = userRepo.findById(dto.getEmployerId())
-                .orElseThrow(() -> new NotFoundException("Employer not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User employer = (User) authentication.getPrincipal();
 
         if (employer.getUserType() != UserType.EMPLOYER) {
             throw new UnauthorizedActionException("Only users with EMPLOYER type can post jobs.");
         }
-
-
 
         JobPost job = JobPost.builder()
                 .title(dto.getTitle())
@@ -97,7 +94,6 @@ public class JobPostService {
     private JobPostDto toDto(JobPost job) {
         return JobPostDto.builder()
                 .id(job.getId())
-                .employerId(job.getEmployer().getId())
                 .title(job.getTitle())
                 .description(job.getDescription())
                 .company(job.getCompany())
@@ -119,7 +115,6 @@ public class JobPostService {
         job.setLocation(dto.getLocation());
         job.setRemote(dto.isRemote());
         job.setEthicalTags(dto.getEthicalTags());
-        dto.setEmployerId(job.getEmployer().getId());
         job.setMinSalary(dto.getMinSalary());
         job.setMaxSalary(dto.getMaxSalary());
         job.setContact(dto.getContact());
