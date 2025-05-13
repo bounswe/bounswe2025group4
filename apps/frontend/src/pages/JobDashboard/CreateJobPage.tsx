@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import { useForm, Controller, Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -9,12 +9,13 @@ import {
   Typography,
   Box,
   Paper,
-  MenuItem,
   Checkbox,
   FormControlLabel,
   FormGroup,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useCreateJob } from '../../services/jobs.service';
+import { JobPost } from '../../types/job';
 
 // Zod schema for validation (as per roadmap)
 const jobPostSchema = z
@@ -25,89 +26,74 @@ const jobPostSchema = z
       .min(20, 'Description must be at least 20 characters long'),
     companyName: z.string().min(2, 'Company name is required'),
     location: z.string().min(2, 'Location is required'),
-    employmentType: z.enum([
-      'Full-time',
-      'Part-time',
-      'Contract',
-      'Internship',
-      'Temporary',
-    ]),
-    salaryMin: z.coerce.number().optional(),
-    salaryMax: z.coerce.number().optional(),
-    ethicalPolicies: z.array(z.string()).optional(), // Example: could be IDs or specific policy strings
-    contactEmail: z.string().email('Invalid email address'),
+    isRemote: z.boolean(),
+    minSalary: z.coerce.number().min(0).default(1),
+    maxSalary: z.coerce.number().min(0).default(1),
+    ethicalTags: z.array(z.string()).default([]),
+    contact: z.string().email('Invalid email address'),
   })
-  .refine(
-    (data) =>
-      !data.salaryMin || !data.salaryMax || data.salaryMax >= data.salaryMin,
-    {
-      message: 'Max salary must be greater than or equal to min salary',
-      path: ['salaryMax'],
-    }
-  );
+  .refine((data) => data.maxSalary >= data.minSalary, {
+    message: 'Max salary must be greater than or equal to min salary',
+    path: ['maxSalary'],
+  });
 
 type JobFormValues = z.infer<typeof jobPostSchema>;
 
 // Mock ethical policies - in a real app, these might come from an API or config
 const ETHICAL_POLICY_OPTIONS = [
-  { id: 'fair-wage', label: 'Fair Wage' },
-  { id: 'equal-opportunity', label: 'Equal Opportunity' },
-  { id: 'work-life-balance', label: 'Work-Life Balance' },
-  { id: 'eco-friendly', label: 'Eco-Friendly Practices' },
+  { id: 'fair_wage', label: 'Fair Wage' },
+  { id: 'diversity', label: 'Diversity' },
+  { id: 'sustainability', label: 'Sustainability' },
+  { id: 'wellbeing', label: 'Wellbeing' },
   { id: 'transparency', label: 'Transparency' },
 ];
 
-// Mock API call for creating a job post
-const createJobPostAPI = async (data: JobFormValues) => {
-  console.log('Submitting job post data:', data);
-  // Simulate API call
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  // In a real app, handle success/error responses from the API
-  // For example:
-  // const response = await fetch('/api/jobs', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json', /* Authorization header */ },
-  //   body: JSON.stringify(data),
-  // });
-  // if (!response.ok) throw new Error('Failed to create job post');
-  // return response.json();
-  return { id: `new-job-${Date.now()}`, ...data }; // Return mock response
-};
-
 const CreateJobPage: React.FC = () => {
   const navigate = useNavigate();
+  const createJobMutation = useCreateJob();
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
   } = useForm<JobFormValues>({
-    resolver: zodResolver(jobPostSchema),
+    resolver: zodResolver(jobPostSchema) as Resolver<JobFormValues>,
     defaultValues: {
       title: '',
       description: '',
       companyName: '',
       location: '',
-      employmentType: 'Full-time',
-      salaryMin: undefined,
-      salaryMax: undefined,
-      ethicalPolicies: [],
-      contactEmail: '',
+      isRemote: false,
+      minSalary: 1,
+      maxSalary: 1,
+      ethicalTags: [],
+      contact: '',
     },
   });
 
-  const onSubmit: SubmitHandler<JobFormValues> = async (data) => {
+  const onSubmit = handleSubmit(async (data: JobFormValues) => {
     try {
-      await createJobPostAPI(data);
-      // alert('Job post created successfully!'); // Or use a snackbar notification
+      // Transform form data to match JobPost structure
+      const jobPostData: Partial<JobPost> = {
+        title: data.title,
+        description: data.description,
+        company: data.companyName,
+        location: data.location,
+        remote: data.isRemote,
+        minSalary: data.minSalary,
+        maxSalary: data.maxSalary,
+        ethicalTags: data.ethicalTags.join(','),
+        contact: data.contact,
+      };
+
+      await createJobMutation.mutateAsync(jobPostData as JobPost);
       navigate('/dashboard/jobs'); // Redirect to dashboard after creation
     } catch (error) {
       console.error('Error creating job post:', error);
-      // alert('Failed to create job post. See console for details.'); // Or use a snackbar
     }
-  };
+  });
 
-  const selectedEthicalPolicies = watch('ethicalPolicies') || [];
+  const selectedEthicalTags = watch('ethicalTags');
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
@@ -115,7 +101,7 @@ const CreateJobPage: React.FC = () => {
         <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 3 }}>
           Create New Job Post
         </Typography>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={onSubmit}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Controller
               name="title"
@@ -180,101 +166,75 @@ const CreateJobPage: React.FC = () => {
             />
 
             <Controller
-              name="employmentType"
+              name="isRemote"
               control={control}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  select
-                  label="Employment Type"
-                  variant="outlined"
-                  fullWidth
-                  error={!!errors.employmentType}
-                  helperText={errors.employmentType?.message}
-                >
-                  {[
-                    'Full-time',
-                    'Part-time',
-                    'Contract',
-                    'Internship',
-                    'Temporary',
-                  ].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                    />
+                  }
+                  label="Remote option is available"
+                />
               )}
             />
 
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Controller
-                name="salaryMin"
+                name="minSalary"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Minimum Salary (Optional)"
+                    label="Minimum Salary"
                     type="number"
                     variant="outlined"
                     fullWidth
-                    error={!!errors.salaryMin}
-                    helperText={errors.salaryMin?.message}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value === ''
-                          ? undefined
-                          : Number(e.target.value)
-                      )
-                    }
+                    error={!!errors.minSalary}
+                    helperText={errors.minSalary?.message}
                   />
                 )}
               />
               <Controller
-                name="salaryMax"
+                name="maxSalary"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Maximum Salary (Optional)"
+                    label="Maximum Salary"
                     type="number"
                     variant="outlined"
                     fullWidth
-                    error={!!errors.salaryMax}
-                    helperText={errors.salaryMax?.message}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value === ''
-                          ? undefined
-                          : Number(e.target.value)
-                      )
-                    }
+                    error={!!errors.maxSalary}
+                    helperText={errors.maxSalary?.message}
                   />
                 )}
               />
             </Box>
 
             <Typography variant="subtitle1" sx={{ mt: 1 }}>
-              Ethical Policies (Optional)
+              Ethical Policies
             </Typography>
             <FormGroup sx={{ pl: 1 }}>
               {ETHICAL_POLICY_OPTIONS.map((policy) => (
                 <Controller
-                  name="ethicalPolicies"
+                  name="ethicalTags"
                   control={control}
                   key={policy.id}
                   render={({ field }) => (
                     <FormControlLabel
                       control={
                         <Checkbox
-                          checked={selectedEthicalPolicies.includes(policy.id)}
+                          checked={selectedEthicalTags.includes(policy.id)}
                           onChange={(e) => {
-                            const newPolicies = e.target.checked
-                              ? [...selectedEthicalPolicies, policy.id]
-                              : selectedEthicalPolicies.filter(
+                            const newTags = e.target.checked
+                              ? [...selectedEthicalTags, policy.id]
+                              : selectedEthicalTags.filter(
                                   (id) => id !== policy.id
                                 );
-                            field.onChange(newPolicies);
+                            field.onChange(newTags);
                           }}
                         />
                       }
@@ -286,7 +246,7 @@ const CreateJobPage: React.FC = () => {
             </FormGroup>
 
             <Controller
-              name="contactEmail"
+              name="contact"
               control={control}
               render={({ field }) => (
                 <TextField
@@ -295,8 +255,8 @@ const CreateJobPage: React.FC = () => {
                   variant="outlined"
                   fullWidth
                   type="email"
-                  error={!!errors.contactEmail}
-                  helperText={errors.contactEmail?.message}
+                  error={!!errors.contact}
+                  helperText={errors.contact?.message}
                 />
               )}
             />
