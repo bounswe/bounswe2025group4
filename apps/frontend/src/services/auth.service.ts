@@ -1,10 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './api';
-import {
-  LoginCredentials,
-  RegisterCredentials,
-  AuthResponse,
-} from '../types/auth';
+import { LoginCredentials, AuthResponse, RegisterData } from '../types/auth';
 
 const AUTH_KEYS = {
   user: ['auth', 'user'] as const,
@@ -23,7 +19,7 @@ class AuthService {
     return response.data;
   }
 
-  async register(credentials: RegisterCredentials): Promise<AuthResponse> {
+  async register(credentials: RegisterData): Promise<AuthResponse> {
     const response = await apiClient.post<AuthResponse>(
       '/auth/register',
       credentials
@@ -33,26 +29,6 @@ class AuthService {
 
   async logout(): Promise<void> {
     localStorage.removeItem('token');
-  }
-
-  async getCurrentUser(): Promise<User | null> {
-    const token = localStorage.getItem('token');
-    const id = localStorage.getItem('id');
-    if (token) {
-      try {
-        const response = await apiClient.get<User>(`/users/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return response.data;
-      } catch (e) {
-        console.error('Failed to parse token or mock user:', e);
-        localStorage.removeItem('token');
-        return null;
-      }
-    }
-    return null;
   }
 }
 
@@ -72,8 +48,8 @@ export const useLogin = () => {
 
 export const useRegister = () => {
   const queryClient = useQueryClient();
-  return useMutation<AuthResponse, Error, RegisterCredentials>({
-    mutationFn: (creds: RegisterCredentials) => authService.register(creds),
+  return useMutation<AuthResponse, Error, RegisterData>({
+    mutationFn: (creds: RegisterData) => authService.register(creds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: AUTH_KEYS.user });
     },

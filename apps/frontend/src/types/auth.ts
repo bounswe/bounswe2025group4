@@ -5,9 +5,8 @@ export interface User {
   id: number;
   username: string;
   email: string;
-  bio: string;
   userType: UserType;
-  mentorType: MentorshipRole;
+  mentorshipStatus: MentorshipRole;
 }
 
 export interface LoginCredentials {
@@ -19,14 +18,24 @@ export interface RegisterCredentials extends LoginCredentials {
   email: string;
   bio: string;
   userType: UserType;
-  mentorshipRole: MentorshipRole;
+  mentorshipStatus: MentorshipRole;
 }
+
+export interface RegisterProfileInfoData {
+  fullName: string;
+  phone: string;
+  location: string;
+  occupation: string;
+  bio: string;
+}
+
+export type RegisterData = RegisterCredentials & RegisterProfileInfoData;
 
 export interface AuthResponse {
   token: string;
   username: string;
   userType: UserType;
-  mentorType: MentorshipRole;
+  mentorshipStatus: MentorshipRole;
   id: number;
 }
 
