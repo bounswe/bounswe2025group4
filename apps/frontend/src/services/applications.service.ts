@@ -1,27 +1,49 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiClient } from './api';
 import { Application, ApplicationStatus } from '../types/application';
+
+export interface ApplicationSubmitData {
+  jobId: string;
+  name: string;
+  email: string;
+  resume: File;
+  coverLetter?: string;
+}
+
+interface RawApplication extends Omit<Application, 'submissionDate'> {
+  submissionDate: string;
+}
 
 export class ApplicationsService {
   async getApplicationsByJobId(jobId: string): Promise<Application[]> {
     const response = await apiClient.get<Application[]>(
       `/applications/${jobId}`
     );
-    return response.data;
+    return response.data.map((application) => ({
+      ...application,
+      submissionDate: new Date(application.submissionDate),
+    }));
   }
 
   async getApplicationStatus(applicationId: string): Promise<Application> {
-    const response = await apiClient.get<Application>(
+    const response = await apiClient.get<RawApplication>(
       `/applications/${applicationId}`
     );
-    return response.data;
+    return {
+      ...response.data,
+      submissionDate: new Date(response.data.submissionDate),
+    };
   }
 
   async getApplicationsByUserId(userId: string): Promise<Application[]> {
-    const response = await apiClient.get<Application[]>(
+    const response = await apiClient.get<RawApplication[]>(
       `/applications?userId=${userId}`
     );
-    return response.data;
+    // date parsing
+    return response.data.map((application) => ({
+      ...application,
+      submissionDate: new Date(application.submissionDate),
+    }));
   }
 
   async updateApplicationStatus(
@@ -33,6 +55,11 @@ export class ApplicationsService {
       `/applications/${applicationId}`,
       { status, feedback }
     );
+    return response.data;
+  }
+
+  async submitApplication(data: ApplicationSubmitData): Promise<Application> {
+    const response = await apiClient.post<Application>('/applications', data);
     return response.data;
   }
 }
@@ -75,5 +102,30 @@ export const useGetApplicationsByUserId = (userId: string | null) => {
         : Promise.resolve([]),
     enabled: !!userId,
     refetchOnWindowFocus: false,
+  });
+};
+
+export const useUpdateApplicationStatus = () => {
+  return useMutation<
+    Application,
+    Error,
+    {
+      applicationId: string;
+      status: ApplicationStatus;
+      feedback?: string;
+    }
+  >({
+    mutationFn: ({ applicationId, status, feedback }) =>
+      applicationsService.updateApplicationStatus(
+        applicationId,
+        status,
+        feedback
+      ),
+  });
+};
+
+export const useSubmitApplication = () => {
+  return useMutation<Application, Error, ApplicationSubmitData>({
+    mutationFn: (data) => applicationsService.submitApplication(data),
   });
 };

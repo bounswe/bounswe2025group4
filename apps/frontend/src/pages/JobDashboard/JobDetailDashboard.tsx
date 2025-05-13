@@ -6,15 +6,19 @@ import {
   Paper,
   CircularProgress,
   Alert,
+  Snackbar,
 } from '@mui/material';
 import { AuthContext, AuthContextType } from '../../contexts/AuthContext';
 import { JobPost } from '../../types/job';
 import { useGetJobById } from '../../services/jobs.service';
-import { useGetApplicationsByJobId } from '../../services/applications.service';
-import ApplicationsGrid from '../../components/dashboard/ApplicationsGrid';
+import {
+  useGetApplicationsByJobId,
+  useUpdateApplicationStatus,
+} from '../../services/applications.service';
+import ApplicationsGrid from '../../components/jobdashboard/ApplicationsGrid';
 import { ApplicationStatusUpdate } from '../../schemas/job';
 
-const JobPostDetailDashboardView: React.FC = () => {
+const JobDetailDashboard: React.FC = () => {
   const { id: jobId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const {
@@ -36,7 +40,19 @@ const JobPostDetailDashboardView: React.FC = () => {
     data: applicationsData,
     isLoading: isLoadingApps,
     error: appsError,
+    refetch: refetchApplications,
   } = useGetApplicationsByJobId(jobId as string);
+
+  const updateStatusMutation = useUpdateApplicationStatus();
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
 
   useEffect(() => {
     if (jobData) {
@@ -57,19 +73,36 @@ const JobPostDetailDashboardView: React.FC = () => {
     data: ApplicationStatusUpdate
   ) => {
     if (!token) {
-      alert('Authentication error.');
+      setSnackbar({
+        open: true,
+        message: 'Authentication error.',
+        severity: 'error',
+      });
       return;
     }
+
     try {
-      console.log(
-        'Update logic to be implemented with React Query mutation hook.',
+      await updateStatusMutation.mutateAsync({
         applicationId,
-        data
-      );
-      alert('Application update placeholder - implement with mutation hook!');
+        status: data.status,
+        feedback: data.feedback,
+      });
+
+      // Refetch applications instead of reloading
+      await refetchApplications();
+
+      setSnackbar({
+        open: true,
+        message: 'Application status updated successfully',
+        severity: 'success',
+      });
     } catch (err) {
       console.error('Failed to update application:', err);
-      alert('Failed to update application. Please try again.');
+      setSnackbar({
+        open: true,
+        message: 'Failed to update application. Please try again.',
+        severity: 'error',
+      });
     }
   };
 
@@ -152,8 +185,21 @@ const JobPostDetailDashboardView: React.FC = () => {
           disabled.
         </Alert>
       )}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
 
-export default JobPostDetailDashboardView;
+export default JobDetailDashboard;

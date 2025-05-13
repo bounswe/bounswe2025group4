@@ -9,5 +9,5 @@ export interface Application {
   jobPostingId: number;
   status: ApplicationStatus;
   feedback: string;
-  submissionDate: string;
+  submissionDate: Date;
 }

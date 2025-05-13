@@ -83,8 +83,8 @@ const UpdateStatusDialog: React.FC<UpdateStatusDialogProps> = ({
       <DialogTitle>Update Application Status</DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="subtitle1" gutterBottom>
+          <Box sx={{ mt: -2 }}>
+            <Typography variant="subtitle1">
               {application.applicantName} - {application.title}
             </Typography>
 

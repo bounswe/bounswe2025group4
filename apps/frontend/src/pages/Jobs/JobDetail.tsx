@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import ApplicationForm from './ApplicationForm';
+import ApplicationForm from '../../components/jobs/ApplicationForm';
 import {
   Container,
   Typography,
@@ -12,12 +12,17 @@ import {
   Alert,
   Grid,
   Divider,
+  Snackbar,
 } from '@mui/material';
 import { JobPost } from '../../types/job';
 import { useGetJobById } from '../../services/jobs.service';
-import { useGetApplicationsByUserId } from '../../services/applications.service';
+import {
+  useGetApplicationsByUserId,
+  useSubmitApplication,
+} from '../../services/applications.service';
 import { AuthContext, AuthContextType } from '../../contexts/AuthContext';
 import { Application } from '../../types/application';
+import { ApplicationSubmitData } from '../../services/applications.service';
 
 // Define a type for application data (can be moved to a shared types file)
 interface ApplicationData {
@@ -41,6 +46,18 @@ const JobDetail: React.FC = () => {
   const authContext = useContext(AuthContext) as AuthContextType;
   const userId = authContext?.id;
 
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
+    open: false,
+    message: '',
+    severity: 'success',
+  });
+
+  const submitApplicationMutation = useSubmitApplication();
+
   if (!jobId) {
     setError('Job ID is missing.');
     setLoading(false);
@@ -48,7 +65,8 @@ const JobDetail: React.FC = () => {
   }
 
   const { data: jobData } = useGetJobById(jobId as string);
-  const { data: userApplications } = useGetApplicationsByUserId(userId);
+  const { data: userApplications, refetch: refetchUserApplications } =
+    useGetApplicationsByUserId(userId);
 
   useEffect(() => {
     if (jobData) {
@@ -77,11 +95,27 @@ const JobDetail: React.FC = () => {
     setShowApplicationForm(false);
   };
 
-  const handleApplicationSubmit = (applicationData: ApplicationData) => {
-    console.log('Submitting application:', applicationData);
-    // Consider using MUI Snackbar for success messages
-    alert(`Application for ${job?.title} submitted successfully!`);
-    setShowApplicationForm(false);
+  const handleApplicationSubmit = async (
+    applicationData: ApplicationSubmitData
+  ) => {
+    try {
+      await submitApplicationMutation.mutateAsync(applicationData);
+      setSnackbar({
+        open: true,
+        message: `Application for ${job?.title} submitted successfully!`,
+        severity: 'success',
+      });
+      setShowApplicationForm(false);
+      // Refetch user applications to show the new status
+      refetchUserApplications();
+    } catch (error) {
+      console.error('Failed to submit application:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to submit application. Please try again.',
+        severity: 'error',
+      });
+    }
   };
 
   if (loading) {
@@ -222,7 +256,7 @@ const JobDetail: React.FC = () => {
                 Ethical Tags
               </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {job.ethicalTags.map((policy) => (
+                {job.ethicalTags.split(',').map((policy) => (
                   <Chip
                     key={policy}
                     label={policy.replace('_', ' ')}
@@ -264,6 +298,20 @@ const JobDetail: React.FC = () => {
           onSubmit={handleApplicationSubmit}
         />
       )}
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

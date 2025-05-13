@@ -72,7 +72,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
 
         {job.ethicalTags && job.ethicalTags.length > 0 && (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {job.ethicalTags.map((policy) => (
+            {job.ethicalTags.split(',').map((policy) => (
               <Chip
                 key={policy}
                 label={policy.replace('_', ' ')}

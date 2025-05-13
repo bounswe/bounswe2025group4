@@ -8,16 +8,13 @@ import {
 } from '@mui/x-data-grid';
 import {
   Box,
-  Button,
   Chip,
   Tooltip,
-  Typography,
   useTheme,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import AddIcon from '@mui/icons-material/Add';
 
 import { JobPost } from '../../types/job';
 import { useDeleteJob } from '../../services/jobs.service';
@@ -27,7 +24,6 @@ interface JobGridProps {
   jobs: JobPost[];
   isLoading: boolean;
   onEdit: (job: JobPost) => void;
-  onCreateNew: () => void;
   onApplicationsView: (jobId: string) => void;
 }
 
@@ -35,7 +31,6 @@ const JobGrid: React.FC<JobGridProps> = ({
   jobs,
   isLoading,
   onEdit,
-  onCreateNew,
   onApplicationsView,
 }) => {
   const theme = useTheme();
@@ -74,23 +69,31 @@ const JobGrid: React.FC<JobGridProps> = ({
     {
       field: 'title',
       headerName: 'Job Title',
+      width: 150,
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
       flex: 1,
-      minWidth: 180,
+      minWidth: 150,
     },
     {
       field: 'location',
       headerName: 'Location',
-      width: 150,
+      width: 100,
     },
     {
-      field: 'employmentType',
-      headerName: 'Type',
-      width: 120,
+      field: 'remote',
+      headerName: 'Remote',
+      width: 80,
+      renderCell: (params: GridRenderCellParams<JobPost>) => {
+        return params.row.remote ? 'Yes' : 'No';
+      },
     },
     {
       field: 'salary',
       headerName: 'Salary Range',
-      width: 150,
+      width: 110,
       renderCell: (params: GridRenderCellParams<JobPost>) => {
         const salaryMin = params.row.minSalary;
         const salaryMax = params.row.maxSalary;
@@ -109,9 +112,9 @@ const JobGrid: React.FC<JobGridProps> = ({
       headerName: 'Ethical Policies',
       width: 200,
       renderCell: (params: GridRenderCellParams<JobPost>) => {
-        const policies = params.row.ethicalTags;
+        const policies = params.row.ethicalTags.split(',');
         return (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1.6 }}>
             {policies.slice(0, 2).map((policy) => (
               <Chip
                 key={policy}
@@ -134,15 +137,15 @@ const JobGrid: React.FC<JobGridProps> = ({
         );
       },
     },
-    {
-      field: 'postedDate',
-      headerName: 'Posted Date',
-      width: 120,
-      valueFormatter: ({ value }) => {
-        if (!value) return '';
-        return new Date(value).toLocaleDateString();
-      },
-    },
+    // {
+    //   field: 'postedDate',
+    //   headerName: 'Posted Date',
+    //   width: 120,
+    //   valueFormatter: ({ value }) => {
+    //     if (!value) return '';
+    //     return new Date(value).toLocaleDateString();
+    //   },
+    // },
     {
       field: 'actions',
       type: 'actions',
@@ -173,24 +176,14 @@ const JobGrid: React.FC<JobGridProps> = ({
 
   return (
     <Box sx={{ width: '100%', height: 500 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6">Manage Job Listings</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={onCreateNew}
-        >
-          Create Job
-        </Button>
-      </Box>
-
       <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <DataGrid
           rows={jobs}
           columns={columns}
           loading={isLoading}
           disableRowSelectionOnClick
+          disableColumnResize
+          disableColumnMenu
           getRowId={(row) => row.id}
           pageSizeOptions={[10, 25, 50]}
           initialState={{

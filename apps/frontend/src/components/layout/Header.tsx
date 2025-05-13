@@ -16,6 +16,11 @@ import { Logout } from '@mui/icons-material';
 const Header: React.FC = () => {
   const { token, setToken } = useAuth();
 
+  const handleLogout = () => {
+    setToken(null);
+    window.location.href = '/';
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -49,7 +54,7 @@ const Header: React.FC = () => {
                 >
                   <AccountCircle />
                 </IconButton>
-                <IconButton color="inherit" onClick={() => setToken(null)}>
+                <IconButton color="inherit" onClick={handleLogout}>
                   <Logout />
                 </IconButton>
               </>

@@ -5,6 +5,7 @@ import {
   GridRenderCellParams,
   GridRowParams,
   GridActionsCellItem,
+  GridValueFormatter,
 } from '@mui/x-data-grid';
 import { Box, Button, Chip, Typography, useTheme } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -30,7 +31,6 @@ interface ApplicationsGridProps {
 }
 
 const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
-  jobId,
   jobTitle,
   applications,
   isLoading,
@@ -100,7 +100,7 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
       field: 'applicantName',
       headerName: 'Applicant',
       flex: 1,
-      minWidth: 180,
+      minWidth: 100,
     },
     {
       field: 'title',
@@ -111,9 +111,13 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
       field: 'submissionDate',
       headerName: 'Applied On',
       width: 120,
-      valueFormatter: ({ value }) => {
+      valueFormatter: (value: Date) => {
         if (!value) return '';
-        return new Date(value).toLocaleDateString();
+        return value.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
       },
     },
     {
@@ -128,9 +132,9 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
       field: 'feedback',
       headerName: 'Feedback',
       width: 200,
-      valueGetter: (params: { row: Application }) => {
-        if (!params?.row) return 'No feedback provided';
-        return params.row.feedback || 'No feedback provided';
+      valueGetter: (feedback: string) => {
+        if (!feedback) return 'No feedback provided';
+        return feedback;
       },
     },
     {
@@ -204,7 +208,6 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
         open={viewDialogOpen}
         application={selectedApplication}
         onClose={handleCloseView}
-        onUpdateStatus={handleStatusUpdate}
       />
 
       <UpdateStatusDialog

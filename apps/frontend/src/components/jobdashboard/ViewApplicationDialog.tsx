@@ -14,14 +14,12 @@ interface ViewApplicationDialogProps {
   open: boolean;
   application: Application | null;
   onClose: () => void;
-  onUpdateStatus: (application: Application) => void;
 }
 
 const ViewApplicationDialog: React.FC<ViewApplicationDialogProps> = ({
   open,
   application,
   onClose,
-  onUpdateStatus,
 }) => {
   if (!application) return null;
 
@@ -29,7 +27,7 @@ const ViewApplicationDialog: React.FC<ViewApplicationDialogProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Application Details</DialogTitle>
       <DialogContent>
-        <Box sx={{ mt: 2 }}>
+        <Box>
           <Typography variant="h6" gutterBottom>
             {application.applicantName}
           </Typography>
@@ -72,16 +70,6 @@ const ViewApplicationDialog: React.FC<ViewApplicationDialogProps> = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            onClose();
-            onUpdateStatus(application);
-          }}
-        >
-          Update Status
-        </Button>
       </DialogActions>
     </Dialog>
   );

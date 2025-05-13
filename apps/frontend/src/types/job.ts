@@ -8,10 +8,11 @@ export interface JobPost {
   company: string;
   location: string;
   remote: boolean;
-  ethicalTags: string[];
+  ethicalTags: string;
   minSalary: number;
   maxSalary: number;
   status: string;
+  contact: string;
 }
 
 export interface JobFilters {
