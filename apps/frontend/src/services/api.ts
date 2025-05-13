@@ -44,7 +44,6 @@ class ApiClient {
       '/auth/reset-password',
       '/auth/forgot-password',
     ];
-    
 
     // Add request interceptor for auth
     this.client.interceptors.request.use(
@@ -97,8 +96,9 @@ class ApiClient {
           return Promise.reject({
             data: null,
             error: error.response.data.error || 'Unknown Error',
-            message: error.response.data.message || 'An unexpected error occurred',
-            status: error.response.data.status || error.response.status
+            message:
+              error.response.data.message || 'An unexpected error occurred',
+            status: error.response.data.status || error.response.status,
           });
         }
 
@@ -107,7 +107,7 @@ class ApiClient {
           data: null,
           error: 'Network Error',
           message: 'Unable to connect to the server',
-          status: 'NETWORK_ERROR'
+          status: 'NETWORK_ERROR',
         });
       }
     );

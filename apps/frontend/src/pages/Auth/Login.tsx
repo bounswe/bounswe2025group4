@@ -47,11 +47,11 @@ export default function LoginPage() {
         { username, password },
         {
           onSuccess: () => {
-              setOpenSuccessSnackbar(true);
-              setTimeout(() => {
-                window.location.href = '/';
-              }, 1500);
-            },
+            setOpenSuccessSnackbar(true);
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 1500);
+          },
           onError: (error: Error) => {
             const apiError = error as unknown as ApiError;
             setErrorMessage(apiError.message || error.message);
