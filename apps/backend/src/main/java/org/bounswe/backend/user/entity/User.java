@@ -26,8 +26,6 @@ public class User {
     private String email;
     private String password;
 
-    private String bio;
-
     @Enumerated(EnumType.STRING)
     private UserType userType;
 

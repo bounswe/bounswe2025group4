@@ -33,7 +33,6 @@ public class UserService {
         User user = User.builder()
                 .username(dto.getUsername())
                 .email(dto.getEmail())
-                .bio(dto.getBio())
                 .userType(dto.getUserType())
                 .mentorshipStatus(dto.getMentorshipStatus())
                 .build();
@@ -44,7 +43,6 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow();
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
-        user.setBio(dto.getBio());
         user.setUserType(dto.getUserType());
         if (dto.getMentorshipStatus() != null) {
             user.setMentorshipStatus(dto.getMentorshipStatus());
@@ -67,7 +65,6 @@ public class UserService {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .bio(user.getBio())
                 .userType(user.getUserType())
                 .mentorshipStatus(user.getMentorshipStatus())
                 .build();
