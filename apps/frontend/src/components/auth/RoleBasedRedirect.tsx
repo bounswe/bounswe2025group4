@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useCurrentUser } from '../../services/auth.service';
-import { User } from '../../types/user';
+import { useCurrentUser } from '../../services/user.service';
+import { User } from '../../types/auth';
 import CenteredLoader from '../layout/CenterLoader';
 
 const RoleBasedRedirect: React.FC = () => {
