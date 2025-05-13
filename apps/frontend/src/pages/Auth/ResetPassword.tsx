@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
 
   // Handle new password submission
   const onSubmitNewPassword = (data: z.infer<typeof newPasswordSchema>) => {
-    const sendData = {  
+    const sendData = {
       token: token || '',
       newPassword: data.password,
     };
@@ -77,7 +77,8 @@ export default function ResetPasswordPage() {
         setResetComplete(true);
       },
       onError: (error) => {
-        const errorMessage = error?.message || 'Failed to reset password. Please try again.';
+        const errorMessage =
+          error?.message || 'Failed to reset password. Please try again.';
         setError(errorMessage);
         setOpenSnackbar(true);
       },
@@ -273,7 +274,11 @@ export default function ResetPasswordPage() {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert severity="error" onClose={handleCloseSnackbar} sx={{ width: '100%' }}>
+        <Alert
+          severity="error"
+          onClose={handleCloseSnackbar}
+          sx={{ width: '100%' }}
+        >
           {error}
         </Alert>
       </Snackbar>

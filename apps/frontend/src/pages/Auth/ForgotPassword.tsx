@@ -54,7 +54,9 @@ export default function ForgotPasswordPage() {
         setEmailSent(true);
       },
       onError: (error) => {
-        const errorMessage = error?.message || 'Failed to send reset password email. Please try again.';
+        const errorMessage =
+          error?.message ||
+          'Failed to send reset password email. Please try again.';
         setError(errorMessage);
         setOpenSnackbar(true);
       },
@@ -202,9 +204,9 @@ export default function ForgotPasswordPage() {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
-          severity="error" 
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
           sx={{ width: '100%' }}
         >
           {error}

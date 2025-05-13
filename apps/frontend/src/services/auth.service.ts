@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './api';
 import { LoginCredentials, AuthResponse, RegisterData } from '../types/auth';
-
+import { ApiError } from '../types/api';
 const AUTH_KEYS = {
   user: ['auth', 'user'] as const,
 };
 
 class AuthService {
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+  async login(credentials: LoginCredentials): Promise<AuthResponse | ApiError> {
     const response = await apiClient.post<AuthResponse>(
       '/auth/login',
       credentials
@@ -19,7 +19,7 @@ class AuthService {
     return response.data;
   }
 
-  async register(credentials: RegisterData): Promise<AuthResponse> {
+  async register(credentials: RegisterData): Promise<AuthResponse | ApiError> {
     const response = await apiClient.post<AuthResponse>(
       '/auth/register',
       credentials
@@ -46,7 +46,7 @@ export const authService = new AuthService();
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  return useMutation<AuthResponse, Error, LoginCredentials>({
+  return useMutation<AuthResponse | ApiError, Error, LoginCredentials>({
     mutationFn: (creds: LoginCredentials) => authService.login(creds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: AUTH_KEYS.user });
@@ -56,7 +56,7 @@ export const useLogin = () => {
 
 export const useRegister = () => {
   const queryClient = useQueryClient();
-  return useMutation<AuthResponse, Error, RegisterData>({
+  return useMutation<AuthResponse | ApiError, Error, RegisterData>({
     mutationFn: (creds: RegisterData) => authService.register(creds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: AUTH_KEYS.user });
