@@ -299,6 +299,57 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
     );
   }
 
+  void _showMentorshipActionDialog(
+    int requestId,
+    String mentorName,
+    MentorshipRequestStatus status,
+  ) {
+    final actionText =
+        status == MentorshipRequestStatus.COMPLETED ? 'complete' : 'cancel';
+    final actionColor =
+        status == MentorshipRequestStatus.COMPLETED ? Colors.green : Colors.red;
+
+    // Capture the provider before showing dialog
+    final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text('$actionText Mentorship'),
+            content: Text(
+              'Are you sure you want to $actionText your mentorship with $mentorName?'
+              '${status == MentorshipRequestStatus.COMPLETED ? '\n\nThis will mark the mentorship as successfully completed.' : '\n\nThis will end the mentorship relationship.'}',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(dialogContext);
+                  // Use the captured provider instead of trying to get it from the dialog context
+                  final success = await mentorProvider.updateRequestStatus(
+                    requestId: requestId,
+                    status: status,
+                  );
+                  if (success && mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Mentorship ${actionText}d successfully'),
+                        backgroundColor: actionColor.withOpacity(0.8),
+                      ),
+                    );
+                  }
+                },
+                child: Text('Confirm', style: TextStyle(color: actionColor)),
+              ),
+            ],
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MentorProvider>(
@@ -391,6 +442,18 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                       () => _navigateToDirectMessage(
                         req.mentor.id.toString(),
                         req.mentor.name,
+                      ),
+                  onCompleteTap:
+                      () => _showMentorshipActionDialog(
+                        req.id,
+                        req.mentor.name,
+                        MentorshipRequestStatus.COMPLETED,
+                      ),
+                  onCancelTap:
+                      () => _showMentorshipActionDialog(
+                        req.id,
+                        req.mentor.name,
+                        MentorshipRequestStatus.CANCELLED,
                       ),
                 );
               }).toList(),

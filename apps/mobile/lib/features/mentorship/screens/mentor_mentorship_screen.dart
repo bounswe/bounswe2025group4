@@ -105,6 +105,58 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
     );
   }
 
+  // Show dialog to confirm complete or cancel action
+  void _showMentorshipActionDialog(
+    int requestId,
+    String menteeName,
+    MentorshipRequestStatus status,
+  ) {
+    final actionText =
+        status == MentorshipRequestStatus.COMPLETED ? 'complete' : 'cancel';
+    final actionColor =
+        status == MentorshipRequestStatus.COMPLETED ? Colors.green : Colors.red;
+
+    // Capture the provider before showing dialog
+    final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text('$actionText Mentorship'),
+            content: Text(
+              'Are you sure you want to $actionText your mentorship with $menteeName?'
+              '${status == MentorshipRequestStatus.COMPLETED ? '\n\nThis will mark the mentorship as successfully completed.' : '\n\nThis will end the mentorship relationship.'}',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(dialogContext);
+                  // Use the captured provider instead of trying to get it from the dialog context
+                  final success = await mentorProvider.updateRequestStatus(
+                    requestId: requestId,
+                    status: status,
+                  );
+                  if (success && mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Mentorship ${actionText}d successfully'),
+                        backgroundColor: actionColor.withOpacity(0.8),
+                      ),
+                    );
+                  }
+                },
+                child: Text('Confirm', style: TextStyle(color: actionColor)),
+              ),
+            ],
+          ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,6 +256,18 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                       ),
                                     );
                                   },
+                                  onCompleteTap:
+                                      () => _showMentorshipActionDialog(
+                                        request.id,
+                                        request.mentee.username,
+                                        MentorshipRequestStatus.COMPLETED,
+                                      ),
+                                  onCancelTap:
+                                      () => _showMentorshipActionDialog(
+                                        request.id,
+                                        request.mentee.username,
+                                        MentorshipRequestStatus.CANCELLED,
+                                      ),
                                 );
                               },
                             ),
