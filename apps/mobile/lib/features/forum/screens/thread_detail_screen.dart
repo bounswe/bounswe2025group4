@@ -22,7 +22,6 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
   late final ApiService _api;
   List<Comment> _comments = [];
   late DiscussionThread _currentThread;
-  String? _username;
 
   @override
   void initState() {
@@ -30,7 +29,6 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
     _api = ApiService(authProvider: context.read<AuthProvider>());
     _currentThread = widget.thread;
     _loadComments();
-    _loadUsername();
   }
 
   Future<void> _loadComments() async {
@@ -65,15 +63,6 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
       );
-    }
-  }
-
-  Future<void> _loadUsername() async {
-    try {
-      final user = await _api.fetchUser(_currentThread.creatorId);
-      setState(() => _username = user.username);
-    } catch (_) {
-      setState(() => _username = 'Unknown');
     }
   }
 
@@ -167,99 +156,137 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: _loadComments,
-              child: ListView.builder(
-                key: ValueKey(_comments.map((c) => c.id).join('-')), // Force rebuild
-                itemCount: _comments.length + 2,
-                itemBuilder: (ctx, i) {
-                  if (i == 0) {
-                    return Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 18,
-                                    child: Text(_username != null ? _username![0].toUpperCase() : '?'),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    _username ?? 'Unknown',
-                                    style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Wrap(
-                                spacing: 6,
-                                children: _currentThread.tags.map((tag) => Chip(label: Text(tag))).toList(),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                _currentThread.body,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ],
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: ListView.builder(
+                  key: ValueKey(_comments.map((c) => c.id).join('-')), // Force rebuild
+                  itemCount: _comments.length + 2,
+                  itemBuilder: (ctx, i) {
+                    if (i == 0) {
+                      return Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 18,
+                                      child: Text(
+                                        _currentThread.creatorUsername.isNotEmpty
+                                            ? _currentThread.creatorUsername[0].toUpperCase()
+                                            : '?',
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      _currentThread.creatorUsername,
+                                      style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 6,
+                                  children: _currentThread.tags.map((tag) => Chip(label: Text(tag))).toList(),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  _currentThread.body,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 12,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.calendar_today, size: 16),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Created: ${_currentThread.createdAt.toLocal().toString().split(".").first}',
+                                          style: Theme.of(context).textTheme.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                    if (_currentThread.editedAt != null)
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.edit, size: 16),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            'Edited: ${_currentThread.editedAt!.toLocal().toString().split(".").first}',
+                                            style: Theme.of(context).textTheme.bodySmall,
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }
-                  if (i == 1) return const Divider();
+                      );
+                    }
+                    if (i == 1) return const Divider();
 
-                  final comment = _comments[i - 2];
-                  return Column(
-                    key: ValueKey("comment-block-${comment.id}"),
-                    children: [
-                      CommentTile(
-                        key: ValueKey("comment-${comment.id}"),
-                        comment: comment,
-                        onUpdate: (id, newBody) {
-                          setState(() {
-                            final index = _comments.indexWhere((c) => c.id == id);
-                            if (index != -1) {
-                              _comments[index] = Comment(
-                                id: id,
-                                body: newBody,
-                                author: _comments[index].author,
-                                reported: _comments[index].reported,
+                    final comment = _comments[i - 2];
+                    return Column(
+                      key: ValueKey("comment-block-${comment.id}"),
+                      children: [
+                        CommentTile(
+                          key: ValueKey("comment-${comment.id}"),
+                          comment: comment,
+                          onUpdate: (id, newBody) {
+                            setState(() {
+                              final index = _comments.indexWhere((c) => c.id == id);
+                              if (index != -1) {
+                                _comments[index] = Comment(
+                                  id: id,
+                                  body: newBody,
+                                  author: _comments[index].author,
+                                  reported: _comments[index].reported,
+                                  createdAt: _comments[index].createdAt,
+                                );
+                              }
+                            });
+                          },
+                          onDelete: (id) async {
+                            try {
+                              final success = await _api.deleteComment(id);
+                              if (success) {
+                                setState(() {
+                                  _comments.removeWhere((c) => c.id == id);
+                                });
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Failed to delete comment.", style: TextStyle(color: Colors.red))),
+                                );
+                              }
+                            } on SocketException {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Failed: Please check your connection and refresh the page.", style: TextStyle(color: Colors.red))),
                               );
-                            }
-                          });
-                        },
-                        onDelete: (id) async {
-                          try {
-                            final success = await _api.deleteComment(id);
-                            if (success) {
-                              setState(() {
-                                _comments.removeWhere((c) => c.id == id);
-                              });
-                            } else {
+                            } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text("Failed to delete comment.", style: TextStyle(color: Colors.red))),
                               );
                             }
-                          } on SocketException {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Failed: Please check your connection and refresh the page.", style: TextStyle(color: Colors.red))),
-                            );
-                          } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Failed to delete comment.", style: TextStyle(color: Colors.red))),
-                            );
-                          }
-                        },
-                      ),
-                      const Divider(),
-                    ],
-                  );
-                },
+                          },
+                        ),
+                        const Divider(),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ),
