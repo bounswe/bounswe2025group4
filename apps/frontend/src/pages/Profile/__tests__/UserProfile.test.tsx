@@ -18,6 +18,52 @@ import { User } from '../../../types/auth';
 vi.mock('../../../services/profile.service');
 vi.mock('../../../services/user.service');
 
+// Helper functions to create mock query results with only essential fields
+type QueryResultOptions = {
+  data?: unknown;
+  isLoading?: boolean;
+  isError?: boolean;
+  error?: Error | null;
+  status?: 'loading' | 'error' | 'success' | 'idle';
+  isSuccess?: boolean;
+  refetch?: () => void;
+  [key: string]: unknown;
+};
+
+const createMockQueryResult = (options: QueryResultOptions = {}) => {
+  const defaults = {
+    data: undefined,
+    isLoading: false,
+    isError: false,
+    error: null,
+    status: 'loading',
+    refetch: vi.fn(),
+  };
+  return { ...defaults, ...options };
+};
+
+type MutationResultOptions = {
+  mutate?: () => void;
+  mutateAsync?: () => Promise<unknown>;
+  isLoading?: boolean;
+  isError?: boolean;
+  error?: Error | null;
+  reset?: () => void;
+  [key: string]: unknown;
+};
+
+const createMockMutationResult = (options: MutationResultOptions = {}) => {
+  const defaults = {
+    mutate: vi.fn(),
+    mutateAsync: vi.fn(),
+    isLoading: false,
+    isError: false,
+    error: null,
+    reset: vi.fn(),
+  };
+  return { ...defaults, ...options };
+};
+
 describe('UserProfile', () => {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -35,35 +81,10 @@ describe('UserProfile', () => {
 
   it('renders loading state', () => {
     // Mock the hooks to return loading state
-    const mockLoadingQueryResult = {
-      data: undefined,
+    const mockLoadingQueryResult = createMockQueryResult({
       isLoading: true,
-      error: null,
-      isError: false,
-      isPending: true,
-      isLoadingError: false,
-      isRefetchError: false,
-      isSuccess: false,
-      isPlaceholderData: false,
-      status: 'loading' as const,
-      fetchStatus: 'fetching' as const,
-      dataUpdatedAt: 0,
-      errorUpdatedAt: 0,
-      failureCount: 0,
-      failureReason: null,
-      errorUpdateCount: 0,
-      isFetched: false,
-      isFetchedAfterMount: false,
-      isFetching: true,
-      isInitialLoading: true,
-      isPaused: false,
-      isRefetching: false,
-      isStale: false,
-      refetch: vi.fn(),
-      remove: vi.fn(),
-      promise: Promise.resolve(),
-      context: {},
-    };
+      status: 'loading',
+    });
 
     vi.mocked(profileService.useUserProfileById).mockReturnValue(
       mockLoadingQueryResult as unknown as UseQueryResult<
@@ -121,40 +142,19 @@ describe('UserProfile', () => {
       mentorType: 'MENTEE',
     };
 
-    const mockSuccessQueryResult = {
+    const mockSuccessQueryResult = createMockQueryResult({
       data: mockProfile,
       isLoading: false,
-      error: null,
-      isError: false,
-      isPending: false,
-      isLoadingError: false,
-      isRefetchError: false,
+      status: 'success',
       isSuccess: true,
-      isPlaceholderData: false,
-      status: 'success' as const,
-      fetchStatus: 'idle' as const,
-      dataUpdatedAt: 0,
-      errorUpdatedAt: 0,
-      failureCount: 0,
-      failureReason: null,
-      errorUpdateCount: 0,
-      isFetched: true,
-      isFetchedAfterMount: true,
-      isFetching: false,
-      isInitialLoading: false,
-      isPaused: false,
-      isRefetching: false,
-      isStale: false,
-      refetch: vi.fn(),
-      remove: vi.fn(),
-      promise: Promise.resolve(),
-      context: {},
-    };
+    });
 
-    const mockSuccessUserQueryResult = {
-      ...mockSuccessQueryResult,
+    const mockSuccessUserQueryResult = createMockQueryResult({
       data: mockUser,
-    };
+      isLoading: false,
+      status: 'success',
+      isSuccess: true,
+    });
 
     vi.mocked(profileService.useUserProfileById).mockReturnValue(
       mockSuccessQueryResult as unknown as UseQueryResult<
@@ -167,24 +167,7 @@ describe('UserProfile', () => {
       mockSuccessUserQueryResult as unknown as UseQueryResult<User, Error>
     );
 
-    const mockMutationResult = {
-      data: undefined,
-      error: null,
-      mutate: vi.fn(),
-      mutateAsync: vi.fn(),
-      reset: vi.fn(),
-      variables: undefined,
-      failureCount: 0,
-      failureReason: null,
-      isPending: false,
-      isError: false,
-      isSuccess: false,
-      status: 'idle' as const,
-      isIdle: true,
-      submittedAt: 0,
-      context: {},
-      isPaused: false,
-    };
+    const mockMutationResult = createMockMutationResult();
 
     vi.mocked(profileService.useUpdateUserProfile).mockReturnValue(
       mockMutationResult as unknown as UseMutationResult<
@@ -196,21 +179,7 @@ describe('UserProfile', () => {
     );
 
     // Create a separate mock for user update with the correct type
-    const mockUserMutationResult = {
-      ...mockMutationResult,
-      mutate: vi.fn() as unknown as UseMutationResult<
-        User,
-        Error,
-        User,
-        unknown
-      >['mutate'],
-      mutateAsync: vi.fn() as unknown as UseMutationResult<
-        User,
-        Error,
-        User,
-        unknown
-      >['mutateAsync'],
-    };
+    const mockUserMutationResult = createMockMutationResult();
 
     vi.mocked(userService.useUpdateUser).mockReturnValue(
       mockUserMutationResult as unknown as UseMutationResult<
@@ -254,35 +223,11 @@ describe('UserProfile', () => {
 
   it('renders error state', () => {
     // Mock error state
-    const mockErrorQueryResult = {
-      data: undefined,
-      isLoading: false,
+    const mockErrorQueryResult = createMockQueryResult({
       error: new Error('Failed to load user'),
       isError: true,
-      isPending: false,
-      isLoadingError: true,
-      isRefetchError: false,
-      isSuccess: false,
-      isPlaceholderData: false,
-      status: 'error' as const,
-      fetchStatus: 'idle' as const,
-      dataUpdatedAt: 0,
-      errorUpdatedAt: Date.now(),
-      failureCount: 1,
-      failureReason: new Error('Failed to load user'),
-      errorUpdateCount: 1,
-      isFetched: true,
-      isFetchedAfterMount: true,
-      isFetching: false,
-      isInitialLoading: false,
-      isPaused: false,
-      isRefetching: false,
-      isStale: false,
-      refetch: vi.fn(),
-      remove: vi.fn(),
-      promise: Promise.reject(new Error('Failed to load user')),
-      context: {},
-    };
+      status: 'error',
+    });
 
     vi.mocked(profileService.useUserProfileById).mockReturnValue(
       mockErrorQueryResult as unknown as UseQueryResult<
