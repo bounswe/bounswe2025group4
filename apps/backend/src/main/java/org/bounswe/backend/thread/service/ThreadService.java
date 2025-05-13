@@ -142,6 +142,7 @@ public class ThreadService {
                         .username(user.getUsername())
                         .email(user.getEmail())
                         .userType(user.getUserType())
+                        .mentorshipStatus(user.getMentorshipStatus())
                         .build())
                 .collect(Collectors.toList());
     }

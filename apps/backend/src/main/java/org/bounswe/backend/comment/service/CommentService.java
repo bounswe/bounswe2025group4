@@ -127,6 +127,7 @@ public class CommentService {
                         .username(user.getUsername())
                         .email(user.getEmail())
                         .userType(user.getUserType())
+                        .mentorshipStatus(user.getMentorshipStatus())
                         .build())
                 .build();
     }
