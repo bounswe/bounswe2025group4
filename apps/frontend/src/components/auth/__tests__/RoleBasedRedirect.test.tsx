@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { useCurrentUser } from '../../../services/auth.service';
+import { useCurrentUser } from '../../../services/user.service';
 import RoleBasedRedirect from '../RoleBasedRedirect';
 import { describe, expect, beforeEach, vi, it } from 'vitest';
 
@@ -14,7 +14,7 @@ vi.mock('react-router-dom', async () => {
 });
 
 // Mock the auth service
-vi.mock('../../../services/auth.service', () => ({
+vi.mock('../../../services/user.service', () => ({
   useCurrentUser: vi.fn(),
 }));
 

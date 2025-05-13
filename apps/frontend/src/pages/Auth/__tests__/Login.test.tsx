@@ -149,6 +149,6 @@ describe('LoginPage', () => {
     await screen.findByRole('button', { name: /log in/i });
 
     expect(window.location.href).toBe(initialHref); // Should not have navigated
-    expect(console.error).toHaveBeenCalledWith(loginError);
+    expect(screen.getByText('Login failed')).toBeInTheDocument();
   });
 });
