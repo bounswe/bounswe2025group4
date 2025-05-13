@@ -100,7 +100,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'register-successfull',
+        path: 'register-successful',
         element: <RegisterSuccesfull />,
       },
       {

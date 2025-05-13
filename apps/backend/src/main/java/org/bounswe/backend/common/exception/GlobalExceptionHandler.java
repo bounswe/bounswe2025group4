@@ -28,6 +28,11 @@ public class GlobalExceptionHandler {
         return buildErrorResponse("Conflict", "Username already exists: " + ex.getUsername(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
+        return buildErrorResponse("Conflict", "An account using this email already exists: " + ex.getEmail(), HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(InvalidResetTokenException.class)
     public ResponseEntity<ApiErrorResponse> handleInvalidResetToken(InvalidResetTokenException ex) {
         return buildErrorResponse("Bad Request", "Invalid or expired reset token.", HttpStatus.BAD_REQUEST);

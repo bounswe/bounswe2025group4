@@ -60,6 +60,10 @@ public class AuthController {
             throw new UsernameAlreadyExistsException(request.getUsername());
         }
 
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException(request.getEmail());
+        }
+
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
