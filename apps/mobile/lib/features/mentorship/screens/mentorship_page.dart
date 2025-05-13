@@ -20,16 +20,45 @@ class _MentorshipPageState extends State<MentorshipPage> {
   @override
   void initState() {
     super.initState();
-    // Delay showing content until the next frame to prevent shaky animation
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+    _loadData();
+  }
+
+  // Method to refresh the data
+  Future<void> _loadData() async {
+    // Set loading state
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
       });
-    });
+    }
+
+    // Delay showing content until the next frame to prevent shaky animation
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  // Method to handle refresh for the RefreshIndicator
+  Future<void> _handleRefresh(BuildContext context) async {
+    // Refresh the MentorProvider data
+    final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+
+    // Reload basic data that's common to both screens
+    try {
+      await Future.wait([
+        mentorProvider.fetchMenteeRequests(),
+        mentorProvider.fetchMentorRequests(),
+        mentorProvider.fetchAvailableMentors(),
+      ]);
+    } catch (e) {
+      // Errors are handled inside the provider
+    }
+
+    return;
   }
 
   @override
@@ -74,9 +103,13 @@ class _MentorshipPageState extends State<MentorshipPage> {
       // Use Builder to access the provider in a separate build method
       child: Builder(
         builder: (context) {
-          return isMentor
-              ? const MentorMentorshipScreen()
-              : const MenteeMentorshipScreen();
+          return RefreshIndicator(
+            onRefresh: () => _handleRefresh(context),
+            child:
+                isMentor
+                    ? const MentorMentorshipScreen()
+                    : const MenteeMentorshipScreen(),
+          );
         },
       ),
     );

@@ -16,7 +16,8 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
   final List<CompanyPolicy> policies = [
     CompanyPolicy(
       title: 'Fair wage commitment',
-      description: 'Ensuring competitive compensation and transparent pay practices',
+      description:
+          'Ensuring competitive compensation and transparent pay practices',
     ),
     CompanyPolicy(
       title: 'Diversity & inclusion policy',
@@ -24,7 +25,8 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
     ),
     CompanyPolicy(
       title: 'Employee well-being programs',
-      description: 'Supporting mental health, work-life balance, and personal growth',
+      description:
+          'Supporting mental health, work-life balance, and personal growth',
     ),
     CompanyPolicy(
       title: 'Remote-friendly culture',
@@ -32,7 +34,8 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
     ),
     CompanyPolicy(
       title: 'Sustainability/environmental goals',
-      description: 'Implementing eco-friendly practices and reducing environmental impact',
+      description:
+          'Implementing eco-friendly practices and reducing environmental impact',
     ),
   ];
 
@@ -44,27 +47,11 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SignUpScreen(),
-                ),
-              );
-            },
-            child: const Text('Skip'),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            const OnboardingProgressBar(
-              currentStep: 2,
-              totalSteps: 3,
-            ),
+            const OnboardingProgressBar(currentStep: 2, totalSteps: 3),
             const SizedBox(height: 24),
             Expanded(
               child: Padding(
@@ -82,20 +69,20 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                     const SizedBox(height: 8),
                     const Text(
                       'Select all that apply',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 24),
                     Expanded(
                       child: ListView.separated(
                         itemCount: policies.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 12),
+                        separatorBuilder:
+                            (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final policy = policies[index];
-                          final isSelected = selectedPolicies.contains(policy.title);
-                          
+                          final isSelected = selectedPolicies.contains(
+                            policy.title,
+                          );
+
                           return InkWell(
                             onTap: () {
                               setState(() {
@@ -110,24 +97,32 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: isSelected ? Colors.blue : Colors.grey.shade300,
+                                  color:
+                                      isSelected
+                                          ? Colors.blue
+                                          : Colors.grey.shade300,
                                 ),
                                 borderRadius: BorderRadius.circular(8),
-                                color: isSelected ? Colors.blue.withOpacity(0.1) : null,
+                                color:
+                                    isSelected
+                                        ? Colors.blue.withOpacity(0.1)
+                                        : null,
                               ),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           policy.title,
                                           style: TextStyle(
                                             fontSize: 16,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
+                                            fontWeight:
+                                                isSelected
+                                                    ? FontWeight.bold
+                                                    : FontWeight.normal,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
@@ -142,7 +137,10 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                                     ),
                                   ),
                                   if (isSelected)
-                                    const Icon(Icons.check_circle, color: Colors.blue),
+                                    const Icon(
+                                      Icons.check_circle,
+                                      color: Colors.blue,
+                                    ),
                                 ],
                               ),
                             ),
@@ -155,16 +153,21 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: selectedPolicies.isNotEmpty
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const MentorshipSelectionScreen(isJobSeeker: false),
-                                  ),
-                                );
-                              }
-                            : null,
+                        onPressed:
+                            selectedPolicies.isNotEmpty
+                                ? () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const MentorshipSelectionScreen(
+                                                isJobSeeker: false,
+                                              ),
+                                    ),
+                                  );
+                                }
+                                : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           shape: RoundedRectangleBorder(
@@ -173,10 +176,7 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                         ),
                         child: const Text(
                           'Continue',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),
@@ -195,8 +195,5 @@ class CompanyPolicy {
   final String title;
   final String description;
 
-  const CompanyPolicy({
-    required this.title,
-    required this.description,
-  });
-} 
+  const CompanyPolicy({required this.title, required this.description});
+}

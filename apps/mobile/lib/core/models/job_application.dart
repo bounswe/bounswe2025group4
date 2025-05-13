@@ -75,9 +75,10 @@ class JobApplication {
           (throw Exception('Missing required field: jobSeekerId')),
       status: parseStatus(json['status']),
       dateApplied:
-          parseDate(json['dateApplied']) ??
+          parseDate(json['submissionDate']) ??
           DateTime.now(), // Use helper and provide default
-      employerFeedback: json['employerFeedback'],
+      employerFeedback:
+          json['feedback'], // Map 'feedback' from API to 'employerFeedback' in the model
     );
   }
 }

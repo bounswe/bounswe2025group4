@@ -76,17 +76,6 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SignUpScreen()),
-              );
-            },
-            child: const Text('Skip'),
-          ),
-        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
