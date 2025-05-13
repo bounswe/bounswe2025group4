@@ -3,6 +3,7 @@ package org.bounswe.backend.job.controller;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.bounswe.backend.job.dto.JobPostDto;
+import org.bounswe.backend.job.dto.JobPostResponseDto;
 import org.bounswe.backend.job.service.JobPostService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,7 +24,7 @@ public class JobPostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<JobPostDto>> getAll(
+    public ResponseEntity<List<JobPostResponseDto>> getAll(
             @Parameter(name = "title", description = "Job title prefix", in = ParameterIn.QUERY)
             @RequestParam(required = false) String title,
 
@@ -49,17 +50,17 @@ public class JobPostController {
     }
 
     @GetMapping("/employer/{employerId}")
-    public ResponseEntity<List<JobPostDto>> getByEmployerId(@PathVariable Long employerId) {
+    public ResponseEntity<List<JobPostResponseDto>> getByEmployerId(@PathVariable Long employerId) {
         return ResponseEntity.ok(service.getByEmployerId(employerId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JobPostDto> getById(@PathVariable Long id) {
+    public ResponseEntity<JobPostResponseDto> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
     @PostMapping
-    public ResponseEntity<JobPostDto> create(@RequestBody JobPostDto dto) {
+    public ResponseEntity<JobPostResponseDto> create(@RequestBody JobPostDto dto) {
         return ResponseEntity.ok(service.create(dto));
     }
 
@@ -70,7 +71,7 @@ public class JobPostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<JobPostDto> update(@PathVariable Long id, @RequestBody @Valid JobPostDto dto) {
+    public ResponseEntity<JobPostResponseDto> update(@PathVariable Long id, @RequestBody @Valid JobPostDto dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
 

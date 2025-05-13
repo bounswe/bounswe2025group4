@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -43,4 +45,8 @@ public class JobPost {
 
     @Column(nullable = false)
     private String contact;
+
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime postedDate;
 }

@@ -10,8 +10,6 @@ import lombok.*;
 @Builder
 public class JobPostDto {
 
-    private Long id;
-
     @NotBlank(message = "Title is required")
     @Size(max = 100)
     private String title;
