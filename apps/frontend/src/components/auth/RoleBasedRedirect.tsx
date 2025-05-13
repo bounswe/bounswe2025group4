@@ -16,7 +16,22 @@ const RoleBasedRedirect: React.FC = () => {
 
   // Redirection based on the current page
   const currentPath = window.location.pathname;
-  if (currentPath === '/jobs') {
+  if (currentPath === '/mentorship') {
+    if (!user) {
+      // wait until user is set
+      return <CenteredLoader />;
+    }
+
+    if (user?.mentorshipStatus === 'MENTEE') {
+      return <Navigate to="/mentorship/mentee" replace />;
+    }
+
+    if (user?.mentorshipStatus === 'MENTOR') {
+      return <Navigate to="/mentorship/mentor" replace />;
+    }
+
+    return <Navigate to="/" replace />;
+  } else if (currentPath === '/jobs') {
     if (!user) {
       // wait until user is set
       return <CenteredLoader />;
@@ -29,9 +44,6 @@ const RoleBasedRedirect: React.FC = () => {
     if (user?.userType === 'JOB_SEEKER') {
       return <Navigate to="/jobs/list" replace />;
     }
-    // Fallback or default redirect if role is not jobseeker or employer
-    // Or handle other roles like 'admin'
-    // For now, redirecting to home as a fallback.
     console.warn(
       `RoleBasedRedirect: Unknown or unhandled user role: ${user?.userType}. Redirecting to home.`
     );

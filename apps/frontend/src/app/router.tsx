@@ -32,6 +32,10 @@ const JobDetailDashboard = lazy(
 const ThreadListPage = lazy(() => import('../pages/Forum/ThreadList'));
 const ThreadDetailPage = lazy(() => import('../pages/Forum/ThreadDetail'));
 
+// Mentorship
+const Mentee = lazy(() => import('../pages/Mentorship/Mentee'));
+const Mentor = lazy(() => import('../pages/Mentorship/Mentor'));
+
 // Util
 const RoleBasedRedirect = lazy(
   () => import('../components/auth/RoleBasedRedirect')
@@ -201,6 +205,18 @@ const router = createBrowserRouter([
             <ThreadDetailPage />
           </RedirectIfNotAuth>
         ),
+      },
+      {
+        path: 'mentorship',
+        element: <RoleBasedRedirect />,
+      },
+      {
+        path: 'mentorship/mentee',
+        element: <Mentee />,
+      },
+      {
+        path: 'mentorship/mentor',
+        element: <Mentor />,
       },
     ],
   },
