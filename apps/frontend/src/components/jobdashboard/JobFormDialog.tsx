@@ -7,9 +7,6 @@ import {
   DialogTitle,
   TextField,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   FormHelperText,
   CircularProgress,
   Grid,
@@ -38,7 +35,6 @@ interface JobFormDialogProps {
   onSubmit: (data: JobFormValues) => void;
   initialData?: JobPost;
   isLoading?: boolean;
-  companies: { id: string; name: string }[];
 }
 
 const JobFormDialog: React.FC<JobFormDialogProps> = ({
@@ -47,7 +43,6 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
   onSubmit,
   initialData,
   isLoading = false,
-  companies,
 }) => {
   const {
     control,
@@ -86,8 +81,8 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
               title: '',
               description: '',
               location: '',
-              minSalary: 0,
-              maxSalary: 0,
+              minSalary: 1,
+              maxSalary: 1,
               isRemote: false,
               ethicalTags: [],
               company: '',
@@ -276,25 +271,15 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
                 name="company"
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth error={!!errors.company}>
-                    <InputLabel id="company-label">Company</InputLabel>
-                    <Select
-                      {...field}
-                      labelId="company-label"
-                      label="Company"
-                      disabled={isLoading}
-                      required
-                    >
-                      {companies.map((company) => (
-                        <MenuItem key={company.id} value={company.id}>
-                          {company.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.company && (
-                      <FormHelperText>{errors.company.message}</FormHelperText>
-                    )}
-                  </FormControl>
+                  <TextField
+                    {...field}
+                    label="Company"
+                    fullWidth
+                    error={!!errors.company}
+                    helperText={errors.company?.message}
+                    disabled={isLoading}
+                    required
+                  />
                 )}
               />
             </Grid>
@@ -328,8 +313,9 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
                         renderTags={(value, getTagProps) =>
                           value.map((option, index) => (
                             <Chip
-                              label={option}
                               {...getTagProps({ index })}
+                              key={option}
+                              label={option}
                               color="primary"
                               variant="outlined"
                             />

@@ -194,11 +194,27 @@ const ApplicationsGrid: React.FC<ApplicationsGridProps> = ({
             },
           }}
           sx={{
-            '& .MuiDataGrid-cell:focus': {
-              outline: 'none',
+            color: 'inherit',
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: theme.palette.background.paper,
             },
-            '& .MuiDataGrid-row:hover': {
-              backgroundColor: theme.palette.action.hover,
+            '& .MuiDataGrid-columnHeader:hover': {
+              backgroundColor: theme.palette.action.selected,
+              color: theme.palette.text.primary,
+            },
+            '& .MuiDataGrid-cell': {
+              backgroundColor: theme.palette.background.paper,
+              borderColor: theme.palette.divider,
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: theme.palette.background.default,
+              borderTop: `1px solid ${theme.palette.divider}`,
+            },
+            '& .MuiTablePagination-root': {
+              color: 'inherit',
+            },
+            '& .MuiTablePagination-actions': {
+              color: 'inherit',
             },
           }}
         />

@@ -97,7 +97,7 @@ const JobDashboardPage: React.FC = () => {
             remote: data.isRemote,
             minSalary: data.minSalary,
             maxSalary: data.maxSalary,
-            ethicalTags: data.ethicalTags,
+            ethicalTags: data.ethicalTags.join(','),
             employerId: parseInt(employerId),
           } as JobPost,
         });
@@ -110,7 +110,7 @@ const JobDashboardPage: React.FC = () => {
           location: data.location,
           company: data.company,
           remote: data.isRemote,
-          ethicalTags: data.ethicalTags,
+          ethicalTags: data.ethicalTags.join(','),
           minSalary: data.minSalary,
           maxSalary: data.maxSalary,
         } as JobPost);
@@ -125,10 +125,7 @@ const JobDashboardPage: React.FC = () => {
   const handleApplicationsView = (jobId: string) => {
     navigate(`/dashboard/jobs/${jobId}`);
   };
-
-  // Get company name from existing jobs if available
-  const companyName = jobs?.[0]?.company || 'My Company';
-
+  
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
@@ -156,7 +153,6 @@ const JobDashboardPage: React.FC = () => {
         onSubmit={handleFormSubmit}
         initialData={selectedJob || undefined}
         isLoading={createJobMutation.isPending || updateJobMutation.isPending}
-        companies={[{ id: employerId, name: companyName }]}
       />
     </Container>
   );

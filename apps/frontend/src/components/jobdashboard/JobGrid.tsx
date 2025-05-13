@@ -105,7 +105,7 @@ const JobGrid: React.FC<JobGridProps> = ({
     {
       field: 'ethicalPolicies',
       headerName: 'Ethical Policies',
-      width: 200,
+      width: 250,
       renderCell: (params: GridRenderCellParams<JobPost>) => {
         const policies = params.row.ethicalTags.split(',');
         return (
@@ -132,15 +132,15 @@ const JobGrid: React.FC<JobGridProps> = ({
         );
       },
     },
-    // {
-    //   field: 'postedDate',
-    //   headerName: 'Posted Date',
-    //   width: 120,
-    //   valueFormatter: ({ value }) => {
-    //     if (!value) return '';
-    //     return new Date(value).toLocaleDateString();
-    //   },
-    // },
+    {
+      field: 'postedDate',
+      headerName: 'Posted Date',
+      width: 120,
+      valueFormatter: (value) => {
+        if (!value) return '';
+        return new Date(value).toLocaleDateString();
+      },
+    },
     {
       field: 'actions',
       type: 'actions',
@@ -151,19 +151,19 @@ const JobGrid: React.FC<JobGridProps> = ({
           icon={<EditIcon />}
           label="Edit"
           onClick={() => handleEditClick(params.row)}
-          color="primary"
+          color="inherit"
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
           onClick={() => handleDeleteClick(params.row.id.toString())}
-          color="primary"
+          color="inherit"
         />,
         <GridActionsCellItem
           icon={<VisibilityIcon />}
           label="View Applications"
           onClick={() => onApplicationsView(params.row.id.toString())}
-          color="primary"
+          color="inherit"
         />,
       ],
     },
@@ -189,11 +189,27 @@ const JobGrid: React.FC<JobGridProps> = ({
             },
           }}
           sx={{
-            '& .MuiDataGrid-cell:focus': {
-              outline: 'none',
+            color: 'inherit',
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: theme.palette.background.paper,
             },
-            '& .MuiDataGrid-row:hover': {
-              backgroundColor: theme.palette.action.hover,
+            '& .MuiDataGrid-columnHeader:hover': {
+              backgroundColor: theme.palette.action.selected,
+              color: theme.palette.text.primary,
+            },
+            '& .MuiDataGrid-cell': {
+              backgroundColor: theme.palette.background.paper,
+              borderColor: theme.palette.divider,
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: theme.palette.background.default,
+              borderTop: `1px solid ${theme.palette.divider}`,
+            },
+            '& .MuiTablePagination-root': {
+              color: 'inherit',
+            },
+            '& .MuiTablePagination-actions': {
+              color: 'inherit',
             },
           }}
         />

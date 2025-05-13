@@ -13,6 +13,7 @@ export interface JobPost {
   maxSalary: number;
   status: string;
   contact: string;
+  postedDate: string;
 }
 
 export interface JobFilters {

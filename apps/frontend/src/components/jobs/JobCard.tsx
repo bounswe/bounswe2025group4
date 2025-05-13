@@ -6,6 +6,7 @@ import { JobPost } from '../../types/job';
 import BusinessIcon from '@mui/icons-material/Business'; // Example Icon
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 interface JobCardProps {
   job: JobPost;
@@ -17,6 +18,19 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
     if (min) return `From $${min / 1000}k`;
     if (max) return `Up to $${max / 1000}k`;
     return 'Not specified';
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Posted today';
+    if (diffDays === 1) return 'Posted yesterday';
+    if (diffDays < 7) return `Posted ${diffDays} days ago`;
+    if (diffDays < 30) return `Posted ${Math.floor(diffDays / 7)} weeks ago`;
+    return `Posted ${Math.floor(diffDays / 30)} months ago`;
   };
 
   return (
@@ -59,6 +73,20 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
             size="small"
             sx={{ ml: 1.5 }}
           />
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            mb: 1,
+            color: 'text.secondary',
+          }}
+        >
+          <AccessTimeIcon fontSize="small" sx={{ mr: 0.5 }} />
+          <Typography variant="body2">
+            {formatDate(job.postedDate)}
+          </Typography>
         </Box>
 
         <Typography

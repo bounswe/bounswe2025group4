@@ -3,11 +3,8 @@ import { apiClient } from './api';
 import { Application, ApplicationStatus } from '../types/application';
 
 export interface ApplicationSubmitData {
-  jobId: string;
-  name: string;
-  email: string;
-  resume: File;
-  coverLetter?: string;
+  jobSeekerId: number;
+  jobPostingId: number;
 }
 
 interface RawApplication extends Omit<Application, 'submissionDate'> {

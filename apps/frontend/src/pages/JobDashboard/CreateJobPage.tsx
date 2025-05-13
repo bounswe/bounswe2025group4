@@ -27,8 +27,8 @@ const jobPostSchema = z
     companyName: z.string().min(2, 'Company name is required'),
     location: z.string().min(2, 'Location is required'),
     isRemote: z.boolean(),
-    minSalary: z.coerce.number().min(0).default(0),
-    maxSalary: z.coerce.number().min(0).default(0),
+    minSalary: z.coerce.number().min(0).default(1),
+    maxSalary: z.coerce.number().min(0).default(1),
     ethicalTags: z.array(z.string()).default([]),
     contact: z.string().email('Invalid email address'),
   })
@@ -41,10 +41,10 @@ type JobFormValues = z.infer<typeof jobPostSchema>;
 
 // Mock ethical policies - in a real app, these might come from an API or config
 const ETHICAL_POLICY_OPTIONS = [
-  { id: 'fair-wage', label: 'Fair Wage' },
-  { id: 'equal-opportunity', label: 'Equal Opportunity' },
-  { id: 'work-life-balance', label: 'Work-Life Balance' },
-  { id: 'eco-friendly', label: 'Eco-Friendly Practices' },
+  { id: 'fair_wage', label: 'Fair Wage' },
+  { id: 'diversity', label: 'Diversity' },
+  { id: 'sustainability', label: 'Sustainability' },
+  { id: 'wellbeing', label: 'Wellbeing' },
   { id: 'transparency', label: 'Transparency' },
 ];
 
@@ -64,8 +64,8 @@ const CreateJobPage: React.FC = () => {
       companyName: '',
       location: '',
       isRemote: false,
-      minSalary: 0,
-      maxSalary: 0,
+      minSalary: 1,
+      maxSalary: 1,
       ethicalTags: [],
       contact: '',
     },
@@ -83,6 +83,7 @@ const CreateJobPage: React.FC = () => {
         minSalary: data.minSalary,
         maxSalary: data.maxSalary,
         ethicalTags: data.ethicalTags.join(','),
+        contact: data.contact,
       };
 
       await createJobMutation.mutateAsync(jobPostData as JobPost);

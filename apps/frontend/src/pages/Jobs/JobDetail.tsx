@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import ApplicationForm from '../../components/jobs/ApplicationForm';
 import {
   Container,
   Typography,
@@ -22,29 +21,18 @@ import {
 } from '../../services/applications.service';
 import { AuthContext, AuthContextType } from '../../contexts/AuthContext';
 import { Application } from '../../types/application';
-import { ApplicationSubmitData } from '../../services/applications.service';
-
-// Define a type for application data (can be moved to a shared types file)
-interface ApplicationData {
-  jobId: string;
-  name: string;
-  email: string;
-  resume: File;
-  coverLetter?: string;
-}
+import { useCurrentUser } from '../../services/user.service';
 
 const JobDetail: React.FC = () => {
   const { id: jobId } = useParams<{ id: string }>();
   const [job, setJob] = useState<JobPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showApplicationForm, setShowApplicationForm] = useState(false);
-  const [userApplication, setUserApplication] = useState<Application | null>(
-    null
-  );
+  const [userApplication, setUserApplication] = useState<Application | null>(null);
 
   const authContext = useContext(AuthContext) as AuthContextType;
   const userId = authContext?.id;
+  const { data: currentUser } = useCurrentUser();
 
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -87,25 +75,19 @@ const JobDetail: React.FC = () => {
     }
   }, [userApplications, jobId]);
 
-  const handleApplyClick = () => {
-    setShowApplicationForm(true);
-  };
-
-  const handleApplicationClose = () => {
-    setShowApplicationForm(false);
-  };
-
-  const handleApplicationSubmit = async (
-    applicationData: ApplicationSubmitData
-  ) => {
+  const handleApplyClick = async () => {
+    if (!jobId || !userId || !currentUser) return;
+    
     try {
-      await submitApplicationMutation.mutateAsync(applicationData);
+      await submitApplicationMutation.mutateAsync({
+        jobSeekerId: parseInt(userId),
+        jobPostingId: parseInt(jobId),
+      });
       setSnackbar({
         open: true,
         message: `Application for ${job?.title} submitted successfully!`,
         severity: 'success',
       });
-      setShowApplicationForm(false);
       // Refetch user applications to show the new status
       refetchUserApplications();
     } catch (error) {
@@ -162,14 +144,7 @@ const JobDetail: React.FC = () => {
 
   return (
     <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-      <Paper
-        elevation={3}
-        sx={{
-          p: 3,
-          opacity: showApplicationForm ? 0.3 : 1,
-          transition: 'opacity 0.3s',
-        }}
-      >
+      <Paper elevation={3} sx={{ p: 3 }}>
         <Typography variant="h3" component="h1" gutterBottom>
           {job.title}
         </Typography>
@@ -181,9 +156,9 @@ const JobDetail: React.FC = () => {
         >
           {job.company} - {job.location}
         </Typography>
-        {/* <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           Posted on: {new Date(job.postedDate).toLocaleDateString()}
-        </Typography> */}
+        </Typography>
 
         {userApplication && (
           <Box sx={{ my: 2 }}>
@@ -283,21 +258,13 @@ const JobDetail: React.FC = () => {
               color="primary"
               size="large"
               onClick={handleApplyClick}
+              disabled={submitApplicationMutation.isPending}
             >
-              Apply for this Job
+              {submitApplicationMutation.isPending ? 'Applying...' : 'Apply for this Job'}
             </Button>
           )}
         </Box>
       </Paper>
-
-      {jobId && !userApplication && (
-        <ApplicationForm
-          jobId={jobId}
-          open={showApplicationForm}
-          onClose={handleApplicationClose}
-          onSubmit={handleApplicationSubmit}
-        />
-      )}
 
       <Snackbar
         open={snackbar.open}
