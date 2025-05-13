@@ -82,7 +82,7 @@ const CreateJobPage: React.FC = () => {
         remote: data.isRemote,
         minSalary: data.minSalary,
         maxSalary: data.maxSalary,
-        ethicalTags: data.ethicalTags,
+        ethicalTags: data.ethicalTags.join(','),
       };
 
       await createJobMutation.mutateAsync(jobPostData as JobPost);
