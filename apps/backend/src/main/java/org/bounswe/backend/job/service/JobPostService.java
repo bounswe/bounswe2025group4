@@ -2,6 +2,8 @@ package org.bounswe.backend.job.service;
 
 
 import org.bounswe.backend.common.enums.UserType;
+import org.bounswe.backend.common.exception.NotFoundException;
+import org.bounswe.backend.common.exception.UnauthorizedActionException;
 import org.bounswe.backend.job.dto.JobPostDto;
 import org.bounswe.backend.job.entity.JobPost;
 import org.bounswe.backend.job.repository.JobPostRepository;
@@ -52,15 +54,18 @@ public class JobPostService {
     }
 
     public JobPostDto getById(Long id) {
-        return repo.findById(id).map(this::toDto).orElse(null);
+        return repo.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new NotFoundException("JobPost with ID " + id + " not found"));
     }
+
 
     public JobPostDto create(JobPostDto dto) {
         User employer = userRepo.findById(dto.getEmployerId())
-                .orElseThrow(() -> new RuntimeException("Employer not found"));
+                .orElseThrow(() -> new NotFoundException("Employer not found"));
 
         if (employer.getUserType() != UserType.EMPLOYER) {
-            throw new RuntimeException("Only users with EMPLOYER type can post jobs.");
+            throw new UnauthorizedActionException("Only users with EMPLOYER type can post jobs.");
         }
 
 
@@ -83,6 +88,9 @@ public class JobPostService {
 
 
     public void delete(Long id) {
+        if (!repo.existsById(id)) {
+            throw new NotFoundException("Entity with ID " + id + " not found");
+        }
         repo.deleteById(id);
     }
 
@@ -103,7 +111,7 @@ public class JobPostService {
     }
 
     public JobPostDto update(Long id, JobPostDto dto) {
-        JobPost job = repo.findById(id).orElseThrow();
+        JobPost job = repo.findById(id).orElseThrow(() -> new NotFoundException("JobPost with ID " + id + " not found"));
 
         job.setTitle(dto.getTitle());
         job.setDescription(dto.getDescription());

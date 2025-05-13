@@ -1,10 +1,13 @@
 package org.bounswe.backend.thread.service;
 
+import org.bounswe.backend.common.exception.UnauthorizedActionException;
 import org.bounswe.backend.thread.dto.CreateThreadRequestDto;
 import org.bounswe.backend.thread.dto.ThreadDto;
 import org.bounswe.backend.thread.dto.UpdateThreadRequestDto;
 import org.bounswe.backend.thread.entity.Thread;
 import org.bounswe.backend.thread.repository.ThreadRepository;
+import org.bounswe.backend.common.exception.NotFoundException;
+import org.bounswe.backend.common.exception.UnauthorizedUserException;
 import org.bounswe.backend.tag.entity.Tag;
 import org.bounswe.backend.tag.repository.TagRepository;
 import org.bounswe.backend.user.dto.UserDto;
@@ -37,7 +40,7 @@ public class ThreadService {
 
     public ThreadDto createThread(Long userId, CreateThreadRequestDto dto) {
         User creator = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Set<Tag> tags = dto.getTags() == null ? new HashSet<>() :
                 dto.getTags().stream()
@@ -59,7 +62,7 @@ public class ThreadService {
     @Transactional
     public ThreadDto getThreadById(Long threadId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         return toDto(thread);
     }
@@ -67,10 +70,10 @@ public class ThreadService {
     @Transactional
     public ThreadDto updateThread(Long threadId, Long userId, UpdateThreadRequestDto dto) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread"));
 
         if (!thread.getCreator().getId().equals(userId)) {
-            throw new RuntimeException("Only the thread creator can update this thread");
+            throw new UnauthorizedUserException("Only the thread creator can update this thread");
         }
 
         thread.setTitle(dto.getTitle());
@@ -93,10 +96,10 @@ public class ThreadService {
     @Transactional
     public void deleteThread(Long threadId, Long userId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         if (!thread.getCreator().getId().equals(userId)) {
-            throw new RuntimeException("You are not authorized to delete this thread.");
+            throw new UnauthorizedActionException("You are not authorized to delete this thread.");
         }
 
         threadRepository.delete(thread);
@@ -107,10 +110,10 @@ public class ThreadService {
     @Transactional
     public void likeThread(Long threadId, Long userId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (!thread.getLikedBy().contains(user)) {
             thread.getLikedBy().add(user);
@@ -121,17 +124,17 @@ public class ThreadService {
     @Transactional
     public void unlikeThread(Long threadId, Long userId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         thread.getLikedBy().remove(user);
     }
 
     public List<UserDto> getLikers(Long threadId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         return thread.getLikedBy().stream()
                 .map(user -> UserDto.builder()
@@ -148,7 +151,7 @@ public class ThreadService {
     @Transactional
     public void reportThread(Long threadId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         if (!thread.isReported()) {
             thread.setReported(true);

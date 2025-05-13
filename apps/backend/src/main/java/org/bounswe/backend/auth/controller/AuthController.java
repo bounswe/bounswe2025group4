@@ -40,7 +40,6 @@ public class AuthController {
         this.profileRepository = profileRepository;
     }
 
-    // 🔒 Register Endpoint
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request) {
         if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
@@ -95,14 +94,13 @@ public class AuthController {
                 .build());
     }
 
-    // 🔑 Login Endpoint
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+                .orElseThrow(UserNotFoundException::new);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid username or password");
+            throw new InvalidCredentialsException();
         }
 
         String token = jwtTokenProvider.generateToken(user.getUsername(), user.getUserType().name());
@@ -115,7 +113,6 @@ public class AuthController {
                 .build());
     }
 
-    // 🔒 Forgot Password Endpoint
     @PostMapping("/forgot-password")
     public ResponseEntity<PasswordResetResponse> forgotPassword(@RequestBody @Valid PasswordForgotRequest request) {
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
@@ -123,7 +120,7 @@ public class AuthController {
         }
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("User"));
 
 
         String token = passwordResetTokenService.createPasswordResetToken(user);
