@@ -13,6 +13,7 @@ import '../models/mentor_review.dart';
 import '../providers/auth_provider.dart'; // Import AuthProvider
 import '../constants/app_constants.dart'; // Import AppConstants
 
+
 const List<String> _availableEthicalPolicies = [
   'fair_wage',
   'diversity',
@@ -122,19 +123,35 @@ class ApiService {
   /// Fetches job postings based on query and filters.
   Future<List<JobPost>> fetchJobPostings({
     String? query,
-    Map<String, List<String>>? filters,
+    String? title,
+    String? company,
+    String? location,
+    bool? remote,
+    String? ethicalTags,
+    double? minSalary,
+    double? maxSalary,
+    Map<String, dynamic>? additionalFilters,
   }) async {
-    print('API: Fetching job postings (query: $query, filters: $filters)');
+    print('API: Fetching job postings');
     final queryParams = <String, dynamic>{};
+
+    // Add search query if provided
     if (query != null && query.isNotEmpty) {
-      queryParams['search'] = query; // Assuming backend uses 'search' param
+      queryParams['title'] = query;
     }
-    if (filters != null) {
-      filters.forEach((key, value) {
-        if (value.isNotEmpty) {
-          queryParams[key] = value;
-        }
-      });
+
+    // Add specific filters if provided
+    if (title != null) queryParams['title'] = title;
+    if (company != null) queryParams['company'] = company;
+    if (location != null) queryParams['location'] = location;
+    if (remote != null) queryParams['remote'] = remote;
+    if (ethicalTags != null) queryParams['ethicalTags'] = ethicalTags;
+    if (minSalary != null) queryParams['minSalary'] = minSalary;
+    if (maxSalary != null) queryParams['maxSalary'] = maxSalary;
+
+    // Add any additional filters
+    if (additionalFilters != null) {
+      queryParams.addAll(additionalFilters);
     }
 
     final uri = _buildUri('/jobs', queryParams);
@@ -439,10 +456,10 @@ class ApiService {
 
   /// POST /api/threads
   Future<DiscussionThread> createDiscussionThread(
-    String title,
-    String body,
-    List<String> tags,
-  ) async {
+      String title,
+      String body,
+      List<String> tags,
+      ) async {
     final uri = _buildUri('/threads');
     final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
 
@@ -515,13 +532,16 @@ class ApiService {
     }
   }
 
+
+
+
   /// PATCH /api/threads/{threadId}
   Future<DiscussionThread> editDiscussion(
-    int threadId,
-    String title,
-    String body,
-    List<String> tags,
-  ) async {
+      int threadId,
+      String title,
+      String body,
+      List<String> tags,
+      ) async {
     final uri = _buildUri('/threads/$threadId');
     final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
 
@@ -554,6 +574,24 @@ class ApiService {
       throw Exception('Failed to fetch discussion tags: $e');
     }
   }
+
+  /// POST /api/tags
+  Future<String> createOrFindTag(String tagName) async {
+    final uri = _buildUri('/threads/tags');
+    final payload = jsonEncode({'name': tagName.trim()});
+    try {
+      final response = await _client.post(uri, headers: _getHeaders(), body: payload);
+      final data = await _handleResponse(response);
+      return data['name']; // returns normalized tag name
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to create or find tag. $e');
+    }
+  }
+
+
+
 
   /// DELETE /api/comments/{commentId}
   Future<bool> deleteComment(int commentId) async {

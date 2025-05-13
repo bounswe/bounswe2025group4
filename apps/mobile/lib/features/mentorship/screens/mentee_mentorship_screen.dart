@@ -26,7 +26,11 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   void initState() {
     super.initState();
     _searchController.addListener(_filterMentors);
-    _loadMentors();
+
+    // Delay showing content to avoid UI jumps
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadMentors();
+    });
   }
 
   @override
@@ -274,7 +278,10 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // Delay showing content to avoid UI jumps
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
   }
 
   Future<void> _loadData() async {
@@ -289,6 +296,57 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
             (context) =>
                 DirectMessageScreen(mentorId: mentorId, mentorName: mentorName),
       ),
+    );
+  }
+
+  void _showMentorshipActionDialog(
+    int requestId,
+    String mentorName,
+    MentorshipRequestStatus status,
+  ) {
+    final actionText =
+        status == MentorshipRequestStatus.COMPLETED ? 'complete' : 'cancel';
+    final actionColor =
+        status == MentorshipRequestStatus.COMPLETED ? Colors.green : Colors.red;
+
+    // Capture the provider before showing dialog
+    final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text('$actionText Mentorship'),
+            content: Text(
+              'Are you sure you want to $actionText your mentorship with $mentorName?'
+              '${status == MentorshipRequestStatus.COMPLETED ? '\n\nThis will mark the mentorship as successfully completed.' : '\n\nThis will end the mentorship relationship.'}',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(dialogContext);
+                  // Use the captured provider instead of trying to get it from the dialog context
+                  final success = await mentorProvider.updateRequestStatus(
+                    requestId: requestId,
+                    status: status,
+                  );
+                  if (success && mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Mentorship ${actionText}d successfully'),
+                        backgroundColor: actionColor.withOpacity(0.8),
+                      ),
+                    );
+                  }
+                },
+                child: Text('Confirm', style: TextStyle(color: actionColor)),
+              ),
+            ],
+          ),
     );
   }
 
@@ -385,6 +443,18 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                         req.mentor.id.toString(),
                         req.mentor.name,
                       ),
+                  onCompleteTap:
+                      () => _showMentorshipActionDialog(
+                        req.id,
+                        req.mentor.name,
+                        MentorshipRequestStatus.COMPLETED,
+                      ),
+                  onCancelTap:
+                      () => _showMentorshipActionDialog(
+                        req.id,
+                        req.mentor.name,
+                        MentorshipRequestStatus.CANCELLED,
+                      ),
                 );
               }).toList(),
             const SizedBox(height: 16), // Add some padding at the bottom
@@ -427,6 +497,7 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
           controller: _tabController,
           tabs: const [Tab(text: 'Find Mentors'), Tab(text: 'My Mentorships')],
         ),
+        automaticallyImplyLeading: false,
       ),
       body: TabBarView(
         controller: _tabController,

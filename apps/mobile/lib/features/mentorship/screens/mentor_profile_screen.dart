@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:mobile/core/models/mentor_profile.dart';
+import 'package:mobile/core/models/mentor_review.dart';
 import 'package:mobile/core/services/api_service.dart';
+import 'package:mobile/core/providers/quote_provider.dart';
 import '../providers/mentor_provider.dart';
 
 class MentorProfileScreen extends StatefulWidget {
@@ -23,6 +26,7 @@ class MentorProfileScreen extends StatefulWidget {
 class _MentorProfileScreenState extends State<MentorProfileScreen> {
   bool _isLoading = true;
   MentorProfile? _mentorProfile;
+  List<MentorReview> _reviews = [];
   String? _errorMessage;
   bool _isSubmittingRating = false;
   int _selectedRating = 0;
@@ -44,6 +48,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
+      _reviews = [];
     });
 
     try {
@@ -51,21 +56,25 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       final profile = await apiService.getMentorProfile(
         int.parse(widget.userId),
       );
+      final reviews = await apiService.getMentorReviews(
+        int.parse(widget.userId),
+      );
 
       setState(() {
         _mentorProfile = profile;
+        _reviews = reviews;
         _isLoading = false;
       });
     } catch (e) {
       setState(() {
-        _errorMessage = 'Failed to load mentor profile';
+        _errorMessage =
+            'Failed to load mentor profile or reviews: ${e.toString()}';
         _isLoading = false;
       });
     }
   }
 
   void _showRatingDialog() {
-    // Track selected rating within dialog
     int dialogRating = _selectedRating;
 
     showDialog(
@@ -92,12 +101,10 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               size: 36,
                             ),
                             onPressed: () {
-                              // Use setDialogState instead of setState
                               setDialogState(() {
                                 dialogRating = index + 1;
                                 print('Selected rating: $dialogRating');
                               });
-                              // Update parent state too
                               setState(() {
                                 _selectedRating = dialogRating;
                               });
@@ -170,7 +177,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       );
 
       if (mounted) {
-        Navigator.pop(context); // Close dialog
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Rating submitted successfully')),
         );
@@ -179,7 +186,6 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           _commentController.clear();
         });
 
-        // Reload mentor profile to show updated rating
         _loadMentorProfile();
       }
     } catch (e) {
@@ -245,7 +251,6 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile Header
             Row(
               children: [
                 CircleAvatar(
@@ -290,7 +295,43 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Rating Section
+            Consumer<QuoteProvider>(
+              builder: (context, quoteProvider, child) {
+                if (quoteProvider.hasQuote) {
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '"${quoteProvider.quote!.text}"',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              '- ${quoteProvider.quote!.author}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+            const SizedBox(height: 16),
+
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -330,7 +371,6 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Mentorship Info
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -361,7 +401,6 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Bio Section
             if (_mentorProfile!.user.bio != null)
               Card(
                 child: Padding(
@@ -385,6 +424,9 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                   ),
                 ),
               ),
+            const SizedBox(height: 16),
+
+            _buildReviewsSection(),
           ],
         ),
       ),
@@ -402,6 +444,102 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           ),
           Text(value, style: const TextStyle(fontSize: 16)),
         ],
+      ),
+    );
+  }
+
+  Widget _buildReviewsSection() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Reviews',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            if (_reviews.isEmpty)
+              const Text(
+                'No reviews yet.',
+                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _reviews.length,
+                itemBuilder: (context, index) {
+                  final review = _reviews[index];
+                  String formattedDate = 'Date unknown';
+                  final createdAtString = review.createdAt?.toString();
+                  if (createdAtString != null) {
+                    try {
+                      final dateTime = DateTime.parse(createdAtString);
+                      formattedDate = DateFormat(
+                        'MMM d, yyyy',
+                      ).format(dateTime);
+                    } catch (e) {
+                      print('Error parsing review date: $createdAtString');
+                    }
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: List.generate(5, (i) {
+                                return Icon(
+                                  i < review.rating
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  color: Colors.amber,
+                                  size: 20,
+                                );
+                              }),
+                            ),
+                            Text(
+                              'By: ${review.mentee.username}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (review.comment != null &&
+                            review.comment!.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              review.comment!,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ),
+                        if (review.createdAt != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              formattedDate,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) => const Divider(),
+              ),
+          ],
+        ),
       ),
     );
   }

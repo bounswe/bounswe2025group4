@@ -8,7 +8,7 @@ class MentorReview {
   final int rating;
   final String? comment;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
   MentorReview({
     required this.id,
@@ -17,18 +17,21 @@ class MentorReview {
     required this.rating,
     this.comment,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
 
   factory MentorReview.fromJson(Map<String, dynamic> json) {
     return MentorReview(
-      id: json['id'],
-      mentor: User.fromJson(json['mentor']),
-      mentee: User.fromJson(json['mentee']),
-      rating: json['rating'],
-      comment: json['comment'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      id: json['id'] as int,
+      mentor: User.fromJson(json['mentor'] as Map<String, dynamic>),
+      mentee: User.fromJson(json['mentee'] as Map<String, dynamic>),
+      rating: json['rating'] as int,
+      comment: json['comment'] as String?,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt:
+          json['updatedAt'] == null
+              ? null
+              : DateTime.parse(json['updatedAt'] as String),
     );
   }
 
@@ -40,7 +43,7 @@ class MentorReview {
       'rating': rating,
       'comment': comment,
       'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 }

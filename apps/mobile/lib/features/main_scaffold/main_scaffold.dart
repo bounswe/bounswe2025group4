@@ -6,6 +6,7 @@ import '../mentorship/screens/mentorship_page.dart';
 import '../profile/screens/profile_page.dart';
 import '../workplaces/screens/workplaces_page.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../core/providers/quote_provider.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -28,6 +29,15 @@ class _MainScaffoldState extends State<MainScaffold> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch a random quote when the main scaffold loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<QuoteProvider>(context, listen: false).fetchRandomQuote();
     });
   }
 

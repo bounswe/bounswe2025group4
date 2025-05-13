@@ -42,7 +42,43 @@ class _CommentTileState extends State<CommentTile> {
             ? widget.comment.author.username
             : 'Unknown',
       ),
-      subtitle: Text(widget.comment.body),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.comment.body),
+          const SizedBox(height: 4),
+          Wrap(
+            spacing: 12,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.calendar_today, size: 14),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Created: ${widget.comment.createdAt.toLocal().toString().split(".").first}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+              if (widget.comment.editedAt != null)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.edit, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Edited: ${widget.comment.editedAt!.toLocal().toString().split(".").first}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      ),
       trailing: PopupMenuButton<String>(
         onSelected: (action) async {
           final messenger = ScaffoldMessenger.of(ctx);
