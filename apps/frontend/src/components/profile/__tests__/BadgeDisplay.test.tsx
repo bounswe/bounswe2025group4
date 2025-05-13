@@ -40,10 +40,10 @@ describe('BadgeDisplay', () => {
 
   it('renders badges with names when badges are provided', () => {
     render(<BadgeDisplay badges={mockBadges as Badge[]} />);
-    
+
     expect(screen.getByText('Badges')).toBeInTheDocument();
-    expect(screen.getByText('Top Contributor')).toBeInTheDocument();
-    expect(screen.getByText('Quick Responder')).toBeInTheDocument();
+    expect(screen.getAllByText('Top Contributor').length).toBe(2);
+    expect(screen.getAllByText('Quick Responder').length).toBe(2);
   });
 
   it('renders badges without labels when showLabels is false', () => {
