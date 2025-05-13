@@ -36,4 +36,6 @@ public class JobPost {
     private Integer minSalary;
 
     private Integer maxSalary;
+    
+    private String contact;
 }

@@ -1,17 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './api';
-import {
-  LoginCredentials,
-  RegisterCredentials,
-  AuthResponse,
-} from '../types/auth';
-
+import { LoginCredentials, AuthResponse, RegisterData } from '../types/auth';
+import { ApiError } from '../types/api';
 const AUTH_KEYS = {
   user: ['auth', 'user'] as const,
 };
 
 class AuthService {
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+  async login(credentials: LoginCredentials): Promise<AuthResponse | ApiError> {
     const response = await apiClient.post<AuthResponse>(
       '/auth/login',
       credentials
@@ -23,7 +19,7 @@ class AuthService {
     return response.data;
   }
 
-  async register(credentials: RegisterCredentials): Promise<AuthResponse> {
+  async register(credentials: RegisterData): Promise<AuthResponse | ApiError> {
     const response = await apiClient.post<AuthResponse>(
       '/auth/register',
       credentials
@@ -35,24 +31,12 @@ class AuthService {
     localStorage.removeItem('token');
   }
 
-  async getCurrentUser(): Promise<User | null> {
-    const token = localStorage.getItem('token');
-    const id = localStorage.getItem('id');
-    if (token) {
-      try {
-        const response = await apiClient.get<User>(`/users/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        return response.data;
-      } catch (e) {
-        console.error('Failed to parse token or mock user:', e);
-        localStorage.removeItem('token');
-        return null;
-      }
-    }
-    return null;
+  async forgotPassword(email: string): Promise<void> {
+    await apiClient.post('/auth/forgot-password', { email });
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    await apiClient.post('/auth/reset-password', { token, newPassword });
   }
 }
 
@@ -62,7 +46,7 @@ export const authService = new AuthService();
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  return useMutation<AuthResponse, Error, LoginCredentials>({
+  return useMutation<AuthResponse | ApiError, Error, LoginCredentials>({
     mutationFn: (creds: LoginCredentials) => authService.login(creds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: AUTH_KEYS.user });
@@ -72,8 +56,8 @@ export const useLogin = () => {
 
 export const useRegister = () => {
   const queryClient = useQueryClient();
-  return useMutation<AuthResponse, Error, RegisterCredentials>({
-    mutationFn: (creds: RegisterCredentials) => authService.register(creds),
+  return useMutation<AuthResponse | ApiError, Error, RegisterData>({
+    mutationFn: (creds: RegisterData) => authService.register(creds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: AUTH_KEYS.user });
     },
@@ -87,5 +71,18 @@ export const useLogout = () => {
     onSuccess: () => {
       queryClient.setQueryData(AUTH_KEYS.user, null);
     },
+  });
+};
+
+export const useForgotPassword = () => {
+  return useMutation<void, Error, string>({
+    mutationFn: (email: string) => authService.forgotPassword(email),
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation<void, Error, { token: string; newPassword: string }>({
+    mutationFn: ({ token, newPassword }) =>
+      authService.resetPassword(token, newPassword),
   });
 };

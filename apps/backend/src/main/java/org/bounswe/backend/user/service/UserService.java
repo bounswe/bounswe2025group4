@@ -1,6 +1,7 @@
 package org.bounswe.backend.user.service;
 
 
+import org.bounswe.backend.common.exception.NotFoundException;
 import org.bounswe.backend.user.dto.UserDto;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
@@ -26,14 +27,13 @@ public class UserService {
     public UserDto getUserById(Long id) {
         return userRepository.findById(id)
                 .map(this::toDto)
-                .orElse(null);
+                .orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
     }
 
     public UserDto createUser(UserDto dto) {
         User user = User.builder()
                 .username(dto.getUsername())
                 .email(dto.getEmail())
-                .bio(dto.getBio())
                 .userType(dto.getUserType())
                 .mentorshipStatus(dto.getMentorshipStatus())
                 .build();
@@ -41,10 +41,9 @@ public class UserService {
     }
 
     public UserDto updateUser(Long id, UserDto dto) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User with ID " + id + " not found"));
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
-        user.setBio(dto.getBio());
         user.setUserType(dto.getUserType());
         if (dto.getMentorshipStatus() != null) {
             user.setMentorshipStatus(dto.getMentorshipStatus());
@@ -53,12 +52,16 @@ public class UserService {
     }
 
     public UserDto updateMentorshipStatus(Long userId, MentorshipStatus mentorshipStatus) {
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User with ID " + userId + " not found"));
         user.setMentorshipStatus(mentorshipStatus);
         return toDto(userRepository.save(user));
     }
 
     public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new NotFoundException("User with ID " + id + " not found");
+        }
+
         userRepository.deleteById(id);
     }
 
@@ -67,7 +70,6 @@ public class UserService {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .bio(user.getBio())
                 .userType(user.getUserType())
                 .mentorshipStatus(user.getMentorshipStatus())
                 .build();

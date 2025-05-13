@@ -1,0 +1,1 @@
+enum UserType { EMPLOYER, JOB_SEEKER, MENTOR }

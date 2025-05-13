@@ -7,6 +7,7 @@ import org.bounswe.backend.tag.entity.Tag;
 import org.bounswe.backend.user.entity.User;
 
 import java.util.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -40,6 +41,8 @@ public class Thread {
     @OneToMany(mappedBy = "thread", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    private int commentCount = 0;
+
     @ManyToMany
     @JoinTable(
             name = "thread_likes",
@@ -51,4 +54,15 @@ public class Thread {
 
     @Column(nullable = false)
     private boolean reported = false;
+
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime editedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

@@ -15,6 +15,7 @@ import {
   InputAdornment,
   IconButton,
   Fade,
+  Snackbar,
 } from '@mui/material';
 import {
   Lock,
@@ -22,7 +23,8 @@ import {
   VisibilityOff,
   CheckCircleOutline,
 } from '@mui/icons-material';
-// import { useParams } from 'react-router-dom'; // If using URL params for token
+import { useLocation } from 'react-router-dom';
+import { useResetPassword } from '../../services/auth.service';
 
 // New password schema
 const newPasswordSchema = z
@@ -49,7 +51,11 @@ export default function ResetPasswordPage() {
   const [resetComplete, setResetComplete] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  // const { token } = useParams(); // Example: if token is in URL
+  const [error, setError] = useState<string | null>(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const query = new URLSearchParams(useLocation().search);
+  const token = query.get('token');
+  const resetPasswordMutation = useResetPassword();
 
   // Form handling for new password step
   const passwordForm = useForm<z.infer<typeof newPasswordSchema>>({
@@ -62,10 +68,25 @@ export default function ResetPasswordPage() {
 
   // Handle new password submission
   const onSubmitNewPassword = (data: z.infer<typeof newPasswordSchema>) => {
-    // In a real app, you would send the new password and token to your backend
-    console.log('Setting new password...', data.password);
-    // console.log('Using token:', token); // If using token
-    setResetComplete(true);
+    const sendData = {
+      token: token || '',
+      newPassword: data.password,
+    };
+    resetPasswordMutation.mutate(sendData, {
+      onSuccess: () => {
+        setResetComplete(true);
+      },
+      onError: (error) => {
+        const errorMessage =
+          error?.message || 'Failed to reset password. Please try again.';
+        setError(errorMessage);
+        setOpenSnackbar(true);
+      },
+    });
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -247,6 +268,20 @@ export default function ResetPasswordPage() {
           )}
         </Box>
       </Paper>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity="error"
+          onClose={handleCloseSnackbar}
+          sx={{ width: '100%' }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

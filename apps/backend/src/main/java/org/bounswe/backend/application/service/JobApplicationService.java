@@ -2,6 +2,7 @@ package org.bounswe.backend.application.service;
 
 
 import org.bounswe.backend.application.repository.JobApplicationRepository;
+import org.bounswe.backend.common.exception.NotFoundException;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+import org.bounswe.backend.application.dto.JobApplicationCreateDto;
 import org.bounswe.backend.application.dto.JobApplicationDto;
+import org.bounswe.backend.application.dto.JobApplicationUpdateDto;
 import org.bounswe.backend.application.entity.JobApplication;
 import org.bounswe.backend.common.enums.JobApplicationStatus;
 
@@ -45,7 +48,7 @@ public class JobApplicationService {
     public JobApplicationDto getById(Long id) {
         return applicationRepository.findById(id)
                 .map(this::toDto)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+                .orElseThrow(() -> new NotFoundException("Application"));
     }
 
     public List<JobApplicationDto> getApplicationsByUserId(Long userId) {
@@ -60,33 +63,33 @@ public class JobApplicationService {
                 .collect(Collectors.toList());
     }
 
-    public JobApplicationDto applyForJob(JobApplicationDto dto) {
-        User jobSeeker = userRepository.findById(dto.getJobSeekerId())
-                .orElseThrow(() -> new RuntimeException("Job seeker not found"));
-        
-        JobPost jobPost = jobPostRepository.findById(dto.getJobPostingId())
-                .orElseThrow(() -> new RuntimeException("Job posting not found"));
-        
+    public JobApplicationDto applyForJob(JobApplicationCreateDto createDto) {
+        User jobSeeker = userRepository.findById(createDto.getJobSeekerId())
+                .orElseThrow(() -> new NotFoundException("Job Seeker not found"));
+
+        JobPost jobPost = jobPostRepository.findById(createDto.getJobPostingId())
+                .orElseThrow(() -> new NotFoundException("Job posting not found"));
+
         JobApplication application = JobApplication.builder()
                 .jobSeeker(jobSeeker)
                 .jobPosting(jobPost)
                 .status(JobApplicationStatus.PENDING)
                 .submissionDate(new Date())
                 .build();
-        
+
         return toDto(applicationRepository.save(application));
     }
 
-    public JobApplicationDto updateApplicationStatus(Long applicationId, JobApplicationDto dto) {
+    public JobApplicationDto updateApplicationStatus(Long applicationId, JobApplicationUpdateDto updateDto) {
         JobApplication application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
-        
-        application.updateStatus(dto.getStatus());
-        
-        if (dto.getFeedback() != null && !dto.getFeedback().isEmpty()) {
-            application.addFeedback(dto.getFeedback());
+                .orElseThrow(() -> new NotFoundException("Application not found"));
+
+        application.updateStatus(updateDto.getStatus());
+
+        if (updateDto.getFeedback() != null && !updateDto.getFeedback().isEmpty()) {
+            application.addFeedback(updateDto.getFeedback());
         }
-        
+
         return toDto(applicationRepository.save(application));
     }
 

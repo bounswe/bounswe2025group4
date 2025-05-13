@@ -6,7 +6,7 @@ export interface ApiResponse<T> {
 }
 
 export interface ApiError {
+  error?: Record<string, string[]>;
   message: string;
   status: number;
-  errors?: Record<string, string[]>;
 }

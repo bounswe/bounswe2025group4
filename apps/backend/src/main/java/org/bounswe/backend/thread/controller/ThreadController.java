@@ -1,11 +1,13 @@
 package org.bounswe.backend.thread.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.bounswe.backend.comment.dto.CommentDto;
 import org.bounswe.backend.comment.dto.CreateCommentRequestDto;
 import org.bounswe.backend.comment.service.CommentService;
+import org.bounswe.backend.common.exception.InvalidAuthContextException;
+import org.bounswe.backend.common.exception.NotFoundException;
 import org.bounswe.backend.tag.service.TagService;
+import org.bounswe.backend.tag.entity.Tag;
 import org.bounswe.backend.thread.dto.CreateThreadRequestDto;
 import org.bounswe.backend.thread.dto.ThreadDto;
 import org.bounswe.backend.thread.dto.UpdateThreadRequestDto;
@@ -19,10 +21,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/threads")
-@Tag(name = "Threads", description = "Discussion thread endpoints")
+@io.swagger.v3.oas.annotations.tags.Tag(name = "Threads", description = "Discussion thread endpoints")
 public class ThreadController {
 
     private final ThreadService threadService;
@@ -46,6 +49,12 @@ public class ThreadController {
     public ResponseEntity<ThreadDto> createThread(@Valid @RequestBody CreateThreadRequestDto request) {
         User user = getCurrentUser();
         return ResponseEntity.ok(threadService.createThread(user.getId(), request));
+    }
+
+    @GetMapping("/{threadId}")
+    public ResponseEntity<ThreadDto> getThreadById(@PathVariable Long threadId) {
+        ThreadDto thread = threadService.getThreadById(threadId);
+        return ResponseEntity.ok(thread);
     }
 
     @PatchMapping("/{threadId}")
@@ -100,6 +109,12 @@ public class ThreadController {
         return ResponseEntity.ok(tagService.getAllTagNames());
     }
 
+    @PostMapping("/tags")
+    public ResponseEntity<Tag> createTag(@RequestBody Map<String, String> payload) {
+        Tag tag = tagService.findOrCreateTag(payload.get("name"));
+        return ResponseEntity.ok(tag);
+    }
+
 
     @GetMapping("/{threadId}/comments")
     public ResponseEntity<List<CommentDto>> getComments(@PathVariable Long threadId) {
@@ -120,7 +135,7 @@ public class ThreadController {
     private User getCurrentUser() {
         String username = getCurrentUsername();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User"));
     }
 
     private String getCurrentUsername() {
@@ -128,6 +143,6 @@ public class ThreadController {
         if (principal instanceof UserDetails userDetails) {
             return userDetails.getUsername();
         }
-        throw new RuntimeException("Invalid authentication context");
+        throw new InvalidAuthContextException();
     }
 }

@@ -1,10 +1,13 @@
 package org.bounswe.backend.thread.service;
 
+import org.bounswe.backend.common.exception.UnauthorizedActionException;
 import org.bounswe.backend.thread.dto.CreateThreadRequestDto;
 import org.bounswe.backend.thread.dto.ThreadDto;
 import org.bounswe.backend.thread.dto.UpdateThreadRequestDto;
 import org.bounswe.backend.thread.entity.Thread;
 import org.bounswe.backend.thread.repository.ThreadRepository;
+import org.bounswe.backend.common.exception.NotFoundException;
+import org.bounswe.backend.common.exception.UnauthorizedUserException;
 import org.bounswe.backend.tag.entity.Tag;
 import org.bounswe.backend.tag.repository.TagRepository;
 import org.bounswe.backend.user.dto.UserDto;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 @Service
 public class ThreadService {
@@ -36,12 +40,12 @@ public class ThreadService {
 
     public ThreadDto createThread(Long userId, CreateThreadRequestDto dto) {
         User creator = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         Set<Tag> tags = dto.getTags() == null ? new HashSet<>() :
                 dto.getTags().stream()
-                        .map(name -> tagRepository.findByName(name)
-                                .orElseGet(() -> tagRepository.save(Tag.builder().name(name).build())))
+                        .map(name -> tagRepository.findByNameIgnoreCase(name.toUpperCase())
+                                .orElseGet(() -> tagRepository.save(Tag.builder().name(name.toUpperCase()).build())))
                         .collect(Collectors.toSet());
 
         Thread thread = Thread.builder()
@@ -49,18 +53,27 @@ public class ThreadService {
                 .body(dto.getBody())
                 .creator(creator)
                 .tags(tags)
+                .createdAt(LocalDateTime.now())
                 .build();
 
         return toDto(threadRepository.save(thread));
     }
 
     @Transactional
+    public ThreadDto getThreadById(Long threadId) {
+        Thread thread = threadRepository.findById(threadId)
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
+
+        return toDto(thread);
+    }
+
+    @Transactional
     public ThreadDto updateThread(Long threadId, Long userId, UpdateThreadRequestDto dto) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread"));
 
         if (!thread.getCreator().getId().equals(userId)) {
-            throw new RuntimeException("Only the thread creator can update this thread");
+            throw new UnauthorizedUserException("Only the thread creator can update this thread");
         }
 
         thread.setTitle(dto.getTitle());
@@ -68,11 +81,13 @@ public class ThreadService {
 
         if (dto.getTags() != null) {
             Set<Tag> updatedTags = dto.getTags().stream()
-                    .map(name -> tagRepository.findByName(name)
-                            .orElseGet(() -> tagRepository.save(Tag.builder().name(name).build())))
+                    .map(name -> tagRepository.findByNameIgnoreCase(name.toUpperCase())
+                            .orElseGet(() -> tagRepository.save(Tag.builder().name(name.toUpperCase()).build())))
                     .collect(Collectors.toSet());
             thread.setTags(updatedTags);
         }
+
+        thread.setEditedAt(LocalDateTime.now());
 
         return toDto(threadRepository.save(thread));
     }
@@ -81,10 +96,10 @@ public class ThreadService {
     @Transactional
     public void deleteThread(Long threadId, Long userId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         if (!thread.getCreator().getId().equals(userId)) {
-            throw new RuntimeException("You are not authorized to delete this thread.");
+            throw new UnauthorizedActionException("You are not authorized to delete this thread.");
         }
 
         threadRepository.delete(thread);
@@ -95,10 +110,10 @@ public class ThreadService {
     @Transactional
     public void likeThread(Long threadId, Long userId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (!thread.getLikedBy().contains(user)) {
             thread.getLikedBy().add(user);
@@ -109,25 +124,25 @@ public class ThreadService {
     @Transactional
     public void unlikeThread(Long threadId, Long userId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         thread.getLikedBy().remove(user);
     }
 
     public List<UserDto> getLikers(Long threadId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         return thread.getLikedBy().stream()
                 .map(user -> UserDto.builder()
                         .id(user.getId())
                         .username(user.getUsername())
                         .email(user.getEmail())
-                        .bio(user.getBio())
                         .userType(user.getUserType())
+                        .mentorshipStatus(user.getMentorshipStatus())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -137,7 +152,7 @@ public class ThreadService {
     @Transactional
     public void reportThread(Long threadId) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread not found"));
 
         if (!thread.isReported()) {
             thread.setReported(true);
@@ -155,8 +170,12 @@ public class ThreadService {
                 .title(thread.getTitle())
                 .body(thread.getBody())
                 .creatorId(thread.getCreator().getId())
+                .creatorUsername(thread.getCreator().getUsername())
                 .tags(thread.getTags().stream().map(Tag::getName).collect(Collectors.toList()))
                 .reported(thread.isReported())
+                .createdAt(thread.getCreatedAt())
+                .editedAt(thread.getEditedAt())
+                .commentCount(thread.getCommentCount())
                 .build();
     }
 }

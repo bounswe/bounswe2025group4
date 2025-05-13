@@ -2,6 +2,10 @@ package org.bounswe.backend.user.controller;
 
 
 
+import org.bounswe.backend.common.exception.EmailAlreadyExistsException;
+import org.bounswe.backend.common.exception.InvalidAuthContextException;
+import org.bounswe.backend.common.exception.NotFoundException;
+import org.bounswe.backend.common.exception.UsernameAlreadyExistsException;
 import org.bounswe.backend.user.dto.UserDto;
 import org.bounswe.backend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +40,33 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
+        if (userRepository.existsByUsername(userDto.getUsername())) {
+            throw new UsernameAlreadyExistsException(userDto.getUsername());
+        }
+        
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new EmailAlreadyExistsException(userDto.getEmail());
+        }
+
         return ResponseEntity.ok(userService.createUser(userDto));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+        // Check if the new username already exists for a DIFFERENT user
+        userRepository.findByUsername(userDto.getUsername()).ifPresent(existingUser -> {
+            if (!existingUser.getId().equals(id)) {
+                throw new UsernameAlreadyExistsException(userDto.getUsername());
+            }
+        });
+
+        // Check if the new email already exists for a DIFFERENT user
+        userRepository.findByEmail(userDto.getEmail()).ifPresent(existingUser -> {
+            if (!existingUser.getId().equals(id)) {
+                throw new EmailAlreadyExistsException(userDto.getEmail());
+            }
+        });
+
         return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 
@@ -54,7 +80,7 @@ public class UserController {
     public ResponseEntity<UserDto> updateMentorshipStatus(@RequestBody UpdateMentorshipDto request) {
         String username = getCurrentUsername();
         org.bounswe.backend.user.entity.User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            .orElseThrow(() -> new NotFoundException("User not found"));
         UserDto updated = userService.updateMentorshipStatus(user.getId(), request.mentorshipStatus);
         return ResponseEntity.ok(updated);
     }
@@ -64,7 +90,7 @@ public class UserController {
         if (principal instanceof UserDetails userDetails) {
             return userDetails.getUsername();
         }
-        throw new RuntimeException("Invalid authentication context");
+        throw new InvalidAuthContextException();
     }
 }
 

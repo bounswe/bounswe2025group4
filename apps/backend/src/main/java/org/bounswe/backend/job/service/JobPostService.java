@@ -2,6 +2,8 @@ package org.bounswe.backend.job.service;
 
 
 import org.bounswe.backend.common.enums.UserType;
+import org.bounswe.backend.common.exception.NotFoundException;
+import org.bounswe.backend.common.exception.UnauthorizedActionException;
 import org.bounswe.backend.job.dto.JobPostDto;
 import org.bounswe.backend.job.entity.JobPost;
 import org.bounswe.backend.job.repository.JobPostRepository;
@@ -30,7 +32,7 @@ public class JobPostService {
         return repo.findAll().stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public List<JobPostDto> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote) {
+    public List<JobPostDto> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, String contact) {
         List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, minSalary, maxSalary, isRemote);
         return jobs.stream()
                 .filter(j -> {
@@ -40,6 +42,10 @@ public class JobPostService {
                     }
                     return false;
                 })
+                .filter(j -> {
+                    if (contact == null || contact.isEmpty()) return true;
+                    return j.getContact() != null && j.getContact().toLowerCase().contains(contact.toLowerCase());
+                })
                 .map(this::toDto).collect(Collectors.toList());
     }
 
@@ -48,15 +54,18 @@ public class JobPostService {
     }
 
     public JobPostDto getById(Long id) {
-        return repo.findById(id).map(this::toDto).orElse(null);
+        return repo.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new NotFoundException("JobPost with ID " + id + " not found"));
     }
+
 
     public JobPostDto create(JobPostDto dto) {
         User employer = userRepo.findById(dto.getEmployerId())
-                .orElseThrow(() -> new RuntimeException("Employer not found"));
+                .orElseThrow(() -> new NotFoundException("Employer not found"));
 
         if (employer.getUserType() != UserType.EMPLOYER) {
-            throw new RuntimeException("Only users with EMPLOYER type can post jobs.");
+            throw new UnauthorizedActionException("Only users with EMPLOYER type can post jobs.");
         }
 
 
@@ -71,6 +80,7 @@ public class JobPostService {
                 .employer(employer)
                 .minSalary(dto.getMinSalary())
                 .maxSalary(dto.getMaxSalary())
+                .contact(dto.getContact())
                 .build();
 
         return toDto(repo.save(job));
@@ -78,6 +88,9 @@ public class JobPostService {
 
 
     public void delete(Long id) {
+        if (!repo.existsById(id)) {
+            throw new NotFoundException("Entity with ID " + id + " not found");
+        }
         repo.deleteById(id);
     }
 
@@ -93,11 +106,12 @@ public class JobPostService {
                 .ethicalTags(job.getEthicalTags())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
+                .contact(job.getContact())
                 .build();
     }
 
     public JobPostDto update(Long id, JobPostDto dto) {
-        JobPost job = repo.findById(id).orElseThrow();
+        JobPost job = repo.findById(id).orElseThrow(() -> new NotFoundException("JobPost with ID " + id + " not found"));
 
         job.setTitle(dto.getTitle());
         job.setDescription(dto.getDescription());
@@ -108,7 +122,7 @@ public class JobPostService {
         dto.setEmployerId(job.getEmployer().getId());
         job.setMinSalary(dto.getMinSalary());
         job.setMaxSalary(dto.getMaxSalary());
-
+        job.setContact(dto.getContact());
 
         return toDto(repo.save(job));
     }

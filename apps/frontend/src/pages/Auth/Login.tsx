@@ -9,6 +9,8 @@ import {
   IconButton,
   InputAdornment,
   Link,
+  Alert,
+  Snackbar,
 } from '@mui/material';
 import {
   Visibility,
@@ -19,12 +21,15 @@ import {
 } from '@mui/icons-material';
 import { useLogin } from '../../services/auth.service';
 import { Link as RouterLink } from 'react-router-dom';
+import { ApiError } from '../../types/api';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const loginMutation = useLogin();
 
@@ -35,22 +40,29 @@ export default function LoginPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null); // Clear any previous errors
 
-    // API call
     try {
       await loginMutation.mutateAsync(
         { username, password },
         {
-          onError: (error) => {
-            console.error(error);
-          },
           onSuccess: () => {
-            window.location.href = '/';
+            setOpenSuccessSnackbar(true);
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 1500);
+          },
+          onError: (error: Error) => {
+            const apiError = error as unknown as ApiError;
+            setErrorMessage(apiError.message || error.message);
           },
         }
       );
     } catch (error) {
-      console.error(error);
+      const apiError = error as unknown as ApiError;
+      setErrorMessage(apiError.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -76,6 +88,12 @@ export default function LoginPage() {
             Log In
           </Typography>
         </Box>
+
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {errorMessage}
+          </Alert>
+        )}
 
         <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
           <TextField
@@ -175,6 +193,16 @@ export default function LoginPage() {
           </Box>
         </Box>
       </Paper>
+      <Snackbar
+        open={openSuccessSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSuccessSnackbar(false)}
+        message={'Login successful'}
+      >
+        <Alert severity="success" onClose={() => setOpenSuccessSnackbar(false)}>
+          {'Login successful'}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
