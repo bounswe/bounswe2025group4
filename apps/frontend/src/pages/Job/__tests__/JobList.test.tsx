@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '../../../utils/test-utils';
+import { render, screen } from '../../../utils/test-utils';
 import JobListPage from '../JobList';
 import { JobPost } from '../../../types/job';
 
