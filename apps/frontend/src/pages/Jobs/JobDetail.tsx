@@ -28,7 +28,9 @@ const JobDetail: React.FC = () => {
   const [job, setJob] = useState<JobPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [userApplication, setUserApplication] = useState<Application | null>(null);
+  const [userApplication, setUserApplication] = useState<Application | null>(
+    null
+  );
 
   const authContext = useContext(AuthContext) as AuthContextType;
   const userId = authContext?.id;
@@ -77,7 +79,7 @@ const JobDetail: React.FC = () => {
 
   const handleApplyClick = async () => {
     if (!jobId || !userId || !currentUser) return;
-    
+
     try {
       await submitApplicationMutation.mutateAsync({
         jobSeekerId: parseInt(userId),
@@ -260,7 +262,9 @@ const JobDetail: React.FC = () => {
               onClick={handleApplyClick}
               disabled={submitApplicationMutation.isPending}
             >
-              {submitApplicationMutation.isPending ? 'Applying...' : 'Apply for this Job'}
+              {submitApplicationMutation.isPending
+                ? 'Applying...'
+                : 'Apply for this Job'}
             </Button>
           )}
         </Box>

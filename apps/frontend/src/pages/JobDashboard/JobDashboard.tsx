@@ -125,7 +125,7 @@ const JobDashboardPage: React.FC = () => {
   const handleApplicationsView = (jobId: string) => {
     navigate(`/dashboard/jobs/${jobId}`);
   };
-  
+
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>

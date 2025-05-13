@@ -84,9 +84,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
           }}
         >
           <AccessTimeIcon fontSize="small" sx={{ mr: 0.5 }} />
-          <Typography variant="body2">
-            {formatDate(job.postedDate)}
-          </Typography>
+          <Typography variant="body2">{formatDate(job.postedDate)}</Typography>
         </Box>
 
         <Typography
