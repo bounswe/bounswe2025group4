@@ -488,12 +488,6 @@ class _JobPageState extends State<JobPage> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Text(
-                        job.jobType ?? 'N/A',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.blueGrey),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 4.0),
@@ -538,16 +532,6 @@ class _JobPageState extends State<JobPage> {
                       alignment: Alignment.centerRight,
                       child: Text(
                         'Posted: ${dateFormat.format(job.datePosted!)}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    )
-                  else
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'Posted: Unknown',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Colors.grey.shade600,
                         ),

@@ -183,25 +183,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(job.company, style: Theme.of(context).textTheme.titleMedium),
-              Text(
-                job.jobType ?? 'N/A',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(color: Colors.blueGrey),
-              ),
             ],
           ),
           const SizedBox(height: 4.0),
           if (job.datePosted != null)
             Text(
               'Posted: ${dateFormat.format(job.datePosted!)}',
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
-            )
-          else
-            Text(
-              'Posted: Unknown',
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
@@ -251,10 +238,16 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           // Salary Section
           Text('Salary Range', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8.0),
-          Text(
-            job.salaryRange ?? 'Not specified',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          if (job.minSalary != null || job.maxSalary != null)
+            Text(
+              _formatSalaryRange(job.minSalary, job.maxSalary),
+              style: Theme.of(context).textTheme.bodyMedium,
+            )
+          else
+            Text(
+              job.salaryRange ?? 'Not specified',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
 
           const Divider(height: 32.0),
 
@@ -265,8 +258,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           ),
           const SizedBox(height: 8.0),
           Text(
-            (job.contactInfo != null && job.contactInfo!.isNotEmpty)
-                ? job.contactInfo!
+            (job.contactInformation != null &&
+                    job.contactInformation!.isNotEmpty)
+                ? job.contactInformation!
                 : 'Not specified',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
@@ -310,5 +304,21 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         onPressed: _isApplying ? null : _applyToJob, // Disable while applying
       ),
     );
+  }
+
+  String _formatSalaryRange(double? minSalary, double? maxSalary) {
+    // Use NumberFormat from intl package for currency formatting
+    final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 0);
+
+    if (minSalary == null && maxSalary == null) {
+      return 'Not specified';
+    }
+    if (minSalary == null) {
+      return 'Up to ${formatter.format(maxSalary)}';
+    }
+    if (maxSalary == null) {
+      return 'From ${formatter.format(minSalary)}';
+    }
+    return '${formatter.format(minSalary)} - ${formatter.format(maxSalary)}';
   }
 }

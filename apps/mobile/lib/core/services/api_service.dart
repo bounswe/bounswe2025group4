@@ -13,7 +13,6 @@ import '../models/mentor_review.dart';
 import '../providers/auth_provider.dart'; // Import AuthProvider
 import '../constants/app_constants.dart'; // Import AppConstants
 
-
 const List<String> _availableEthicalPolicies = [
   'fair_wage',
   'diversity',
@@ -218,10 +217,10 @@ class ApiService {
     required bool remote,
     required String ethicalTags,
 
-    // Optional fields from UI
-    String? contactInfo,
+    String? contactInformation,
     String? jobType,
-    String? salaryRange,
+    double? minSalary,
+    double? maxSalary,
   }) async {
     print('API: Creating new job post');
 
@@ -237,10 +236,11 @@ class ApiService {
       'location': location,
       'remote': remote,
       'ethicalTags': ethicalTags,
-      // TODO: Confirm if optional fields should be sent if null or omitted
-      // if (contactInfo != null) 'contactInfo': contactInfo,
-      // if (jobType != null) 'jobType': jobType,
-      // if (salaryRange != null) 'salaryRange': salaryRange,
+      // Optional fields, only include if not null
+      if (contactInformation != null) 'contact': contactInformation,
+      if (jobType != null) 'jobType': jobType,
+      if (minSalary != null) 'minSalary': minSalary,
+      if (maxSalary != null) 'maxSalary': maxSalary,
     });
 
     try {
@@ -456,10 +456,10 @@ class ApiService {
 
   /// POST /api/threads
   Future<DiscussionThread> createDiscussionThread(
-      String title,
-      String body,
-      List<String> tags,
-      ) async {
+    String title,
+    String body,
+    List<String> tags,
+  ) async {
     final uri = _buildUri('/threads');
     final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
 
@@ -532,16 +532,13 @@ class ApiService {
     }
   }
 
-
-
-
   /// PATCH /api/threads/{threadId}
   Future<DiscussionThread> editDiscussion(
-      int threadId,
-      String title,
-      String body,
-      List<String> tags,
-      ) async {
+    int threadId,
+    String title,
+    String body,
+    List<String> tags,
+  ) async {
     final uri = _buildUri('/threads/$threadId');
     final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
 
@@ -580,7 +577,11 @@ class ApiService {
     final uri = _buildUri('/threads/tags');
     final payload = jsonEncode({'name': tagName.trim()});
     try {
-      final response = await _client.post(uri, headers: _getHeaders(), body: payload);
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
       final data = await _handleResponse(response);
       return data['name']; // returns normalized tag name
     } on SocketException {
@@ -589,9 +590,6 @@ class ApiService {
       throw Exception('Failed to create or find tag. $e');
     }
   }
-
-
-
 
   /// DELETE /api/comments/{commentId}
   Future<bool> deleteComment(int commentId) async {

@@ -40,9 +40,12 @@ public class JobPostController {
             @RequestParam(required = false) Integer maxSalary,
 
             @Parameter(name = "isRemote", description = "Whether the job is remote", in = ParameterIn.QUERY)
-            @RequestParam(required = false) Boolean isRemote
+            @RequestParam(required = false) Boolean isRemote,
+            
+            @Parameter(name = "contact", description = "Contact information", in = ParameterIn.QUERY)
+            @RequestParam(required = false) String contact
     ) {
-        return ResponseEntity.ok(service.getFiltered(title, companyName, ethicalTags, minSalary, maxSalary, isRemote));
+        return ResponseEntity.ok(service.getFiltered(title, companyName, ethicalTags, minSalary, maxSalary, isRemote, contact));
     }
 
     @GetMapping("/employer/{employerId}")
