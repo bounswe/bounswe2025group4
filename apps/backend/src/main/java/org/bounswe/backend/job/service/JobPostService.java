@@ -5,12 +5,16 @@ import org.bounswe.backend.common.enums.UserType;
 import org.bounswe.backend.common.exception.NotFoundException;
 import org.bounswe.backend.common.exception.UnauthorizedActionException;
 import org.bounswe.backend.job.dto.JobPostDto;
+import org.bounswe.backend.job.dto.JobPostResponseDto;
 import org.bounswe.backend.job.entity.JobPost;
 import org.bounswe.backend.job.repository.JobPostRepository;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,21 +22,21 @@ import java.util.stream.Collectors;
 public class JobPostService {
 
     private final JobPostRepository repo;
-    private final UserRepository userRepo;
     private final JobPostRepository jobPostRepository;
+    private final UserRepository userRepository;
 
-    public JobPostService(JobPostRepository repo, UserRepository userRepo, JobPostRepository jobPostRepository) {
+    public JobPostService(JobPostRepository repo, JobPostRepository jobPostRepository, UserRepository userRepository) {
         this.repo = repo;
-        this.userRepo = userRepo;
         this.jobPostRepository = jobPostRepository;
+        this.userRepository = userRepository;
     }
 
 
-    public List<JobPostDto> getAll() {
-        return repo.findAll().stream().map(this::toDto).collect(Collectors.toList());
+    public List<JobPostResponseDto> getAll() {
+        return repo.findAll().stream().map(this::toResponseDto).collect(Collectors.toList());
     }
 
-    public List<JobPostDto> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, String contact) {
+    public List<JobPostResponseDto> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, String contact) {
         List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, minSalary, maxSalary, isRemote);
         return jobs.stream()
                 .filter(j -> {
@@ -46,29 +50,29 @@ public class JobPostService {
                     if (contact == null || contact.isEmpty()) return true;
                     return j.getContact() != null && j.getContact().toLowerCase().contains(contact.toLowerCase());
                 })
-                .map(this::toDto).collect(Collectors.toList());
+                .map(this::toResponseDto).collect(Collectors.toList());
     }
 
-    public List<JobPostDto> getByEmployerId(Long employerId) {
-        return repo.findByEmployerId(employerId).stream().map(this::toDto).collect(Collectors.toList());
+    public List<JobPostResponseDto> getByEmployerId(Long employerId) {
+        return repo.findByEmployerId(employerId).stream().map(this::toResponseDto).collect(Collectors.toList());
     }
 
-    public JobPostDto getById(Long id) {
+    public JobPostResponseDto getById(Long id) {
         return repo.findById(id)
-                .map(this::toDto)
+                .map(this::toResponseDto)
                 .orElseThrow(() -> new NotFoundException("JobPost with ID " + id + " not found"));
     }
 
 
-    public JobPostDto create(JobPostDto dto) {
-        User employer = userRepo.findById(dto.getEmployerId())
-                .orElseThrow(() -> new NotFoundException("Employer not found"));
+    public JobPostResponseDto create(JobPostDto dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // This gets the username (email)
+        User employer = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Authenticated user not found in the system"));
 
         if (employer.getUserType() != UserType.EMPLOYER) {
             throw new UnauthorizedActionException("Only users with EMPLOYER type can post jobs.");
         }
-
-
 
         JobPost job = JobPost.builder()
                 .title(dto.getTitle())
@@ -81,9 +85,10 @@ public class JobPostService {
                 .minSalary(dto.getMinSalary())
                 .maxSalary(dto.getMaxSalary())
                 .contact(dto.getContact())
+                .postedDate(LocalDateTime.now())
                 .build();
 
-        return toDto(repo.save(job));
+        return toResponseDto(repo.save(job));
     }
 
 
@@ -94,8 +99,8 @@ public class JobPostService {
         repo.deleteById(id);
     }
 
-    private JobPostDto toDto(JobPost job) {
-        return JobPostDto.builder()
+    private JobPostResponseDto toResponseDto(JobPost job) {
+        return JobPostResponseDto.builder()
                 .id(job.getId())
                 .employerId(job.getEmployer().getId())
                 .title(job.getTitle())
@@ -107,11 +112,20 @@ public class JobPostService {
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
                 .contact(job.getContact())
+                .postedDate(job.getPostedDate())
                 .build();
     }
 
-    public JobPostDto update(Long id, JobPostDto dto) {
+    public JobPostResponseDto update(Long id, JobPostDto dto) {
+
         JobPost job = repo.findById(id).orElseThrow(() -> new NotFoundException("JobPost with ID " + id + " not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // This gets the username (email)
+        User employer = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Authenticated user not found in the system"));
+        if (!job.getEmployer().getId().equals(employer.getId())) {
+            throw new UnauthorizedActionException("Only the employer who posted the job can update it.");
+        }
 
         job.setTitle(dto.getTitle());
         job.setDescription(dto.getDescription());
@@ -119,12 +133,11 @@ public class JobPostService {
         job.setLocation(dto.getLocation());
         job.setRemote(dto.isRemote());
         job.setEthicalTags(dto.getEthicalTags());
-        dto.setEmployerId(job.getEmployer().getId());
         job.setMinSalary(dto.getMinSalary());
         job.setMaxSalary(dto.getMaxSalary());
         job.setContact(dto.getContact());
 
-        return toDto(repo.save(job));
+        return toResponseDto(repo.save(job));
     }
 
 }

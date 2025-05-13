@@ -10,9 +10,6 @@ import lombok.*;
 @Builder
 public class JobPostDto {
 
-    private Long id;
-    private Long employerId;
-
     @NotBlank(message = "Title is required")
     @Size(max = 100)
     private String title;
@@ -32,8 +29,8 @@ public class JobPostDto {
     private String ethicalTags; // Optional
 
     private Integer minSalary;
-
     private Integer maxSalary;
 
+    @NotBlank(message = "Contact information is required")
     private String contact;
 }
