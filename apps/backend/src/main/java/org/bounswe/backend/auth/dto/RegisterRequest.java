@@ -21,10 +21,14 @@ public class RegisterRequest {
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
-
-    private String bio;
-
     private UserType userType;
-
     private MentorshipStatus mentorshipStatus;
+
+    // Profile fields
+    private String fullName;
+    private String phone;
+    private String location;
+    private String occupation;
+    private String bio;
+    private String profilePicture;
     }

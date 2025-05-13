@@ -7,7 +7,8 @@ class IndustrySelectionScreen extends StatefulWidget {
   const IndustrySelectionScreen({super.key});
 
   @override
-  State<IndustrySelectionScreen> createState() => _IndustrySelectionScreenState();
+  State<IndustrySelectionScreen> createState() =>
+      _IndustrySelectionScreenState();
 }
 
 class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
@@ -38,27 +39,11 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const SignUpScreen(),
-                ),
-              );
-            },
-            child: const Text('Skip'),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            const OnboardingProgressBar(
-              currentStep: 3,
-              totalSteps: 4,
-            ),
+            const OnboardingProgressBar(currentStep: 3, totalSteps: 4),
             const SizedBox(height: 24),
             Expanded(
               child: Padding(
@@ -76,21 +61,21 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                     const SizedBox(height: 8),
                     const Text(
                       'Select all that apply',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 24),
                     Expanded(
                       child: ListView.separated(
                         itemCount: industries.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 12),
+                        separatorBuilder:
+                            (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final industry = industries[index];
-                          final isSelected = selectedIndustries.contains(industry);
+                          final isSelected = selectedIndustries.contains(
+                            industry,
+                          );
                           final isOther = industry == 'Other';
-                          
+
                           return Column(
                             children: [
                               InkWell(
@@ -114,10 +99,16 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: isSelected ? Colors.blue : Colors.grey.shade300,
+                                      color:
+                                          isSelected
+                                              ? Colors.blue
+                                              : Colors.grey.shade300,
                                     ),
                                     borderRadius: BorderRadius.circular(8),
-                                    color: isSelected ? Colors.blue.withOpacity(0.1) : null,
+                                    color:
+                                        isSelected
+                                            ? Colors.blue.withOpacity(0.1)
+                                            : null,
                                   ),
                                   child: Row(
                                     children: [
@@ -126,14 +117,18 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                                           industry,
                                           style: TextStyle(
                                             fontSize: 16,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
+                                            fontWeight:
+                                                isSelected
+                                                    ? FontWeight.bold
+                                                    : FontWeight.normal,
                                           ),
                                         ),
                                       ),
                                       if (isSelected)
-                                        const Icon(Icons.check_circle, color: Colors.blue),
+                                        const Icon(
+                                          Icons.check_circle,
+                                          color: Colors.blue,
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -163,16 +158,21 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: selectedIndustries.isNotEmpty
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const MentorshipSelectionScreen(isJobSeeker: true),
-                                  ),
-                                );
-                              }
-                            : null,
+                        onPressed:
+                            selectedIndustries.isNotEmpty
+                                ? () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const MentorshipSelectionScreen(
+                                                isJobSeeker: true,
+                                              ),
+                                    ),
+                                  );
+                                }
+                                : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           shape: RoundedRectangleBorder(
@@ -181,10 +181,7 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                         ),
                         child: const Text(
                           'Continue',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),
@@ -197,4 +194,4 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
       ),
     );
   }
-} 
+}

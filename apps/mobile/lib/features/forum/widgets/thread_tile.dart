@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../../../core/models/discussion_thread.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
-import '../screens/create_thread_screen.dart';
 
 class ThreadTile extends StatefulWidget {
   final DiscussionThread thread;
@@ -24,22 +23,10 @@ class ThreadTile extends StatefulWidget {
 }
 
 class _ThreadTileState extends State<ThreadTile> {
-  String? _username;
 
   @override
   void initState() {
     super.initState();
-    _loadUsername();
-  }
-
-  Future<void> _loadUsername() async {
-    final api = ApiService(authProvider: context.read<AuthProvider>());
-    try {
-      final user = await api.fetchUser(widget.thread.creatorId);
-      setState(() => _username = user.username);
-    } catch (_) {
-      setState(() => _username = 'Unknown');
-    }
   }
 
   @override
@@ -63,11 +50,15 @@ class _ThreadTileState extends State<ThreadTile> {
                 children: [
                   CircleAvatar(
                     radius: 16,
-                    child: Text(_username != null ? _username![0].toUpperCase() : '?'),
+                    child: Text(
+                      widget.thread.creatorUsername.isNotEmpty
+                          ? widget.thread.creatorUsername[0].toUpperCase()
+                          : '?',
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    _username ?? 'Loading...',
+                    widget.thread.creatorUsername,
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ],
@@ -90,11 +81,42 @@ class _ThreadTileState extends State<ThreadTile> {
                 children: widget.thread.tags.map((tag) => Chip(label: Text(tag))).toList(),
               ),
               const SizedBox(height: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.calendar_today, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Created: ${widget.thread.createdAt.toLocal().toString().split(".").first}',                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                  if (widget.thread.editedAt != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.edit, size: 16),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Edited: ${widget.thread.editedAt!.toLocal().toString().split(".").first}',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ]
+                ],
+              ),
+              const SizedBox(height: 8),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Icon(Icons.comment, size: 20),
-                  Text('Unknown date', style: Theme.of(context).textTheme.bodySmall),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${widget.thread.commentCount} comments',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               ),
             ],
@@ -104,4 +126,3 @@ class _ThreadTileState extends State<ThreadTile> {
     );
   }
 }
-

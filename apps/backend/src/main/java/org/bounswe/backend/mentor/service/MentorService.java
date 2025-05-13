@@ -318,7 +318,6 @@ public class MentorService {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .bio(user.getBio())
                 .userType(user.getUserType())
                 .build();
     }

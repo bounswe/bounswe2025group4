@@ -7,8 +7,59 @@ import '../providers/mentor_provider.dart';
 import './mentee_mentorship_screen.dart';
 import './mentor_mentorship_screen.dart';
 
-class MentorshipPage extends StatelessWidget {
+class MentorshipPage extends StatefulWidget {
   const MentorshipPage({super.key});
+
+  @override
+  State<MentorshipPage> createState() => _MentorshipPageState();
+}
+
+class _MentorshipPageState extends State<MentorshipPage> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  // Method to refresh the data
+  Future<void> _loadData() async {
+    // Set loading state
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
+    // Delay showing content until the next frame to prevent shaky animation
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  // Method to handle refresh for the RefreshIndicator
+  Future<void> _handleRefresh(BuildContext context) async {
+    // Refresh the MentorProvider data
+    final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+
+    // Reload basic data that's common to both screens
+    try {
+      await Future.wait([
+        mentorProvider.fetchMenteeRequests(),
+        mentorProvider.fetchMentorRequests(),
+        mentorProvider.fetchAvailableMentors(),
+      ]);
+    } catch (e) {
+      // Errors are handled inside the provider
+    }
+
+    return;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +69,27 @@ class MentorshipPage extends StatelessWidget {
     // If the user is not logged in, show a message
     if (!authProvider.isLoggedIn) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Mentorship')),
+        appBar: AppBar(
+          title: const Text('Mentorship'),
+          automaticallyImplyLeading: false,
+        ),
         body: const Center(
           child: Text(
             'Please log in to access mentorship features.',
             style: TextStyle(fontSize: 16),
           ),
         ),
+      );
+    }
+
+    // Show loading state
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Mentorship'),
+          automaticallyImplyLeading: false,
+        ),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -38,9 +103,13 @@ class MentorshipPage extends StatelessWidget {
       // Use Builder to access the provider in a separate build method
       child: Builder(
         builder: (context) {
-          return isMentor
-              ? const MentorMentorshipScreen()
-              : const MenteeMentorshipScreen();
+          return RefreshIndicator(
+            onRefresh: () => _handleRefresh(context),
+            child:
+                isMentor
+                    ? const MentorMentorshipScreen()
+                    : const MenteeMentorshipScreen(),
+          );
         },
       ),
     );

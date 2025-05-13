@@ -11,9 +11,11 @@ class JobPost {
   final bool remote;
   final String ethicalTags;
   final String? salaryRange;
-  final String? contactInfo;
+  final String? contactInformation;
   final String? jobType;
   final DateTime? datePosted;
+  final double? minSalary;
+  final double? maxSalary;
 
   JobPost({
     required this.id,
@@ -25,9 +27,11 @@ class JobPost {
     required this.remote,
     required this.ethicalTags,
     this.salaryRange,
-    this.contactInfo,
+    this.contactInformation,
     this.jobType,
     this.datePosted,
+    this.minSalary,
+    this.maxSalary,
   });
 
   // Factory constructor for JSON parsing (GET /api/jobs/{id} or GET /api/jobs)
@@ -68,9 +72,21 @@ class JobPost {
       ethicalTags: json['ethicalTags'] ?? '', // Default to empty string if null
       // Optional fields from GET potentially not in DTO
       salaryRange: json['salaryRange'],
-      contactInfo: json['contactInfo'],
+      contactInformation: json['contact'],
       jobType: json['jobType'],
       datePosted: parseDate(json['datePosted']), // Use helper for safe parsing
+      minSalary:
+          json['minSalary'] != null
+              ? (json['minSalary'] is int
+                  ? (json['minSalary'] as int).toDouble()
+                  : json['minSalary'] as double)
+              : null,
+      maxSalary:
+          json['maxSalary'] != null
+              ? (json['maxSalary'] is int
+                  ? (json['maxSalary'] as int).toDouble()
+                  : json['maxSalary'] as double)
+              : null,
     );
   }
 
@@ -89,6 +105,7 @@ class JobPost {
       'remote': remote,
       // Sending ethicalTags as a string.
       'ethicalTags': ethicalTags,
+      if (contactInformation != null) 'contact': contactInformation,
     };
   }
 
@@ -107,8 +124,10 @@ class JobPost {
       'ethicalTags': ethicalTags, // Send as String
       // Include other fields if they are updatable via PUT
       'salaryRange': salaryRange,
-      'contactInfo': contactInfo,
+      'contact': contactInformation,
       'jobType': jobType,
+      'minSalary': minSalary,
+      'maxSalary': maxSalary,
       // datePosted is usually managed by the server
     };
   }

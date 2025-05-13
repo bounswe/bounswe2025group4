@@ -5,7 +5,11 @@ import org.bounswe.backend.auth.dto.*;
 import org.bounswe.backend.auth.jwt.JwtTokenProvider;
 import org.bounswe.backend.auth.service.PasswordResetTokenService;
 import org.bounswe.backend.auth.service.EmailService;
-import org.bounswe.backend.common.exception.*;
+import org.bounswe.backend.common.exception.InvalidResetTokenException;
+import org.bounswe.backend.common.exception.UserNotFoundException;
+import org.bounswe.backend.common.exception.UsernameAlreadyExistsException;
+import org.bounswe.backend.profile.entity.Profile;
+import org.bounswe.backend.profile.repository.ProfileRepository;
 import org.bounswe.backend.user.entity.User;
 import org.bounswe.backend.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -21,17 +25,19 @@ public class AuthController {
     private final BCryptPasswordEncoder passwordEncoder;
     private final PasswordResetTokenService passwordResetTokenService;
     private final EmailService emailService;
+    private final ProfileRepository profileRepository;
 
     public AuthController(UserRepository userRepository,
                           JwtTokenProvider jwtTokenProvider,
                           BCryptPasswordEncoder passwordEncoder,
                           PasswordResetTokenService passwordResetTokenService,
-                          EmailService emailService) {
+                          EmailService emailService, ProfileRepository profileRepository) {
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
         this.passwordResetTokenService = passwordResetTokenService;
         this.emailService = emailService;
+        this.profileRepository = profileRepository;
     }
 
     @PostMapping("/register")
@@ -60,12 +66,23 @@ public class AuthController {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .bio(request.getBio())
                 .userType(request.getUserType())
                 .mentorshipStatus(request.getMentorshipStatus())
                 .build();
 
         userRepository.save(user);
+
+        Profile profile = Profile.builder()
+            .fullName(request.getFullName())
+            .phone(request.getPhone())
+            .location(request.getLocation())
+            .occupation(request.getOccupation())
+            .profilePicture(request.getProfilePicture())
+            .bio(request.getBio())
+            .user(user)
+            .build();
+
+        profileRepository.save(profile);
 
         String token = jwtTokenProvider.generateToken(user.getUsername(), user.getUserType().name());
 

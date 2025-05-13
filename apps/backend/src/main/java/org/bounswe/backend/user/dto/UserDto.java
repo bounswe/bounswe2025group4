@@ -12,7 +12,6 @@ public class UserDto {
     private Long id;
     private String username;
     private String email;
-    private String bio;
     private UserType userType;
     private MentorshipStatus mentorshipStatus;
 }

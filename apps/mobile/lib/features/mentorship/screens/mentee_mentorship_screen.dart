@@ -26,7 +26,11 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   void initState() {
     super.initState();
     _searchController.addListener(_filterMentors);
-    _loadMentors();
+
+    // Delay showing content to avoid UI jumps
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadMentors();
+    });
   }
 
   @override
@@ -178,6 +182,60 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
         final mentors =
             _isFiltered ? _filteredMentors : mentorProvider.availableMentors;
 
+        Widget contentWidget;
+
+        if (mentorProvider.isLoadingMentors) {
+          contentWidget = const Center(child: CircularProgressIndicator());
+        } else if (mentorProvider.error != null && mentors.isEmpty) {
+          // Only show error state if there are no mentors to display
+          contentWidget = Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Error loading mentors: ${mentorProvider.error}'),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    mentorProvider.clearError();
+                    _loadMentors();
+                  },
+                  child: const Text('Retry Loading Mentors'),
+                ),
+              ],
+            ),
+          );
+        } else if (mentors.isEmpty) {
+          contentWidget = const Center(child: Text('No mentors found.'));
+        } else {
+          contentWidget = ListView.builder(
+            itemCount: mentors.length,
+            padding: EdgeInsets.zero,
+            itemBuilder: (context, index) {
+              final mentor = mentors[index];
+              return MentorCard(
+                mentorId: mentor.id.toString(),
+                name: mentor.user.name,
+                role: mentor.user.jobTitle ?? 'Mentor',
+                company: mentor.user.company,
+                maxMenteeCount: mentor.capacity,
+                currentMenteeCount: mentor.currentMenteeCount,
+                averageRating: mentor.averageRating,
+                onTap:
+                    () => _navigateToMentorProfile(
+                      mentor.user.id,
+                      mentor.id,
+                      mentor.user.name,
+                    ),
+                onRequestTap:
+                    () => _showRequestMentorshipDialog(
+                      mentor.id,
+                      mentor.user.name,
+                    ),
+              );
+            },
+          );
+        }
+
         return Column(
           children: [
             Padding(
@@ -202,59 +260,21 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                 ),
               ),
             ),
-            if (mentorProvider.isLoadingMentors)
-              const Expanded(child: Center(child: CircularProgressIndicator()))
-            else if (mentorProvider.error != null && mentors.isEmpty)
-              // Only show error state if there are no mentors to display
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Error loading mentors: ${mentorProvider.error}'),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          mentorProvider.clearError();
-                          _loadMentors();
-                        },
-                        child: const Text('Retry Loading Mentors'),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else if (mentors.isEmpty)
-              const Expanded(child: Center(child: Text('No mentors found.')))
-            else
-              Expanded(
-                child: ListView.builder(
-                  itemCount: mentors.length,
-                  itemBuilder: (context, index) {
-                    final mentor = mentors[index];
-                    return MentorCard(
-                      mentorId: mentor.id.toString(),
-                      name: mentor.user.name,
-                      role: mentor.user.jobTitle ?? 'Mentor',
-                      company: mentor.user.company,
-                      maxMenteeCount: mentor.capacity,
-                      currentMenteeCount: mentor.currentMenteeCount,
-                      averageRating: mentor.averageRating,
-                      onTap:
-                          () => _navigateToMentorProfile(
-                            mentor.user.id,
-                            mentor.id,
-                            mentor.user.name,
+            Expanded(
+              // Always wrap in a scrollable widget for RefreshIndicator
+              child:
+                  mentors.isEmpty && !mentorProvider.isLoadingMentors
+                      ? ListView(
+                        // Use ListView with a centered item instead of just Center
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height / 3,
                           ),
-                      onRequestTap:
-                          () => _showRequestMentorshipDialog(
-                            mentor.id,
-                            mentor.user.name,
-                          ),
-                    );
-                  },
-                ),
-              ),
+                          contentWidget,
+                        ],
+                      )
+                      : contentWidget,
+            ),
           ],
         );
       },
@@ -274,7 +294,10 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // Delay showing content to avoid UI jumps
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
   }
 
   Future<void> _loadData() async {
@@ -289,6 +312,57 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
             (context) =>
                 DirectMessageScreen(mentorId: mentorId, mentorName: mentorName),
       ),
+    );
+  }
+
+  void _showMentorshipActionDialog(
+    int requestId,
+    String mentorName,
+    MentorshipRequestStatus status,
+  ) {
+    final actionText =
+        status == MentorshipRequestStatus.COMPLETED ? 'complete' : 'cancel';
+    final actionColor =
+        status == MentorshipRequestStatus.COMPLETED ? Colors.green : Colors.red;
+
+    // Capture the provider before showing dialog
+    final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder:
+          (dialogContext) => AlertDialog(
+            title: Text('$actionText Mentorship'),
+            content: Text(
+              'Are you sure you want to $actionText your mentorship with $mentorName?'
+              '${status == MentorshipRequestStatus.COMPLETED ? '\n\nThis will mark the mentorship as successfully completed.' : '\n\nThis will end the mentorship relationship.'}',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(dialogContext);
+                  // Use the captured provider instead of trying to get it from the dialog context
+                  final success = await mentorProvider.updateRequestStatus(
+                    requestId: requestId,
+                    status: status,
+                  );
+                  if (success && mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Mentorship ${actionText}d successfully'),
+                        backgroundColor: actionColor.withOpacity(0.8),
+                      ),
+                    );
+                  }
+                },
+                child: Text('Confirm', style: TextStyle(color: actionColor)),
+              ),
+            ],
+          ),
     );
   }
 
@@ -308,28 +382,69 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                 .toList();
 
         if (mentorProvider.isLoadingMenteeRequests) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (mentorProvider.error != null) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Error: ${mentorProvider.error}'),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    mentorProvider.clearError();
-                    _loadData();
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
+          // For loading state, still use ListView to ensure it's scrollable for RefreshIndicator
+          return ListView(
+            children: const [
+              SizedBox(height: 100),
+              Center(child: CircularProgressIndicator()),
+            ],
           );
         }
 
+        if (mentorProvider.error != null) {
+          // For error state, use ListView to ensure it's scrollable for RefreshIndicator
+          return ListView(
+            children: [
+              const SizedBox(height: 100),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Error: ${mentorProvider.error}'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        mentorProvider.clearError();
+                        _loadData();
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }
+
+        // If we have no data, still make sure we have a scrollable widget
+        if (pendingRequests.isEmpty && acceptedRequests.isEmpty) {
+          return ListView(
+            padding: const EdgeInsets.all(16.0),
+            children: [
+              Text(
+                'Pending Requests',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'No pending requests.',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+              const Divider(height: 32),
+              Text(
+                'Active Mentorships',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'No active mentorships.',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ],
+          );
+        }
+
+        // Regular content with data
         return ListView(
           children: [
             // --- Pending Requests Section ---
@@ -385,9 +500,20 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                         req.mentor.id.toString(),
                         req.mentor.name,
                       ),
+                  onCompleteTap:
+                      () => _showMentorshipActionDialog(
+                        req.id,
+                        req.mentor.name,
+                        MentorshipRequestStatus.COMPLETED,
+                      ),
+                  onCancelTap:
+                      () => _showMentorshipActionDialog(
+                        req.id,
+                        req.mentor.name,
+                        MentorshipRequestStatus.CANCELLED,
+                      ),
                 );
               }).toList(),
-            const SizedBox(height: 16), // Add some padding at the bottom
           ],
         );
       },
@@ -418,11 +544,24 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
     super.dispose();
   }
 
+  // Method to refresh data in all tabs
+  Future<void> refresh() async {
+    // Get the MentorProvider
+    final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+
+    // Refresh all relevant data
+    await Future.wait([
+      mentorProvider.fetchMenteeRequests(),
+      mentorProvider.fetchAvailableMentors(),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mentorship'),
+        automaticallyImplyLeading: false,
         bottom: TabBar(
           controller: _tabController,
           tabs: const [Tab(text: 'Find Mentors'), Tab(text: 'My Mentorships')],
@@ -430,7 +569,13 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [FindMentorsTab(), MyMentorshipsTab()],
+        children: [
+          // Find Mentors Tab - Wrap with RefreshIndicator
+          RefreshIndicator(onRefresh: refresh, child: const FindMentorsTab()),
+
+          // My Mentorships Tab - Wrap with RefreshIndicator
+          RefreshIndicator(onRefresh: refresh, child: const MyMentorshipsTab()),
+        ],
       ),
     );
   }

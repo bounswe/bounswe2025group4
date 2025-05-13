@@ -32,7 +32,7 @@ public class JobPostService {
         return repo.findAll().stream().map(this::toDto).collect(Collectors.toList());
     }
 
-    public List<JobPostDto> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote) {
+    public List<JobPostDto> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, String contact) {
         List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, minSalary, maxSalary, isRemote);
         return jobs.stream()
                 .filter(j -> {
@@ -41,6 +41,10 @@ public class JobPostService {
                         if (j.getEthicalTags().toLowerCase().contains(tag.toLowerCase())) return true;
                     }
                     return false;
+                })
+                .filter(j -> {
+                    if (contact == null || contact.isEmpty()) return true;
+                    return j.getContact() != null && j.getContact().toLowerCase().contains(contact.toLowerCase());
                 })
                 .map(this::toDto).collect(Collectors.toList());
     }
@@ -76,6 +80,7 @@ public class JobPostService {
                 .employer(employer)
                 .minSalary(dto.getMinSalary())
                 .maxSalary(dto.getMaxSalary())
+                .contact(dto.getContact())
                 .build();
 
         return toDto(repo.save(job));
@@ -101,6 +106,7 @@ public class JobPostService {
                 .ethicalTags(job.getEthicalTags())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
+                .contact(job.getContact())
                 .build();
     }
 
@@ -116,7 +122,7 @@ public class JobPostService {
         dto.setEmployerId(job.getEmployer().getId());
         job.setMinSalary(dto.getMinSalary());
         job.setMaxSalary(dto.getMaxSalary());
-
+        job.setContact(dto.getContact());
 
         return toDto(repo.save(job));
     }

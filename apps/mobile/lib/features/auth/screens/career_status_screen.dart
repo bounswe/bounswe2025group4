@@ -28,27 +28,11 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const JobPrioritiesScreen(),
-                ),
-              );
-            },
-            child: const Text('Skip'),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            const OnboardingProgressBar(
-              currentStep: 1,
-              totalSteps: 4,
-            ),
+            const OnboardingProgressBar(currentStep: 1, totalSteps: 4),
             const SizedBox(height: 24),
             Expanded(
               child: Padding(
@@ -67,7 +51,8 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
                     Expanded(
                       child: ListView.separated(
                         itemCount: careerStatuses.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 12),
+                        separatorBuilder:
+                            (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final status = careerStatuses[index];
                           return InkWell(
@@ -80,14 +65,16 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: selectedStatus == status
-                                      ? Colors.blue
-                                      : Colors.grey.shade300,
+                                  color:
+                                      selectedStatus == status
+                                          ? Colors.blue
+                                          : Colors.grey.shade300,
                                 ),
                                 borderRadius: BorderRadius.circular(8),
-                                color: selectedStatus == status
-                                    ? Colors.blue.withOpacity(0.1)
-                                    : null,
+                                color:
+                                    selectedStatus == status
+                                        ? Colors.blue.withOpacity(0.1)
+                                        : null,
                               ),
                               child: Row(
                                 children: [
@@ -96,14 +83,18 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
                                       status,
                                       style: TextStyle(
                                         fontSize: 16,
-                                        fontWeight: selectedStatus == status
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
+                                        fontWeight:
+                                            selectedStatus == status
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
                                       ),
                                     ),
                                   ),
                                   if (selectedStatus == status)
-                                    const Icon(Icons.check_circle, color: Colors.blue),
+                                    const Icon(
+                                      Icons.check_circle,
+                                      color: Colors.blue,
+                                    ),
                                 ],
                               ),
                             ),
@@ -116,16 +107,19 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: selectedStatus != null
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const JobPrioritiesScreen(),
-                                  ),
-                                );
-                              }
-                            : null,
+                        onPressed:
+                            selectedStatus != null
+                                ? () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const JobPrioritiesScreen(),
+                                    ),
+                                  );
+                                }
+                                : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           shape: RoundedRectangleBorder(
@@ -134,10 +128,7 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
                         ),
                         child: const Text(
                           'Continue',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),
@@ -150,4 +141,4 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
       ),
     );
   }
-} 
+}

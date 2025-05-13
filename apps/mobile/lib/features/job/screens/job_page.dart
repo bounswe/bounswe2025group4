@@ -11,6 +11,7 @@ import './create_job_post_screen.dart'; // Import placeholder
 import './job_applications_screen.dart'; // Import placeholder
 import '../widgets/job_filter_dialog.dart'; // Import the filter dialog
 import '../../application/screens/my_applications_screen.dart'; // Import the new screen
+import 'dart:async'; // Import for Timer
 
 class JobPage extends StatefulWidget {
   const JobPage({super.key});
@@ -26,9 +27,20 @@ class _JobPageState extends State<JobPage> {
   bool _isLoading = false;
   String? _errorMessage;
   final TextEditingController _searchController = TextEditingController();
-  // Store selected filters as a map
-  Map<String, List<String>> _selectedFilters = {'policies': [], 'jobTypes': []};
+  // Store selected filters as a map with dynamic values
+  Map<String, dynamic> _selectedFilters = {
+    'title': null,
+    'companyName': null,
+    'ethicalTags': <String>[],
+    'minSalary': null,
+    'maxSalary': null,
+    'isRemote': null,
+    'jobTypes': <String>[],
+  };
   UserType? _userRole; // Changed type to UserType?
+
+  // Add debounce timer for search
+  Timer? _debounce;
 
   // Initialize ApiService late or in initState AFTER getting AuthProvider
   late final ApiService _apiService;
@@ -50,6 +62,7 @@ class _JobPageState extends State<JobPage> {
   @override
   void dispose() {
     _searchController.dispose();
+    _debounce?.cancel(); // Cancel debounce timer on dispose
     super.dispose();
   }
 
@@ -73,12 +86,24 @@ class _JobPageState extends State<JobPage> {
           employerId,
         ); // Using placeholder
       } else {
-        // Pass the filter map to the API service
+        // Pass the search query and filter map to the API service
         postings = await _apiService.fetchJobPostings(
           query: searchQuery,
-          filters:
-              _selectedFilters.values.any((list) => list.isNotEmpty)
-                  ? _selectedFilters
+          title: _hasActiveFilters() ? _selectedFilters['title'] : null,
+          company: _hasActiveFilters() ? _selectedFilters['companyName'] : null,
+          ethicalTags:
+              _hasActiveFilters() &&
+                      (_selectedFilters['ethicalTags'] as List<String>)
+                          .isNotEmpty
+                  ? (_selectedFilters['ethicalTags'] as List<String>).join(',')
+                  : null,
+          minSalary: _hasActiveFilters() ? _selectedFilters['minSalary'] : null,
+          maxSalary: _hasActiveFilters() ? _selectedFilters['maxSalary'] : null,
+          remote: _hasActiveFilters() ? _selectedFilters['isRemote'] : null,
+          additionalFilters:
+              _hasActiveFilters() &&
+                      (_selectedFilters['jobTypes'] as List<String>).isNotEmpty
+                  ? {'jobTypes': _selectedFilters['jobTypes']}
                   : null,
         );
       }
@@ -103,48 +128,95 @@ class _JobPageState extends State<JobPage> {
     }
   }
 
+  // Helper method to check if any filters are active
+  bool _hasActiveFilters() {
+    return _selectedFilters['title'] != null ||
+        _selectedFilters['companyName'] != null ||
+        (_selectedFilters['ethicalTags'] as List<String>).isNotEmpty ||
+        _selectedFilters['minSalary'] != null ||
+        _selectedFilters['maxSalary'] != null ||
+        _selectedFilters['isRemote'] != null ||
+        (_selectedFilters['jobTypes'] as List<String>).isNotEmpty;
+  }
+
   // --- Event Handlers ---
   void _handleSearchChanged(String query) {
-    // Consider adding debounce here to avoid excessive API calls
-    _loadData(searchQuery: query);
+    // Implement debounce to avoid excessive API calls while typing
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      print('Searching for: $query');
+      _loadData(searchQuery: query.isEmpty ? null : query);
+    });
   }
 
   void _handleSearchSubmitted(String query) {
-    _loadData(searchQuery: query);
+    // Cancel any active debounce
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+
+    print('Search submitted: $query');
+    _loadData(searchQuery: query.isEmpty ? null : query);
   }
 
   void _openFilterDialog() async {
-    final Map<String, List<String>>? result =
-        await showDialog<Map<String, List<String>>>(
-          context: context,
-          // Prevent dismissal by tapping outside
-          barrierDismissible: false,
-          builder:
-              (context) => JobFilterDialog(
-                apiService:
-                    _apiService, // Pass service to get available filters
-                initialFilters: _selectedFilters,
-              ),
-        );
-
-    // --- Placeholder simulation removed ---
+    final Map<String, dynamic>? result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      // Prevent dismissal by tapping outside
+      barrierDismissible: false,
+      builder:
+          (context) => JobFilterDialog(
+            apiService: _apiService, // Pass service to get available filters
+            initialFilters: _selectedFilters,
+          ),
+    );
 
     if (result != null) {
-      // Check if filters actually changed before reloading
-      // Using Sets for efficient comparison regardless of order
-      final currentPolicies = Set.from(_selectedFilters['policies'] ?? []);
-      final newPolicies = Set.from(result['policies'] ?? []);
-      final currentJobTypes = Set.from(_selectedFilters['jobTypes'] ?? []);
-      final newJobTypes = Set.from(result['jobTypes'] ?? []);
+      print("Filters returned from dialog: $result");
 
-      bool filtersChanged =
-          currentPolicies.length != newPolicies.length ||
-          currentJobTypes.length != newJobTypes.length ||
-          !currentPolicies.containsAll(newPolicies) ||
-          !currentJobTypes.containsAll(newJobTypes);
+      // Check if any filters changed
+      bool filtersChanged = false;
+
+      // Compare text-based filters
+      if (_selectedFilters['title'] != result['title'] ||
+          _selectedFilters['companyName'] != result['companyName']) {
+        filtersChanged = true;
+      }
+
+      // Compare numeric filters
+      if (_selectedFilters['minSalary'] != result['minSalary'] ||
+          _selectedFilters['maxSalary'] != result['maxSalary']) {
+        filtersChanged = true;
+      }
+
+      // Compare boolean filter
+      if (_selectedFilters['isRemote'] != result['isRemote']) {
+        filtersChanged = true;
+      }
+
+      // Compare lists (ethicalTags)
+      final currentEthicalTags = Set<String>.from(
+        _selectedFilters['ethicalTags'] as List<String>,
+      );
+      final newEthicalTags = Set<String>.from(
+        result['ethicalTags'] as List<String>,
+      );
+      if (currentEthicalTags.length != newEthicalTags.length ||
+          !currentEthicalTags.containsAll(newEthicalTags)) {
+        filtersChanged = true;
+      }
+
+      // Compare lists (jobTypes)
+      final currentJobTypes = Set<String>.from(
+        _selectedFilters['jobTypes'] as List<String>,
+      );
+      final newJobTypes = Set<String>.from(result['jobTypes'] as List<String>);
+      if (currentJobTypes.length != newJobTypes.length ||
+          !currentJobTypes.containsAll(newJobTypes)) {
+        filtersChanged = true;
+      }
 
       if (filtersChanged) {
-        print("Filters changed to: $result");
+        print("Filters changed, reloading data with: $result");
         setState(() {
           // Update state with the filters returned from the dialog
           _selectedFilters = result;
@@ -279,7 +351,7 @@ class _JobPageState extends State<JobPage> {
   // --- Builder Methods for Different Roles ---
 
   Widget _buildJobSeekerView(BuildContext context) {
-    bool filtersActive = _selectedFilters.values.any((list) => list.isNotEmpty);
+    bool filtersActive = _hasActiveFilters();
     return Column(
       children: [
         // Search and Filters Bar
@@ -291,7 +363,7 @@ class _JobPageState extends State<JobPage> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search jobs (title, company...)',
+                    hintText: 'Search jobs',
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
@@ -299,16 +371,6 @@ class _JobPageState extends State<JobPage> {
                     ),
                     filled: true,
                     fillColor: Colors.grey[200],
-                    // Optional: Clear button
-                    // suffixIcon: _searchController.text.isNotEmpty
-                    //     ? IconButton(
-                    //         icon: Icon(Icons.clear),
-                    //         onPressed: () {
-                    //           _searchController.clear();
-                    //           _handleSearchChanged('');
-                    //         },
-                    //       )
-                    //     : null,
                   ),
                   onChanged:
                       _handleSearchChanged, // Search as user types (debounced recommended)
@@ -392,111 +454,102 @@ class _JobPageState extends State<JobPage> {
     }
 
     // Display the list of Job Postings using Cards
-    return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
-      itemCount: _jobPostings.length,
-      itemBuilder: (context, index) {
-        final job = _jobPostings[index];
-        final dateFormat = DateFormat.yMMMd();
-
-        return Card(
-          elevation: 2.0,
-          margin: const EdgeInsets.symmetric(vertical: 6.0),
-          child: InkWell(
-            onTap: () {
-              if (_userRole == UserType.EMPLOYER) {
-                _navigateToJobApplications(job);
-              } else {
-                _navigateToJobDetails(job);
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          job.title,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Text(
-                        job.jobType ?? 'N/A',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.blueGrey),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4.0),
-                  Text(
-                    job.company,
-                    style: Theme.of(context).textTheme.titleSmall,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8.0),
-                  // Split the ethicalTags string and display as chips
-                  if (job.ethicalTags.isNotEmpty)
-                    Wrap(
-                      spacing: 6.0,
-                      runSpacing: 4.0,
-                      children:
-                          // Split string by comma, trim whitespace, remove empty strings
-                          job.ethicalTags
-                              .split(',')
-                              .map((e) => e.trim())
-                              .where((e) => e.isNotEmpty)
-                              .map(
-                                (tag) => Chip(
-                                  label: Text(
-                                    tag.formatFilterName(),
-                                  ), // Assuming formatFilterName works for tags
-                                  padding: EdgeInsets.zero,
-                                  labelPadding: const EdgeInsets.symmetric(
-                                    horizontal: 6.0,
-                                  ),
-                                  labelStyle:
-                                      Theme.of(context).textTheme.labelSmall,
-                                  visualDensity: VisualDensity.compact,
-                                  backgroundColor: Colors.teal.shade50,
-                                  side: BorderSide.none,
-                                ),
-                              )
-                              .toList(),
-                    ),
-                  const SizedBox(height: 8.0),
-                  if (job.datePosted != null)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'Posted: ${dateFormat.format(job.datePosted!)}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    )
-                  else
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'Posted: Unknown',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _loadData(
+          searchQuery:
+              _searchController.text.isNotEmpty ? _searchController.text : null,
         );
       },
+      child: ListView.builder(
+        padding: const EdgeInsets.all(8.0),
+        itemCount: _jobPostings.length,
+        itemBuilder: (context, index) {
+          final job = _jobPostings[index];
+          final dateFormat = DateFormat.yMMMd();
+
+          return Card(
+            elevation: 2.0,
+            margin: const EdgeInsets.symmetric(vertical: 6.0),
+            child: InkWell(
+              onTap: () {
+                if (_userRole == UserType.EMPLOYER) {
+                  _navigateToJobApplications(job);
+                } else {
+                  _navigateToJobDetails(job);
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            job.title,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4.0),
+                    Text(
+                      job.company,
+                      style: Theme.of(context).textTheme.titleSmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8.0),
+                    // Split the ethicalTags string and display as chips
+                    if (job.ethicalTags.isNotEmpty)
+                      Wrap(
+                        spacing: 6.0,
+                        runSpacing: 4.0,
+                        children:
+                            // Split string by comma, trim whitespace, remove empty strings
+                            job.ethicalTags
+                                .split(',')
+                                .map((e) => e.trim())
+                                .where((e) => e.isNotEmpty)
+                                .map(
+                                  (tag) => Chip(
+                                    label: Text(
+                                      tag.formatFilterName(),
+                                    ), // Assuming formatFilterName works for tags
+                                    padding: EdgeInsets.zero,
+                                    labelPadding: const EdgeInsets.symmetric(
+                                      horizontal: 6.0,
+                                    ),
+                                    labelStyle:
+                                        Theme.of(context).textTheme.labelSmall,
+                                    visualDensity: VisualDensity.compact,
+                                    backgroundColor: Colors.teal.shade50,
+                                    side: BorderSide.none,
+                                  ),
+                                )
+                                .toList(),
+                      ),
+                    const SizedBox(height: 8.0),
+                    if (job.datePosted != null)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Posted: ${dateFormat.format(job.datePosted!)}',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.grey.shade600),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }
