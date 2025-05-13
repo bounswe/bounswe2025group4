@@ -4,6 +4,7 @@ import 'dart:io';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/models/discussion_thread.dart';
+import '../../../core/services/tag_recommendation_service.dart';
 
 class CreateThreadScreen extends StatefulWidget {
   final DiscussionThread? thread;
@@ -49,11 +50,13 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
   void _showTagSelectionSheet() {
     final List<String> tempSelectedTags = List.from(_selectedTags);
     String _searchQuery = '';
+    List<String> _suggestedTags = [];
+    String? _suggestError;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.5),
+      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.75),
       builder: (_) {
         final TextEditingController _modalTagController = TextEditingController();
 
@@ -66,6 +69,62 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        final title = _titleCtrl.text.trim();
+                        if (title.isEmpty) {
+                          setModalState(() {
+                            _suggestError = "Please enter a title to get tag suggestions.";
+                          });
+                          return;
+                        }
+                        final result = await TagRecommendationService.fetchSuggestions(title);
+
+                        setModalState(() {
+                          if (result['status'] == 'success') {
+                            _suggestedTags = List<String>.from(result['suggestions']);
+                            _suggestError = null;
+                          } else {
+                            _suggestedTags = [];
+                            _suggestError = result['message'];
+                          }
+                        });
+                      },
+                      child: const Text("Suggest Tags"),
+                    ),
+                    if (_suggestError != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          _suggestError!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    if (_suggestedTags.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        children: _suggestedTags
+                            .where((tag) => !tempSelectedTags.contains(tag))
+                            .map((tag) => InputChip(
+                          label: Text(tag),
+                          backgroundColor: Colors.orange.shade100, // farklı renk
+                          avatar: const Icon(Icons.lightbulb_outline, size: 18),
+                          onPressed: () {
+                            setModalState(() {
+                              if (!_availableTags.contains(tag)) {
+                                _availableTags.insert(0, tag);
+                              }
+                              if (!tempSelectedTags.contains(tag)) {
+                                tempSelectedTags.add(tag);
+                              }
+                            });
+                          },
+                        ))
+                            .toList(),
+                      ),
+                    ],
+                    const Divider(),
                     Row(
                       children: [
                         Expanded(
@@ -104,7 +163,6 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                                 _tagError = null;
                               });
                               _modalTagController.clear();
-
                             }
                           },
                         ),
