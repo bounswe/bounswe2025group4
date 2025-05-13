@@ -138,8 +138,24 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
           application.jobTitle,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(
-          '${application.companyName}\nApplied: ${dateFormat.format(application.dateApplied)}',
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${application.companyName}'),
+            Text('Applied: ${dateFormat.format(application.dateApplied)}'),
+            if (application.employerFeedback != null &&
+                application.employerFeedback!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  'Feedback: ${application.employerFeedback}',
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ),
+          ],
         ),
         trailing: Chip(
           label: Text(statusText),
@@ -153,13 +169,22 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
         ),
         isThreeLine: true,
         onTap: () {
-          // TODO: Navigate to Job Details maybe? Or show feedback if available?
+          // Show a more detailed feedback in a dialog if available
           if (application.employerFeedback != null &&
               application.employerFeedback!.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Feedback: ${application.employerFeedback}'),
-              ),
+            showDialog(
+              context: context,
+              builder:
+                  (context) => AlertDialog(
+                    title: Text('Feedback for ${application.jobTitle}'),
+                    content: Text(application.employerFeedback!),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Close'),
+                      ),
+                    ],
+                  ),
             );
           }
         },

@@ -36,27 +36,11 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const CompanyPoliciesScreen(),
-                ),
-              );
-            },
-            child: const Text('Skip'),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            const OnboardingProgressBar(
-              currentStep: 1,
-              totalSteps: 3,
-            ),
+            const OnboardingProgressBar(currentStep: 1, totalSteps: 3),
             const SizedBox(height: 24),
             Expanded(
               child: Padding(
@@ -75,7 +59,8 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
                     Expanded(
                       child: ListView.separated(
                         itemCount: organizationTypes.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 12),
+                        separatorBuilder:
+                            (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final type = organizationTypes[index];
                           final isSelected = selectedType == type;
@@ -107,10 +92,16 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: isSelected ? Colors.blue : Colors.grey.shade300,
+                                      color:
+                                          isSelected
+                                              ? Colors.blue
+                                              : Colors.grey.shade300,
                                     ),
                                     borderRadius: BorderRadius.circular(8),
-                                    color: isSelected ? Colors.blue.withOpacity(0.1) : null,
+                                    color:
+                                        isSelected
+                                            ? Colors.blue.withOpacity(0.1)
+                                            : null,
                                   ),
                                   child: Row(
                                     children: [
@@ -119,14 +110,18 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
                                           type,
                                           style: TextStyle(
                                             fontSize: 16,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
+                                            fontWeight:
+                                                isSelected
+                                                    ? FontWeight.bold
+                                                    : FontWeight.normal,
                                           ),
                                         ),
                                       ),
                                       if (isSelected)
-                                        const Icon(Icons.check_circle, color: Colors.blue),
+                                        const Icon(
+                                          Icons.check_circle,
+                                          color: Colors.blue,
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -156,17 +151,21 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: selectedType != null &&
-                                (!showOtherField || _otherController.text.isNotEmpty)
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const CompanyPoliciesScreen(),
-                                  ),
-                                );
-                              }
-                            : null,
+                        onPressed:
+                            selectedType != null &&
+                                    (!showOtherField ||
+                                        _otherController.text.isNotEmpty)
+                                ? () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const CompanyPoliciesScreen(),
+                                    ),
+                                  );
+                                }
+                                : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           shape: RoundedRectangleBorder(
@@ -175,10 +174,7 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
                         ),
                         child: const Text(
                           'Continue',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),
@@ -191,4 +187,4 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
       ),
     );
   }
-} 
+}
