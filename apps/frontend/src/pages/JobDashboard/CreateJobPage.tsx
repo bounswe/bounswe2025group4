@@ -32,13 +32,10 @@ const jobPostSchema = z
     ethicalTags: z.array(z.string()).default([]),
     contact: z.string().email('Invalid email address'),
   })
-  .refine(
-    (data) => data.maxSalary >= data.minSalary,
-    {
-      message: 'Max salary must be greater than or equal to min salary',
-      path: ['maxSalary'],
-    }
-  );
+  .refine((data) => data.maxSalary >= data.minSalary, {
+    message: 'Max salary must be greater than or equal to min salary',
+    path: ['maxSalary'],
+  });
 
 type JobFormValues = z.infer<typeof jobPostSchema>;
 

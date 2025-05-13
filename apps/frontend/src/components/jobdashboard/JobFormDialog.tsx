@@ -109,9 +109,7 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
       fullWidth
       aria-labelledby="job-form-dialog-title"
     >
-      <DialogTitle id="job-form-dialog-title">
-        Edit Job Listing
-      </DialogTitle>
+      <DialogTitle id="job-form-dialog-title">Edit Job Listing</DialogTitle>
 
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogContent>
@@ -173,22 +171,22 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
-            <Controller
-              name="isRemote"
-              control={control}
-              render={({ field }) => (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                      disabled={isLoading}
-                    />
-                  }
-                  label="Remote option is available"
-                />
-              )}
-            />
+              <Controller
+                name="isRemote"
+                control={control}
+                render={({ field }) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                        disabled={isLoading}
+                      />
+                    }
+                    label="Remote option is available"
+                  />
+                )}
+              />
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
@@ -228,7 +226,7 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
                     type="number"
                     fullWidth
                     error={
-                        !!errors.maxSalary ||
+                      !!errors.maxSalary ||
                       (maxSalary !== undefined &&
                         minSalary !== undefined &&
                         maxSalary < minSalary)
@@ -294,9 +292,7 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
                       ))}
                     </Select>
                     {errors.company && (
-                      <FormHelperText>
-                        {errors.company.message}
-                      </FormHelperText>
+                      <FormHelperText>{errors.company.message}</FormHelperText>
                     )}
                   </FormControl>
                 )}

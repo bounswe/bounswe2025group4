@@ -6,12 +6,7 @@ import {
   GridRowParams,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import {
-  Box,
-  Chip,
-  Tooltip,
-  useTheme,
-} from '@mui/material';
+import { Box, Chip, Tooltip, useTheme } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';

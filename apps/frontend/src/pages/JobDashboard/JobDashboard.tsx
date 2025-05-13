@@ -1,6 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, CircularProgress, Typography, Alert, Box, Button } from '@mui/material';
+import {
+  Container,
+  CircularProgress,
+  Typography,
+  Alert,
+  Box,
+  Button,
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { AuthContext, AuthContextType } from '../../contexts/AuthContext';
 import { JobPost } from '../../types/job';
@@ -25,7 +32,6 @@ const JobDashboardPage: React.FC = () => {
   const { data: jobs, isLoading } = useGetJobByEmployer(employerId ?? '');
   const createJobMutation = useCreateJob();
   const updateJobMutation = useUpdateJob();
-
 
   if (!token) {
     return (
@@ -136,7 +142,7 @@ const JobDashboardPage: React.FC = () => {
           Create Job
         </Button>
       </Box>
-    
+
       <JobGrid
         jobs={jobs || []}
         isLoading={isLoading}

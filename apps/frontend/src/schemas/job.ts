@@ -43,12 +43,22 @@ export type JobUpdateValues = z.infer<typeof jobUpdateSchema>;
 export type ApplicationStatusUpdate = z.infer<typeof applicationStatusSchema>;
 
 export const jobFormValueFromJobPost = (jobPost: JobPost): JobFormValues => {
-  const newEthicalTags = jobPost.ethicalTags.split(',').map(tag => tag.trim()).filter(tag => ethicalPolicies.includes(tag as typeof ethicalPolicies[number]));
+  const newEthicalTags = jobPost.ethicalTags
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter((tag) =>
+      ethicalPolicies.includes(tag as (typeof ethicalPolicies)[number])
+    );
   const jobFormValues: JobFormValues = {
     ...jobPost,
     isRemote: jobPost.remote,
-    ethicalTags: newEthicalTags as ("fair_wage" | "diversity" | "sustainability" | "wellbeing" | "transparency")[],
+    ethicalTags: newEthicalTags as (
+      | 'fair_wage'
+      | 'diversity'
+      | 'sustainability'
+      | 'wellbeing'
+      | 'transparency'
+    )[],
   };
   return jobFormValues;
 };
-

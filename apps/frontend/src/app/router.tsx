@@ -1,7 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import CenteredLoader from '../components/layout/CenterLoader';
 import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
