@@ -145,8 +145,8 @@ const UserProfile: FC = () => {
       });
       await updateAuthUser.mutateAsync({
         id: authUser?.id || 0,
-        username: authUser?.username || '',
-        email: authUser?.email || '',
+        username: data.username,
+        email: data.email,
         userType: authUser?.userType || 'JOB_SEEKER',
         mentorshipStatus: newMentorshipStatus,
       });

@@ -15,9 +15,11 @@ import {
   AlertTitle,
   InputAdornment,
   Fade,
+  Snackbar,
 } from '@mui/material';
 import { ArrowForward, Email, CheckCircleOutline } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
+import { useForgotPassword } from '../../services/auth.service';
 
 // Email submission schema
 const emailSchema = z.object({
@@ -28,6 +30,9 @@ export default function ForgotPasswordPage() {
   const theme = useTheme();
   const [emailSent, setEmailSent] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const forgotPasswordMutation = useForgotPassword();
 
   // Form handling for email step
   const emailForm = useForm<z.infer<typeof emailSchema>>({
@@ -37,12 +42,23 @@ export default function ForgotPasswordPage() {
     },
   });
 
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
+
   // Handle email form submission
   const onSubmitEmail = (data: z.infer<typeof emailSchema>) => {
     setSubmittedEmail(data.email);
-    // In a real app, you would send a link to the user's email
-    console.log('Sending password reset link to:', data.email);
-    setEmailSent(true);
+    forgotPasswordMutation.mutate(data.email, {
+      onSuccess: () => {
+        setEmailSent(true);
+      },
+      onError: (error) => {
+        const errorMessage = error?.message || 'Failed to send reset password email. Please try again.';
+        setError(errorMessage);
+        setOpenSnackbar(true);
+      },
+    });
   };
 
   return (
@@ -109,7 +125,7 @@ export default function ForgotPasswordPage() {
                     fontWeight: 'bold',
                   }}
                 >
-                  Back to Sign In
+                  Back to Log In
                 </Button>
               </Box>
             </Fade>
@@ -172,7 +188,7 @@ export default function ForgotPasswordPage() {
                 <Typography variant="body2">
                   Remember your password?{' '}
                   <Link component={RouterLink} to="/login">
-                    Sign in
+                    Log in
                   </Link>
                 </Typography>
               </Box>
@@ -180,6 +196,20 @@ export default function ForgotPasswordPage() {
           )}
         </Box>
       </Paper>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity="error" 
+          sx={{ width: '100%' }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }
