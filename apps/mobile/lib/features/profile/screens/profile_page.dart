@@ -9,6 +9,7 @@ import '../widgets/editable_chip_list.dart';
 import '../widgets/badge_list.dart';
 import '../widgets/education_list.dart';
 import 'edit_profile_page.dart';
+import '../../../core/models/mentorship_status.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -24,10 +25,16 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final profileProvider =
-          Provider.of<ProfileProvider>(context, listen: false);
-      profileProvider.fetchMyProfile();
+      Provider.of<ProfileProvider>(context, listen: false);
+
+      await profileProvider.fetchMyProfile();
+
+      final userId = profileProvider.currentUserProfile?.profile.userId;
+      if (userId != null) {
+        await profileProvider.fetchUserDetails(userId);
+      }
     });
   }
 
@@ -148,6 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileHeader(profile) {
+    final user = Provider.of<ProfileProvider>(context, listen: false).currentUser;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -166,6 +174,15 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Username: ${user?.username}',
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
+
+              Text(
+                'Email: ${user?.email}',
+                style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              ),
               Text(
                 profile.fullName,
                 style: const TextStyle(
@@ -213,6 +230,32 @@ class _ProfilePageState extends State<ProfilePage> {
                   profile.bio!,
                   style: const TextStyle(fontSize: 14),
                 ),
+
+              const SizedBox(height: 12),
+              Consumer<ProfileProvider>(
+                builder: (context, provider, _) {
+                  final user = provider.currentUser;
+                  if (user == null) return SizedBox();
+
+                  return DropdownButton<MentorshipStatus>(
+                    value: user.mentorshipStatus,
+                    items: MentorshipStatus.values
+                        .map((status) => DropdownMenuItem(
+                      value: status,
+                      child: Text(status.name),
+                    ))
+                        .toList(),
+                    onChanged: (value) async {
+                      if (value != null) {
+                        await provider.updateMentorshipStatus(value);
+                        await provider.fetchUserDetails(int.parse(user.id));
+                      }
+                    },
+                    hint: const Text("Change mentorship status"),
+                  );
+                },
+              ),
+
             ],
           ),
         ),

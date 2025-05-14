@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../models/full_profile.dart';
 import '../services/api_service.dart';
+import '../models/user.dart';
+import '../models/mentorship_status.dart';
+import 'dart:io';
 
 class ProfileProvider extends ChangeNotifier {
   late ApiService _apiService;
@@ -21,6 +24,11 @@ class ProfileProvider extends ChangeNotifier {
   String? get error => _error;
   bool get hasProfile => _currentUserProfile != null;
 
+  void clearCurrentUserProfile() {
+    _currentUserProfile = null;
+    notifyListeners();
+  }
+
   // Fetch current user profile
   Future<void> fetchMyProfile() async {
     try {
@@ -28,10 +36,14 @@ class ProfileProvider extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
+      print('DEBUG(fetchMyProfile): calling getMyProfile()');
       final profile = await _apiService.getMyProfile();
+      print('DEBUG(fetchMyProfile): received profile: ${profile.profile}');
+      print('DEBUG(fetchMyProfile): userId = ${profile.profile.userId}');
       final userId = profile.profile.userId;
 
       final pictureUrl = await _apiService.getProfilePicture(userId);
+      print('DEBUG(fetchMyProfile): fetched picture URL: $pictureUrl');
 
       final updatedProfile = profile.profile.copyWith(
         profilePicture: pictureUrl,
@@ -489,4 +501,37 @@ class ProfileProvider extends ChangeNotifier {
       throw Exception('Failed to remove badge: $e');
     }
   }
+
+  User? _user;
+  User? get currentUser => _user;
+
+  Future<void> fetchUserDetails(int userId) async {
+    try {
+      _user = await _apiService.fetchUser(userId.toString());
+      notifyListeners();
+    } catch (e) {
+      print("Error fetching user data: $e");
+    }
+  }
+
+  Future<void> updateUser(String userId, Map<String, dynamic> userData) async {
+    try {
+      await _apiService.updateUser(userId, userData); // API çağrısı yap
+      await fetchUserDetails(int.parse(userId));      // local user bilgisini güncelle
+      notifyListeners();                              // UI'yı güncelle
+    } catch (e) {
+      print("Error updating user data: $e");
+    }
+  }
+
+  Future<void> updateMentorshipStatus(MentorshipStatus status) async {
+    try {
+      await _apiService.updateMentorshipStatus(status); // API çağrısı
+      await fetchUserDetails(int.parse(_user!.id)); // local user'ı güncelle
+      notifyListeners(); // UI'yı güncelle
+    } catch (e) {
+      print("Failed to update mentorship status: $e");
+    }
+  }
+
 }

@@ -17,6 +17,7 @@ import '../models/education.dart';
 import '../models/badge.dart';
 import '../providers/auth_provider.dart'; // Import AuthProvider
 import '../constants/app_constants.dart'; // Imp// ort AppConstants
+import '../models/mentorship_status.dart';
 
 const List<String> _availableEthicalPolicies = [
   'fair_wage',
@@ -662,11 +663,29 @@ class ApiService {
     try {
       final response = await _client.get(uri, headers: _getHeaders());
       final data = await _handleResponse(response);
+      // print user data
+      print('User data: $data');
       return User.fromJson(data);
     } on SocketException {
       rethrow;
     } catch (e) {
       throw Exception('Failed to fetch user $userId: $e');
+    }
+  }
+
+  Future<void> updateUser(String userId, Map<String, dynamic> userData) async {
+    final uri = _buildUri('/users/$userId');
+
+    try {
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode(userData),
+      );
+
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to update user: $e');
     }
   }
 
@@ -1227,6 +1246,24 @@ class ApiService {
       await _handleResponse(response);
     } catch (e) {
       throw Exception('Failed to remove badge. $e');
+    }
+  }
+
+  Future<void> updateMentorshipStatus(MentorshipStatus status) async {
+    final url = Uri.parse('${AppConstants.baseUrl}/users/mentorship-status');
+    final token = _authProvider.token; // getToken yerine
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final body = jsonEncode({'mentorshipStatus': status.name});
+
+    final response = await _client.put(url, headers: headers, body: body);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update mentorship status');
     }
   }
 
