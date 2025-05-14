@@ -7,6 +7,7 @@ import RedirectIfAuth from '../components/auth/RedirectIfAuth';
 import RegisterSuccesfull from '../pages/Auth/RegisterSuccesful';
 import UserProfileRedirect from '../pages/Profile/UserProfileRedirect';
 import UserProfile from '../pages/Profile/UserProfile';
+import RedirectIfNotAuth from '../components/auth/RedirectIfNotAuth';
 
 // Lazy load pages for better performance
 
@@ -115,51 +116,91 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile',
-        element: <UserProfileRedirect />,
+        element: (
+          <RedirectIfNotAuth>
+            <UserProfileRedirect />
+          </RedirectIfNotAuth>
+        ),
       },
       {
         path: '/u/:userId',
-        element: <UserProfile />,
+        element: (
+          <RedirectIfNotAuth>
+            <UserProfile />
+          </RedirectIfNotAuth>
+        ),
       },
       {
         // This is the new entry point for when a user clicks "Jobs"
         path: 'jobs',
-        element: <RoleBasedRedirect />,
+        element: (
+          <RedirectIfNotAuth>
+            <RoleBasedRedirect />
+          </RedirectIfNotAuth>
+        ),
       },
       {
         // Renamed/Re-scoped route for job seekers to view the list of jobs
         path: 'jobs/list',
-        element: <JobListPage />,
+        element: (
+          <RedirectIfNotAuth>
+            <JobListPage />
+          </RedirectIfNotAuth>
+        ),
       },
       {
         // New job detail route
         path: 'jobs/:id',
-        element: <JobDetailPage />,
+        element: (
+          <RedirectIfNotAuth>
+            <JobDetailPage />
+          </RedirectIfNotAuth>
+        ),
       },
       // Add employer dashboard route
       {
         path: 'dashboard/jobs',
-        element: <JobDashboardPage />,
+        element: (
+          <RedirectIfNotAuth>
+            <JobDashboardPage />
+          </RedirectIfNotAuth>
+        ),
         // In a real app, this would have an auth check loader
         // to redirect non-employers or unauthenticated users
       },
       {
         path: 'dashboard/jobs/create',
-        element: <CreateJobPage />,
+        element: (
+          <RedirectIfNotAuth>
+            <CreateJobPage />
+          </RedirectIfNotAuth>
+        ),
         // Add auth protection: only employers can access
       },
       {
         path: 'dashboard/jobs/:id',
-        element: <JobDetailDashboard />,
+        element: (
+          <RedirectIfNotAuth>
+            <JobDetailDashboard />
+          </RedirectIfNotAuth>
+        ),
         // Add auth protection: only employer who owns the job can access
       },
       {
         path: 'forum',
-        element: <ThreadListPage />,
+        element: (
+          <RedirectIfNotAuth>
+            <ThreadListPage />
+          </RedirectIfNotAuth>
+        ),
       },
       {
         path: 'forum/:id',
-        element: <ThreadDetailPage />,
+        element: (
+          <RedirectIfNotAuth>
+            <ThreadDetailPage />
+          </RedirectIfNotAuth>
+        ),
       },
     ],
   },
