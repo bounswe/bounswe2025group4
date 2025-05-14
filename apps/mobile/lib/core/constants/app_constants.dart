@@ -8,13 +8,13 @@ class AppConstants {
   static String _getBaseUrl() {
     if (Platform.isAndroid) {
       // Use 10.0.2.2 for Android Emulator to connect to host localhost
-      return 'http://10.0.2.2:8080/api';
+      return 'https://bounswe2025group4-327739565032.europe-west1.run.app/api';
     } else if (Platform.isIOS) {
       // iOS Simulator usually works with localhost
-      return 'http://localhost:8080/api';
+      return 'https://bounswe2025group4-327739565032.europe-west1.run.app/api';
     } else {
       // Default for other platforms (web, desktop - might need adjustment)
-      return 'http://localhost:8080/api';
+      return 'https://bounswe2025group4-327739565032.europe-west1.run.app/api';
     }
   }
 }

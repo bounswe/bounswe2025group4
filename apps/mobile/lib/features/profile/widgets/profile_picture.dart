@@ -50,8 +50,6 @@ class _ProfilePictureState extends State<ProfilePicture> {
   }
   Future<Uint8List?> _fetchImageWithAuth(String url, String token) async {
     try {
-      print('🔍 Fetching image with token: $token');
-
       final response = await http.get(Uri.parse(url), headers: {
         'Authorization': 'Bearer $token',
       });
@@ -59,11 +57,9 @@ class _ProfilePictureState extends State<ProfilePicture> {
       if (response.statusCode == 200) {
         return response.bodyBytes;
       } else {
-        print('Image fetch error: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Image fetch exception: $e');
       return null;
     }
   }
@@ -102,7 +98,6 @@ class _ProfilePictureState extends State<ProfilePicture> {
     return Consumer<ProfileProvider>(
       builder: (context, provider, child) {
         final profilePictureUrl = provider.currentUserProfile?.profile.profilePicture ?? '';
-        print("profilePictureUrltestttttt: $profilePictureUrl");
         final token = Provider.of<AuthProvider>(context, listen: false).token ?? '';
         return GestureDetector(
           onTap: widget.isEditable ? () => _pickImage(context) : null,
