@@ -132,7 +132,7 @@ public class ThreadController {
     }
 
 
-    private User getCurrentUser() {
+    User getCurrentUser() {
         String username = getCurrentUsername();
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User"));
