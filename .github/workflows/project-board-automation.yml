@@ -1,0 +1,66 @@
+name: Project Board Automation with Labels
+
+on:
+  issues:
+    types: [opened, labeled, edited, closed]
+  pull_request:
+    types: [opened, labeled, edited, review_requested, closed]
+
+jobs:
+  automate-board:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Automate Project Board with Labels
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const projectNumber = 1; // Change this to your project number
+            const columnMapping = {
+              "type: planning": "Planning",
+              "type: research": "Planning",
+              "status: to do": "To Do",
+              "type: feature": "To Do",
+              "type: good first issue": "To Do",
+              "type: help wanted": "To Do",
+              "type: question": "To Do",
+              "status: in progress": "In Progress",
+              "type: bug": "In Progress",
+              "type: improvement / refactor": "In Progress",
+              "status: waiting for review": "In Review",
+              "type: docs": "In Review",
+              "type: wiki": "In Review",
+              "status: done": "Done"
+            };
+
+            const labels = context.payload.issue ? context.payload.issue.labels : context.payload.pull_request.labels;
+            let targetColumn = "Planning"; // Default column
+
+            for (const label of labels) {
+              if (columnMapping[label.name.toLowerCase()]) {
+                targetColumn = columnMapping[label.name.toLowerCase()];
+                break;
+              }
+            }
+
+            if (context.payload.action === 'closed') {
+              targetColumn = "Done";
+            }
+
+            const columns = await github.projects.listColumns({
+              project_id: projectNumber
+            });
+
+            const column = columns.data.find(col => col.name === targetColumn);
+            if (!column) {
+              core.setFailed(`Column ${targetColumn} not found in the project.`);
+              return;
+            }
+
+            const card = await github.projects.createCard({
+              column_id: column.id,
+              content_id: context.payload.issue ? context.payload.issue.id : context.payload.pull_request.id,
+              content_type: context.payload.issue ? "Issue" : "PullRequest"
+            });
+
+            console.log(`Card added to column: ${targetColumn}`);
