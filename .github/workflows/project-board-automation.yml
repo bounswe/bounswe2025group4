@@ -1,21 +1,23 @@
-name: Project Board Automation with Labels
+name: Project Board Automation with Labels (GraphQL)
 
 on:
   issues:
-    types: [opened, labeled, edited, closed]
+    types: [opened, labeled, edited, closed, reopened]
   pull_request:
-    types: [opened, labeled, edited, review_requested, closed]
+    types: [opened, labeled, edited, review_requested, closed, reopened]
 
 jobs:
   automate-board:
     runs-on: ubuntu-latest
     steps:
-      - name: Automate Project Board with Labels
+      - name: Automate Project Board with Labels using GraphQL
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const projectNumber = 111; // Change this to your project number
+            const projectNumber = 111;
+            const projectId = '111';
+            
             const columnMapping = {
               "type: planning": "Planning",
               "type: research": "Planning",
@@ -33,9 +35,11 @@ jobs:
               "status: done": "Done"
             };
 
-            const labels = context.payload.issue ? context.payload.issue.labels : context.payload.pull_request.labels;
+            const issue = context.payload.issue || context.payload.pull_request;
+            const labels = issue.labels;
             let targetColumn = "Planning"; // Default column
 
+            // Determine the target column based on labels
             for (const label of labels) {
               if (columnMapping[label.name.toLowerCase()]) {
                 targetColumn = columnMapping[label.name.toLowerCase()];
@@ -43,24 +47,74 @@ jobs:
               }
             }
 
-            if (context.payload.action === 'closed') {
+            if (issue.state === "closed") {
               targetColumn = "Done";
             }
 
-            const columns = await github.projects.listColumns({
-              project_id: projectNumber
+            const query = `
+              query ($projectId: ID!) {
+                node(id: $projectId) {
+                  ... on ProjectV2 {
+                    id
+                    title
+                    fields(first: 20) {
+                      nodes {
+                        ... on ProjectV2Field {
+                          name
+                          id
+                        }
+                      }
+                    }
+                    items(first: 100) {
+                      nodes {
+                        id
+                        content {
+                          ... on Issue { id }
+                          ... on PullRequest { id }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            `;
+
+            const response = await github.graphql(query, {
+              projectId
             });
 
-            const column = columns.data.find(col => col.name === targetColumn);
-            if (!column) {
-              core.setFailed(`Column ${targetColumn} not found in the project.`);
-              return;
+            const project = response.node;
+            const items = project.items.nodes;
+            const existingItem = items.find(item => 
+              item.content?.id === issue.node_id
+            );
+
+            if (existingItem) {
+              console.log(`Item already exists in project. Removing it for update.`);
+              await github.graphql(`
+                mutation ($itemId: ID!) {
+                  deleteProjectV2Item(input: { projectId: "${projectId}", itemId: $itemId }) {
+                    deletedItemId
+                  }
+                }
+              `, {
+                itemId: existingItem.id
+              });
             }
 
-            const card = await github.projects.createCard({
-              column_id: column.id,
-              content_id: context.payload.issue ? context.payload.issue.id : context.payload.pull_request.id,
-              content_type: context.payload.issue ? "Issue" : "PullRequest"
+            console.log(`Adding item to the project board in column: ${targetColumn}`);
+
+            await github.graphql(`
+              mutation ($projectId: ID!, $contentId: ID!) {
+                addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
+                  item {
+                    id
+                  }
+                }
+              }
+            `, {
+              projectId,
+              contentId: issue.node_id
             });
 
-            console.log(`Card added to column: ${targetColumn}`);
+            console.log(`Card successfully added to column: ${targetColumn}`);
