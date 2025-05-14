@@ -32,7 +32,6 @@ class QuoteService {
         author: "Nelson Mandela",
       );
     } catch (e) {
-      print('Error fetching quote: $e');
       return Quote(
         text: "The way to get started is to quit talking and begin doing.",
         author: "Walt Disney",

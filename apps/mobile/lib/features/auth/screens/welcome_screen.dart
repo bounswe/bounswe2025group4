@@ -144,18 +144,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ],
                 ),
               const SizedBox(height: 32),
-              const CircleAvatar(
-                radius: 40,
-                backgroundColor: Colors.blue,
-                child: Text(
-                  'EJP',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              Image.asset('assets/logo.jpeg', width: 120, height: 120),
               const SizedBox(height: 32),
               const Text(
                 'Welcome to Ethical Job Platform',

@@ -7,6 +7,8 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import 'create_thread_screen.dart';
 import '../widgets/comment_tile.dart';
+import '../../profile/screens/user_profile_view.dart';
+import 'package:flutter/gestures.dart';
 
 class ThreadDetailScreen extends StatefulWidget {
   final DiscussionThread thread;
@@ -45,7 +47,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
       );
-      Navigator.of(context).pop(); // Go back to forum
+      Navigator.of(context).pop();
     }
   }
 
@@ -61,7 +63,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
+        const SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
       );
     }
   }
@@ -103,7 +105,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                   );
                 } catch (e) {
                   messenger.showSnackBar(
-                    SnackBar(content: Text('Failed: This discussion is no longer available.', style: TextStyle(color: Colors.red))),
+                    const SnackBar(content: Text('Failed: This discussion is no longer available.', style: TextStyle(color: Colors.red))),
                   );
                 }
               } else if (action == 'Edit' && isOwner) {
@@ -123,7 +125,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                   );
                 } catch (e) {
                   messenger.showSnackBar(
-                    SnackBar(content: Text('Failed to create/edit discussion.', style: TextStyle(color: Colors.red))),
+                    const SnackBar(content: Text('Failed to create/edit discussion.', style: TextStyle(color: Colors.red))),
                   );
                 }
               } else if (action == 'Delete' && isOwner) {
@@ -136,7 +138,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                   );
                 } catch (e) {
                   messenger.showSnackBar(
-                    SnackBar(content: Text('Failed to delete discussion.', style: TextStyle(color: Colors.red))),
+                    const SnackBar(content: Text('Failed to delete discussion.', style: TextStyle(color: Colors.red))),
                   );
                 }
               }
@@ -159,7 +161,6 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
               child: Scrollbar(
                 thumbVisibility: true,
                 child: ListView.builder(
-                  key: ValueKey(_comments.map((c) => c.id).join('-')), // Force rebuild
                   itemCount: _comments.length + 2,
                   itemBuilder: (ctx, i) {
                     if (i == 0) {
@@ -173,70 +174,101 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 18,
-                                      child: Text(
-                                        _currentThread.creatorUsername.isNotEmpty
-                                            ? _currentThread.creatorUsername[0].toUpperCase()
-                                            : '?',
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      _currentThread.creatorUsername,
-                                      style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
+                                Text('Thread Details', style: Theme.of(context).textTheme.titleLarge),
                                 const SizedBox(height: 12),
+
+                                // Creator
+                                RichText(
+                                  text: TextSpan(
+                                    style: const TextStyle(fontSize: 16),
+                                    children: [
+                                      const TextSpan(
+                                        text: 'Creator: ',
+                                        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500),
+                                      ),
+                                      TextSpan(
+                                        text: _currentThread.creatorUsername,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF1565C0),
+                                          decoration: TextDecoration.underline,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => UserProfileView(
+                                                  userId: int.parse(_currentThread.creatorId),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(height: 12),
+
+                                // Content
+                                Text('Content:', style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700])),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _currentThread.body,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black87,
+                                    height: 1.4,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 12),
+
+                                // Tags
+                                Text('Tags:', style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700])),
+                                const SizedBox(height: 4),
                                 Wrap(
                                   spacing: 6,
                                   children: _currentThread.tags.map((tag) => Chip(label: Text(tag))).toList(),
                                 ),
+
                                 const SizedBox(height: 12),
-                                Text(
-                                  _currentThread.body,
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                const SizedBox(height: 12),
-                                Wrap(
-                                  spacing: 12,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
+
+                                // Timestamps
+                                Row(
                                   children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(Icons.calendar_today, size: 16),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          'Created: ${_currentThread.createdAt.toLocal().toString().split(".").first}',
-                                          style: Theme.of(context).textTheme.bodySmall,
-                                        ),
-                                      ],
-                                    ),
-                                    if (_currentThread.editedAt != null)
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(Icons.edit, size: 16),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            'Edited: ${_currentThread.editedAt!.toLocal().toString().split(".").first}',
-                                            style: Theme.of(context).textTheme.bodySmall,
-                                          ),
-                                        ],
-                                      ),
+                                    const Icon(Icons.calendar_today, size: 16),
+                                    const SizedBox(width: 4),
+                                    Text('Created: ${_currentThread.createdAt.toLocal().toString().split(".").first}'),
                                   ],
                                 ),
+                                if (_currentThread.editedAt != null)
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.edit, size: 16),
+                                      const SizedBox(width: 4),
+                                      Text('Edited: ${_currentThread.editedAt!.toLocal().toString().split(".").first}'),
+                                    ],
+                                  ),
                               ],
                             ),
                           ),
                         ),
                       );
                     }
-                    if (i == 1) return const Divider();
+
+                    if (i == 1) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Text(
+                          'Comments',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      );
+                    }
 
                     final comment = _comments[i - 2];
                     return Column(
@@ -300,9 +332,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                     child: TextFormField(
                       controller: _commentCtrl,
                       decoration: const InputDecoration(hintText: 'Add a comment…'),
-                      validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'Please enter a comment'
-                          : null,
+                      validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter a comment' : null,
                     ),
                   ),
                   IconButton(

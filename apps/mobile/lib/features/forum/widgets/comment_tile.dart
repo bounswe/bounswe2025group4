@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import '../../../core/models/comment.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
+import '../../profile/screens/user_profile_view.dart';
 
 class CommentTile extends StatefulWidget {
   final Comment comment;
@@ -30,17 +32,45 @@ class _CommentTileState extends State<CommentTile> {
 
     return ListTile(
       key: ValueKey(widget.comment.id),
-      leading: CircleAvatar(
-        child: Text(
-          widget.comment.author.username.isNotEmpty
-              ? widget.comment.author.username[0]
-              : '?',
+      title: RichText(
+        text: TextSpan(
+          style: const TextStyle(fontSize: 16),
+          children: [
+            const TextSpan(
+              text: 'Author: ',
+              style: TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            TextSpan(
+              text: widget.comment.author.username,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1565C0),
+                decoration: TextDecoration.underline,
+                letterSpacing: 0.3,
+                shadows: [
+                  Shadow(
+                    color: Colors.black12,
+                    offset: Offset(0.5, 0.5),
+                    blurRadius: 1,
+                  ),
+                ],
+              ),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => UserProfileView(userId: int.parse(widget.comment.author.id)),
+                    ),
+                  );
+                },
+            ),
+          ],
         ),
-      ),
-      title: Text(
-        widget.comment.author.username.isNotEmpty
-            ? widget.comment.author.username
-            : 'Unknown',
       ),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

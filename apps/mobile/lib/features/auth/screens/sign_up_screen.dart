@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
 import 'package:mobile/core/models/user_type.dart';
 import 'package:mobile/core/models/mentorship_status.dart';
+import 'package:mobile/core/providers/profile_provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -69,6 +70,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (!mounted) return;
 
         if (success) {
+          final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+          profileProvider.clearCurrentUserProfile();
+          await profileProvider.fetchMyProfile();
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const MainScaffold()),
