@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import { Avatar, Box, CircularProgress } from '@mui/material';
-import { CameraAlt as CameraIcon } from '@mui/icons-material';
+import CameraAlt from '@mui/icons-material/CameraAlt';
 import { useProfilePictureUpload } from '../../services/profile.service';
 import { useDropzone } from 'react-dropzone';
 
@@ -98,7 +98,7 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
           color="white"
           borderRadius="50%"
         >
-          <CameraIcon fontSize={size > 80 ? 'large' : 'medium'} />
+          <CameraAlt fontSize={size > 80 ? 'large' : 'medium'} />
         </Box>
       )}
 

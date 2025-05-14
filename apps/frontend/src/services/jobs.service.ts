@@ -85,7 +85,7 @@ export const useUpdateJob = () => {
   const queryClient = useQueryClient();
   return useMutation<JobPost, Error, { id: string; data: JobPost }>({
     mutationFn: ({ id, data }) => jobsService.updateJob(id, data),
-    onSuccess: (data, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: JOB_KEYS.lists() });
       queryClient.invalidateQueries({
         queryKey: JOB_KEYS.detail(variables.id),

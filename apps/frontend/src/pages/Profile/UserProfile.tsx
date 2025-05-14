@@ -23,13 +23,11 @@ import {
   CardActionArea,
   CardContent,
 } from '@mui/material';
-import {
-  Edit as EditIcon,
-  Save as SaveIcon,
-  Cancel as CancelIcon,
-  Person,
-  Handshake,
-} from '@mui/icons-material';
+import Edit from '@mui/icons-material/Edit';
+import Save from '@mui/icons-material/Save';
+import Cancel from '@mui/icons-material/Cancel';
+import Person from '@mui/icons-material/Person';
+import Handshake from '@mui/icons-material/Handshake';
 import {
   useUserProfileById,
   useUpdateUserProfile,
@@ -360,7 +358,7 @@ const UserProfile: FC = () => {
                           <Button
                             type="submit"
                             variant="contained"
-                            startIcon={<SaveIcon />}
+                            startIcon={<Save />}
                             disabled={updateUserProfile.isPending}
                           >
                             Save Changes
@@ -368,7 +366,7 @@ const UserProfile: FC = () => {
                           <Button
                             onClick={cancelIdentityEdit}
                             variant="outlined"
-                            startIcon={<CancelIcon />}
+                            startIcon={<Cancel />}
                           >
                             Cancel
                           </Button>
@@ -400,7 +398,7 @@ const UserProfile: FC = () => {
 
                       {isOwnProfile && (
                         <Button
-                          startIcon={<EditIcon />}
+                          startIcon={<Edit />}
                           onClick={() => setIsEditingIdentity(true)}
                         >
                           Edit Profile

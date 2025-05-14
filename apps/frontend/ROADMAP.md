@@ -1,4 +1,4 @@
-# Job Listing Platform – Front-end
+# Job Listing Platform - Front-end
 
 > A React 19 / Vite web-app that connects job-seekers with ethical employers.  
 > This README is written as a **living TODO list** — check items off as you complete them!
@@ -28,8 +28,8 @@
 
 ## 🔑  2. Authentication Flow
 
-- [ ] `/register` → email / password + validation  
-- [ ] `/login` + remember-me  
+- [x] `/register` → email / password + validation  
+- [x] `/login` + remember-me  
 - [ ] Forgot-password wizard (`/reset-password`)  
 - [ ] Account deletion confirmation dialog  
 
@@ -38,15 +38,15 @@
 ## 📄  3. Job Listings & Applications
 
 - [x] **JobList** page `/jobs`  
-  - [ ] Fetch + cache jobs (`queryKey: ['jobs', filters]`)  
+  - [x] Fetch + cache jobs (`queryKey: ['jobs', filters]`)  
   - [x] Filter sidebar (ethical policies, salary range, company)  
   - [x] Skeleton loaders & empty-state illustrations  
 - [x] **JobDetail** page `/jobs/:id`  
-  - [ ] Apply form (Router *action* + optimistic UI)  
+  - [x] Apply form (Router *action* + optimistic UI)  
   - [ ] Company badge linking to `/company/:slug`  
-- [ ] Employer dashboard `/dashboard/jobs`  
-  - [ ] CRUD wizard (MUI **DataGridPro**)  
-  - [ ] Validation with `zod`  
+- [x] Employer dashboard `/dashboard/jobs`  
+  - [x] CRUD wizard (MUI **DataGridPro**)  
+  - [x] Validation with `zod`  
 
 ---
 
@@ -64,13 +64,13 @@
 
 ## 💬  5. Networking Forum
 
-- [ ] **ForumHome** `/forum`  
-  - [ ] Create thread (RHF + markdown editor)  
-  - [ ] Tag picker (predefined & custom)  
-- [ ] **ThreadDetail**  
-  - [ ] Infinite-scroll comments  
-  - [ ] Edit / delete own posts  
-  - [ ] Report inappropriate content → API  
+- [x] **ForumHome** `/forum`  
+  - [x] Create thread (RHF + markdown editor)  
+  - [x] Tag picker (predefined & custom)  
+- [x] **ThreadDetail**  
+  - [x] Infinite-scroll comments  
+  - [x] Edit / delete own posts  
+  - [x] Report inappropriate content → API  
 
 ---
 
