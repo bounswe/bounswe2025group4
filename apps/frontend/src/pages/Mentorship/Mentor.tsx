@@ -44,7 +44,7 @@ const Mentor: React.FC = () => {
   );
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  
+
   // State for mentor profile creation form
   const [mentorCapacity, setMentorCapacity] = useState(5);
   const [isAvailable, setIsAvailable] = useState(true);
@@ -80,7 +80,7 @@ const Mentor: React.FC = () => {
   // Check if the profile error is a "not found" error
   const isProfileNotFound = profileError != null;
 
-  console.warn("isProfileNotFound: ", isProfileNotFound);
+  console.warn('isProfileNotFound: ', isProfileNotFound);
 
   // Calculate capacity usage
   const capacityUsage = mentorProfile
@@ -110,7 +110,7 @@ const Mentor: React.FC = () => {
         status: newStatus,
       },
       {
-        onSuccess: (data) => {
+        onSuccess: (_) => {
           setSnackbarMessage(
             `${dialogAction === 'accept' ? 'Accepted' : 'Rejected'} mentorship request from ${selectedRequest.mentee.username}`
           );
@@ -196,7 +196,9 @@ const Mentor: React.FC = () => {
         },
         onError: (error) => {
           console.error('Failed to create mentor profile:', error);
-          setSnackbarMessage('Failed to create mentor profile. Please try again.');
+          setSnackbarMessage(
+            'Failed to create mentor profile. Please try again.'
+          );
           setSnackbarOpen(true);
         },
       }
@@ -204,7 +206,11 @@ const Mentor: React.FC = () => {
   };
 
   // Show loading state
-  if (isLoadingUser || (isLoadingProfile && !isProfileNotFound) || isLoadingRequests) {
+  if (
+    isLoadingUser ||
+    (isLoadingProfile && !isProfileNotFound) ||
+    isLoadingRequests
+  ) {
     return (
       <Box
         sx={{
@@ -238,16 +244,17 @@ const Mentor: React.FC = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Become a Mentor
         </Typography>
-        
+
         <Alert severity="info" sx={{ mb: 3 }}>
-          You don't have a mentor profile yet. Please create one to start mentoring.
+          You don't have a mentor profile yet. Please create one to start
+          mentoring.
         </Alert>
-        
+
         <Paper elevation={3} sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
           <Typography variant="h5" gutterBottom>
             Create Your Mentor Profile
           </Typography>
-          
+
           <Box component="form" noValidate sx={{ mt: 2 }}>
             <TextField
               fullWidth
@@ -259,11 +266,14 @@ const Mentor: React.FC = () => {
                 setCapacityError('');
               }}
               error={!!capacityError}
-              helperText={capacityError || "Maximum number of mentees you can support at one time"}
+              helperText={
+                capacityError ||
+                'Maximum number of mentees you can support at one time'
+              }
               margin="normal"
               InputProps={{ inputProps: { min: 1, max: 50 } }}
             />
-            
+
             <FormControlLabel
               control={
                 <Switch
@@ -275,16 +285,18 @@ const Mentor: React.FC = () => {
               label="Available for mentorship"
               sx={{ mt: 2, mb: 2, display: 'block' }}
             />
-            
+
             <Box sx={{ mt: 3 }}>
-              <Button 
-                variant="contained" 
-                color="primary" 
+              <Button
+                variant="contained"
+                color="primary"
                 fullWidth
                 onClick={handleCreateMentorProfile}
                 disabled={createMentorProfile.isPending}
               >
-                {createMentorProfile.isPending ? 'Creating Profile...' : 'Create Mentor Profile'}
+                {createMentorProfile.isPending
+                  ? 'Creating Profile...'
+                  : 'Create Mentor Profile'}
               </Button>
             </Box>
           </Box>
@@ -460,7 +472,7 @@ const Mentor: React.FC = () => {
                   <Button
                     variant="outlined"
                     onClick={() =>
-                      console.log(
+                      console.warn(
                         'Opening chat with mentee:',
                         mentorship.channelId
                       )
@@ -472,7 +484,7 @@ const Mentor: React.FC = () => {
                     variant="outlined"
                     color="warning"
                     onClick={() =>
-                      console.log(
+                      console.warn(
                         'Marking mentorship as complete:',
                         mentorship.id
                       )

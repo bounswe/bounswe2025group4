@@ -31,7 +31,6 @@ import {
 import { useCurrentUser } from '../../services/user.service';
 import {
   MentorProfile,
-  MentorshipRequest,
   RequestStatus,
 } from '../../types/mentor';
 
@@ -46,7 +45,7 @@ const Mentee: React.FC = () => {
 
   // Get current user
   const {
-    data: currentUser,
+    data: _,
     isLoading: isLoadingUser,
     error: userError,
   } = useCurrentUser();
@@ -301,7 +300,7 @@ const Mentee: React.FC = () => {
                 <Button
                   variant="outlined"
                   color="error"
-                  onClick={() => console.log('Cancelling request:', request.id)}
+                  onClick={() => console.warn('Cancelling request:', request.id)}
                 >
                   Cancel Request
                 </Button>
@@ -342,7 +341,7 @@ const Mentee: React.FC = () => {
                 <Button
                   variant="outlined"
                   onClick={() =>
-                    console.log(
+                    console.warn(
                       'Opening chat with mentor:',
                       mentorship.channelId
                     )
