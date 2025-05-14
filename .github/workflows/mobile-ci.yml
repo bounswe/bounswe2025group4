@@ -2,13 +2,10 @@ name: Mobile
 
 on:
   push:
-    branches: [main]
-    paths:
-      - 'apps/mobile/**'
+    branches: [ main ]
   pull_request:
-    branches: [main]
-    paths:
-      - 'apps/mobile/**'
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   setup:
