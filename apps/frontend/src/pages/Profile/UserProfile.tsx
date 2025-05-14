@@ -130,7 +130,7 @@ const UserProfile: FC = () => {
         fullName: fullProfile.profile.fullName || '',
         bio: fullProfile.profile.bio || '',
       });
-      setNewMentorshipStatus(authUser?.mentorType || 'MENTEE');
+      setNewMentorshipStatus(authUser?.mentorshipStatus || 'MENTEE');
     }
   }, [fullProfile, resetIdentity, authUser]);
 
@@ -145,11 +145,10 @@ const UserProfile: FC = () => {
       });
       await updateAuthUser.mutateAsync({
         id: authUser?.id || 0,
-        username: authUser?.username || '',
-        email: authUser?.email || '',
-        bio: data.bio,
+        username: data.username,
+        email: data.email,
         userType: authUser?.userType || 'JOB_SEEKER',
-        mentorType: newMentorshipStatus,
+        mentorshipStatus: newMentorshipStatus,
       });
 
       setIsEditingIdentity(false);
@@ -428,7 +427,7 @@ const UserProfile: FC = () => {
                         {authUser?.userType === 'EMPLOYER'
                           ? 'Employer'
                           : 'Job Seeker'}
-                        {authUser?.mentorType === 'MENTOR' && ' • Mentor'}
+                        {authUser?.mentorshipStatus === 'MENTOR' && ' • Mentor'}
                       </Typography>
                     </Box>
 

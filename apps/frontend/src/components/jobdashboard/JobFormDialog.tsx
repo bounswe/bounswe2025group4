@@ -7,39 +7,34 @@ import {
   DialogTitle,
   TextField,
   FormControl,
-  FormControlLabel,
-  InputLabel,
-  Select,
-  MenuItem,
   FormHelperText,
   CircularProgress,
   Grid,
-  Checkbox,
-  FormGroup,
   FormLabel,
   Divider,
   Box,
   Autocomplete,
   Chip,
+  Checkbox,
+  FormControlLabel,
 } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Job } from '../../types/job';
+import { JobPost } from '../../types/job';
 import {
   jobSchema,
   JobFormValues,
   ethicalPolicies,
-  employmentTypes,
+  jobFormValueFromJobPost,
 } from '../../schemas/job';
 
 interface JobFormDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: JobFormValues) => void;
-  initialData?: Job;
+  initialData?: JobPost;
   isLoading?: boolean;
-  companies: { id: string; name: string }[];
 }
 
 const JobFormDialog: React.FC<JobFormDialogProps> = ({
@@ -48,10 +43,7 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
   onSubmit,
   initialData,
   isLoading = false,
-  companies,
 }) => {
-  const isEditing = !!initialData;
-
   const {
     control,
     handleSubmit,
@@ -61,58 +53,40 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
   } = useForm<JobFormValues>({
     resolver: zodResolver(jobSchema),
     defaultValues: initialData
-      ? {
-          title: initialData.title,
-          description: initialData.description,
-          location: initialData.location,
-          salaryMin: initialData.salaryMin,
-          salaryMax: initialData.salaryMax,
-          employmentType: initialData.employmentType,
-          ethicalPolicies: initialData.ethicalPolicies,
-          companyId: initialData.company.id,
-          contactEmail: initialData.contactEmail || '',
-          contactPhone: initialData.contactPhone || '',
-        }
+      ? jobFormValueFromJobPost(initialData)
       : {
           title: '',
           description: '',
           location: '',
-          employmentType: 'Full-time',
-          ethicalPolicies: [],
-          companyId: '',
-          contactEmail: '',
+          minSalary: 0,
+          maxSalary: 0,
+          isRemote: false,
+          ethicalTags: [],
+          company: '',
+          contact: '',
         },
   });
 
   // Watch for min/max salary to validate relationship
-  const salaryMin = watch('salaryMin');
-  const salaryMax = watch('salaryMax');
+  const minSalary = watch('minSalary');
+  const maxSalary = watch('maxSalary');
 
   // Reset form when dialog opens with new data
   useEffect(() => {
     if (open) {
       reset(
         initialData
-          ? {
-              title: initialData.title,
-              description: initialData.description,
-              location: initialData.location,
-              salaryMin: initialData.salaryMin,
-              salaryMax: initialData.salaryMax,
-              employmentType: initialData.employmentType,
-              ethicalPolicies: initialData.ethicalPolicies,
-              companyId: initialData.company.id,
-              contactEmail: initialData.contactEmail || '',
-              contactPhone: initialData.contactPhone || '',
-            }
+          ? jobFormValueFromJobPost(initialData)
           : {
               title: '',
               description: '',
               location: '',
-              employmentType: 'Full-time',
-              ethicalPolicies: [],
-              companyId: '',
-              contactEmail: '',
+              minSalary: 1,
+              maxSalary: 1,
+              isRemote: false,
+              ethicalTags: [],
+              company: '',
+              contact: '',
             }
       );
     }
@@ -130,14 +104,12 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
       fullWidth
       aria-labelledby="job-form-dialog-title"
     >
-      <DialogTitle id="job-form-dialog-title">
-        {isEditing ? 'Edit Job Listing' : 'Create New Job Listing'}
-      </DialogTitle>
+      <DialogTitle id="job-form-dialog-title">Edit Job Listing</DialogTitle>
 
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogContent>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Controller
                 name="title"
                 control={control}
@@ -155,7 +127,7 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Controller
                 name="description"
                 control={control}
@@ -175,7 +147,7 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
                 name="location"
                 control={control}
@@ -193,41 +165,28 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
-                name="employmentType"
+                name="isRemote"
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth error={!!errors.employmentType}>
-                    <InputLabel id="employment-type-label">
-                      Employment Type
-                    </InputLabel>
-                    <Select
-                      {...field}
-                      labelId="employment-type-label"
-                      label="Employment Type"
-                      disabled={isLoading}
-                      required
-                    >
-                      {employmentTypes.map((type) => (
-                        <MenuItem key={type} value={type}>
-                          {type}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.employmentType && (
-                      <FormHelperText>
-                        {errors.employmentType.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                        disabled={isLoading}
+                      />
+                    }
+                    label="Remote option is available"
+                  />
                 )}
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
-                name="salaryMin"
+                name="minSalary"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -235,10 +194,10 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
                     label="Minimum Salary"
                     type="number"
                     fullWidth
-                    error={!!errors.salaryMin}
-                    helperText={errors.salaryMin?.message}
+                    error={!!errors.minSalary}
+                    helperText={errors.minSalary?.message}
                     disabled={isLoading}
-                    InputProps={{ inputProps: { min: 0 } }}
+                    slotProps={{ htmlInput: { min: 0 } }}
                     onChange={(e) => {
                       const value = e.target.value
                         ? parseInt(e.target.value, 10)
@@ -251,9 +210,9 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
-                name="salaryMax"
+                name="maxSalary"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -262,21 +221,21 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
                     type="number"
                     fullWidth
                     error={
-                      !!errors.salaryMax ||
-                      (salaryMax !== undefined &&
-                        salaryMin !== undefined &&
-                        salaryMax < salaryMin)
+                      !!errors.maxSalary ||
+                      (maxSalary !== undefined &&
+                        minSalary !== undefined &&
+                        maxSalary < minSalary)
                     }
                     helperText={
-                      errors.salaryMax?.message ||
-                      (salaryMax !== undefined &&
-                      salaryMin !== undefined &&
-                      salaryMax < salaryMin
+                      errors.maxSalary?.message ||
+                      (maxSalary !== undefined &&
+                      minSalary !== undefined &&
+                      maxSalary < minSalary
                         ? 'Maximum salary must be greater than minimum salary'
                         : '')
                     }
                     disabled={isLoading}
-                    InputProps={{ inputProps: { min: 0 } }}
+                    slotProps={{ htmlInput: { min: 0 } }}
                     onChange={(e) => {
                       const value = e.target.value
                         ? parseInt(e.target.value, 10)
@@ -289,17 +248,17 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Controller
-                name="contactEmail"
+                name="contact"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
                     label="Contact Email"
                     fullWidth
-                    error={!!errors.contactEmail}
-                    helperText={errors.contactEmail?.message}
+                    error={!!errors.contact}
+                    helperText={errors.contact?.message}
                     disabled={isLoading}
                     required
                   />
@@ -307,61 +266,32 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
               />
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12 }}>
               <Controller
-                name="contactPhone"
+                name="company"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Contact Phone"
+                    label="Company"
                     fullWidth
-                    error={!!errors.contactPhone}
-                    helperText={errors.contactPhone?.message}
+                    error={!!errors.company}
+                    helperText={errors.company?.message}
                     disabled={isLoading}
+                    required
                   />
                 )}
               />
             </Grid>
 
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <Controller
-                name="companyId"
-                control={control}
-                render={({ field }) => (
-                  <FormControl fullWidth error={!!errors.companyId}>
-                    <InputLabel id="company-label">Company</InputLabel>
-                    <Select
-                      {...field}
-                      labelId="company-label"
-                      label="Company"
-                      disabled={isLoading}
-                      required
-                    >
-                      {companies.map((company) => (
-                        <MenuItem key={company.id} value={company.id}>
-                          {company.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.companyId && (
-                      <FormHelperText>
-                        {errors.companyId.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Controller
-                name="ethicalPolicies"
+                name="ethicalTags"
                 control={control}
                 render={({ field }) => (
                   <FormControl
                     fullWidth
-                    error={!!errors.ethicalPolicies}
+                    error={!!errors.ethicalTags}
                     component="fieldset"
                     variant="standard"
                   >
@@ -383,8 +313,9 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
                         renderTags={(value, getTagProps) =>
                           value.map((option, index) => (
                             <Chip
-                              label={option}
                               {...getTagProps({ index })}
+                              key={option}
+                              label={option}
                               color="primary"
                               variant="outlined"
                             />
@@ -395,8 +326,8 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
                             {...params}
                             variant="outlined"
                             placeholder="Select policies"
-                            error={!!errors.ethicalPolicies}
-                            helperText={errors.ethicalPolicies?.message}
+                            error={!!errors.ethicalTags}
+                            helperText={errors.ethicalTags?.message}
                           />
                         )}
                       />
@@ -421,7 +352,7 @@ const JobFormDialog: React.FC<JobFormDialogProps> = ({
             disabled={isLoading}
             startIcon={isLoading ? <CircularProgress size={20} /> : null}
           >
-            {isLoading ? 'Saving...' : isEditing ? 'Update' : 'Create'}
+            {isLoading ? 'Saving...' : 'Update'}
           </Button>
         </DialogActions>
       </form>

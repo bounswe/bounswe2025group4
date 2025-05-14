@@ -15,19 +15,23 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
   final List<JobPriority> priorities = [
     JobPriority(
       title: 'Fair Wages',
-      description: 'Companies that pay living wages and maintain transparent compensation practices',
+      description:
+          'Companies that pay living wages and maintain transparent compensation practices',
     ),
     JobPriority(
       title: 'Inclusive Workplace',
-      description: 'Organizations committed to diversity, equity, and inclusion',
+      description:
+          'Organizations committed to diversity, equity, and inclusion',
     ),
     JobPriority(
       title: 'Sustainability/Environmental Policies',
-      description: 'Companies with strong environmental commitments and practices',
+      description:
+          'Companies with strong environmental commitments and practices',
     ),
     JobPriority(
       title: 'Work-Life Balance',
-      description: 'Respectful of personal time with flexible scheduling options',
+      description:
+          'Respectful of personal time with flexible scheduling options',
     ),
     JobPriority(
       title: 'Remote-Friendly',
@@ -47,27 +51,11 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const IndustrySelectionScreen(),
-                ),
-              );
-            },
-            child: const Text('Skip'),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            const OnboardingProgressBar(
-              currentStep: 2,
-              totalSteps: 4,
-            ),
+            const OnboardingProgressBar(currentStep: 2, totalSteps: 4),
             const SizedBox(height: 24),
             Expanded(
               child: Padding(
@@ -85,20 +73,20 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
                     const SizedBox(height: 8),
                     const Text(
                       'Select all that apply',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 24),
                     Expanded(
                       child: ListView.separated(
                         itemCount: priorities.length,
-                        separatorBuilder: (context, index) => const SizedBox(height: 12),
+                        separatorBuilder:
+                            (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final priority = priorities[index];
-                          final isSelected = selectedPriorities.contains(priority.title);
-                          
+                          final isSelected = selectedPriorities.contains(
+                            priority.title,
+                          );
+
                           return InkWell(
                             onTap: () {
                               setState(() {
@@ -113,24 +101,32 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: isSelected ? Colors.blue : Colors.grey.shade300,
+                                  color:
+                                      isSelected
+                                          ? Colors.blue
+                                          : Colors.grey.shade300,
                                 ),
                                 borderRadius: BorderRadius.circular(8),
-                                color: isSelected ? Colors.blue.withOpacity(0.1) : null,
+                                color:
+                                    isSelected
+                                        ? Colors.blue.withOpacity(0.1)
+                                        : null,
                               ),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           priority.title,
                                           style: TextStyle(
                                             fontSize: 16,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.normal,
+                                            fontWeight:
+                                                isSelected
+                                                    ? FontWeight.bold
+                                                    : FontWeight.normal,
                                           ),
                                         ),
                                         const SizedBox(height: 4),
@@ -145,7 +141,10 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
                                     ),
                                   ),
                                   if (isSelected)
-                                    const Icon(Icons.check_circle, color: Colors.blue),
+                                    const Icon(
+                                      Icons.check_circle,
+                                      color: Colors.blue,
+                                    ),
                                 ],
                               ),
                             ),
@@ -158,16 +157,19 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: selectedPriorities.isNotEmpty
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const IndustrySelectionScreen(),
-                                  ),
-                                );
-                              }
-                            : null,
+                        onPressed:
+                            selectedPriorities.isNotEmpty
+                                ? () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const IndustrySelectionScreen(),
+                                    ),
+                                  );
+                                }
+                                : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           shape: RoundedRectangleBorder(
@@ -176,10 +178,7 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
                         ),
                         child: const Text(
                           'Continue',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),
@@ -198,8 +197,5 @@ class JobPriority {
   final String title;
   final String description;
 
-  const JobPriority({
-    required this.title,
-    required this.description,
-  });
-} 
+  const JobPriority({required this.title, required this.description});
+}

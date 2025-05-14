@@ -454,111 +454,102 @@ class _JobPageState extends State<JobPage> {
     }
 
     // Display the list of Job Postings using Cards
-    return ListView.builder(
-      padding: const EdgeInsets.all(8.0),
-      itemCount: _jobPostings.length,
-      itemBuilder: (context, index) {
-        final job = _jobPostings[index];
-        final dateFormat = DateFormat.yMMMd();
-
-        return Card(
-          elevation: 2.0,
-          margin: const EdgeInsets.symmetric(vertical: 6.0),
-          child: InkWell(
-            onTap: () {
-              if (_userRole == UserType.EMPLOYER) {
-                _navigateToJobApplications(job);
-              } else {
-                _navigateToJobDetails(job);
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          job.title,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Text(
-                        job.jobType ?? 'N/A',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.blueGrey),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4.0),
-                  Text(
-                    job.company,
-                    style: Theme.of(context).textTheme.titleSmall,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8.0),
-                  // Split the ethicalTags string and display as chips
-                  if (job.ethicalTags.isNotEmpty)
-                    Wrap(
-                      spacing: 6.0,
-                      runSpacing: 4.0,
-                      children:
-                          // Split string by comma, trim whitespace, remove empty strings
-                          job.ethicalTags
-                              .split(',')
-                              .map((e) => e.trim())
-                              .where((e) => e.isNotEmpty)
-                              .map(
-                                (tag) => Chip(
-                                  label: Text(
-                                    tag.formatFilterName(),
-                                  ), // Assuming formatFilterName works for tags
-                                  padding: EdgeInsets.zero,
-                                  labelPadding: const EdgeInsets.symmetric(
-                                    horizontal: 6.0,
-                                  ),
-                                  labelStyle:
-                                      Theme.of(context).textTheme.labelSmall,
-                                  visualDensity: VisualDensity.compact,
-                                  backgroundColor: Colors.teal.shade50,
-                                  side: BorderSide.none,
-                                ),
-                              )
-                              .toList(),
-                    ),
-                  const SizedBox(height: 8.0),
-                  if (job.datePosted != null)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'Posted: ${dateFormat.format(job.datePosted!)}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    )
-                  else
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'Posted: Unknown',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _loadData(
+          searchQuery:
+              _searchController.text.isNotEmpty ? _searchController.text : null,
         );
       },
+      child: ListView.builder(
+        padding: const EdgeInsets.all(8.0),
+        itemCount: _jobPostings.length,
+        itemBuilder: (context, index) {
+          final job = _jobPostings[index];
+          final dateFormat = DateFormat.yMMMd();
+
+          return Card(
+            elevation: 2.0,
+            margin: const EdgeInsets.symmetric(vertical: 6.0),
+            child: InkWell(
+              onTap: () {
+                if (_userRole == UserType.EMPLOYER) {
+                  _navigateToJobApplications(job);
+                } else {
+                  _navigateToJobDetails(job);
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            job.title,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4.0),
+                    Text(
+                      job.company,
+                      style: Theme.of(context).textTheme.titleSmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8.0),
+                    // Split the ethicalTags string and display as chips
+                    if (job.ethicalTags.isNotEmpty)
+                      Wrap(
+                        spacing: 6.0,
+                        runSpacing: 4.0,
+                        children:
+                            // Split string by comma, trim whitespace, remove empty strings
+                            job.ethicalTags
+                                .split(',')
+                                .map((e) => e.trim())
+                                .where((e) => e.isNotEmpty)
+                                .map(
+                                  (tag) => Chip(
+                                    label: Text(
+                                      tag.formatFilterName(),
+                                    ), // Assuming formatFilterName works for tags
+                                    padding: EdgeInsets.zero,
+                                    labelPadding: const EdgeInsets.symmetric(
+                                      horizontal: 6.0,
+                                    ),
+                                    labelStyle:
+                                        Theme.of(context).textTheme.labelSmall,
+                                    visualDensity: VisualDensity.compact,
+                                    backgroundColor: Colors.teal.shade50,
+                                    side: BorderSide.none,
+                                  ),
+                                )
+                                .toList(),
+                      ),
+                    const SizedBox(height: 8.0),
+                    if (job.datePosted != null)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Posted: ${dateFormat.format(job.datePosted!)}',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.grey.shade600),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

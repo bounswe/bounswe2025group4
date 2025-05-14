@@ -24,37 +24,93 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UsernameAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<Map<String, Object>> handleUsernameAlreadyExists(UsernameAlreadyExistsException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.CONFLICT.value());
-        response.put("error", "Conflict");
-        response.put("message", "Username already exists: " + ex.getUsername());
-        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    public ResponseEntity<ApiErrorResponse> handleUsernameAlreadyExists(UsernameAlreadyExistsException ex) {
+        return buildErrorResponse("Conflict", "Username already exists: " + ex.getUsername(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
+        return buildErrorResponse("Conflict", "An account using this email already exists: " + ex.getEmail(), HttpStatus.CONFLICT);
+    }
 
     @ExceptionHandler(InvalidResetTokenException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Map<String, Object>> handleInvalidResetToken(InvalidResetTokenException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "Invalid or expired reset token.");
-        response.put("message", ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ApiErrorResponse> handleInvalidResetToken(InvalidResetTokenException ex) {
+        return buildErrorResponse("Bad Request", "Invalid or expired reset token.", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleUserNotFound(UserNotFoundException ex) {
+        return buildErrorResponse("Not Found", ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNotFound(NotFoundException ex) {
+        return buildErrorResponse("Not Found", ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return buildErrorResponse("Unauthorized", ex.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(QuoteFetchException.class)
+    public ResponseEntity<ApiErrorResponse> handleQuoteFetchException(QuoteFetchException ex) {
+        return buildErrorResponse("Service Error", ex.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @ExceptionHandler(UnauthorizedActionException.class)
+    public ResponseEntity<ApiErrorResponse> handleUnauthorizedAction(UnauthorizedActionException ex) {
+        return buildErrorResponse("Unauthorized Action", ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(MentorNotAvailableException.class)
+    public ResponseEntity<ApiErrorResponse> handleMentorNotAvailable(MentorNotAvailableException ex) {
+        return buildErrorResponse("Unavailable Mentor", ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MentorCapacityExceededException.class)
+    public ResponseEntity<ApiErrorResponse> handleMentorCapacityExceeded(MentorCapacityExceededException ex) {
+        return buildErrorResponse("Mentorship Capacity Exceeded", ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(PendingRequestExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handlePendingRequestExists(PendingRequestExistsException ex) {
+        return buildErrorResponse("Conflict", ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MentorProfileAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleMentorProfileAlreadyExists(MentorProfileAlreadyExistsException ex) {
+        return buildErrorResponse("Conflict", ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MentorshipNotCompletedException.class)
+    public ResponseEntity<ApiErrorResponse> handleMentorshipNotCompleted(MentorshipNotCompletedException ex) {
+        return buildErrorResponse("Forbidden", ex.getMessage(), HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(DuplicateReviewException.class)
+    public ResponseEntity<ApiErrorResponse> handleDuplicateReview(DuplicateReviewException ex) {
+        return buildErrorResponse("Conflict", ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(TagException.class)
+    public ResponseEntity<ApiErrorResponse> handleTagException(TagException ex) {
+        String message = ex.getMessage();
+        String errorCode = ex.getErrorCode();
+
+        return buildErrorResponse(errorCode, message, HttpStatus.BAD_REQUEST);
     }
 
 
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUserNotFound(UserNotFoundException ex) {
-        Map<String, String> response = new HashMap<>();
-        response.put("timestamp", String.valueOf(LocalDateTime.now()));
-        response.put("status", String.valueOf(HttpStatus.NOT_FOUND.value()));
-        response.put("error", "Not Found");
-        response.put("message", ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+
+
+
+
+    // Reusable method for building error responses
+    private ResponseEntity<ApiErrorResponse> buildErrorResponse(String error, String message, HttpStatus status) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(error, message, status);
+        return new ResponseEntity<>(errorResponse, status);
     }
 }

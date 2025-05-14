@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.bounswe.backend.comment.dto.CommentDto;
 import org.bounswe.backend.comment.dto.CreateCommentRequestDto;
 import org.bounswe.backend.comment.service.CommentService;
+import org.bounswe.backend.common.exception.InvalidAuthContextException;
+import org.bounswe.backend.common.exception.NotFoundException;
 import org.bounswe.backend.tag.service.TagService;
 import org.bounswe.backend.tag.entity.Tag;
 import org.bounswe.backend.thread.dto.CreateThreadRequestDto;
@@ -133,7 +135,7 @@ public class ThreadController {
     private User getCurrentUser() {
         String username = getCurrentUsername();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User"));
     }
 
     private String getCurrentUsername() {
@@ -141,6 +143,6 @@ public class ThreadController {
         if (principal instanceof UserDetails userDetails) {
             return userDetails.getUsername();
         }
-        throw new RuntimeException("Invalid authentication context");
+        throw new InvalidAuthContextException();
     }
 }

@@ -1,6 +1,12 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import { ApiError, ApiResponse } from '../types/api';
 
+interface ApiErrorResponse {
+  error: string;
+  message: string;
+  status: string;
+}
+
 class ApiClient {
   private client: AxiosInstance;
   private static instance: ApiClient;
@@ -32,9 +38,19 @@ class ApiClient {
       },
     });
 
+    const ignoredEndpoints = [
+      '/auth/login',
+      '/auth/register',
+      '/auth/reset-password',
+      '/auth/forgot-password',
+    ];
+
     // Add request interceptor for auth
     this.client.interceptors.request.use(
       (config) => {
+        if (ignoredEndpoints.includes(config.url || '')) {
+          return config;
+        }
         const token = localStorage.getItem('token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
@@ -47,13 +63,21 @@ class ApiClient {
     // Add response interceptor for error handling
     this.client.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError<ApiError>) => {
+      async (error: AxiosError<ApiErrorResponse>) => {
+        // For ignored endpoints (auth endpoints), return the error response data directly
+        if (ignoredEndpoints.includes(error.config?.url || '')) {
+          if (error.response?.data) {
+            return Promise.reject(error.response.data);
+          }
+        }
+
         const originalRequest = error.config!;
 
-        // Handle 401 and token refresh
+        // Handle 401 and token refresh for non-auth endpoints
         if (
           error.response?.status === 401 &&
-          !originalRequest.headers['X-Retry']
+          !originalRequest.headers['X-Retry'] &&
+          !ignoredEndpoints.includes(error.config?.url || '')
         ) {
           try {
             const token = localStorage.getItem('token');
@@ -67,7 +91,24 @@ class ApiClient {
           }
         }
 
-        return Promise.reject(error);
+        // For all other errors, return a consistent error response format
+        if (error.response?.data) {
+          return Promise.reject({
+            data: null,
+            error: error.response.data.error || 'Unknown Error',
+            message:
+              error.response.data.message || 'An unexpected error occurred',
+            status: error.response.data.status || error.response.status,
+          });
+        }
+
+        // For network errors or other issues where response is not available
+        return Promise.reject({
+          data: null,
+          error: 'Network Error',
+          message: 'Unable to connect to the server',
+          status: 'NETWORK_ERROR',
+        });
       }
     );
   }

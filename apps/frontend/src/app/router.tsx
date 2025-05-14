@@ -1,46 +1,40 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  // redirect,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import CenteredLoader from '../components/layout/CenterLoader';
 import ForgotPasswordPage from '../pages/Auth/ForgotPassword';
 import ResetPasswordPage from '../pages/Auth/ResetPassword';
-import { RedirectIfAuth } from '../components/auth/RedirectIfAuth';
+import RedirectIfAuth from '../components/auth/RedirectIfAuth';
 import RegisterSuccesfull from '../pages/Auth/RegisterSuccesful';
 import UserProfileRedirect from '../pages/Profile/UserProfileRedirect';
 import UserProfile from '../pages/Profile/UserProfile';
 
 // Lazy load pages for better performance
+
 const HomePage = lazy(() => import('../pages/Home'));
-// Removed placeholder JobsPage import
 const LoginPage = lazy(() => import('../pages/Auth/Login'));
 const RegisterPage = lazy(() => import('../pages/Auth/Register'));
 
-// Import new pages and their loader/action functions
-const JobListPage = lazy(() => import('../pages/Job/JobList'));
-const JobDetailPage = lazy(() => import('../pages/Job/JobDetail'));
-// import { jobDetailLoader, applyAction } from '../pages/Job/JobDetail';
-// Add JobDashboard
-const JobDashboardPage = lazy(() => import('../pages/Job/JobDashboard'));
+// Job => job seeker
+const JobListPage = lazy(() => import('../pages/Jobs/JobList'));
+const JobDetailPage = lazy(() => import('../pages/Jobs/JobDetail'));
 
-// Import the RoleBasedRedirect component
-const RoleBasedRedirect = lazy(
-  () => import('../components/auth/RoleBasedRedirect')
+// Job => employer
+const JobDashboardPage = lazy(
+  () => import('../pages/JobDashboard/JobDashboard')
 );
-
-// Import the CreateJobPage component
-const CreateJobPage = lazy(() => import('../pages/Job/CreateJobPage'));
-
-// Import the JobPostDetailDashboardView component
-const JobPostDetailDashboardView = lazy(
-  () => import('../pages/Job/JobPostDetailDashboardView')
+const CreateJobPage = lazy(() => import('../pages/JobDashboard/CreateJobPage'));
+const JobDetailDashboard = lazy(
+  () => import('../pages/JobDashboard/JobDetailDashboard')
 );
 
 // Forum part
 const ThreadListPage = lazy(() => import('../pages/Forum/ThreadList'));
 const ThreadDetailPage = lazy(() => import('../pages/Forum/ThreadDetail'));
+
+// Util
+const RoleBasedRedirect = lazy(
+  () => import('../components/auth/RoleBasedRedirect')
+);
 
 // Root layout with navigation and common elements
 const RootLayout = lazy(() => import('../layouts/Root'));
@@ -100,7 +94,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'register-successfull',
+        path: 'register-successful',
         element: <RegisterSuccesfull />,
       },
       {
@@ -156,7 +150,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'dashboard/jobs/:id',
-        element: <JobPostDetailDashboardView />,
+        element: <JobDetailDashboard />,
         // Add auth protection: only employer who owns the job can access
       },
       {

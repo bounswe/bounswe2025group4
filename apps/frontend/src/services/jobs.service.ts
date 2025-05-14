@@ -13,40 +13,18 @@ const JOB_KEYS = {
   detail: (id: string) => [...JOB_KEYS.details(), id] as const,
 };
 
-// Define a type for the raw response from the API
-type RawJobPost = Omit<JobPost, 'ethicalTags'> & {
-  ethicalTags: string | string[];
-};
-
 class JobsService {
   async getAllJobs(filters: JobFilters): Promise<JobPost[]> {
-    const response = await apiClient.get<RawJobPost[]>(
+    const response = await apiClient.get<JobPost[]>(
       '/jobs',
       filters as Record<string, unknown>
     );
-    // Transform ethicalTags from comma-separated string to string array
-    return response.data.map((job: RawJobPost) => ({
-      ...job,
-      ethicalTags:
-        typeof job.ethicalTags === 'string'
-          ? job.ethicalTags.split(',').map((tag: string) => tag.trim())
-          : Array.isArray(job.ethicalTags)
-            ? job.ethicalTags
-            : [], // Handle if it's already an array or empty
-    }));
+    return response.data;
   }
 
   async getJobById(id: string): Promise<JobPost> {
     const response = await apiClient.get<JobPost>(`/jobs/${id}`);
-    // Transform ethicalTags from comma-separated string to string array
-    const job = response.data as RawJobPost;
-    return {
-      ...job,
-      ethicalTags:
-        typeof job.ethicalTags === 'string'
-          ? job.ethicalTags.split(',').map((tag: string) => tag.trim())
-          : [], // Handle if it's already an array or empty
-    };
+    return response.data;
   }
 
   async getJobByEmployer(employerId: string): Promise<JobPost[]> {

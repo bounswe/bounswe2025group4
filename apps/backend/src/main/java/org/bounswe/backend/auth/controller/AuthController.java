@@ -5,9 +5,7 @@ import org.bounswe.backend.auth.dto.*;
 import org.bounswe.backend.auth.jwt.JwtTokenProvider;
 import org.bounswe.backend.auth.service.PasswordResetTokenService;
 import org.bounswe.backend.auth.service.EmailService;
-import org.bounswe.backend.common.exception.InvalidResetTokenException;
-import org.bounswe.backend.common.exception.UserNotFoundException;
-import org.bounswe.backend.common.exception.UsernameAlreadyExistsException;
+import org.bounswe.backend.common.exception.*;
 import org.bounswe.backend.profile.entity.Profile;
 import org.bounswe.backend.profile.repository.ProfileRepository;
 import org.bounswe.backend.user.entity.User;
@@ -40,7 +38,6 @@ public class AuthController {
         this.profileRepository = profileRepository;
     }
 
-    // 🔒 Register Endpoint
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody @Valid RegisterRequest request) {
         if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
@@ -61,6 +58,10 @@ public class AuthController {
 
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new UsernameAlreadyExistsException(request.getUsername());
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException(request.getEmail());
         }
 
         User user = User.builder()
@@ -95,14 +96,13 @@ public class AuthController {
                 .build());
     }
 
-    // 🔑 Login Endpoint
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+                .orElseThrow(UserNotFoundException::new);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid username or password");
+            throw new InvalidCredentialsException();
         }
 
         String token = jwtTokenProvider.generateToken(user.getUsername(), user.getUserType().name());
@@ -115,7 +115,6 @@ public class AuthController {
                 .build());
     }
 
-    // 🔒 Forgot Password Endpoint
     @PostMapping("/forgot-password")
     public ResponseEntity<PasswordResetResponse> forgotPassword(@RequestBody @Valid PasswordForgotRequest request) {
         if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
@@ -123,7 +122,7 @@ public class AuthController {
         }
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new NotFoundException("User"));
 
 
         String token = passwordResetTokenService.createPasswordResetToken(user);

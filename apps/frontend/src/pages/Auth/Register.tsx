@@ -20,6 +20,7 @@ import {
   Typography,
   useTheme,
   Alert,
+  Snackbar,
 } from '@mui/material';
 import {
   Visibility,
@@ -81,11 +82,24 @@ const mentorshipRoleOptions: MentorshipRoleOption[] = [
   },
 ];
 
+const titles = {
+  credentials: 'Create your account',
+  userType: 'Choose your role',
+  mentorship: 'Choose mentorship role',
+  profileInfo: 'Profile Information',
+};
+
+const subtitles = {
+  credentials: 'Join our platform to connect with opportunities',
+  userType: 'Are you offering or seeking job opportunities?',
+  mentorship: 'Are you seeking guidance or offering help?',
+  profileInfo:
+    'Please provide some information about yourself to help people find you.',
+};
+
 // Define form schema with Zod
 const registerSchema = z
   .object({
-    // firstName: z.string().min(2, 'First name must be at least 2 characters'),
-    // lastName: z.string().min(2, 'Last name must be at least 2 characters'),
     username: z.string().min(2, 'Username must be at least 2 characters'),
     email: z.string().email('Please enter a valid email address'),
     password: z
@@ -111,7 +125,17 @@ const registerSchema = z
     path: ['confirmPassword'],
   });
 
+const registerProfileInfoSchema = z.object({
+  firstName: z.string().min(2, 'First name must be at least 2 characters'),
+  lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+  phone: z.string().min(10, 'Phone must be at least 10 characters'),
+  location: z.string().min(2, 'Location must be at least 2 characters'),
+  occupation: z.string().min(2, 'Occupation must be at least 2 characters'),
+  bio: z.string().min(10, 'Bio must be at least 10 characters'),
+});
+
 type RegisterFormData = z.infer<typeof registerSchema>;
+type RegisterProfileInfoData = z.infer<typeof registerProfileInfoSchema>;
 
 export default function RegisterPage() {
   const theme = useTheme();
@@ -123,8 +147,9 @@ export default function RegisterPage() {
   const [registrationError, setRegistrationError] = useState<string | null>(
     null
   );
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [currentStep, setCurrentStep] = useState<
-    'credentials' | 'userType' | 'mentorship'
+    'credentials' | 'userType' | 'mentorship' | 'profileInfo'
   >('credentials');
 
   const [formData, setFormData] = useState<RegisterFormData>({
@@ -156,9 +181,39 @@ export default function RegisterPage() {
     },
   });
 
+  const {
+    control: profileControl,
+    handleSubmit: handleProfileSubmit,
+    formState: { errors: profileErrors },
+  } = useForm<RegisterProfileInfoData>({
+    resolver: zodResolver(registerProfileInfoSchema),
+    mode: 'onChange',
+  });
+
   const onSubmit = (data: RegisterFormData) => {
     setFormData(data);
     setCurrentStep('userType');
+  };
+
+  const onProfileSubmit = (data: RegisterProfileInfoData) => {
+    // API call to complete registration with profile info
+    const registerCredentials = {
+      ...formData,
+      ...data,
+      fullName: `${data.firstName} ${data.lastName}`,
+      userType: selectedUserType,
+      mentorshipStatus: selectedMentorshipRole,
+    };
+    registerMutation.mutate(registerCredentials, {
+      onSuccess: () => {
+        navigate('/register-successful');
+      },
+      onError: (error) => {
+        const errorMessage = error?.message || 'An unexpected error occurred.';
+        setRegistrationError(errorMessage);
+        setOpenSnackbar(true);
+      },
+    });
   };
 
   const handleUserTypeSelect = (userType: UserType) => {
@@ -167,58 +222,36 @@ export default function RegisterPage() {
 
   const handleMentorshipRoleSelect = (mentorshipRole: MentorshipRole) => {
     setSelectedMentorshipRole(mentorshipRole);
-  };
-
-  const handleCompleteRegistration = () => {
-    // API call to complete registration
-    const registerCredentials = {
-      ...formData,
-      bio: '',
-      userType: selectedUserType,
-      mentorshipRole: selectedMentorshipRole,
-    };
-    registerMutation.mutate(registerCredentials, {
-      onSuccess: () => {
-        navigate('/register-successfull');
-      },
-      onError: (error) => {
-        const errorMessage = error?.message || 'An unexpected error occurred.';
-        setRegistrationError(errorMessage);
-        console.error(error);
-      },
-    });
+    setCurrentStep('profileInfo');
   };
 
   const handleBack = () => {
-    setCurrentStep(currentStep === 'userType' ? 'credentials' : 'userType');
+    let prevStep = currentStep;
+    if (currentStep === 'userType') {
+      prevStep = 'credentials';
+    } else if (currentStep === 'mentorship') {
+      prevStep = 'userType';
+    }
+    setCurrentStep(prevStep);
   };
 
   const handleNext = () => {
-    setCurrentStep(currentStep === 'userType' ? 'mentorship' : 'userType');
+    let nextStep = currentStep;
+    if (currentStep === 'userType') {
+      nextStep = 'mentorship';
+    } else if (currentStep === 'mentorship') {
+      nextStep = 'profileInfo';
+    }
+    setCurrentStep(nextStep);
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   const renderCredidentals = () => (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 5 }}>
       <Grid container spacing={3}>
-        {/* {(['firstName', 'lastName'] as (keyof RegisterFormData)[]).map(
-          (field, idx) => (
-            <Grid size={{ xs: 12, sm: 6 }} key={field}>
-              <Controller
-                name={field as keyof RegisterFormData}
-                control={control}
-                render={({ field: controllerField }) => (
-                  <TextField
-                    {...controllerField}
-                    label={idx === 0 ? 'First Name' : 'Last Name'}
-                    fullWidth
-                    error={!!errors[field]}
-                    helperText={errors[field]?.message}
-                  />
-                )}
-              />
-            </Grid>
-          )
-        )} */}
         <Grid size={{ xs: 12 }}>
           <Controller
             name="username"
@@ -457,52 +490,156 @@ export default function RegisterPage() {
         >
           Back
         </Button>
-        {currentStep === 'userType' && (
-          <Button
-            variant="contained"
-            onClick={handleNext}
-            endIcon={<ArrowForward />}
-            disabled={!selected}
-            sx={{
-              py: 1.5,
-              px: 4,
-              borderRadius: 2,
-              fontSize: '1rem',
-              textTransform: 'none',
-              fontWeight: 'bold',
-              ml: 'auto',
-              flexGrow: 1,
-            }}
-          >
-            Continue
-          </Button>
-        )}
-        {currentStep === 'mentorship' && (
-          <Button
-            variant="contained"
-            disabled={!selectedMentorshipRole}
-            onClick={handleCompleteRegistration}
-            endIcon={<ArrowForward />}
-            sx={{
-              py: 1.5,
-              px: 4,
-              borderRadius: 2,
-              fontSize: '1rem',
-              textTransform: 'none',
-              fontWeight: 'bold',
-              ml: 'auto',
-              flexGrow: 1,
-            }}
-          >
-            Complete Registration
-          </Button>
-        )}
+        <Button
+          variant="contained"
+          onClick={handleNext}
+          endIcon={<ArrowForward />}
+          disabled={!selected}
+          sx={{
+            py: 1.5,
+            px: 4,
+            borderRadius: 2,
+            fontSize: '1rem',
+            textTransform: 'none',
+            fontWeight: 'bold',
+            ml: 'auto',
+            flexGrow: 1,
+          }}
+        >
+          Continue
+        </Button>
       </Stack>
-      {registrationError && currentStep === 'mentorship' && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {registrationError}
-        </Alert>
-      )}
+    </Box>
+  );
+
+  const renderProfileInfo = () => (
+    <Box
+      component="form"
+      onSubmit={handleProfileSubmit(onProfileSubmit)}
+      sx={{ p: 5 }}
+    >
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Controller
+            name="firstName"
+            control={profileControl}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="First Name"
+                fullWidth
+                error={!!profileErrors.firstName}
+                helperText={profileErrors.firstName?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Controller
+            name="lastName"
+            control={profileControl}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Last Name"
+                fullWidth
+                error={!!profileErrors.lastName}
+                helperText={profileErrors.lastName?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Controller
+            name="phone"
+            control={profileControl}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Phone Number"
+                fullWidth
+                error={!!profileErrors.phone}
+                helperText={profileErrors.phone?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Controller
+            name="location"
+            control={profileControl}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Location"
+                fullWidth
+                error={!!profileErrors.location}
+                helperText={profileErrors.location?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <Controller
+            name="occupation"
+            control={profileControl}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Occupation"
+                fullWidth
+                error={!!profileErrors.occupation}
+                helperText={profileErrors.occupation?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <Controller
+            name="bio"
+            control={profileControl}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Bio"
+                fullWidth
+                multiline
+                rows={4}
+                error={!!profileErrors.bio}
+                helperText={profileErrors.bio?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <Stack direction="row" spacing={2}>
+            <Button
+              startIcon={<ArrowBack />}
+              onClick={() => setCurrentStep('mentorship')}
+              sx={{ textTransform: 'none' }}
+            >
+              Back
+            </Button>
+            <Button
+              variant="contained"
+              type="submit"
+              endIcon={<ArrowForward />}
+              sx={{
+                py: 1.5,
+                px: 4,
+                borderRadius: 2,
+                fontSize: '1rem',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                ml: 'auto',
+                flexGrow: 1,
+              }}
+            >
+              Complete Registration
+            </Button>
+          </Stack>
+        </Grid>
+      </Grid>
     </Box>
   );
 
@@ -520,17 +657,9 @@ export default function RegisterPage() {
         }}
       >
         <Box p={3} bgcolor="primary.main" color="primary.contrastText">
-          <Typography variant="h4">
-            {currentStep === 'credentials'
-              ? 'Create your account'
-              : currentStep === 'userType'
-                ? 'Choose your role'
-                : 'Choose mentorship role'}
-          </Typography>
+          <Typography variant="h4">{titles[currentStep]}</Typography>
           <Typography variant="body1" sx={{ mt: 1, opacity: 0.9 }}>
-            {currentStep === 'credentials'
-              ? 'Join our platform to connect with opportunities'
-              : 'Help us personalize your experience'}
+            {subtitles[currentStep]}
           </Typography>
         </Box>
         {currentStep === 'credentials' && renderCredidentals()}
@@ -550,7 +679,22 @@ export default function RegisterPage() {
             selectedMentorshipRole,
             (val: string) => handleMentorshipRoleSelect(val as MentorshipRole)
           )}
+        {currentStep === 'profileInfo' && renderProfileInfo()}
       </Paper>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: '100%' }}
+        >
+          {registrationError}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

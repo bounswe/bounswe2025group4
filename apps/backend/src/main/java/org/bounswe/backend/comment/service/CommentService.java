@@ -4,6 +4,8 @@ import org.bounswe.backend.comment.dto.CommentDto;
 import org.bounswe.backend.comment.dto.CreateCommentRequestDto;
 import org.bounswe.backend.comment.entity.Comment;
 import org.bounswe.backend.comment.repository.CommentRepository;
+import org.bounswe.backend.common.exception.NotFoundException;
+import org.bounswe.backend.common.exception.UnauthorizedUserException;
 import org.bounswe.backend.thread.entity.Thread;
 import org.bounswe.backend.thread.repository.ThreadRepository;
 import org.bounswe.backend.user.dto.UserDto;
@@ -34,7 +36,7 @@ public class CommentService {
 
     public List<CommentDto> getCommentsByThreadId(Long threadId) {
         if (!threadRepository.existsById(threadId)) {
-            throw new RuntimeException("Thread not found");
+            throw new NotFoundException("Thread");
         }
 
         return commentRepository.findByThreadId(threadId).stream()
@@ -45,10 +47,10 @@ public class CommentService {
     @Transactional
     public CommentDto addCommentToThread(Long threadId, Long userId, CreateCommentRequestDto dto) {
         Thread thread = threadRepository.findById(threadId)
-                .orElseThrow(() -> new RuntimeException("Thread not found"));
+                .orElseThrow(() -> new NotFoundException("Thread"));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User"));
 
         Comment comment = Comment.builder()
                 .body(dto.getBody())
@@ -68,7 +70,7 @@ public class CommentService {
     @Transactional
     public void reportComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new NotFoundException("Comment"));
 
         if (!comment.isReported()) {
             comment.setReported(true);
@@ -80,10 +82,10 @@ public class CommentService {
     @Transactional
     public CommentDto updateComment(Long commentId, Long userId, String body) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new NotFoundException("Comment"));
 
         if (!comment.getAuthor().getId().equals(userId)) {
-            throw new RuntimeException("You can only edit your own comments");
+            throw new UnauthorizedUserException("Tried to edit comment of different user");
         }
 
         comment.setBody(body);
@@ -95,10 +97,10 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
+                .orElseThrow(() -> new NotFoundException("Comment"));
 
         if (!comment.getAuthor().getId().equals(userId)) {
-            throw new RuntimeException("You are not authorized to delete this comment");
+            throw new UnauthorizedUserException("Tried to delete comment of different user");
         }
         Thread thread = comment.getThread();
 
@@ -125,6 +127,7 @@ public class CommentService {
                         .username(user.getUsername())
                         .email(user.getEmail())
                         .userType(user.getUserType())
+                        .mentorshipStatus(user.getMentorshipStatus())
                         .build())
                 .build();
     }

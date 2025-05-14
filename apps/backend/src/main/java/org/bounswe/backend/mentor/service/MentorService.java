@@ -1,6 +1,7 @@
 package org.bounswe.backend.mentor.service;
 
 import lombok.RequiredArgsConstructor;
+import org.bounswe.backend.common.exception.*;
 import org.bounswe.backend.mentor.dto.*;
 import org.bounswe.backend.mentor.entity.MentorProfile;
 import org.bounswe.backend.mentor.entity.MentorReview;
@@ -32,10 +33,10 @@ public class MentorService {
     @Transactional
     public MentorProfileDto createMentorProfile(Long userId, CreateMentorProfileRequestDto dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (mentorProfileRepository.existsByUserId(userId)) {
-            throw new RuntimeException("Mentor profile already exists for this user");
+            throw new MentorProfileAlreadyExistsException();
         }
 
         MentorProfile mentorProfile = MentorProfile.builder()
@@ -53,7 +54,7 @@ public class MentorService {
 
     public MentorProfileDto getMentorProfileByUserId(Long userId) {
         MentorProfile mentorProfile = mentorProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Mentor profile not found"));
+                .orElseThrow(() -> new NotFoundException("Mentor profile not found"));
         return mapToMentorProfileDto(mentorProfile);
     }
 
@@ -66,7 +67,7 @@ public class MentorService {
     @Transactional
     public MentorProfileDto updateMentorCapacity(Long userId, Integer capacity) {
         MentorProfile mentorProfile = mentorProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Mentor profile not found"));
+                .orElseThrow(() -> new NotFoundException("Mentor profile not found"));
 
         mentorProfile.setCapacity(capacity);
         MentorProfile updatedProfile = mentorProfileRepository.save(mentorProfile);
@@ -76,7 +77,7 @@ public class MentorService {
     @Transactional
     public MentorProfileDto updateMentorAvailability(Long userId, Boolean isAvailable) {
         MentorProfile mentorProfile = mentorProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Mentor profile not found"));
+                .orElseThrow(() -> new NotFoundException("Mentor profile not found"));
 
         mentorProfile.setIsAvailable(isAvailable);
         MentorProfile updatedProfile = mentorProfileRepository.save(mentorProfile);
@@ -86,26 +87,26 @@ public class MentorService {
     @Transactional
     public MentorshipRequestDto createMentorshipRequest(Long menteeId, CreateMentorshipRequestDto dto) {
         User mentee = userRepository.findById(menteeId)
-                .orElseThrow(() -> new RuntimeException("Mentee not found"));
+                .orElseThrow(() -> new NotFoundException("Mentee not found"));
 
         // Find the mentor profile first, then get the associated user
         MentorProfile mentorProfile = mentorProfileRepository.findById(dto.getMentorId())
-                .orElseThrow(() -> new RuntimeException("Mentor profile not found"));
+                .orElseThrow(() -> new NotFoundException("Mentor profile not found"));
 
         User mentor = mentorProfile.getUser();
 
         if (!mentorProfile.getIsAvailable()) {
-            throw new RuntimeException("Mentor is not available for mentorship");
+            throw new MentorNotAvailableException();
         }
 
         if (mentorProfile.getCurrentMenteeCount() >= mentorProfile.getCapacity()) {
-            throw new RuntimeException("Mentor has reached maximum capacity");
+            throw new MentorCapacityExceededException();
         }
 
         // Check if there's already an active request
         mentorshipRequestRepository.findByMentorAndMenteeAndStatus(mentor, mentee, MentorshipRequestStatus.PENDING)
                 .ifPresent(request -> {
-                    throw new RuntimeException("A pending request already exists");
+                    throw new PendingRequestExistsException();
                 });
 
         MentorshipRequest request = MentorshipRequest.builder()
@@ -122,7 +123,7 @@ public class MentorService {
 
     public List<MentorshipRequestDto> getMentorshipRequestsByMentorId(Long mentorId) {
         User mentor = userRepository.findById(mentorId)
-                .orElseThrow(() -> new RuntimeException("Mentor not found"));
+                .orElseThrow(() -> new NotFoundException("Mentor not found"));
 
         return mentorshipRequestRepository.findByMentor(mentor).stream()
                 .map(this::mapToMentorshipRequestDto)
@@ -131,7 +132,7 @@ public class MentorService {
 
     public List<MentorshipRequestDto> getMentorshipRequestsByMenteeId(Long menteeId) {
         User mentee = userRepository.findById(menteeId)
-                .orElseThrow(() -> new RuntimeException("Mentee not found"));
+                .orElseThrow(() -> new NotFoundException("Mentee not found"));
 
         return mentorshipRequestRepository.findByMentee(mentee).stream()
                 .map(this::mapToMentorshipRequestDto)
@@ -140,7 +141,7 @@ public class MentorService {
 
     public MentorshipRequestDto getMentorshipRequestById(Long requestId) {
         MentorshipRequest request = mentorshipRequestRepository.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Mentorship request not found"));
+                .orElseThrow(() -> new NotFoundException("Mentorship request not found"));
 
         return mapToMentorshipRequestDto(request);
     }
@@ -148,38 +149,38 @@ public class MentorService {
     @Transactional
     public MentorshipRequestDto updateMentorshipRequestStatus(Long requestId, MentorshipRequestStatus status, Long userId) {
         MentorshipRequest request = mentorshipRequestRepository.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Mentorship request not found"));
+                .orElseThrow(() -> new NotFoundException("Mentorship request not found"));
 
         // Check if the user has permission to update the status
         if (!request.getMentor().getId().equals(userId) && !request.getMentee().getId().equals(userId)) {
-            throw new RuntimeException("You don't have permission to update this request");
+            throw new UnauthorizedActionException("You don't have permission to update this request");
         }
 
         // Additional validation based on status and user role
         if (status == MentorshipRequestStatus.ACCEPTED || status == MentorshipRequestStatus.REJECTED) {
             // Only mentor can accept or reject
             if (!request.getMentor().getId().equals(userId)) {
-                throw new RuntimeException("Only the mentor can accept or reject requests");
+                throw new UnauthorizedActionException("Only the mentor can accept or reject requests");
             }
         } else if (status == MentorshipRequestStatus.CANCELLED) {
             // Only mentee can cancel
             if (!request.getMentee().getId().equals(userId)) {
-                throw new RuntimeException("Only the mentee can cancel requests");
+                throw new UnauthorizedActionException("Only the mentee can cancel requests");
             }
         } else if (status == MentorshipRequestStatus.COMPLETED) {
             // Both mentor and mentee can mark as completed, but only if the request is currently ACCEPTED
             if (request.getStatus() != MentorshipRequestStatus.ACCEPTED) {
-                throw new RuntimeException("Only accepted mentorships can be marked as completed");
+                throw new UnauthorizedActionException("Only accepted mentorships can be marked as completed");
             }
         }
 
         MentorProfile mentorProfile = mentorProfileRepository.findByUser(request.getMentor())
-                .orElseThrow(() -> new RuntimeException("Mentor profile not found"));
+                .orElseThrow(() -> new NotFoundException("Mentor profile not found"));
 
         // If accepting a request, check capacity and create a channel
         if (status == MentorshipRequestStatus.ACCEPTED && request.getStatus() != MentorshipRequestStatus.ACCEPTED) {
             if (mentorProfile.getCurrentMenteeCount() >= mentorProfile.getCapacity()) {
-                throw new RuntimeException("Mentor has reached maximum capacity");
+                throw new MentorCapacityExceededException();
             }
 
             // Increment current mentee count
@@ -207,23 +208,23 @@ public class MentorService {
     @Transactional
     public MentorReviewDto createMentorReview(Long menteeId, CreateMentorReviewRequestDto dto) {
         User mentee = userRepository.findById(menteeId)
-                .orElseThrow(() -> new RuntimeException("Mentee not found"));
+                .orElseThrow(() -> new NotFoundException("Mentee not found"));
 
         User mentor = userRepository.findById(dto.getMentorId())
-                .orElseThrow(() -> new RuntimeException("Mentor not found"));
+                .orElseThrow(() -> new NotFoundException("Mentor not found"));
 
         // Check if there was an accepted mentorship between these users
         boolean hadMentorship = mentorshipRequestRepository.findByMentorAndMenteeAndStatus(
                 mentor, mentee, MentorshipRequestStatus.COMPLETED).isPresent();
 
         if (!hadMentorship) {
-            throw new RuntimeException("Cannot review a mentor without completing a mentorship");
+            throw new MentorshipNotCompletedException();
         }
 
         // Check if already reviewed
         mentorReviewRepository.findByMentorAndMentee(mentor, mentee)
                 .ifPresent(review -> {
-                    throw new RuntimeException("You have already reviewed this mentor");
+                    throw new DuplicateReviewException();
                 });
 
         MentorReview review = MentorReview.builder()
@@ -244,7 +245,7 @@ public class MentorService {
 
     public List<MentorReviewDto> getMentorReviewsByMentorId(Long mentorId) {
         User mentor = userRepository.findById(mentorId)
-                .orElseThrow(() -> new RuntimeException("Mentor not found"));
+                .orElseThrow(() -> new NotFoundException("Mentor not found"));
 
         return mentorReviewRepository.findByMentor(mentor).stream()
                 .map(this::mapToMentorReviewDto)
@@ -253,7 +254,7 @@ public class MentorService {
 
     public MentorReviewDto getMentorReviewById(Long reviewId) {
         MentorReview review = mentorReviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
+                .orElseThrow(() -> new NotFoundException("Review not found"));
 
         return mapToMentorReviewDto(review);
     }
@@ -267,7 +268,7 @@ public class MentorService {
         }
 
         MentorProfile mentorProfile = mentorProfileRepository.findByUser(mentor)
-                .orElseThrow(() -> new RuntimeException("Mentor profile not found"));
+                .orElseThrow(() -> new NotFoundException("Mentor profile not found"));
 
         mentorProfile.setAverageRating(averageRating);
         mentorProfile.setReviewCount(reviewCount);

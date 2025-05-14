@@ -1,38 +1,24 @@
 import React, { useState } from 'react';
 import {
-  DataGridPro,
+  DataGrid,
   GridColDef,
   GridRenderCellParams,
   GridRowParams,
   GridActionsCellItem,
-  GridEventListener,
-  GridRowId,
-} from '@mui/x-data-grid-pro';
-import {
-  Box,
-  Button,
-  Chip,
-  IconButton,
-  Tooltip,
-  CircularProgress,
-  Typography,
-  useTheme,
-} from '@mui/material';
+} from '@mui/x-data-grid';
+import { Box, Chip, Tooltip, useTheme } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import AddIcon from '@mui/icons-material/Add';
-import { Link } from 'react-router-dom';
 
-import { Job } from '../../types/job';
+import { JobPost } from '../../types/job';
 import { useDeleteJob } from '../../services/jobs.service';
 import ConfirmDialog from '../common/ConfirmDialog';
 
 interface JobGridProps {
-  jobs: Job[];
+  jobs: JobPost[];
   isLoading: boolean;
-  onEdit: (job: Job) => void;
-  onCreateNew: () => void;
+  onEdit: (job: JobPost) => void;
   onApplicationsView: (jobId: string) => void;
 }
 
@@ -40,7 +26,6 @@ const JobGrid: React.FC<JobGridProps> = ({
   jobs,
   isLoading,
   onEdit,
-  onCreateNew,
   onApplicationsView,
 }) => {
   const theme = useTheme();
@@ -49,7 +34,7 @@ const JobGrid: React.FC<JobGridProps> = ({
 
   const deleteJobMutation = useDeleteJob();
 
-  const handleEditClick = (job: Job) => {
+  const handleEditClick = (job: JobPost) => {
     onEdit(job);
   };
 
@@ -79,26 +64,34 @@ const JobGrid: React.FC<JobGridProps> = ({
     {
       field: 'title',
       headerName: 'Job Title',
+      width: 150,
+    },
+    {
+      field: 'description',
+      headerName: 'Description',
       flex: 1,
-      minWidth: 180,
+      minWidth: 150,
     },
     {
       field: 'location',
       headerName: 'Location',
-      width: 150,
+      width: 100,
     },
     {
-      field: 'employmentType',
-      headerName: 'Type',
-      width: 120,
+      field: 'remote',
+      headerName: 'Remote',
+      width: 80,
+      renderCell: (params: GridRenderCellParams<JobPost>) => {
+        return params.row.remote ? 'Yes' : 'No';
+      },
     },
     {
       field: 'salary',
       headerName: 'Salary Range',
-      width: 150,
-      renderCell: (params: GridRenderCellParams<Job>) => {
-        const salaryMin = params.row.salaryMin;
-        const salaryMax = params.row.salaryMax;
+      width: 110,
+      renderCell: (params: GridRenderCellParams<JobPost>) => {
+        const salaryMin = params.row.minSalary;
+        const salaryMax = params.row.maxSalary;
         if (salaryMin && salaryMax) {
           return `$${salaryMin / 1000}k - $${salaryMax / 1000}k`;
         } else if (salaryMin) {
@@ -112,11 +105,11 @@ const JobGrid: React.FC<JobGridProps> = ({
     {
       field: 'ethicalPolicies',
       headerName: 'Ethical Policies',
-      width: 200,
-      renderCell: (params: GridRenderCellParams<Job>) => {
-        const policies = params.row.ethicalPolicies;
+      width: 250,
+      renderCell: (params: GridRenderCellParams<JobPost>) => {
+        const policies = params.row.ethicalTags.split(',');
         return (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 1.6 }}>
             {policies.slice(0, 2).map((policy) => (
               <Chip
                 key={policy}
@@ -143,7 +136,7 @@ const JobGrid: React.FC<JobGridProps> = ({
       field: 'postedDate',
       headerName: 'Posted Date',
       width: 120,
-      valueFormatter: ({ value }) => {
+      valueFormatter: (value) => {
         if (!value) return '';
         return new Date(value).toLocaleDateString();
       },
@@ -153,24 +146,24 @@ const JobGrid: React.FC<JobGridProps> = ({
       type: 'actions',
       headerName: 'Actions',
       width: 120,
-      getActions: (params: GridRowParams<Job>) => [
+      getActions: (params: GridRowParams<JobPost>) => [
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Edit"
           onClick={() => handleEditClick(params.row)}
-          color="primary"
+          color="inherit"
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
-          onClick={() => handleDeleteClick(params.row.id)}
-          color="error"
+          onClick={() => handleDeleteClick(params.row.id.toString())}
+          color="inherit"
         />,
         <GridActionsCellItem
           icon={<VisibilityIcon />}
           label="View Applications"
-          onClick={() => onApplicationsView(params.row.id)}
-          color="info"
+          onClick={() => onApplicationsView(params.row.id.toString())}
+          color="inherit"
         />,
       ],
     },
@@ -178,42 +171,49 @@ const JobGrid: React.FC<JobGridProps> = ({
 
   return (
     <Box sx={{ width: '100%', height: 500 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6">Manage Job Listings</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={onCreateNew}
-        >
-          Create Job
-        </Button>
-      </Box>
-
-      <DataGridPro
-        rows={jobs}
-        columns={columns}
-        loading={isLoading}
-        autoHeight
-        disableRowSelectionOnClick
-        getRowId={(row) => row.id}
-        pageSizeOptions={[10, 25, 50]}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
+      <Box style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <DataGrid
+          rows={jobs}
+          columns={columns}
+          loading={isLoading}
+          disableRowSelectionOnClick
+          disableColumnResize
+          disableColumnMenu
+          getRowId={(row) => row.id}
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
+              },
             },
-          },
-        }}
-        sx={{
-          '& .MuiDataGrid-cell:focus': {
-            outline: 'none',
-          },
-          '& .MuiDataGrid-row:hover': {
-            backgroundColor: theme.palette.action.hover,
-          },
-        }}
-      />
+          }}
+          sx={{
+            color: 'inherit',
+            '& .MuiDataGrid-columnHeader': {
+              backgroundColor: theme.palette.background.paper,
+            },
+            '& .MuiDataGrid-columnHeader:hover': {
+              backgroundColor: theme.palette.action.selected,
+              color: theme.palette.text.primary,
+            },
+            '& .MuiDataGrid-cell': {
+              backgroundColor: theme.palette.background.paper,
+              borderColor: theme.palette.divider,
+            },
+            '& .MuiDataGrid-footerContainer': {
+              backgroundColor: theme.palette.background.default,
+              borderTop: `1px solid ${theme.palette.divider}`,
+            },
+            '& .MuiTablePagination-root': {
+              color: 'inherit',
+            },
+            '& .MuiTablePagination-actions': {
+              color: 'inherit',
+            },
+          }}
+        />
+      </Box>
 
       <ConfirmDialog
         open={confirmDialogOpen}

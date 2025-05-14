@@ -18,37 +18,29 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _contactInfoController = TextEditingController();
-  final _salaryRangeController = TextEditingController();
+  final _minSalaryController = TextEditingController();
+  final _maxSalaryController = TextEditingController();
+  final _companyController = TextEditingController();
+  final _locationController = TextEditingController();
 
   String? _selectedJobType;
   List<String> _selectedPolicies = [];
+  bool _isRemote = false;
 
   bool _isLoading = false;
 
-  // Initialize ApiService late or use didChangeDependencies
   late final ApiService _apiService;
-
-  // Flag to ensure ApiService is initialized only once if using didChangeDependencies
-  // bool _isApiServiceInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    // Option 1: Initialize here if context is available safely
-    // (Might be problematic if AuthProvider isn't ready immediately)
-    // final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    // _apiService = ApiService(authProvider: authProvider);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Option 2: Initialize here, safer as context/providers are ready
-    // if (!_isApiServiceInitialized) { // Prevent re-initialization
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     _apiService = ApiService(authProvider: authProvider);
-    //   _isApiServiceInitialized = true;
-    // }
   }
 
   @override
@@ -56,7 +48,10 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
     _titleController.dispose();
     _descriptionController.dispose();
     _contactInfoController.dispose();
-    _salaryRangeController.dispose();
+    _minSalaryController.dispose();
+    _maxSalaryController.dispose();
+    _companyController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -93,6 +88,55 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         return;
       }
 
+      // Parse salaries
+      double? minSalary;
+      if (_minSalaryController.text.isNotEmpty) {
+        minSalary = double.tryParse(
+          _minSalaryController.text.replaceAll(RegExp(r'[^0-9.]'), ''),
+        );
+        if (minSalary == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Invalid minimum salary format. Please enter numbers only.',
+              ),
+              backgroundColor: Colors.orange,
+            ),
+          );
+          return;
+        }
+      }
+
+      double? maxSalary;
+      if (_maxSalaryController.text.isNotEmpty) {
+        maxSalary = double.tryParse(
+          _maxSalaryController.text.replaceAll(RegExp(r'[^0-9.]'), ''),
+        );
+        if (maxSalary == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Invalid maximum salary format. Please enter numbers only.',
+              ),
+              backgroundColor: Colors.orange,
+            ),
+          );
+          return;
+        }
+      }
+
+      if (minSalary != null && maxSalary != null && minSalary > maxSalary) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Minimum salary cannot be greater than maximum salary.',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
       setState(() {
         _isLoading = true;
       });
@@ -100,21 +144,22 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
       try {
         final newJob = await _apiService.createJobPost(
           employerId: currentUser.id,
-          company: currentUser.company ?? 'Your Company',
+          company:
+              _companyController.text.isNotEmpty
+                  ? _companyController.text
+                  : (currentUser.company ?? 'Your Company'),
           title: _titleController.text,
           description: _descriptionController.text,
-          location: 'Unknown Location',
-          remote: false,
+          location: _locationController.text,
+          remote: _isRemote,
           ethicalTags: _selectedPolicies.join(','),
-          contactInfo:
+          contactInformation:
               _contactInfoController.text.isNotEmpty
                   ? _contactInfoController.text
                   : null,
           jobType: _selectedJobType,
-          salaryRange:
-              _salaryRangeController.text.isNotEmpty
-                  ? _salaryRangeController.text
-                  : null,
+          minSalary: minSalary,
+          maxSalary: maxSalary,
         );
 
         if (mounted) {
@@ -183,6 +228,66 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             ),
             const SizedBox(height: 16.0),
 
+            // --- Company ---
+            TextFormField(
+              controller: _companyController,
+              decoration: InputDecoration(
+                labelText: 'Company',
+                hintText:
+                    Provider.of<AuthProvider>(
+                      context,
+                      listen: false,
+                    ).currentUser?.company ??
+                    'Your Company Name',
+                border: const OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  // If user has a company set, it can be optional, otherwise required.
+                  // This logic might need adjustment based on whether company can be truly empty.
+                  // For now, let's make it required if not pre-filled by currentUser.company
+                  if (Provider.of<AuthProvider>(
+                        context,
+                        listen: false,
+                      ).currentUser?.company ==
+                      null) {
+                    return 'Please enter the company name';
+                  }
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16.0),
+
+            // --- Location ---
+            TextFormField(
+              controller: _locationController,
+              decoration: const InputDecoration(
+                labelText: 'Location (e.g., City, State, Country)',
+                border: OutlineInputBorder(),
+              ),
+              validator:
+                  (value) =>
+                      (value == null || value.isEmpty)
+                          ? 'Please enter a location'
+                          : null,
+            ),
+            const SizedBox(height: 16.0),
+
+            // --- Remote Checkbox ---
+            CheckboxListTile(
+              title: const Text('Remote Job'),
+              value: _isRemote,
+              onChanged: (bool? value) {
+                setState(() {
+                  _isRemote = value ?? false;
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.zero,
+            ),
+            const SizedBox(height: 16.0),
+
             // --- Description ---
             TextFormField(
               controller: _descriptionController,
@@ -236,18 +341,78 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             ),
             const SizedBox(height: 16.0),
 
-            // --- Salary Range (Optional) ---
+            // --- Min Salary (Optional) ---
             TextFormField(
-              controller: _salaryRangeController,
+              controller: _minSalaryController,
               decoration: const InputDecoration(
-                labelText: r'Salary Range (e.g., $50k - $70k)',
-                hintText: 'Optional',
+                labelText: 'Minimum Salary (Optional)',
+                hintText: 'e.g., 50000',
                 border: OutlineInputBorder(),
+                prefixText: '\$', // Optional: Add a currency symbol
               ),
-              // No validator, as it's optional
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              validator: (value) {
+                if (value != null && value.isNotEmpty) {
+                  // Allow only numbers and a single decimal point
+                  final sanitizedValue = value.replaceAll(
+                    RegExp(r'[^0-9.]'),
+                    '',
+                  );
+                  if (double.tryParse(sanitizedValue) == null) {
+                    return 'Please enter a valid number';
+                  }
+                  if (sanitizedValue.split('.').length > 2) {
+                    return 'Invalid number format (too many decimal points)';
+                  }
+                }
+                return null;
+              },
             ),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: 16.0),
 
+            // --- Max Salary (Optional) ---
+            TextFormField(
+              controller: _maxSalaryController,
+              decoration: const InputDecoration(
+                labelText: 'Maximum Salary (Optional)',
+                hintText: 'e.g., 70000',
+                border: OutlineInputBorder(),
+                prefixText: '\$', // Optional: Add a currency symbol
+              ),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              validator: (value) {
+                if (value != null && value.isNotEmpty) {
+                  final sanitizedValue = value.replaceAll(
+                    RegExp(r'[^0-9.]'),
+                    '',
+                  );
+                  if (double.tryParse(sanitizedValue) == null) {
+                    return 'Please enter a valid number';
+                  }
+                  if (sanitizedValue.split('.').length > 2) {
+                    return 'Invalid number format (too many decimal points)';
+                  }
+                  final minSalaryText = _minSalaryController.text.replaceAll(
+                    RegExp(r'[^0-9.]'),
+                    '',
+                  );
+                  if (minSalaryText.isNotEmpty &&
+                      double.tryParse(minSalaryText) != null) {
+                    final minSal = double.parse(minSalaryText);
+                    final maxSal = double.tryParse(sanitizedValue);
+                    if (maxSal != null && minSal > maxSal) {
+                      return 'Max salary must be >= min salary';
+                    }
+                  }
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 24.0), // Spacing after salary fields
             // --- Ethical Policies Checkboxes/Chips ---
             Text(
               'Ethical Policies Compliance',

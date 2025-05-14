@@ -1,5 +1,6 @@
 package org.bounswe.backend.external.service;
 
+import org.bounswe.backend.common.exception.QuoteFetchException;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,7 +27,7 @@ public class QuoteService {
             assert response.getBody() != null;
             return response.getBody()[0];
         }
-        throw new RuntimeException("Failed to fetch quote");
+        throw new QuoteFetchException("Failed to fetch today's quote from external API");
     }
 
     @CacheEvict(value = "todayQuote", allEntries = true)

@@ -1,24 +1,13 @@
 import { z } from 'zod';
+import { JobPost } from '../types/job';
 
 // Define ethical policy options
 export const ethicalPolicies = [
-  'fair-wage',
-  'equal-opportunity',
-  'remote-friendly',
-  'sustainable-practices',
-  'inclusive-culture',
-  'diversity-focused',
-  'work-life-balance',
-  'career-growth',
-  'transparent-compensation',
-  'eco-friendly',
-] as const;
-
-export const employmentTypes = [
-  'Full-time',
-  'Part-time',
-  'Contract',
-  'Internship',
+  'fair_wage',
+  'diversity',
+  'sustainability',
+  'wellbeing',
+  'transparency',
 ] as const;
 
 // Define zod schema for job validation
@@ -29,20 +18,19 @@ export const jobSchema = z.object({
     .max(100, 'Title cannot exceed 100 characters'),
   description: z.string().min(20, 'Description must be at least 20 characters'),
   location: z.string().min(2, 'Location is required'),
-  salaryMin: z.number().int().positive().optional(),
-  salaryMax: z.number().int().positive().optional(),
-  employmentType: z.enum(employmentTypes),
-  ethicalPolicies: z
+  minSalary: z.number().int().positive().optional(),
+  maxSalary: z.number().int().positive().optional(),
+  isRemote: z.boolean(),
+  ethicalTags: z
     .array(z.enum(ethicalPolicies))
     .min(1, 'At least one ethical policy must be selected'),
-  companyId: z.string().min(1, 'Company is required'),
-  contactEmail: z.string().email('Invalid email address'),
-  contactPhone: z.string().optional(),
+  company: z.string().min(1, 'Company is required'),
+  contact: z.string().email('Invalid email address'),
 });
 
 // Define schema for application status updates
 export const applicationStatusSchema = z.object({
-  status: z.enum(['Pending', 'Approved', 'Rejected']),
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED'] as const),
   feedback: z.string().optional(),
 });
 
@@ -53,3 +41,24 @@ export const jobUpdateSchema = jobSchema.partial();
 export type JobFormValues = z.infer<typeof jobSchema>;
 export type JobUpdateValues = z.infer<typeof jobUpdateSchema>;
 export type ApplicationStatusUpdate = z.infer<typeof applicationStatusSchema>;
+
+export const jobFormValueFromJobPost = (jobPost: JobPost): JobFormValues => {
+  const newEthicalTags = jobPost.ethicalTags
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter((tag) =>
+      ethicalPolicies.includes(tag as (typeof ethicalPolicies)[number])
+    );
+  const jobFormValues: JobFormValues = {
+    ...jobPost,
+    isRemote: jobPost.remote,
+    ethicalTags: newEthicalTags as (
+      | 'fair_wage'
+      | 'diversity'
+      | 'sustainability'
+      | 'wellbeing'
+      | 'transparency'
+    )[],
+  };
+  return jobFormValues;
+};
