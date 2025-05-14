@@ -12,6 +12,21 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: jobboard_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: bounswe2025jobboard
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,6 +40,12 @@ jobs:
 
       - name: Build and run tests
         working-directory: ./apps/backend
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/jobboard_test
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: bounswe2025jobboard
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          SPRING_JPA_SHOW_SQL: false
         run: |
           chmod +x ./mvnw
           ./mvnw -B test
