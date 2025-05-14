@@ -17,6 +17,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _locationController;
   late TextEditingController _phoneController;
   late TextEditingController _occupationController;
+  late TextEditingController _usernameController;
+  late TextEditingController _emailController;
 
   @override
   void initState() {
@@ -30,6 +32,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _phoneController = TextEditingController(text: profile?.phone);
     _occupationController =
         TextEditingController(text: profile?.occupation);
+    final user = Provider.of<ProfileProvider>(context, listen: false).currentUser;
+    _usernameController = TextEditingController(text: user?.username);
+    _emailController = TextEditingController(text: user?.email);
   }
 
   @override
@@ -39,6 +44,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _locationController.dispose();
     _phoneController.dispose();
     _occupationController.dispose();
+    _usernameController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -53,6 +60,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         'phone': _phoneController.text,
         'occupation': _occupationController.text,
       });
+      profileProvider.updateUser(
+        profileProvider.currentUser!.id,
+        {
+          'username': _usernameController.text,
+          'email': _emailController.text,
+        },
+      );
       Navigator.pop(context);
     }
   }
@@ -99,6 +113,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Expanded(
                     child: Column(
                       children: [
+                        TextFormField(
+                          controller: _usernameController,
+                          decoration: const InputDecoration(labelText: 'Username'),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: const InputDecoration(labelText: 'Email'),
+                        ),
+                        const SizedBox(height: 8),
                         TextFormField(
                           controller: _nameController,
                           decoration: const InputDecoration(

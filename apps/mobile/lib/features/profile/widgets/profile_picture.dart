@@ -1,8 +1,11 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import '../../../core/providers/profile_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 
 class ProfilePicture extends StatefulWidget {
   final double size;
@@ -45,6 +48,25 @@ class _ProfilePictureState extends State<ProfilePicture> {
       }
     }
   }
+  Future<Uint8List?> _fetchImageWithAuth(String url, String token) async {
+    try {
+      print('🔍 Fetching image with token: $token');
+
+      final response = await http.get(Uri.parse(url), headers: {
+        'Authorization': 'Bearer $token',
+      });
+
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      } else {
+        print('Image fetch error: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Image fetch exception: $e');
+      return null;
+    }
+  }
 
   Future<void> _deleteImage(BuildContext context) async {
     try {
@@ -79,37 +101,41 @@ class _ProfilePictureState extends State<ProfilePicture> {
   Widget build(BuildContext context) {
     return Consumer<ProfileProvider>(
       builder: (context, provider, child) {
-        final profilePictureUrl = provider.currentUserProfile?.profile.profilePicture;
-
+        final profilePictureUrl = provider.currentUserProfile?.profile.profilePicture ?? '';
+        print("profilePictureUrltestttttt: $profilePictureUrl");
+        final token = Provider.of<AuthProvider>(context, listen: false).token ?? '';
         return GestureDetector(
           onTap: widget.isEditable ? () => _pickImage(context) : null,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              CircleAvatar(
-                key: ValueKey(profilePictureUrl),
-                radius: widget.size / 2,
-                backgroundColor: Colors.grey[300],
-                child: (profilePictureUrl == null || profilePictureUrl.isEmpty || profilePictureUrl.contains('placeholder'))
-                    ? Icon(
-                  Icons.person,
-                  size: widget.size / 2,
-                  color: Colors.grey[600],
-                )
-                    : ClipOval(
-                  child: Image.network(
-                    profilePictureUrl,
-                    key: UniqueKey(),
-                    width: widget.size,
-                    height: widget.size,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Icon(Icons.person),
-                  ),
-                ),
+              FutureBuilder<Uint8List?>(
+                future: profilePictureUrl.isNotEmpty
+                    ? _fetchImageWithAuth(profilePictureUrl, token)
+                    : Future.value(null),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircleAvatar(
+                      radius: widget.size / 2,
+                      backgroundColor: Colors.grey[300],
+                      child: const CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasData) {
+                    return CircleAvatar(
+                      radius: widget.size / 2,
+                      backgroundImage: MemoryImage(snapshot.data!),
+                    );
+                  } else {
+                    return CircleAvatar(
+                      radius: widget.size / 2,
+                      backgroundColor: Colors.grey[300],
+                      child: Icon(Icons.person, size: widget.size / 2, color: Colors.grey[600]),
+                    );
+                  }
+                },
               ),
 
-
-              if (widget.isEditable && (profilePictureUrl?.isNotEmpty ?? false))
+              if (widget.isEditable && profilePictureUrl.isNotEmpty)
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -118,7 +144,6 @@ class _ProfilePictureState extends State<ProfilePicture> {
                     onPressed: () => _deleteImage(context),
                   ),
                 ),
-
 
               if (widget.isEditable)
                 Positioned(

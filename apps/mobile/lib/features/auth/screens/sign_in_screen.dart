@@ -3,6 +3,7 @@ import 'package:mobile/features/main_scaffold/main_scaffold.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
+import 'package:mobile/core/providers/profile_provider.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -36,6 +37,9 @@ class _SignInScreenState extends State<SignInScreen> {
       if (!mounted) return;
 
       if (success) {
+        final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+        profileProvider.clearCurrentUserProfile();
+        await profileProvider.fetchMyProfile();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainScaffold()),

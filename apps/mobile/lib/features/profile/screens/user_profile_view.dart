@@ -5,6 +5,7 @@ import '../widgets/profile_picture.dart';
 import '../widgets/work_experience_list.dart';
 import '../widgets/education_list.dart';
 import '../widgets/badge_list.dart';
+import '../../../core/models/mentorship_status.dart';
 
 class UserProfileView extends StatefulWidget {
   final int userId;
@@ -25,6 +26,7 @@ class _UserProfileViewState extends State<UserProfileView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
       profileProvider.fetchUserProfile(widget.userId);
+      profileProvider.fetchUserDetails(widget.userId);
     });
   }
 
@@ -48,6 +50,7 @@ class _UserProfileViewState extends State<UserProfileView> {
   Widget build(BuildContext context) {
     final profileProvider = Provider.of<ProfileProvider>(context);
     final userProfile = profileProvider.viewedProfile;
+    final user = profileProvider.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -106,6 +109,17 @@ class _UserProfileViewState extends State<UserProfileView> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      if (user?.mentorshipStatus == MentorshipStatus.MENTOR)                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            'Mentor',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.green[700],
+                            ),
+                          ),
+                        ),
                       if (userProfile.profile.occupation != null)
                         Text(
                           userProfile.profile.occupation!,
