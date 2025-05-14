@@ -5,19 +5,19 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Create a custom render method that includes providers
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
       },
-    });
+    },
+  });
 
-    return (
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>{children}</BrowserRouter>
-      </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>{children}</BrowserRouter>
+    </QueryClientProvider>
+  );
 };
 
 const customRender = (

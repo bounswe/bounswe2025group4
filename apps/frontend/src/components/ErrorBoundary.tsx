@@ -44,7 +44,10 @@ export default function ErrorBoundary() {
         >
           Oops!
         </Typography>
-        <Typography variant="h5" sx={{ mb: 3, color: theme.palette.text.secondary }}>
+        <Typography
+          variant="h5"
+          sx={{ mb: 3, color: theme.palette.text.secondary }}
+        >
           Something went wrong
         </Typography>
         <Typography
@@ -71,7 +74,7 @@ export default function ErrorBoundary() {
         >
           Return to Home
         </Button>
-      </Box>  
+      </Box>
     </Container>
   );
 }

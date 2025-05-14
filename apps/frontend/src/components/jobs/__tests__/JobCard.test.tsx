@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import JobCard from '../JobCard';
-import { describe, test, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { JobPost } from '../../../types/job';
 
 describe('JobCard', () => {
@@ -14,12 +14,12 @@ describe('JobCard', () => {
     maxSalary: 120000,
     remote: true,
     description: 'This is a job description for a senior developer role.',
-    ethicalTags: ['ENVIRONMENT_FRIENDLY', 'DIVERSITY_INCLUSIVE'],
+    ethicalTags: 'ENVIRONMENT_FRIENDLY,DIVERSITY_INCLUSIVE',
     employerId: 1,
     status: 'ACTIVE',
     createdAt: new Date().toISOString(),
-    requirements: [],
-    responsibilities: []
+    contact: 'test@example.com',
+    postedDate: new Date().toISOString(),
   } as JobPost;
 
   it('renders job title and company', () => {
@@ -66,7 +66,7 @@ describe('JobCard', () => {
   it('renders on-site tag when job is not remote', () => {
     const onSiteJob: Partial<JobPost> = {
       ...mockJob,
-      remote: false
+      remote: false,
     };
 
     render(
@@ -85,7 +85,9 @@ describe('JobCard', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('This is a job description for a senior developer role.')).toBeInTheDocument();
+    expect(
+      screen.getByText('This is a job description for a senior developer role.')
+    ).toBeInTheDocument();
   });
 
   it('renders ethical tags', () => {
@@ -102,7 +104,7 @@ describe('JobCard', () => {
   it('does not render ethical tags section when no tags provided', () => {
     const jobWithoutTags: Partial<JobPost> = {
       ...mockJob,
-      ethicalTags: []
+      ethicalTags: '',
     };
 
     render(
@@ -118,7 +120,7 @@ describe('JobCard', () => {
   it('formats salary correctly when only minSalary is provided', () => {
     const jobWithMinSalaryOnly: Partial<JobPost> = {
       ...mockJob,
-      maxSalary: null as unknown as undefined
+      maxSalary: null as unknown as undefined,
     };
 
     render(
@@ -133,7 +135,7 @@ describe('JobCard', () => {
   it('formats salary correctly when only maxSalary is provided', () => {
     const jobWithMaxSalaryOnly: Partial<JobPost> = {
       ...mockJob,
-      minSalary: null as unknown as undefined
+      minSalary: null as unknown as undefined,
     };
 
     render(
@@ -149,7 +151,7 @@ describe('JobCard', () => {
     const jobWithNoSalary: Partial<JobPost> = {
       ...mockJob,
       minSalary: null as unknown as undefined,
-      maxSalary: null as unknown as undefined
+      maxSalary: null as unknown as undefined,
     };
 
     render(
@@ -160,4 +162,4 @@ describe('JobCard', () => {
 
     expect(screen.getByText('Not specified')).toBeInTheDocument();
   });
-}); 
+});

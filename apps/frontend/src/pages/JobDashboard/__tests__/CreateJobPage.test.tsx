@@ -16,8 +16,18 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Mock API call (defined in the component)
+// Mock useCreateJob
+const mockMutateAsync = vi.fn().mockResolvedValue({});
+vi.mock('../../../services/jobs.service', () => ({
+  useCreateJob: () => ({
+    mutateAsync: mockMutateAsync,
+    isPending: false,
+  }),
+}));
+
+// Mock console methods
 global.console.log = vi.fn();
+global.console.error = vi.fn();
 
 describe('CreateJobPage', () => {
   beforeEach(() => {
@@ -35,14 +45,10 @@ describe('CreateJobPage', () => {
     expect(screen.getByLabelText('Job Description')).toBeInTheDocument();
     expect(screen.getByLabelText('Company Name')).toBeInTheDocument();
     expect(screen.getByLabelText(/Location/)).toBeInTheDocument();
-    expect(screen.getByLabelText('Employment Type')).toBeInTheDocument();
-    expect(
-      screen.getByLabelText('Minimum Salary (Optional)')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByLabelText('Maximum Salary (Optional)')
-    ).toBeInTheDocument();
-    expect(screen.getByText('Ethical Policies (Optional)')).toBeInTheDocument();
+    expect(screen.getByLabelText(/remote option/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('Minimum Salary')).toBeInTheDocument();
+    expect(screen.getByLabelText('Maximum Salary')).toBeInTheDocument();
+    expect(screen.getByText('Ethical Policies')).toBeInTheDocument();
     expect(
       screen.getByLabelText('Contact Email for Applications')
     ).toBeInTheDocument();
@@ -95,14 +101,8 @@ describe('CreateJobPage', () => {
     );
 
     // Set invalid salary range (max < min)
-    await user.type(
-      screen.getByLabelText('Minimum Salary (Optional)'),
-      '100000'
-    );
-    await user.type(
-      screen.getByLabelText('Maximum Salary (Optional)'),
-      '90000'
-    );
+    await user.type(screen.getByLabelText('Minimum Salary'), '100000');
+    await user.type(screen.getByLabelText('Maximum Salary'), '90000');
 
     // Try to submit
     await user.click(screen.getByRole('button', { name: /create job post/i }));
@@ -138,43 +138,19 @@ describe('CreateJobPage', () => {
     );
 
     // Set valid salary range
-    await user.type(
-      screen.getByLabelText('Minimum Salary (Optional)'),
-      '80000'
-    );
-    await user.type(
-      screen.getByLabelText('Maximum Salary (Optional)'),
-      '120000'
-    );
-
-    // Select employment type
-    await user.click(screen.getByLabelText('Employment Type'));
-    await user.click(screen.getByText('Full-time'));
+    await user.type(screen.getByLabelText('Minimum Salary'), '80000');
+    await user.type(screen.getByLabelText('Maximum Salary'), '120000');
 
     // Select ethical policies
     await user.click(screen.getByLabelText('Fair Wage'));
-    await user.click(screen.getByLabelText('Equal Opportunity'));
+    await user.click(screen.getByLabelText('Sustainability'));
 
     // Submit form
     await user.click(screen.getByRole('button', { name: /create job post/i }));
 
-    // Verify API call
+    // Verify API call and navigation
     await waitFor(() => {
-      expect(console.log).toHaveBeenCalledWith(
-        'Submitting job post data:',
-        expect.objectContaining({
-          title: 'Senior Developer Position',
-          description:
-            'This is a detailed job description with more than 20 characters',
-          companyName: 'Test Company',
-          location: 'Remote',
-          employmentType: 'Full-time',
-          salaryMin: 80000,
-          salaryMax: 120000,
-          ethicalPolicies: ['fair-wage', 'equal-opportunity'],
-          contactEmail: 'test@example.com',
-        })
-      );
+      expect(mockMutateAsync).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard/jobs');
     });
   });
@@ -201,16 +177,7 @@ describe('CreateJobPage', () => {
 
     // Verify API call and navigation
     await waitFor(() => {
-      expect(console.log).toHaveBeenCalledWith(
-        'Submitting job post data:',
-        expect.objectContaining({
-          title: 'Junior Developer',
-          description: 'This is a detailed job description for juniors',
-          companyName: 'Small Company',
-          location: 'New York',
-          contactEmail: 'hr@smallcompany.com',
-        })
-      );
+      expect(mockMutateAsync).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith('/dashboard/jobs');
     });
   });

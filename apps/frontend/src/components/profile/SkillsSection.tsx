@@ -126,11 +126,7 @@ const SkillsSection: FC<SkillsSectionProps> = ({
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                   No skills added yet
                 </Typography>
-                <Button
-                  startIcon={<Add />}
-                  onClick={openAddModal}
-                  size="small"
-                >
+                <Button startIcon={<Add />} onClick={openAddModal} size="small">
                   Add Your First Skill
                 </Button>
               </Box>

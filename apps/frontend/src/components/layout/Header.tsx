@@ -55,7 +55,11 @@ const Header: React.FC = () => {
                 >
                   <AccountCircle />
                 </IconButton>
-                <IconButton color="inherit" onClick={handleLogout}>
+                <IconButton
+                  color="inherit"
+                  onClick={handleLogout}
+                  data-testid="logout-button"
+                >
                   <Logout />
                 </IconButton>
               </>

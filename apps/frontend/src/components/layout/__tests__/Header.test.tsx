@@ -88,4 +88,4 @@ describe('Header', () => {
     // Check that the ThemeToggle component is rendered
     expect(screen.getByTestId('theme-toggle')).toBeInTheDocument();
   });
-}); 
+});

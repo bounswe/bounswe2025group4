@@ -31,10 +31,12 @@ describe('BadgeDisplay', () => {
 
   it('renders empty state message when no badges are provided', () => {
     render(<BadgeDisplay badges={[]} />);
-    
+
     expect(screen.getByText('Badges')).toBeInTheDocument();
     expect(
-      screen.getByText('No badges earned yet. Participate in the community to earn badges!')
+      screen.getByText(
+        'No badges earned yet. Participate in the community to earn badges!'
+      )
     ).toBeInTheDocument();
   });
 
@@ -48,11 +50,11 @@ describe('BadgeDisplay', () => {
 
   it('renders badges without labels when showLabels is false', () => {
     render(<BadgeDisplay badges={mockBadges as Badge[]} showLabels={false} />);
-    
+
     expect(screen.getByText('Badges')).toBeInTheDocument();
     expect(screen.queryByText('Top Contributor')).not.toBeInTheDocument();
     expect(screen.queryByText('Quick Responder')).not.toBeInTheDocument();
-    
+
     // Check for avatar elements instead
     const avatars = document.querySelectorAll('.MuiAvatar-root');
     expect(avatars.length).toBe(2);
@@ -60,7 +62,7 @@ describe('BadgeDisplay', () => {
 
   it('renders badges with correct size based on size prop', () => {
     render(<BadgeDisplay badges={mockBadges as Badge[]} size="small" />);
-    
+
     // Check for small chips
     const smallChips = document.querySelectorAll('.MuiChip-sizeSmall');
     expect(smallChips.length).toBe(2);
@@ -68,13 +70,13 @@ describe('BadgeDisplay', () => {
 
   it('renders badges with medium size by default', () => {
     render(<BadgeDisplay badges={mockBadges as Badge[]} />);
-    
+
     // Chips should not have small size class
     const smallChips = document.querySelectorAll('.MuiChip-sizeSmall');
     expect(smallChips.length).toBe(0);
-    
+
     // Should have regular chips
     const chips = document.querySelectorAll('.MuiChip-root');
     expect(chips.length).toBe(2);
   });
-}); 
+});

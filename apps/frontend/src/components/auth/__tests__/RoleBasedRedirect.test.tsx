@@ -6,10 +6,17 @@ import { describe, expect, beforeEach, vi, it } from 'vitest';
 
 // Mock the react-router-dom Navigate component
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  const actual =
+    await vi.importActual<typeof import('react-router-dom')>(
+      'react-router-dom'
+    );
   return {
     ...actual,
-    Navigate: vi.fn().mockImplementation(({ to }) => <div data-testid="navigate" data-to={to} />),
+    Navigate: vi
+      .fn()
+      .mockImplementation(({ to }) => (
+        <div data-testid="navigate" data-to={to} />
+      )),
   };
 });
 
@@ -38,7 +45,9 @@ describe('RoleBasedRedirect', () => {
 
   it('should show loader when user data is not yet available', () => {
     mockLocationPathname('/jobs');
-    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ data: null });
+    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: null,
+    });
 
     render(
       <MemoryRouter>
@@ -51,8 +60,8 @@ describe('RoleBasedRedirect', () => {
 
   it('should redirect employer to dashboard/jobs', () => {
     mockLocationPathname('/jobs');
-    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ 
-      data: { userType: 'EMPLOYER' } 
+    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: { userType: 'EMPLOYER' },
     });
 
     render(
@@ -61,13 +70,16 @@ describe('RoleBasedRedirect', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByTestId('navigate')).toHaveAttribute('data-to', '/dashboard/jobs');
+    expect(screen.getByTestId('navigate')).toHaveAttribute(
+      'data-to',
+      '/dashboard/jobs'
+    );
   });
 
   it('should redirect job seeker to jobs/list', () => {
     mockLocationPathname('/jobs');
-    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ 
-      data: { userType: 'JOB_SEEKER' } 
+    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: { userType: 'JOB_SEEKER' },
     });
 
     render(
@@ -76,13 +88,16 @@ describe('RoleBasedRedirect', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByTestId('navigate')).toHaveAttribute('data-to', '/jobs/list');
+    expect(screen.getByTestId('navigate')).toHaveAttribute(
+      'data-to',
+      '/jobs/list'
+    );
   });
 
   it('should redirect unknown user type to home page', () => {
     mockLocationPathname('/jobs');
-    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ 
-      data: { userType: 'UNKNOWN' } 
+    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: { userType: 'UNKNOWN' },
     });
 
     render(
@@ -96,8 +111,8 @@ describe('RoleBasedRedirect', () => {
 
   it('should redirect to home page for non-jobs paths', () => {
     mockLocationPathname('/some-other-path');
-    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ 
-      data: { userType: 'JOB_SEEKER' } 
+    (useCurrentUser as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: { userType: 'JOB_SEEKER' },
     });
 
     render(

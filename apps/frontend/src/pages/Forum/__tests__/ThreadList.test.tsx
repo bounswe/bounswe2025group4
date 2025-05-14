@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '../../../utils/test-utils';
 import ThreadListPage from '../ThreadList';
 import userEvent from '@testing-library/user-event';
-import { useNavigate } from 'react-router-dom';
 
 // Mock threads service
 const mockGetThreads = vi.fn();
@@ -60,10 +59,13 @@ vi.mock('../../../services/user.service', () => ({
 
 // Mock react-router-dom
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', () => ({
-  ...vi.importActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe('ThreadListPage', () => {
   beforeEach(() => {
@@ -77,7 +79,7 @@ describe('ThreadListPage', () => {
         body: 'This is the first test thread',
         creatorId: 123,
         reported: false,
-        tags: ['Test', 'First'],
+        tags: ['Test1Tag', 'FirstTag'],
       },
       {
         id: 2,
@@ -85,14 +87,15 @@ describe('ThreadListPage', () => {
         body: 'This is the second test thread',
         creatorId: 456,
         reported: true,
-        tags: ['Test', 'Second'],
+        tags: ['Test2Tag', 'SecondTag'],
       },
     ]);
 
     mockGetThreadTags.mockReturnValue([
-      { id: 1, name: 'Test' },
-      { id: 2, name: 'General' },
-      { id: 3, name: 'Question' },
+      { id: 1, name: 'Test1Tag' },
+      { id: 2, name: 'Test2Tag' },
+      { id: 3, name: 'FirstTag' },
+      { id: 4, name: 'SecondTag' },
     ]);
 
     mockCurrentUser.mockReturnValue({
@@ -130,8 +133,8 @@ describe('ThreadListPage', () => {
     expect(reportedChips.length).toBe(1);
 
     // Check tags
-    expect(screen.getByText('First')).toBeInTheDocument();
-    expect(screen.getByText('Second')).toBeInTheDocument();
+    expect(screen.getByText('FirstTag')).toBeInTheDocument();
+    expect(screen.getByText('SecondTag')).toBeInTheDocument();
 
     // Check for New Thread button
     expect(
@@ -166,8 +169,7 @@ describe('ThreadListPage', () => {
     );
 
     // Select tags
-    await user.click(screen.getByText('Test'));
-    await user.click(screen.getByText('General'));
+    await user.click(screen.getByText('FirstTag'));
 
     // Submit form
     await user.click(screen.getByRole('button', { name: /create thread/i }));
@@ -175,7 +177,7 @@ describe('ThreadListPage', () => {
     expect(mockCreateThread).toHaveBeenCalledWith({
       title: 'New Test Thread',
       body: 'This is a newly created thread for testing',
-      tags: ['Test', 'General'],
+      tags: ['FirstTag'],
     });
 
     // Check for success message

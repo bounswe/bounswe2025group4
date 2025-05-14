@@ -102,7 +102,7 @@ class ProfileService {
   async updateExperience(
     userId: number,
     experienceId: number,
-    experience: Omit<WorkExperience, 'id'|'userId'>
+    experience: Omit<WorkExperience, 'id' | 'userId'>
   ): Promise<WorkExperience> {
     const response = await apiClient.put<WorkExperience>(
       `/profile/${userId}/experience/${experienceId}`,
@@ -119,7 +119,7 @@ class ProfileService {
 
   async createEducation(
     userId: number,
-    education: Omit<Education, 'id'|'userId'>
+    education: Omit<Education, 'id' | 'userId'>
   ): Promise<Education> {
     const response = await apiClient.post<Education>(
       `/profile/${userId}/education`,
@@ -131,7 +131,7 @@ class ProfileService {
   async updateEducation(
     userId: number,
     educationId: number,
-    education: Omit<Education, 'id'|'userId'>
+    education: Omit<Education, 'id' | 'userId'>
   ): Promise<Education> {
     const response = await apiClient.put<Education>(
       `/profile/${userId}/education/${educationId}`,
@@ -335,7 +335,7 @@ export const useAddEducation = (userId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (education: Omit<Education, 'id'|'userId'>) =>
+    mutationFn: (education: Omit<Education, 'id' | 'userId'>) =>
       userService.createEducation(userId, education),
     onSuccess: () => {
       queryClient.invalidateQueries({

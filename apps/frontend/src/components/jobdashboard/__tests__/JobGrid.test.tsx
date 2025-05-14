@@ -1,21 +1,21 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, expect, vi, it } from 'vitest';
 import JobGrid from '../JobGrid';
-import { GridColDef } from '@mui/x-data-grid-pro';
+import { GridColDef } from '@mui/x-data-grid';
 import { JobPost } from '../../../types/job';
 
 // Mock the services
 vi.mock('../../../services/jobs.service', () => ({
   useDeleteJob: () => ({
     mutateAsync: vi.fn().mockResolvedValue({}),
-    isLoading: false
-  })
+    isLoading: false,
+  }),
 }));
 
 // Mock the DataGridPro component since it's complex and not needed for basic tests
-vi.mock('@mui/x-data-grid-pro', () => ({
-  DataGridPro: ({ rows, columns }: { rows: JobPost[]; columns: GridColDef[] }) => (
+vi.mock('@mui/x-data-grid', () => ({
+  DataGrid: ({ rows, columns }: { rows: JobPost[]; columns: GridColDef[] }) => (
     <div data-testid="data-grid">
       <div data-testid="row-count">{rows.length}</div>
       <table>
@@ -37,7 +37,13 @@ vi.mock('@mui/x-data-grid-pro', () => ({
       </table>
     </div>
   ),
-  GridActionsCellItem: ({ label, onClick }: { label: string; onClick: () => void }) => (
+  GridActionsCellItem: ({
+    label,
+    onClick,
+  }: {
+    label: string;
+    onClick: () => void;
+  }) => (
     <button onClick={onClick} data-testid={`action-${label.toLowerCase()}`}>
       {label}
     </button>
@@ -55,12 +61,14 @@ describe('JobGrid', () => {
       location: 'New York',
       minSalary: 80000,
       maxSalary: 100000,
-      ethicalTags: ['Eco-friendly', 'Inclusive'],
+      ethicalTags: 'eco_friendly,inclusive',
       description: 'A frontend developer job',
       company: 'Tech Co',
       employerId: 1,
       remote: true,
       status: 'ACTIVE',
+      contact: 'test@example.com',
+      postedDate: new Date().toISOString(),
     },
     {
       id: 2,
@@ -68,12 +76,14 @@ describe('JobGrid', () => {
       location: 'Remote',
       minSalary: 90000,
       maxSalary: 120000,
-      ethicalTags: ['Eco-friendly'],
+      ethicalTags: 'eco_friendly',
       description: 'A backend developer job',
       company: 'Tech Co',
       employerId: 1,
       remote: true,
       status: 'ACTIVE',
+      contact: 'test@example.com',
+      postedDate: new Date().toISOString(),
     },
   ];
 
@@ -83,42 +93,6 @@ describe('JobGrid', () => {
     onApplicationsView: vi.fn(),
   };
 
-  it('renders job grid with correct title', () => {
-    render(
-      <BrowserRouter>
-        <JobGrid
-          jobs={mockJobs}
-          isLoading={false}
-          onEdit={mockHandlers.onEdit}
-          onCreateNew={mockHandlers.onCreateNew}
-          onApplicationsView={mockHandlers.onApplicationsView}
-        />
-      </BrowserRouter>
-    );
-
-    expect(screen.getByText('Manage Job Listings')).toBeInTheDocument();
-  });
-
-  it('displays create job button', () => {
-    render(
-      <BrowserRouter>
-        <JobGrid
-          jobs={mockJobs}
-          isLoading={false}
-          onEdit={mockHandlers.onEdit}
-          onCreateNew={mockHandlers.onCreateNew}
-          onApplicationsView={mockHandlers.onApplicationsView}
-        />
-      </BrowserRouter>
-    );
-
-    const createButton = screen.getByText('Create Job');
-    expect(createButton).toBeInTheDocument();
-    
-    fireEvent.click(createButton);
-    expect(mockHandlers.onCreateNew).toHaveBeenCalledTimes(1);
-  });
-
   it('renders the correct number of jobs', () => {
     render(
       <BrowserRouter>
@@ -126,7 +100,6 @@ describe('JobGrid', () => {
           jobs={mockJobs}
           isLoading={false}
           onEdit={mockHandlers.onEdit}
-          onCreateNew={mockHandlers.onCreateNew}
           onApplicationsView={mockHandlers.onApplicationsView}
         />
       </BrowserRouter>
@@ -144,7 +117,6 @@ describe('JobGrid', () => {
           jobs={mockJobs}
           isLoading={true}
           onEdit={mockHandlers.onEdit}
-          onCreateNew={mockHandlers.onCreateNew}
           onApplicationsView={mockHandlers.onApplicationsView}
         />
       </BrowserRouter>
@@ -153,4 +125,4 @@ describe('JobGrid', () => {
     // Check for loading indicator inside the DataGrid
     expect(screen.getByTestId('data-grid')).toBeInTheDocument();
   });
-}); 
+});

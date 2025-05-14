@@ -50,7 +50,9 @@ describe('LoginPage', () => {
     expect(
       screen.getByRole('heading', { name: /log in/i })
     ).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: /username/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('textbox', { name: /username/i })
+    ).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument();
   });
@@ -104,14 +106,15 @@ describe('LoginPage', () => {
     await user.type(passwordInput, 'password123');
     await user.click(loginButton);
 
-    expect(mockMutateAsync).toHaveBeenCalledWith({
-      username: 'testuser',
-      password: 'password123',
-    },
-    {
-      onSuccess: expect.any(Function),
-      onError: expect.any(Function),
-    }
+    expect(mockMutateAsync).toHaveBeenCalledWith(
+      {
+        username: 'testuser',
+        password: 'password123',
+      },
+      {
+        onSuccess: expect.any(Function),
+        onError: expect.any(Function),
+      }
     );
     // Wait for async operations to complete, like the navigation
     // A simple way to wait for location change is to check for it until it meets the condition or timeout
@@ -134,14 +137,15 @@ describe('LoginPage', () => {
     await user.type(passwordInput, 'badpassword');
     await user.click(loginButton);
 
-    expect(mockMutateAsync).toHaveBeenCalledWith({
-      username: 'baduser',
-      password: 'badpassword',
-    },
-    {
-      onSuccess: expect.any(Function),
-      onError: expect.any(Function),
-    }
+    expect(mockMutateAsync).toHaveBeenCalledWith(
+      {
+        username: 'baduser',
+        password: 'badpassword',
+      },
+      {
+        onSuccess: expect.any(Function),
+        onError: expect.any(Function),
+      }
     );
 
     // Ensure async operations complete

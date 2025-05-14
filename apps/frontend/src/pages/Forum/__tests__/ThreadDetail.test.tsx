@@ -3,13 +3,43 @@ import { render, screen, waitFor } from '../../../utils/test-utils';
 import ThreadDetailPage from '../ThreadDetail';
 import userEvent from '@testing-library/user-event';
 import { useParams } from 'react-router-dom';
+import * as threadsService from '../../../services/threads.service';
+import { Thread } from '../../../types/thread';
+import { UseQueryResult } from '@tanstack/react-query';
 
-// Mock the threads service
+type ThreadQueryResult = UseQueryResult<Thread, Error>;
+
+const defaultThreadQueryResult: ThreadQueryResult = {
+  data: null,
+  error: null,
+  status: 'idle',
+  isIdle: true,
+  isLoading: false,
+  isError: false,
+  isSuccess: false,
+  isFetching: false,
+  refetch: vi.fn(),
+  // any other fields your component actually uses…
+  // you can even leave out dataUpdatedAt, etc., unless you directly inspect them
+} as unknown as ThreadQueryResult;
+
+function createMockThreadQueryResult(
+  overrides: Partial<ThreadQueryResult>
+): ThreadQueryResult {
+  return {
+    ...defaultThreadQueryResult,
+    ...overrides,
+  } as unknown as ThreadQueryResult;
+}
+
+// Create mock functions
 const mockGetThreadById = vi.fn();
 const mockGetThreadComments = vi.fn();
 const mockCreateComment = vi.fn();
 const mockDeleteComment = vi.fn();
+const mockCurrentUser = vi.fn();
 
+// Mock the threads service
 vi.mock('../../../services/threads.service', () => ({
   useGetThreadById: () => ({
     data: mockGetThreadById(),
@@ -33,7 +63,6 @@ vi.mock('../../../services/threads.service', () => ({
 }));
 
 // Mock the user service
-const mockCurrentUser = vi.fn();
 vi.mock('../../../services/user.service', () => ({
   useCurrentUser: () => ({
     data: mockCurrentUser(),
@@ -42,10 +71,7 @@ vi.mock('../../../services/user.service', () => ({
 
 // Mock react-router-dom
 vi.mock('react-router-dom', async () => {
-  const actual =
-    await vi.importActual<typeof import('react-router-dom')>(
-      'react-router-dom'
-    );
+  const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
     useParams: vi.fn(),
@@ -123,62 +149,51 @@ describe('ThreadDetailPage', () => {
     ).toBeInTheDocument();
   });
 
+  // Modified to simulate loading state by manipulating the mockGetThreadById directly
   it('shows loading state when thread is loading', () => {
-    vi.mock('../../../services/threads.service', () => ({
-      useGetThreadById: () => ({
-        data: null,
+    // Cleanup previous mocks
+    vi.clearAllMocks();
+
+    // Re-mock useGetThreadById for loading state
+    const useGetThreadByIdMock = vi.spyOn(threadsService, 'useGetThreadById');
+    useGetThreadByIdMock.mockReturnValue(
+      createMockThreadQueryResult({
+        data: undefined,
         isLoading: true,
-        isError: false,
-      }),
-      useGetThreadComments: () => ({
-        data: [],
-        isLoading: false,
-        isError: false,
-        refetch: vi.fn(),
-      }),
-      useCreateComment: () => ({
-        mutateAsync: mockCreateComment,
-        isPending: false,
-      }),
-      useDeleteComment: () => ({
-        mutateAsync: mockDeleteComment,
-        isPending: false,
-      }),
-    }));
+      })
+    );
 
     render(<ThreadDetailPage />);
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
+
+    // Restore the original implementation
+    useGetThreadByIdMock.mockRestore();
   });
 
+  // Modified to simulate error state by manipulating the mockGetThreadById directly
   it('shows error message when thread fails to load', () => {
-    vi.mock('../../../services/threads.service', () => ({
-      useGetThreadById: () => ({
-        data: null,
-        isLoading: false,
+    // Cleanup previous mocks
+    vi.clearAllMocks();
+
+    // Re-mock useGetThreadById for error state
+    const useGetThreadByIdMock = vi.spyOn(threadsService, 'useGetThreadById');
+    useGetThreadByIdMock.mockReturnValue(
+      createMockThreadQueryResult({
+        data: undefined,
+        error: new Error('Failed to load thread'),
         isError: true,
-      }),
-      useGetThreadComments: () => ({
-        data: [],
-        isLoading: false,
-        isError: false,
-        refetch: vi.fn(),
-      }),
-      useCreateComment: () => ({
-        mutateAsync: mockCreateComment,
-        isPending: false,
-      }),
-      useDeleteComment: () => ({
-        mutateAsync: mockDeleteComment,
-        isPending: false,
-      }),
-    }));
+      })
+    );
 
     render(<ThreadDetailPage />);
 
     expect(
       screen.getByText(/thread not found or error loading thread/i)
     ).toBeInTheDocument();
+
+    // Restore the original implementation
+    useGetThreadByIdMock.mockRestore();
   });
 
   it('allows users to post a comment', async () => {

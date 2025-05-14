@@ -289,11 +289,7 @@ const EducationHistory: FC<EducationHistoryProps> = ({
                 No education added yet
               </Typography>
               {isEditable && (
-                <Button
-                  startIcon={<Add />}
-                  onClick={openAddModal}
-                  size="small"
-                >
+                <Button startIcon={<Add />} onClick={openAddModal} size="small">
                   Add Your First Education
                 </Button>
               )}

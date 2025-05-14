@@ -30,6 +30,13 @@ const vitestConfig = defineVitestConfig({
           '**/*.d.ts',
         ],
       },
+      deps: {
+        optimizer: {
+          web: {
+            include: ['@mui/x-data-grid'],
+          }
+        }
+      }
     },
 });
 

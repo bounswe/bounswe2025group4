@@ -59,9 +59,8 @@ const WorkHistory: FC<WorkHistoryProps> = ({
   isEditable,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentExperience, setCurrentExperience] = useState<
-    WorkExperience | null
-  >(null);
+  const [currentExperience, setCurrentExperience] =
+    useState<WorkExperience | null>(null);
 
   // React Query mutations
   const addWorkExperience = useAddWorkExperience(userId);
@@ -298,11 +297,7 @@ const WorkHistory: FC<WorkHistoryProps> = ({
               No work experience added yet
             </Typography>
             {isEditable && (
-              <Button
-                startIcon={<Add />}
-                onClick={openAddModal}
-                size="small"
-              >
+              <Button startIcon={<Add />} onClick={openAddModal} size="small">
                 Add Your First Experience
               </Button>
             )}

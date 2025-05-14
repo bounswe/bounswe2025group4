@@ -40,4 +40,4 @@ describe('Footer', () => {
     expect(appNameLink.tagName.toLowerCase()).toBe('a');
     expect(appNameLink).toHaveAttribute('href', '/');
   });
-}); 
+});

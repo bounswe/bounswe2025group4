@@ -137,10 +137,6 @@ describe('RegisterPage', () => {
     ).toBeInTheDocument();
     // Confirm password error won't show yet because password itself is too short
 
-
-
-
-
     // Fill username and email, but short password
     await user.type(usernameInput, 'usr');
     await user.type(emailInput, 'test@example.com');
@@ -151,20 +147,15 @@ describe('RegisterPage', () => {
       screen.getByText('Password must be at least 8 characters')
     ).toBeInTheDocument();
 
-
-
-
     // Fill with non-matching passwords
     await user.clear(passwordInput);
     await user.type(passwordInput, 'ValidPass123!');
     await user.type(confirmPasswordInput, 'MismatchedPass123!');
     await user.click(continueButton);
 
-    expect(await screen.findByText("Passwords don't match")).toBeInTheDocument();
-
-
-
-
+    expect(
+      await screen.findByText("Passwords don't match")
+    ).toBeInTheDocument();
 
     // Forget to agree to terms
     await user.clear(confirmPasswordInput);
@@ -188,10 +179,7 @@ describe('RegisterPage', () => {
       'test@example.com'
     );
     await user.type(screen.getByLabelText(/^password$/i), 'Password123!');
-    await user.type(
-      screen.getByLabelText(/confirm password/i),
-      'Password123!'
-    );
+    await user.type(screen.getByLabelText(/confirm password/i), 'Password123!');
     await user.click(screen.getByLabelText(/i agree to the/i));
 
     await user.click(screen.getByRole('button', { name: /continue/i }));
@@ -216,22 +204,14 @@ describe('RegisterPage', () => {
       'test@example.com'
     );
     await user.type(screen.getByLabelText(/^password$/i), 'Password123!');
-    await user.type(
-      screen.getByLabelText(/confirm password/i),
-      'Password123!'
-    );
+    await user.type(screen.getByLabelText(/confirm password/i), 'Password123!');
     await user.click(screen.getByLabelText(/i agree to the/i));
     await user.click(screen.getByRole('button', { name: /continue/i }));
-
-
-
 
     await screen.findByRole('heading', { name: /choose your role/i }); // Wait for navigation
 
     const employerOption = screen.getByText(/employer/i);
     await user.click(employerOption);
-
-
 
     // Check if Employer option is selected (visually indicated by border or background)
     // This relies on visual cues being testable or having specific attributes.
@@ -260,10 +240,7 @@ describe('RegisterPage', () => {
       'test@example.com'
     );
     await user.type(screen.getByLabelText(/^password$/i), 'Password123!');
-    await user.type(
-      screen.getByLabelText(/confirm password/i),
-      'Password123!'
-    );
+    await user.type(screen.getByLabelText(/confirm password/i), 'Password123!');
     await user.click(screen.getByLabelText(/i agree to the/i));
     await user.click(screen.getAllByRole('button', { name: /continue/i })[0]); // Credentials continue
     await screen.findByRole('heading', { name: /choose your role/i });
@@ -359,10 +336,7 @@ describe('RegisterPage', () => {
       'good@example.com'
     );
     await user.type(screen.getByLabelText(/^password$/i), 'GoodPass123!');
-    await user.type(
-      screen.getByLabelText(/confirm password/i),
-      'GoodPass123!'
-    );
+    await user.type(screen.getByLabelText(/confirm password/i), 'GoodPass123!');
     await user.click(screen.getByLabelText(/i agree to the/i));
     await user.click(screen.getAllByRole('button', { name: /continue/i })[0]);
     await screen.findByRole('heading', { name: /choose your role/i });
@@ -400,15 +374,9 @@ describe('RegisterPage', () => {
 
     // Minimal path to final submission
     await user.type(screen.getByLabelText(/username/i), 'baduser');
-    await user.type(
-      screen.getByLabelText(/email address/i),
-      'bad@example.com'
-    );
+    await user.type(screen.getByLabelText(/email address/i), 'bad@example.com');
     await user.type(screen.getByLabelText(/^password$/i), 'BadPass123!');
-    await user.type(
-      screen.getByLabelText(/confirm password/i),
-      'BadPass123!'
-    );
+    await user.type(screen.getByLabelText(/confirm password/i), 'BadPass123!');
     await user.click(screen.getByLabelText(/i agree to the/i));
     await user.click(screen.getAllByRole('button', { name: /continue/i })[0]); // Credentials
     await screen.findByRole('heading', { name: /choose your role/i });
@@ -453,10 +421,7 @@ describe('RegisterPage', () => {
       'test@example.com'
     );
     await user.type(screen.getByLabelText(/^password$/i), 'Password123!');
-    await user.type(
-      screen.getByLabelText(/confirm password/i),
-      'Password123!'
-    );
+    await user.type(screen.getByLabelText(/confirm password/i), 'Password123!');
     await user.click(screen.getByLabelText(/i agree to the/i));
     await user.click(screen.getAllByRole('button', { name: /continue/i })[0]);
     await screen.findByRole('heading', { name: /choose your role/i });
@@ -464,9 +429,7 @@ describe('RegisterPage', () => {
     // Click back button
     await user.click(screen.getByRole('button', { name: /back/i }));
 
-    expect(
-      await screen.findByText(/create your account/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/create your account/i)).toBeInTheDocument();
   });
 
   it('allows navigation back from mentorship to user type', async () => {
@@ -480,10 +443,7 @@ describe('RegisterPage', () => {
       'test@example.com'
     );
     await user.type(screen.getByLabelText(/^password$/i), 'Password123!');
-    await user.type(
-      screen.getByLabelText(/confirm password/i),
-      'Password123!'
-    );
+    await user.type(screen.getByLabelText(/confirm password/i), 'Password123!');
     await user.click(screen.getByLabelText(/i agree to the/i));
     await user.click(screen.getAllByRole('button', { name: /continue/i })[0]); // Credentials
     await screen.findByText(/choose your role/i);
@@ -494,9 +454,7 @@ describe('RegisterPage', () => {
     // Click back button
     await user.click(screen.getByRole('button', { name: /back/i }));
 
-    expect(
-      await screen.findByText(/choose your role/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/choose your role/i)).toBeInTheDocument();
   });
 
   it('allows navigation back from profile info to mentorship', async () => {
@@ -510,10 +468,7 @@ describe('RegisterPage', () => {
       'test@example.com'
     );
     await user.type(screen.getByLabelText(/^password$/i), 'Password123!');
-    await user.type(
-      screen.getByLabelText(/confirm password/i),
-      'Password123!'
-    );
+    await user.type(screen.getByLabelText(/confirm password/i), 'Password123!');
     await user.click(screen.getByLabelText(/i agree to the/i));
     await user.click(screen.getAllByRole('button', { name: /continue/i })[0]); // Credentials
     await screen.findByRole('heading', { name: /choose your role/i });

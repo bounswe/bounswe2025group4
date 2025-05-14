@@ -23,11 +23,11 @@ describe('ThemeToggle', () => {
     });
 
     render(<ThemeToggle />);
-    
+
     // Brightness4Icon is used for light mode (to switch to dark)
     const iconButton = screen.getByRole('button');
     expect(iconButton).toBeInTheDocument();
-    
+
     // Check tooltip text for light mode
     expect(screen.getByLabelText('Switch to dark mode')).toBeInTheDocument();
   });
@@ -40,11 +40,11 @@ describe('ThemeToggle', () => {
     });
 
     render(<ThemeToggle />);
-    
+
     // Brightness7Icon is used for dark mode (to switch to light)
     const iconButton = screen.getByRole('button');
     expect(iconButton).toBeInTheDocument();
-    
+
     // Check tooltip text for dark mode
     expect(screen.getByLabelText('Switch to light mode')).toBeInTheDocument();
   });
@@ -57,12 +57,12 @@ describe('ThemeToggle', () => {
     });
 
     render(<ThemeToggle />);
-    
+
     // Click the button
     const iconButton = screen.getByRole('button');
     fireEvent.click(iconButton);
-    
+
     // Check if toggleTheme was called
     expect(mockToggleTheme).toHaveBeenCalledTimes(1);
   });
-}); 
+});
