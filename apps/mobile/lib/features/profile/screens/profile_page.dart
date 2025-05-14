@@ -231,30 +231,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: const TextStyle(fontSize: 14),
                 ),
 
-              const SizedBox(height: 12),
-              Consumer<ProfileProvider>(
-                builder: (context, provider, _) {
-                  final user = provider.currentUser;
-                  if (user == null) return SizedBox();
-
-                  return DropdownButton<MentorshipStatus>(
-                    value: user.mentorshipStatus,
-                    items: MentorshipStatus.values
-                        .map((status) => DropdownMenuItem(
-                      value: status,
-                      child: Text(status.name),
-                    ))
-                        .toList(),
-                    onChanged: (value) async {
-                      if (value != null) {
-                        await provider.updateMentorshipStatus(value);
-                        await provider.fetchUserDetails(int.parse(user.id));
-                      }
-                    },
-                    hint: const Text("Change mentorship status"),
-                  );
-                },
-              ),
 
             ],
           ),

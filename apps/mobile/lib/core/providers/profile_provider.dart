@@ -4,7 +4,6 @@ import '../models/full_profile.dart';
 import '../services/api_service.dart';
 import '../models/user.dart';
 import '../models/mentorship_status.dart';
-import 'dart:io';
 
 class ProfileProvider extends ChangeNotifier {
   late ApiService _apiService;
@@ -36,14 +35,10 @@ class ProfileProvider extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      print('DEBUG(fetchMyProfile): calling getMyProfile()');
       final profile = await _apiService.getMyProfile();
-      print('DEBUG(fetchMyProfile): received profile: ${profile.profile}');
-      print('DEBUG(fetchMyProfile): userId = ${profile.profile.userId}');
       final userId = profile.profile.userId;
 
       final pictureUrl = await _apiService.getProfilePicture(userId);
-      print('DEBUG(fetchMyProfile): fetched picture URL: $pictureUrl');
 
       final updatedProfile = profile.profile.copyWith(
         profilePicture: pictureUrl,
@@ -70,8 +65,8 @@ class ProfileProvider extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      final profile = await _apiService.getUserProfile(userId); // başka kişinin profili
-      final pictureUrl = await _apiService.getProfilePicture(userId); // doğru foto
+      final profile = await _apiService.getUserProfile(userId);
+      final pictureUrl = await _apiService.getProfilePicture(userId);
 
       final updatedProfile = profile.profile.copyWith(profilePicture: pictureUrl);
       _viewedProfile = FullProfile(
@@ -510,27 +505,27 @@ class ProfileProvider extends ChangeNotifier {
       _user = await _apiService.fetchUser(userId.toString());
       notifyListeners();
     } catch (e) {
-      print("Error fetching user data: $e");
+      throw Exception('Failed to fetch user details: $e');
     }
   }
 
   Future<void> updateUser(String userId, Map<String, dynamic> userData) async {
     try {
-      await _apiService.updateUser(userId, userData); // API çağrısı yap
-      await fetchUserDetails(int.parse(userId));      // local user bilgisini güncelle
-      notifyListeners();                              // UI'yı güncelle
+      await _apiService.updateUser(userId, userData);
+      await fetchUserDetails(int.parse(userId));
+      notifyListeners();
     } catch (e) {
-      print("Error updating user data: $e");
+      throw Exception('Failed to update user: $e');
     }
   }
 
   Future<void> updateMentorshipStatus(MentorshipStatus status) async {
     try {
-      await _apiService.updateMentorshipStatus(status); // API çağrısı
-      await fetchUserDetails(int.parse(_user!.id)); // local user'ı güncelle
-      notifyListeners(); // UI'yı güncelle
+      await _apiService.updateMentorshipStatus(status);
+      await fetchUserDetails(int.parse(_user!.id));
+      notifyListeners();
     } catch (e) {
-      print("Failed to update mentorship status: $e");
+      throw Exception('Failed to update mentorship status: $e');
     }
   }
 
