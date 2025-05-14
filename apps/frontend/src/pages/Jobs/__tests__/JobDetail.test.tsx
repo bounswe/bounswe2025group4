@@ -111,7 +111,9 @@ beforeEach(() => {
   );
 
   mockSubmitMutateAsync.mockClear();
-  mockSubmitMutateAsync.mockResolvedValue(createMockApplication('1', 'PENDING'));
+  mockSubmitMutateAsync.mockResolvedValue(
+    createMockApplication('1', 'PENDING')
+  );
 });
 
 describe('JobDetail', () => {

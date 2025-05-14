@@ -78,7 +78,7 @@ describe('ThreadListPage', () => {
         title: 'First Thread',
         body: 'This is the first test thread',
         creatorId: 123,
-        reported: false,
+        reported: true,
         tags: ['Test1Tag', 'FirstTag'],
       },
       {
@@ -86,16 +86,16 @@ describe('ThreadListPage', () => {
         title: 'Second Thread',
         body: 'This is the second test thread',
         creatorId: 456,
-        reported: true,
+        reported: false,
         tags: ['Test2Tag', 'SecondTag'],
       },
     ]);
 
     mockGetThreadTags.mockReturnValue([
-      { id: 1, name: 'Test1Tag' },
-      { id: 2, name: 'Test2Tag' },
-      { id: 3, name: 'FirstTag' },
-      { id: 4, name: 'SecondTag' },
+      'Test1Tag',
+      'Test2Tag',
+      'FirstTag',
+      'SecondTag',
     ]);
 
     mockCurrentUser.mockReturnValue({
@@ -169,7 +169,7 @@ describe('ThreadListPage', () => {
     );
 
     // Select tags
-    await user.click(screen.getByText('FirstTag'));
+    await user.click(screen.getAllByText('FirstTag')[1]);
 
     // Submit form
     await user.click(screen.getByRole('button', { name: /create thread/i }));
@@ -255,7 +255,7 @@ describe('ThreadListPage', () => {
     expect(window.confirm).toHaveBeenCalledWith(
       'Are you sure you want to report this thread as inappropriate?'
     );
-    expect(mockReportThread).toHaveBeenCalledWith(1);
+    expect(mockReportThread).toHaveBeenCalledWith(2);
   });
 
   it('navigates to thread detail when a thread is clicked', async () => {

@@ -4,10 +4,9 @@ import {
   CreateThreadRequest,
   Comment,
   CreateCommentRequest,
-  Tag,
 } from '../types/thread';
 import { apiClient } from './api';
-import { User } from '../types/user';
+import { User } from '../types/auth';
 
 const THREAD_KEYS = {
   all: ['threads'] as const,
@@ -57,8 +56,8 @@ class ThreadsService {
     await apiClient.delete(`/comments/${commentId}`);
   }
 
-  async getThreadTags(): Promise<Tag[]> {
-    const response = await apiClient.get<Tag[]>('/threads/tags');
+  async getThreadTags(): Promise<string[]> {
+    const response = await apiClient.get<string[]>('/threads/tags');
     return response.data;
   }
 
@@ -133,7 +132,7 @@ export const useDeleteThread = () => {
 };
 
 export const useGetThreadTags = () =>
-  useQuery<Tag[], Error>({
+  useQuery<string[], Error>({
     queryKey: THREAD_KEYS.tags(),
     queryFn: () => threadsService.getThreadTags(),
   });

@@ -1,6 +1,6 @@
 // TypeScript types for Thread features
 
-import { User } from './user';
+import { User } from './auth';
 
 export interface Thread {
   id: number;
@@ -26,9 +26,4 @@ export interface Comment {
 
 export interface CreateCommentRequest {
   body: string;
-}
-
-export interface Tag {
-  id: number;
-  name: string;
 }
