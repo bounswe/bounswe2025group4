@@ -218,7 +218,6 @@ export default function RegisterPage() {
 
   const handleMentorshipRoleSelect = (mentorshipRole: MentorshipRole) => {
     setSelectedMentorshipRole(mentorshipRole);
-    setCurrentStep('profileInfo');
   };
 
   const handleBack = () => {
