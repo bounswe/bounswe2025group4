@@ -389,10 +389,10 @@ const ThreadListPage: React.FC = () => {
   const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
   const [deleteSuccessSnackbarOpen, setDeleteSuccessSnackbarOpen] =
     useState(false);
-  const [deletingThreadId, setDeletingThreadId] = useState<number | null>(null);
+  const [_deletingThreadId, setDeletingThreadId] = useState<number | null>(null);
 
   const [likeSnackbarOpen, setLikeSnackbarOpen] = useState(false);
-  const [likeSnackbarMessage, setLikeSnackbarMessage] = useState('');
+  const [likeSnackbarMessage, _setLikeSnackbarMessage] = useState('');
   const [reportSnackbarOpen, setReportSnackbarOpen] = useState(false);
 
   // Get current user using the same approach as in your comments section
@@ -422,7 +422,7 @@ const ThreadListPage: React.FC = () => {
     : [];
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     value: number
   ) => {
     setCurrentPage(value);
