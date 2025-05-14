@@ -177,7 +177,7 @@ class ProfileService {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await apiClient.post<{ profilePicture: string }>(
+    const response = await apiClient.put<{ profilePicture: string }>(
       `/profile/${userId}/profile-picture`,
       formData
     );
