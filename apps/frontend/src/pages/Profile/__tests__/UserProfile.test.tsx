@@ -137,9 +137,8 @@ describe('UserProfile', () => {
       id: 123,
       username: 'testuser',
       email: 'test@example.com',
-      bio: 'This is my test bio',
       userType: 'JOB_SEEKER',
-      mentorType: 'MENTEE',
+      mentorshipStatus: 'MENTEE',
     };
 
     const mockSuccessQueryResult = createMockQueryResult({

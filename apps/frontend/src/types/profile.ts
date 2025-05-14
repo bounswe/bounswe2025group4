@@ -39,7 +39,8 @@ export type Badge = {
   id: number;
   name: string;
   description: string;
-  imageUrl: string;
+  icon: string;
+  earnedAt: string;
 };
 
 export type FullProfileResponse = {

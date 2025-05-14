@@ -146,6 +146,7 @@ const WorkHistory: FC<WorkHistoryProps> = ({
         // Add new
         await addWorkExperience.mutateAsync({
           ...formattedData,
+          userId,
         });
       }
 

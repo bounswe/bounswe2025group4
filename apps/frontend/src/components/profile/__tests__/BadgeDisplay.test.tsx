@@ -15,16 +15,14 @@ describe('BadgeDisplay', () => {
       id: 1,
       name: 'Top Contributor',
       description: 'Awarded to users who contribute actively',
-      imageUrl: '/badges/top-contributor.png',
-      icon: '/badges/top-contributor.png', // Component uses icon prop
+      icon: '/badges/top-contributor.png',
       earnedAt: '2025-04-15T10:30:00Z',
     },
     {
       id: 2,
       name: 'Quick Responder',
       description: 'Responds to queries within 24 hours',
-      imageUrl: '/badges/quick-responder.png',
-      icon: '/badges/quick-responder.png', // Component uses icon prop
+      icon: '/badges/quick-responder.png',
       earnedAt: '2025-03-10T14:20:00Z',
     },
   ];
