@@ -1,6 +1,6 @@
 // Skeleton loader for the JobList page
 import React from 'react';
-import { Box, Skeleton, Grid } from '@mui/material';
+import { Box, Skeleton } from '@mui/material';
 
 interface JobListSkeletonProps {
   count?: number;

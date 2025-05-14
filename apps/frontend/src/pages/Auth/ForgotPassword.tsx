@@ -17,7 +17,9 @@ import {
   Fade,
   Snackbar,
 } from '@mui/material';
-import { ArrowForward, Email, CheckCircleOutline } from '@mui/icons-material';
+import ArrowForward from '@mui/icons-material/ArrowForward';
+import Email from '@mui/icons-material/Email';
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 import { Link as RouterLink } from 'react-router-dom';
 import { useForgotPassword } from '../../services/auth.service';
 

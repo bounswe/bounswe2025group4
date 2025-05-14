@@ -78,7 +78,12 @@ const JobDetail: React.FC = () => {
   }, [userApplications, jobId]);
 
   const handleApplyClick = async () => {
-    if (!jobId || !userId || !currentUser) return;
+    if (!jobId || !userId || !currentUser) {
+      setError('Job ID, user ID, or current user is missing.');
+      setLoading(false);
+      window.location.href = '/jobs';
+      return;
+    }
 
     try {
       await submitApplicationMutation.mutateAsync({

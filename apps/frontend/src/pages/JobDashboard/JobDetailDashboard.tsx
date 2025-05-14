@@ -97,10 +97,9 @@ const JobDetailDashboard: React.FC = () => {
         severity: 'success',
       });
     } catch (err) {
-      console.error('Failed to update application:', err);
       setSnackbar({
         open: true,
-        message: 'Failed to update application. Please try again.',
+        message: 'Failed to update application. Please try again. ' + err,
         severity: 'error',
       });
     }

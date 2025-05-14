@@ -12,7 +12,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import Add from '@mui/icons-material/Add';
+import Delete from '@mui/icons-material/Delete';
 import { useUpdateSkills } from '../../services/profile.service';
 
 interface SkillsSectionProps {
@@ -91,7 +92,7 @@ const SkillsSection: FC<SkillsSectionProps> = ({
 
           {isEditable && skillsState.length > 0 && (
             <Button
-              startIcon={<AddIcon />}
+              startIcon={<Add />}
               onClick={openAddModal}
               variant="outlined"
               size="small"
@@ -114,7 +115,7 @@ const SkillsSection: FC<SkillsSectionProps> = ({
                     onDelete={
                       isEditable ? () => handleRemoveSkill(skill) : undefined
                     }
-                    deleteIcon={isEditable ? <DeleteIcon /> : undefined}
+                    deleteIcon={isEditable ? <Delete /> : undefined}
                   />
                 ))}
               </Stack>
@@ -125,11 +126,7 @@ const SkillsSection: FC<SkillsSectionProps> = ({
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                   No skills added yet
                 </Typography>
-                <Button
-                  startIcon={<AddIcon />}
-                  onClick={openAddModal}
-                  size="small"
-                >
+                <Button startIcon={<Add />} onClick={openAddModal} size="small">
                   Add Your First Skill
                 </Button>
               </Box>

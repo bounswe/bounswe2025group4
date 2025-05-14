@@ -5,7 +5,6 @@ import {
   GridRenderCellParams,
   GridRowParams,
   GridActionsCellItem,
-  GridValueFormatter,
 } from '@mui/x-data-grid';
 import { Box, Button, Chip, Typography, useTheme } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';

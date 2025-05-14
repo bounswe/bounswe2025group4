@@ -1,4 +1,4 @@
-version: '3.8'
+version: '1.0'
 
 services:
   backend:
@@ -21,6 +21,7 @@ services:
     networks:
       - app-network
     volumes:
+      - ./apps/backend/uploads:/app/uploads
       - backend-data:/app/data
     deploy:
       resources:
@@ -36,18 +37,17 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-#    depends_on:
-#      backend:
-#        condition: service_healthy
+    depends_on:
+      - backend
     environment:
-      - BACKEND_URL=http://backend:8080  # Add this to make backend URL configurable
+      - BACKEND_URL=http://backend:8080
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+    # healthcheck:
+    #   test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/"]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 3
     deploy:
       resources:
         limits:

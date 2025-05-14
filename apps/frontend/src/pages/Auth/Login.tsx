@@ -12,13 +12,11 @@ import {
   Alert,
   Snackbar,
 } from '@mui/material';
-import {
-  Visibility,
-  VisibilityOff,
-  Person,
-  Lock,
-  Login,
-} from '@mui/icons-material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Person from '@mui/icons-material/Person';
+import Lock from '@mui/icons-material/Lock';
+import Login from '@mui/icons-material/Login';
 import { useLogin } from '../../services/auth.service';
 import { Link as RouterLink } from 'react-router-dom';
 import { ApiError } from '../../types/api';
@@ -126,6 +124,7 @@ export default function LoginPage() {
             name="password"
             label="Password"
             id="password"
+            placeholder="Password"
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
             value={password}
@@ -140,7 +139,7 @@ export default function LoginPage() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      aria-label="toggle password visibility"
+                      aria-label="toggle-password-visibility"
                       onClick={handleTogglePasswordVisibility}
                       edge="end"
                     >

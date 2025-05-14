@@ -1,57 +1,53 @@
-export interface Experience {
+export type Profile = {
+  userId: number;
+  fullName: string;
+  bio: string;
+  phone?: string;
+  location?: string;
+  occupation?: string;
+  profilePicture: string;
+  skills: string[];
+  interests: string[];
+};
+
+export type ProfileResponse = Profile & {
   id: number;
+};
+
+export type WorkExperience = {
+  id: number;
+  userId: number;
   company: string;
   position: string;
+  startDate: string;
+  endDate?: string;
   description?: string;
-  startDate: string; // ISO format date
-  endDate?: string; // ISO format date, can be null for current jobs
-}
+};
 
-export interface Education {
+export type Education = {
   id: number;
+  userId: number;
   school: string;
   degree: string;
   field: string;
   startDate: string;
   endDate?: string;
-}
+  description?: string;
+};
 
-export interface Badge {
+export type Badge = {
   id: number;
   name: string;
   description: string;
   icon: string;
   earnedAt: string;
-}
+};
 
-export interface Profile {
-  fullName: string;
-  phone: string;
-  location: string;
-  occupation: string;
-  bio: string;
-  profilePicture: string;
-  skills: string[];
-  interests: string[];
-}
-
-export interface ProfileResponse extends Profile {
+export type FullProfileResponse = {
   id: number;
   userId: number;
-}
-
-export interface FullProfile {
-  profile: Profile;
-  experience: Experience[];
-  education: Education[];
-  badges: Badge[];
-}
-
-export interface FullProfileResponse {
-  id: number;
   profile: ProfileResponse;
-  experience: Experience[];
+  experience: WorkExperience[];
   education: Education[];
   badges: Badge[];
-  userId: number;
-}
+};

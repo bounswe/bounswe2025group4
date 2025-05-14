@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://host.docker.internal:5432/jobboard
+    url: jdbc:postgresql://10.42.208.3:5432/jobboard
     username: postgres
-    password:
+    password: bounswe2025jobboard
   jpa:
     hibernate:
       ddl-auto: update
