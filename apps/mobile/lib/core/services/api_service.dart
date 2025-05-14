@@ -10,8 +10,13 @@ import '../models/user.dart';
 import '../models/mentor_profile.dart';
 import '../models/mentorship_request.dart';
 import '../models/mentor_review.dart';
+import '../models/full_profile.dart';
+import '../models/profile.dart';
+import '../models/experience.dart';
+import '../models/education.dart';
+import '../models/badge.dart';
 import '../providers/auth_provider.dart'; // Import AuthProvider
-import '../constants/app_constants.dart'; // Import AppConstants
+import '../constants/app_constants.dart'; // Imp// ort AppConstants
 
 
 const List<String> _availableEthicalPolicies = [
@@ -923,6 +928,307 @@ class ApiService {
     } catch (e) {
       print("API Error getting mentor review: $e");
       throw Exception('Failed to get mentor review. $e');
+    }
+  }
+
+  // --- Profile Endpoints ---
+
+  /// GET /api/me
+  /// Fetches the current user's profile data
+  Future<FullProfile> getMyProfile() async {
+    final uri = _buildUri('/me');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+      return FullProfile.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to load profile data. $e');
+    }
+  }
+
+  /// GET /api/profile/{userId}
+  /// Fetches a user profile by ID
+  Future<FullProfile> getUserProfile(int userId) async {
+    final uri = _buildUri('/profile/$userId');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final data = await _handleResponse(response);
+      return FullProfile.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to load user profile. $e');
+    }
+  }
+
+  /// PATCH /api/profile/{userId}
+  /// Updates a user profile
+  Future<Profile> updateProfile(int userId, Map<String, dynamic> profileData) async {
+    final uri = _buildUri('/profile/$userId');
+
+    try {
+      final response = await _client.patch(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode(profileData),
+      );
+      final data = await _handleResponse(response);
+      return Profile.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to update profile. $e');
+    }
+  }
+
+  /// PUT /api/profile/{userId}/profile-picture
+  /// Uploads a profile picture using base64-encoded image in JSON
+  Future<String> uploadProfilePicture(int userId, File imageFile) async {
+    try {
+      final uri = _buildUri('/profile/$userId/profile-picture');
+      print('API Request: PUT $uri');
+
+      final request = http.MultipartRequest('PUT', uri);
+      request.headers.addAll(_getHeaders());
+
+      final fileStream = http.ByteStream(imageFile.openRead());
+      final fileLength = await imageFile.length();
+      final multipartFile = http.MultipartFile(
+        'file',
+        fileStream,
+        fileLength,
+        filename: 'profile_image.jpg',
+      );
+
+      request.files.add(multipartFile);
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      print("Raw response: ${response.body}");
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return response.body;
+      } else {
+        throw Exception('Failed to upload: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Failed to upload profile picture: $e');
+    }
+  }
+
+
+  /// GET /api/profile/{userId}/profile-picture
+  /// Fetches the profile picture as a direct image URL (used by Image.network)
+  Future<String> getProfilePicture(int userId) async {
+    final timestamp = DateTime.now().millisecondsSinceEpoch; // ✅ timestamp tanımlandı
+    return '${AppConstants.baseUrl}/profile/$userId/profile-picture?t=$timestamp';
+  }
+
+  /// DELETE /api/profile/{userId}/profile-picture
+  /// Deletes the user's profile picture
+  Future<void> deleteProfilePicture(int userId) async {
+    final uri = _buildUri('/profile/$userId/profile-picture');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to delete profile picture. $e');
+    }
+  }
+  /// PATCH /api/profile/{userId}/skills
+  /// Updates user skills
+  Future<List<String>> updateSkills(int userId, List<String> skills) async {
+    final uri = _buildUri('/profile/$userId/skills');
+
+    try {
+      final response = await _client.patch(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode({'skills': skills}),
+      );
+      final data = await _handleResponse(response);
+      return (data as List<dynamic>).cast<String>();
+    } catch (e) {
+      throw Exception('Failed to update skills. $e');
+    }
+  }
+
+  /// PATCH /api/profile/{userId}/interests
+  /// Updates user interests
+  Future<List<String>> updateInterests(int userId, List<String> interests) async {
+    final uri = _buildUri('/profile/$userId/interests');
+
+    try {
+      final response = await _client.patch(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode({'interests': interests}),
+      );
+      final data = await _handleResponse(response);
+      return (data as List<dynamic>).cast<String>();
+    } catch (e) {
+      throw Exception('Failed to update interests. $e');
+    }
+  }
+
+  // --- Experience Endpoints ---
+
+  /// POST /api/profile/{userId}/experience
+  /// Creates a new work experience entry
+  Future<Experience> createExperience(int userId, Map<String, dynamic> experienceData) async {
+    final uri = _buildUri('/profile/$userId/experience');
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode(experienceData),
+      );
+      final data = await _handleResponse(response);
+      return Experience.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to create experience. $e');
+    }
+  }
+
+  /// PUT /api/profile/{userId}/experience/{experienceId}
+  /// Updates an existing work experience entry
+  Future<Experience> updateExperience(
+      int userId, int experienceId, Map<String, dynamic> experienceData) async {
+    final uri = _buildUri('/profile/$userId/experience/$experienceId');
+
+    try {
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode(experienceData),
+      );
+      final data = await _handleResponse(response);
+      return Experience.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to update experience. $e');
+    }
+  }
+
+  /// DELETE /api/profile/{userId}/experience/{experienceId}
+  /// Deletes a work experience entry
+  Future<void> deleteExperience(int userId, int experienceId) async {
+    final uri = _buildUri('/profile/$userId/experience/$experienceId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to delete experience. $e');
+    }
+  }
+  /// POST /api/profile/{userId}/education
+  /// Creates a new education entry
+  Future<Education> createEducation(int userId, Map<String, dynamic> educationData) async {
+    final uri = _buildUri('/profile/$userId/education');
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode(educationData),
+      );
+      final data = await _handleResponse(response);
+      return Education.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to create education entry. $e');
+    }
+  }
+
+  /// PUT /api/profile/{userId}/education/{educationId}
+  /// Updates an existing education entry
+  Future<Education> updateEducation(
+      int userId, int educationId, Map<String, dynamic> educationData) async {
+    final uri = _buildUri('/profile/$userId/education/$educationId');
+
+    try {
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode(educationData),
+      );
+      final data = await _handleResponse(response);
+      return Education.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to update education entry. $e');
+    }
+  }
+
+  /// DELETE /api/profile/{userId}/education/{educationId}
+  /// Deletes an education entry
+  Future<void> deleteEducation(int userId, int educationId) async {
+    final uri = _buildUri('/profile/$userId/education/$educationId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to delete education entry. $e');
+    }
+  }
+  /// POST /api/profile
+  /// Creates a new user profile
+  Future<Profile> createProfile(Map<String, dynamic> profileData) async {
+    final uri = _buildUri('/profile');
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode(profileData),
+      );
+      final data = await _handleResponse(response);
+      return Profile.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to create profile. $e');
+    }
+  }
+
+  /// GET /api/profile/{userId}/badges
+  /// Fetches a user's badges
+  Future<List<Badge>> getUserBadges(int userId) async {
+    final uri = _buildUri('/profile/$userId/badges');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => Badge.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to load badges. $e');
+    }
+  }
+
+  /// POST /api/profile/{userId}/badges
+  /// Adds a badge to a user
+  Future<void> addBadgeToUser(int userId, int badgeId) async {
+    final uri = _buildUri('/profile/$userId/badges');
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode({'badgeId': badgeId}),
+      );
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to add badge. $e');
+    }
+  }
+  /// DELETE /api/profile/{userId}/badges/{badgeId}
+  /// Removes a badge from a user
+  Future<void> removeBadgeFromUser(int userId, int badgeId) async {
+    final uri = _buildUri('/profile/$userId/badges/$badgeId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to remove badge. $e');
     }
   }
 
