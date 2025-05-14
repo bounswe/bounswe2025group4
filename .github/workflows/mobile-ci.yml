@@ -28,14 +28,22 @@ jobs:
       - name: Verify Flutter setup
         run: flutter doctor -v
 
+      - name: Show Flutter version
+        run: flutter --version
+
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Check outdated packages (debug only)
-        run: flutter pub outdated || true  
+      - name: List pub dependencies
+        run: flutter pub deps
 
-      - name: Generate code (build_runner)
-        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Check outdated packages (debug only)
+        run: flutter pub outdated || true
+
+      - name: Run build_runner (codegen)
+        run: |
+          echo "Running code generation..."
+          flutter pub run build_runner build --delete-conflicting-outputs
 
   format:
     name: Check Dart Formatting
