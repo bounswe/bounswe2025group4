@@ -132,6 +132,11 @@ const UserProfile: FC = () => {
     }
   }, [fullProfile, resetIdentity, authUser]);
 
+  const handleUploadSuccess = () => {
+    // reload the page
+    window.location.reload();
+  };
+
   // Handle identity form submission
   const onSubmitIdentity = async (data: IdentityFormData) => {
     if (!fullProfile) return;
@@ -256,6 +261,7 @@ const UserProfile: FC = () => {
                 profilePictureUrl={fullProfile.profile.profilePicture}
                 size={isMobile ? 100 : 150}
                 editable={isOwnProfile}
+                onUploadSuccess={handleUploadSuccess}
               />
 
               {/* User info */}
@@ -333,29 +339,6 @@ const UserProfile: FC = () => {
                       <Grid size={{ xs: 12 }}>
                         <Box display="flex" gap={1}>
                           <Button
-                            variant="contained"
-                            onClick={() => setIsMentorshipDialogOpen(true)}
-                          >
-                            Edit Mentorship Status
-                          </Button>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 1,
-                            }}
-                          >
-                            <Typography variant="body2" color="text.secondary">
-                              {newMentorshipStatus === 'MENTOR'
-                                ? 'Mentor'
-                                : 'Mentee'}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </Grid>
-                      <Grid size={{ xs: 12 }}>
-                        <Box display="flex" gap={1}>
-                          <Button
                             type="submit"
                             variant="contained"
                             startIcon={<Save />}
@@ -426,6 +409,7 @@ const UserProfile: FC = () => {
                           ? 'Employer'
                           : 'Job Seeker'}
                         {authUser?.mentorshipStatus === 'MENTOR' && ' • Mentor'}
+                        {authUser?.mentorshipStatus === 'MENTEE' && ' • Mentee'}
                       </Typography>
                     </Box>
 
