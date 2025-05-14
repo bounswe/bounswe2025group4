@@ -39,9 +39,9 @@ const Mentor: React.FC = () => {
   const [selectedRequest, setSelectedRequest] =
     useState<MentorshipRequest | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogAction, setDialogAction] = useState<'accept' | 'reject' | null>(
-    null
-  );
+  const [dialogAction, setDialogAction] = useState<
+    'accept' | 'reject' | 'completed' | null
+  >(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -99,10 +99,23 @@ const Mentor: React.FC = () => {
     setDialogOpen(true);
   };
 
+  const handleCompleteRequest = (request: MentorshipRequest) => {
+    setSelectedRequest(request);
+    setDialogAction('completed');
+    setDialogOpen(true);
+  };
+
   const confirmAction = () => {
     if (!selectedRequest || !dialogAction) return;
 
-    const newStatus = dialogAction === 'accept' ? 'ACCEPTED' : 'REJECTED';
+    const newStatus =
+      dialogAction === 'accept'
+        ? 'ACCEPTED'
+        : dialogAction === 'reject'
+          ? 'REJECTED'
+          : 'COMPLETED';
+
+    console.warn(newStatus);
 
     updateRequestStatus.mutate(
       {
@@ -112,7 +125,7 @@ const Mentor: React.FC = () => {
       {
         onSuccess: (_) => {
           setSnackbarMessage(
-            `${dialogAction === 'accept' ? 'Accepted' : 'Rejected'} mentorship request from ${selectedRequest.mentee.username}`
+            `${dialogAction === 'accept' ? 'Accepted' : dialogAction === 'reject' ? 'Rejected' : 'Completed'} mentorship request from ${selectedRequest.mentee.username}`
           );
           setSnackbarOpen(true);
         },
@@ -483,12 +496,7 @@ const Mentor: React.FC = () => {
                   <Button
                     variant="outlined"
                     color="warning"
-                    onClick={() =>
-                      console.warn(
-                        'Marking mentorship as complete:',
-                        mentorship.id
-                      )
-                    }
+                    onClick={() => handleCompleteRequest(mentorship)}
                   >
                     Mark as Complete
                   </Button>
@@ -539,14 +547,19 @@ const Mentor: React.FC = () => {
         <DialogTitle>
           {dialogAction === 'accept'
             ? 'Accept Mentorship Request?'
-            : 'Reject Mentorship Request?'}
+            : dialogAction === 'reject'
+              ? 'Reject Mentorship Request?'
+              : 'Complete Mentorship Request?'}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
             {dialogAction === 'accept'
               ? `Are you sure you want to accept the mentorship request from ${selectedRequest?.mentee.username}?
                  They will be added to your active mentorships.`
-              : `Are you sure you want to reject the mentorship request from ${selectedRequest?.mentee.username}?
+              : dialogAction === 'reject'
+                ? `Are you sure you want to reject the mentorship request from ${selectedRequest?.mentee.username}?
+                 This action cannot be undone.`
+                : `Are you sure you want to complete the mentorship request from ${selectedRequest?.mentee.username}?
                  This action cannot be undone.`}
           </DialogContentText>
         </DialogContent>
@@ -556,11 +569,15 @@ const Mentor: React.FC = () => {
           </Button>
           <Button
             onClick={confirmAction}
-            color={dialogAction === 'accept' ? 'primary' : 'error'}
+            color={dialogAction === 'reject' ? 'error' : 'primary'}
             variant="contained"
             autoFocus
           >
-            {dialogAction === 'accept' ? 'Accept' : 'Reject'}
+            {dialogAction === 'accept'
+              ? 'Accept'
+              : dialogAction === 'reject'
+                ? 'Reject'
+                : 'Complete'}
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,3 +1,4 @@
+// src/pages/Mentorship/Mentee.tsx
 import React, { useState } from 'react';
 import {
   Box,
@@ -29,10 +30,9 @@ import {
   useCreateMentorshipRequest,
 } from '../../services/mentorship.service';
 import { useCurrentUser } from '../../services/user.service';
-import {
-  MentorProfile,
-  RequestStatus,
-} from '../../types/mentor';
+import { MentorProfile, RequestStatus } from '../../types/mentor';
+import { Rating } from '@mui/material';
+import { useCreateMentorReview } from '../../services/mentorship.service';
 
 const Mentee: React.FC = () => {
   const [selectedMentor, setSelectedMentor] = useState<MentorProfile | null>(
@@ -42,6 +42,15 @@ const Mentee: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  // Review states
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [selectedMentorForReview, setSelectedMentorForReview] = useState<{
+    id: number;
+    username: string;
+  } | null>(null);
+  const [reviewRating, setReviewRating] = useState<number | null>(5);
+  const [reviewComment, setReviewComment] = useState('');
 
   // Get current user
   const {
@@ -66,6 +75,8 @@ const Mentee: React.FC = () => {
 
   // Create mentorship request mutation
   const createMentorshipRequest = useCreateMentorshipRequest();
+
+  const createMentorReview = useCreateMentorReview();
 
   const handleRequestMentor = (mentor: MentorProfile) => {
     setSelectedMentor(mentor);
@@ -134,6 +145,48 @@ const Mentee: React.FC = () => {
       default:
         return <Chip label={status} size="small" />;
     }
+  };
+
+  // Function to handle opening the review dialog
+  const handleOpenReviewDialog = (mentorId: number, mentorUsername: string) => {
+    setSelectedMentorForReview({ id: mentorId, username: mentorUsername });
+    setReviewRating(5);
+    setReviewComment('');
+    setReviewDialogOpen(true);
+  };
+
+  // Function to handle closing the review dialog
+  const handleCloseReviewDialog = () => {
+    setReviewDialogOpen(false);
+    setSelectedMentorForReview(null);
+  };
+
+  // Function to handle submitting the review
+  const handleSubmitReview = () => {
+    if (!selectedMentorForReview || !reviewRating) return;
+
+    createMentorReview.mutate(
+      {
+        mentorId: selectedMentorForReview.id,
+        rating: reviewRating,
+        comment: reviewComment.trim(),
+      },
+      {
+        onSuccess: () => {
+          setSnackbarMessage(
+            `Review submitted for ${selectedMentorForReview.username}`
+          );
+          setSnackbarOpen(true);
+          setReviewDialogOpen(false);
+        },
+        onError: (error) => {
+          console.error('Failed to submit review:', error);
+          const errorMessage = 'Failed to submit review';
+          setSnackbarMessage(errorMessage);
+          setSnackbarOpen(true);
+        },
+      }
+    );
   };
 
   // Show loading state
@@ -300,7 +353,9 @@ const Mentee: React.FC = () => {
                 <Button
                   variant="outlined"
                   color="error"
-                  onClick={() => console.warn('Cancelling request:', request.id)}
+                  onClick={() =>
+                    console.warn('Cancelling request:', request.id)
+                  }
                 >
                   Cancel Request
                 </Button>
@@ -383,6 +438,24 @@ const Mentee: React.FC = () => {
                       mentorship.updatedAt || mentorship.createdAt
                     ).toLocaleDateString()}
                   </Typography>
+                  {/* Add this review button for completed mentorships */}
+                  {mentorship.status === 'COMPLETED' && (
+                    <Box sx={{ mt: 2 }}>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() =>
+                          handleOpenReviewDialog(
+                            mentorship.mentor.id,
+                            mentorship.mentor.username
+                          )
+                        }
+                        startIcon={<StarIcon />}
+                      >
+                        Leave Review
+                      </Button>
+                    </Box>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -421,6 +494,52 @@ const Mentee: React.FC = () => {
             disabled={!requestMessage.trim()}
           >
             Send Request
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Review Dialog */}
+      <Dialog open={reviewDialogOpen} onClose={handleCloseReviewDialog}>
+        <DialogTitle>Rate Your Mentor</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please rate your experience with {selectedMentorForReview?.username}{' '}
+            and leave any feedback you have.
+          </DialogContentText>
+          <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
+            <Typography component="legend" sx={{ mr: 2 }}>
+              Rating:
+            </Typography>
+            <Rating
+              name="mentor-rating"
+              value={reviewRating}
+              onChange={(_, newValue) => setReviewRating(newValue)}
+              precision={1}
+            />
+          </Box>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Your Feedback (Optional)"
+            type="text"
+            fullWidth
+            multiline
+            rows={4}
+            value={reviewComment}
+            onChange={(e) => setReviewComment(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseReviewDialog} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmitReview}
+            color="primary"
+            variant="contained"
+            disabled={!reviewRating}
+          >
+            Submit Review
           </Button>
         </DialogActions>
       </Dialog>

@@ -7,6 +7,8 @@ import {
   CreateMentorshipRequestRequest,
   RequestStatus,
   UpdateMentorProfileRequest,
+  MentorReview,
+  CreateMentorReviewRequest,
 } from '../types/mentor';
 import { apiClient } from './api';
 
@@ -19,6 +21,9 @@ const MENTOR_KEYS = {
   requests: () => [...MENTOR_KEYS.all, 'requests'] as const,
   mentorRequests: () => [...MENTOR_KEYS.all, 'mentorRequests'] as const,
   menteeRequests: () => [...MENTOR_KEYS.all, 'menteeRequests'] as const,
+  reviews: () => [...MENTOR_KEYS.all, 'reviews'] as const,
+  mentorReviews: (mentorId: number) =>
+    [...MENTOR_KEYS.all, 'reviews', mentorId] as const,
 };
 
 class MentorService {
@@ -85,6 +90,23 @@ class MentorService {
     const response = await apiClient.put<MentorProfile>(
       '/api/mentor/profile',
       profileData
+    );
+    return response.data;
+  }
+
+  async createMentorReview(
+    reviewData: CreateMentorReviewRequest
+  ): Promise<MentorReview> {
+    const response = await apiClient.post<MentorReview>(
+      '/mentor/review',
+      reviewData
+    );
+    return response.data;
+  }
+
+  async getMentorReviews(mentorId: number): Promise<MentorReview[]> {
+    const response = await apiClient.get<MentorReview[]>(
+      `/mentor/${mentorId}/reviews`
     );
     return response.data;
   }
@@ -210,3 +232,38 @@ export const useUpdateMentorProfile = () => {
     },
   });
 };
+
+export const useCreateMentorReview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<MentorReview, Error, CreateMentorReviewRequest>({
+    mutationFn: (reviewData) => mentorService.createMentorReview(reviewData),
+    onSuccess: (data) => {
+      // Invalidate the mentor profiles queries to reflect updated ratings
+      queryClient.invalidateQueries({ queryKey: MENTOR_KEYS.profiles() });
+
+      // Invalidate specific mentor profile
+      if (data.mentor.id) {
+        queryClient.invalidateQueries({
+          queryKey: MENTOR_KEYS.profile(data.mentor.id),
+        });
+
+        // Invalidate mentor reviews
+        queryClient.invalidateQueries({
+          queryKey: MENTOR_KEYS.mentorReviews(data.mentor.id),
+        });
+      }
+    },
+    onError: (error) => {
+      console.error('Failed to create mentor review:', error);
+    },
+  });
+};
+
+export const useGetMentorReviews = (mentorId: number) =>
+  useQuery<MentorReview[], Error>({
+    queryKey: MENTOR_KEYS.mentorReviews(mentorId),
+    queryFn: () => mentorService.getMentorReviews(mentorId),
+    enabled: !!mentorId, // Only run the query if mentorId is provided
+    refetchOnWindowFocus: false,
+  });

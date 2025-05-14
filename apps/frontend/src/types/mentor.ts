@@ -43,3 +43,31 @@ export interface UpdateMentorProfileRequest {
   capacity: number;
   isAvailable: boolean;
 }
+
+export interface CreateMentorReviewRequest {
+  mentorId: number;
+  rating: number;
+  comment: string;
+}
+
+export interface MentorReview {
+  id: number;
+  mentor: {
+    id: number;
+    username: string;
+    email: string;
+    userType: string;
+    mentorshipStatus: string | null;
+  };
+  mentee: {
+    id: number;
+    username: string;
+    email: string;
+    userType: string;
+    mentorshipStatus: string | null;
+  };
+  rating: number;
+  comment: string;
+  createdAt: string;
+  updatedAt: string | null;
+}
