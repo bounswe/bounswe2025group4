@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { ApiError, ApiResponse } from '../types/api';
 
 interface ApiErrorResponse {
@@ -128,12 +128,22 @@ class ApiClient {
     params?: Record<string, unknown>
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await this.client.request<T>({
+      const config: AxiosRequestConfig = {
         method,
         url,
         data,
         params,
-      });
+        headers: {},
+      };
+
+      if (data instanceof FormData) {
+        // Setting Content-Type to undefined/null for FormData
+        // allows Axios to correctly set it to 'multipart/form-data' with the boundary,
+        // overriding any default Content-Type like 'application/json'.
+        config.headers = { ...config.headers, 'Content-Type': undefined };
+      }
+
+      const response = await this.client.request<T>(config);
       return { data: response.data, status: response.status };
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
