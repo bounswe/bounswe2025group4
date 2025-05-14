@@ -15,7 +15,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const projectNumber = 1; // Change this to your project number
+            const projectNumber = 111; // Change this to your project number
             const columnMapping = {
               "type: planning": "Planning",
               "type: research": "Planning",
