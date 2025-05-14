@@ -1,17 +1,134 @@
-name: Mobile
+name: Mobile CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+    paths:
+      - 'apps/mobile/**'
   pull_request:
-    branches: [ main ]
-
-  workflow_dispatch:
+    branches: [main]
+    paths:
+      - 'apps/mobile/**'
 
 jobs:
-  placeholder:
+  setup:
+    name: Setup Flutter Environment
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: apps/mobile
     steps:
-      - name: Print confirmation message
-        run: echo "This GitHub Action is running as a placeholder!"
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code (build_runner)
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+  format:
+    name: Check Dart Formatting
+    runs-on: ubuntu-latest
+    needs: setup
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+  analyze:
+    name: Static Code Analysis
+    runs-on: ubuntu-latest
+    needs: setup
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Analyze source
+        run: flutter analyze
+
+  test_unit:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    needs: setup
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Run unit tests
+        run: flutter test test/unit
+
+  test_widget:
+    name: Run Widget Tests
+    runs-on: ubuntu-latest
+    needs: setup
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Run widget tests
+        run: flutter test test/features
+
+  test_integration:
+    name: Run Integration Tests
+    runs-on: ubuntu-latest
+    needs: setup
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Run integration tests
+        run: flutter test test/integration
