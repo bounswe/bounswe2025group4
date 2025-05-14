@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class TagRecommendationService {
-  static Future<Map<String, dynamic>> fetchSuggestions(String title) async {
+  static Future<Map<String, dynamic>> fetchSuggestions(String title, {http.Client? client}) async {
+    final effectiveClient = client ?? http.Client();
     try {
       final query = title.trim().split(RegExp(r'\s+')).join('+');
       final url = 'https://api.datamuse.com/words?ml=$query&max=10';
 
-      final response = await http.get(Uri.parse(url));
+      final uri = Uri.parse(url);
+      final response = await effectiveClient.get(uri);
 
       if (response.statusCode == 200) {
         final List data = json.decode(response.body);
@@ -48,6 +50,10 @@ class TagRecommendationService {
         'status': 'error',
         'message': 'Please check your connection, and try again.',
       };
+    } finally {
+      if (client == null) {
+        effectiveClient.close();
+      }
     }
   }
 }
