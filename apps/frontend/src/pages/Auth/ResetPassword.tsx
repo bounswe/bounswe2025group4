@@ -17,12 +17,10 @@ import {
   Fade,
   Snackbar,
 } from '@mui/material';
-import {
-  Lock,
-  Visibility,
-  VisibilityOff,
-  CheckCircleOutline,
-} from '@mui/icons-material';
+import Lock from '@mui/icons-material/Lock';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 import { useLocation } from 'react-router-dom';
 import { useResetPassword } from '../../services/auth.service';
 

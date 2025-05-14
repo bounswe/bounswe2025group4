@@ -12,7 +12,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import Add from '@mui/icons-material/Add';
+import Delete from '@mui/icons-material/Delete';
 import { useUpdateInterests } from '../../services/profile.service';
 
 interface InterestsSectionProps {
@@ -87,7 +88,7 @@ const InterestsSection: FC<InterestsSectionProps> = ({
 
         {isEditable && interestsState.length > 0 && (
           <Button
-            startIcon={<AddIcon />}
+            startIcon={<Add />}
             onClick={openAddModal}
             variant="outlined"
             size="small"
@@ -111,7 +112,7 @@ const InterestsSection: FC<InterestsSectionProps> = ({
                       ? () => handleRemoveInterest(interest)
                       : undefined
                   }
-                  deleteIcon={isEditable ? <DeleteIcon /> : undefined}
+                  deleteIcon={isEditable ? <Delete /> : undefined}
                 />
               </Stack>
             </Box>
@@ -123,7 +124,7 @@ const InterestsSection: FC<InterestsSectionProps> = ({
             <Typography variant="body2" color="text.secondary" gutterBottom>
               No interests added yet
             </Typography>
-            <Button startIcon={<AddIcon />} onClick={openAddModal} size="small">
+            <Button startIcon={<Add />} onClick={openAddModal} size="small">
               Add Your First Interest
             </Button>
           </Box>
