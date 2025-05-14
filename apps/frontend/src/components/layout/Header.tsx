@@ -26,10 +26,9 @@ const Header: React.FC = () => {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: 'flex' }}>
-            {/* TODO: Add Logo */}
-            <Button color="inherit" component={RouterLink} to="/">
-              Home
-            </Button>
+            <IconButton component={RouterLink} to="/">
+              <img src="/ethica-logo.svg" alt="Ethica Jobs" width={128} height={64} />
+            </IconButton>
             <Button color="inherit" component={RouterLink} to="/jobs">
               Jobs
             </Button>

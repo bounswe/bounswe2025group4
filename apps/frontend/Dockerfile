@@ -1,6 +1,12 @@
 # ---------- Build Stage ----------
 FROM node:22-alpine AS builder
 
+# Declare the build argument
+ARG VITE_API_BASE_URL
+
+# Set the environment variable from the build argument
+ENV VITE_API_BASE_URL="https://bounswe2025group4-327739565032.europe-west1.run.app/api"
+
 # Set working directory
 WORKDIR /app
 
