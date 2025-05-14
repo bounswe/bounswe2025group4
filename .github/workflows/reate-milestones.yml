@@ -1,0 +1,92 @@
+name: Create Project Milestones
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-milestones:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Milestones Automatically
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const milestones = [
+              {
+                title: "Frontend Initialization",
+                description: "Set up project structure, authentication UI, routing.",
+                due_on: "2025-05-05T23:59:59Z"
+              },
+              {
+                title: "Frontend Core Features",
+                description: "Implement user dashboard, job listing, job details, and profile management.",
+                due_on: "2025-05-10T23:59:59Z"
+              },
+              {
+                title: "Frontend UI/UX Enhancement",
+                description: "Create responsive layout, optimize performance, and deploy to Vercel.",
+                due_on: "2025-05-15T23:59:59Z"
+              },
+              {
+                title: "Mobile App Initialization",
+                description: "Set up mobile app structure, authentication, navigation.",
+                due_on: "2025-05-05T23:59:59Z"
+              },
+              {
+                title: "Mobile Core Features",
+                description: "Implement job listing, job details, profile management, push notifications.",
+                due_on: "2025-05-10T23:59:59Z"
+              },
+              {
+                title: "Mobile Deployment",
+                description: "Test on real devices, configure Firebase, deploy to App Store and Play Store.",
+                due_on: "2025-05-15T23:59:59Z"
+              },
+              {
+                title: "Backend Initialization",
+                description: "Set up project structure, configure database, implement authentication.",
+                due_on: "2025-05-05T23:59:59Z"
+              },
+              {
+                title: "Backend API Development",
+                description: "Develop core API endpoints (User, Job, Application).",
+                due_on: "2025-05-08T23:59:59Z"
+              },
+              {
+                title: "Backend Security & Optimization",
+                description: "Implement RBAC, API rate limiting, and secure API endpoints.",
+                due_on: "2025-05-12T23:59:59Z"
+              },
+              {
+                title: "Backend Deployment",
+                description: "Set up Docker, configure CI/CD, deploy to cloud.",
+                due_on: "2025-05-15T23:59:59Z"
+              },
+              {
+                title: "Initial Deployment",
+                description: "Set up cloud server, configure Nginx, deploy Frontend and Backend.",
+                due_on: "2025-05-13T23:59:59Z"
+              },
+              {
+                title: "Continuous Integration/Deployment",
+                description: "Automate deployments using GitHub Actions for Frontend, Backend, and Mobile.",
+                due_on: "2025-05-15T23:59:59Z"
+              }
+            ];
+
+            for (const milestone of milestones) {
+              const { title, description, due_on } = milestone;
+              try {
+                await github.rest.issues.createMilestone({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: title,
+                  description: description,
+                  due_on: due_on
+                });
+                console.log(`Milestone created: ${title}`);
+              } catch (error) {
+                console.error(`Failed to create milestone: ${title} - ${error.message}`);
+              }
+            }
