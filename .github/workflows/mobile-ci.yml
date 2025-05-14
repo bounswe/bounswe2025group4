@@ -15,17 +15,24 @@ jobs:
       run:
         working-directory: apps/mobile
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.3'
           channel: 'stable'
-          cache: true
+          cache: false
+
+      - name: Verify Flutter setup
+        run: flutter doctor -v
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Check outdated packages (debug only)
+        run: flutter pub outdated || true  
 
       - name: Generate code (build_runner)
         run: flutter pub run build_runner build --delete-conflicting-outputs
@@ -39,16 +46,12 @@ jobs:
         working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.3'
           channel: 'stable'
-          cache: true
-
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
+          cache: false
+      - run: dart format --output=none --set-exit-if-changed .
 
   analyze:
     name: Static Code Analysis
@@ -59,16 +62,12 @@ jobs:
         working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.3'
           channel: 'stable'
-          cache: true
-
-      - name: Analyze source
-        run: flutter analyze
+          cache: false
+      - run: flutter analyze
 
   test_unit:
     name: Run Unit Tests
@@ -79,16 +78,12 @@ jobs:
         working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.3'
           channel: 'stable'
-          cache: true
-
-      - name: Run unit tests
-        run: flutter test test/unit
+          cache: false
+      - run: flutter test test/unit
 
   test_widget:
     name: Run Widget Tests
@@ -99,16 +94,12 @@ jobs:
         working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.3'
           channel: 'stable'
-          cache: true
-
-      - name: Run widget tests
-        run: flutter test test/features
+          cache: false
+      - run: flutter test test/features
 
   test_integration:
     name: Run Integration Tests
@@ -119,13 +110,9 @@ jobs:
         working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.3'
           channel: 'stable'
-          cache: true
-
-      - name: Run integration tests
-        run: flutter test test/integration
+          cache: false
+      - run: flutter test test/integration
