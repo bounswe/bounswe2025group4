@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +41,7 @@ class JobPostControllerTest {
         jobPostResponseDto = new JobPostResponseDto();
         // Set appropriate fields for jobPostResponseDto
 
-        jobPostResponseDtoList = Arrays.asList(jobPostResponseDto);
+        jobPostResponseDtoList = Collections.singletonList(jobPostResponseDto);
     }
 
     @Test
