@@ -195,7 +195,7 @@ describe('UserProfile', () => {
     // Mock useProfilePictureUpload
     vi.mocked(profileService.useProfilePictureUpload).mockReturnValue(
       mockMutationResult as unknown as UseMutationResult<
-        string,
+        void,
         Error,
         File,
         unknown

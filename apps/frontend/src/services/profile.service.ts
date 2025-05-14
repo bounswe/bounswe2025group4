@@ -173,16 +173,11 @@ class ProfileService {
   /* Profile Picture API */
 
   // Upload profile picture
-  async uploadProfilePicture(userId: number, file: File): Promise<string> {
+  async uploadProfilePicture(userId: number, file: File): Promise<void> {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await apiClient.put<{ profilePicture: string }>(
-      `/profile/${userId}/profile-picture`,
-      formData
-    );
-
-    return response.data.profilePicture;
+    await apiClient.put(`/profile/${userId}/profile-picture`, formData);
   }
 
   // Delete profile picture

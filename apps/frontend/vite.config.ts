@@ -7,7 +7,7 @@ const viteConfig =  defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://bounswe2025group4-327739565032.europe-west1.run.app',
+        target: 'http://localhost:8080',
         changeOrigin: true,
       },
     },

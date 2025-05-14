@@ -9,6 +9,7 @@ interface ProfilePictureUploadProps {
   profilePictureUrl: string;
   size?: number;
   editable?: boolean;
+  onUploadSuccess?: () => void;
 }
 
 /**
@@ -19,6 +20,7 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
   profilePictureUrl,
   size = 120,
   editable,
+  onUploadSuccess,
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const uploadProfilePicture = useProfilePictureUpload(userId);
@@ -37,6 +39,7 @@ const ProfilePictureUpload: FC<ProfilePictureUploadProps> = ({
 
         try {
           await uploadProfilePicture.mutateAsync(file);
+          onUploadSuccess?.();
         } catch (error) {
           console.error('Avatar upload failed:', error);
         }
