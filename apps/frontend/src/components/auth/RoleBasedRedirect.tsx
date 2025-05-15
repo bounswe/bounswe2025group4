@@ -16,7 +16,22 @@ const RoleBasedRedirect: React.FC = () => {
 
   // Redirection based on the current page
   const currentPath = window.location.pathname;
-  if (currentPath === '/jobs') {
+  if (currentPath === '/mentorship') {
+    if (!user) {
+      // wait until user is set
+      return <CenteredLoader />;
+    }
+
+    if (user?.mentorshipStatus === 'MENTEE') {
+      return <Navigate to="/mentorship/mentee" replace />;
+    }
+
+    if (user?.mentorshipStatus === 'MENTOR') {
+      return <Navigate to="/mentorship/mentor" replace />;
+    }
+
+    return <Navigate to="/" replace />;
+  } else if (currentPath === '/jobs') {
     if (!user) {
       // wait until user is set
       return <CenteredLoader />;
