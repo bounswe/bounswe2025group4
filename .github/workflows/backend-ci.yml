@@ -1,0 +1,13 @@
+name: Jobboard Backend CI
+
+on:
+  push:
+    paths:
+      - "apps/jobboard/backend/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Jobboard backend workflow triggered"
