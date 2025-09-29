@@ -4,6 +4,9 @@ on:
   push:
     paths:
       - "apps/jobboard/mobile/**"
+  pull_request:
+    paths:
+      - "apps/jobboard/mobile/**"
 
 jobs:
   build:
