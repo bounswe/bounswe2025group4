@@ -3,10 +3,10 @@ name: Jobboard Frontend CI
 on:
   push:
     paths:
-      - "apps/jobboard/frontend/**"
+      - "apps/jobboard-frontend/**"
   pull_request:
     paths:
-      - "apps/jobboard/frontend/**"
+      - "apps/jobboard-frontend/**"
 
 jobs:
   build:

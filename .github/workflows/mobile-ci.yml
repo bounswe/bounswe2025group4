@@ -3,10 +3,10 @@ name: Jobboard Mobile CI
 on:
   push:
     paths:
-      - "apps/jobboard/mobile/**"
+      - "apps/jobboard-mobile/**"
   pull_request:
     paths:
-      - "apps/jobboard/mobile/**"
+      - "apps/jobboard-mobile/**"
 
 jobs:
   build:
