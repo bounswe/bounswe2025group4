@@ -15,7 +15,7 @@ public class RootController {
 
     @GetMapping("/")
     public MessageResponse hello() {
-        return new MessageResponse("Hello from " + appProperties.getEnv() + " environment!");
+        return new MessageResponse("Hello from " + appProperties.getEnv() + " environment! This message will change on this PR.");
     }
 
     public record MessageResponse(String message) {}

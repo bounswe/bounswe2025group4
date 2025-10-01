@@ -34,6 +34,9 @@ function App() {
       <p style={{ marginTop: '20px', fontSize: '0.9em', opacity: 0.7 }}>
           Environment: {import.meta.env.VITE_ENV || 'local'}
       </p>
+      <p style={{ marginTop: '20px', fontSize: '0.9em', opacity: 0.7 }}>
+          This Paragraph will be added if this PR is merged.
+      </p>
     </>
   )
 }
