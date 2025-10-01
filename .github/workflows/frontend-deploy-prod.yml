@@ -8,6 +8,10 @@ on:
       - "apps/jobboard-frontend/**"
       - ".github/workflows/frontend-deploy-prod.yml"
 
+concurrency:
+  group: frontend-deploy-prod
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     name: Build and Deploy to Cloudflare Pages

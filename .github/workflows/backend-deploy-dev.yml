@@ -8,6 +8,10 @@ on:
       - "apps/jobboard-backend/**"
       - ".github/workflows/backend-deploy-dev.yml"
 
+concurrency:
+  group: backend-deploy-dev
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     name: Build and Deploy to Cloud Run
