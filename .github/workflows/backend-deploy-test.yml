@@ -8,9 +8,59 @@ on:
       - "apps/jobboard-backend/**"
       - ".github/workflows/backend-deploy-test.yml"
 
+concurrency:
+  group: backend-deploy-test
+  cancel-in-progress: true
+
 jobs:
-  build:
+  build-and-deploy:
+    name: Build and Deploy to Cloud Run
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - run: echo "Jobboard backend test deployment workflow triggered for PR"
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Docker authentication for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet --project ${{ env.PROJECT_ID }}
+
+      - name: Build and push Docker image to Artifact Registry
+        run: |
+          set -e
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/jobboard-backend:test-${{ github.sha }}"
+          docker build -t "$IMAGE" ./apps/jobboard-backend
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+
+      - name: Deploy to Cloud Run test environment
+        run: |
+          set -e
+          gcloud run deploy jobboard-backend-test \
+            --image "${{ env.IMAGE }}" \
+            --region ${{ env.REGION }} \
+            --project ${{ env.PROJECT_ID }} \
+            --service-account jobboard-runtime@${{ env.PROJECT_ID }}.iam.gserviceaccount.com \
+            --allow-unauthenticated \
+            --port 8080 \
+            --memory 512Mi \
+            --cpu 1 \
+            --min-instances 0 \
+            --max-instances 1 \
+            --concurrency 80 \
+            --set-env-vars "ENV=test" \
+            --set-env-vars "DB_URL=jdbc:postgresql://ep-lucky-brook-ag2dzxqz-pooler.c-2.eu-central-1.aws.neon.tech:5432/jobboard?sslmode=require" \
+            --set-env-vars "DB_USERNAME=jobboard_owner" \
+            --set-secrets "DB_PASSWORD=jobboard-neon-db-pass:latest"
+
+    env:
+      PROJECT_ID: shadowops-dev
+      REGION: europe-west1
+      REPO_NAME: jobboard-containers
