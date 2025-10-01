@@ -14,3 +14,6 @@ spring:
 
 server:
   port: 8080
+
+app:
+  env: ${ENV:local}
