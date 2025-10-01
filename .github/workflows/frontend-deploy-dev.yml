@@ -39,5 +39,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=bounswe-jobboard-dev
+          command: pages deploy apps/jobboard-frontend/dist --project-name=bounswe-jobboard-dev
           wranglerVersion: '3'
