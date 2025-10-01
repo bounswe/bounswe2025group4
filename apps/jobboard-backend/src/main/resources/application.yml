@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: jobboard-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/jobboard}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:admin}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8080
