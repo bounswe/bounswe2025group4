@@ -29,7 +29,10 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
       <p style={{ marginTop: '20px', fontSize: '0.9em', opacity: 0.7 }}>
-        API URL: {import.meta.env.VITE_API_URL || 'Not set'}
+        API URL: {import.meta.env.VITE_API_URL || 'localhost:8080'}
+      </p>
+      <p style={{ marginTop: '20px', fontSize: '0.9em', opacity: 0.7 }}>
+          Environment: {import.meta.env.ENV || 'local'}
       </p>
     </>
   )
