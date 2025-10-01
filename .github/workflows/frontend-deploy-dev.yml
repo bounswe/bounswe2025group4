@@ -37,7 +37,7 @@ jobs:
         run: npm run build
         env:
           VITE_API_URL: https://jobboard-backend-dev-728855696411.europe-west1.run.app
-          ENV: dev
+          VITE_ENV: dev
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
