@@ -28,6 +28,9 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <p style={{ marginTop: '20px', fontSize: '0.9em', opacity: 0.7 }}>
+        API URL: {import.meta.env.VITE_API_URL || 'Not set'}
+      </p>
     </>
   )
 }
