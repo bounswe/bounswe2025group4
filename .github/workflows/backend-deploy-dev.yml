@@ -51,7 +51,10 @@ jobs:
             --min-instances 0 \
             --max-instances 1 \
             --concurrency 80 \
-            --set-env-vars "ENV=dev"
+            --set-env-vars "ENV=dev" \
+            --set-env-vars "DB_URL=jdbc:postgresql://ep-summer-lab-agmn03ff-pooler.c-2.eu-central-1.aws.neon.tech:5432/jobboard?sslmode=require" \
+            --set-env-vars "DB_USERNAME=jobboard_owner" \
+            --set-secrets "DB_PASSWORD=jobboard-neon-db-pass:latest"
 
     env:
       PROJECT_ID: shadowops-dev
