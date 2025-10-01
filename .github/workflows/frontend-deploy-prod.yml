@@ -9,8 +9,36 @@ on:
       - ".github/workflows/frontend-deploy-prod.yml"
 
 jobs:
-  build:
+  build-and-deploy:
+    name: Build and Deploy to Cloudflare Pages
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/jobboard-frontend
     steps:
-      - uses: actions/checkout@v4
-      - run: echo "Jobboard frontend production deployment workflow triggered"
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: apps/jobboard-frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+        env:
+          VITE_API_URL: https://jobboard-backend-728855696411.europe-west1.run.app
+          ENV: prod
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy apps/jobboard-frontend/dist --project-name=bounswe-jobboard
+          wranglerVersion: '3'
