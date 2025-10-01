@@ -1,0 +1,16 @@
+name: Jobboard Backend Test Deployment (PR)
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - "apps/jobboard-backend/**"
+      - ".github/workflows/backend-deploy-test.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Jobboard backend test deployment workflow triggered for PR"

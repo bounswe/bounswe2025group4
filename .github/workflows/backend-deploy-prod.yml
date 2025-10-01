@@ -1,0 +1,16 @@
+name: Jobboard Backend Production Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/jobboard-backend/**"
+      - ".github/workflows/backend-deploy-prod.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Jobboard backend production deployment workflow triggered"
