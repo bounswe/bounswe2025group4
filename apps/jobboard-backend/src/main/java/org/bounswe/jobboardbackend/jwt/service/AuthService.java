@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.jwt.dto.*;
 import org.bounswe.jobboardbackend.jwt.model.*;
 import org.bounswe.jobboardbackend.jwt.repository.PasswordResetTokenRepository;
-import org.bounswe.jobboardbackend.jwt.repository.RoleRepository;
 import org.bounswe.jobboardbackend.jwt.repository.TokenRepository;
 import org.bounswe.jobboardbackend.jwt.repository.UserRepository;
 import org.bounswe.jobboardbackend.jwt.security.JwtUtils;
@@ -40,7 +39,6 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
@@ -84,28 +82,25 @@ public class AuthService {
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_JOBSEEKER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            Role userRole = Role.ROLE_JOBSEEKER;
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "ROLE_ADMIN":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        Role adminRole = Role.ROLE_ADMIN;
+
                         roles.add(adminRole);
 
-                        break;
                     case "ROLE_EMPLOYER":
-                        Role employerRole = roleRepository.findByName(ERole.ROLE_EMPLOYER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        Role employerRole = Role.ROLE_EMPLOYER;
                         roles.add(employerRole);
 
-                        break;
                     default:
-                        Role jobseekerRole = roleRepository.findByName(ERole.ROLE_JOBSEEKER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        Role jobseekerRole = Role.ROLE_JOBSEEKER;
+
                         roles.add(jobseekerRole);
+                        break;
                 }
             });
         }
@@ -235,7 +230,7 @@ public class AuthService {
 
         List<String> roles = user.getRoles()
                 .stream()
-                .map(role -> role.getName().name())
+                .map(Enum::name)
                 .collect(Collectors.toList());
         return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), roles);
     }
