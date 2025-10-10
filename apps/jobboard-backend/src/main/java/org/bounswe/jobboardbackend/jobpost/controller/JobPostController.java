@@ -28,9 +28,9 @@ public class JobPostController {
             @RequestParam(required = false) Integer minSalary,
             @RequestParam(required = false) Integer maxSalary,
             @RequestParam(required = false) Boolean isRemote,
-            @RequestParam(required = false) Boolean isInclusiveOpportunity
+            @RequestParam(required = false) Boolean inclusiveOpportunity
     ) {
-        return ResponseEntity.ok(service.getFiltered(title, companyName, ethicalTags, minSalary, maxSalary, isRemote, isInclusiveOpportunity));
+        return ResponseEntity.ok(service.getFiltered(title, companyName, ethicalTags, minSalary, maxSalary, isRemote, inclusiveOpportunity));
     }
 
     @GetMapping("/employer/{employerId}")

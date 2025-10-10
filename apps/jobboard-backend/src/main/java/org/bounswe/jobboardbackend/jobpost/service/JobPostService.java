@@ -33,8 +33,8 @@ public class JobPostService {
         return jobPostRepository.findAll().stream().map(this::toResponseDto).collect(Collectors.toList());
     }
 
-    public List<JobPostResponse> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, Boolean isInclusiveOpportunity) {
-        List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, minSalary, maxSalary, isRemote, isInclusiveOpportunity);
+    public List<JobPostResponse> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, Boolean inclusiveOpportunity) {
+        List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, minSalary, maxSalary, isRemote, inclusiveOpportunity);
         return jobs.stream()
                 .filter(j -> {
                     if (ethicalTags == null || ethicalTags.isEmpty()) return true;
@@ -74,7 +74,7 @@ public class JobPostService {
                 .location(dto.getLocation())
                 .remote(dto.isRemote())
                 .ethicalTags(dto.getEthicalTags())
-                .isInclusiveOpportunity(dto.isInclusiveOpportunity())
+                .inclusiveOpportunity(dto.isInclusiveOpportunity())
                 .employer(employer)
                 .minSalary(dto.getMinSalary())
                 .maxSalary(dto.getMaxSalary())
@@ -112,7 +112,7 @@ public class JobPostService {
                 .location(job.getLocation())
                 .remote(job.isRemote())
                 .ethicalTags(job.getEthicalTags())
-                .isInclusiveOpportunity(job.isInclusiveOpportunity())
+                .inclusiveOpportunity(job.isInclusiveOpportunity())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
                 .contact(job.getContact())
