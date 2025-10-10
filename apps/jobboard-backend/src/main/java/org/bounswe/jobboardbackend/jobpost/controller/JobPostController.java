@@ -2,6 +2,7 @@ package org.bounswe.jobboardbackend.jobpost.controller;
 
 import jakarta.validation.Valid;
 import org.bounswe.jobboardbackend.jobpost.dto.JobPostRequest;
+import org.bounswe.jobboardbackend.jobpost.dto.UpdateJobPostRequest;
 import org.bounswe.jobboardbackend.jobpost.dto.JobPostResponse;
 import org.bounswe.jobboardbackend.jobpost.service.JobPostService;
 import org.springframework.http.HttpStatus;
@@ -55,7 +56,7 @@ public class JobPostController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<JobPostResponse> update(@PathVariable Long id, @RequestBody @Valid JobPostRequest dto) {
+    public ResponseEntity<JobPostResponse> update(@PathVariable Long id, @RequestBody @Valid UpdateJobPostRequest dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
 
