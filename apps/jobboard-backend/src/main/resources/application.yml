@@ -27,6 +27,7 @@ server:
   port: 8080
 
 app:
+  env: ${APP_ENV}
   jwtSecret: ${APP_JWT_SECRET}
   jwtExpirationInMs: 864000000
   verifyEmailUrl: ${APP_VERIFY_EMAIL_URL}
