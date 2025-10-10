@@ -71,6 +71,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/verify-email", "/api/auth/password-reset/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/auth/password-change").authenticated()
                         .anyRequest().authenticated()
                 );

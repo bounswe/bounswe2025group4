@@ -40,7 +40,7 @@ public class JobPost {
 
     private String ethicalTags; // comma-separated for now (e.g. "open-source,remote-first")
 
-    private boolean isInclusiveOpportunity; // targeted toward candidates with disabilities
+    private boolean inclusiveOpportunity; // targeted toward candidates with disabilities
 
     private Integer minSalary;
     private Integer maxSalary;

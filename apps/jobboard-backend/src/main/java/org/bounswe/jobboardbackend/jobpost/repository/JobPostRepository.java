@@ -18,7 +18,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long> {
     AND (:minSalary IS NULL OR CAST(j.min_salary AS integer) >= CAST(:minSalary AS integer))
     AND (:maxSalary IS NULL OR CAST(j.max_salary AS integer) <= CAST(:maxSalary AS integer))
     AND (:isRemote IS NULL OR CAST(j.remote AS boolean) = CAST(:isRemote AS boolean))
-    AND (:isInclusiveOpportunity IS NULL OR CAST(j.is_inclusive_opportunity AS boolean) = CAST(:isInclusiveOpportunity AS boolean))
+    AND (:inclusiveOpportunity IS NULL OR CAST(j.inclusive_opportunity AS boolean) = CAST(:inclusiveOpportunity AS boolean))
     """, nativeQuery = true)
     List<JobPost> findFiltered(
             @Param("title") String title,
@@ -26,7 +26,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long> {
             @Param("minSalary") Integer minSalary,
             @Param("maxSalary") Integer maxSalary,
             @Param("isRemote") Boolean isRemote,
-            @Param("isInclusiveOpportunity") Boolean isInclusiveOpportunity
+            @Param("inclusiveOpportunity") Boolean inclusiveOpportunity
     );
 
 }

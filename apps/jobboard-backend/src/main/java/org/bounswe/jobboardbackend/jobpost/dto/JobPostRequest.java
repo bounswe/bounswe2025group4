@@ -28,7 +28,7 @@ public class JobPostRequest {
 
     private String ethicalTags; // comma-separated, optional
 
-    private boolean isInclusiveOpportunity; // targeted toward candidates with disabilities
+    private boolean inclusiveOpportunity; // targeted toward candidates with disabilities
 
     private Integer minSalary;
     private Integer maxSalary;
