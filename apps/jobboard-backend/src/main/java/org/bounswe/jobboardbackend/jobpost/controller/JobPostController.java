@@ -1,7 +1,7 @@
 package org.bounswe.jobboardbackend.jobpost.controller;
 
 import jakarta.validation.Valid;
-import org.bounswe.jobboardbackend.jobpost.dto.JobPostRequest;
+import org.bounswe.jobboardbackend.jobpost.dto.CreateJobPostRequest;
 import org.bounswe.jobboardbackend.jobpost.dto.UpdateJobPostRequest;
 import org.bounswe.jobboardbackend.jobpost.dto.JobPostResponse;
 import org.bounswe.jobboardbackend.jobpost.service.JobPostService;
@@ -45,7 +45,7 @@ public class JobPostController {
     }
 
     @PostMapping
-    public ResponseEntity<JobPostResponse> create(@RequestBody @Valid JobPostRequest dto) {
+    public ResponseEntity<JobPostResponse> create(@RequestBody @Valid CreateJobPostRequest dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
     }
 
