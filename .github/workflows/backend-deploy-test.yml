@@ -58,8 +58,12 @@ jobs:
             --set-env-vars "ENV=test" \
             --set-env-vars "SPRING_DATASOURCE_URL=jdbc:postgresql://ep-lucky-brook-ag2dzxqz-pooler.c-2.eu-central-1.aws.neon.tech:5432/jobboard?sslmode=require" \
             --set-env-vars "SPRING_DATASOURCE_USERNAME=jobboard_owner" \
+            --set-env-vars "APP_VERIFY_EMAIL_URL=https://bounswe-jobboard-test.pages.dev" \
+            --set-env-vars "APP_RESET_PASSWORD_URL=https://bounswe-jobboard-test.pages.dev/api/auth/reset-password" \
+            --set-env-vars "MAIL_USERNAME=ethicaljobb@gmail.com" \
             --set-secrets "SPRING_DATASOURCE_PASSWORD=jobboard-neon-db-pass:latest"
             --set-secrets "APP_JWT_SECRET=jobboard-jwt-secret-test:latest"
+            --set-secrets "MAIL_PASSWORD=jobboard-mail-password:latest
 
     env:
       PROJECT_ID: shadowops-dev
