@@ -4,6 +4,7 @@ import org.bounswe.jobboardbackend.auth.model.Role;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.jobpost.dto.JobPostRequest;
+import org.bounswe.jobboardbackend.jobpost.dto.UpdateJobPostRequest;
 import org.bounswe.jobboardbackend.jobpost.dto.JobPostResponse;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
@@ -120,7 +121,7 @@ public class JobPostService {
                 .build();
     }
 
-    public JobPostResponse update(Long id, JobPostRequest dto) {
+    public JobPostResponse update(Long id, UpdateJobPostRequest dto) {
 
         JobPost job = jobPostRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "JobPost with ID " + id + " not found"));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -131,16 +132,17 @@ public class JobPostService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the employer who posted the job can update it.");
         }
 
-        job.setTitle(dto.getTitle());
-        job.setDescription(dto.getDescription());
-        job.setCompany(dto.getCompany());
-        job.setLocation(dto.getLocation());
-        job.setRemote(dto.isRemote());
-        job.setEthicalTags(dto.getEthicalTags());
-        job.setInclusiveOpportunity(dto.isInclusiveOpportunity());
-        job.setMinSalary(dto.getMinSalary());
-        job.setMaxSalary(dto.getMaxSalary());
-        job.setContact(dto.getContact());
+        // Partial update: only update non-null fields
+        if (dto.getTitle() != null) job.setTitle(dto.getTitle());
+        if (dto.getDescription() != null) job.setDescription(dto.getDescription());
+        if (dto.getCompany() != null) job.setCompany(dto.getCompany());
+        if (dto.getLocation() != null) job.setLocation(dto.getLocation());
+        if (dto.getRemote() != null) job.setRemote(dto.getRemote());
+        if (dto.getEthicalTags() != null) job.setEthicalTags(dto.getEthicalTags());
+        if (dto.getInclusiveOpportunity() != null) job.setInclusiveOpportunity(dto.getInclusiveOpportunity());
+        if (dto.getMinSalary() != null) job.setMinSalary(dto.getMinSalary());
+        if (dto.getMaxSalary() != null) job.setMaxSalary(dto.getMaxSalary());
+        if (dto.getContact() != null) job.setContact(dto.getContact());
 
         return toResponseDto(jobPostRepository.save(job));
     }
