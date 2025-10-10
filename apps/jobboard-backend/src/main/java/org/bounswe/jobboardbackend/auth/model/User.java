@@ -35,6 +35,7 @@ public class User {
     private String email;
     private String password;
 
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
     @Column(nullable = false)

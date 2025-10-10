@@ -3,7 +3,6 @@ package org.bounswe.jobboardbackend.auth.controller;
 import jakarta.validation.Valid;
 import org.bounswe.jobboardbackend.auth.dto.*;
 import org.bounswe.jobboardbackend.auth.service.AuthService;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
