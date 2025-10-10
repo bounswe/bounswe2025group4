@@ -51,6 +51,12 @@ public class AuthService {
 
     @Transactional
     public JwtResponse authUser(@Valid LoginRequest loginRequest) {
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        if (!Boolean.TRUE.equals(user.getEmailVerified())) {
+            throw new IllegalStateException("Email not verified. Please verify your email before logging in.");
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
