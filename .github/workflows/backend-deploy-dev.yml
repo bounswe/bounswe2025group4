@@ -59,6 +59,7 @@ jobs:
             --set-env-vars "SPRING_DATASOURCE_URL=jdbc:postgresql://ep-summer-lab-agmn03ff-pooler.c-2.eu-central-1.aws.neon.tech:5432/jobboard?sslmode=require" \
             --set-env-vars "SPRING_DATASOURCE_USERNAME=jobboard_owner" \
             --set-secrets "SPRING_DATASOURCE_PASSWORD=jobboard-neon-db-pass:latest"
+            --set-secrets "APP_JWT_SECRET=jobboard-jwt-secret-dev:latest"
 
     env:
       PROJECT_ID: shadowops-dev
