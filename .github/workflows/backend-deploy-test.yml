@@ -63,7 +63,7 @@ jobs:
             --set-env-vars "MAIL_USERNAME=ethicaljobb@gmail.com" \
             --set-secrets "SPRING_DATASOURCE_PASSWORD=jobboard-neon-db-pass:latest" \
             --set-secrets "APP_JWT_SECRET=jobboard-jwt-secret-test:latest" \
-            --set-secrets "MAIL_PASSWORD=jobboard-mail-password:latest
+            --set-secrets "MAIL_PASSWORD=jobboard-mail-password:latest"
 
     env:
       PROJECT_ID: shadowops-dev
