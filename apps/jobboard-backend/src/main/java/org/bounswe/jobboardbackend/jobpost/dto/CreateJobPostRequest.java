@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class JobPostRequest {
+public class CreateJobPostRequest {
 
     @NotBlank(message = "Title is required")
     @Size(max = 100)

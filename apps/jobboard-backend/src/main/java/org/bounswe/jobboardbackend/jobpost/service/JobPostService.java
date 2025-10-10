@@ -3,7 +3,7 @@ package org.bounswe.jobboardbackend.jobpost.service;
 import org.bounswe.jobboardbackend.auth.model.Role;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
-import org.bounswe.jobboardbackend.jobpost.dto.JobPostRequest;
+import org.bounswe.jobboardbackend.jobpost.dto.CreateJobPostRequest;
 import org.bounswe.jobboardbackend.jobpost.dto.UpdateJobPostRequest;
 import org.bounswe.jobboardbackend.jobpost.dto.JobPostResponse;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
@@ -58,7 +58,7 @@ public class JobPostService {
     }
 
 
-    public JobPostResponse create(JobPostRequest dto) {
+    public JobPostResponse create(CreateJobPostRequest dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName(); // This gets the username (email)
         User employer = userRepository.findByUsername(username)
