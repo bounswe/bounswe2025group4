@@ -6,7 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.auth.dto.*;
-import org.bounswe.jobboardbackend.auth.model.*;
+import org.bounswe.jobboardbackend.auth.model.EmailVerificationToken;
+import org.bounswe.jobboardbackend.auth.model.PasswordResetToken;
+import org.bounswe.jobboardbackend.auth.model.Role;
+import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.PasswordResetTokenRepository;
 import org.bounswe.jobboardbackend.auth.repository.TokenRepository;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
@@ -23,20 +26,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
-
-
 
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-    @Value("${app.verifyEmailUrl}")
-    private String verifyEmailUrl;
-    @Value("${app.resetPasswordUrl}")
-    private String resetPasswordUrl;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
@@ -44,7 +44,10 @@ public class AuthService {
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
-
+    @Value("${app.verifyEmailUrl}")
+    private String verifyEmailUrl;
+    @Value("${app.resetPasswordUrl}")
+    private String resetPasswordUrl;
 
     @Transactional
     public JwtResponse authUser(@Valid LoginRequest loginRequest) {
@@ -73,11 +76,11 @@ public class AuthService {
             return new MessageResponse("Error: Email is already in use!");
         }
 
-        // Create the new user's account
         User user = new User(
                 registerRequest.getUsername(),
                 registerRequest.getEmail(),
-                encoder.encode(registerRequest.getPassword()));
+                encoder.encode(registerRequest.getPassword()
+                ));
 
         Set<String> strRoles = registerRequest.getRole();
         Set<Role> roles = new HashSet<>();
@@ -120,10 +123,10 @@ public class AuthService {
                 .build().toUriString();
 
         String body = """
-            Please click to verify your email (expires in ~20m):
-            %s
-            If you didn't request this, ignore.
-        """.formatted(link);
+                    Please click to verify your email (expires in ~20m):
+                    %s
+                    If you didn't request this, ignore.
+                """.formatted(link);
 
         emailService.sendEmail(user.getEmail(), "Verify your email", body);
 
@@ -173,12 +176,12 @@ public class AuthService {
                 user.getEmail(),
                 "Reset your password",
                 """
-                You requested a password reset. This link expires in ~20 minutes.
-
-                %s
-
-                If you didn't request this, you can ignore this email.
-                """.formatted(link)
+                        You requested a password reset. This link expires in ~20 minutes.
+                        
+                        %s
+                        
+                        If you didn't request this, you can ignore this email.
+                        """.formatted(link)
         );
     }
 

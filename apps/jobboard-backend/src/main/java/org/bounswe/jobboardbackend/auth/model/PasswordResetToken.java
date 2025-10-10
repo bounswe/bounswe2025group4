@@ -17,11 +17,11 @@ public class PasswordResetToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     String token;
-    @Column(nullable=false)
+    @Column(nullable = false)
     Long userId;
-    @Column(nullable=false)
+    @Column(nullable = false)
     Instant expiresAt;
     Instant usedAt;
 

@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface TokenRepository extends JpaRepository<EmailVerificationToken, Long> {
     Optional<EmailVerificationToken> findByToken(String token);
+
     void deleteByUserId(Long userId);
 }

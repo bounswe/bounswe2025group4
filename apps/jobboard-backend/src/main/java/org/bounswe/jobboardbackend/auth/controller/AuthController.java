@@ -45,8 +45,7 @@ public class AuthController {
     @PostMapping("/password-reset")
     public ResponseEntity<MessageResponse> requestReset(@Valid @RequestBody PasswordResetRequest resetRequest) {
         authService.issueResetTokenIfExists(resetRequest.getEmail());
-        return ResponseEntity.accepted()
-                .body(new MessageResponse("If that email exists, a reset link has been sent."));
+        return ResponseEntity.accepted().body(new MessageResponse("If that email exists, a reset link has been sent."));
     }
 
     @PostMapping("/password-reset/confirm")
@@ -57,19 +56,14 @@ public class AuthController {
 
     @PostMapping("/password-change")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<MessageResponse> changePassword(
-            @Valid @RequestBody PasswordChangeRequest req,
-            Authentication auth
-    ) {
+    public ResponseEntity<MessageResponse> changePassword(@Valid @RequestBody PasswordChangeRequest req, Authentication auth) {
         authService.changePassword(auth, req.getCurrentPassword(), req.getNewPassword());
         return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
     }
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserResponse> getMe(
-            Authentication auth
-    ) {
+    public ResponseEntity<UserResponse> getMe(Authentication auth) {
         return new ResponseEntity<>(authService.getUserDetails(auth), HttpStatus.OK);
     }
 
