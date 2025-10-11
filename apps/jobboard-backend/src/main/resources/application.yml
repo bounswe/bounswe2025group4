@@ -32,3 +32,5 @@ app:
   jwtExpirationInMs: 864000000
   verifyEmailUrl: ${APP_VERIFY_EMAIL_URL}
   resetPasswordUrl: ${APP_RESET_PASSWORD_URL}
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS}
