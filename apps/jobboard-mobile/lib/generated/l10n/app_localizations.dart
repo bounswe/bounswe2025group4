@@ -484,7 +484,7 @@ abstract class AppLocalizations {
   /// **'Failed to load profile'**
   String get profilePage_failedToLoad;
 
-  /// Snackbar message when font size is changed
+  /// Font size change notification
   ///
   /// In en, this message translates to:
   /// **'Font size changed to {size}'**
@@ -2055,6 +2055,534 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apply Filters'**
   String get jobFilter_applyFilters;
+
+  /// My applications screen title
+  ///
+  /// In en, this message translates to:
+  /// **'My Job Applications'**
+  String get myApplications_title;
+
+  /// User error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error: User not found. Cannot load applications.'**
+  String get myApplications_userError;
+
+  /// Load error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load applications. Please try again.'**
+  String get myApplications_loadError;
+
+  /// No applications message
+  ///
+  /// In en, this message translates to:
+  /// **'You have not applied to any jobs yet.'**
+  String get myApplications_noApplications;
+
+  /// Applied date label
+  ///
+  /// In en, this message translates to:
+  /// **'Applied: {date}'**
+  String myApplications_applied(String date);
+
+  /// Feedback label
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback: {feedback}'**
+  String myApplications_feedback(String feedback);
+
+  /// Feedback dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback for {jobTitle}'**
+  String myApplications_feedbackTitle(String jobTitle);
+
+  /// Close button
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get myApplications_close;
+
+  /// Workplaces screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Workplaces'**
+  String get workplaces_title;
+
+  /// Reviews count
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reviews'**
+  String workplaces_reviews(int count);
+
+  /// Edit profile screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile_title;
+
+  /// Save changes tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get editProfile_saveChanges;
+
+  /// Personal information section
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get editProfile_personalInfo;
+
+  /// Full name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get editProfile_fullName;
+
+  /// Bio field label
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get editProfile_bio;
+
+  /// Location field label
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get editProfile_location;
+
+  /// Phone field label
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get editProfile_phone;
+
+  /// Occupation field label
+  ///
+  /// In en, this message translates to:
+  /// **'Occupation'**
+  String get editProfile_occupation;
+
+  /// Account information section
+  ///
+  /// In en, this message translates to:
+  /// **'Account Information'**
+  String get editProfile_accountInfo;
+
+  /// Username field label
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get editProfile_username;
+
+  /// Email field label
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get editProfile_email;
+
+  /// Work experience section
+  ///
+  /// In en, this message translates to:
+  /// **'Work Experience'**
+  String get editProfile_workExperience;
+
+  /// Education section
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get editProfile_education;
+
+  /// Add work experience button
+  ///
+  /// In en, this message translates to:
+  /// **'Add Work Experience'**
+  String get editProfile_addWorkExperience;
+
+  /// Add education button
+  ///
+  /// In en, this message translates to:
+  /// **'Add Education'**
+  String get editProfile_addEducation;
+
+  /// User profile screen title
+  ///
+  /// In en, this message translates to:
+  /// **'User Profile'**
+  String get userProfile_title;
+
+  /// Load error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load user profile'**
+  String get userProfile_loadError;
+
+  /// Try again button
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get userProfile_tryAgain;
+
+  /// Work experience section
+  ///
+  /// In en, this message translates to:
+  /// **'Work Experience'**
+  String get userProfile_workExperience;
+
+  /// Education section
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get userProfile_education;
+
+  /// No work experience message
+  ///
+  /// In en, this message translates to:
+  /// **'No work experience added yet'**
+  String get userProfile_noWorkExperience;
+
+  /// No education message
+  ///
+  /// In en, this message translates to:
+  /// **'No education added yet'**
+  String get userProfile_noEducation;
+
+  /// Skills section title
+  ///
+  /// In en, this message translates to:
+  /// **'Skills'**
+  String get userProfile_skills;
+
+  /// Interests section title
+  ///
+  /// In en, this message translates to:
+  /// **'Interests'**
+  String get userProfile_interests;
+
+  /// Username label
+  ///
+  /// In en, this message translates to:
+  /// **'Username: {username}'**
+  String profilePage_username(String username);
+
+  /// Email label
+  ///
+  /// In en, this message translates to:
+  /// **'Email: {email}'**
+  String profilePage_email(String email);
+
+  /// Skills section title
+  ///
+  /// In en, this message translates to:
+  /// **'Skills'**
+  String get profilePage_skills;
+
+  /// No skills message
+  ///
+  /// In en, this message translates to:
+  /// **'No skills added yet.'**
+  String get profilePage_noSkills;
+
+  /// Add skill dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Add Skill'**
+  String get profilePage_addSkill;
+
+  /// Add skill dialog hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a skill'**
+  String get profilePage_enterSkill;
+
+  /// Interests section title
+  ///
+  /// In en, this message translates to:
+  /// **'Interests'**
+  String get profilePage_interests;
+
+  /// No interests message
+  ///
+  /// In en, this message translates to:
+  /// **'No interests added yet.'**
+  String get profilePage_noInterests;
+
+  /// Add interest dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Add Interest'**
+  String get profilePage_addInterest;
+
+  /// Add interest dialog hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an interest'**
+  String get profilePage_enterInterest;
+
+  /// Font size section title
+  ///
+  /// In en, this message translates to:
+  /// **'Font Size'**
+  String get profilePage_fontSize;
+
+  /// Small font size option
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get profilePage_small;
+
+  /// Medium font size option
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get profilePage_medium;
+
+  /// Large font size option
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get profilePage_large;
+
+  /// Language section title
+  ///
+  /// In en, this message translates to:
+  /// **'Language / Dil / اللغة'**
+  String get profilePage_language;
+
+  /// Education section title
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get profileWidgets_education;
+
+  /// Add button
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get profileWidgets_add;
+
+  /// No education message
+  ///
+  /// In en, this message translates to:
+  /// **'No education history added yet.'**
+  String get profileWidgets_noEducation;
+
+  /// Delete education dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Education'**
+  String get profileWidgets_deleteEducation;
+
+  /// Delete education confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your education at {school}?'**
+  String profileWidgets_confirmDeleteEducation(String school);
+
+  /// Cancel button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get profileWidgets_cancel;
+
+  /// Delete button
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get profileWidgets_delete;
+
+  /// Work experience section title
+  ///
+  /// In en, this message translates to:
+  /// **'Work Experience'**
+  String get profileWidgets_workExperience;
+
+  /// No work experience message
+  ///
+  /// In en, this message translates to:
+  /// **'No work experience added yet.'**
+  String get profileWidgets_noWorkExperience;
+
+  /// Delete experience dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Experience'**
+  String get profileWidgets_deleteExperience;
+
+  /// Delete experience confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your experience at {company}?'**
+  String profileWidgets_confirmDeleteExperience(String company);
+
+  /// Add education dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Add Education'**
+  String get educationDialog_addTitle;
+
+  /// Edit education dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Education'**
+  String get educationDialog_editTitle;
+
+  /// School field label
+  ///
+  /// In en, this message translates to:
+  /// **'School/University'**
+  String get educationDialog_school;
+
+  /// School validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a school name'**
+  String get educationDialog_schoolRequired;
+
+  /// Degree field label
+  ///
+  /// In en, this message translates to:
+  /// **'Degree'**
+  String get educationDialog_degree;
+
+  /// Degree validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a degree'**
+  String get educationDialog_degreeRequired;
+
+  /// Field of study label
+  ///
+  /// In en, this message translates to:
+  /// **'Field of Study'**
+  String get educationDialog_field;
+
+  /// Field validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a field of study'**
+  String get educationDialog_fieldRequired;
+
+  /// Start date field label
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date (MM/YYYY)'**
+  String get educationDialog_startDate;
+
+  /// Start date validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a start date'**
+  String get educationDialog_startDateRequired;
+
+  /// Currently studying checkbox
+  ///
+  /// In en, this message translates to:
+  /// **'I am currently studying here'**
+  String get educationDialog_currentlyStudying;
+
+  /// End date field label
+  ///
+  /// In en, this message translates to:
+  /// **'End Date (MM/YYYY)'**
+  String get educationDialog_endDate;
+
+  /// End date validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter an end date'**
+  String get educationDialog_endDateRequired;
+
+  /// Save button
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get educationDialog_save;
+
+  /// Add work experience dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Add Work Experience'**
+  String get workExperienceDialog_addTitle;
+
+  /// Edit work experience dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Work Experience'**
+  String get workExperienceDialog_editTitle;
+
+  /// Company field label
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get workExperienceDialog_company;
+
+  /// Company validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a company name'**
+  String get workExperienceDialog_companyRequired;
+
+  /// Position field label
+  ///
+  /// In en, this message translates to:
+  /// **'Position'**
+  String get workExperienceDialog_position;
+
+  /// Position validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a position'**
+  String get workExperienceDialog_positionRequired;
+
+  /// Start date field label
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date (MM/YYYY)'**
+  String get workExperienceDialog_startDate;
+
+  /// Start date validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a start date'**
+  String get workExperienceDialog_startDateRequired;
+
+  /// Currently working checkbox
+  ///
+  /// In en, this message translates to:
+  /// **'I currently work here'**
+  String get workExperienceDialog_currentlyWorking;
+
+  /// End date field label
+  ///
+  /// In en, this message translates to:
+  /// **'End Date (MM/YYYY)'**
+  String get workExperienceDialog_endDate;
+
+  /// End date validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter an end date'**
+  String get workExperienceDialog_endDateRequired;
+
+  /// Description field label
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get workExperienceDialog_description;
+
+  /// Description validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a description'**
+  String get workExperienceDialog_descriptionRequired;
+
+  /// Save button
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get workExperienceDialog_save;
 
   /// Not specified message
   ///

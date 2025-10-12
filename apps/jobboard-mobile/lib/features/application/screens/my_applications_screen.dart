@@ -6,6 +6,7 @@ import '../../../core/models/job_application.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/utils/string_extensions.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class MyApplicationsScreen extends StatefulWidget {
   const MyApplicationsScreen({super.key});
@@ -38,7 +39,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
         Provider.of<AuthProvider>(context, listen: false).currentUser?.id;
     if (userId == null) {
       setState(() {
-        _errorMessage = "Error: User not found. Cannot load applications.";
+        _errorMessage = AppLocalizations.of(context)!.myApplications_userError;
       });
       return;
     }
@@ -60,7 +61,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       print("Error loading applications: $e");
       if (mounted) {
         setState(() {
-          _errorMessage = "Failed to load applications. Please try again.";
+          _errorMessage = AppLocalizations.of(context)!.myApplications_loadError;
         });
       }
     } finally {
@@ -75,7 +76,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Job Applications')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.myApplications_title)),
       body: _buildContent(),
     );
   }
@@ -100,7 +101,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: _loadApplications,
-                child: const Text('Retry'),
+                child: Text(AppLocalizations.of(context)!.common_retry),
               ),
             ],
           ),
@@ -109,7 +110,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     }
 
     if (_applications.isEmpty) {
-      return const Center(child: Text('You have not applied to any jobs yet.'));
+      return Center(child: Text(AppLocalizations.of(context)!.myApplications_noApplications));
     }
 
     return RefreshIndicator(
@@ -142,13 +143,13 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('${application.companyName}'),
-            Text('Applied: ${dateFormat.format(application.dateApplied)}'),
+            Text(AppLocalizations.of(context)!.myApplications_applied(dateFormat.format(application.dateApplied))),
             if (application.employerFeedback != null &&
                 application.employerFeedback!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
-                  'Feedback: ${application.employerFeedback}',
+                  AppLocalizations.of(context)!.myApplications_feedback(application.employerFeedback!),
                   style: TextStyle(
                     fontStyle: FontStyle.italic,
                     color: Theme.of(context).primaryColor,
@@ -176,12 +177,12 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
               context: context,
               builder:
                   (context) => AlertDialog(
-                    title: Text('Feedback for ${application.jobTitle}'),
+                    title: Text(AppLocalizations.of(context)!.myApplications_feedbackTitle(application.jobTitle)),
                     content: Text(application.employerFeedback!),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Close'),
+                        child: Text(AppLocalizations.of(context)!.myApplications_close),
                       ),
                     ],
                   ),

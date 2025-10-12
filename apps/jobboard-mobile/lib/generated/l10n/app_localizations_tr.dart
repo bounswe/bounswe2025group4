@@ -1119,6 +1119,295 @@ class AppLocalizationsTr extends AppLocalizations {
   String get jobFilter_applyFilters => 'Filtreleri Uygula';
 
   @override
+  String get myApplications_title => 'İş Başvurularım';
+
+  @override
+  String get myApplications_userError =>
+      'Hata: Kullanıcı bulunamadı. Başvurular yüklenemiyor.';
+
+  @override
+  String get myApplications_loadError =>
+      'Başvurular yüklenemedi. Lütfen tekrar deneyin.';
+
+  @override
+  String get myApplications_noApplications => 'Henüz hiçbir işe başvurmadınız.';
+
+  @override
+  String myApplications_applied(String date) {
+    return 'Başvuru: $date';
+  }
+
+  @override
+  String myApplications_feedback(String feedback) {
+    return 'Geri Bildirim: $feedback';
+  }
+
+  @override
+  String myApplications_feedbackTitle(String jobTitle) {
+    return '$jobTitle için Geri Bildirim';
+  }
+
+  @override
+  String get myApplications_close => 'Kapat';
+
+  @override
+  String get workplaces_title => 'İş Yerleri';
+
+  @override
+  String workplaces_reviews(int count) {
+    return '$count yorum';
+  }
+
+  @override
+  String get editProfile_title => 'Profili Düzenle';
+
+  @override
+  String get editProfile_saveChanges => 'Değişiklikleri kaydet';
+
+  @override
+  String get editProfile_personalInfo => 'Kişisel Bilgiler';
+
+  @override
+  String get editProfile_fullName => 'Ad Soyad';
+
+  @override
+  String get editProfile_bio => 'Biyografi';
+
+  @override
+  String get editProfile_location => 'Konum';
+
+  @override
+  String get editProfile_phone => 'Telefon';
+
+  @override
+  String get editProfile_occupation => 'Meslek';
+
+  @override
+  String get editProfile_accountInfo => 'Hesap Bilgileri';
+
+  @override
+  String get editProfile_username => 'Kullanıcı Adı';
+
+  @override
+  String get editProfile_email => 'E-posta';
+
+  @override
+  String get editProfile_workExperience => 'İş Deneyimi';
+
+  @override
+  String get editProfile_education => 'Eğitim';
+
+  @override
+  String get editProfile_addWorkExperience => 'İş Deneyimi Ekle';
+
+  @override
+  String get editProfile_addEducation => 'Eğitim Ekle';
+
+  @override
+  String get userProfile_title => 'Kullanıcı Profili';
+
+  @override
+  String get userProfile_loadError => 'Kullanıcı profili yüklenemedi';
+
+  @override
+  String get userProfile_tryAgain => 'Tekrar Dene';
+
+  @override
+  String get userProfile_workExperience => 'İş Deneyimi';
+
+  @override
+  String get userProfile_education => 'Eğitim';
+
+  @override
+  String get userProfile_noWorkExperience => 'Henüz iş deneyimi eklenmemiş';
+
+  @override
+  String get userProfile_noEducation => 'Henüz eğitim eklenmemiş';
+
+  @override
+  String get userProfile_skills => 'Yetenekler';
+
+  @override
+  String get userProfile_interests => 'İlgi Alanları';
+
+  @override
+  String profilePage_username(String username) {
+    return 'Kullanıcı Adı: $username';
+  }
+
+  @override
+  String profilePage_email(String email) {
+    return 'E-posta: $email';
+  }
+
+  @override
+  String get profilePage_skills => 'Yetenekler';
+
+  @override
+  String get profilePage_noSkills => 'Henüz yetenek eklenmemiş.';
+
+  @override
+  String get profilePage_addSkill => 'Yetenek Ekle';
+
+  @override
+  String get profilePage_enterSkill => 'Bir yetenek girin';
+
+  @override
+  String get profilePage_interests => 'İlgi Alanları';
+
+  @override
+  String get profilePage_noInterests => 'Henüz ilgi alanı eklenmemiş.';
+
+  @override
+  String get profilePage_addInterest => 'İlgi Alanı Ekle';
+
+  @override
+  String get profilePage_enterInterest => 'Bir ilgi alanı girin';
+
+  @override
+  String get profilePage_fontSize => 'Yazı Boyutu';
+
+  @override
+  String get profilePage_small => 'Küçük';
+
+  @override
+  String get profilePage_medium => 'Orta';
+
+  @override
+  String get profilePage_large => 'Büyük';
+
+  @override
+  String get profilePage_language => 'Language / Dil / اللغة';
+
+  @override
+  String get profileWidgets_education => 'Eğitim';
+
+  @override
+  String get profileWidgets_add => 'Ekle';
+
+  @override
+  String get profileWidgets_noEducation => 'Henüz eğitim geçmişi eklenmemiş.';
+
+  @override
+  String get profileWidgets_deleteEducation => 'Eğitimi Sil';
+
+  @override
+  String profileWidgets_confirmDeleteEducation(String school) {
+    return '$school okulundaki eğitiminizi silmek istediğinizden emin misiniz?';
+  }
+
+  @override
+  String get profileWidgets_cancel => 'İptal';
+
+  @override
+  String get profileWidgets_delete => 'Sil';
+
+  @override
+  String get profileWidgets_workExperience => 'İş Deneyimi';
+
+  @override
+  String get profileWidgets_noWorkExperience => 'Henüz iş deneyimi eklenmemiş.';
+
+  @override
+  String get profileWidgets_deleteExperience => 'Deneyimi Sil';
+
+  @override
+  String profileWidgets_confirmDeleteExperience(String company) {
+    return '$company şirketindeki deneyiminizi silmek istediğinizden emin misiniz?';
+  }
+
+  @override
+  String get educationDialog_addTitle => 'Eğitim Ekle';
+
+  @override
+  String get educationDialog_editTitle => 'Eğitimi Düzenle';
+
+  @override
+  String get educationDialog_school => 'Okul/Üniversite';
+
+  @override
+  String get educationDialog_schoolRequired => 'Lütfen bir okul adı girin';
+
+  @override
+  String get educationDialog_degree => 'Derece';
+
+  @override
+  String get educationDialog_degreeRequired => 'Lütfen bir derece girin';
+
+  @override
+  String get educationDialog_field => 'Çalışma Alanı';
+
+  @override
+  String get educationDialog_fieldRequired => 'Lütfen bir çalışma alanı girin';
+
+  @override
+  String get educationDialog_startDate => 'Başlangıç Tarihi (AA/YYYY)';
+
+  @override
+  String get educationDialog_startDateRequired =>
+      'Lütfen bir başlangıç tarihi girin';
+
+  @override
+  String get educationDialog_currentlyStudying => 'Şu anda burada okuyorum';
+
+  @override
+  String get educationDialog_endDate => 'Bitiş Tarihi (AA/YYYY)';
+
+  @override
+  String get educationDialog_endDateRequired => 'Lütfen bir bitiş tarihi girin';
+
+  @override
+  String get educationDialog_save => 'Kaydet';
+
+  @override
+  String get workExperienceDialog_addTitle => 'İş Deneyimi Ekle';
+
+  @override
+  String get workExperienceDialog_editTitle => 'İş Deneyimini Düzenle';
+
+  @override
+  String get workExperienceDialog_company => 'Şirket';
+
+  @override
+  String get workExperienceDialog_companyRequired =>
+      'Lütfen bir şirket adı girin';
+
+  @override
+  String get workExperienceDialog_position => 'Pozisyon';
+
+  @override
+  String get workExperienceDialog_positionRequired =>
+      'Lütfen bir pozisyon girin';
+
+  @override
+  String get workExperienceDialog_startDate => 'Başlangıç Tarihi (AA/YYYY)';
+
+  @override
+  String get workExperienceDialog_startDateRequired =>
+      'Lütfen bir başlangıç tarihi girin';
+
+  @override
+  String get workExperienceDialog_currentlyWorking =>
+      'Şu anda burada çalışıyorum';
+
+  @override
+  String get workExperienceDialog_endDate => 'Bitiş Tarihi (AA/YYYY)';
+
+  @override
+  String get workExperienceDialog_endDateRequired =>
+      'Lütfen bir bitiş tarihi girin';
+
+  @override
+  String get workExperienceDialog_description => 'Açıklama';
+
+  @override
+  String get workExperienceDialog_descriptionRequired =>
+      'Lütfen bir açıklama girin';
+
+  @override
+  String get workExperienceDialog_save => 'Kaydet';
+
+  @override
   String get common_notSpecified => 'Belirtilmemiş';
 
   @override

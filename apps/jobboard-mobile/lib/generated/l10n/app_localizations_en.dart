@@ -1111,6 +1111,293 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobFilter_applyFilters => 'Apply Filters';
 
   @override
+  String get myApplications_title => 'My Job Applications';
+
+  @override
+  String get myApplications_userError =>
+      'Error: User not found. Cannot load applications.';
+
+  @override
+  String get myApplications_loadError =>
+      'Failed to load applications. Please try again.';
+
+  @override
+  String get myApplications_noApplications =>
+      'You have not applied to any jobs yet.';
+
+  @override
+  String myApplications_applied(String date) {
+    return 'Applied: $date';
+  }
+
+  @override
+  String myApplications_feedback(String feedback) {
+    return 'Feedback: $feedback';
+  }
+
+  @override
+  String myApplications_feedbackTitle(String jobTitle) {
+    return 'Feedback for $jobTitle';
+  }
+
+  @override
+  String get myApplications_close => 'Close';
+
+  @override
+  String get workplaces_title => 'Workplaces';
+
+  @override
+  String workplaces_reviews(int count) {
+    return '$count reviews';
+  }
+
+  @override
+  String get editProfile_title => 'Edit Profile';
+
+  @override
+  String get editProfile_saveChanges => 'Save changes';
+
+  @override
+  String get editProfile_personalInfo => 'Personal Information';
+
+  @override
+  String get editProfile_fullName => 'Full Name';
+
+  @override
+  String get editProfile_bio => 'Bio';
+
+  @override
+  String get editProfile_location => 'Location';
+
+  @override
+  String get editProfile_phone => 'Phone';
+
+  @override
+  String get editProfile_occupation => 'Occupation';
+
+  @override
+  String get editProfile_accountInfo => 'Account Information';
+
+  @override
+  String get editProfile_username => 'Username';
+
+  @override
+  String get editProfile_email => 'Email';
+
+  @override
+  String get editProfile_workExperience => 'Work Experience';
+
+  @override
+  String get editProfile_education => 'Education';
+
+  @override
+  String get editProfile_addWorkExperience => 'Add Work Experience';
+
+  @override
+  String get editProfile_addEducation => 'Add Education';
+
+  @override
+  String get userProfile_title => 'User Profile';
+
+  @override
+  String get userProfile_loadError => 'Failed to load user profile';
+
+  @override
+  String get userProfile_tryAgain => 'Try Again';
+
+  @override
+  String get userProfile_workExperience => 'Work Experience';
+
+  @override
+  String get userProfile_education => 'Education';
+
+  @override
+  String get userProfile_noWorkExperience => 'No work experience added yet';
+
+  @override
+  String get userProfile_noEducation => 'No education added yet';
+
+  @override
+  String get userProfile_skills => 'Skills';
+
+  @override
+  String get userProfile_interests => 'Interests';
+
+  @override
+  String profilePage_username(String username) {
+    return 'Username: $username';
+  }
+
+  @override
+  String profilePage_email(String email) {
+    return 'Email: $email';
+  }
+
+  @override
+  String get profilePage_skills => 'Skills';
+
+  @override
+  String get profilePage_noSkills => 'No skills added yet.';
+
+  @override
+  String get profilePage_addSkill => 'Add Skill';
+
+  @override
+  String get profilePage_enterSkill => 'Enter a skill';
+
+  @override
+  String get profilePage_interests => 'Interests';
+
+  @override
+  String get profilePage_noInterests => 'No interests added yet.';
+
+  @override
+  String get profilePage_addInterest => 'Add Interest';
+
+  @override
+  String get profilePage_enterInterest => 'Enter an interest';
+
+  @override
+  String get profilePage_fontSize => 'Font Size';
+
+  @override
+  String get profilePage_small => 'Small';
+
+  @override
+  String get profilePage_medium => 'Medium';
+
+  @override
+  String get profilePage_large => 'Large';
+
+  @override
+  String get profilePage_language => 'Language / Dil / اللغة';
+
+  @override
+  String get profileWidgets_education => 'Education';
+
+  @override
+  String get profileWidgets_add => 'Add';
+
+  @override
+  String get profileWidgets_noEducation => 'No education history added yet.';
+
+  @override
+  String get profileWidgets_deleteEducation => 'Delete Education';
+
+  @override
+  String profileWidgets_confirmDeleteEducation(String school) {
+    return 'Are you sure you want to delete your education at $school?';
+  }
+
+  @override
+  String get profileWidgets_cancel => 'Cancel';
+
+  @override
+  String get profileWidgets_delete => 'Delete';
+
+  @override
+  String get profileWidgets_workExperience => 'Work Experience';
+
+  @override
+  String get profileWidgets_noWorkExperience => 'No work experience added yet.';
+
+  @override
+  String get profileWidgets_deleteExperience => 'Delete Experience';
+
+  @override
+  String profileWidgets_confirmDeleteExperience(String company) {
+    return 'Are you sure you want to delete your experience at $company?';
+  }
+
+  @override
+  String get educationDialog_addTitle => 'Add Education';
+
+  @override
+  String get educationDialog_editTitle => 'Edit Education';
+
+  @override
+  String get educationDialog_school => 'School/University';
+
+  @override
+  String get educationDialog_schoolRequired => 'Please enter a school name';
+
+  @override
+  String get educationDialog_degree => 'Degree';
+
+  @override
+  String get educationDialog_degreeRequired => 'Please enter a degree';
+
+  @override
+  String get educationDialog_field => 'Field of Study';
+
+  @override
+  String get educationDialog_fieldRequired => 'Please enter a field of study';
+
+  @override
+  String get educationDialog_startDate => 'Start Date (MM/YYYY)';
+
+  @override
+  String get educationDialog_startDateRequired => 'Please enter a start date';
+
+  @override
+  String get educationDialog_currentlyStudying =>
+      'I am currently studying here';
+
+  @override
+  String get educationDialog_endDate => 'End Date (MM/YYYY)';
+
+  @override
+  String get educationDialog_endDateRequired => 'Please enter an end date';
+
+  @override
+  String get educationDialog_save => 'Save';
+
+  @override
+  String get workExperienceDialog_addTitle => 'Add Work Experience';
+
+  @override
+  String get workExperienceDialog_editTitle => 'Edit Work Experience';
+
+  @override
+  String get workExperienceDialog_company => 'Company';
+
+  @override
+  String get workExperienceDialog_companyRequired =>
+      'Please enter a company name';
+
+  @override
+  String get workExperienceDialog_position => 'Position';
+
+  @override
+  String get workExperienceDialog_positionRequired => 'Please enter a position';
+
+  @override
+  String get workExperienceDialog_startDate => 'Start Date (MM/YYYY)';
+
+  @override
+  String get workExperienceDialog_startDateRequired =>
+      'Please enter a start date';
+
+  @override
+  String get workExperienceDialog_currentlyWorking => 'I currently work here';
+
+  @override
+  String get workExperienceDialog_endDate => 'End Date (MM/YYYY)';
+
+  @override
+  String get workExperienceDialog_endDateRequired => 'Please enter an end date';
+
+  @override
+  String get workExperienceDialog_description => 'Description';
+
+  @override
+  String get workExperienceDialog_descriptionRequired =>
+      'Please enter a description';
+
+  @override
+  String get workExperienceDialog_save => 'Save';
+
+  @override
   String get common_notSpecified => 'Not specified';
 
   @override

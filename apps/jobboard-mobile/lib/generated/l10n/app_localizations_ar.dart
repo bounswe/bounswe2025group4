@@ -1105,6 +1105,290 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jobFilter_applyFilters => 'تطبيق المرشحات';
 
   @override
+  String get myApplications_title => 'طلبات الوظائف الخاصة بي';
+
+  @override
+  String get myApplications_userError =>
+      'خطأ: لم يتم العثور على المستخدم. لا يمكن تحميل الطلبات.';
+
+  @override
+  String get myApplications_loadError =>
+      'فشل تحميل الطلبات. الرجاء المحاولة مرة أخرى.';
+
+  @override
+  String get myApplications_noApplications => 'لم تتقدم لأي وظيفة بعد.';
+
+  @override
+  String myApplications_applied(String date) {
+    return 'تم التقديم: $date';
+  }
+
+  @override
+  String myApplications_feedback(String feedback) {
+    return 'التعليقات: $feedback';
+  }
+
+  @override
+  String myApplications_feedbackTitle(String jobTitle) {
+    return 'تعليقات لـ $jobTitle';
+  }
+
+  @override
+  String get myApplications_close => 'إغلاق';
+
+  @override
+  String get workplaces_title => 'أماكن العمل';
+
+  @override
+  String workplaces_reviews(int count) {
+    return '$count مراجعة';
+  }
+
+  @override
+  String get editProfile_title => 'تعديل الملف الشخصي';
+
+  @override
+  String get editProfile_saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get editProfile_personalInfo => 'المعلومات الشخصية';
+
+  @override
+  String get editProfile_fullName => 'الاسم الكامل';
+
+  @override
+  String get editProfile_bio => 'السيرة الذاتية';
+
+  @override
+  String get editProfile_location => 'الموقع';
+
+  @override
+  String get editProfile_phone => 'الهاتف';
+
+  @override
+  String get editProfile_occupation => 'المهنة';
+
+  @override
+  String get editProfile_accountInfo => 'معلومات الحساب';
+
+  @override
+  String get editProfile_username => 'اسم المستخدم';
+
+  @override
+  String get editProfile_email => 'البريد الإلكتروني';
+
+  @override
+  String get editProfile_workExperience => 'الخبرة العملية';
+
+  @override
+  String get editProfile_education => 'التعليم';
+
+  @override
+  String get editProfile_addWorkExperience => 'إضافة خبرة عمل';
+
+  @override
+  String get editProfile_addEducation => 'إضافة تعليم';
+
+  @override
+  String get userProfile_title => 'الملف الشخصي للمستخدم';
+
+  @override
+  String get userProfile_loadError => 'فشل تحميل الملف الشخصي للمستخدم';
+
+  @override
+  String get userProfile_tryAgain => 'حاول مرة أخرى';
+
+  @override
+  String get userProfile_workExperience => 'الخبرة العملية';
+
+  @override
+  String get userProfile_education => 'التعليم';
+
+  @override
+  String get userProfile_noWorkExperience => 'لم يتم إضافة خبرة عمل بعد';
+
+  @override
+  String get userProfile_noEducation => 'لم يتم إضافة تعليم بعد';
+
+  @override
+  String get userProfile_skills => 'المهارات';
+
+  @override
+  String get userProfile_interests => 'الاهتمامات';
+
+  @override
+  String profilePage_username(String username) {
+    return 'اسم المستخدم: $username';
+  }
+
+  @override
+  String profilePage_email(String email) {
+    return 'البريد الإلكتروني: $email';
+  }
+
+  @override
+  String get profilePage_skills => 'المهارات';
+
+  @override
+  String get profilePage_noSkills => 'لم يتم إضافة مهارات بعد.';
+
+  @override
+  String get profilePage_addSkill => 'إضافة مهارة';
+
+  @override
+  String get profilePage_enterSkill => 'أدخل مهارة';
+
+  @override
+  String get profilePage_interests => 'الاهتمامات';
+
+  @override
+  String get profilePage_noInterests => 'لم يتم إضافة اهتمامات بعد.';
+
+  @override
+  String get profilePage_addInterest => 'إضافة اهتمام';
+
+  @override
+  String get profilePage_enterInterest => 'أدخل اهتمام';
+
+  @override
+  String get profilePage_fontSize => 'حجم الخط';
+
+  @override
+  String get profilePage_small => 'صغير';
+
+  @override
+  String get profilePage_medium => 'متوسط';
+
+  @override
+  String get profilePage_large => 'كبير';
+
+  @override
+  String get profilePage_language => 'Language / Dil / اللغة';
+
+  @override
+  String get profileWidgets_education => 'التعليم';
+
+  @override
+  String get profileWidgets_add => 'إضافة';
+
+  @override
+  String get profileWidgets_noEducation => 'لم يتم إضافة تاريخ تعليمي بعد.';
+
+  @override
+  String get profileWidgets_deleteEducation => 'حذف التعليم';
+
+  @override
+  String profileWidgets_confirmDeleteEducation(String school) {
+    return 'هل أنت متأكد من أنك تريد حذف تعليمك في $school؟';
+  }
+
+  @override
+  String get profileWidgets_cancel => 'إلغاء';
+
+  @override
+  String get profileWidgets_delete => 'حذف';
+
+  @override
+  String get profileWidgets_workExperience => 'الخبرة العملية';
+
+  @override
+  String get profileWidgets_noWorkExperience => 'لم يتم إضافة خبرة عمل بعد.';
+
+  @override
+  String get profileWidgets_deleteExperience => 'حذف الخبرة';
+
+  @override
+  String profileWidgets_confirmDeleteExperience(String company) {
+    return 'هل أنت متأكد من أنك تريد حذف خبرتك في $company؟';
+  }
+
+  @override
+  String get educationDialog_addTitle => 'إضافة تعليم';
+
+  @override
+  String get educationDialog_editTitle => 'تعديل التعليم';
+
+  @override
+  String get educationDialog_school => 'المدرسة/الجامعة';
+
+  @override
+  String get educationDialog_schoolRequired => 'الرجاء إدخال اسم المدرسة';
+
+  @override
+  String get educationDialog_degree => 'الدرجة';
+
+  @override
+  String get educationDialog_degreeRequired => 'الرجاء إدخال درجة';
+
+  @override
+  String get educationDialog_field => 'مجال الدراسة';
+
+  @override
+  String get educationDialog_fieldRequired => 'الرجاء إدخال مجال الدراسة';
+
+  @override
+  String get educationDialog_startDate => 'تاريخ البداية (شهر/سنة)';
+
+  @override
+  String get educationDialog_startDateRequired => 'الرجاء إدخال تاريخ البداية';
+
+  @override
+  String get educationDialog_currentlyStudying => 'أدرس حالياً هنا';
+
+  @override
+  String get educationDialog_endDate => 'تاريخ النهاية (شهر/سنة)';
+
+  @override
+  String get educationDialog_endDateRequired => 'الرجاء إدخال تاريخ النهاية';
+
+  @override
+  String get educationDialog_save => 'حفظ';
+
+  @override
+  String get workExperienceDialog_addTitle => 'إضافة خبرة عمل';
+
+  @override
+  String get workExperienceDialog_editTitle => 'تعديل الخبرة العملية';
+
+  @override
+  String get workExperienceDialog_company => 'الشركة';
+
+  @override
+  String get workExperienceDialog_companyRequired => 'الرجاء إدخال اسم الشركة';
+
+  @override
+  String get workExperienceDialog_position => 'المنصب';
+
+  @override
+  String get workExperienceDialog_positionRequired => 'الرجاء إدخال المنصب';
+
+  @override
+  String get workExperienceDialog_startDate => 'تاريخ البداية (شهر/سنة)';
+
+  @override
+  String get workExperienceDialog_startDateRequired =>
+      'الرجاء إدخال تاريخ البداية';
+
+  @override
+  String get workExperienceDialog_currentlyWorking => 'أعمل حالياً هنا';
+
+  @override
+  String get workExperienceDialog_endDate => 'تاريخ النهاية (شهر/سنة)';
+
+  @override
+  String get workExperienceDialog_endDateRequired =>
+      'الرجاء إدخال تاريخ النهاية';
+
+  @override
+  String get workExperienceDialog_description => 'الوصف';
+
+  @override
+  String get workExperienceDialog_descriptionRequired => 'الرجاء إدخال وصف';
+
+  @override
+  String get workExperienceDialog_save => 'حفظ';
+
+  @override
   String get common_notSpecified => 'غير محدد';
 
   @override

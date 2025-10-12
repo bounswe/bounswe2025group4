@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class Company {
   final String name;
@@ -61,7 +62,7 @@ class WorkplacesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Workplaces'),
+        title: Text(AppLocalizations.of(context)!.workplaces_title),
         automaticallyImplyLeading: false,
       ),
       body: ListView.builder(
@@ -85,7 +86,7 @@ class WorkplacesPage extends StatelessWidget {
                         company.averageRating.toStringAsFixed(1),
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      Text(' (${company.reviewCount} reviews)', style: const TextStyle(fontSize: 12)),
+                      Text(' (${AppLocalizations.of(context)!.workplaces_reviews(company.reviewCount)})', style: const TextStyle(fontSize: 12)),
                     ],
                   ),
                 ],

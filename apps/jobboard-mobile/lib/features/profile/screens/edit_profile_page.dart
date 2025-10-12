@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/profile_provider.dart';
 import '../widgets/profile_picture.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -79,11 +80,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title: Text(AppLocalizations.of(context)!.editProfile_title),
         actions: [
           IconButton(
             icon: const Icon(Icons.save),
-            tooltip: 'Save changes',
+            tooltip: AppLocalizations.of(context)!.editProfile_saveChanges,
             onPressed: _saveProfile,
           )
         ],
@@ -115,18 +116,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       children: [
                         TextFormField(
                           controller: _usernameController,
-                          decoration: const InputDecoration(labelText: 'Username'),
+                          decoration: InputDecoration(labelText: AppLocalizations.of(context)!.editProfile_username),
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _emailController,
-                          decoration: const InputDecoration(labelText: 'Email'),
+                          decoration: InputDecoration(labelText: AppLocalizations.of(context)!.editProfile_email),
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _nameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Full Name',
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.editProfile_fullName,
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -137,8 +138,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         ),
                         TextFormField(
                           controller: _occupationController,
-                          decoration: const InputDecoration(
-                            labelText: 'Occupation',
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.editProfile_occupation,
                           ),
                         ),
                       ],
@@ -149,24 +150,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _locationController,
-                decoration: const InputDecoration(
-                  labelText: 'Location',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.editProfile_location,
                   prefixIcon: Icon(Icons.location_on),
                 ),
               ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _phoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Phone',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.editProfile_phone,
                   prefixIcon: Icon(Icons.phone),
                 ),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _bioController,
-                decoration: const InputDecoration(
-                  labelText: 'Bio',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.editProfile_bio,
                   alignLabelWithHint: true,
                 ),
                 maxLines: 3,

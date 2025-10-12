@@ -1365,6 +1365,421 @@
     "description": "Apply filters button"
   },
 
+  "@@_APPLICATION": {},
+  "myApplications_title": "My Job Applications",
+  "@myApplications_title": {
+    "description": "My applications screen title"
+  },
+  "myApplications_userError": "Error: User not found. Cannot load applications.",
+  "@myApplications_userError": {
+    "description": "User error message"
+  },
+  "myApplications_loadError": "Failed to load applications. Please try again.",
+  "@myApplications_loadError": {
+    "description": "Load error message"
+  },
+  "myApplications_noApplications": "You have not applied to any jobs yet.",
+  "@myApplications_noApplications": {
+    "description": "No applications message"
+  },
+  "myApplications_applied": "Applied: {date}",
+  "@myApplications_applied": {
+    "description": "Applied date label",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "myApplications_feedback": "Feedback: {feedback}",
+  "@myApplications_feedback": {
+    "description": "Feedback label",
+    "placeholders": {
+      "feedback": {
+        "type": "String"
+      }
+    }
+  },
+  "myApplications_feedbackTitle": "Feedback for {jobTitle}",
+  "@myApplications_feedbackTitle": {
+    "description": "Feedback dialog title",
+    "placeholders": {
+      "jobTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "myApplications_close": "Close",
+  "@myApplications_close": {
+    "description": "Close button"
+  },
+
+  "@@_WORKPLACES": {},
+  "workplaces_title": "Workplaces",
+  "@workplaces_title": {
+    "description": "Workplaces screen title"
+  },
+  "workplaces_reviews": "{count} reviews",
+  "@workplaces_reviews": {
+    "description": "Reviews count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "@@_PROFILE": {},
+  "editProfile_title": "Edit Profile",
+  "@editProfile_title": {
+    "description": "Edit profile screen title"
+  },
+  "editProfile_saveChanges": "Save changes",
+  "@editProfile_saveChanges": {
+    "description": "Save changes tooltip"
+  },
+  "editProfile_personalInfo": "Personal Information",
+  "@editProfile_personalInfo": {
+    "description": "Personal information section"
+  },
+  "editProfile_fullName": "Full Name",
+  "@editProfile_fullName": {
+    "description": "Full name field label"
+  },
+  "editProfile_bio": "Bio",
+  "@editProfile_bio": {
+    "description": "Bio field label"
+  },
+  "editProfile_location": "Location",
+  "@editProfile_location": {
+    "description": "Location field label"
+  },
+  "editProfile_phone": "Phone",
+  "@editProfile_phone": {
+    "description": "Phone field label"
+  },
+  "editProfile_occupation": "Occupation",
+  "@editProfile_occupation": {
+    "description": "Occupation field label"
+  },
+  "editProfile_accountInfo": "Account Information",
+  "@editProfile_accountInfo": {
+    "description": "Account information section"
+  },
+  "editProfile_username": "Username",
+  "@editProfile_username": {
+    "description": "Username field label"
+  },
+  "editProfile_email": "Email",
+  "@editProfile_email": {
+    "description": "Email field label"
+  },
+  "editProfile_workExperience": "Work Experience",
+  "@editProfile_workExperience": {
+    "description": "Work experience section"
+  },
+  "editProfile_education": "Education",
+  "@editProfile_education": {
+    "description": "Education section"
+  },
+  "editProfile_addWorkExperience": "Add Work Experience",
+  "@editProfile_addWorkExperience": {
+    "description": "Add work experience button"
+  },
+  "editProfile_addEducation": "Add Education",
+  "@editProfile_addEducation": {
+    "description": "Add education button"
+  },
+
+  "userProfile_title": "User Profile",
+  "@userProfile_title": {
+    "description": "User profile screen title"
+  },
+  "userProfile_loadError": "Failed to load user profile",
+  "@userProfile_loadError": {
+    "description": "Load error message"
+  },
+  "userProfile_tryAgain": "Try Again",
+  "@userProfile_tryAgain": {
+    "description": "Try again button"
+  },
+  "userProfile_workExperience": "Work Experience",
+  "@userProfile_workExperience": {
+    "description": "Work experience section"
+  },
+  "userProfile_education": "Education",
+  "@userProfile_education": {
+    "description": "Education section"
+  },
+  "userProfile_noWorkExperience": "No work experience added yet",
+  "@userProfile_noWorkExperience": {
+    "description": "No work experience message"
+  },
+  "userProfile_noEducation": "No education added yet",
+  "@userProfile_noEducation": {
+    "description": "No education message"
+  },
+  "userProfile_skills": "Skills",
+  "@userProfile_skills": {
+    "description": "Skills section title"
+  },
+  "userProfile_interests": "Interests",
+  "@userProfile_interests": {
+    "description": "Interests section title"
+  },
+  "profilePage_username": "Username: {username}",
+  "@profilePage_username": {
+    "description": "Username label",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "profilePage_email": "Email: {email}",
+  "@profilePage_email": {
+    "description": "Email label",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "profilePage_skills": "Skills",
+  "@profilePage_skills": {
+    "description": "Skills section title"
+  },
+  "profilePage_noSkills": "No skills added yet.",
+  "@profilePage_noSkills": {
+    "description": "No skills message"
+  },
+  "profilePage_addSkill": "Add Skill",
+  "@profilePage_addSkill": {
+    "description": "Add skill dialog title"
+  },
+  "profilePage_enterSkill": "Enter a skill",
+  "@profilePage_enterSkill": {
+    "description": "Add skill dialog hint"
+  },
+  "profilePage_interests": "Interests",
+  "@profilePage_interests": {
+    "description": "Interests section title"
+  },
+  "profilePage_noInterests": "No interests added yet.",
+  "@profilePage_noInterests": {
+    "description": "No interests message"
+  },
+  "profilePage_addInterest": "Add Interest",
+  "@profilePage_addInterest": {
+    "description": "Add interest dialog title"
+  },
+  "profilePage_enterInterest": "Enter an interest",
+  "@profilePage_enterInterest": {
+    "description": "Add interest dialog hint"
+  },
+  "profilePage_fontSize": "Font Size",
+  "@profilePage_fontSize": {
+    "description": "Font size section title"
+  },
+  "profilePage_small": "Small",
+  "@profilePage_small": {
+    "description": "Small font size option"
+  },
+  "profilePage_medium": "Medium",
+  "@profilePage_medium": {
+    "description": "Medium font size option"
+  },
+  "profilePage_large": "Large",
+  "@profilePage_large": {
+    "description": "Large font size option"
+  },
+  "profilePage_fontSizeChanged": "Font size changed to {size}",
+  "@profilePage_fontSizeChanged": {
+    "description": "Font size change notification",
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "profilePage_language": "Language / Dil / اللغة",
+  "@profilePage_language": {
+    "description": "Language section title"
+  },
+
+  "@@_PROFILE_WIDGETS": {},
+  "profileWidgets_education": "Education",
+  "@profileWidgets_education": {
+    "description": "Education section title"
+  },
+  "profileWidgets_add": "Add",
+  "@profileWidgets_add": {
+    "description": "Add button"
+  },
+  "profileWidgets_noEducation": "No education history added yet.",
+  "@profileWidgets_noEducation": {
+    "description": "No education message"
+  },
+  "profileWidgets_deleteEducation": "Delete Education",
+  "@profileWidgets_deleteEducation": {
+    "description": "Delete education dialog title"
+  },
+  "profileWidgets_confirmDeleteEducation": "Are you sure you want to delete your education at {school}?",
+  "@profileWidgets_confirmDeleteEducation": {
+    "description": "Delete education confirmation",
+    "placeholders": {
+      "school": {
+        "type": "String"
+      }
+    }
+  },
+  "profileWidgets_cancel": "Cancel",
+  "@profileWidgets_cancel": {
+    "description": "Cancel button"
+  },
+  "profileWidgets_delete": "Delete",
+  "@profileWidgets_delete": {
+    "description": "Delete button"
+  },
+
+  "profileWidgets_workExperience": "Work Experience",
+  "@profileWidgets_workExperience": {
+    "description": "Work experience section title"
+  },
+  "profileWidgets_noWorkExperience": "No work experience added yet.",
+  "@profileWidgets_noWorkExperience": {
+    "description": "No work experience message"
+  },
+  "profileWidgets_deleteExperience": "Delete Experience",
+  "@profileWidgets_deleteExperience": {
+    "description": "Delete experience dialog title"
+  },
+  "profileWidgets_confirmDeleteExperience": "Are you sure you want to delete your experience at {company}?",
+  "@profileWidgets_confirmDeleteExperience": {
+    "description": "Delete experience confirmation",
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+
+  "@@_EDUCATION_DIALOG": {},
+  "educationDialog_addTitle": "Add Education",
+  "@educationDialog_addTitle": {
+    "description": "Add education dialog title"
+  },
+  "educationDialog_editTitle": "Edit Education",
+  "@educationDialog_editTitle": {
+    "description": "Edit education dialog title"
+  },
+  "educationDialog_school": "School/University",
+  "@educationDialog_school": {
+    "description": "School field label"
+  },
+  "educationDialog_schoolRequired": "Please enter a school name",
+  "@educationDialog_schoolRequired": {
+    "description": "School validation message"
+  },
+  "educationDialog_degree": "Degree",
+  "@educationDialog_degree": {
+    "description": "Degree field label"
+  },
+  "educationDialog_degreeRequired": "Please enter a degree",
+  "@educationDialog_degreeRequired": {
+    "description": "Degree validation message"
+  },
+  "educationDialog_field": "Field of Study",
+  "@educationDialog_field": {
+    "description": "Field of study label"
+  },
+  "educationDialog_fieldRequired": "Please enter a field of study",
+  "@educationDialog_fieldRequired": {
+    "description": "Field validation message"
+  },
+  "educationDialog_startDate": "Start Date (MM/YYYY)",
+  "@educationDialog_startDate": {
+    "description": "Start date field label"
+  },
+  "educationDialog_startDateRequired": "Please enter a start date",
+  "@educationDialog_startDateRequired": {
+    "description": "Start date validation message"
+  },
+  "educationDialog_currentlyStudying": "I am currently studying here",
+  "@educationDialog_currentlyStudying": {
+    "description": "Currently studying checkbox"
+  },
+  "educationDialog_endDate": "End Date (MM/YYYY)",
+  "@educationDialog_endDate": {
+    "description": "End date field label"
+  },
+  "educationDialog_endDateRequired": "Please enter an end date",
+  "@educationDialog_endDateRequired": {
+    "description": "End date validation message"
+  },
+  "educationDialog_save": "Save",
+  "@educationDialog_save": {
+    "description": "Save button"
+  },
+
+  "@@_WORK_EXPERIENCE_DIALOG": {},
+  "workExperienceDialog_addTitle": "Add Work Experience",
+  "@workExperienceDialog_addTitle": {
+    "description": "Add work experience dialog title"
+  },
+  "workExperienceDialog_editTitle": "Edit Work Experience",
+  "@workExperienceDialog_editTitle": {
+    "description": "Edit work experience dialog title"
+  },
+  "workExperienceDialog_company": "Company",
+  "@workExperienceDialog_company": {
+    "description": "Company field label"
+  },
+  "workExperienceDialog_companyRequired": "Please enter a company name",
+  "@workExperienceDialog_companyRequired": {
+    "description": "Company validation message"
+  },
+  "workExperienceDialog_position": "Position",
+  "@workExperienceDialog_position": {
+    "description": "Position field label"
+  },
+  "workExperienceDialog_positionRequired": "Please enter a position",
+  "@workExperienceDialog_positionRequired": {
+    "description": "Position validation message"
+  },
+  "workExperienceDialog_startDate": "Start Date (MM/YYYY)",
+  "@workExperienceDialog_startDate": {
+    "description": "Start date field label"
+  },
+  "workExperienceDialog_startDateRequired": "Please enter a start date",
+  "@workExperienceDialog_startDateRequired": {
+    "description": "Start date validation message"
+  },
+  "workExperienceDialog_currentlyWorking": "I currently work here",
+  "@workExperienceDialog_currentlyWorking": {
+    "description": "Currently working checkbox"
+  },
+  "workExperienceDialog_endDate": "End Date (MM/YYYY)",
+  "@workExperienceDialog_endDate": {
+    "description": "End date field label"
+  },
+  "workExperienceDialog_endDateRequired": "Please enter an end date",
+  "@workExperienceDialog_endDateRequired": {
+    "description": "End date validation message"
+  },
+  "workExperienceDialog_description": "Description",
+  "@workExperienceDialog_description": {
+    "description": "Description field label"
+  },
+  "workExperienceDialog_descriptionRequired": "Please enter a description",
+  "@workExperienceDialog_descriptionRequired": {
+    "description": "Description validation message"
+  },
+  "workExperienceDialog_save": "Save",
+  "@workExperienceDialog_save": {
+    "description": "Save button"
+  },
+
   "@@_COMMON": {},
   "common_retry": "Retry",
   "@common_retry": {

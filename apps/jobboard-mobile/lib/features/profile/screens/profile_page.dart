@@ -136,10 +136,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
             EditableChipList(
               items: profile.skills,
-              title: 'Skills',
-              emptyMessage: 'No skills added yet.',
-              addDialogTitle: 'Add Skill',
-              addDialogHint: 'Enter a skill',
+              title: AppLocalizations.of(context)!.profilePage_skills,
+              emptyMessage: AppLocalizations.of(context)!.profilePage_noSkills,
+              addDialogTitle: AppLocalizations.of(context)!.profilePage_addSkill,
+              addDialogHint: AppLocalizations.of(context)!.profilePage_enterSkill,
               onSave: (updatedSkills) {
                 profileProvider.updateSkills(updatedSkills);
               },
@@ -149,10 +149,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
             EditableChipList(
               items: profile.interests,
-              title: 'Interests',
-              emptyMessage: 'No interests added yet.',
-              addDialogTitle: 'Add Interest',
-              addDialogHint: 'Enter an interest',
+              title: AppLocalizations.of(context)!.profilePage_interests,
+              emptyMessage: AppLocalizations.of(context)!.profilePage_noInterests,
+              addDialogTitle: AppLocalizations.of(context)!.profilePage_addInterest,
+              addDialogHint: AppLocalizations.of(context)!.profilePage_enterInterest,
               onSave: (updatedInterests) {
                 profileProvider.updateInterests(updatedInterests);
               },
@@ -193,7 +193,7 @@ class _ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Username: ${user?.username}',
+                AppLocalizations.of(context)!.profilePage_username(user?.username ?? ''),
                 style: TextStyle(
                   fontSize: fontSizeProvider.getScaledFontSize(14),
                   color: Colors.grey[700],
@@ -201,7 +201,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               Text(
-                'Email: ${user?.email}',
+                AppLocalizations.of(context)!.profilePage_email(user?.email ?? ''),
                 style: TextStyle(
                   fontSize: fontSizeProvider.getScaledFontSize(14),
                   color: Colors.grey[700],
@@ -280,7 +280,7 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Font Size',
+                  AppLocalizations.of(context)!.profilePage_fontSize,
                   style: TextStyle(
                     fontSize: fontSizeProvider.getScaledFontSize(18),
                     fontWeight: FontWeight.bold,
@@ -294,7 +294,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         fontSizeProvider,
                         FontSizeOption.small,
-                        'Small',
+                        AppLocalizations.of(context)!.profilePage_small,
                         Icons.text_fields,
                       ),
                     ),
@@ -304,7 +304,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         fontSizeProvider,
                         FontSizeOption.medium,
-                        'Medium',
+                        AppLocalizations.of(context)!.profilePage_medium,
                         Icons.text_fields,
                       ),
                     ),
@@ -314,7 +314,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         fontSizeProvider,
                         FontSizeOption.large,
-                        'Large',
+                        AppLocalizations.of(context)!.profilePage_large,
                         Icons.text_fields,
                       ),
                     ),
@@ -348,7 +348,7 @@ class _ProfilePageState extends State<ProfilePage> {
         fontSizeProvider.setFontSize(option);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Font size changed to $label'),
+            content: Text(AppLocalizations.of(context)!.profilePage_fontSizeChanged(label)),
             duration: const Duration(seconds: 1),
           ),
         );
@@ -402,7 +402,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     const Icon(Icons.language, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Language / Dil / اللغة',
+                      AppLocalizations.of(context)!.profilePage_language,
                       style: TextStyle(
                         fontSize: Provider.of<FontSizeProvider>(context).getScaledFontSize(18),
                         fontWeight: FontWeight.bold,
