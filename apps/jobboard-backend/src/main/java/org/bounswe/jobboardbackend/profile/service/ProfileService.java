@@ -46,6 +46,9 @@ public class ProfileService {
     @Value("${app.gcs.publicBaseUrl:https://storage.googleapis.com}")
     private String gcsPublicBaseUrl;
 
+    @Value("${app.env}")
+    private String appEnv;
+
     // Google Cloud Storage client
     private final Storage storage = StorageOptions.getDefaultInstance().getService();
 
@@ -117,7 +120,7 @@ public class ProfileService {
         String ext = (originalFilename != null && originalFilename.contains("."))
                 ? originalFilename.substring(originalFilename.lastIndexOf('.'))
                 : ".jpg";
-        return gcsFolderPrefix + userId + "/" + java.util.UUID.randomUUID() + ext;
+        return appEnv + "/" + "profiles/" + userId + ext;
     }
 
     private String publicUrl(String objectName) {
@@ -411,7 +414,7 @@ public class ProfileService {
                 .experiences(p.getExperiences().stream().map(this::toExperienceDto).collect(java.util.stream.Collectors.toList()))
                 .skills(p.getSkills().stream().map(this::toSkillDto).collect(java.util.stream.Collectors.toList()))
                 .interests(p.getInterests().stream().map(this::toInterestDto).collect(java.util.stream.Collectors.toList()))
-                .badges(null) 
+                .badges(null)
                 .createdAt(p.getCreatedAt())
                 .updatedAt(p.getUpdatedAt())
                 .build();
