@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/industry_selection_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 
 class JobPrioritiesScreen extends StatefulWidget {
   const JobPrioritiesScreen({super.key});
@@ -12,36 +13,34 @@ class JobPrioritiesScreen extends StatefulWidget {
 class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
   final Set<String> selectedPriorities = {};
 
-  final List<JobPriority> priorities = [
-    JobPriority(
-      title: 'Fair Wages',
-      description:
-          'Companies that pay living wages and maintain transparent compensation practices',
-    ),
-    JobPriority(
-      title: 'Inclusive Workplace',
-      description:
-          'Organizations committed to diversity, equity, and inclusion',
-    ),
-    JobPriority(
-      title: 'Sustainability/Environmental Policies',
-      description:
-          'Companies with strong environmental commitments and practices',
-    ),
-    JobPriority(
-      title: 'Work-Life Balance',
-      description:
-          'Respectful of personal time with flexible scheduling options',
-    ),
-    JobPriority(
-      title: 'Remote-Friendly',
-      description: 'Options for remote work and flexible location',
-    ),
-    JobPriority(
-      title: 'Career Growth Opportunities',
-      description: 'Clear paths for advancement and professional development',
-    ),
-  ];
+  List<JobPriority> _getJobPriorities(BuildContext context) {
+    return [
+      JobPriority(
+        title: AppLocalizations.of(context)!.jobPrioritiesScreen_fairWages,
+        description: AppLocalizations.of(context)!.jobPrioritiesScreen_fairWagesDesc,
+      ),
+      JobPriority(
+        title: AppLocalizations.of(context)!.jobPrioritiesScreen_inclusive,
+        description: AppLocalizations.of(context)!.jobPrioritiesScreen_inclusiveDesc,
+      ),
+      JobPriority(
+        title: AppLocalizations.of(context)!.jobPrioritiesScreen_sustainability,
+        description: AppLocalizations.of(context)!.jobPrioritiesScreen_sustainabilityDesc,
+      ),
+      JobPriority(
+        title: AppLocalizations.of(context)!.jobPrioritiesScreen_workLife,
+        description: AppLocalizations.of(context)!.jobPrioritiesScreen_workLifeDesc,
+      ),
+      JobPriority(
+        title: AppLocalizations.of(context)!.jobPrioritiesScreen_remote,
+        description: AppLocalizations.of(context)!.jobPrioritiesScreen_remoteDesc,
+      ),
+      JobPriority(
+        title: AppLocalizations.of(context)!.jobPrioritiesScreen_growth,
+        description: AppLocalizations.of(context)!.jobPrioritiesScreen_growthDesc,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,26 +62,26 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'What are your top priorities when looking for a job?',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.jobPrioritiesScreen_question,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Select all that apply',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    Text(
+                      AppLocalizations.of(context)!.jobPrioritiesScreen_selectAll,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 24),
                     Expanded(
                       child: ListView.separated(
-                        itemCount: priorities.length,
+                        itemCount: _getJobPriorities(context).length,
                         separatorBuilder:
                             (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
-                          final priority = priorities[index];
+                          final priority = _getJobPriorities(context)[index];
                           final isSelected = selectedPriorities.contains(
                             priority.title,
                           );
@@ -176,9 +175,9 @@ class _JobPrioritiesScreenState extends State<JobPrioritiesScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Continue',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        child: Text(
+                          AppLocalizations.of(context)!.userTypeScreen_continue,
+                          style: const TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),

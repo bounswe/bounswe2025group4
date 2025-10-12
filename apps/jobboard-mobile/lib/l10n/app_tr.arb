@@ -134,6 +134,29 @@
   "mentorshipSelectionScreen_enterNumber": "Lütfen bir sayı girin",
   "mentorshipSelectionScreen_validNumber": "Lütfen geçerli bir sayı girin",
   "mentorshipSelectionScreen_greaterThanZero": "0'dan büyük olmalıdır",
-  "mentorshipSelectionScreen_lessThan21": "21'den küçük olmalıdır"
+  "mentorshipSelectionScreen_lessThan21": "21'den küçük olmalıdır",
+
+  "jobPage_title": "İşler",
+  "jobPage_search": "İş ara...",
+  "jobPage_filter": "Filtrele",
+  "jobPage_createJob": "İş İlanı Oluştur",
+  "jobPage_myApplications": "Başvurularım",
+  "jobPage_viewApplications": "Başvuruları Görüntüle",
+  "jobPage_noJobs": "İş ilanı bulunamadı",
+  "jobPage_loadError": "İşler yüklenemedi. Lütfen tekrar deneyin.",
+  "jobPage_posted": "Yayınlandı",
+  "jobPage_remote": "Uzaktan",
+
+  "jobDetails_title": "İş Detayları",
+  "jobDetails_apply": "Şimdi Başvur",
+  "jobDetails_loadError": "İş detayları yüklenemedi. Lütfen tekrar deneyin.",
+  "jobDetails_applyError": "Hata: Kullanıcı tanımlanamadı.",
+  "jobDetails_applySuccess": "{jobTitle} pozisyonuna başarıyla başvuruldu",
+  "jobDetails_company": "Şirket",
+  "jobDetails_location": "Konum",
+  "jobDetails_salary": "Maaş",
+  "jobDetails_description": "Açıklama",
+  "jobDetails_requirements": "Gereksinimler",
+  "jobDetails_ethicalTags": "Etik Etiketler"
 }
 

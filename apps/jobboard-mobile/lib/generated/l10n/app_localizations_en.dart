@@ -416,4 +416,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mentorshipSelectionScreen_lessThan21 => 'Must be less than 21';
+
+  @override
+  String get jobPage_title => 'Jobs';
+
+  @override
+  String get jobPage_search => 'Search jobs...';
+
+  @override
+  String get jobPage_filter => 'Filter';
+
+  @override
+  String get jobPage_createJob => 'Create Job Post';
+
+  @override
+  String get jobPage_myApplications => 'My Applications';
+
+  @override
+  String get jobPage_viewApplications => 'View Applications';
+
+  @override
+  String get jobPage_noJobs => 'No jobs found';
+
+  @override
+  String get jobPage_loadError => 'Failed to load jobs. Please try again.';
+
+  @override
+  String get jobPage_posted => 'Posted';
+
+  @override
+  String get jobPage_remote => 'Remote';
+
+  @override
+  String get jobDetails_title => 'Job Details';
+
+  @override
+  String get jobDetails_apply => 'Apply Now';
+
+  @override
+  String get jobDetails_loadError =>
+      'Failed to load job details. Please try again.';
+
+  @override
+  String get jobDetails_applyError => 'Error: Could not identify user.';
+
+  @override
+  String jobDetails_applySuccess(String jobTitle) {
+    return 'Successfully applied to $jobTitle';
+  }
+
+  @override
+  String get jobDetails_company => 'Company';
+
+  @override
+  String get jobDetails_location => 'Location';
+
+  @override
+  String get jobDetails_salary => 'Salary';
+
+  @override
+  String get jobDetails_description => 'Description';
+
+  @override
+  String get jobDetails_requirements => 'Requirements';
+
+  @override
+  String get jobDetails_ethicalTags => 'Ethical Tags';
 }

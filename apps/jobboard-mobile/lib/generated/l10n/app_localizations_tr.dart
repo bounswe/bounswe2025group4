@@ -420,4 +420,70 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get mentorshipSelectionScreen_lessThan21 => '21\'den küçük olmalıdır';
+
+  @override
+  String get jobPage_title => 'İşler';
+
+  @override
+  String get jobPage_search => 'İş ara...';
+
+  @override
+  String get jobPage_filter => 'Filtrele';
+
+  @override
+  String get jobPage_createJob => 'İş İlanı Oluştur';
+
+  @override
+  String get jobPage_myApplications => 'Başvurularım';
+
+  @override
+  String get jobPage_viewApplications => 'Başvuruları Görüntüle';
+
+  @override
+  String get jobPage_noJobs => 'İş ilanı bulunamadı';
+
+  @override
+  String get jobPage_loadError => 'İşler yüklenemedi. Lütfen tekrar deneyin.';
+
+  @override
+  String get jobPage_posted => 'Yayınlandı';
+
+  @override
+  String get jobPage_remote => 'Uzaktan';
+
+  @override
+  String get jobDetails_title => 'İş Detayları';
+
+  @override
+  String get jobDetails_apply => 'Şimdi Başvur';
+
+  @override
+  String get jobDetails_loadError =>
+      'İş detayları yüklenemedi. Lütfen tekrar deneyin.';
+
+  @override
+  String get jobDetails_applyError => 'Hata: Kullanıcı tanımlanamadı.';
+
+  @override
+  String jobDetails_applySuccess(String jobTitle) {
+    return '$jobTitle pozisyonuna başarıyla başvuruldu';
+  }
+
+  @override
+  String get jobDetails_company => 'Şirket';
+
+  @override
+  String get jobDetails_location => 'Konum';
+
+  @override
+  String get jobDetails_salary => 'Maaş';
+
+  @override
+  String get jobDetails_description => 'Açıklama';
+
+  @override
+  String get jobDetails_requirements => 'Gereksinimler';
+
+  @override
+  String get jobDetails_ethicalTags => 'Etik Etiketler';
 }

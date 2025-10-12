@@ -831,6 +831,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Must be less than 21'**
   String get mentorshipSelectionScreen_lessThan21;
+
+  /// Jobs page title
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get jobPage_title;
+
+  /// Search placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Search jobs...'**
+  String get jobPage_search;
+
+  /// Filter button
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get jobPage_filter;
+
+  /// Create job post button
+  ///
+  /// In en, this message translates to:
+  /// **'Create Job Post'**
+  String get jobPage_createJob;
+
+  /// My applications button
+  ///
+  /// In en, this message translates to:
+  /// **'My Applications'**
+  String get jobPage_myApplications;
+
+  /// View applications button
+  ///
+  /// In en, this message translates to:
+  /// **'View Applications'**
+  String get jobPage_viewApplications;
+
+  /// No jobs message
+  ///
+  /// In en, this message translates to:
+  /// **'No jobs found'**
+  String get jobPage_noJobs;
+
+  /// Load error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load jobs. Please try again.'**
+  String get jobPage_loadError;
+
+  /// Posted label
+  ///
+  /// In en, this message translates to:
+  /// **'Posted'**
+  String get jobPage_posted;
+
+  /// Remote badge
+  ///
+  /// In en, this message translates to:
+  /// **'Remote'**
+  String get jobPage_remote;
+
+  /// Job details screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Job Details'**
+  String get jobDetails_title;
+
+  /// Apply button
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Now'**
+  String get jobDetails_apply;
+
+  /// Load error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load job details. Please try again.'**
+  String get jobDetails_loadError;
+
+  /// Apply error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error: Could not identify user.'**
+  String get jobDetails_applyError;
+
+  /// Apply success message
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully applied to {jobTitle}'**
+  String jobDetails_applySuccess(String jobTitle);
+
+  /// Company label
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get jobDetails_company;
+
+  /// Location label
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get jobDetails_location;
+
+  /// Salary label
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get jobDetails_salary;
+
+  /// Description label
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get jobDetails_description;
+
+  /// Requirements label
+  ///
+  /// In en, this message translates to:
+  /// **'Requirements'**
+  String get jobDetails_requirements;
+
+  /// Ethical tags label
+  ///
+  /// In en, this message translates to:
+  /// **'Ethical Tags'**
+  String get jobDetails_ethicalTags;
 }
 
 class _AppLocalizationsDelegate

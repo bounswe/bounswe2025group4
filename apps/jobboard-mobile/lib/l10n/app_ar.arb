@@ -134,6 +134,29 @@
   "mentorshipSelectionScreen_enterNumber": "الرجاء إدخال رقم",
   "mentorshipSelectionScreen_validNumber": "الرجاء إدخال رقم صحيح",
   "mentorshipSelectionScreen_greaterThanZero": "يجب أن يكون أكبر من 0",
-  "mentorshipSelectionScreen_lessThan21": "يجب أن يكون أقل من 21"
+  "mentorshipSelectionScreen_lessThan21": "يجب أن يكون أقل من 21",
+
+  "jobPage_title": "الوظائف",
+  "jobPage_search": "البحث عن وظائف...",
+  "jobPage_filter": "تصفية",
+  "jobPage_createJob": "إنشاء إعلان وظيفة",
+  "jobPage_myApplications": "طلباتي",
+  "jobPage_viewApplications": "عرض الطلبات",
+  "jobPage_noJobs": "لم يتم العثور على وظائف",
+  "jobPage_loadError": "فشل تحميل الوظائف. يرجى المحاولة مرة أخرى.",
+  "jobPage_posted": "نُشر",
+  "jobPage_remote": "عن بُعد",
+
+  "jobDetails_title": "تفاصيل الوظيفة",
+  "jobDetails_apply": "قدم الآن",
+  "jobDetails_loadError": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة مرة أخرى.",
+  "jobDetails_applyError": "خطأ: تعذر تحديد المستخدم.",
+  "jobDetails_applySuccess": "تم التقديم بنجاح إلى {jobTitle}",
+  "jobDetails_company": "الشركة",
+  "jobDetails_location": "الموقع",
+  "jobDetails_salary": "الراتب",
+  "jobDetails_description": "الوصف",
+  "jobDetails_requirements": "المتطلبات",
+  "jobDetails_ethicalTags": "العلامات الأخلاقية"
 }
 

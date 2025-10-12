@@ -411,4 +411,70 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mentorshipSelectionScreen_lessThan21 => 'يجب أن يكون أقل من 21';
+
+  @override
+  String get jobPage_title => 'الوظائف';
+
+  @override
+  String get jobPage_search => 'البحث عن وظائف...';
+
+  @override
+  String get jobPage_filter => 'تصفية';
+
+  @override
+  String get jobPage_createJob => 'إنشاء إعلان وظيفة';
+
+  @override
+  String get jobPage_myApplications => 'طلباتي';
+
+  @override
+  String get jobPage_viewApplications => 'عرض الطلبات';
+
+  @override
+  String get jobPage_noJobs => 'لم يتم العثور على وظائف';
+
+  @override
+  String get jobPage_loadError => 'فشل تحميل الوظائف. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get jobPage_posted => 'نُشر';
+
+  @override
+  String get jobPage_remote => 'عن بُعد';
+
+  @override
+  String get jobDetails_title => 'تفاصيل الوظيفة';
+
+  @override
+  String get jobDetails_apply => 'قدم الآن';
+
+  @override
+  String get jobDetails_loadError =>
+      'فشل تحميل تفاصيل الوظيفة. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get jobDetails_applyError => 'خطأ: تعذر تحديد المستخدم.';
+
+  @override
+  String jobDetails_applySuccess(String jobTitle) {
+    return 'تم التقديم بنجاح إلى $jobTitle';
+  }
+
+  @override
+  String get jobDetails_company => 'الشركة';
+
+  @override
+  String get jobDetails_location => 'الموقع';
+
+  @override
+  String get jobDetails_salary => 'الراتب';
+
+  @override
+  String get jobDetails_description => 'الوصف';
+
+  @override
+  String get jobDetails_requirements => 'المتطلبات';
+
+  @override
+  String get jobDetails_ethicalTags => 'العلامات الأخلاقية';
 }

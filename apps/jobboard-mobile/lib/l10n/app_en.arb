@@ -384,6 +384,100 @@
   "mentorshipSelectionScreen_enterNumber": "Please enter a number",
   "mentorshipSelectionScreen_validNumber": "Please enter a valid number",
   "mentorshipSelectionScreen_greaterThanZero": "Must be greater than 0",
-  "mentorshipSelectionScreen_lessThan21": "Must be less than 21"
+  "mentorshipSelectionScreen_lessThan21": "Must be less than 21",
+
+  "@@_JOB_PAGE": {},
+  "jobPage_title": "Jobs",
+  "@jobPage_title": {
+    "description": "Jobs page title"
+  },
+  "jobPage_search": "Search jobs...",
+  "@jobPage_search": {
+    "description": "Search placeholder"
+  },
+  "jobPage_filter": "Filter",
+  "@jobPage_filter": {
+    "description": "Filter button"
+  },
+  "jobPage_createJob": "Create Job Post",
+  "@jobPage_createJob": {
+    "description": "Create job post button"
+  },
+  "jobPage_myApplications": "My Applications",
+  "@jobPage_myApplications": {
+    "description": "My applications button"
+  },
+  "jobPage_viewApplications": "View Applications",
+  "@jobPage_viewApplications": {
+    "description": "View applications button"
+  },
+  "jobPage_noJobs": "No jobs found",
+  "@jobPage_noJobs": {
+    "description": "No jobs message"
+  },
+  "jobPage_loadError": "Failed to load jobs. Please try again.",
+  "@jobPage_loadError": {
+    "description": "Load error message"
+  },
+  "jobPage_posted": "Posted",
+  "@jobPage_posted": {
+    "description": "Posted label"
+  },
+  "jobPage_remote": "Remote",
+  "@jobPage_remote": {
+    "description": "Remote badge"
+  },
+
+  "@@_JOB_DETAILS": {},
+  "jobDetails_title": "Job Details",
+  "@jobDetails_title": {
+    "description": "Job details screen title"
+  },
+  "jobDetails_apply": "Apply Now",
+  "@jobDetails_apply": {
+    "description": "Apply button"
+  },
+  "jobDetails_loadError": "Failed to load job details. Please try again.",
+  "@jobDetails_loadError": {
+    "description": "Load error message"
+  },
+  "jobDetails_applyError": "Error: Could not identify user.",
+  "@jobDetails_applyError": {
+    "description": "Apply error message"
+  },
+  "jobDetails_applySuccess": "Successfully applied to {jobTitle}",
+  "@jobDetails_applySuccess": {
+    "description": "Apply success message",
+    "placeholders": {
+      "jobTitle": {
+        "type": "String",
+        "example": "Software Engineer"
+      }
+    }
+  },
+  "jobDetails_company": "Company",
+  "@jobDetails_company": {
+    "description": "Company label"
+  },
+  "jobDetails_location": "Location",
+  "@jobDetails_location": {
+    "description": "Location label"
+  },
+  "jobDetails_salary": "Salary",
+  "@jobDetails_salary": {
+    "description": "Salary label"
+  },
+  "jobDetails_description": "Description",
+  "@jobDetails_description": {
+    "description": "Description label"
+  },
+  "jobDetails_requirements": "Requirements",
+  "@jobDetails_requirements": {
+    "description": "Requirements label"
+  },
+  "jobDetails_ethicalTags": "Ethical Tags",
+  "@jobDetails_ethicalTags": {
+    "description": "Ethical tags label"
+  }
 }
 
