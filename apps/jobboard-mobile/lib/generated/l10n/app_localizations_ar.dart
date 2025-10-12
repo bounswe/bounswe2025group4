@@ -1389,6 +1389,50 @@ class AppLocalizationsAr extends AppLocalizations {
   String get workExperienceDialog_save => 'حفظ';
 
   @override
+  String get badges_title => 'الإنجازات والشارات';
+
+  @override
+  String get badges_noBadges => 'لم يتم كسب أي شارات بعد.';
+
+  @override
+  String badges_earned(String date) {
+    return 'تم كسبها في $date';
+  }
+
+  @override
+  String get badges_today => 'اليوم';
+
+  @override
+  String get badges_yesterday => 'أمس';
+
+  @override
+  String badges_daysAgo(int days) {
+    return 'منذ $days أيام';
+  }
+
+  @override
+  String badges_monthsAgo(int months, String monthText) {
+    return 'منذ $months $monthText';
+  }
+
+  @override
+  String badges_yearsAgo(int years, String yearText) {
+    return 'منذ $years $yearText';
+  }
+
+  @override
+  String get badges_month => 'شهر';
+
+  @override
+  String get badges_months => 'أشهر';
+
+  @override
+  String get badges_year => 'سنة';
+
+  @override
+  String get badges_years => 'سنوات';
+
+  @override
   String get common_notSpecified => 'غير محدد';
 
   @override

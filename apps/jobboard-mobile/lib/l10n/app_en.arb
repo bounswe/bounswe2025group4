@@ -1780,6 +1780,82 @@
     "description": "Save button"
   },
 
+  "@@_BADGES": {},
+  "badges_title": "Achievements & Badges",
+  "@badges_title": {
+    "description": "Badges section title"
+  },
+  "badges_noBadges": "No badges earned yet.",
+  "@badges_noBadges": {
+    "description": "No badges message"
+  },
+  "badges_earned": "Earned {date}",
+  "@badges_earned": {
+    "description": "Earned date label",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "badges_today": "today",
+  "@badges_today": {
+    "description": "Today label"
+  },
+  "badges_yesterday": "yesterday",
+  "@badges_yesterday": {
+    "description": "Yesterday label"
+  },
+  "badges_daysAgo": "{days} days ago",
+  "@badges_daysAgo": {
+    "description": "Days ago label",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "badges_monthsAgo": "{months} {monthText} ago",
+  "@badges_monthsAgo": {
+    "description": "Months ago label",
+    "placeholders": {
+      "months": {
+        "type": "int"
+      },
+      "monthText": {
+        "type": "String"
+      }
+    }
+  },
+  "badges_yearsAgo": "{years} {yearText} ago",
+  "@badges_yearsAgo": {
+    "description": "Years ago label",
+    "placeholders": {
+      "years": {
+        "type": "int"
+      },
+      "yearText": {
+        "type": "String"
+      }
+    }
+  },
+  "badges_month": "month",
+  "@badges_month": {
+    "description": "Month singular"
+  },
+  "badges_months": "months",
+  "@badges_months": {
+    "description": "Month plural"
+  },
+  "badges_year": "year",
+  "@badges_year": {
+    "description": "Year singular"
+  },
+  "badges_years": "years",
+  "@badges_years": {
+    "description": "Year plural"
+  },
+
   "@@_COMMON": {},
   "common_retry": "Retry",
   "@common_retry": {

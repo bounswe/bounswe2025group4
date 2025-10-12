@@ -1398,6 +1398,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workExperienceDialog_save => 'Save';
 
   @override
+  String get badges_title => 'Achievements & Badges';
+
+  @override
+  String get badges_noBadges => 'No badges earned yet.';
+
+  @override
+  String badges_earned(String date) {
+    return 'Earned $date';
+  }
+
+  @override
+  String get badges_today => 'today';
+
+  @override
+  String get badges_yesterday => 'yesterday';
+
+  @override
+  String badges_daysAgo(int days) {
+    return '$days days ago';
+  }
+
+  @override
+  String badges_monthsAgo(int months, String monthText) {
+    return '$months $monthText ago';
+  }
+
+  @override
+  String badges_yearsAgo(int years, String yearText) {
+    return '$years $yearText ago';
+  }
+
+  @override
+  String get badges_month => 'month';
+
+  @override
+  String get badges_months => 'months';
+
+  @override
+  String get badges_year => 'year';
+
+  @override
+  String get badges_years => 'years';
+
+  @override
   String get common_notSpecified => 'Not specified';
 
   @override

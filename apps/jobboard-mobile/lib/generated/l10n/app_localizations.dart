@@ -2584,6 +2584,78 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get workExperienceDialog_save;
 
+  /// Badges section title
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements & Badges'**
+  String get badges_title;
+
+  /// No badges message
+  ///
+  /// In en, this message translates to:
+  /// **'No badges earned yet.'**
+  String get badges_noBadges;
+
+  /// Earned date label
+  ///
+  /// In en, this message translates to:
+  /// **'Earned {date}'**
+  String badges_earned(String date);
+
+  /// Today label
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get badges_today;
+
+  /// Yesterday label
+  ///
+  /// In en, this message translates to:
+  /// **'yesterday'**
+  String get badges_yesterday;
+
+  /// Days ago label
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days ago'**
+  String badges_daysAgo(int days);
+
+  /// Months ago label
+  ///
+  /// In en, this message translates to:
+  /// **'{months} {monthText} ago'**
+  String badges_monthsAgo(int months, String monthText);
+
+  /// Years ago label
+  ///
+  /// In en, this message translates to:
+  /// **'{years} {yearText} ago'**
+  String badges_yearsAgo(int years, String yearText);
+
+  /// Month singular
+  ///
+  /// In en, this message translates to:
+  /// **'month'**
+  String get badges_month;
+
+  /// Month plural
+  ///
+  /// In en, this message translates to:
+  /// **'months'**
+  String get badges_months;
+
+  /// Year singular
+  ///
+  /// In en, this message translates to:
+  /// **'year'**
+  String get badges_year;
+
+  /// Year plural
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get badges_years;
+
   /// Not specified message
   ///
   /// In en, this message translates to:

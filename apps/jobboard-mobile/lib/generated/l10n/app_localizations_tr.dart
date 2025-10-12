@@ -1408,6 +1408,50 @@ class AppLocalizationsTr extends AppLocalizations {
   String get workExperienceDialog_save => 'Kaydet';
 
   @override
+  String get badges_title => 'Başarılar ve Rozetler';
+
+  @override
+  String get badges_noBadges => 'Henüz rozet kazanılmamış.';
+
+  @override
+  String badges_earned(String date) {
+    return '$date tarihinde kazanıldı';
+  }
+
+  @override
+  String get badges_today => 'bugün';
+
+  @override
+  String get badges_yesterday => 'dün';
+
+  @override
+  String badges_daysAgo(int days) {
+    return '$days gün önce';
+  }
+
+  @override
+  String badges_monthsAgo(int months, String monthText) {
+    return '$months $monthText önce';
+  }
+
+  @override
+  String badges_yearsAgo(int years, String yearText) {
+    return '$years $yearText önce';
+  }
+
+  @override
+  String get badges_month => 'ay';
+
+  @override
+  String get badges_months => 'ay';
+
+  @override
+  String get badges_year => 'yıl';
+
+  @override
+  String get badges_years => 'yıl';
+
+  @override
   String get common_notSpecified => 'Belirtilmemiş';
 
   @override
