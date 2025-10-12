@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../generated/l10n/app_localizations.dart';
 import '../forum/screens/forum_page.dart';
 import '../job/screens/job_page.dart';
 import '../mentorship/screens/mentorship_page.dart';
@@ -56,20 +57,26 @@ class _MainScaffoldState extends State<MainScaffold> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.forum), label: 'Forum'),
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.work),
-            label: 'Jobs', // This is your Job page
+            icon: const Icon(Icons.forum),
+            label: AppLocalizations.of(context)!.mainScaffold_forum,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school), // Or Icons.people or similar
-            label: 'Mentorship', // This is your Mentorship page
+            icon: const Icon(Icons.work),
+            label: AppLocalizations.of(context)!.mainScaffold_jobs,
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Workplaces',
+            icon: const Icon(Icons.school),
+            label: AppLocalizations.of(context)!.mainScaffold_mentorship,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person),
+            label: AppLocalizations.of(context)!.mainScaffold_profile,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.business),
+            label: AppLocalizations.of(context)!.mainScaffold_workplaces,
           ),
         ],
         currentIndex: _selectedIndex,

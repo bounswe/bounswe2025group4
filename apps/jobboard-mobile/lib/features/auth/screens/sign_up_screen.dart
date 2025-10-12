@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/main_scaffold/main_scaffold.dart';
 import 'package:mobile/features/auth/screens/sign_in_screen.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
 import 'package:mobile/core/models/user_type.dart';
@@ -48,8 +49,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       if (userType == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('User type missing. Please restart signup process.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.signUpScreen_userTypeMissing),
             backgroundColor: Colors.orange,
           ),
         );
@@ -81,8 +82,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           // This branch might not be reached since errors now throw exceptions,
           // but keeping it for robustness
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Sign up failed. Please try again later.'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.signUpScreen_signUpFailed),
               backgroundColor: Colors.red,
             ),
           );
@@ -91,14 +92,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (!mounted) return;
 
         // Display specific error message
-        String errorMessage = 'Sign up failed.';
+        String errorMessage;
         if (e.toString().contains('mentor profile')) {
-          errorMessage =
-              'Failed to create mentor profile. Please try again or contact support.';
+          errorMessage = AppLocalizations.of(context)!.signUpScreen_mentorProfileFailed;
         } else if (e.toString().contains('already exist')) {
-          errorMessage = 'Username or email already exists.';
+          errorMessage = AppLocalizations.of(context)!.signUpScreen_alreadyExists;
         } else {
-          errorMessage = 'Registration failed: ${e.toString()}';
+          errorMessage = AppLocalizations.of(context)!.signUpScreen_registrationFailed(e.toString());
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -122,7 +122,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Sign Up'),
+        title: Text(AppLocalizations.of(context)!.signUpScreen_title),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -132,20 +132,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Create your account',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.signUpScreen_createAccount,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.signUpScreen_username,
+                    border: const OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a username';
+                      return AppLocalizations.of(context)!.signUpScreen_usernameRequired;
                     }
                     return null;
                   },
@@ -154,16 +154,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.signUpScreen_email,
+                    border: const OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return AppLocalizations.of(context)!.signUpScreen_emailRequired;
                     }
                     if (!value.contains('@')) {
-                      return 'Please enter a valid email';
+                      return AppLocalizations.of(context)!.signUpScreen_emailInvalid;
                     }
                     return null;
                   },
@@ -173,7 +173,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: AppLocalizations.of(context)!.signUpScreen_password,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -190,10 +190,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
+                      return AppLocalizations.of(context)!.signUpScreen_passwordRequired;
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                      return AppLocalizations.of(context)!.signUpScreen_passwordTooShort;
                     }
                     return null;
                   },
@@ -203,7 +203,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
                   decoration: InputDecoration(
-                    labelText: 'Confirm Password',
+                    labelText: AppLocalizations.of(context)!.signUpScreen_confirmPassword,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -220,10 +220,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
+                      return AppLocalizations.of(context)!.signUpScreen_confirmPasswordRequired;
                     }
                     if (value != _passwordController.text) {
-                      return 'Passwords do not match';
+                      return AppLocalizations.of(context)!.signUpScreen_passwordsDoNotMatch;
                     }
                     return null;
                   },
@@ -231,13 +231,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _bioController,
-                  decoration: const InputDecoration(
-                    labelText: 'Bio',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.signUpScreen_bio,
+                    border: const OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a bio';
+                      return AppLocalizations.of(context)!.signUpScreen_bioRequired;
                     }
                     return null;
                   },
@@ -263,9 +263,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 color: Colors.white,
                               ),
                             )
-                            : const Text(
-                              'Sign Up',
-                              style: TextStyle(
+                            : Text(
+                              AppLocalizations.of(context)!.signUpScreen_signUpButton,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                               ),
@@ -276,7 +276,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Already have an account?'),
+                    Text(AppLocalizations.of(context)!.signUpScreen_alreadyHaveAccount),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -286,7 +286,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         );
                       },
-                      child: const Text('Sign In'),
+                      child: Text(AppLocalizations.of(context)!.signUpScreen_signInLink),
                     ),
                   ],
                 ),

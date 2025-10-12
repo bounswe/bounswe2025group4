@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'generated/l10n/app_localizations.dart';
 import 'core/providers/auth_provider.dart';
 import 'core/providers/font_size_provider.dart';
+import 'core/providers/locale_provider.dart';
 import 'features/auth/screens/welcome_screen.dart';
 import 'features/main_scaffold/main_scaffold.dart';
 
@@ -10,10 +13,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FontSizeProvider>(
-      builder: (context, fontSizeProvider, child) {
+    return Consumer2<FontSizeProvider, LocaleProvider>(
+      builder: (context, fontSizeProvider, localeProvider, child) {
         return MaterialApp(
           title: 'EthicaJobs',
+          
+          // Localization configuration
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: LocaleProvider.supportedLocales,
+          locale: localeProvider.locale,
+          localeResolutionCallback: (locale, supportedLocales) {
+            // Check if the current device locale is supported
+            if (locale != null) {
+              for (var supportedLocale in supportedLocales) {
+                if (supportedLocale.languageCode == locale.languageCode) {
+                  return supportedLocale;
+                }
+              }
+            }
+            // If not supported, return the first supported locale (English)
+            return supportedLocales.first;
+          },
+          
           theme: ThemeData(
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity,

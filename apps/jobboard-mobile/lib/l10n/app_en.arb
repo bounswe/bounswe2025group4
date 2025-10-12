@@ -1,0 +1,300 @@
+{
+  "@@locale": "en",
+  
+  "@@_WELCOME_SCREEN": {},
+  "welcomeScreen_stayMotivated": "Stay motivated!",
+  "@welcomeScreen_stayMotivated": {
+    "description": "Fallback message when quote fails to load"
+  },
+  "welcomeScreen_title": "Welcome to Ethical Job Platform",
+  "@welcomeScreen_title": {
+    "description": "Main title on welcome screen"
+  },
+  "welcomeScreen_subtitle": "Connect with companies that share your values and build an ethical career path",
+  "@welcomeScreen_subtitle": {
+    "description": "Subtitle description on welcome screen"
+  },
+  "welcomeScreen_getStarted": "Get Started",
+  "@welcomeScreen_getStarted": {
+    "description": "Primary CTA button"
+  },
+  "welcomeScreen_alreadyHaveAccount": "I already have an account",
+  "@welcomeScreen_alreadyHaveAccount": {
+    "description": "Secondary button for existing users"
+  },
+
+  "@@_SIGN_IN_SCREEN": {},
+  "signInScreen_title": "Sign In",
+  "@signInScreen_title": {
+    "description": "Sign in screen title"
+  },
+  "signInScreen_welcomeBack": "Welcome back!",
+  "@signInScreen_welcomeBack": {
+    "description": "Welcome back message"
+  },
+  "signInScreen_username": "Username",
+  "@signInScreen_username": {
+    "description": "Username field label"
+  },
+  "signInScreen_password": "Password",
+  "@signInScreen_password": {
+    "description": "Password field label"
+  },
+  "signInScreen_usernameRequired": "Please enter your username",
+  "@signInScreen_usernameRequired": {
+    "description": "Username validation error"
+  },
+  "signInScreen_passwordRequired": "Please enter your password",
+  "@signInScreen_passwordRequired": {
+    "description": "Password validation error"
+  },
+  "signInScreen_signInButton": "Sign In",
+  "@signInScreen_signInButton": {
+    "description": "Sign in button text"
+  },
+  "signInScreen_dontHaveAccount": "Don't have an account?",
+  "@signInScreen_dontHaveAccount": {
+    "description": "Prompt for new users"
+  },
+  "signInScreen_signUpLink": "Sign Up",
+  "@signInScreen_signUpLink": {
+    "description": "Sign up link text"
+  },
+  "signInScreen_loginFailed": "Login Failed. Please check your credentials.",
+  "@signInScreen_loginFailed": {
+    "description": "Login failure error message"
+  },
+
+  "@@_SIGN_UP_SCREEN": {},
+  "signUpScreen_title": "Sign Up",
+  "@signUpScreen_title": {
+    "description": "Sign up screen title"
+  },
+  "signUpScreen_createAccount": "Create your account",
+  "@signUpScreen_createAccount": {
+    "description": "Create account heading"
+  },
+  "signUpScreen_username": "Username",
+  "@signUpScreen_username": {
+    "description": "Username field label"
+  },
+  "signUpScreen_email": "Email",
+  "@signUpScreen_email": {
+    "description": "Email field label"
+  },
+  "signUpScreen_password": "Password",
+  "@signUpScreen_password": {
+    "description": "Password field label"
+  },
+  "signUpScreen_confirmPassword": "Confirm Password",
+  "@signUpScreen_confirmPassword": {
+    "description": "Confirm password field label"
+  },
+  "signUpScreen_bio": "Bio",
+  "@signUpScreen_bio": {
+    "description": "Bio field label"
+  },
+  "signUpScreen_usernameRequired": "Please enter a username",
+  "@signUpScreen_usernameRequired": {
+    "description": "Username validation error"
+  },
+  "signUpScreen_emailRequired": "Please enter your email",
+  "@signUpScreen_emailRequired": {
+    "description": "Email validation error"
+  },
+  "signUpScreen_emailInvalid": "Please enter a valid email",
+  "@signUpScreen_emailInvalid": {
+    "description": "Invalid email format error"
+  },
+  "signUpScreen_passwordRequired": "Please enter a password",
+  "@signUpScreen_passwordRequired": {
+    "description": "Password validation error"
+  },
+  "signUpScreen_passwordTooShort": "Password must be at least 6 characters",
+  "@signUpScreen_passwordTooShort": {
+    "description": "Password length validation error"
+  },
+  "signUpScreen_confirmPasswordRequired": "Please confirm your password",
+  "@signUpScreen_confirmPasswordRequired": {
+    "description": "Confirm password validation error"
+  },
+  "signUpScreen_passwordsDoNotMatch": "Passwords do not match",
+  "@signUpScreen_passwordsDoNotMatch": {
+    "description": "Password mismatch error"
+  },
+  "signUpScreen_bioRequired": "Please enter a bio",
+  "@signUpScreen_bioRequired": {
+    "description": "Bio validation error"
+  },
+  "signUpScreen_signUpButton": "Sign Up",
+  "@signUpScreen_signUpButton": {
+    "description": "Sign up button text"
+  },
+  "signUpScreen_alreadyHaveAccount": "Already have an account?",
+  "@signUpScreen_alreadyHaveAccount": {
+    "description": "Prompt for existing users"
+  },
+  "signUpScreen_signInLink": "Sign In",
+  "@signUpScreen_signInLink": {
+    "description": "Sign in link text"
+  },
+  "signUpScreen_userTypeMissing": "User type missing. Please restart signup process.",
+  "@signUpScreen_userTypeMissing": {
+    "description": "Error when user type is not selected"
+  },
+  "signUpScreen_signUpFailed": "Sign up failed. Please try again later.",
+  "@signUpScreen_signUpFailed": {
+    "description": "Generic signup failure message"
+  },
+  "signUpScreen_mentorProfileFailed": "Failed to create mentor profile. Please try again or contact support.",
+  "@signUpScreen_mentorProfileFailed": {
+    "description": "Mentor profile creation error"
+  },
+  "signUpScreen_alreadyExists": "Username or email already exists.",
+  "@signUpScreen_alreadyExists": {
+    "description": "Duplicate user error"
+  },
+  "signUpScreen_registrationFailed": "Registration failed: {error}",
+  "@signUpScreen_registrationFailed": {
+    "description": "Registration failure with error details",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+
+  "@@_USER_TYPE_SCREEN": {},
+  "userTypeScreen_question": "How will you use our platform?",
+  "@userTypeScreen_question": {
+    "description": "User type selection question"
+  },
+  "userTypeScreen_jobSeeker": "Job Seeker",
+  "@userTypeScreen_jobSeeker": {
+    "description": "Job seeker option"
+  },
+  "userTypeScreen_jobSeekerDesc": "Find ethical companies and opportunities aligned with your values",
+  "@userTypeScreen_jobSeekerDesc": {
+    "description": "Job seeker description"
+  },
+  "userTypeScreen_employer": "Employer",
+  "@userTypeScreen_employer": {
+    "description": "Employer option"
+  },
+  "userTypeScreen_employerDesc": "Post jobs and find candidates who share your company's values",
+  "@userTypeScreen_employerDesc": {
+    "description": "Employer description"
+  },
+  "userTypeScreen_continue": "Continue",
+  "@userTypeScreen_continue": {
+    "description": "Continue button"
+  },
+
+  "@@_MAIN_SCAFFOLD": {},
+  "mainScaffold_forum": "Forum",
+  "@mainScaffold_forum": {
+    "description": "Forum tab label"
+  },
+  "mainScaffold_jobs": "Jobs",
+  "@mainScaffold_jobs": {
+    "description": "Jobs tab label"
+  },
+  "mainScaffold_mentorship": "Mentorship",
+  "@mainScaffold_mentorship": {
+    "description": "Mentorship tab label"
+  },
+  "mainScaffold_profile": "Profile",
+  "@mainScaffold_profile": {
+    "description": "Profile tab label"
+  },
+  "mainScaffold_workplaces": "Workplaces",
+  "@mainScaffold_workplaces": {
+    "description": "Workplaces tab label"
+  },
+
+  "@@_COMMON": {},
+  "common_loading": "Loading...",
+  "@common_loading": {
+    "description": "Generic loading message"
+  },
+  "common_error": "Error",
+  "@common_error": {
+    "description": "Generic error label"
+  },
+  "common_retry": "Retry",
+  "@common_retry": {
+    "description": "Retry button"
+  },
+  "common_cancel": "Cancel",
+  "@common_cancel": {
+    "description": "Cancel button"
+  },
+  "common_save": "Save",
+  "@common_save": {
+    "description": "Save button"
+  },
+  "common_delete": "Delete",
+  "@common_delete": {
+    "description": "Delete button"
+  },
+  "common_edit": "Edit",
+  "@common_edit": {
+    "description": "Edit button"
+  },
+  "common_search": "Search",
+  "@common_search": {
+    "description": "Search placeholder"
+  },
+  "common_ok": "OK",
+  "@common_ok": {
+    "description": "OK button"
+  },
+  "common_yes": "Yes",
+  "@common_yes": {
+    "description": "Yes button"
+  },
+  "common_no": "No",
+  "@common_no": {
+    "description": "No button"
+  },
+
+  "@@_PROFILE_PAGE": {},
+  "profilePage_title": "My Profile",
+  "@profilePage_title": {
+    "description": "Profile page title"
+  },
+  "profilePage_editProfile": "Edit profile",
+  "@profilePage_editProfile": {
+    "description": "Edit profile tooltip"
+  },
+  "profilePage_logout": "Logout",
+  "@profilePage_logout": {
+    "description": "Logout tooltip"
+  },
+  "profilePage_failedToLoad": "Failed to load profile",
+  "@profilePage_failedToLoad": {
+    "description": "Error message when profile fails to load"
+  },
+  "profilePage_fontSizeChanged": "Font size changed to {size}",
+  "@profilePage_fontSizeChanged": {
+    "description": "Snackbar message when font size is changed",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "Medium"
+      }
+    }
+  },
+  "profilePage_languageChanged": "Language changed to {language}",
+  "@profilePage_languageChanged": {
+    "description": "Snackbar message when language is changed",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "English"
+      }
+    }
+  }
+}
+
