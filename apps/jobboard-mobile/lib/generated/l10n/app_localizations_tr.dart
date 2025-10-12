@@ -647,6 +647,478 @@ class AppLocalizationsTr extends AppLocalizations {
   String get threadDetail_deleteCommentError => 'Yorum silinemedi.';
 
   @override
+  String get mentorshipPage_title => 'Mentorluk';
+
+  @override
+  String get mentorshipPage_loginRequired =>
+      'Mentorluk özelliklerine erişmek için lütfen giriş yapın.';
+
+  @override
+  String get mentorScreen_title => 'Mentorluk';
+
+  @override
+  String get mentorScreen_currentMentees => 'Mevcut Mentiler';
+
+  @override
+  String get mentorScreen_requests => 'Talepler';
+
+  @override
+  String mentorScreen_currentCapacity(int capacity) {
+    return 'Mevcut Kapasite: $capacity';
+  }
+
+  @override
+  String get mentorScreen_updateCapacity => 'Kapasiteyi Güncelle';
+
+  @override
+  String get mentorScreen_noCurrentMentees => 'Mevcut menti yok';
+
+  @override
+  String get mentorScreen_noPendingRequests => 'Bekleyen talep yok';
+
+  @override
+  String get mentorScreen_capacityUpdated => 'Kapasite başarıyla güncellendi';
+
+  @override
+  String get mentorScreen_requestAccepted => 'Talep kabul edildi';
+
+  @override
+  String get mentorScreen_requestRejected => 'Talep reddedildi';
+
+  @override
+  String get mentorScreen_mentorshipCompleted =>
+      'Mentorluk başarıyla tamamlandı';
+
+  @override
+  String get mentorScreen_mentorshipCancelled =>
+      'Mentorluk başarıyla iptal edildi';
+
+  @override
+  String mentorScreen_openChat(String menteeName) {
+    return '$menteeName ile sohbet aç';
+  }
+
+  @override
+  String get mentorScreen_updateCapacityTitle =>
+      'Maksimum Menti Kapasitesini Güncelle';
+
+  @override
+  String get mentorScreen_maxMentees => 'Maksimum menti sayısı';
+
+  @override
+  String get mentorScreen_enterNumber => 'Bir sayı girin';
+
+  @override
+  String get mentorScreen_cancel => 'İptal';
+
+  @override
+  String get mentorScreen_update => 'Güncelle';
+
+  @override
+  String get mentorScreen_completeMentorship => 'Mentorluğu tamamla';
+
+  @override
+  String get mentorScreen_cancelMentorship => 'Mentorluğu iptal et';
+
+  @override
+  String mentorScreen_confirmComplete(String menteeName) {
+    return '$menteeName ile mentorluğunuzu tamamlamak istediğinizden emin misiniz?\n\nBu, mentorluğu başarıyla tamamlanmış olarak işaretleyecektir.';
+  }
+
+  @override
+  String mentorScreen_confirmCancel(String menteeName) {
+    return '$menteeName ile mentorluğunuzu iptal etmek istediğinizden emin misiniz?\n\nBu, mentorluk ilişkisini sona erdirecektir.';
+  }
+
+  @override
+  String get mentorScreen_confirm => 'Onayla';
+
+  @override
+  String get menteeScreen_findMentors => 'Mentor Bul';
+
+  @override
+  String get menteeScreen_myMentorships => 'Mentorluklarım';
+
+  @override
+  String get menteeScreen_searchMentors =>
+      'Mentorları isim, rol, şirket ile ara...';
+
+  @override
+  String get menteeScreen_noMentorsFound => 'Mentor bulunamadı.';
+
+  @override
+  String menteeScreen_errorLoadingMentors(String error) {
+    return 'Mentorlar yüklenirken hata: $error';
+  }
+
+  @override
+  String get menteeScreen_retryLoadingMentors => 'Mentorları Tekrar Yükle';
+
+  @override
+  String menteeScreen_requestMentorshipTitle(String mentorName) {
+    return '$mentorName ile Mentorluk Talep Et';
+  }
+
+  @override
+  String get menteeScreen_provideMessage =>
+      'Lütfen mentorluk talebiniz için bir mesaj sağlayın:';
+
+  @override
+  String get menteeScreen_messageHint =>
+      'Benim mentorum olmanı istiyorum çünkü...';
+
+  @override
+  String get menteeScreen_sendRequest => 'Talebi Gönder';
+
+  @override
+  String get menteeScreen_messageMinLength =>
+      'Lütfen en az 10 karakter uzunluğunda bir mesaj girin';
+
+  @override
+  String menteeScreen_requestSent(String mentorName) {
+    return '$mentorName için mentorluk talep edildi';
+  }
+
+  @override
+  String get menteeScreen_requestError => 'Talep ederken bir hata oluştu';
+
+  @override
+  String get menteeScreen_pendingRequests => 'Bekleyen Talepler';
+
+  @override
+  String get menteeScreen_activeMentorships => 'Aktif Mentorluklar';
+
+  @override
+  String get menteeScreen_noPendingRequests => 'Bekleyen talep yok.';
+
+  @override
+  String get menteeScreen_noActiveMentorships => 'Aktif mentorluk yok.';
+
+  @override
+  String menteeScreen_error(String error) {
+    return 'Hata: $error';
+  }
+
+  @override
+  String mentorProfile_title(String mentorName) {
+    return 'Mentor Profili: $mentorName';
+  }
+
+  @override
+  String mentorProfile_loadError(String error) {
+    return 'Mentor profili veya yorumları yüklenemedi: $error';
+  }
+
+  @override
+  String get mentorProfile_noProfileData => 'Profil verisi mevcut değil';
+
+  @override
+  String get mentorProfile_rateMentor => 'Bu mentoru değerlendir';
+
+  @override
+  String mentorProfile_atCompany(String company) {
+    return '$company şirketinde';
+  }
+
+  @override
+  String get mentorProfile_rating => 'Değerlendirme';
+
+  @override
+  String mentorProfile_reviews(int count) {
+    return '$count yorum';
+  }
+
+  @override
+  String get mentorProfile_mentorshipInfo => 'Mentorluk Bilgileri';
+
+  @override
+  String get mentorProfile_capacity => 'Kapasite';
+
+  @override
+  String mentorProfile_mentees(int current, int max) {
+    return '$current/$max menti';
+  }
+
+  @override
+  String get mentorProfile_status => 'Durum';
+
+  @override
+  String get mentorProfile_available => 'Mentorluk için müsait';
+
+  @override
+  String get mentorProfile_notAvailable => 'Mentorluk için müsait değil';
+
+  @override
+  String get mentorProfile_about => 'Hakkında';
+
+  @override
+  String get mentorProfile_noReviews => 'Henüz yorum yok.';
+
+  @override
+  String mentorProfile_byUser(String username) {
+    return 'Yazan: $username';
+  }
+
+  @override
+  String mentorProfile_rateTitle(String mentorName) {
+    return '$mentorName Değerlendir';
+  }
+
+  @override
+  String get mentorProfile_selectRating => 'Bir değerlendirme seçin:';
+
+  @override
+  String get mentorProfile_commentOptional => 'Yorum (isteğe bağlı)';
+
+  @override
+  String get mentorProfile_submitting => 'Gönderiliyor...';
+
+  @override
+  String get mentorProfile_submit => 'Gönder';
+
+  @override
+  String get mentorProfile_selectRatingError =>
+      'Lütfen bir değerlendirme seçin';
+
+  @override
+  String get mentorProfile_ratingSubmitted =>
+      'Değerlendirme başarıyla gönderildi';
+
+  @override
+  String mentorProfile_ratingError(String error) {
+    return 'Değerlendirme gönderilirken hata: $error';
+  }
+
+  @override
+  String directMessage_title(String mentorName) {
+    return '$mentorName';
+  }
+
+  @override
+  String get directMessage_attachFile => 'Dosya ekle';
+
+  @override
+  String get directMessage_typeMessage => 'Mesaj yazın...';
+
+  @override
+  String get directMessage_sendMessage => 'Mesaj gönder';
+
+  @override
+  String get directMessage_fileNotImplemented =>
+      'Dosya ekleme henüz uygulanmadı.';
+
+  @override
+  String get createJob_title => 'Yeni İş İlanı Oluştur';
+
+  @override
+  String get createJob_jobDetails => 'İş Detayları';
+
+  @override
+  String get createJob_jobTitle => 'İş Başlığı';
+
+  @override
+  String get createJob_jobTitleRequired => 'Lütfen bir iş başlığı girin';
+
+  @override
+  String get createJob_company => 'Şirket';
+
+  @override
+  String get createJob_companyHint => 'Şirket Adınız';
+
+  @override
+  String get createJob_companyRequired => 'Lütfen şirket adını girin';
+
+  @override
+  String get createJob_location => 'Konum (örn. Şehir, Eyalet, Ülke)';
+
+  @override
+  String get createJob_locationRequired => 'Lütfen bir konum girin';
+
+  @override
+  String get createJob_remoteJob => 'Uzaktan İş';
+
+  @override
+  String get createJob_description => 'İş Açıklaması';
+
+  @override
+  String get createJob_descriptionRequired => 'Lütfen bir iş açıklaması girin';
+
+  @override
+  String get createJob_jobType => 'İş Türü';
+
+  @override
+  String get createJob_selectJobType => 'İş Türü Seçin';
+
+  @override
+  String get createJob_jobTypeRequired => 'Lütfen bir iş türü seçin';
+
+  @override
+  String get createJob_contactInfo =>
+      'İletişim Bilgileri (E-posta/Telefon/Bağlantı)';
+
+  @override
+  String get createJob_contactInfoRequired =>
+      'Lütfen iletişim bilgilerini sağlayın';
+
+  @override
+  String get createJob_minSalary => 'Minimum Maaş (İsteğe Bağlı)';
+
+  @override
+  String get createJob_minSalaryHint => 'örn. 50000';
+
+  @override
+  String get createJob_maxSalary => 'Maksimum Maaş (İsteğe Bağlı)';
+
+  @override
+  String get createJob_maxSalaryHint => 'örn. 70000';
+
+  @override
+  String get createJob_validNumber => 'Lütfen geçerli bir sayı girin';
+
+  @override
+  String get createJob_invalidFormat =>
+      'Geçersiz sayı formatı (çok fazla ondalık nokta)';
+
+  @override
+  String get createJob_maxSalaryError =>
+      'Maksimum maaş >= minimum maaş olmalıdır';
+
+  @override
+  String get createJob_ethicalPolicies => 'Etik Politikalar Uyumu';
+
+  @override
+  String get createJob_creatingPost => 'İlan Oluşturuluyor...';
+
+  @override
+  String get createJob_createPost => 'İş İlanı Oluştur';
+
+  @override
+  String get createJob_selectJobTypeError => 'Lütfen bir iş türü seçin.';
+
+  @override
+  String get createJob_selectPolicyError =>
+      'Lütfen en az bir etik politika seçin.';
+
+  @override
+  String get createJob_employerError => 'Hata: İşveren hesabı doğrulanamadı.';
+
+  @override
+  String get createJob_invalidMinSalary =>
+      'Geçersiz minimum maaş formatı. Lütfen sadece sayı girin.';
+
+  @override
+  String get createJob_invalidMaxSalary =>
+      'Geçersiz maksimum maaş formatı. Lütfen sadece sayı girin.';
+
+  @override
+  String get createJob_salaryRangeError =>
+      'Minimum maaş maksimum maaştan büyük olamaz.';
+
+  @override
+  String createJob_success(String jobTitle) {
+    return 'İş \"$jobTitle\" başarıyla oluşturuldu!';
+  }
+
+  @override
+  String createJob_error(String error) {
+    return 'İş oluşturulurken hata: $error';
+  }
+
+  @override
+  String get jobApplications_title => 'İş Başvuruları';
+
+  @override
+  String get jobApplications_userError =>
+      'Kullanıcı giriş yapmamış veya kullanıcı kimliği bulunamadı.';
+
+  @override
+  String get jobApplications_loadError =>
+      'Başvurular yüklenemedi. Lütfen tekrar deneyin.';
+
+  @override
+  String get jobApplications_noApplications =>
+      'Bu iş için henüz başvuru alınmadı.';
+
+  @override
+  String jobApplications_applied(String date) {
+    return 'Başvuru: $date';
+  }
+
+  @override
+  String jobApplications_feedback(String feedback) {
+    return 'Geri Bildirim: $feedback';
+  }
+
+  @override
+  String get jobApplications_reject => 'Reddet';
+
+  @override
+  String get jobApplications_approve => 'Onayla';
+
+  @override
+  String jobApplications_statusUpdated(String status) {
+    return 'Başvuru $status.';
+  }
+
+  @override
+  String jobApplications_updateError(String error) {
+    return 'Durum güncellenirken hata: $error';
+  }
+
+  @override
+  String jobApplications_feedbackTitle(String action) {
+    return '$action için Geri Bildirim Sağla (İsteğe Bağlı)';
+  }
+
+  @override
+  String get jobApplications_feedbackHint => 'Geri bildirimi buraya girin...';
+
+  @override
+  String get jobApplications_submit => 'Gönder';
+
+  @override
+  String get jobFilter_title => 'İşleri Filtrele';
+
+  @override
+  String get jobFilter_jobTitle => 'İş Başlığı';
+
+  @override
+  String get jobFilter_jobTitleHint => 'İş başlığı öneki girin';
+
+  @override
+  String get jobFilter_companyName => 'Şirket Adı';
+
+  @override
+  String get jobFilter_companyNameHint => 'Şirket adı öneki girin';
+
+  @override
+  String get jobFilter_ethicalPolicies => 'Etik Politikalar';
+
+  @override
+  String get jobFilter_minSalary => 'Min Maaş';
+
+  @override
+  String get jobFilter_minSalaryHint => 'örn. 30000';
+
+  @override
+  String get jobFilter_maxSalary => 'Max Maaş';
+
+  @override
+  String get jobFilter_maxSalaryHint => 'örn. 100000';
+
+  @override
+  String get jobFilter_remoteOnly => 'Sadece Uzaktan İşler';
+
+  @override
+  String get jobFilter_jobType => 'İş Türü';
+
+  @override
+  String get jobFilter_clearAll => 'Tümünü Temizle';
+
+  @override
+  String get jobFilter_applyFilters => 'Filtreleri Uygula';
+
+  @override
   String get common_notSpecified => 'Belirtilmemiş';
 
   @override

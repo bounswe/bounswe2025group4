@@ -636,6 +636,475 @@ class AppLocalizationsAr extends AppLocalizations {
   String get threadDetail_deleteCommentError => 'فشل حذف التعليق.';
 
   @override
+  String get mentorshipPage_title => 'الترابط المهني';
+
+  @override
+  String get mentorshipPage_loginRequired =>
+      'الرجاء تسجيل الدخول للوصول إلى ميزات الترابط المهني.';
+
+  @override
+  String get mentorScreen_title => 'الترابط المهني';
+
+  @override
+  String get mentorScreen_currentMentees => 'المنتسبون الحاليون';
+
+  @override
+  String get mentorScreen_requests => 'الطلبات';
+
+  @override
+  String mentorScreen_currentCapacity(int capacity) {
+    return 'السعة الحالية: $capacity';
+  }
+
+  @override
+  String get mentorScreen_updateCapacity => 'تحديث السعة';
+
+  @override
+  String get mentorScreen_noCurrentMentees => 'لا يوجد منتسبون حاليون';
+
+  @override
+  String get mentorScreen_noPendingRequests => 'لا توجد طلبات معلقة';
+
+  @override
+  String get mentorScreen_capacityUpdated => 'تم تحديث السعة بنجاح';
+
+  @override
+  String get mentorScreen_requestAccepted => 'تم قبول الطلب';
+
+  @override
+  String get mentorScreen_requestRejected => 'تم رفض الطلب';
+
+  @override
+  String get mentorScreen_mentorshipCompleted =>
+      'تم إكمال الترابط المهني بنجاح';
+
+  @override
+  String get mentorScreen_mentorshipCancelled =>
+      'تم إلغاء الترابط المهني بنجاح';
+
+  @override
+  String mentorScreen_openChat(String menteeName) {
+    return 'فتح الدردشة مع $menteeName';
+  }
+
+  @override
+  String get mentorScreen_updateCapacityTitle =>
+      'تحديث الحد الأقصى لسعة المنتسبين';
+
+  @override
+  String get mentorScreen_maxMentees => 'الحد الأقصى لعدد المنتسبين';
+
+  @override
+  String get mentorScreen_enterNumber => 'أدخل رقماً';
+
+  @override
+  String get mentorScreen_cancel => 'إلغاء';
+
+  @override
+  String get mentorScreen_update => 'تحديث';
+
+  @override
+  String get mentorScreen_completeMentorship => 'إكمال الترابط المهني';
+
+  @override
+  String get mentorScreen_cancelMentorship => 'إلغاء الترابط المهني';
+
+  @override
+  String mentorScreen_confirmComplete(String menteeName) {
+    return 'هل أنت متأكد من أنك تريد إكمال الترابط المهني مع $menteeName؟\n\nسيؤدي هذا إلى تمييز الترابط المهني كمكتمل بنجاح.';
+  }
+
+  @override
+  String mentorScreen_confirmCancel(String menteeName) {
+    return 'هل أنت متأكد من أنك تريد إلغاء الترابط المهني مع $menteeName؟\n\nسيؤدي هذا إلى إنهاء علاقة الترابط المهني.';
+  }
+
+  @override
+  String get mentorScreen_confirm => 'تأكيد';
+
+  @override
+  String get menteeScreen_findMentors => 'البحث عن المرشدين';
+
+  @override
+  String get menteeScreen_myMentorships => 'ترابطاتي المهنية';
+
+  @override
+  String get menteeScreen_searchMentors =>
+      'البحث عن المرشدين بالاسم، الدور، الشركة...';
+
+  @override
+  String get menteeScreen_noMentorsFound => 'لم يتم العثور على مرشدين.';
+
+  @override
+  String menteeScreen_errorLoadingMentors(String error) {
+    return 'خطأ في تحميل المرشدين: $error';
+  }
+
+  @override
+  String get menteeScreen_retryLoadingMentors => 'إعادة تحميل المرشدين';
+
+  @override
+  String menteeScreen_requestMentorshipTitle(String mentorName) {
+    return 'طلب ترابط مهني من $mentorName';
+  }
+
+  @override
+  String get menteeScreen_provideMessage =>
+      'الرجاء تقديم رسالة لطلب الترابط المهني:';
+
+  @override
+  String get menteeScreen_messageHint => 'أريدك أن تكون مرشدي لأن...';
+
+  @override
+  String get menteeScreen_sendRequest => 'إرسال الطلب';
+
+  @override
+  String get menteeScreen_messageMinLength =>
+      'الرجاء إدخال رسالة من 10 أحرف على الأقل';
+
+  @override
+  String menteeScreen_requestSent(String mentorName) {
+    return 'تم طلب الترابط المهني لـ $mentorName';
+  }
+
+  @override
+  String get menteeScreen_requestError => 'حدث خطأ أثناء الطلب';
+
+  @override
+  String get menteeScreen_pendingRequests => 'الطلبات المعلقة';
+
+  @override
+  String get menteeScreen_activeMentorships => 'الترابطات المهنية النشطة';
+
+  @override
+  String get menteeScreen_noPendingRequests => 'لا توجد طلبات معلقة.';
+
+  @override
+  String get menteeScreen_noActiveMentorships => 'لا توجد ترابطات مهنية نشطة.';
+
+  @override
+  String menteeScreen_error(String error) {
+    return 'خطأ: $error';
+  }
+
+  @override
+  String mentorProfile_title(String mentorName) {
+    return 'ملف المرشد: $mentorName';
+  }
+
+  @override
+  String mentorProfile_loadError(String error) {
+    return 'فشل تحميل ملف المرشد أو المراجعات: $error';
+  }
+
+  @override
+  String get mentorProfile_noProfileData => 'لا توجد بيانات ملف متاحة';
+
+  @override
+  String get mentorProfile_rateMentor => 'تقييم هذا المرشد';
+
+  @override
+  String mentorProfile_atCompany(String company) {
+    return 'في $company';
+  }
+
+  @override
+  String get mentorProfile_rating => 'التقييم';
+
+  @override
+  String mentorProfile_reviews(int count) {
+    return '$count مراجعة';
+  }
+
+  @override
+  String get mentorProfile_mentorshipInfo => 'معلومات الترابط المهني';
+
+  @override
+  String get mentorProfile_capacity => 'السعة';
+
+  @override
+  String mentorProfile_mentees(int current, int max) {
+    return '$current/$max منتسب';
+  }
+
+  @override
+  String get mentorProfile_status => 'الحالة';
+
+  @override
+  String get mentorProfile_available => 'متاح للترابط المهني';
+
+  @override
+  String get mentorProfile_notAvailable => 'غير متاح للترابط المهني';
+
+  @override
+  String get mentorProfile_about => 'حول';
+
+  @override
+  String get mentorProfile_noReviews => 'لا توجد مراجعات بعد.';
+
+  @override
+  String mentorProfile_byUser(String username) {
+    return 'بواسطة: $username';
+  }
+
+  @override
+  String mentorProfile_rateTitle(String mentorName) {
+    return 'تقييم $mentorName';
+  }
+
+  @override
+  String get mentorProfile_selectRating => 'اختر تقييماً:';
+
+  @override
+  String get mentorProfile_commentOptional => 'تعليق (اختياري)';
+
+  @override
+  String get mentorProfile_submitting => 'جاري الإرسال...';
+
+  @override
+  String get mentorProfile_submit => 'إرسال';
+
+  @override
+  String get mentorProfile_selectRatingError => 'الرجاء اختيار تقييم';
+
+  @override
+  String get mentorProfile_ratingSubmitted => 'تم إرسال التقييم بنجاح';
+
+  @override
+  String mentorProfile_ratingError(String error) {
+    return 'خطأ في إرسال التقييم: $error';
+  }
+
+  @override
+  String directMessage_title(String mentorName) {
+    return '$mentorName';
+  }
+
+  @override
+  String get directMessage_attachFile => 'إرفاق ملف';
+
+  @override
+  String get directMessage_typeMessage => 'اكتب رسالة...';
+
+  @override
+  String get directMessage_sendMessage => 'إرسال رسالة';
+
+  @override
+  String get directMessage_fileNotImplemented =>
+      'إرفاق الملفات لم يتم تطبيقه بعد.';
+
+  @override
+  String get createJob_title => 'إنشاء إعلان وظيفة جديد';
+
+  @override
+  String get createJob_jobDetails => 'تفاصيل الوظيفة';
+
+  @override
+  String get createJob_jobTitle => 'عنوان الوظيفة';
+
+  @override
+  String get createJob_jobTitleRequired => 'الرجاء إدخال عنوان الوظيفة';
+
+  @override
+  String get createJob_company => 'الشركة';
+
+  @override
+  String get createJob_companyHint => 'اسم شركتك';
+
+  @override
+  String get createJob_companyRequired => 'الرجاء إدخال اسم الشركة';
+
+  @override
+  String get createJob_location => 'الموقع (مثل: المدينة، الولاية، البلد)';
+
+  @override
+  String get createJob_locationRequired => 'الرجاء إدخال موقع';
+
+  @override
+  String get createJob_remoteJob => 'وظيفة عن بُعد';
+
+  @override
+  String get createJob_description => 'وصف الوظيفة';
+
+  @override
+  String get createJob_descriptionRequired => 'الرجاء إدخال وصف الوظيفة';
+
+  @override
+  String get createJob_jobType => 'نوع الوظيفة';
+
+  @override
+  String get createJob_selectJobType => 'اختر نوع الوظيفة';
+
+  @override
+  String get createJob_jobTypeRequired => 'الرجاء اختيار نوع الوظيفة';
+
+  @override
+  String get createJob_contactInfo =>
+      'معلومات الاتصال (البريد الإلكتروني/الهاتف/الرابط)';
+
+  @override
+  String get createJob_contactInfoRequired => 'الرجاء تقديم معلومات الاتصال';
+
+  @override
+  String get createJob_minSalary => 'الحد الأدنى للراتب (اختياري)';
+
+  @override
+  String get createJob_minSalaryHint => 'مثل: 50000';
+
+  @override
+  String get createJob_maxSalary => 'الحد الأقصى للراتب (اختياري)';
+
+  @override
+  String get createJob_maxSalaryHint => 'مثل: 70000';
+
+  @override
+  String get createJob_validNumber => 'الرجاء إدخال رقم صحيح';
+
+  @override
+  String get createJob_invalidFormat =>
+      'تنسيق رقم غير صحيح (نقاط عشرية كثيرة جداً)';
+
+  @override
+  String get createJob_maxSalaryError =>
+      'الحد الأقصى للراتب يجب أن يكون >= الحد الأدنى للراتب';
+
+  @override
+  String get createJob_ethicalPolicies => 'الامتثال للسياسات الأخلاقية';
+
+  @override
+  String get createJob_creatingPost => 'جاري إنشاء الإعلان...';
+
+  @override
+  String get createJob_createPost => 'إنشاء إعلان وظيفة';
+
+  @override
+  String get createJob_selectJobTypeError => 'الرجاء اختيار نوع الوظيفة.';
+
+  @override
+  String get createJob_selectPolicyError =>
+      'الرجاء اختيار سياسة أخلاقية واحدة على الأقل.';
+
+  @override
+  String get createJob_employerError =>
+      'خطأ: لا يمكن التحقق من حساب صاحب العمل.';
+
+  @override
+  String get createJob_invalidMinSalary =>
+      'تنسيق الحد الأدنى للراتب غير صحيح. الرجاء إدخال أرقام فقط.';
+
+  @override
+  String get createJob_invalidMaxSalary =>
+      'تنسيق الحد الأقصى للراتب غير صحيح. الرجاء إدخال أرقام فقط.';
+
+  @override
+  String get createJob_salaryRangeError =>
+      'الحد الأدنى للراتب لا يمكن أن يكون أكبر من الحد الأقصى للراتب.';
+
+  @override
+  String createJob_success(String jobTitle) {
+    return 'تم إنشاء الوظيفة \"$jobTitle\" بنجاح!';
+  }
+
+  @override
+  String createJob_error(String error) {
+    return 'خطأ في إنشاء الوظيفة: $error';
+  }
+
+  @override
+  String get jobApplications_title => 'طلبات الوظائف';
+
+  @override
+  String get jobApplications_userError =>
+      'المستخدم غير مسجل الدخول أو لم يتم العثور على معرف المستخدم.';
+
+  @override
+  String get jobApplications_loadError =>
+      'فشل تحميل الطلبات. الرجاء المحاولة مرة أخرى.';
+
+  @override
+  String get jobApplications_noApplications =>
+      'لم يتم استلام أي طلبات لهذه الوظيفة بعد.';
+
+  @override
+  String jobApplications_applied(String date) {
+    return 'تم التقديم: $date';
+  }
+
+  @override
+  String jobApplications_feedback(String feedback) {
+    return 'التعليقات: $feedback';
+  }
+
+  @override
+  String get jobApplications_reject => 'رفض';
+
+  @override
+  String get jobApplications_approve => 'موافقة';
+
+  @override
+  String jobApplications_statusUpdated(String status) {
+    return 'تم $status الطلب.';
+  }
+
+  @override
+  String jobApplications_updateError(String error) {
+    return 'خطأ في تحديث الحالة: $error';
+  }
+
+  @override
+  String jobApplications_feedbackTitle(String action) {
+    return 'تقديم تعليقات (اختياري) لـ $action';
+  }
+
+  @override
+  String get jobApplications_feedbackHint => 'أدخل التعليقات هنا...';
+
+  @override
+  String get jobApplications_submit => 'إرسال';
+
+  @override
+  String get jobFilter_title => 'تصفية الوظائف';
+
+  @override
+  String get jobFilter_jobTitle => 'عنوان الوظيفة';
+
+  @override
+  String get jobFilter_jobTitleHint => 'أدخل بادئة عنوان الوظيفة';
+
+  @override
+  String get jobFilter_companyName => 'اسم الشركة';
+
+  @override
+  String get jobFilter_companyNameHint => 'أدخل بادئة اسم الشركة';
+
+  @override
+  String get jobFilter_ethicalPolicies => 'السياسات الأخلاقية';
+
+  @override
+  String get jobFilter_minSalary => 'الحد الأدنى للراتب';
+
+  @override
+  String get jobFilter_minSalaryHint => 'مثل: 30000';
+
+  @override
+  String get jobFilter_maxSalary => 'الحد الأقصى للراتب';
+
+  @override
+  String get jobFilter_maxSalaryHint => 'مثل: 100000';
+
+  @override
+  String get jobFilter_remoteOnly => 'الوظائف عن بُعد فقط';
+
+  @override
+  String get jobFilter_jobType => 'نوع الوظيفة';
+
+  @override
+  String get jobFilter_clearAll => 'مسح الكل';
+
+  @override
+  String get jobFilter_applyFilters => 'تطبيق المرشحات';
+
+  @override
   String get common_notSpecified => 'غير محدد';
 
   @override

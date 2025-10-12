@@ -642,6 +642,475 @@ class AppLocalizationsEn extends AppLocalizations {
   String get threadDetail_deleteCommentError => 'Failed to delete comment.';
 
   @override
+  String get mentorshipPage_title => 'Mentorship';
+
+  @override
+  String get mentorshipPage_loginRequired =>
+      'Please log in to access mentorship features.';
+
+  @override
+  String get mentorScreen_title => 'Mentorship';
+
+  @override
+  String get mentorScreen_currentMentees => 'Current Mentees';
+
+  @override
+  String get mentorScreen_requests => 'Requests';
+
+  @override
+  String mentorScreen_currentCapacity(int capacity) {
+    return 'Current Capacity: $capacity';
+  }
+
+  @override
+  String get mentorScreen_updateCapacity => 'Update Capacity';
+
+  @override
+  String get mentorScreen_noCurrentMentees => 'No current mentees';
+
+  @override
+  String get mentorScreen_noPendingRequests => 'No pending requests';
+
+  @override
+  String get mentorScreen_capacityUpdated => 'Capacity updated successfully';
+
+  @override
+  String get mentorScreen_requestAccepted => 'Request accepted';
+
+  @override
+  String get mentorScreen_requestRejected => 'Request rejected';
+
+  @override
+  String get mentorScreen_mentorshipCompleted =>
+      'Mentorship completed successfully';
+
+  @override
+  String get mentorScreen_mentorshipCancelled =>
+      'Mentorship cancelled successfully';
+
+  @override
+  String mentorScreen_openChat(String menteeName) {
+    return 'Open chat with $menteeName';
+  }
+
+  @override
+  String get mentorScreen_updateCapacityTitle =>
+      'Update Maximum Mentee Capacity';
+
+  @override
+  String get mentorScreen_maxMentees => 'Maximum number of mentees';
+
+  @override
+  String get mentorScreen_enterNumber => 'Enter a number';
+
+  @override
+  String get mentorScreen_cancel => 'Cancel';
+
+  @override
+  String get mentorScreen_update => 'Update';
+
+  @override
+  String get mentorScreen_completeMentorship => 'complete Mentorship';
+
+  @override
+  String get mentorScreen_cancelMentorship => 'cancel Mentorship';
+
+  @override
+  String mentorScreen_confirmComplete(String menteeName) {
+    return 'Are you sure you want to complete your mentorship with $menteeName?\n\nThis will mark the mentorship as successfully completed.';
+  }
+
+  @override
+  String mentorScreen_confirmCancel(String menteeName) {
+    return 'Are you sure you want to cancel your mentorship with $menteeName?\n\nThis will end the mentorship relationship.';
+  }
+
+  @override
+  String get mentorScreen_confirm => 'Confirm';
+
+  @override
+  String get menteeScreen_findMentors => 'Find Mentors';
+
+  @override
+  String get menteeScreen_myMentorships => 'My Mentorships';
+
+  @override
+  String get menteeScreen_searchMentors =>
+      'Search mentors by name, role, company...';
+
+  @override
+  String get menteeScreen_noMentorsFound => 'No mentors found.';
+
+  @override
+  String menteeScreen_errorLoadingMentors(String error) {
+    return 'Error loading mentors: $error';
+  }
+
+  @override
+  String get menteeScreen_retryLoadingMentors => 'Retry Loading Mentors';
+
+  @override
+  String menteeScreen_requestMentorshipTitle(String mentorName) {
+    return 'Request Mentorship from $mentorName';
+  }
+
+  @override
+  String get menteeScreen_provideMessage =>
+      'Please provide a message for your mentorship request:';
+
+  @override
+  String get menteeScreen_messageHint =>
+      'I would like you to be my mentor because...';
+
+  @override
+  String get menteeScreen_sendRequest => 'Send Request';
+
+  @override
+  String get menteeScreen_messageMinLength =>
+      'Please enter a message of at least 10 characters';
+
+  @override
+  String menteeScreen_requestSent(String mentorName) {
+    return 'Mentorship requested for $mentorName';
+  }
+
+  @override
+  String get menteeScreen_requestError => 'There is an error while requesting';
+
+  @override
+  String get menteeScreen_pendingRequests => 'Pending Requests';
+
+  @override
+  String get menteeScreen_activeMentorships => 'Active Mentorships';
+
+  @override
+  String get menteeScreen_noPendingRequests => 'No pending requests.';
+
+  @override
+  String get menteeScreen_noActiveMentorships => 'No active mentorships.';
+
+  @override
+  String menteeScreen_error(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String mentorProfile_title(String mentorName) {
+    return 'Mentor Profile: $mentorName';
+  }
+
+  @override
+  String mentorProfile_loadError(String error) {
+    return 'Failed to load mentor profile or reviews: $error';
+  }
+
+  @override
+  String get mentorProfile_noProfileData => 'No profile data available';
+
+  @override
+  String get mentorProfile_rateMentor => 'Rate this mentor';
+
+  @override
+  String mentorProfile_atCompany(String company) {
+    return 'at $company';
+  }
+
+  @override
+  String get mentorProfile_rating => 'Rating';
+
+  @override
+  String mentorProfile_reviews(int count) {
+    return '$count reviews';
+  }
+
+  @override
+  String get mentorProfile_mentorshipInfo => 'Mentorship Information';
+
+  @override
+  String get mentorProfile_capacity => 'Capacity';
+
+  @override
+  String mentorProfile_mentees(int current, int max) {
+    return '$current/$max mentees';
+  }
+
+  @override
+  String get mentorProfile_status => 'Status';
+
+  @override
+  String get mentorProfile_available => 'Available for mentorship';
+
+  @override
+  String get mentorProfile_notAvailable => 'Not available for mentorship';
+
+  @override
+  String get mentorProfile_about => 'About';
+
+  @override
+  String get mentorProfile_noReviews => 'No reviews yet.';
+
+  @override
+  String mentorProfile_byUser(String username) {
+    return 'By: $username';
+  }
+
+  @override
+  String mentorProfile_rateTitle(String mentorName) {
+    return 'Rate $mentorName';
+  }
+
+  @override
+  String get mentorProfile_selectRating => 'Select a rating:';
+
+  @override
+  String get mentorProfile_commentOptional => 'Comment (optional)';
+
+  @override
+  String get mentorProfile_submitting => 'Submitting...';
+
+  @override
+  String get mentorProfile_submit => 'Submit';
+
+  @override
+  String get mentorProfile_selectRatingError => 'Please select a rating';
+
+  @override
+  String get mentorProfile_ratingSubmitted => 'Rating submitted successfully';
+
+  @override
+  String mentorProfile_ratingError(String error) {
+    return 'Error submitting rating: $error';
+  }
+
+  @override
+  String directMessage_title(String mentorName) {
+    return '$mentorName';
+  }
+
+  @override
+  String get directMessage_attachFile => 'Attach file';
+
+  @override
+  String get directMessage_typeMessage => 'Type a message...';
+
+  @override
+  String get directMessage_sendMessage => 'Send message';
+
+  @override
+  String get directMessage_fileNotImplemented =>
+      'File attachment not implemented yet.';
+
+  @override
+  String get createJob_title => 'Create New Job Posting';
+
+  @override
+  String get createJob_jobDetails => 'Job Details';
+
+  @override
+  String get createJob_jobTitle => 'Job Title';
+
+  @override
+  String get createJob_jobTitleRequired => 'Please enter a job title';
+
+  @override
+  String get createJob_company => 'Company';
+
+  @override
+  String get createJob_companyHint => 'Your Company Name';
+
+  @override
+  String get createJob_companyRequired => 'Please enter the company name';
+
+  @override
+  String get createJob_location => 'Location (e.g., City, State, Country)';
+
+  @override
+  String get createJob_locationRequired => 'Please enter a location';
+
+  @override
+  String get createJob_remoteJob => 'Remote Job';
+
+  @override
+  String get createJob_description => 'Job Description';
+
+  @override
+  String get createJob_descriptionRequired => 'Please enter a job description';
+
+  @override
+  String get createJob_jobType => 'Job Type';
+
+  @override
+  String get createJob_selectJobType => 'Select Job Type';
+
+  @override
+  String get createJob_jobTypeRequired => 'Please select a job type';
+
+  @override
+  String get createJob_contactInfo => 'Contact Information (Email/Phone/Link)';
+
+  @override
+  String get createJob_contactInfoRequired =>
+      'Please provide contact information';
+
+  @override
+  String get createJob_minSalary => 'Minimum Salary (Optional)';
+
+  @override
+  String get createJob_minSalaryHint => 'e.g., 50000';
+
+  @override
+  String get createJob_maxSalary => 'Maximum Salary (Optional)';
+
+  @override
+  String get createJob_maxSalaryHint => 'e.g., 70000';
+
+  @override
+  String get createJob_validNumber => 'Please enter a valid number';
+
+  @override
+  String get createJob_invalidFormat =>
+      'Invalid number format (too many decimal points)';
+
+  @override
+  String get createJob_maxSalaryError => 'Max salary must be >= min salary';
+
+  @override
+  String get createJob_ethicalPolicies => 'Ethical Policies Compliance';
+
+  @override
+  String get createJob_creatingPost => 'Creating Post...';
+
+  @override
+  String get createJob_createPost => 'Create Job Post';
+
+  @override
+  String get createJob_selectJobTypeError => 'Please select a job type.';
+
+  @override
+  String get createJob_selectPolicyError =>
+      'Please select at least one ethical policy.';
+
+  @override
+  String get createJob_employerError =>
+      'Error: Could not verify employer account.';
+
+  @override
+  String get createJob_invalidMinSalary =>
+      'Invalid minimum salary format. Please enter numbers only.';
+
+  @override
+  String get createJob_invalidMaxSalary =>
+      'Invalid maximum salary format. Please enter numbers only.';
+
+  @override
+  String get createJob_salaryRangeError =>
+      'Minimum salary cannot be greater than maximum salary.';
+
+  @override
+  String createJob_success(String jobTitle) {
+    return 'Job \"$jobTitle\" created successfully!';
+  }
+
+  @override
+  String createJob_error(String error) {
+    return 'Error creating job: $error';
+  }
+
+  @override
+  String get jobApplications_title => 'Job Applications';
+
+  @override
+  String get jobApplications_userError =>
+      'User not logged in or user ID not found.';
+
+  @override
+  String get jobApplications_loadError =>
+      'Failed to load applications. Please try again.';
+
+  @override
+  String get jobApplications_noApplications =>
+      'No applications received for this job yet.';
+
+  @override
+  String jobApplications_applied(String date) {
+    return 'Applied: $date';
+  }
+
+  @override
+  String jobApplications_feedback(String feedback) {
+    return 'Feedback: $feedback';
+  }
+
+  @override
+  String get jobApplications_reject => 'Reject';
+
+  @override
+  String get jobApplications_approve => 'Approve';
+
+  @override
+  String jobApplications_statusUpdated(String status) {
+    return 'Application $status.';
+  }
+
+  @override
+  String jobApplications_updateError(String error) {
+    return 'Error updating status: $error';
+  }
+
+  @override
+  String jobApplications_feedbackTitle(String action) {
+    return 'Provide Feedback (Optional) for $action';
+  }
+
+  @override
+  String get jobApplications_feedbackHint => 'Enter feedback here...';
+
+  @override
+  String get jobApplications_submit => 'Submit';
+
+  @override
+  String get jobFilter_title => 'Filter Jobs';
+
+  @override
+  String get jobFilter_jobTitle => 'Job Title';
+
+  @override
+  String get jobFilter_jobTitleHint => 'Enter job title prefix';
+
+  @override
+  String get jobFilter_companyName => 'Company Name';
+
+  @override
+  String get jobFilter_companyNameHint => 'Enter company name prefix';
+
+  @override
+  String get jobFilter_ethicalPolicies => 'Ethical Policies';
+
+  @override
+  String get jobFilter_minSalary => 'Min Salary';
+
+  @override
+  String get jobFilter_minSalaryHint => 'e.g., 30000';
+
+  @override
+  String get jobFilter_maxSalary => 'Max Salary';
+
+  @override
+  String get jobFilter_maxSalaryHint => 'e.g., 100000';
+
+  @override
+  String get jobFilter_remoteOnly => 'Remote Jobs Only';
+
+  @override
+  String get jobFilter_jobType => 'Job Type';
+
+  @override
+  String get jobFilter_clearAll => 'Clear All';
+
+  @override
+  String get jobFilter_applyFilters => 'Apply Filters';
+
+  @override
   String get common_notSpecified => 'Not specified';
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/services/api_service.dart'; // To get available filters
 import '../../../core/utils/string_extensions.dart'; // Import shared extension
+import '../../../generated/l10n/app_localizations.dart';
 
 class JobFilterDialog extends StatefulWidget {
   final ApiService apiService;
@@ -63,7 +64,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
     final availableJobTypes = widget.apiService.availableJobTypes;
 
     return AlertDialog(
-      title: const Text('Filter Jobs'),
+      title: Text(AppLocalizations.of(context)!.jobFilter_title),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -72,9 +73,9 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
             // Title filter
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Job Title',
-                hintText: 'Enter job title prefix',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.jobFilter_jobTitle,
+                hintText: AppLocalizations.of(context)!.jobFilter_jobTitleHint,
               ),
               onChanged: (value) {
                 _selectedFilters['title'] = value.isEmpty ? null : value;
@@ -85,9 +86,9 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
             // Company name filter
             TextField(
               controller: _companyNameController,
-              decoration: const InputDecoration(
-                labelText: 'Company Name',
-                hintText: 'Enter company name prefix',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.jobFilter_companyName,
+                hintText: AppLocalizations.of(context)!.jobFilter_companyNameHint,
               ),
               onChanged: (value) {
                 _selectedFilters['companyName'] = value.isEmpty ? null : value;
@@ -97,7 +98,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
 
             // Ethical policies filter
             _buildFilterSection(
-              title: 'Ethical Policies',
+              title: AppLocalizations.of(context)!.jobFilter_ethicalPolicies,
               availableItems: availablePolicies,
               selectedItems: _selectedFilters['ethicalTags'] as List<String>,
               filterKey: 'ethicalTags',
@@ -110,9 +111,9 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
                 Expanded(
                   child: TextField(
                     controller: _minSalaryController,
-                    decoration: const InputDecoration(
-                      labelText: 'Min Salary',
-                      hintText: 'e.g., 30000',
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.jobFilter_minSalary,
+                      hintText: AppLocalizations.of(context)!.jobFilter_minSalaryHint,
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
@@ -125,9 +126,9 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
                 Expanded(
                   child: TextField(
                     controller: _maxSalaryController,
-                    decoration: const InputDecoration(
-                      labelText: 'Max Salary',
-                      hintText: 'e.g., 100000',
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.jobFilter_maxSalary,
+                      hintText: AppLocalizations.of(context)!.jobFilter_maxSalaryHint,
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
@@ -142,7 +143,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
 
             // Remote option
             SwitchListTile(
-              title: const Text('Remote Jobs Only'),
+              title: Text(AppLocalizations.of(context)!.jobFilter_remoteOnly),
               value: _isRemote,
               onChanged: (value) {
                 setState(() {
@@ -156,7 +157,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
 
             // Job types
             _buildFilterSection(
-              title: 'Job Type',
+              title: AppLocalizations.of(context)!.jobFilter_jobType,
               availableItems: availableJobTypes,
               selectedItems: _selectedFilters['jobTypes'] as List<String>,
               filterKey: 'jobTypes',
@@ -167,7 +168,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(), // Cancel
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
         ),
         TextButton(
           onPressed: () {
@@ -187,14 +188,14 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
               (_selectedFilters['jobTypes'] as List<String>).clear();
             });
           },
-          child: const Text('Clear All'),
+          child: Text(AppLocalizations.of(context)!.jobFilter_clearAll),
         ),
         ElevatedButton(
           onPressed: () {
             // Return the selected filters
             Navigator.of(context).pop(_selectedFilters);
           },
-          child: const Text('Apply Filters'),
+          child: Text(AppLocalizations.of(context)!.jobFilter_applyFilters),
         ),
       ],
     );

@@ -1252,6 +1252,810 @@ abstract class AppLocalizations {
   /// **'Failed to delete comment.'**
   String get threadDetail_deleteCommentError;
 
+  /// Mentorship page title
+  ///
+  /// In en, this message translates to:
+  /// **'Mentorship'**
+  String get mentorshipPage_title;
+
+  /// Login required message
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to access mentorship features.'**
+  String get mentorshipPage_loginRequired;
+
+  /// Mentor screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Mentorship'**
+  String get mentorScreen_title;
+
+  /// Current mentees tab
+  ///
+  /// In en, this message translates to:
+  /// **'Current Mentees'**
+  String get mentorScreen_currentMentees;
+
+  /// Requests tab
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get mentorScreen_requests;
+
+  /// Current capacity label
+  ///
+  /// In en, this message translates to:
+  /// **'Current Capacity: {capacity}'**
+  String mentorScreen_currentCapacity(int capacity);
+
+  /// Update capacity button
+  ///
+  /// In en, this message translates to:
+  /// **'Update Capacity'**
+  String get mentorScreen_updateCapacity;
+
+  /// No current mentees message
+  ///
+  /// In en, this message translates to:
+  /// **'No current mentees'**
+  String get mentorScreen_noCurrentMentees;
+
+  /// No pending requests message
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requests'**
+  String get mentorScreen_noPendingRequests;
+
+  /// Capacity updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity updated successfully'**
+  String get mentorScreen_capacityUpdated;
+
+  /// Request accepted message
+  ///
+  /// In en, this message translates to:
+  /// **'Request accepted'**
+  String get mentorScreen_requestAccepted;
+
+  /// Request rejected message
+  ///
+  /// In en, this message translates to:
+  /// **'Request rejected'**
+  String get mentorScreen_requestRejected;
+
+  /// Mentorship completed message
+  ///
+  /// In en, this message translates to:
+  /// **'Mentorship completed successfully'**
+  String get mentorScreen_mentorshipCompleted;
+
+  /// Mentorship cancelled message
+  ///
+  /// In en, this message translates to:
+  /// **'Mentorship cancelled successfully'**
+  String get mentorScreen_mentorshipCancelled;
+
+  /// Open chat message
+  ///
+  /// In en, this message translates to:
+  /// **'Open chat with {menteeName}'**
+  String mentorScreen_openChat(String menteeName);
+
+  /// Update capacity dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Update Maximum Mentee Capacity'**
+  String get mentorScreen_updateCapacityTitle;
+
+  /// Max mentees label
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum number of mentees'**
+  String get mentorScreen_maxMentees;
+
+  /// Enter number hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number'**
+  String get mentorScreen_enterNumber;
+
+  /// Cancel button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get mentorScreen_cancel;
+
+  /// Update button
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get mentorScreen_update;
+
+  /// Complete mentorship dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'complete Mentorship'**
+  String get mentorScreen_completeMentorship;
+
+  /// Cancel mentorship dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'cancel Mentorship'**
+  String get mentorScreen_cancelMentorship;
+
+  /// Confirm complete message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to complete your mentorship with {menteeName}?\n\nThis will mark the mentorship as successfully completed.'**
+  String mentorScreen_confirmComplete(String menteeName);
+
+  /// Confirm cancel message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel your mentorship with {menteeName}?\n\nThis will end the mentorship relationship.'**
+  String mentorScreen_confirmCancel(String menteeName);
+
+  /// Confirm button
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get mentorScreen_confirm;
+
+  /// Find mentors tab
+  ///
+  /// In en, this message translates to:
+  /// **'Find Mentors'**
+  String get menteeScreen_findMentors;
+
+  /// My mentorships tab
+  ///
+  /// In en, this message translates to:
+  /// **'My Mentorships'**
+  String get menteeScreen_myMentorships;
+
+  /// Search mentors placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Search mentors by name, role, company...'**
+  String get menteeScreen_searchMentors;
+
+  /// No mentors found message
+  ///
+  /// In en, this message translates to:
+  /// **'No mentors found.'**
+  String get menteeScreen_noMentorsFound;
+
+  /// Error loading mentors
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading mentors: {error}'**
+  String menteeScreen_errorLoadingMentors(String error);
+
+  /// Retry loading mentors button
+  ///
+  /// In en, this message translates to:
+  /// **'Retry Loading Mentors'**
+  String get menteeScreen_retryLoadingMentors;
+
+  /// Request mentorship dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Request Mentorship from {mentorName}'**
+  String menteeScreen_requestMentorshipTitle(String mentorName);
+
+  /// Provide message text
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide a message for your mentorship request:'**
+  String get menteeScreen_provideMessage;
+
+  /// Message hint
+  ///
+  /// In en, this message translates to:
+  /// **'I would like you to be my mentor because...'**
+  String get menteeScreen_messageHint;
+
+  /// Send request button
+  ///
+  /// In en, this message translates to:
+  /// **'Send Request'**
+  String get menteeScreen_sendRequest;
+
+  /// Message min length validation
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a message of at least 10 characters'**
+  String get menteeScreen_messageMinLength;
+
+  /// Request sent message
+  ///
+  /// In en, this message translates to:
+  /// **'Mentorship requested for {mentorName}'**
+  String menteeScreen_requestSent(String mentorName);
+
+  /// Request error message
+  ///
+  /// In en, this message translates to:
+  /// **'There is an error while requesting'**
+  String get menteeScreen_requestError;
+
+  /// Pending requests section
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Requests'**
+  String get menteeScreen_pendingRequests;
+
+  /// Active mentorships section
+  ///
+  /// In en, this message translates to:
+  /// **'Active Mentorships'**
+  String get menteeScreen_activeMentorships;
+
+  /// No pending requests message
+  ///
+  /// In en, this message translates to:
+  /// **'No pending requests.'**
+  String get menteeScreen_noPendingRequests;
+
+  /// No active mentorships message
+  ///
+  /// In en, this message translates to:
+  /// **'No active mentorships.'**
+  String get menteeScreen_noActiveMentorships;
+
+  /// Error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String menteeScreen_error(String error);
+
+  /// Mentor profile title
+  ///
+  /// In en, this message translates to:
+  /// **'Mentor Profile: {mentorName}'**
+  String mentorProfile_title(String mentorName);
+
+  /// Load error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load mentor profile or reviews: {error}'**
+  String mentorProfile_loadError(String error);
+
+  /// No profile data message
+  ///
+  /// In en, this message translates to:
+  /// **'No profile data available'**
+  String get mentorProfile_noProfileData;
+
+  /// Rate mentor tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Rate this mentor'**
+  String get mentorProfile_rateMentor;
+
+  /// At company text
+  ///
+  /// In en, this message translates to:
+  /// **'at {company}'**
+  String mentorProfile_atCompany(String company);
+
+  /// Rating label
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get mentorProfile_rating;
+
+  /// Reviews count
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reviews'**
+  String mentorProfile_reviews(int count);
+
+  /// Mentorship information label
+  ///
+  /// In en, this message translates to:
+  /// **'Mentorship Information'**
+  String get mentorProfile_mentorshipInfo;
+
+  /// Capacity label
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity'**
+  String get mentorProfile_capacity;
+
+  /// Mentees count
+  ///
+  /// In en, this message translates to:
+  /// **'{current}/{max} mentees'**
+  String mentorProfile_mentees(int current, int max);
+
+  /// Status label
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get mentorProfile_status;
+
+  /// Available status
+  ///
+  /// In en, this message translates to:
+  /// **'Available for mentorship'**
+  String get mentorProfile_available;
+
+  /// Not available status
+  ///
+  /// In en, this message translates to:
+  /// **'Not available for mentorship'**
+  String get mentorProfile_notAvailable;
+
+  /// About label
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get mentorProfile_about;
+
+  /// No reviews message
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet.'**
+  String get mentorProfile_noReviews;
+
+  /// Review by user
+  ///
+  /// In en, this message translates to:
+  /// **'By: {username}'**
+  String mentorProfile_byUser(String username);
+
+  /// Rate dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Rate {mentorName}'**
+  String mentorProfile_rateTitle(String mentorName);
+
+  /// Select rating text
+  ///
+  /// In en, this message translates to:
+  /// **'Select a rating:'**
+  String get mentorProfile_selectRating;
+
+  /// Comment optional label
+  ///
+  /// In en, this message translates to:
+  /// **'Comment (optional)'**
+  String get mentorProfile_commentOptional;
+
+  /// Submitting button text
+  ///
+  /// In en, this message translates to:
+  /// **'Submitting...'**
+  String get mentorProfile_submitting;
+
+  /// Submit button
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get mentorProfile_submit;
+
+  /// Select rating error
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a rating'**
+  String get mentorProfile_selectRatingError;
+
+  /// Rating submitted message
+  ///
+  /// In en, this message translates to:
+  /// **'Rating submitted successfully'**
+  String get mentorProfile_ratingSubmitted;
+
+  /// Rating error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error submitting rating: {error}'**
+  String mentorProfile_ratingError(String error);
+
+  /// Direct message title
+  ///
+  /// In en, this message translates to:
+  /// **'{mentorName}'**
+  String directMessage_title(String mentorName);
+
+  /// Attach file tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Attach file'**
+  String get directMessage_attachFile;
+
+  /// Type message placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Type a message...'**
+  String get directMessage_typeMessage;
+
+  /// Send message tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Send message'**
+  String get directMessage_sendMessage;
+
+  /// File attachment not implemented message
+  ///
+  /// In en, this message translates to:
+  /// **'File attachment not implemented yet.'**
+  String get directMessage_fileNotImplemented;
+
+  /// Create job screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Job Posting'**
+  String get createJob_title;
+
+  /// Job details section title
+  ///
+  /// In en, this message translates to:
+  /// **'Job Details'**
+  String get createJob_jobDetails;
+
+  /// Job title field label
+  ///
+  /// In en, this message translates to:
+  /// **'Job Title'**
+  String get createJob_jobTitle;
+
+  /// Job title validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a job title'**
+  String get createJob_jobTitleRequired;
+
+  /// Company field label
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get createJob_company;
+
+  /// Company field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Your Company Name'**
+  String get createJob_companyHint;
+
+  /// Company validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the company name'**
+  String get createJob_companyRequired;
+
+  /// Location field label
+  ///
+  /// In en, this message translates to:
+  /// **'Location (e.g., City, State, Country)'**
+  String get createJob_location;
+
+  /// Location validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a location'**
+  String get createJob_locationRequired;
+
+  /// Remote job checkbox label
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Job'**
+  String get createJob_remoteJob;
+
+  /// Description field label
+  ///
+  /// In en, this message translates to:
+  /// **'Job Description'**
+  String get createJob_description;
+
+  /// Description validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a job description'**
+  String get createJob_descriptionRequired;
+
+  /// Job type field label
+  ///
+  /// In en, this message translates to:
+  /// **'Job Type'**
+  String get createJob_jobType;
+
+  /// Job type dropdown hint
+  ///
+  /// In en, this message translates to:
+  /// **'Select Job Type'**
+  String get createJob_selectJobType;
+
+  /// Job type validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a job type'**
+  String get createJob_jobTypeRequired;
+
+  /// Contact info field label
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information (Email/Phone/Link)'**
+  String get createJob_contactInfo;
+
+  /// Contact info validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide contact information'**
+  String get createJob_contactInfoRequired;
+
+  /// Min salary field label
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum Salary (Optional)'**
+  String get createJob_minSalary;
+
+  /// Min salary field hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 50000'**
+  String get createJob_minSalaryHint;
+
+  /// Max salary field label
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum Salary (Optional)'**
+  String get createJob_maxSalary;
+
+  /// Max salary field hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 70000'**
+  String get createJob_maxSalaryHint;
+
+  /// Number validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid number'**
+  String get createJob_validNumber;
+
+  /// Number format validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid number format (too many decimal points)'**
+  String get createJob_invalidFormat;
+
+  /// Max salary validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Max salary must be >= min salary'**
+  String get createJob_maxSalaryError;
+
+  /// Ethical policies section title
+  ///
+  /// In en, this message translates to:
+  /// **'Ethical Policies Compliance'**
+  String get createJob_ethicalPolicies;
+
+  /// Creating post button text
+  ///
+  /// In en, this message translates to:
+  /// **'Creating Post...'**
+  String get createJob_creatingPost;
+
+  /// Create post button text
+  ///
+  /// In en, this message translates to:
+  /// **'Create Job Post'**
+  String get createJob_createPost;
+
+  /// Job type selection error
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a job type.'**
+  String get createJob_selectJobTypeError;
+
+  /// Policy selection error
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one ethical policy.'**
+  String get createJob_selectPolicyError;
+
+  /// Employer verification error
+  ///
+  /// In en, this message translates to:
+  /// **'Error: Could not verify employer account.'**
+  String get createJob_employerError;
+
+  /// Min salary format error
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid minimum salary format. Please enter numbers only.'**
+  String get createJob_invalidMinSalary;
+
+  /// Max salary format error
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid maximum salary format. Please enter numbers only.'**
+  String get createJob_invalidMaxSalary;
+
+  /// Salary range error
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum salary cannot be greater than maximum salary.'**
+  String get createJob_salaryRangeError;
+
+  /// Job creation success message
+  ///
+  /// In en, this message translates to:
+  /// **'Job \"{jobTitle}\" created successfully!'**
+  String createJob_success(String jobTitle);
+
+  /// Job creation error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error creating job: {error}'**
+  String createJob_error(String error);
+
+  /// Job applications screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Job Applications'**
+  String get jobApplications_title;
+
+  /// User error message
+  ///
+  /// In en, this message translates to:
+  /// **'User not logged in or user ID not found.'**
+  String get jobApplications_userError;
+
+  /// Load error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load applications. Please try again.'**
+  String get jobApplications_loadError;
+
+  /// No applications message
+  ///
+  /// In en, this message translates to:
+  /// **'No applications received for this job yet.'**
+  String get jobApplications_noApplications;
+
+  /// Applied date label
+  ///
+  /// In en, this message translates to:
+  /// **'Applied: {date}'**
+  String jobApplications_applied(String date);
+
+  /// Feedback label
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback: {feedback}'**
+  String jobApplications_feedback(String feedback);
+
+  /// Reject button
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get jobApplications_reject;
+
+  /// Approve button
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get jobApplications_approve;
+
+  /// Status updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Application {status}.'**
+  String jobApplications_statusUpdated(String status);
+
+  /// Update error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating status: {error}'**
+  String jobApplications_updateError(String error);
+
+  /// Feedback dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Provide Feedback (Optional) for {action}'**
+  String jobApplications_feedbackTitle(String action);
+
+  /// Feedback input hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter feedback here...'**
+  String get jobApplications_feedbackHint;
+
+  /// Submit button
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get jobApplications_submit;
+
+  /// Filter dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Jobs'**
+  String get jobFilter_title;
+
+  /// Job title filter label
+  ///
+  /// In en, this message translates to:
+  /// **'Job Title'**
+  String get jobFilter_jobTitle;
+
+  /// Job title filter hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter job title prefix'**
+  String get jobFilter_jobTitleHint;
+
+  /// Company name filter label
+  ///
+  /// In en, this message translates to:
+  /// **'Company Name'**
+  String get jobFilter_companyName;
+
+  /// Company name filter hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter company name prefix'**
+  String get jobFilter_companyNameHint;
+
+  /// Ethical policies filter section
+  ///
+  /// In en, this message translates to:
+  /// **'Ethical Policies'**
+  String get jobFilter_ethicalPolicies;
+
+  /// Min salary filter label
+  ///
+  /// In en, this message translates to:
+  /// **'Min Salary'**
+  String get jobFilter_minSalary;
+
+  /// Min salary filter hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 30000'**
+  String get jobFilter_minSalaryHint;
+
+  /// Max salary filter label
+  ///
+  /// In en, this message translates to:
+  /// **'Max Salary'**
+  String get jobFilter_maxSalary;
+
+  /// Max salary filter hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 100000'**
+  String get jobFilter_maxSalaryHint;
+
+  /// Remote jobs filter label
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Jobs Only'**
+  String get jobFilter_remoteOnly;
+
+  /// Job type filter section
+  ///
+  /// In en, this message translates to:
+  /// **'Job Type'**
+  String get jobFilter_jobType;
+
+  /// Clear all button
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All'**
+  String get jobFilter_clearAll;
+
+  /// Apply filters button
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filters'**
+  String get jobFilter_applyFilters;
+
   /// Not specified message
   ///
   /// In en, this message translates to:

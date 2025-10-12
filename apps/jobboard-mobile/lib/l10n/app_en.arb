@@ -690,6 +690,681 @@
     "description": "Delete comment error"
   },
 
+  "@@_MENTORSHIP": {},
+  "mentorshipPage_title": "Mentorship",
+  "@mentorshipPage_title": {
+    "description": "Mentorship page title"
+  },
+  "mentorshipPage_loginRequired": "Please log in to access mentorship features.",
+  "@mentorshipPage_loginRequired": {
+    "description": "Login required message"
+  },
+
+  "mentorScreen_title": "Mentorship",
+  "@mentorScreen_title": {
+    "description": "Mentor screen title"
+  },
+  "mentorScreen_currentMentees": "Current Mentees",
+  "@mentorScreen_currentMentees": {
+    "description": "Current mentees tab"
+  },
+  "mentorScreen_requests": "Requests",
+  "@mentorScreen_requests": {
+    "description": "Requests tab"
+  },
+  "mentorScreen_currentCapacity": "Current Capacity: {capacity}",
+  "@mentorScreen_currentCapacity": {
+    "description": "Current capacity label",
+    "placeholders": {
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "mentorScreen_updateCapacity": "Update Capacity",
+  "@mentorScreen_updateCapacity": {
+    "description": "Update capacity button"
+  },
+  "mentorScreen_noCurrentMentees": "No current mentees",
+  "@mentorScreen_noCurrentMentees": {
+    "description": "No current mentees message"
+  },
+  "mentorScreen_noPendingRequests": "No pending requests",
+  "@mentorScreen_noPendingRequests": {
+    "description": "No pending requests message"
+  },
+  "mentorScreen_capacityUpdated": "Capacity updated successfully",
+  "@mentorScreen_capacityUpdated": {
+    "description": "Capacity updated message"
+  },
+  "mentorScreen_requestAccepted": "Request accepted",
+  "@mentorScreen_requestAccepted": {
+    "description": "Request accepted message"
+  },
+  "mentorScreen_requestRejected": "Request rejected",
+  "@mentorScreen_requestRejected": {
+    "description": "Request rejected message"
+  },
+  "mentorScreen_mentorshipCompleted": "Mentorship completed successfully",
+  "@mentorScreen_mentorshipCompleted": {
+    "description": "Mentorship completed message"
+  },
+  "mentorScreen_mentorshipCancelled": "Mentorship cancelled successfully",
+  "@mentorScreen_mentorshipCancelled": {
+    "description": "Mentorship cancelled message"
+  },
+  "mentorScreen_openChat": "Open chat with {menteeName}",
+  "@mentorScreen_openChat": {
+    "description": "Open chat message",
+    "placeholders": {
+      "menteeName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "mentorScreen_updateCapacityTitle": "Update Maximum Mentee Capacity",
+  "@mentorScreen_updateCapacityTitle": {
+    "description": "Update capacity dialog title"
+  },
+  "mentorScreen_maxMentees": "Maximum number of mentees",
+  "@mentorScreen_maxMentees": {
+    "description": "Max mentees label"
+  },
+  "mentorScreen_enterNumber": "Enter a number",
+  "@mentorScreen_enterNumber": {
+    "description": "Enter number hint"
+  },
+  "mentorScreen_cancel": "Cancel",
+  "@mentorScreen_cancel": {
+    "description": "Cancel button"
+  },
+  "mentorScreen_update": "Update",
+  "@mentorScreen_update": {
+    "description": "Update button"
+  },
+
+  "mentorScreen_completeMentorship": "complete Mentorship",
+  "@mentorScreen_completeMentorship": {
+    "description": "Complete mentorship dialog title"
+  },
+  "mentorScreen_cancelMentorship": "cancel Mentorship",
+  "@mentorScreen_cancelMentorship": {
+    "description": "Cancel mentorship dialog title"
+  },
+  "mentorScreen_confirmComplete": "Are you sure you want to complete your mentorship with {menteeName}?\n\nThis will mark the mentorship as successfully completed.",
+  "@mentorScreen_confirmComplete": {
+    "description": "Confirm complete message",
+    "placeholders": {
+      "menteeName": {
+        "type": "String"
+      }
+    }
+  },
+  "mentorScreen_confirmCancel": "Are you sure you want to cancel your mentorship with {menteeName}?\n\nThis will end the mentorship relationship.",
+  "@mentorScreen_confirmCancel": {
+    "description": "Confirm cancel message",
+    "placeholders": {
+      "menteeName": {
+        "type": "String"
+      }
+    }
+  },
+  "mentorScreen_confirm": "Confirm",
+  "@mentorScreen_confirm": {
+    "description": "Confirm button"
+  },
+
+  "menteeScreen_findMentors": "Find Mentors",
+  "@menteeScreen_findMentors": {
+    "description": "Find mentors tab"
+  },
+  "menteeScreen_myMentorships": "My Mentorships",
+  "@menteeScreen_myMentorships": {
+    "description": "My mentorships tab"
+  },
+  "menteeScreen_searchMentors": "Search mentors by name, role, company...",
+  "@menteeScreen_searchMentors": {
+    "description": "Search mentors placeholder"
+  },
+  "menteeScreen_noMentorsFound": "No mentors found.",
+  "@menteeScreen_noMentorsFound": {
+    "description": "No mentors found message"
+  },
+  "menteeScreen_errorLoadingMentors": "Error loading mentors: {error}",
+  "@menteeScreen_errorLoadingMentors": {
+    "description": "Error loading mentors",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "menteeScreen_retryLoadingMentors": "Retry Loading Mentors",
+  "@menteeScreen_retryLoadingMentors": {
+    "description": "Retry loading mentors button"
+  },
+  "menteeScreen_requestMentorshipTitle": "Request Mentorship from {mentorName}",
+  "@menteeScreen_requestMentorshipTitle": {
+    "description": "Request mentorship dialog title",
+    "placeholders": {
+      "mentorName": {
+        "type": "String"
+      }
+    }
+  },
+  "menteeScreen_provideMessage": "Please provide a message for your mentorship request:",
+  "@menteeScreen_provideMessage": {
+    "description": "Provide message text"
+  },
+  "menteeScreen_messageHint": "I would like you to be my mentor because...",
+  "@menteeScreen_messageHint": {
+    "description": "Message hint"
+  },
+  "menteeScreen_sendRequest": "Send Request",
+  "@menteeScreen_sendRequest": {
+    "description": "Send request button"
+  },
+  "menteeScreen_messageMinLength": "Please enter a message of at least 10 characters",
+  "@menteeScreen_messageMinLength": {
+    "description": "Message min length validation"
+  },
+  "menteeScreen_requestSent": "Mentorship requested for {mentorName}",
+  "@menteeScreen_requestSent": {
+    "description": "Request sent message",
+    "placeholders": {
+      "mentorName": {
+        "type": "String"
+      }
+    }
+  },
+  "menteeScreen_requestError": "There is an error while requesting",
+  "@menteeScreen_requestError": {
+    "description": "Request error message"
+  },
+
+  "menteeScreen_pendingRequests": "Pending Requests",
+  "@menteeScreen_pendingRequests": {
+    "description": "Pending requests section"
+  },
+  "menteeScreen_activeMentorships": "Active Mentorships",
+  "@menteeScreen_activeMentorships": {
+    "description": "Active mentorships section"
+  },
+  "menteeScreen_noPendingRequests": "No pending requests.",
+  "@menteeScreen_noPendingRequests": {
+    "description": "No pending requests message"
+  },
+  "menteeScreen_noActiveMentorships": "No active mentorships.",
+  "@menteeScreen_noActiveMentorships": {
+    "description": "No active mentorships message"
+  },
+  "menteeScreen_error": "Error: {error}",
+  "@menteeScreen_error": {
+    "description": "Error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "mentorProfile_title": "Mentor Profile: {mentorName}",
+  "@mentorProfile_title": {
+    "description": "Mentor profile title",
+    "placeholders": {
+      "mentorName": {
+        "type": "String"
+      }
+    }
+  },
+  "mentorProfile_loadError": "Failed to load mentor profile or reviews: {error}",
+  "@mentorProfile_loadError": {
+    "description": "Load error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "mentorProfile_noProfileData": "No profile data available",
+  "@mentorProfile_noProfileData": {
+    "description": "No profile data message"
+  },
+  "mentorProfile_rateMentor": "Rate this mentor",
+  "@mentorProfile_rateMentor": {
+    "description": "Rate mentor tooltip"
+  },
+  "mentorProfile_atCompany": "at {company}",
+  "@mentorProfile_atCompany": {
+    "description": "At company text",
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "mentorProfile_rating": "Rating",
+  "@mentorProfile_rating": {
+    "description": "Rating label"
+  },
+  "mentorProfile_reviews": "{count} reviews",
+  "@mentorProfile_reviews": {
+    "description": "Reviews count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mentorProfile_mentorshipInfo": "Mentorship Information",
+  "@mentorProfile_mentorshipInfo": {
+    "description": "Mentorship information label"
+  },
+  "mentorProfile_capacity": "Capacity",
+  "@mentorProfile_capacity": {
+    "description": "Capacity label"
+  },
+  "mentorProfile_mentees": "{current}/{max} mentees",
+  "@mentorProfile_mentees": {
+    "description": "Mentees count",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "mentorProfile_status": "Status",
+  "@mentorProfile_status": {
+    "description": "Status label"
+  },
+  "mentorProfile_available": "Available for mentorship",
+  "@mentorProfile_available": {
+    "description": "Available status"
+  },
+  "mentorProfile_notAvailable": "Not available for mentorship",
+  "@mentorProfile_notAvailable": {
+    "description": "Not available status"
+  },
+  "mentorProfile_about": "About",
+  "@mentorProfile_about": {
+    "description": "About label"
+  },
+  "mentorProfile_noReviews": "No reviews yet.",
+  "@mentorProfile_noReviews": {
+    "description": "No reviews message"
+  },
+  "mentorProfile_byUser": "By: {username}",
+  "@mentorProfile_byUser": {
+    "description": "Review by user",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+
+  "mentorProfile_rateTitle": "Rate {mentorName}",
+  "@mentorProfile_rateTitle": {
+    "description": "Rate dialog title",
+    "placeholders": {
+      "mentorName": {
+        "type": "String"
+      }
+    }
+  },
+  "mentorProfile_selectRating": "Select a rating:",
+  "@mentorProfile_selectRating": {
+    "description": "Select rating text"
+  },
+  "mentorProfile_commentOptional": "Comment (optional)",
+  "@mentorProfile_commentOptional": {
+    "description": "Comment optional label"
+  },
+  "mentorProfile_submitting": "Submitting...",
+  "@mentorProfile_submitting": {
+    "description": "Submitting button text"
+  },
+  "mentorProfile_submit": "Submit",
+  "@mentorProfile_submit": {
+    "description": "Submit button"
+  },
+  "mentorProfile_selectRatingError": "Please select a rating",
+  "@mentorProfile_selectRatingError": {
+    "description": "Select rating error"
+  },
+  "mentorProfile_ratingSubmitted": "Rating submitted successfully",
+  "@mentorProfile_ratingSubmitted": {
+    "description": "Rating submitted message"
+  },
+  "mentorProfile_ratingError": "Error submitting rating: {error}",
+  "@mentorProfile_ratingError": {
+    "description": "Rating error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "directMessage_title": "{mentorName}",
+  "@directMessage_title": {
+    "description": "Direct message title",
+    "placeholders": {
+      "mentorName": {
+        "type": "String"
+      }
+    }
+  },
+  "directMessage_attachFile": "Attach file",
+  "@directMessage_attachFile": {
+    "description": "Attach file tooltip"
+  },
+  "directMessage_typeMessage": "Type a message...",
+  "@directMessage_typeMessage": {
+    "description": "Type message placeholder"
+  },
+  "directMessage_sendMessage": "Send message",
+  "@directMessage_sendMessage": {
+    "description": "Send message tooltip"
+  },
+  "directMessage_fileNotImplemented": "File attachment not implemented yet.",
+  "@directMessage_fileNotImplemented": {
+    "description": "File attachment not implemented message"
+  },
+
+  "@@_JOB_CREATE": {},
+  "createJob_title": "Create New Job Posting",
+  "@createJob_title": {
+    "description": "Create job screen title"
+  },
+  "createJob_jobDetails": "Job Details",
+  "@createJob_jobDetails": {
+    "description": "Job details section title"
+  },
+  "createJob_jobTitle": "Job Title",
+  "@createJob_jobTitle": {
+    "description": "Job title field label"
+  },
+  "createJob_jobTitleRequired": "Please enter a job title",
+  "@createJob_jobTitleRequired": {
+    "description": "Job title validation message"
+  },
+  "createJob_company": "Company",
+  "@createJob_company": {
+    "description": "Company field label"
+  },
+  "createJob_companyHint": "Your Company Name",
+  "@createJob_companyHint": {
+    "description": "Company field hint"
+  },
+  "createJob_companyRequired": "Please enter the company name",
+  "@createJob_companyRequired": {
+    "description": "Company validation message"
+  },
+  "createJob_location": "Location (e.g., City, State, Country)",
+  "@createJob_location": {
+    "description": "Location field label"
+  },
+  "createJob_locationRequired": "Please enter a location",
+  "@createJob_locationRequired": {
+    "description": "Location validation message"
+  },
+  "createJob_remoteJob": "Remote Job",
+  "@createJob_remoteJob": {
+    "description": "Remote job checkbox label"
+  },
+  "createJob_description": "Job Description",
+  "@createJob_description": {
+    "description": "Description field label"
+  },
+  "createJob_descriptionRequired": "Please enter a job description",
+  "@createJob_descriptionRequired": {
+    "description": "Description validation message"
+  },
+  "createJob_jobType": "Job Type",
+  "@createJob_jobType": {
+    "description": "Job type field label"
+  },
+  "createJob_selectJobType": "Select Job Type",
+  "@createJob_selectJobType": {
+    "description": "Job type dropdown hint"
+  },
+  "createJob_jobTypeRequired": "Please select a job type",
+  "@createJob_jobTypeRequired": {
+    "description": "Job type validation message"
+  },
+  "createJob_contactInfo": "Contact Information (Email/Phone/Link)",
+  "@createJob_contactInfo": {
+    "description": "Contact info field label"
+  },
+  "createJob_contactInfoRequired": "Please provide contact information",
+  "@createJob_contactInfoRequired": {
+    "description": "Contact info validation message"
+  },
+  "createJob_minSalary": "Minimum Salary (Optional)",
+  "@createJob_minSalary": {
+    "description": "Min salary field label"
+  },
+  "createJob_minSalaryHint": "e.g., 50000",
+  "@createJob_minSalaryHint": {
+    "description": "Min salary field hint"
+  },
+  "createJob_maxSalary": "Maximum Salary (Optional)",
+  "@createJob_maxSalary": {
+    "description": "Max salary field label"
+  },
+  "createJob_maxSalaryHint": "e.g., 70000",
+  "@createJob_maxSalaryHint": {
+    "description": "Max salary field hint"
+  },
+  "createJob_validNumber": "Please enter a valid number",
+  "@createJob_validNumber": {
+    "description": "Number validation message"
+  },
+  "createJob_invalidFormat": "Invalid number format (too many decimal points)",
+  "@createJob_invalidFormat": {
+    "description": "Number format validation message"
+  },
+  "createJob_maxSalaryError": "Max salary must be >= min salary",
+  "@createJob_maxSalaryError": {
+    "description": "Max salary validation message"
+  },
+  "createJob_ethicalPolicies": "Ethical Policies Compliance",
+  "@createJob_ethicalPolicies": {
+    "description": "Ethical policies section title"
+  },
+  "createJob_creatingPost": "Creating Post...",
+  "@createJob_creatingPost": {
+    "description": "Creating post button text"
+  },
+  "createJob_createPost": "Create Job Post",
+  "@createJob_createPost": {
+    "description": "Create post button text"
+  },
+  "createJob_selectJobTypeError": "Please select a job type.",
+  "@createJob_selectJobTypeError": {
+    "description": "Job type selection error"
+  },
+  "createJob_selectPolicyError": "Please select at least one ethical policy.",
+  "@createJob_selectPolicyError": {
+    "description": "Policy selection error"
+  },
+  "createJob_employerError": "Error: Could not verify employer account.",
+  "@createJob_employerError": {
+    "description": "Employer verification error"
+  },
+  "createJob_invalidMinSalary": "Invalid minimum salary format. Please enter numbers only.",
+  "@createJob_invalidMinSalary": {
+    "description": "Min salary format error"
+  },
+  "createJob_invalidMaxSalary": "Invalid maximum salary format. Please enter numbers only.",
+  "@createJob_invalidMaxSalary": {
+    "description": "Max salary format error"
+  },
+  "createJob_salaryRangeError": "Minimum salary cannot be greater than maximum salary.",
+  "@createJob_salaryRangeError": {
+    "description": "Salary range error"
+  },
+  "createJob_success": "Job \"{jobTitle}\" created successfully!",
+  "@createJob_success": {
+    "description": "Job creation success message",
+    "placeholders": {
+      "jobTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "createJob_error": "Error creating job: {error}",
+  "@createJob_error": {
+    "description": "Job creation error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "@@_JOB_APPLICATIONS": {},
+  "jobApplications_title": "Job Applications",
+  "@jobApplications_title": {
+    "description": "Job applications screen title"
+  },
+  "jobApplications_userError": "User not logged in or user ID not found.",
+  "@jobApplications_userError": {
+    "description": "User error message"
+  },
+  "jobApplications_loadError": "Failed to load applications. Please try again.",
+  "@jobApplications_loadError": {
+    "description": "Load error message"
+  },
+  "jobApplications_noApplications": "No applications received for this job yet.",
+  "@jobApplications_noApplications": {
+    "description": "No applications message"
+  },
+  "jobApplications_applied": "Applied: {date}",
+  "@jobApplications_applied": {
+    "description": "Applied date label",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_feedback": "Feedback: {feedback}",
+  "@jobApplications_feedback": {
+    "description": "Feedback label",
+    "placeholders": {
+      "feedback": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_reject": "Reject",
+  "@jobApplications_reject": {
+    "description": "Reject button"
+  },
+  "jobApplications_approve": "Approve",
+  "@jobApplications_approve": {
+    "description": "Approve button"
+  },
+  "jobApplications_statusUpdated": "Application {status}.",
+  "@jobApplications_statusUpdated": {
+    "description": "Status updated message",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_updateError": "Error updating status: {error}",
+  "@jobApplications_updateError": {
+    "description": "Update error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_feedbackTitle": "Provide Feedback (Optional) for {action}",
+  "@jobApplications_feedbackTitle": {
+    "description": "Feedback dialog title",
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_feedbackHint": "Enter feedback here...",
+  "@jobApplications_feedbackHint": {
+    "description": "Feedback input hint"
+  },
+  "jobApplications_submit": "Submit",
+  "@jobApplications_submit": {
+    "description": "Submit button"
+  },
+
+  "@@_JOB_FILTER": {},
+  "jobFilter_title": "Filter Jobs",
+  "@jobFilter_title": {
+    "description": "Filter dialog title"
+  },
+  "jobFilter_jobTitle": "Job Title",
+  "@jobFilter_jobTitle": {
+    "description": "Job title filter label"
+  },
+  "jobFilter_jobTitleHint": "Enter job title prefix",
+  "@jobFilter_jobTitleHint": {
+    "description": "Job title filter hint"
+  },
+  "jobFilter_companyName": "Company Name",
+  "@jobFilter_companyName": {
+    "description": "Company name filter label"
+  },
+  "jobFilter_companyNameHint": "Enter company name prefix",
+  "@jobFilter_companyNameHint": {
+    "description": "Company name filter hint"
+  },
+  "jobFilter_ethicalPolicies": "Ethical Policies",
+  "@jobFilter_ethicalPolicies": {
+    "description": "Ethical policies filter section"
+  },
+  "jobFilter_minSalary": "Min Salary",
+  "@jobFilter_minSalary": {
+    "description": "Min salary filter label"
+  },
+  "jobFilter_minSalaryHint": "e.g., 30000",
+  "@jobFilter_minSalaryHint": {
+    "description": "Min salary filter hint"
+  },
+  "jobFilter_maxSalary": "Max Salary",
+  "@jobFilter_maxSalary": {
+    "description": "Max salary filter label"
+  },
+  "jobFilter_maxSalaryHint": "e.g., 100000",
+  "@jobFilter_maxSalaryHint": {
+    "description": "Max salary filter hint"
+  },
+  "jobFilter_remoteOnly": "Remote Jobs Only",
+  "@jobFilter_remoteOnly": {
+    "description": "Remote jobs filter label"
+  },
+  "jobFilter_jobType": "Job Type",
+  "@jobFilter_jobType": {
+    "description": "Job type filter section"
+  },
+  "jobFilter_clearAll": "Clear All",
+  "@jobFilter_clearAll": {
+    "description": "Clear all button"
+  },
+  "jobFilter_applyFilters": "Apply Filters",
+  "@jobFilter_applyFilters": {
+    "description": "Apply filters button"
+  },
+
   "@@_COMMON": {},
   "common_retry": "Retry",
   "@common_retry": {
