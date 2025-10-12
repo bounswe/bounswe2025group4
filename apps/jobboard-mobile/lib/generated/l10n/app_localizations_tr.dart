@@ -452,6 +452,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get jobPage_remote => 'Uzaktan';
 
   @override
+  String get jobPage_yourPostedJobs => 'Yayınladığınız İşler';
+
+  @override
+  String get jobPage_noPostedJobs => 'Henüz iş ilanı yayınlamadınız.';
+
+  @override
   String get jobDetails_title => 'İş Detayları';
 
   @override
@@ -486,4 +492,170 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get jobDetails_ethicalTags => 'Etik Etiketler';
+
+  @override
+  String get jobDetails_notFound => 'İş detayları bulunamadı.';
+
+  @override
+  String get jobDetails_noTags => 'Belirli etiket yok.';
+
+  @override
+  String get jobDetails_salaryRange => 'Maaş Aralığı';
+
+  @override
+  String get jobDetails_contactInfo => 'İletişim Bilgileri';
+
+  @override
+  String get jobDetails_applying => 'Başvuruluyor...';
+
+  @override
+  String get forumPage_title => 'Forum';
+
+  @override
+  String get forumPage_loadError =>
+      'Forum yüklenemedi: Lütfen bağlantınızı kontrol edip tekrar deneyin.';
+
+  @override
+  String get forumPage_noDiscussions => 'Henüz tartışma yok';
+
+  @override
+  String get forumPage_filter => 'Filtrele';
+
+  @override
+  String get forumPage_searchTags => 'Etiket ara';
+
+  @override
+  String get forumPage_reset => 'Sıfırla';
+
+  @override
+  String get createThread_newTitle => 'Yeni Tartışma';
+
+  @override
+  String get createThread_editTitle => 'Tartışmayı Düzenle';
+
+  @override
+  String get createThread_titleLabel => 'Başlık';
+
+  @override
+  String get createThread_titleRequired => 'Lütfen bir başlık girin';
+
+  @override
+  String get createThread_titleMaxLength =>
+      'Başlık en fazla 100 karakter olmalıdır';
+
+  @override
+  String get createThread_bodyLabel => 'Aklınızdan ne geçiyor?';
+
+  @override
+  String get createThread_bodyRequired => 'Lütfen içerik girin';
+
+  @override
+  String get createThread_tags => 'Etiketler';
+
+  @override
+  String get createThread_selectTags => 'Etiket Seç';
+
+  @override
+  String get createThread_suggestTags => 'Etiket Öner';
+
+  @override
+  String get createThread_enterTitleForSuggestions =>
+      'Etiket önerileri almak için lütfen bir başlık girin.';
+
+  @override
+  String get createThread_addNewTag => 'Yeni etiket ekle';
+
+  @override
+  String get createThread_tagEmpty => 'Etiket adı boş olamaz.';
+
+  @override
+  String get createThread_tagMaxLength =>
+      'Etiket adı en fazla 255 karakter olmalıdır.';
+
+  @override
+  String get createThread_done => 'Tamam';
+
+  @override
+  String get createThread_post => 'Gönder';
+
+  @override
+  String get createThread_save => 'Kaydet';
+
+  @override
+  String get createThread_createError =>
+      'Tartışma oluşturma/düzenleme başarısız. Lütfen bağlantınızı kontrol edin.';
+
+  @override
+  String get createThread_generalError =>
+      'Tartışma oluşturma/düzenleme başarısız.';
+
+  @override
+  String get threadDetail_report => 'Bildir';
+
+  @override
+  String get threadDetail_edit => 'Düzenle';
+
+  @override
+  String get threadDetail_delete => 'Sil';
+
+  @override
+  String get threadDetail_reported => 'Tartışma bildirildi';
+
+  @override
+  String get threadDetail_connectionError =>
+      'Başarısız: Lütfen bağlantınızı kontrol edip sayfayı yenileyin.';
+
+  @override
+  String get threadDetail_unavailable =>
+      'Başarısız: Bu tartışma artık mevcut değil.';
+
+  @override
+  String get threadDetail_deleteError => 'Tartışma silinemedi.';
+
+  @override
+  String get threadDetail_threadDetails => 'Tartışma Detayları';
+
+  @override
+  String get threadDetail_creator => 'Oluşturan: ';
+
+  @override
+  String get threadDetail_content => 'İçerik:';
+
+  @override
+  String get threadDetail_tags => 'Etiketler:';
+
+  @override
+  String threadDetail_created(String date) {
+    return 'Oluşturulma: $date';
+  }
+
+  @override
+  String threadDetail_edited(String date) {
+    return 'Düzenleme: $date';
+  }
+
+  @override
+  String get threadDetail_comments => 'Yorumlar';
+
+  @override
+  String get threadDetail_addComment => 'Yorum ekle…';
+
+  @override
+  String get threadDetail_commentRequired => 'Lütfen bir yorum girin';
+
+  @override
+  String get threadDetail_deleteCommentError => 'Yorum silinemedi.';
+
+  @override
+  String get common_notSpecified => 'Belirtilmemiş';
+
+  @override
+  String common_upTo(String amount) {
+    return '$amount kadar';
+  }
+
+  @override
+  String common_from(String amount) {
+    return '$amount\'den başlayarak';
+  }
 }

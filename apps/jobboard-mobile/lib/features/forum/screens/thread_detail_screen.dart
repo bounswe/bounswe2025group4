@@ -9,6 +9,7 @@ import 'create_thread_screen.dart';
 import '../widgets/comment_tile.dart';
 import '../../profile/screens/user_profile_view.dart';
 import 'package:flutter/gestures.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class ThreadDetailScreen extends StatefulWidget {
   final DiscussionThread thread;
@@ -41,11 +42,11 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
       });
     } on SocketException {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed: Please check your connection and refresh the page.", style: TextStyle(color: Colors.red))),
+        SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_connectionError, style: const TextStyle(color: Colors.red))),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
+        SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_unavailable, style: const TextStyle(color: Colors.red))),
       );
       Navigator.of(context).pop();
     }
@@ -59,11 +60,11 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
       await _loadComments();
     } on SocketException {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed: Please check your connection and refresh the page.", style: TextStyle(color: Colors.red))),
+        SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_connectionError, style: const TextStyle(color: Colors.red))),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
+        SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_unavailable, style: const TextStyle(color: Colors.red))),
       );
     }
   }
@@ -97,15 +98,15 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                 try {
                   await _api.reportDiscussion(_currentThread.id);
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('Discussion reported', style: TextStyle(color: Colors.green))),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_reported, style: const TextStyle(color: Colors.green))),
                   );
                 } on SocketException {
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_connectionError, style: const TextStyle(color: Colors.red))),
                   );
                 } catch (e) {
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('Failed: This discussion is no longer available.', style: TextStyle(color: Colors.red))),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_unavailable, style: const TextStyle(color: Colors.red))),
                   );
                 }
               } else if (action == 'Edit' && isOwner) {
@@ -121,11 +122,11 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                   }
                 } on SocketException {
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_connectionError, style: const TextStyle(color: Colors.red))),
                   );
                 } catch (e) {
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('Failed to create/edit discussion.', style: TextStyle(color: Colors.red))),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.createThread_generalError, style: const TextStyle(color: Colors.red))),
                   );
                 }
               } else if (action == 'Delete' && isOwner) {
@@ -134,20 +135,20 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                   navigator.pop('deleted');
                 } on SocketException {
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_connectionError, style: const TextStyle(color: Colors.red))),
                   );
                 } catch (e) {
                   messenger.showSnackBar(
-                    const SnackBar(content: Text('Failed to delete discussion.', style: TextStyle(color: Colors.red))),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_deleteError, style: const TextStyle(color: Colors.red))),
                   );
                 }
               }
             },
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'Report', child: Text('Report')),
+              PopupMenuItem(value: 'Report', child: Text(AppLocalizations.of(context)!.threadDetail_report)),
               if (isOwner) ...[
-                const PopupMenuItem(value: 'Edit', child: Text('Edit')),
-                const PopupMenuItem(value: 'Delete', child: Text('Delete')),
+                PopupMenuItem(value: 'Edit', child: Text(AppLocalizations.of(context)!.threadDetail_edit)),
+                PopupMenuItem(value: 'Delete', child: Text(AppLocalizations.of(context)!.threadDetail_delete)),
               ],
             ],
           ),
@@ -174,7 +175,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Thread Details', style: Theme.of(context).textTheme.titleLarge),
+                                Text(AppLocalizations.of(context)!.threadDetail_threadDetails, style: Theme.of(context).textTheme.titleLarge),
                                 const SizedBox(height: 12),
 
                                 // Creator
@@ -182,9 +183,9 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                   text: TextSpan(
                                     style: const TextStyle(fontSize: 16),
                                     children: [
-                                      const TextSpan(
-                                        text: 'Creator: ',
-                                        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w500),
+                                      TextSpan(
+                                        text: AppLocalizations.of(context)!.threadDetail_creator,
+                                        style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.w500),
                                       ),
                                       TextSpan(
                                         text: _currentThread.creatorUsername,
@@ -213,7 +214,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 const SizedBox(height: 12),
 
                                 // Content
-                                Text('Content:', style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700])),
+                                Text(AppLocalizations.of(context)!.threadDetail_content, style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700])),
                                 const SizedBox(height: 4),
                                 Text(
                                   _currentThread.body,
@@ -228,7 +229,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 const SizedBox(height: 12),
 
                                 // Tags
-                                Text('Tags:', style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700])),
+                                Text(AppLocalizations.of(context)!.threadDetail_tags, style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700])),
                                 const SizedBox(height: 4),
                                 Wrap(
                                   spacing: 6,
@@ -242,7 +243,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                   children: [
                                     const Icon(Icons.calendar_today, size: 16),
                                     const SizedBox(width: 4),
-                                    Text('Created: ${_currentThread.createdAt.toLocal().toString().split(".").first}'),
+                                    Text(AppLocalizations.of(context)!.threadDetail_created(_currentThread.createdAt.toLocal().toString().split(".").first)),
                                   ],
                                 ),
                                 if (_currentThread.editedAt != null)
@@ -250,7 +251,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                     children: [
                                       const Icon(Icons.edit, size: 16),
                                       const SizedBox(width: 4),
-                                      Text('Edited: ${_currentThread.editedAt!.toLocal().toString().split(".").first}'),
+                                      Text(AppLocalizations.of(context)!.threadDetail_edited(_currentThread.editedAt!.toLocal().toString().split(".").first)),
                                     ],
                                   ),
                               ],
@@ -264,7 +265,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Text(
-                          'Comments',
+                          AppLocalizations.of(context)!.threadDetail_comments,
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                       );
@@ -300,16 +301,16 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 });
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Failed to delete comment.", style: TextStyle(color: Colors.red))),
+                                  SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_deleteCommentError, style: const TextStyle(color: Colors.red))),
                                 );
                               }
                             } on SocketException {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Failed: Please check your connection and refresh the page.", style: TextStyle(color: Colors.red))),
+                                SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_connectionError, style: const TextStyle(color: Colors.red))),
                               );
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Failed to delete comment.", style: TextStyle(color: Colors.red))),
+                                SnackBar(content: Text(AppLocalizations.of(context)!.threadDetail_deleteCommentError, style: const TextStyle(color: Colors.red))),
                               );
                             }
                           },
@@ -331,8 +332,8 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _commentCtrl,
-                      decoration: const InputDecoration(hintText: 'Add a comment…'),
-                      validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter a comment' : null,
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.threadDetail_addComment),
+                      validator: (v) => (v == null || v.trim().isEmpty) ? AppLocalizations.of(context)!.threadDetail_commentRequired : null,
                     ),
                   ),
                   IconButton(

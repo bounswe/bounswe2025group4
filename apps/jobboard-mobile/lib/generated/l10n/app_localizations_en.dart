@@ -448,6 +448,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobPage_remote => 'Remote';
 
   @override
+  String get jobPage_yourPostedJobs => 'Your Posted Jobs';
+
+  @override
+  String get jobPage_noPostedJobs => 'You have not posted any jobs yet.';
+
+  @override
   String get jobDetails_title => 'Job Details';
 
   @override
@@ -482,4 +488,169 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get jobDetails_ethicalTags => 'Ethical Tags';
+
+  @override
+  String get jobDetails_notFound => 'Job details not found.';
+
+  @override
+  String get jobDetails_noTags => 'No specific tags listed.';
+
+  @override
+  String get jobDetails_salaryRange => 'Salary Range';
+
+  @override
+  String get jobDetails_contactInfo => 'Contact Information';
+
+  @override
+  String get jobDetails_applying => 'Applying...';
+
+  @override
+  String get forumPage_title => 'Forum';
+
+  @override
+  String get forumPage_loadError =>
+      'Failed to load Forum: Please check your connection and try again.';
+
+  @override
+  String get forumPage_noDiscussions => 'No discussions yet';
+
+  @override
+  String get forumPage_filter => 'Filter';
+
+  @override
+  String get forumPage_searchTags => 'Search tags';
+
+  @override
+  String get forumPage_reset => 'Reset';
+
+  @override
+  String get createThread_newTitle => 'New Discussion';
+
+  @override
+  String get createThread_editTitle => 'Edit Discussion';
+
+  @override
+  String get createThread_titleLabel => 'Title';
+
+  @override
+  String get createThread_titleRequired => 'Please enter a title';
+
+  @override
+  String get createThread_titleMaxLength =>
+      'Title must be at most 100 characters';
+
+  @override
+  String get createThread_bodyLabel => 'What\'s on your mind?';
+
+  @override
+  String get createThread_bodyRequired => 'Please enter content';
+
+  @override
+  String get createThread_tags => 'Tags';
+
+  @override
+  String get createThread_selectTags => 'Select Tags';
+
+  @override
+  String get createThread_suggestTags => 'Suggest Tags';
+
+  @override
+  String get createThread_enterTitleForSuggestions =>
+      'Please enter a title to get tag suggestions.';
+
+  @override
+  String get createThread_addNewTag => 'Add a new tag';
+
+  @override
+  String get createThread_tagEmpty => 'Tag name cannot be empty.';
+
+  @override
+  String get createThread_tagMaxLength =>
+      'Tag name must be at most 255 characters.';
+
+  @override
+  String get createThread_done => 'Done';
+
+  @override
+  String get createThread_post => 'Post';
+
+  @override
+  String get createThread_save => 'Save';
+
+  @override
+  String get createThread_createError =>
+      'Failed to create/edit discussion. Please check your connection.';
+
+  @override
+  String get createThread_generalError => 'Failed to create/edit discussion.';
+
+  @override
+  String get threadDetail_report => 'Report';
+
+  @override
+  String get threadDetail_edit => 'Edit';
+
+  @override
+  String get threadDetail_delete => 'Delete';
+
+  @override
+  String get threadDetail_reported => 'Discussion reported';
+
+  @override
+  String get threadDetail_connectionError =>
+      'Failed: Please check your connection and refresh the page.';
+
+  @override
+  String get threadDetail_unavailable =>
+      'Failed: This discussion is no longer available.';
+
+  @override
+  String get threadDetail_deleteError => 'Failed to delete discussion.';
+
+  @override
+  String get threadDetail_threadDetails => 'Thread Details';
+
+  @override
+  String get threadDetail_creator => 'Creator: ';
+
+  @override
+  String get threadDetail_content => 'Content:';
+
+  @override
+  String get threadDetail_tags => 'Tags:';
+
+  @override
+  String threadDetail_created(String date) {
+    return 'Created: $date';
+  }
+
+  @override
+  String threadDetail_edited(String date) {
+    return 'Edited: $date';
+  }
+
+  @override
+  String get threadDetail_comments => 'Comments';
+
+  @override
+  String get threadDetail_addComment => 'Add a comment…';
+
+  @override
+  String get threadDetail_commentRequired => 'Please enter a comment';
+
+  @override
+  String get threadDetail_deleteCommentError => 'Failed to delete comment.';
+
+  @override
+  String get common_notSpecified => 'Not specified';
+
+  @override
+  String common_upTo(String amount) {
+    return 'Up to $amount';
+  }
+
+  @override
+  String common_from(String amount) {
+    return 'From $amount';
+  }
 }

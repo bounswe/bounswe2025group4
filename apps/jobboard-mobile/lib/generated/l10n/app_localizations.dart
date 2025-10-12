@@ -892,6 +892,18 @@ abstract class AppLocalizations {
   /// **'Remote'**
   String get jobPage_remote;
 
+  /// Employer posted jobs title
+  ///
+  /// In en, this message translates to:
+  /// **'Your Posted Jobs'**
+  String get jobPage_yourPostedJobs;
+
+  /// No posted jobs message for employers
+  ///
+  /// In en, this message translates to:
+  /// **'You have not posted any jobs yet.'**
+  String get jobPage_noPostedJobs;
+
   /// Job details screen title
   ///
   /// In en, this message translates to:
@@ -957,6 +969,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ethical Tags'**
   String get jobDetails_ethicalTags;
+
+  /// Job not found message
+  ///
+  /// In en, this message translates to:
+  /// **'Job details not found.'**
+  String get jobDetails_notFound;
+
+  /// No tags message
+  ///
+  /// In en, this message translates to:
+  /// **'No specific tags listed.'**
+  String get jobDetails_noTags;
+
+  /// Salary range label
+  ///
+  /// In en, this message translates to:
+  /// **'Salary Range'**
+  String get jobDetails_salaryRange;
+
+  /// Contact information label
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information'**
+  String get jobDetails_contactInfo;
+
+  /// Applying button loading state
+  ///
+  /// In en, this message translates to:
+  /// **'Applying...'**
+  String get jobDetails_applying;
+
+  /// Forum page title
+  ///
+  /// In en, this message translates to:
+  /// **'Forum'**
+  String get forumPage_title;
+
+  /// Forum load error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load Forum: Please check your connection and try again.'**
+  String get forumPage_loadError;
+
+  /// No discussions message
+  ///
+  /// In en, this message translates to:
+  /// **'No discussions yet'**
+  String get forumPage_noDiscussions;
+
+  /// Filter button
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get forumPage_filter;
+
+  /// Search tags placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Search tags'**
+  String get forumPage_searchTags;
+
+  /// Reset button
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get forumPage_reset;
+
+  /// New discussion screen title
+  ///
+  /// In en, this message translates to:
+  /// **'New Discussion'**
+  String get createThread_newTitle;
+
+  /// Edit discussion screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Discussion'**
+  String get createThread_editTitle;
+
+  /// Title input label
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get createThread_titleLabel;
+
+  /// Title required validation
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title'**
+  String get createThread_titleRequired;
+
+  /// Title max length validation
+  ///
+  /// In en, this message translates to:
+  /// **'Title must be at most 100 characters'**
+  String get createThread_titleMaxLength;
+
+  /// Body input label
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get createThread_bodyLabel;
+
+  /// Body required validation
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter content'**
+  String get createThread_bodyRequired;
+
+  /// Tags label
+  ///
+  /// In en, this message translates to:
+  /// **'Tags'**
+  String get createThread_tags;
+
+  /// Select tags button
+  ///
+  /// In en, this message translates to:
+  /// **'Select Tags'**
+  String get createThread_selectTags;
+
+  /// Suggest tags button
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest Tags'**
+  String get createThread_suggestTags;
+
+  /// Enter title for suggestions message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title to get tag suggestions.'**
+  String get createThread_enterTitleForSuggestions;
+
+  /// Add new tag label
+  ///
+  /// In en, this message translates to:
+  /// **'Add a new tag'**
+  String get createThread_addNewTag;
+
+  /// Tag empty validation
+  ///
+  /// In en, this message translates to:
+  /// **'Tag name cannot be empty.'**
+  String get createThread_tagEmpty;
+
+  /// Tag max length validation
+  ///
+  /// In en, this message translates to:
+  /// **'Tag name must be at most 255 characters.'**
+  String get createThread_tagMaxLength;
+
+  /// Done button
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get createThread_done;
+
+  /// Post button
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
+  String get createThread_post;
+
+  /// Save button
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get createThread_save;
+
+  /// Create/edit error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create/edit discussion. Please check your connection.'**
+  String get createThread_createError;
+
+  /// General error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create/edit discussion.'**
+  String get createThread_generalError;
+
+  /// Report action
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get threadDetail_report;
+
+  /// Edit action
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get threadDetail_edit;
+
+  /// Delete action
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get threadDetail_delete;
+
+  /// Discussion reported message
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion reported'**
+  String get threadDetail_reported;
+
+  /// Connection error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed: Please check your connection and refresh the page.'**
+  String get threadDetail_connectionError;
+
+  /// Discussion unavailable message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed: This discussion is no longer available.'**
+  String get threadDetail_unavailable;
+
+  /// Delete error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete discussion.'**
+  String get threadDetail_deleteError;
+
+  /// Thread details label
+  ///
+  /// In en, this message translates to:
+  /// **'Thread Details'**
+  String get threadDetail_threadDetails;
+
+  /// Creator label
+  ///
+  /// In en, this message translates to:
+  /// **'Creator: '**
+  String get threadDetail_creator;
+
+  /// Content label
+  ///
+  /// In en, this message translates to:
+  /// **'Content:'**
+  String get threadDetail_content;
+
+  /// Tags label
+  ///
+  /// In en, this message translates to:
+  /// **'Tags:'**
+  String get threadDetail_tags;
+
+  /// Created date
+  ///
+  /// In en, this message translates to:
+  /// **'Created: {date}'**
+  String threadDetail_created(String date);
+
+  /// Edited date
+  ///
+  /// In en, this message translates to:
+  /// **'Edited: {date}'**
+  String threadDetail_edited(String date);
+
+  /// Comments label
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get threadDetail_comments;
+
+  /// Add comment placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Add a comment…'**
+  String get threadDetail_addComment;
+
+  /// Comment required validation
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a comment'**
+  String get threadDetail_commentRequired;
+
+  /// Delete comment error
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete comment.'**
+  String get threadDetail_deleteCommentError;
+
+  /// Not specified message
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get common_notSpecified;
+
+  /// Up to amount
+  ///
+  /// In en, this message translates to:
+  /// **'Up to {amount}'**
+  String common_upTo(String amount);
+
+  /// From amount
+  ///
+  /// In en, this message translates to:
+  /// **'From {amount}'**
+  String common_from(String amount);
 }
 
 class _AppLocalizationsDelegate

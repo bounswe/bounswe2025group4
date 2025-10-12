@@ -443,6 +443,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jobPage_remote => 'عن بُعد';
 
   @override
+  String get jobPage_yourPostedJobs => 'الوظائف التي نشرتها';
+
+  @override
+  String get jobPage_noPostedJobs => 'لم تنشر أي وظائف بعد.';
+
+  @override
   String get jobDetails_title => 'تفاصيل الوظيفة';
 
   @override
@@ -477,4 +483,168 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get jobDetails_ethicalTags => 'العلامات الأخلاقية';
+
+  @override
+  String get jobDetails_notFound => 'لم يتم العثور على تفاصيل الوظيفة.';
+
+  @override
+  String get jobDetails_noTags => 'لا توجد علامات محددة.';
+
+  @override
+  String get jobDetails_salaryRange => 'نطاق الراتب';
+
+  @override
+  String get jobDetails_contactInfo => 'معلومات الاتصال';
+
+  @override
+  String get jobDetails_applying => 'جارٍ التقديم...';
+
+  @override
+  String get forumPage_title => 'المنتدى';
+
+  @override
+  String get forumPage_loadError =>
+      'فشل تحميل المنتدى: يرجى التحقق من اتصالك والمحاولة مرة أخرى.';
+
+  @override
+  String get forumPage_noDiscussions => 'لا توجد مناقشات بعد';
+
+  @override
+  String get forumPage_filter => 'تصفية';
+
+  @override
+  String get forumPage_searchTags => 'البحث عن العلامات';
+
+  @override
+  String get forumPage_reset => 'إعادة تعيين';
+
+  @override
+  String get createThread_newTitle => 'مناقشة جديدة';
+
+  @override
+  String get createThread_editTitle => 'تعديل المناقشة';
+
+  @override
+  String get createThread_titleLabel => 'العنوان';
+
+  @override
+  String get createThread_titleRequired => 'الرجاء إدخال عنوان';
+
+  @override
+  String get createThread_titleMaxLength =>
+      'يجب أن يكون العنوان 100 حرف على الأكثر';
+
+  @override
+  String get createThread_bodyLabel => 'ما الذي يدور في ذهنك؟';
+
+  @override
+  String get createThread_bodyRequired => 'الرجاء إدخال المحتوى';
+
+  @override
+  String get createThread_tags => 'العلامات';
+
+  @override
+  String get createThread_selectTags => 'اختر العلامات';
+
+  @override
+  String get createThread_suggestTags => 'اقترح العلامات';
+
+  @override
+  String get createThread_enterTitleForSuggestions =>
+      'الرجاء إدخال عنوان للحصول على اقتراحات العلامات.';
+
+  @override
+  String get createThread_addNewTag => 'إضافة علامة جديدة';
+
+  @override
+  String get createThread_tagEmpty => 'اسم العلامة لا يمكن أن يكون فارغًا.';
+
+  @override
+  String get createThread_tagMaxLength =>
+      'يجب أن يكون اسم العلامة 255 حرفًا على الأكثر.';
+
+  @override
+  String get createThread_done => 'تم';
+
+  @override
+  String get createThread_post => 'نشر';
+
+  @override
+  String get createThread_save => 'حفظ';
+
+  @override
+  String get createThread_createError =>
+      'فشل إنشاء/تعديل المناقشة. يرجى التحقق من اتصالك.';
+
+  @override
+  String get createThread_generalError => 'فشل إنشاء/تعديل المناقشة.';
+
+  @override
+  String get threadDetail_report => 'إبلاغ';
+
+  @override
+  String get threadDetail_edit => 'تعديل';
+
+  @override
+  String get threadDetail_delete => 'حذف';
+
+  @override
+  String get threadDetail_reported => 'تم الإبلاغ عن المناقشة';
+
+  @override
+  String get threadDetail_connectionError =>
+      'فشل: يرجى التحقق من اتصالك وتحديث الصفحة.';
+
+  @override
+  String get threadDetail_unavailable => 'فشل: هذه المناقشة لم تعد متاحة.';
+
+  @override
+  String get threadDetail_deleteError => 'فشل حذف المناقشة.';
+
+  @override
+  String get threadDetail_threadDetails => 'تفاصيل المناقشة';
+
+  @override
+  String get threadDetail_creator => 'المُنشئ: ';
+
+  @override
+  String get threadDetail_content => 'المحتوى:';
+
+  @override
+  String get threadDetail_tags => 'العلامات:';
+
+  @override
+  String threadDetail_created(String date) {
+    return 'تم الإنشاء: $date';
+  }
+
+  @override
+  String threadDetail_edited(String date) {
+    return 'تم التعديل: $date';
+  }
+
+  @override
+  String get threadDetail_comments => 'التعليقات';
+
+  @override
+  String get threadDetail_addComment => 'أضف تعليقاً…';
+
+  @override
+  String get threadDetail_commentRequired => 'الرجاء إدخال تعليق';
+
+  @override
+  String get threadDetail_deleteCommentError => 'فشل حذف التعليق.';
+
+  @override
+  String get common_notSpecified => 'غير محدد';
+
+  @override
+  String common_upTo(String amount) {
+    return 'حتى $amount';
+  }
+
+  @override
+  String common_from(String amount) {
+    return 'من $amount';
+  }
 }

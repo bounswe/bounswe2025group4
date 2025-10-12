@@ -427,6 +427,14 @@
   "@jobPage_remote": {
     "description": "Remote badge"
   },
+  "jobPage_yourPostedJobs": "Your Posted Jobs",
+  "@jobPage_yourPostedJobs": {
+    "description": "Employer posted jobs title"
+  },
+  "jobPage_noPostedJobs": "You have not posted any jobs yet.",
+  "@jobPage_noPostedJobs": {
+    "description": "No posted jobs message for employers"
+  },
 
   "@@_JOB_DETAILS": {},
   "jobDetails_title": "Job Details",
@@ -478,6 +486,236 @@
   "jobDetails_ethicalTags": "Ethical Tags",
   "@jobDetails_ethicalTags": {
     "description": "Ethical tags label"
+  },
+  "jobDetails_notFound": "Job details not found.",
+  "@jobDetails_notFound": {
+    "description": "Job not found message"
+  },
+  "jobDetails_noTags": "No specific tags listed.",
+  "@jobDetails_noTags": {
+    "description": "No tags message"
+  },
+  "jobDetails_salaryRange": "Salary Range",
+  "@jobDetails_salaryRange": {
+    "description": "Salary range label"
+  },
+  "jobDetails_contactInfo": "Contact Information",
+  "@jobDetails_contactInfo": {
+    "description": "Contact information label"
+  },
+  "jobDetails_applying": "Applying...",
+  "@jobDetails_applying": {
+    "description": "Applying button loading state"
+  },
+
+  "@@_FORUM": {},
+  "forumPage_title": "Forum",
+  "@forumPage_title": {
+    "description": "Forum page title"
+  },
+  "forumPage_loadError": "Failed to load Forum: Please check your connection and try again.",
+  "@forumPage_loadError": {
+    "description": "Forum load error message"
+  },
+  "forumPage_noDiscussions": "No discussions yet",
+  "@forumPage_noDiscussions": {
+    "description": "No discussions message"
+  },
+  "forumPage_filter": "Filter",
+  "@forumPage_filter": {
+    "description": "Filter button"
+  },
+  "forumPage_searchTags": "Search tags",
+  "@forumPage_searchTags": {
+    "description": "Search tags placeholder"
+  },
+  "forumPage_reset": "Reset",
+  "@forumPage_reset": {
+    "description": "Reset button"
+  },
+
+  "createThread_newTitle": "New Discussion",
+  "@createThread_newTitle": {
+    "description": "New discussion screen title"
+  },
+  "createThread_editTitle": "Edit Discussion",
+  "@createThread_editTitle": {
+    "description": "Edit discussion screen title"
+  },
+  "createThread_titleLabel": "Title",
+  "@createThread_titleLabel": {
+    "description": "Title input label"
+  },
+  "createThread_titleRequired": "Please enter a title",
+  "@createThread_titleRequired": {
+    "description": "Title required validation"
+  },
+  "createThread_titleMaxLength": "Title must be at most 100 characters",
+  "@createThread_titleMaxLength": {
+    "description": "Title max length validation"
+  },
+  "createThread_bodyLabel": "What's on your mind?",
+  "@createThread_bodyLabel": {
+    "description": "Body input label"
+  },
+  "createThread_bodyRequired": "Please enter content",
+  "@createThread_bodyRequired": {
+    "description": "Body required validation"
+  },
+  "createThread_tags": "Tags",
+  "@createThread_tags": {
+    "description": "Tags label"
+  },
+  "createThread_selectTags": "Select Tags",
+  "@createThread_selectTags": {
+    "description": "Select tags button"
+  },
+  "createThread_suggestTags": "Suggest Tags",
+  "@createThread_suggestTags": {
+    "description": "Suggest tags button"
+  },
+  "createThread_enterTitleForSuggestions": "Please enter a title to get tag suggestions.",
+  "@createThread_enterTitleForSuggestions": {
+    "description": "Enter title for suggestions message"
+  },
+  "createThread_addNewTag": "Add a new tag",
+  "@createThread_addNewTag": {
+    "description": "Add new tag label"
+  },
+  "createThread_tagEmpty": "Tag name cannot be empty.",
+  "@createThread_tagEmpty": {
+    "description": "Tag empty validation"
+  },
+  "createThread_tagMaxLength": "Tag name must be at most 255 characters.",
+  "@createThread_tagMaxLength": {
+    "description": "Tag max length validation"
+  },
+  "createThread_done": "Done",
+  "@createThread_done": {
+    "description": "Done button"
+  },
+  "createThread_post": "Post",
+  "@createThread_post": {
+    "description": "Post button"
+  },
+  "createThread_save": "Save",
+  "@createThread_save": {
+    "description": "Save button"
+  },
+  "createThread_createError": "Failed to create/edit discussion. Please check your connection.",
+  "@createThread_createError": {
+    "description": "Create/edit error message"
+  },
+  "createThread_generalError": "Failed to create/edit discussion.",
+  "@createThread_generalError": {
+    "description": "General error message"
+  },
+
+  "threadDetail_report": "Report",
+  "@threadDetail_report": {
+    "description": "Report action"
+  },
+  "threadDetail_edit": "Edit",
+  "@threadDetail_edit": {
+    "description": "Edit action"
+  },
+  "threadDetail_delete": "Delete",
+  "@threadDetail_delete": {
+    "description": "Delete action"
+  },
+  "threadDetail_reported": "Discussion reported",
+  "@threadDetail_reported": {
+    "description": "Discussion reported message"
+  },
+  "threadDetail_connectionError": "Failed: Please check your connection and refresh the page.",
+  "@threadDetail_connectionError": {
+    "description": "Connection error message"
+  },
+  "threadDetail_unavailable": "Failed: This discussion is no longer available.",
+  "@threadDetail_unavailable": {
+    "description": "Discussion unavailable message"
+  },
+  "threadDetail_deleteError": "Failed to delete discussion.",
+  "@threadDetail_deleteError": {
+    "description": "Delete error message"
+  },
+  "threadDetail_threadDetails": "Thread Details",
+  "@threadDetail_threadDetails": {
+    "description": "Thread details label"
+  },
+  "threadDetail_creator": "Creator: ",
+  "@threadDetail_creator": {
+    "description": "Creator label"
+  },
+  "threadDetail_content": "Content:",
+  "@threadDetail_content": {
+    "description": "Content label"
+  },
+  "threadDetail_tags": "Tags:",
+  "@threadDetail_tags": {
+    "description": "Tags label"
+  },
+  "threadDetail_created": "Created: {date}",
+  "@threadDetail_created": {
+    "description": "Created date",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "threadDetail_edited": "Edited: {date}",
+  "@threadDetail_edited": {
+    "description": "Edited date",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "threadDetail_comments": "Comments",
+  "@threadDetail_comments": {
+    "description": "Comments label"
+  },
+  "threadDetail_addComment": "Add a comment…",
+  "@threadDetail_addComment": {
+    "description": "Add comment placeholder"
+  },
+  "threadDetail_commentRequired": "Please enter a comment",
+  "@threadDetail_commentRequired": {
+    "description": "Comment required validation"
+  },
+  "threadDetail_deleteCommentError": "Failed to delete comment.",
+  "@threadDetail_deleteCommentError": {
+    "description": "Delete comment error"
+  },
+
+  "@@_COMMON": {},
+  "common_retry": "Retry",
+  "@common_retry": {
+    "description": "Retry button"
+  },
+  "common_notSpecified": "Not specified",
+  "@common_notSpecified": {
+    "description": "Not specified message"
+  },
+  "common_upTo": "Up to {amount}",
+  "@common_upTo": {
+    "description": "Up to amount",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "common_from": "From {amount}",
+  "@common_from": {
+    "description": "From amount",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
   }
 }
 
