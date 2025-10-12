@@ -2,7 +2,6 @@ package org.bounswe.jobboardbackend.profile.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.bounswe.jobboardbackend.auth.model.User;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
@@ -32,8 +31,8 @@ public class Badge {
     private String criteria;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "profile_id", nullable = false)
+    private Profile profile;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

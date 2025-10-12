@@ -12,8 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.google.cloud.storage.*;
+import org.springframework.beans.factory.annotation.Value;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import java.net.URL;
+
 import java.time.Instant;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +33,22 @@ public class ProfileService {
     private final SkillRepository skillRepository;
     private final InterestRepository interestRepository;
 
+    // === GCS config ===
+    @Value("${app.gcs.bucket}")
+    private String gcsBucket;
+
+    @Value("${app.gcs.folderPrefix:profiles/}")
+    private String gcsFolderPrefix;
+
+    @Value("${app.gcs.public:true}")
+    private boolean gcsPublic;
+
+    @Value("${app.gcs.publicBaseUrl:https://storage.googleapis.com}")
+    private String gcsPublicBaseUrl;
+
+    // Google Cloud Storage client
+    private final Storage storage = StorageOptions.getDefaultInstance().getService();
+
     // =========================
     // PROFILE
     // =========================
@@ -38,7 +59,6 @@ public class ProfileService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         if (profileRepository.findByUserId(userId).isPresent()) {
-            // 409 CONFLICT: Aynı kullanıcı için profil zaten var.
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Profile already exists for this user");
         }
 
@@ -47,8 +67,7 @@ public class ProfileService {
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .bio(dto.getBio())
-                .imageUrl(null)        // GCS geldiğinde gerçek URL yazılacak
-                // .imageObjectKey(null)  // Eğer modelde varsa, GCS için tutulabilir
+                .imageUrl(null)
                 .build();
 
         profile = profileRepository.save(profile);
@@ -91,27 +110,82 @@ public class ProfileService {
     }
 
     // =========================
-    // IMAGE (GCS-READY PLACEHOLDERS)
+    // IMAGE (GCS integration)
     // =========================
+
+    private String buildObjectNameForUser(Long userId, String originalFilename) {
+        String ext = (originalFilename != null && originalFilename.contains("."))
+                ? originalFilename.substring(originalFilename.lastIndexOf('.'))
+                : ".jpg";
+        return gcsFolderPrefix + userId + "/" + java.util.UUID.randomUUID() + ext;
+    }
+
+    private String publicUrl(String objectName) {
+        return gcsPublicBaseUrl + "/" + gcsBucket + "/" + objectName;
+    }
+
+    private String extractObjectNameFromUrl(String url) {
+        String prefix = gcsPublicBaseUrl + "/" + gcsBucket + "/";
+        if (url != null && url.startsWith(prefix)) {
+            return url.substring(prefix.length());
+        }
+        return null;
+    }
+
+    private String uploadToGcs(byte[] content, String contentType, String objectName) {
+        BlobInfo info = BlobInfo.newBuilder(gcsBucket, objectName)
+                .setContentType(contentType != null ? contentType : "application/octet-stream")
+                .build();
+        storage.create(info, content);
+        if (gcsPublic) {
+            return publicUrl(objectName);
+        } else {
+            URL signed = storage.signUrl(
+                    BlobInfo.newBuilder(gcsBucket, objectName).build(),
+                    15, TimeUnit.MINUTES,
+                    Storage.SignUrlOption.withV4Signature(),
+                    Storage.SignUrlOption.httpMethod(HttpMethod.GET)
+            );
+            return signed.toString();
+        }
+    }
+
+    private void deleteFromGcs(String objectName) {
+        if (objectName == null) return;
+        try {
+            storage.delete(gcsBucket, objectName);
+        } catch (StorageException ignore) {
+        }
+    }
 
     @Transactional
     public ProfileImageResponseDto uploadImage(Long userId, MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            // 400 BAD_REQUEST
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file is required");
         }
+        String ct = file.getContentType();
+        if (ct == null || !ct.startsWith("image/")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only image files are allowed");
+        }
+
         Profile p = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
 
-        // Şimdilik: benzersiz objectKey üret, URL’i placeholder olarak yaz.
-        // İLERİDE: GCS'ye yükleyip public/signed URL ve objectKey kaydedin.
-        String original = file.getOriginalFilename() == null ? "upload" : file.getOriginalFilename();
-        String safe = original.replaceAll("[^a-zA-Z0-9._-]", "_");
-        String objectKey = "profile-images/" + userId + "/" + UUID.randomUUID() + "-" + safe;
-        String url = "/media/" + objectKey; // GCS geçince gerçek URL dönecek
+        if (p.getImageUrl() != null) {
+            String oldObject = extractObjectNameFromUrl(p.getImageUrl());
+            if (oldObject != null) {
+                deleteFromGcs(oldObject);
+            }
+        }
 
-        // Eğer modelde objectKey alanı varsa:
-        // p.setImageObjectKey(objectKey);
+        String objectName = buildObjectNameForUser(userId, file.getOriginalFilename());
+        String url;
+        try {
+            url = uploadToGcs(file.getBytes(), ct, objectName);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Upload failed", e);
+        }
+
         p.setImageUrl(url);
 
         return ProfileImageResponseDto.builder()
@@ -124,9 +198,14 @@ public class ProfileService {
     public void deleteImage(Long userId) {
         Profile p = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
-        // İLERİDE: p.getImageObjectKey() GCS’den silinecek.
-        // p.setImageObjectKey(null);
-        p.setImageUrl(null);
+
+        if (p.getImageUrl() != null) {
+            String objectName = extractObjectNameFromUrl(p.getImageUrl());
+            if (objectName != null) {
+                deleteFromGcs(objectName);
+            }
+            p.setImageUrl(null);
+        }
     }
 
     // =========================
@@ -332,7 +411,7 @@ public class ProfileService {
                 .experiences(p.getExperiences().stream().map(this::toExperienceDto).collect(java.util.stream.Collectors.toList()))
                 .skills(p.getSkills().stream().map(this::toSkillDto).collect(java.util.stream.Collectors.toList()))
                 .interests(p.getInterests().stream().map(this::toInterestDto).collect(java.util.stream.Collectors.toList()))
-                .badges(null) // Badge alanı eklenirse burada map'lenebilir
+                .badges(null) 
                 .createdAt(p.getCreatedAt())
                 .updatedAt(p.getUpdatedAt())
                 .build();
