@@ -13,7 +13,9 @@ import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -35,32 +37,32 @@ public class JobApplicationService {
         this.jobPostRepository = jobPostRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<JobApplicationResponse> getByJobSeekerId(Long jobSeekerId) {
         return applicationRepository.findByJobSeekerId(jobSeekerId).stream()
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<JobApplicationResponse> getByJobPostId(Long jobPostId) {
         return applicationRepository.findByJobPostId(jobPostId).stream()
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public JobApplicationResponse getById(Long id) {
         return applicationRepository.findById(id)
                 .map(this::toResponseDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with ID " + id + " not found"));
     }
 
+    @Transactional
     public JobApplicationResponse create(CreateJobApplicationRequest dto) {
-        // Get authenticated user (jobseeker)
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User jobSeeker = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found"));
+        User jobSeeker = getCurrentUser();
 
-        // Check if user has EMPLOYEE role
+        // Check if user has JOBSEEKER role
         if (!jobSeeker.getRoles().contains(Role.ROLE_JOBSEEKER)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only users with JOBSEEKER role can apply for jobs");
         }
@@ -81,15 +83,13 @@ public class JobApplicationService {
         return toResponseDto(applicationRepository.save(application));
     }
 
+    @Transactional
     public JobApplicationResponse approve(Long id, String feedback) {
         JobApplication application = applicationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with ID " + id + " not found"));
 
         // Check authorization: only the employer who posted the job can approve
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User employer = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found"));
+        User employer = getCurrentUser();
 
         if (!application.getJobPost().getEmployer().getId().equals(employer.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the employer who posted the job can approve applications");
@@ -104,15 +104,13 @@ public class JobApplicationService {
         return toResponseDto(applicationRepository.save(application));
     }
 
+    @Transactional
     public JobApplicationResponse reject(Long id, String feedback) {
         JobApplication application = applicationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with ID " + id + " not found"));
 
         // Check authorization: only the employer who posted the job can reject
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User employer = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found"));
+        User employer = getCurrentUser();
 
         if (!application.getJobPost().getEmployer().getId().equals(employer.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the employer who posted the job can reject applications");
@@ -127,21 +125,19 @@ public class JobApplicationService {
         return toResponseDto(applicationRepository.save(application));
     }
 
+    @Transactional
     public void delete(Long id) {
         JobApplication application = applicationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with ID " + id + " not found"));
 
         // Check authorization: only the applicant can delete their own application
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found"));
+        User user = getCurrentUser();
 
         if (!application.getJobSeeker().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the applicant can delete their own application");
         }
 
-        applicationRepository.deleteById(id);
+        applicationRepository.delete(application);
     }
 
     private JobApplicationResponse toResponseDto(JobApplication application) {
@@ -160,5 +156,24 @@ public class JobApplicationService {
                 .feedback(application.getFeedback())
                 .appliedDate(application.getAppliedDate())
                 .build();
+    }
+
+    private User getCurrentUser() {
+        String username = getCurrentUsername();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found in the system"));
+    }
+
+    private String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No authentication context found");
+        }
+        
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails userDetails) {
+            return userDetails.getUsername();
+        }
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authentication context");
     }
 }

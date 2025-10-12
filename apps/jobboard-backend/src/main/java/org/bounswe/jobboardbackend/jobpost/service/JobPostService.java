@@ -11,7 +11,9 @@ import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -29,11 +31,7 @@ public class JobPostService {
         this.userRepository = userRepository;
     }
 
-
-    public List<JobPostResponse> getAll() {
-        return jobPostRepository.findAll().stream().map(this::toResponseDto).collect(Collectors.toList());
-    }
-
+    @Transactional(readOnly = true)
     public List<JobPostResponse> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, Boolean inclusiveOpportunity) {
         List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, minSalary, maxSalary, isRemote, inclusiveOpportunity);
         return jobs.stream()
@@ -47,22 +45,21 @@ public class JobPostService {
                 .map(this::toResponseDto).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<JobPostResponse> getByEmployerId(Long employerId) {
         return jobPostRepository.findByEmployerId(employerId).stream().map(this::toResponseDto).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public JobPostResponse getById(Long id) {
         return jobPostRepository.findById(id)
                 .map(this::toResponseDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "JobPost with ID " + id + " not found"));
     }
 
-
+    @Transactional
     public JobPostResponse create(CreateJobPostRequest dto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // This gets the username (email)
-        User employer = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found in the system"));
+        User employer = getCurrentUser();
 
         if (!employer.getRoles().contains(Role.ROLE_EMPLOYER)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only users with EMPLOYER role can post jobs.");
@@ -86,21 +83,15 @@ public class JobPostService {
         return toResponseDto(jobPostRepository.save(job));
     }
 
-
+    @Transactional
     public void delete(Long id) {
         JobPost job = jobPostRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "JobPost with ID " + id + " not found"));
         
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User employer = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found in the system"));
+        User currentUser = getCurrentUser();
+        validateJobOwnership(job, currentUser);
         
-        if (!job.getEmployer().getId().equals(employer.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the employer who posted the job can delete it.");
-        }
-        
-        jobPostRepository.deleteById(id);
+        jobPostRepository.delete(job);
     }
 
     private JobPostResponse toResponseDto(JobPost job) {
@@ -121,16 +112,13 @@ public class JobPostService {
                 .build();
     }
 
+    @Transactional
     public JobPostResponse update(Long id, UpdateJobPostRequest dto) {
-
-        JobPost job = jobPostRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "JobPost with ID " + id + " not found"));
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // This gets the username (email)
-        User employer = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found in the system"));
-        if (!job.getEmployer().getId().equals(employer.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the employer who posted the job can update it.");
-        }
+        JobPost job = jobPostRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "JobPost with ID " + id + " not found"));
+        
+        User currentUser = getCurrentUser();
+        validateJobOwnership(job, currentUser);
 
         // Partial update: only update non-null fields
         if (dto.getTitle() != null) job.setTitle(dto.getTitle());
@@ -145,6 +133,34 @@ public class JobPostService {
         if (dto.getContact() != null) job.setContact(dto.getContact());
 
         return toResponseDto(jobPostRepository.save(job));
+    }
+
+    private User getCurrentUser() {
+        String username = getCurrentUsername();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found in the system"));
+    }
+
+    private String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No authentication context found");
+        }
+        
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails userDetails) {
+            return userDetails.getUsername();
+        }
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authentication context");
+    }
+
+    private void validateJobOwnership(JobPost job, User user) {
+        if (job.getEmployer() == null) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Job post has no employer assigned");
+        }
+        if (!job.getEmployer().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the employer who posted the job can perform this action");
+        }
     }
 
 }
