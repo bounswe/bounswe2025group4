@@ -22,6 +22,10 @@ spring:
           auth: true
           starttls:
             enable: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 server:
   port: 8080
@@ -32,3 +36,8 @@ app:
   jwtExpirationInMs: 864000000
   verifyEmailUrl: ${APP_VERIFY_EMAIL_URL}
   resetPasswordUrl: ${APP_RESET_PASSWORD_URL}
+
+  gcs:
+    bucket: ${APP_GCS_BUCKET}
+    publicBaseUrl: https://storage.googleapis.com
+    public: true
