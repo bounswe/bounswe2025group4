@@ -222,4 +222,202 @@ class AppLocalizationsTr extends AppLocalizations {
   String profilePage_languageChanged(String language) {
     return 'Dil $language olarak değiştirildi';
   }
+
+  @override
+  String get careerStatusScreen_question => 'Mevcut kariyer durumunuz nedir?';
+
+  @override
+  String get careerStatusScreen_student => 'Öğrenci';
+
+  @override
+  String get careerStatusScreen_recentGraduate => 'Yeni Mezun';
+
+  @override
+  String get careerStatusScreen_midLevel => 'Orta Düzey Profesyonel';
+
+  @override
+  String get careerStatusScreen_senior => 'Kıdemli Profesyonel';
+
+  @override
+  String get careerStatusScreen_changingCareers =>
+      'Kariyer Değişikliği Yapıyor';
+
+  @override
+  String get organizationTypeScreen_question =>
+      'Ne tür bir organizasyonu temsil ediyorsunuz?';
+
+  @override
+  String get organizationTypeScreen_company => 'Şirket';
+
+  @override
+  String get organizationTypeScreen_startup => 'Girişim';
+
+  @override
+  String get organizationTypeScreen_nonprofit => 'Kar Amacı Gütmeyen';
+
+  @override
+  String get organizationTypeScreen_freelancer =>
+      'Proje için serbest çalışan arayan';
+
+  @override
+  String get organizationTypeScreen_other => 'Diğer';
+
+  @override
+  String get organizationTypeScreen_pleaseSpecify => 'Lütfen belirtin';
+
+  @override
+  String get jobPrioritiesScreen_question =>
+      'İş ararken en önemli öncelikleriniz nelerdir?';
+
+  @override
+  String get jobPrioritiesScreen_selectAll => 'Uygun olanların hepsini seçin';
+
+  @override
+  String get jobPrioritiesScreen_fairWages => 'Adil Ücretler';
+
+  @override
+  String get jobPrioritiesScreen_fairWagesDesc =>
+      'Yaşam ücreti ödeyen ve şeffaf ücret uygulamaları olan şirketler';
+
+  @override
+  String get jobPrioritiesScreen_inclusive => 'Kapsayıcı İşyeri';
+
+  @override
+  String get jobPrioritiesScreen_inclusiveDesc =>
+      'Çeşitlilik, eşitlik ve kapsayıcılığa bağlı organizasyonlar';
+
+  @override
+  String get jobPrioritiesScreen_sustainability =>
+      'Sürdürülebilirlik/Çevre Politikaları';
+
+  @override
+  String get jobPrioritiesScreen_sustainabilityDesc =>
+      'Güçlü çevre taahhütleri ve uygulamaları olan şirketler';
+
+  @override
+  String get jobPrioritiesScreen_workLife => 'İş-Yaşam Dengesi';
+
+  @override
+  String get jobPrioritiesScreen_workLifeDesc =>
+      'Esnek çalışma seçenekleriyle kişisel zamana saygılı';
+
+  @override
+  String get jobPrioritiesScreen_remote => 'Uzaktan Çalışma Dostu';
+
+  @override
+  String get jobPrioritiesScreen_remoteDesc =>
+      'Uzaktan çalışma ve esnek konum seçenekleri';
+
+  @override
+  String get jobPrioritiesScreen_growth => 'Kariyer Gelişim Fırsatları';
+
+  @override
+  String get jobPrioritiesScreen_growthDesc =>
+      'İlerleme ve profesyonel gelişim için net yollar';
+
+  @override
+  String get companyPoliciesScreen_question =>
+      'Şirketiniz hangi etik politikaları takip ediyor?';
+
+  @override
+  String get companyPoliciesScreen_fairWage => 'Adil ücret taahhüdü';
+
+  @override
+  String get companyPoliciesScreen_fairWageDesc =>
+      'Rekabetçi ücretlendirme ve şeffaf ödeme uygulamaları';
+
+  @override
+  String get companyPoliciesScreen_diversity =>
+      'Çeşitlilik ve kapsayıcılık politikası';
+
+  @override
+  String get companyPoliciesScreen_diversityDesc =>
+      'Eşit fırsatlarla kapsayıcı bir işyeri teşvik etme';
+
+  @override
+  String get companyPoliciesScreen_wellbeing => 'Çalışan refahı programları';
+
+  @override
+  String get companyPoliciesScreen_wellbeingDesc =>
+      'Ruh sağlığı, iş-yaşam dengesi ve kişisel gelişimi destekleme';
+
+  @override
+  String get companyPoliciesScreen_remotePolicy =>
+      'Uzaktan çalışma dostu kültür';
+
+  @override
+  String get companyPoliciesScreen_remotePolicyDesc =>
+      'Esnek çalışma düzenlemeleri ve uzaktan seçenekler sunma';
+
+  @override
+  String get companyPoliciesScreen_sustainabilityPolicy =>
+      'Sürdürülebilirlik/çevre hedefleri';
+
+  @override
+  String get companyPoliciesScreen_sustainabilityPolicyDesc =>
+      'Çevre dostu uygulamalar ve çevresel etkileri azaltma';
+
+  @override
+  String get industrySelectionScreen_question =>
+      'Hangi sektörlerle en çok ilgileniyorsunuz?';
+
+  @override
+  String get industrySelectionScreen_tech => 'Teknoloji';
+
+  @override
+  String get industrySelectionScreen_healthcare => 'Sağlık';
+
+  @override
+  String get industrySelectionScreen_education => 'Eğitim';
+
+  @override
+  String get industrySelectionScreen_finance => 'Finans';
+
+  @override
+  String get industrySelectionScreen_creativeArts => 'Yaratıcı Sanatlar';
+
+  @override
+  String get mentorshipSelectionScreen_question =>
+      'Mentorluk sistemimize katılmak ister misiniz?';
+
+  @override
+  String get mentorshipSelectionScreen_subtitle =>
+      'Kariyer rehberliği almak veya sağlamak için başkalarıyla bağlantı kurabilirsiniz.';
+
+  @override
+  String get mentorshipSelectionScreen_beMentor => 'Mentor olmak istiyorum';
+
+  @override
+  String get mentorshipSelectionScreen_beMentorDesc =>
+      'Başkalarının özgeçmişlerini ve kariyerlerini geliştirmelerine yardımcı olun';
+
+  @override
+  String get mentorshipSelectionScreen_lookingForMentor =>
+      'Mentor arıyorum (mentee)';
+
+  @override
+  String get mentorshipSelectionScreen_lookingForMentorDesc =>
+      'Profesyonel olarak büyümek için geri bildirim ve rehberlik alın';
+
+  @override
+  String get mentorshipSelectionScreen_maxMentees =>
+      'Kaç mentee almaya hazırsınız?';
+
+  @override
+  String get mentorshipSelectionScreen_maxMenteesLabel =>
+      'Maksimum Mentee Sayısı (1-20)';
+
+  @override
+  String get mentorshipSelectionScreen_enterNumber => 'Lütfen bir sayı girin';
+
+  @override
+  String get mentorshipSelectionScreen_validNumber =>
+      'Lütfen geçerli bir sayı girin';
+
+  @override
+  String get mentorshipSelectionScreen_greaterThanZero =>
+      '0\'dan büyük olmalıdır';
+
+  @override
+  String get mentorshipSelectionScreen_lessThan21 => '21\'den küçük olmalıdır';
 }

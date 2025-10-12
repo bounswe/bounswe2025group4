@@ -295,6 +295,95 @@
         "example": "English"
       }
     }
-  }
+  },
+
+  "@@_CAREER_STATUS_SCREEN": {},
+  "careerStatusScreen_question": "What is your current career status?",
+  "@careerStatusScreen_question": {
+    "description": "Career status question"
+  },
+  "careerStatusScreen_student": "Student",
+  "careerStatusScreen_recentGraduate": "Recent Graduate",
+  "careerStatusScreen_midLevel": "Mid-Level Professional",
+  "careerStatusScreen_senior": "Senior Professional",
+  "careerStatusScreen_changingCareers": "Changing Careers",
+
+  "@@_ORGANIZATION_TYPE_SCREEN": {},
+  "organizationTypeScreen_question": "What type of organization do you represent?",
+  "@organizationTypeScreen_question": {
+    "description": "Organization type question"
+  },
+  "organizationTypeScreen_company": "Company",
+  "organizationTypeScreen_startup": "Startup",
+  "organizationTypeScreen_nonprofit": "Non-profit",
+  "organizationTypeScreen_freelancer": "Freelancer hiring for a project",
+  "organizationTypeScreen_other": "Other",
+  "organizationTypeScreen_pleaseSpecify": "Please specify",
+
+  "@@_JOB_PRIORITIES_SCREEN": {},
+  "jobPrioritiesScreen_question": "What are your top priorities when looking for a job?",
+  "@jobPrioritiesScreen_question": {
+    "description": "Job priorities question"
+  },
+  "jobPrioritiesScreen_selectAll": "Select all that apply",
+  "jobPrioritiesScreen_fairWages": "Fair Wages",
+  "jobPrioritiesScreen_fairWagesDesc": "Companies that pay living wages and maintain transparent compensation practices",
+  "jobPrioritiesScreen_inclusive": "Inclusive Workplace",
+  "jobPrioritiesScreen_inclusiveDesc": "Organizations committed to diversity, equity, and inclusion",
+  "jobPrioritiesScreen_sustainability": "Sustainability/Environmental Policies",
+  "jobPrioritiesScreen_sustainabilityDesc": "Companies with strong environmental commitments and practices",
+  "jobPrioritiesScreen_workLife": "Work-Life Balance",
+  "jobPrioritiesScreen_workLifeDesc": "Respectful of personal time with flexible scheduling options",
+  "jobPrioritiesScreen_remote": "Remote-Friendly",
+  "jobPrioritiesScreen_remoteDesc": "Options for remote work and flexible location",
+  "jobPrioritiesScreen_growth": "Career Growth Opportunities",
+  "jobPrioritiesScreen_growthDesc": "Clear paths for advancement and professional development",
+
+  "@@_COMPANY_POLICIES_SCREEN": {},
+  "companyPoliciesScreen_question": "Which ethical policies does your company follow?",
+  "@companyPoliciesScreen_question": {
+    "description": "Company policies question"
+  },
+  "companyPoliciesScreen_fairWage": "Fair wage commitment",
+  "companyPoliciesScreen_fairWageDesc": "Ensuring competitive compensation and transparent pay practices",
+  "companyPoliciesScreen_diversity": "Diversity & inclusion policy",
+  "companyPoliciesScreen_diversityDesc": "Promoting an inclusive workplace with equal opportunities",
+  "companyPoliciesScreen_wellbeing": "Employee well-being programs",
+  "companyPoliciesScreen_wellbeingDesc": "Supporting mental health, work-life balance, and personal growth",
+  "companyPoliciesScreen_remotePolicy": "Remote-friendly culture",
+  "companyPoliciesScreen_remotePolicyDesc": "Offering flexible work arrangements and remote options",
+  "companyPoliciesScreen_sustainabilityPolicy": "Sustainability/environmental goals",
+  "companyPoliciesScreen_sustainabilityPolicyDesc": "Implementing eco-friendly practices and reducing environmental impact",
+
+  "@@_INDUSTRY_SELECTION_SCREEN": {},
+  "industrySelectionScreen_question": "Which industries are you most interested in?",
+  "@industrySelectionScreen_question": {
+    "description": "Industry selection question"
+  },
+  "industrySelectionScreen_tech": "Tech",
+  "industrySelectionScreen_healthcare": "Healthcare",
+  "industrySelectionScreen_education": "Education",
+  "industrySelectionScreen_finance": "Finance",
+  "industrySelectionScreen_creativeArts": "Creative Arts",
+
+  "@@_MENTORSHIP_SELECTION_SCREEN": {},
+  "mentorshipSelectionScreen_question": "Would you like to participate in our mentorship system?",
+  "@mentorshipSelectionScreen_question": {
+    "description": "Mentorship participation question"
+  },
+  "mentorshipSelectionScreen_subtitle": "You can connect with others to either receive or provide career guidance.",
+  "@mentorshipSelectionScreen_subtitle": {
+    "description": "Mentorship explanation"
+  },
+  "mentorshipSelectionScreen_beMentor": "I want to be a mentor",
+  "mentorshipSelectionScreen_beMentorDesc": "Help others improve their resumes and careers",
+  "mentorshipSelectionScreen_lookingForMentor": "I'm looking for a mentor (mentee)",
+  "mentorshipSelectionScreen_lookingForMentorDesc": "Get feedback and guidance to grow professionally",
+  "mentorshipSelectionScreen_maxMentees": "How many mentees are you willing to take?",
+  "mentorshipSelectionScreen_maxMenteesLabel": "Max Mentee Count (1-20)",
+  "mentorshipSelectionScreen_enterNumber": "Please enter a number",
+  "mentorshipSelectionScreen_validNumber": "Please enter a valid number",
+  "mentorshipSelectionScreen_greaterThanZero": "Must be greater than 0",
+  "mentorshipSelectionScreen_lessThan21": "Must be less than 21"
 }
 

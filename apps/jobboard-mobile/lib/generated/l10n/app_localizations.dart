@@ -495,6 +495,342 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Language changed to {language}'**
   String profilePage_languageChanged(String language);
+
+  /// Career status question
+  ///
+  /// In en, this message translates to:
+  /// **'What is your current career status?'**
+  String get careerStatusScreen_question;
+
+  /// No description provided for @careerStatusScreen_student.
+  ///
+  /// In en, this message translates to:
+  /// **'Student'**
+  String get careerStatusScreen_student;
+
+  /// No description provided for @careerStatusScreen_recentGraduate.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Graduate'**
+  String get careerStatusScreen_recentGraduate;
+
+  /// No description provided for @careerStatusScreen_midLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mid-Level Professional'**
+  String get careerStatusScreen_midLevel;
+
+  /// No description provided for @careerStatusScreen_senior.
+  ///
+  /// In en, this message translates to:
+  /// **'Senior Professional'**
+  String get careerStatusScreen_senior;
+
+  /// No description provided for @careerStatusScreen_changingCareers.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing Careers'**
+  String get careerStatusScreen_changingCareers;
+
+  /// Organization type question
+  ///
+  /// In en, this message translates to:
+  /// **'What type of organization do you represent?'**
+  String get organizationTypeScreen_question;
+
+  /// No description provided for @organizationTypeScreen_company.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get organizationTypeScreen_company;
+
+  /// No description provided for @organizationTypeScreen_startup.
+  ///
+  /// In en, this message translates to:
+  /// **'Startup'**
+  String get organizationTypeScreen_startup;
+
+  /// No description provided for @organizationTypeScreen_nonprofit.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-profit'**
+  String get organizationTypeScreen_nonprofit;
+
+  /// No description provided for @organizationTypeScreen_freelancer.
+  ///
+  /// In en, this message translates to:
+  /// **'Freelancer hiring for a project'**
+  String get organizationTypeScreen_freelancer;
+
+  /// No description provided for @organizationTypeScreen_other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get organizationTypeScreen_other;
+
+  /// No description provided for @organizationTypeScreen_pleaseSpecify.
+  ///
+  /// In en, this message translates to:
+  /// **'Please specify'**
+  String get organizationTypeScreen_pleaseSpecify;
+
+  /// Job priorities question
+  ///
+  /// In en, this message translates to:
+  /// **'What are your top priorities when looking for a job?'**
+  String get jobPrioritiesScreen_question;
+
+  /// No description provided for @jobPrioritiesScreen_selectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all that apply'**
+  String get jobPrioritiesScreen_selectAll;
+
+  /// No description provided for @jobPrioritiesScreen_fairWages.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair Wages'**
+  String get jobPrioritiesScreen_fairWages;
+
+  /// No description provided for @jobPrioritiesScreen_fairWagesDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Companies that pay living wages and maintain transparent compensation practices'**
+  String get jobPrioritiesScreen_fairWagesDesc;
+
+  /// No description provided for @jobPrioritiesScreen_inclusive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inclusive Workplace'**
+  String get jobPrioritiesScreen_inclusive;
+
+  /// No description provided for @jobPrioritiesScreen_inclusiveDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizations committed to diversity, equity, and inclusion'**
+  String get jobPrioritiesScreen_inclusiveDesc;
+
+  /// No description provided for @jobPrioritiesScreen_sustainability.
+  ///
+  /// In en, this message translates to:
+  /// **'Sustainability/Environmental Policies'**
+  String get jobPrioritiesScreen_sustainability;
+
+  /// No description provided for @jobPrioritiesScreen_sustainabilityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Companies with strong environmental commitments and practices'**
+  String get jobPrioritiesScreen_sustainabilityDesc;
+
+  /// No description provided for @jobPrioritiesScreen_workLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Work-Life Balance'**
+  String get jobPrioritiesScreen_workLife;
+
+  /// No description provided for @jobPrioritiesScreen_workLifeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Respectful of personal time with flexible scheduling options'**
+  String get jobPrioritiesScreen_workLifeDesc;
+
+  /// No description provided for @jobPrioritiesScreen_remote.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote-Friendly'**
+  String get jobPrioritiesScreen_remote;
+
+  /// No description provided for @jobPrioritiesScreen_remoteDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Options for remote work and flexible location'**
+  String get jobPrioritiesScreen_remoteDesc;
+
+  /// No description provided for @jobPrioritiesScreen_growth.
+  ///
+  /// In en, this message translates to:
+  /// **'Career Growth Opportunities'**
+  String get jobPrioritiesScreen_growth;
+
+  /// No description provided for @jobPrioritiesScreen_growthDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear paths for advancement and professional development'**
+  String get jobPrioritiesScreen_growthDesc;
+
+  /// Company policies question
+  ///
+  /// In en, this message translates to:
+  /// **'Which ethical policies does your company follow?'**
+  String get companyPoliciesScreen_question;
+
+  /// No description provided for @companyPoliciesScreen_fairWage.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair wage commitment'**
+  String get companyPoliciesScreen_fairWage;
+
+  /// No description provided for @companyPoliciesScreen_fairWageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensuring competitive compensation and transparent pay practices'**
+  String get companyPoliciesScreen_fairWageDesc;
+
+  /// No description provided for @companyPoliciesScreen_diversity.
+  ///
+  /// In en, this message translates to:
+  /// **'Diversity & inclusion policy'**
+  String get companyPoliciesScreen_diversity;
+
+  /// No description provided for @companyPoliciesScreen_diversityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Promoting an inclusive workplace with equal opportunities'**
+  String get companyPoliciesScreen_diversityDesc;
+
+  /// No description provided for @companyPoliciesScreen_wellbeing.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee well-being programs'**
+  String get companyPoliciesScreen_wellbeing;
+
+  /// No description provided for @companyPoliciesScreen_wellbeingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Supporting mental health, work-life balance, and personal growth'**
+  String get companyPoliciesScreen_wellbeingDesc;
+
+  /// No description provided for @companyPoliciesScreen_remotePolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote-friendly culture'**
+  String get companyPoliciesScreen_remotePolicy;
+
+  /// No description provided for @companyPoliciesScreen_remotePolicyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Offering flexible work arrangements and remote options'**
+  String get companyPoliciesScreen_remotePolicyDesc;
+
+  /// No description provided for @companyPoliciesScreen_sustainabilityPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sustainability/environmental goals'**
+  String get companyPoliciesScreen_sustainabilityPolicy;
+
+  /// No description provided for @companyPoliciesScreen_sustainabilityPolicyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Implementing eco-friendly practices and reducing environmental impact'**
+  String get companyPoliciesScreen_sustainabilityPolicyDesc;
+
+  /// Industry selection question
+  ///
+  /// In en, this message translates to:
+  /// **'Which industries are you most interested in?'**
+  String get industrySelectionScreen_question;
+
+  /// No description provided for @industrySelectionScreen_tech.
+  ///
+  /// In en, this message translates to:
+  /// **'Tech'**
+  String get industrySelectionScreen_tech;
+
+  /// No description provided for @industrySelectionScreen_healthcare.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthcare'**
+  String get industrySelectionScreen_healthcare;
+
+  /// No description provided for @industrySelectionScreen_education.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get industrySelectionScreen_education;
+
+  /// No description provided for @industrySelectionScreen_finance.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get industrySelectionScreen_finance;
+
+  /// No description provided for @industrySelectionScreen_creativeArts.
+  ///
+  /// In en, this message translates to:
+  /// **'Creative Arts'**
+  String get industrySelectionScreen_creativeArts;
+
+  /// Mentorship participation question
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to participate in our mentorship system?'**
+  String get mentorshipSelectionScreen_question;
+
+  /// Mentorship explanation
+  ///
+  /// In en, this message translates to:
+  /// **'You can connect with others to either receive or provide career guidance.'**
+  String get mentorshipSelectionScreen_subtitle;
+
+  /// No description provided for @mentorshipSelectionScreen_beMentor.
+  ///
+  /// In en, this message translates to:
+  /// **'I want to be a mentor'**
+  String get mentorshipSelectionScreen_beMentor;
+
+  /// No description provided for @mentorshipSelectionScreen_beMentorDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Help others improve their resumes and careers'**
+  String get mentorshipSelectionScreen_beMentorDesc;
+
+  /// No description provided for @mentorshipSelectionScreen_lookingForMentor.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m looking for a mentor (mentee)'**
+  String get mentorshipSelectionScreen_lookingForMentor;
+
+  /// No description provided for @mentorshipSelectionScreen_lookingForMentorDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get feedback and guidance to grow professionally'**
+  String get mentorshipSelectionScreen_lookingForMentorDesc;
+
+  /// No description provided for @mentorshipSelectionScreen_maxMentees.
+  ///
+  /// In en, this message translates to:
+  /// **'How many mentees are you willing to take?'**
+  String get mentorshipSelectionScreen_maxMentees;
+
+  /// No description provided for @mentorshipSelectionScreen_maxMenteesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Mentee Count (1-20)'**
+  String get mentorshipSelectionScreen_maxMenteesLabel;
+
+  /// No description provided for @mentorshipSelectionScreen_enterNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a number'**
+  String get mentorshipSelectionScreen_enterNumber;
+
+  /// No description provided for @mentorshipSelectionScreen_validNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid number'**
+  String get mentorshipSelectionScreen_validNumber;
+
+  /// No description provided for @mentorshipSelectionScreen_greaterThanZero.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be greater than 0'**
+  String get mentorshipSelectionScreen_greaterThanZero;
+
+  /// No description provided for @mentorshipSelectionScreen_lessThan21.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be less than 21'**
+  String get mentorshipSelectionScreen_lessThan21;
 }
 
 class _AppLocalizationsDelegate

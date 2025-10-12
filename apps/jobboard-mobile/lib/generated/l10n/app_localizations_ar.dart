@@ -220,4 +220,195 @@ class AppLocalizationsAr extends AppLocalizations {
   String profilePage_languageChanged(String language) {
     return 'تم تغيير اللغة إلى $language';
   }
+
+  @override
+  String get careerStatusScreen_question => 'ما هي حالتك المهنية الحالية؟';
+
+  @override
+  String get careerStatusScreen_student => 'طالب';
+
+  @override
+  String get careerStatusScreen_recentGraduate => 'خريج حديث';
+
+  @override
+  String get careerStatusScreen_midLevel => 'محترف متوسط المستوى';
+
+  @override
+  String get careerStatusScreen_senior => 'محترف كبير';
+
+  @override
+  String get careerStatusScreen_changingCareers => 'تغيير المهنة';
+
+  @override
+  String get organizationTypeScreen_question => 'ما نوع المنظمة التي تمثلها؟';
+
+  @override
+  String get organizationTypeScreen_company => 'شركة';
+
+  @override
+  String get organizationTypeScreen_startup => 'شركة ناشئة';
+
+  @override
+  String get organizationTypeScreen_nonprofit => 'غير ربحية';
+
+  @override
+  String get organizationTypeScreen_freelancer => 'مستقل يوظف لمشروع';
+
+  @override
+  String get organizationTypeScreen_other => 'أخرى';
+
+  @override
+  String get organizationTypeScreen_pleaseSpecify => 'يرجى التحديد';
+
+  @override
+  String get jobPrioritiesScreen_question =>
+      'ما هي أهم أولوياتك عند البحث عن وظيفة؟';
+
+  @override
+  String get jobPrioritiesScreen_selectAll => 'حدد كل ما ينطبق';
+
+  @override
+  String get jobPrioritiesScreen_fairWages => 'أجور عادلة';
+
+  @override
+  String get jobPrioritiesScreen_fairWagesDesc =>
+      'الشركات التي تدفع أجوراً معيشية وتحافظ على ممارسات تعويض شفافة';
+
+  @override
+  String get jobPrioritiesScreen_inclusive => 'مكان عمل شامل';
+
+  @override
+  String get jobPrioritiesScreen_inclusiveDesc =>
+      'المنظمات الملتزمة بالتنوع والمساواة والشمول';
+
+  @override
+  String get jobPrioritiesScreen_sustainability => 'الاستدامة/السياسات البيئية';
+
+  @override
+  String get jobPrioritiesScreen_sustainabilityDesc =>
+      'الشركات ذات الالتزامات والممارسات البيئية القوية';
+
+  @override
+  String get jobPrioritiesScreen_workLife => 'التوازن بين العمل والحياة';
+
+  @override
+  String get jobPrioritiesScreen_workLifeDesc =>
+      'احترام الوقت الشخصي مع خيارات جدولة مرنة';
+
+  @override
+  String get jobPrioritiesScreen_remote => 'صديق للعمل عن بُعد';
+
+  @override
+  String get jobPrioritiesScreen_remoteDesc =>
+      'خيارات للعمل عن بُعد والموقع المرن';
+
+  @override
+  String get jobPrioritiesScreen_growth => 'فرص النمو الوظيفي';
+
+  @override
+  String get jobPrioritiesScreen_growthDesc =>
+      'مسارات واضحة للتقدم والتطوير المهني';
+
+  @override
+  String get companyPoliciesScreen_question =>
+      'ما هي السياسات الأخلاقية التي تتبعها شركتك؟';
+
+  @override
+  String get companyPoliciesScreen_fairWage => 'التزام الأجور العادلة';
+
+  @override
+  String get companyPoliciesScreen_fairWageDesc =>
+      'ضمان تعويض تنافسي وممارسات دفع شفافة';
+
+  @override
+  String get companyPoliciesScreen_diversity => 'سياسة التنوع والشمول';
+
+  @override
+  String get companyPoliciesScreen_diversityDesc =>
+      'تعزيز مكان عمل شامل مع فرص متساوية';
+
+  @override
+  String get companyPoliciesScreen_wellbeing => 'برامج رفاهية الموظفين';
+
+  @override
+  String get companyPoliciesScreen_wellbeingDesc =>
+      'دعم الصحة النفسية والتوازن بين العمل والحياة والنمو الشخصي';
+
+  @override
+  String get companyPoliciesScreen_remotePolicy => 'ثقافة صديقة للعمل عن بُعد';
+
+  @override
+  String get companyPoliciesScreen_remotePolicyDesc =>
+      'تقديم ترتيبات عمل مرنة وخيارات عن بُعد';
+
+  @override
+  String get companyPoliciesScreen_sustainabilityPolicy =>
+      'أهداف الاستدامة/البيئة';
+
+  @override
+  String get companyPoliciesScreen_sustainabilityPolicyDesc =>
+      'تنفيذ ممارسات صديقة للبيئة وتقليل التأثير البيئي';
+
+  @override
+  String get industrySelectionScreen_question =>
+      'ما هي الصناعات الأكثر اهتماماً بها؟';
+
+  @override
+  String get industrySelectionScreen_tech => 'التكنولوجيا';
+
+  @override
+  String get industrySelectionScreen_healthcare => 'الرعاية الصحية';
+
+  @override
+  String get industrySelectionScreen_education => 'التعليم';
+
+  @override
+  String get industrySelectionScreen_finance => 'المالية';
+
+  @override
+  String get industrySelectionScreen_creativeArts => 'الفنون الإبداعية';
+
+  @override
+  String get mentorshipSelectionScreen_question =>
+      'هل ترغب في المشاركة في نظام الإرشاد لدينا؟';
+
+  @override
+  String get mentorshipSelectionScreen_subtitle =>
+      'يمكنك التواصل مع الآخرين لتلقي أو تقديم التوجيه المهني.';
+
+  @override
+  String get mentorshipSelectionScreen_beMentor => 'أريد أن أكون مرشداً';
+
+  @override
+  String get mentorshipSelectionScreen_beMentorDesc =>
+      'ساعد الآخرين على تحسين سيرهم الذاتية ومساراتهم المهنية';
+
+  @override
+  String get mentorshipSelectionScreen_lookingForMentor =>
+      'أبحث عن مرشد (متدرب)';
+
+  @override
+  String get mentorshipSelectionScreen_lookingForMentorDesc =>
+      'احصل على ملاحظات وإرشادات للنمو مهنياً';
+
+  @override
+  String get mentorshipSelectionScreen_maxMentees =>
+      'كم عدد المتدربين الذين ترغب في قبولهم؟';
+
+  @override
+  String get mentorshipSelectionScreen_maxMenteesLabel =>
+      'الحد الأقصى لعدد المتدربين (1-20)';
+
+  @override
+  String get mentorshipSelectionScreen_enterNumber => 'الرجاء إدخال رقم';
+
+  @override
+  String get mentorshipSelectionScreen_validNumber => 'الرجاء إدخال رقم صحيح';
+
+  @override
+  String get mentorshipSelectionScreen_greaterThanZero =>
+      'يجب أن يكون أكبر من 0';
+
+  @override
+  String get mentorshipSelectionScreen_lessThan21 => 'يجب أن يكون أقل من 21';
 }

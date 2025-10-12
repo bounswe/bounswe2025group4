@@ -220,4 +220,200 @@ class AppLocalizationsEn extends AppLocalizations {
   String profilePage_languageChanged(String language) {
     return 'Language changed to $language';
   }
+
+  @override
+  String get careerStatusScreen_question =>
+      'What is your current career status?';
+
+  @override
+  String get careerStatusScreen_student => 'Student';
+
+  @override
+  String get careerStatusScreen_recentGraduate => 'Recent Graduate';
+
+  @override
+  String get careerStatusScreen_midLevel => 'Mid-Level Professional';
+
+  @override
+  String get careerStatusScreen_senior => 'Senior Professional';
+
+  @override
+  String get careerStatusScreen_changingCareers => 'Changing Careers';
+
+  @override
+  String get organizationTypeScreen_question =>
+      'What type of organization do you represent?';
+
+  @override
+  String get organizationTypeScreen_company => 'Company';
+
+  @override
+  String get organizationTypeScreen_startup => 'Startup';
+
+  @override
+  String get organizationTypeScreen_nonprofit => 'Non-profit';
+
+  @override
+  String get organizationTypeScreen_freelancer =>
+      'Freelancer hiring for a project';
+
+  @override
+  String get organizationTypeScreen_other => 'Other';
+
+  @override
+  String get organizationTypeScreen_pleaseSpecify => 'Please specify';
+
+  @override
+  String get jobPrioritiesScreen_question =>
+      'What are your top priorities when looking for a job?';
+
+  @override
+  String get jobPrioritiesScreen_selectAll => 'Select all that apply';
+
+  @override
+  String get jobPrioritiesScreen_fairWages => 'Fair Wages';
+
+  @override
+  String get jobPrioritiesScreen_fairWagesDesc =>
+      'Companies that pay living wages and maintain transparent compensation practices';
+
+  @override
+  String get jobPrioritiesScreen_inclusive => 'Inclusive Workplace';
+
+  @override
+  String get jobPrioritiesScreen_inclusiveDesc =>
+      'Organizations committed to diversity, equity, and inclusion';
+
+  @override
+  String get jobPrioritiesScreen_sustainability =>
+      'Sustainability/Environmental Policies';
+
+  @override
+  String get jobPrioritiesScreen_sustainabilityDesc =>
+      'Companies with strong environmental commitments and practices';
+
+  @override
+  String get jobPrioritiesScreen_workLife => 'Work-Life Balance';
+
+  @override
+  String get jobPrioritiesScreen_workLifeDesc =>
+      'Respectful of personal time with flexible scheduling options';
+
+  @override
+  String get jobPrioritiesScreen_remote => 'Remote-Friendly';
+
+  @override
+  String get jobPrioritiesScreen_remoteDesc =>
+      'Options for remote work and flexible location';
+
+  @override
+  String get jobPrioritiesScreen_growth => 'Career Growth Opportunities';
+
+  @override
+  String get jobPrioritiesScreen_growthDesc =>
+      'Clear paths for advancement and professional development';
+
+  @override
+  String get companyPoliciesScreen_question =>
+      'Which ethical policies does your company follow?';
+
+  @override
+  String get companyPoliciesScreen_fairWage => 'Fair wage commitment';
+
+  @override
+  String get companyPoliciesScreen_fairWageDesc =>
+      'Ensuring competitive compensation and transparent pay practices';
+
+  @override
+  String get companyPoliciesScreen_diversity => 'Diversity & inclusion policy';
+
+  @override
+  String get companyPoliciesScreen_diversityDesc =>
+      'Promoting an inclusive workplace with equal opportunities';
+
+  @override
+  String get companyPoliciesScreen_wellbeing => 'Employee well-being programs';
+
+  @override
+  String get companyPoliciesScreen_wellbeingDesc =>
+      'Supporting mental health, work-life balance, and personal growth';
+
+  @override
+  String get companyPoliciesScreen_remotePolicy => 'Remote-friendly culture';
+
+  @override
+  String get companyPoliciesScreen_remotePolicyDesc =>
+      'Offering flexible work arrangements and remote options';
+
+  @override
+  String get companyPoliciesScreen_sustainabilityPolicy =>
+      'Sustainability/environmental goals';
+
+  @override
+  String get companyPoliciesScreen_sustainabilityPolicyDesc =>
+      'Implementing eco-friendly practices and reducing environmental impact';
+
+  @override
+  String get industrySelectionScreen_question =>
+      'Which industries are you most interested in?';
+
+  @override
+  String get industrySelectionScreen_tech => 'Tech';
+
+  @override
+  String get industrySelectionScreen_healthcare => 'Healthcare';
+
+  @override
+  String get industrySelectionScreen_education => 'Education';
+
+  @override
+  String get industrySelectionScreen_finance => 'Finance';
+
+  @override
+  String get industrySelectionScreen_creativeArts => 'Creative Arts';
+
+  @override
+  String get mentorshipSelectionScreen_question =>
+      'Would you like to participate in our mentorship system?';
+
+  @override
+  String get mentorshipSelectionScreen_subtitle =>
+      'You can connect with others to either receive or provide career guidance.';
+
+  @override
+  String get mentorshipSelectionScreen_beMentor => 'I want to be a mentor';
+
+  @override
+  String get mentorshipSelectionScreen_beMentorDesc =>
+      'Help others improve their resumes and careers';
+
+  @override
+  String get mentorshipSelectionScreen_lookingForMentor =>
+      'I\'m looking for a mentor (mentee)';
+
+  @override
+  String get mentorshipSelectionScreen_lookingForMentorDesc =>
+      'Get feedback and guidance to grow professionally';
+
+  @override
+  String get mentorshipSelectionScreen_maxMentees =>
+      'How many mentees are you willing to take?';
+
+  @override
+  String get mentorshipSelectionScreen_maxMenteesLabel =>
+      'Max Mentee Count (1-20)';
+
+  @override
+  String get mentorshipSelectionScreen_enterNumber => 'Please enter a number';
+
+  @override
+  String get mentorshipSelectionScreen_validNumber =>
+      'Please enter a valid number';
+
+  @override
+  String get mentorshipSelectionScreen_greaterThanZero =>
+      'Must be greater than 0';
+
+  @override
+  String get mentorshipSelectionScreen_lessThan21 => 'Must be less than 21';
 }
