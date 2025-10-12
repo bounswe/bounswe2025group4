@@ -61,6 +61,7 @@ jobs:
             --set-env-vars "APP_VERIFY_EMAIL_URL=https://bounswe-jobboard-dev.pages.dev" \
             --set-env-vars "APP_RESET_PASSWORD_URL=https://bounswe-jobboard-dev.pages.dev/api/auth/reset-password" \
             --set-env-vars "MAIL_USERNAME=ethicaljobb@gmail.com" \
+            --set-env-vars "APP_GCS_BUCKET=bounswe-jobboard" \
             --set-secrets "SPRING_DATASOURCE_PASSWORD=jobboard-neon-db-pass:latest" \
             --set-secrets "APP_JWT_SECRET=jobboard-jwt-secret-dev:latest" \
             --set-secrets "MAIL_PASSWORD=jobboard-mail-password:latest"
