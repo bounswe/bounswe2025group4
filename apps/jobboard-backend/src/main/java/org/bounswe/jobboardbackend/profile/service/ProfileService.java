@@ -33,6 +33,25 @@ public class ProfileService {
     private final SkillRepository skillRepository;
     private final InterestRepository interestRepository;
 
+    private static void require(boolean condition, HttpStatus status, String message) {
+        if (!condition) throw new ResponseStatusException(status, message);
+    }
+    private static void requireNotBlank(String value, String field) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, field + " is required");
+        }
+    }
+    private static void requireNotNull(Object value, String field) {
+        if (value == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, field + " is required");
+        }
+    }
+    private static void requireStartBeforeEnd(java.time.LocalDate start, java.time.LocalDate end, String startName, String endName) {
+        if (start != null && end != null && end.isBefore(start)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, endName + " must be after " + startName);
+        }
+    }
+
     // === GCS config ===
     @Value("${app.gcs.bucket}")
     private String gcsBucket;
@@ -65,6 +84,10 @@ public class ProfileService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Profile already exists for this user");
         }
 
+        requireNotNull(dto, "body");
+        requireNotBlank(dto.getFirstName(), "firstName");
+        requireNotBlank(dto.getLastName(), "lastName");
+
         Profile profile = Profile.builder()
                 .user(user)
                 .firstName(dto.getFirstName())
@@ -88,6 +111,11 @@ public class ProfileService {
     public ProfileResponseDto updateProfile(Long userId, UpdateProfileRequestDto dto) {
         Profile profile = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+
+        requireNotNull(dto, "body");
+        if (dto.getFirstName() == null && dto.getLastName() == null && dto.getBio() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+        }
 
         if (dto.getFirstName() != null) profile.setFirstName(dto.getFirstName());
         if (dto.getLastName()  != null) profile.setLastName(dto.getLastName());
@@ -220,6 +248,10 @@ public class ProfileService {
         Profile p = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
 
+        requireNotNull(dto, "body");
+        requireNotBlank(dto.getSchool(), "school");
+        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate(), "startDate", "endDate");
+
         Education e = Education.builder()
                 .profile(p)
                 .school(dto.getSchool())
@@ -241,6 +273,12 @@ public class ProfileService {
 
         Education e = educationRepository.findByIdAndProfileId(eduId, p.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Education not found"));
+
+        requireNotNull(dto, "body");
+        if (dto.getSchool() == null && dto.getDegree() == null && dto.getField() == null && dto.getStartDate() == null && dto.getEndDate() == null && dto.getDescription() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+        }
+        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate(), "startDate", "endDate");
 
         if (dto.getSchool()      != null) e.setSchool(dto.getSchool());
         if (dto.getDegree()      != null) e.setDegree(dto.getDegree());
@@ -272,6 +310,11 @@ public class ProfileService {
         Profile p = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
 
+        requireNotNull(dto, "body");
+        requireNotBlank(dto.getCompany(), "company");
+        requireNotBlank(dto.getPosition(), "position");
+        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate(), "startDate", "endDate");
+
         Experience ex = Experience.builder()
                 .profile(p)
                 .company(dto.getCompany())
@@ -292,6 +335,12 @@ public class ProfileService {
 
         Experience ex = experienceRepository.findByIdAndProfileId(expId, p.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Experience not found"));
+
+        requireNotNull(dto, "body");
+        if (dto.getCompany() == null && dto.getPosition() == null && dto.getDescription() == null && dto.getStartDate() == null && dto.getEndDate() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+        }
+        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate(), "startDate", "endDate");
 
         if (dto.getCompany()     != null) ex.setCompany(dto.getCompany());
         if (dto.getPosition()    != null) ex.setPosition(dto.getPosition());
@@ -322,6 +371,9 @@ public class ProfileService {
         Profile p = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
 
+        requireNotNull(dto, "body");
+        requireNotBlank(dto.getName(), "name");
+
         Skill s = Skill.builder()
                 .profile(p)
                 .name(dto.getName())
@@ -339,6 +391,12 @@ public class ProfileService {
 
         Skill s = skillRepository.findByIdAndProfileId(skillId, p.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Skill not found"));
+
+        requireNotNull(dto, "body");
+        if (dto.getName() == null && dto.getLevel() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+        }
+        if (dto.getName() != null) requireNotBlank(dto.getName(), "name");
 
         if (dto.getName()  != null) s.setName(dto.getName());
         if (dto.getLevel() != null) s.setLevel(dto.getLevel());
@@ -366,6 +424,9 @@ public class ProfileService {
         Profile p = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
 
+        requireNotNull(dto, "body");
+        requireNotBlank(dto.getName(), "name");
+
         Interest i = Interest.builder()
                 .profile(p)
                 .name(dto.getName())
@@ -382,6 +443,12 @@ public class ProfileService {
 
         Interest i = interestRepository.findByIdAndProfileId(interestId, p.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Interest not found"));
+
+        requireNotNull(dto, "body");
+        if (dto.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+        }
+        requireNotBlank(dto.getName(), "name");
 
         if (dto.getName() != null) i.setName(dto.getName());
         return toInterestDto(i);
