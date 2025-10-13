@@ -53,11 +53,9 @@ public class ProfileService {
     }
 
     // === GCS config ===
-    @Value("${app.gcs.bucket}")
+    @Value("${app.gcs.bucket:bounswe-jobboard}")
     private String gcsBucket;
 
-    @Value("${app.gcs.folderPrefix:profiles/}")
-    private String gcsFolderPrefix;
 
     @Value("${app.gcs.public:true}")
     private boolean gcsPublic;
