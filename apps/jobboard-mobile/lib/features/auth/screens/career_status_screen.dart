@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/job_priorities_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 
 class CareerStatusScreen extends StatefulWidget {
   const CareerStatusScreen({super.key});
@@ -12,13 +13,15 @@ class CareerStatusScreen extends StatefulWidget {
 class _CareerStatusScreenState extends State<CareerStatusScreen> {
   String? selectedStatus;
 
-  final List<String> careerStatuses = [
-    'Student',
-    'Recent Graduate',
-    'Mid-Level Professional',
-    'Senior Professional',
-    'Changing Careers',
-  ];
+  List<String> _getCareerStatuses(BuildContext context) {
+    return [
+      AppLocalizations.of(context)!.careerStatusScreen_student,
+      AppLocalizations.of(context)!.careerStatusScreen_recentGraduate,
+      AppLocalizations.of(context)!.careerStatusScreen_midLevel,
+      AppLocalizations.of(context)!.careerStatusScreen_senior,
+      AppLocalizations.of(context)!.careerStatusScreen_changingCareers,
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +43,9 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'What is your current career status?',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.careerStatusScreen_question,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -50,11 +53,11 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
                     const SizedBox(height: 32),
                     Expanded(
                       child: ListView.separated(
-                        itemCount: careerStatuses.length,
+                        itemCount: _getCareerStatuses(context).length,
                         separatorBuilder:
                             (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
-                          final status = careerStatuses[index];
+                          final status = _getCareerStatuses(context)[index];
                           return InkWell(
                             onTap: () {
                               setState(() {
@@ -126,9 +129,9 @@ class _CareerStatusScreenState extends State<CareerStatusScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Continue',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        child: Text(
+                          AppLocalizations.of(context)!.userTypeScreen_continue,
+                          style: const TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),

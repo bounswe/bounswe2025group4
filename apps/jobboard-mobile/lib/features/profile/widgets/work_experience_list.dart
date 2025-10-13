@@ -4,6 +4,7 @@ import '../../../core/models/experience.dart';
 import '../../../core/providers/profile_provider.dart';
 import 'work_experience_item.dart';
 import '../dialogs/work_experience_dialog.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class WorkExperienceList extends StatelessWidget {
   final List<Experience> experiences;
@@ -24,22 +25,22 @@ class WorkExperienceList extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Work Experience',
+              AppLocalizations.of(context)!.profileWidgets_workExperience,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             if (isEditable)
               TextButton.icon(
                 icon: const Icon(Icons.add),
-                label: const Text('Add'),
+                label: Text(AppLocalizations.of(context)!.profileWidgets_add),
                 onPressed: () => _showWorkExperienceDialog(context),
               ),
           ],
         ),
         const SizedBox(height: 8),
         if (experiences.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text('No work experience added yet.'),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(AppLocalizations.of(context)!.profileWidgets_noWorkExperience),
           )
         else
           ListView.builder(
@@ -79,17 +80,17 @@ class WorkExperienceList extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Experience'),
+        title: Text(AppLocalizations.of(context)!.profileWidgets_deleteExperience),
         content: Text(
-          'Are you sure you want to delete your experience at ${experience.company}?'
+          AppLocalizations.of(context)!.profileWidgets_confirmDeleteExperience(experience.company)
         ),
         actions: [
           TextButton(
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.profileWidgets_cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.profileWidgets_delete, style: TextStyle(color: Colors.red)),
             onPressed: () {
               final profileProvider = Provider.of<ProfileProvider>(
                 context,

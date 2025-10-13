@@ -5,6 +5,7 @@ import '../../../core/services/api_service.dart';
 import '../../../core/utils/string_extensions.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class JobApplicationsScreen extends StatefulWidget {
   final String jobId;
@@ -55,7 +56,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
         // Handle case where user is not logged in or user object is missing ID
         if (mounted) {
           setState(() {
-            _errorMessage = "User not logged in or user ID not found.";
+            _errorMessage = AppLocalizations.of(context)!.jobApplications_userError;
             _isLoading = false;
           });
         }
@@ -76,7 +77,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       print("Error loading applications for job: $e");
       if (mounted) {
         setState(() {
-          _errorMessage = "Failed to load applications. Please try again.";
+          _errorMessage = AppLocalizations.of(context)!.jobApplications_loadError;
         });
       }
     } finally {
@@ -125,7 +126,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Application ${newStatus.name}.'),
+            content: Text(AppLocalizations.of(context)!.jobApplications_statusUpdated(newStatus.name)),
             backgroundColor: Colors.green,
           ),
         );
@@ -133,14 +134,12 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     } catch (e) {
       print("Error updating application status: $e");
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Error updating status: ${e.toString().replaceFirst("Exception: ", "")}',
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.jobApplications_updateError(e.toString().replaceFirst("Exception: ", ""))),
+              backgroundColor: Colors.red,
             ),
-            backgroundColor: Colors.red,
-          ),
-        );
+          );
       }
     } finally {
       if (mounted) {
@@ -189,7 +188,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.jobTitle ?? 'Job Applications')),
+      appBar: AppBar(title: Text(widget.jobTitle ?? AppLocalizations.of(context)!.jobApplications_title)),
       body: _buildContent(),
     );
   }
@@ -214,7 +213,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: _loadApplications,
-                child: const Text('Retry'),
+                child: Text(AppLocalizations.of(context)!.common_retry),
               ),
             ],
           ),
@@ -223,8 +222,8 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     }
 
     if (_applications.isEmpty) {
-      return const Center(
-        child: Text('No applications received for this job yet.'),
+      return Center(
+        child: Text(AppLocalizations.of(context)!.jobApplications_noApplications),
       );
     }
 

@@ -7,6 +7,7 @@ import '../../../core/models/user_type.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/utils/string_extensions.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   final String jobId;
@@ -54,7 +55,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       print("Error loading job details: $e");
       if (mounted) {
         setState(() {
-          _errorMessage = "Failed to load job details. Please try again.";
+          _errorMessage = AppLocalizations.of(context)!.jobDetails_loadError;
         });
       }
     } finally {
@@ -71,8 +72,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         Provider.of<AuthProvider>(context, listen: false).currentUser?.id;
     if (userId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error: Could not identify user.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.jobDetails_applyError),
           backgroundColor: Colors.red,
         ),
       );
@@ -90,7 +91,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Successfully applied to ${_jobPost!.title}'),
+            content: Text(AppLocalizations.of(context)!.jobDetails_applySuccess(_jobPost!.title)),
             backgroundColor: Colors.green,
           ),
         );
@@ -123,7 +124,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         // Show job title in AppBar if loaded
-        title: Text(_jobPost?.title ?? 'Job Details'),
+        title: Text(_jobPost?.title ?? AppLocalizations.of(context)!.jobDetails_title),
       ),
       body: _buildContent(),
       // Add Apply button at the bottom
@@ -151,7 +152,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: _loadJobDetails,
-                child: const Text('Retry'),
+                child: Text(AppLocalizations.of(context)!.common_retry),
               ),
             ],
           ),
@@ -160,7 +161,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     }
 
     if (_jobPost == null) {
-      return const Center(child: Text('Job details not found.'));
+      return Center(child: Text(AppLocalizations.of(context)!.jobDetails_notFound));
     }
 
     final job = _jobPost!;
@@ -188,7 +189,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           const SizedBox(height: 4.0),
           if (job.datePosted != null)
             Text(
-              'Posted: ${dateFormat.format(job.datePosted!)}',
+              '${AppLocalizations.of(context)!.jobPage_posted}: ${dateFormat.format(job.datePosted!)}',
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
@@ -198,7 +199,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
           // Description Section
           Text(
-            'Job Description',
+            AppLocalizations.of(context)!.jobDetails_description,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8.0),
@@ -207,7 +208,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           const Divider(height: 32.0),
 
           // Ethical Policies Section
-          Text('Ethical Tags', style: Theme.of(context).textTheme.titleMedium),
+          Text(AppLocalizations.of(context)!.jobDetails_ethicalTags, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8.0),
           if (job.ethicalTags.isNotEmpty)
             Wrap(
@@ -229,14 +230,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             )
           else
             Text(
-              'No specific tags listed.',
+              AppLocalizations.of(context)!.jobDetails_noTags,
               style: Theme.of(context).textTheme.bodySmall,
             ),
 
           const Divider(height: 32.0),
 
           // Salary Section
-          Text('Salary Range', style: Theme.of(context).textTheme.titleMedium),
+          Text(AppLocalizations.of(context)!.jobDetails_salaryRange, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8.0),
           if (job.minSalary != null || job.maxSalary != null)
             Text(
@@ -245,7 +246,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             )
           else
             Text(
-              job.salaryRange ?? 'Not specified',
+              job.salaryRange ?? AppLocalizations.of(context)!.common_notSpecified,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
 
@@ -253,7 +254,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
           // Contact Section
           Text(
-            'Contact Information',
+            AppLocalizations.of(context)!.jobDetails_contactInfo,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8.0),
@@ -261,7 +262,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             (job.contactInformation != null &&
                     job.contactInformation!.isNotEmpty)
                 ? job.contactInformation!
-                : 'Not specified',
+                : AppLocalizations.of(context)!.common_notSpecified,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 24.0), // Space before apply button area
@@ -292,7 +293,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   ),
                 )
                 : const Icon(Icons.send),
-        label: Text(_isApplying ? 'Applying...' : 'Apply Now'),
+        label: Text(_isApplying ? AppLocalizations.of(context)!.jobDetails_applying : AppLocalizations.of(context)!.jobDetails_apply),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.teal, // Or theme primary color
           foregroundColor: Colors.white,
@@ -311,13 +312,13 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 0);
 
     if (minSalary == null && maxSalary == null) {
-      return 'Not specified';
+      return AppLocalizations.of(context)!.common_notSpecified;
     }
     if (minSalary == null) {
-      return 'Up to ${formatter.format(maxSalary)}';
+      return AppLocalizations.of(context)!.common_upTo(formatter.format(maxSalary));
     }
     if (maxSalary == null) {
-      return 'From ${formatter.format(minSalary)}';
+      return AppLocalizations.of(context)!.common_from(formatter.format(minSalary));
     }
     return '${formatter.format(minSalary)} - ${formatter.format(maxSalary)}';
   }

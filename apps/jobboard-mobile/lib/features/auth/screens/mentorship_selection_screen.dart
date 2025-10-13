@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
 import 'package:mobile/core/models/user.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
 import 'package:mobile/core/models/user_type.dart';
@@ -34,7 +35,7 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
   bool validateMaxMenteeCount(String value) {
     if (value.isEmpty) {
       setState(() {
-        maxMenteeCountError = 'Please enter a number';
+        maxMenteeCountError = AppLocalizations.of(context)!.mentorshipSelectionScreen_enterNumber;
       });
       return false;
     }
@@ -42,21 +43,21 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
     int? count = int.tryParse(value);
     if (count == null) {
       setState(() {
-        maxMenteeCountError = 'Please enter a valid number';
+        maxMenteeCountError = AppLocalizations.of(context)!.mentorshipSelectionScreen_validNumber;
       });
       return false;
     }
 
     if (count <= 0) {
       setState(() {
-        maxMenteeCountError = 'Must be greater than 0';
+        maxMenteeCountError = AppLocalizations.of(context)!.mentorshipSelectionScreen_greaterThanZero;
       });
       return false;
     }
 
     if (count >= 21) {
       setState(() {
-        maxMenteeCountError = 'Must be less than 21';
+        maxMenteeCountError = AppLocalizations.of(context)!.mentorshipSelectionScreen_lessThan21;
       });
       return false;
     }
@@ -90,30 +91,29 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Would you like to participate in our mentorship system?',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.mentorshipSelectionScreen_question,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'You can connect with others to either receive or provide career guidance.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    Text(
+                      AppLocalizations.of(context)!.mentorshipSelectionScreen_subtitle,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 32),
                     _buildMentorshipOption(
-                      title: 'I want to be a mentor',
-                      subtitle: 'Help others improve their resumes and careers',
+                      title: AppLocalizations.of(context)!.mentorshipSelectionScreen_beMentor,
+                      subtitle: AppLocalizations.of(context)!.mentorshipSelectionScreen_beMentorDesc,
                       icon: Icons.school,
                       value: 'mentor',
                     ),
                     const SizedBox(height: 16),
                     _buildMentorshipOption(
-                      title: 'I\'m looking for a mentor (mentee)',
-                      subtitle:
-                          'Get feedback and guidance to grow professionally',
+                      title: AppLocalizations.of(context)!.mentorshipSelectionScreen_lookingForMentor,
+                      subtitle: AppLocalizations.of(context)!.mentorshipSelectionScreen_lookingForMentorDesc,
                       icon: Icons.person_outline,
                       value: 'mentee',
                     ),
@@ -125,9 +125,9 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'How many mentees are you willing to take?',
-                              style: TextStyle(
+                            Text(
+                              AppLocalizations.of(context)!.mentorshipSelectionScreen_maxMentees,
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -139,7 +139,7 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                                   child: TextFormField(
                                     controller: _menteeCountController,
                                     decoration: InputDecoration(
-                                      labelText: 'Max Mentee Count (1-20)',
+                                      labelText: AppLocalizations.of(context)!.mentorshipSelectionScreen_maxMenteesLabel,
                                       border: const OutlineInputBorder(),
                                       errorText: maxMenteeCountError,
                                     ),
@@ -215,9 +215,9 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Continue',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        child: Text(
+                          AppLocalizations.of(context)!.userTypeScreen_continue,
+                          style: const TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),

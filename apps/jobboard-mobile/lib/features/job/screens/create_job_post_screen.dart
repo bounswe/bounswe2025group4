@@ -5,6 +5,7 @@ import '../../../core/models/user_type.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/string_extensions.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class CreateJobPostScreen extends StatefulWidget {
   const CreateJobPostScreen({super.key});
@@ -59,8 +60,8 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
     if (_formKey.currentState?.validate() ?? false) {
       if (_selectedJobType == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select a job type.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.createJob_selectJobTypeError),
             backgroundColor: Colors.orange,
           ),
         );
@@ -68,8 +69,8 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
       }
       if (_selectedPolicies.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select at least one ethical policy.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.createJob_selectPolicyError),
             backgroundColor: Colors.orange,
           ),
         );
@@ -80,8 +81,8 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
           Provider.of<AuthProvider>(context, listen: false).currentUser;
       if (currentUser == null || currentUser.role != UserType.EMPLOYER) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error: Could not verify employer account.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.createJob_employerError),
             backgroundColor: Colors.red,
           ),
         );
@@ -165,7 +166,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Job "${newJob.title}" created successfully!'),
+              content: Text(AppLocalizations.of(context)!.createJob_success(newJob.title)),
               backgroundColor: Colors.green,
             ),
           );
@@ -177,9 +178,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                'Error creating job: ${e.toString().replaceFirst("Exception: ", "")}',
-              ),
+              content: Text(AppLocalizations.of(context)!.createJob_error(e.toString().replaceFirst("Exception: ", ""))),
               backgroundColor: Colors.red,
             ),
           );
@@ -201,14 +200,14 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
     final availablePolicies = _apiService.availableEthicalPolicies;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create New Job Posting')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.createJob_title)),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
             Text(
-              'Job Details',
+              AppLocalizations.of(context)!.createJob_jobDetails,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16.0),
@@ -216,14 +215,14 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             // --- Title ---
             TextFormField(
               controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Job Title',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.createJob_jobTitle,
                 border: OutlineInputBorder(),
               ),
               validator:
                   (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Please enter a job title'
+                          ? AppLocalizations.of(context)!.createJob_jobTitleRequired
                           : null,
             ),
             const SizedBox(height: 16.0),
@@ -232,14 +231,14 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             TextFormField(
               controller: _companyController,
               decoration: InputDecoration(
-                labelText: 'Company',
+                labelText: AppLocalizations.of(context)!.createJob_company,
                 hintText:
                     Provider.of<AuthProvider>(
                       context,
                       listen: false,
                     ).currentUser?.company ??
-                    'Your Company Name',
-                border: const OutlineInputBorder(),
+                    AppLocalizations.of(context)!.createJob_companyHint,
+                border: OutlineInputBorder(),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -457,7 +456,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                         ),
                       )
                       : const Icon(Icons.publish),
-              label: Text(_isLoading ? 'Creating Post...' : 'Create Job Post'),
+              label: Text(_isLoading ? AppLocalizations.of(context)!.createJob_creatingPost : AppLocalizations.of(context)!.createJob_createPost),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
                 foregroundColor: Colors.white,

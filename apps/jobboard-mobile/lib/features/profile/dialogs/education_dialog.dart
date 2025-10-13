@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/models/education.dart';
 import '../../../core/providers/profile_provider.dart';
 import 'package:intl/intl.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class EducationDialog extends StatefulWidget {
   final Education? education;
@@ -132,8 +133,8 @@ class _EducationDialogState extends State<EducationDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(widget.education == null
-          ? 'Add Education'
-          : 'Edit Education'),
+          ? AppLocalizations.of(context)!.educationDialog_addTitle
+          : AppLocalizations.of(context)!.educationDialog_editTitle),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -142,12 +143,12 @@ class _EducationDialogState extends State<EducationDialog> {
             children: [
               TextFormField(
                 controller: _schoolController,
-                decoration: const InputDecoration(
-                  labelText: 'School/University',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.educationDialog_school,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a school name';
+                    return AppLocalizations.of(context)!.educationDialog_schoolRequired;
                   }
                   return null;
                 },
@@ -155,12 +156,12 @@ class _EducationDialogState extends State<EducationDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _degreeController,
-                decoration: const InputDecoration(
-                  labelText: 'Degree',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.educationDialog_degree,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a degree';
+                    return AppLocalizations.of(context)!.educationDialog_degreeRequired;
                   }
                   return null;
                 },
@@ -168,12 +169,12 @@ class _EducationDialogState extends State<EducationDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _fieldController,
-                decoration: const InputDecoration(
-                  labelText: 'Field of Study',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.educationDialog_field,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a field of study';
+                    return AppLocalizations.of(context)!.educationDialog_fieldRequired;
                   }
                   return null;
                 },
@@ -182,7 +183,7 @@ class _EducationDialogState extends State<EducationDialog> {
               TextFormField(
                 controller: _startDateController,
                 decoration: InputDecoration(
-                  labelText: 'Start Date (MM/YYYY)',
+                  labelText: AppLocalizations.of(context)!.educationDialog_startDate,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.calendar_today),
                     onPressed: () => _selectDate(context, _startDateController),
@@ -191,7 +192,7 @@ class _EducationDialogState extends State<EducationDialog> {
                 readOnly: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a start date';
+                    return AppLocalizations.of(context)!.educationDialog_startDateRequired;
                   }
                   return null;
                 },
@@ -210,7 +211,7 @@ class _EducationDialogState extends State<EducationDialog> {
                       });
                     },
                   ),
-                  const Text('I am currently studying here'),
+                  Text(AppLocalizations.of(context)!.educationDialog_currentlyStudying),
                 ],
               ),
               if (!_isCurrent) ...[
@@ -218,7 +219,7 @@ class _EducationDialogState extends State<EducationDialog> {
                 TextFormField(
                   controller: _endDateController,
                   decoration: InputDecoration(
-                    labelText: 'End Date (MM/YYYY)',
+                    labelText: AppLocalizations.of(context)!.educationDialog_endDate,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.calendar_today),
                       onPressed: () => _selectDate(context, _endDateController),
@@ -227,7 +228,7 @@ class _EducationDialogState extends State<EducationDialog> {
                   readOnly: true,
                   validator: (value) {
                     if (!_isCurrent && (value == null || value.isEmpty)) {
-                      return 'Please enter an end date';
+                      return AppLocalizations.of(context)!.educationDialog_endDateRequired;
                     }
                     return null;
                   },
@@ -239,11 +240,11 @@ class _EducationDialogState extends State<EducationDialog> {
       ),
       actions: [
         TextButton(
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.profileWidgets_cancel),
           onPressed: () => Navigator.of(context).pop(),
         ),
         ElevatedButton(
-          child: const Text('Save'),
+          child: Text(AppLocalizations.of(context)!.educationDialog_save),
           onPressed: _save,
         ),
       ],

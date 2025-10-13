@@ -5,6 +5,7 @@ import 'package:mobile/core/models/mentorship_request.dart';
 import '../providers/mentor_provider.dart';
 import '../widgets/mentee_card.dart';
 import '../widgets/mentorship_request_card.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class MentorMentorshipScreen extends StatefulWidget {
   const MentorMentorshipScreen({super.key});
@@ -63,7 +64,7 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
       final success = await mentorProvider.updateMentorCapacity(newCapacity);
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Capacity updated successfully')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.mentorScreen_capacityUpdated)),
         );
       }
     }
@@ -79,26 +80,26 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text('Update Maximum Mentee Capacity'),
+            title: Text(AppLocalizations.of(context)!.mentorScreen_updateCapacityTitle),
             content: TextField(
               controller: _capacityController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Maximum number of mentees',
-                hintText: 'Enter a number',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.mentorScreen_maxMentees,
+                hintText: AppLocalizations.of(context)!.mentorScreen_enterNumber,
               ),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
               ),
               TextButton(
                 onPressed: () {
                   _updateCapacity();
                   Navigator.pop(context);
                 },
-                child: const Text('Update'),
+                child: Text(AppLocalizations.of(context)!.mentorScreen_update),
               ),
             ],
           ),
@@ -111,10 +112,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
     String menteeName,
     MentorshipRequestStatus status,
   ) {
-    final actionText =
-        status == MentorshipRequestStatus.COMPLETED ? 'complete' : 'cancel';
-    final actionColor =
-        status == MentorshipRequestStatus.COMPLETED ? Colors.green : Colors.red;
+    final isComplete = status == MentorshipRequestStatus.COMPLETED;
+    final actionColor = isComplete ? Colors.green : Colors.red;
 
     // Capture the provider before showing dialog
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
@@ -123,15 +122,16 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
       context: context,
       builder:
           (dialogContext) => AlertDialog(
-            title: Text('$actionText Mentorship'),
-            content: Text(
-              'Are you sure you want to $actionText your mentorship with $menteeName?'
-              '${status == MentorshipRequestStatus.COMPLETED ? '\n\nThis will mark the mentorship as successfully completed.' : '\n\nThis will end the mentorship relationship.'}',
-            ),
+            title: Text(isComplete 
+                ? AppLocalizations.of(context)!.mentorScreen_completeMentorship
+                : AppLocalizations.of(context)!.mentorScreen_cancelMentorship),
+            content: Text(isComplete
+                ? AppLocalizations.of(context)!.mentorScreen_confirmComplete(menteeName)
+                : AppLocalizations.of(context)!.mentorScreen_confirmCancel(menteeName)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
               ),
               TextButton(
                 onPressed: () async {
@@ -144,13 +144,16 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                   if (success && mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Mentorship ${actionText}d successfully'),
+                        content: Text(isComplete
+                            ? AppLocalizations.of(context)!.mentorScreen_mentorshipCompleted
+                            : AppLocalizations.of(context)!.mentorScreen_mentorshipCancelled),
                         backgroundColor: actionColor.withOpacity(0.8),
                       ),
                     );
                   }
                 },
-                child: Text('Confirm', style: TextStyle(color: actionColor)),
+                child: Text(AppLocalizations.of(context)!.mentorScreen_confirm, 
+                    style: TextStyle(color: actionColor)),
               ),
             ],
           ),
@@ -166,11 +169,14 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mentorship'),
+        title: Text(AppLocalizations.of(context)!.mentorScreen_title),
         automaticallyImplyLeading: false,
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [Tab(text: 'Current Mentees'), Tab(text: 'Requests')],
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.mentorScreen_currentMentees), 
+            Tab(text: AppLocalizations.of(context)!.mentorScreen_requests)
+          ],
         ),
       ),
       body: Consumer<MentorProvider>(
@@ -194,12 +200,14 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Current Capacity: ${mentorProvider.currentUserMentorProfile?.capacity ?? 0}',
+                            AppLocalizations.of(context)!.mentorScreen_currentCapacity(
+                              mentorProvider.currentUserMentorProfile?.capacity ?? 0
+                            ),
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           ElevatedButton(
                             onPressed: _showCapacityDialog,
-                            child: const Text('Update Capacity'),
+                            child: Text(AppLocalizations.of(context)!.mentorScreen_updateCapacity),
                           ),
                         ],
                       ),
@@ -231,7 +239,7 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                         ),
                                         const SizedBox(height: 16),
                                         Text(
-                                          'No current mentees',
+                                          AppLocalizations.of(context)!.mentorScreen_noCurrentMentees,
                                           style: TextStyle(
                                             fontSize: 16,
                                             color: Colors.grey[600],
@@ -270,7 +278,7 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                       ).showSnackBar(
                                         SnackBar(
                                           content: Text(
-                                            'Open chat with ${request.mentee.username}',
+                                            AppLocalizations.of(context)!.mentorScreen_openChat(request.mentee.username),
                                           ),
                                         ),
                                       );
@@ -321,7 +329,7 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    'No pending requests',
+                                    AppLocalizations.of(context)!.mentorScreen_noPendingRequests,
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey[600],
@@ -360,8 +368,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                     );
                                 if (success && mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Request accepted'),
+                                    SnackBar(
+                                      content: Text(AppLocalizations.of(context)!.mentorScreen_requestAccepted),
                                     ),
                                   );
                                 }
@@ -374,8 +382,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                     );
                                 if (success && mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Request rejected'),
+                                    SnackBar(
+                                      content: Text(AppLocalizations.of(context)!.mentorScreen_requestRejected),
                                     ),
                                   );
                                 }

@@ -46,4 +46,4 @@ class MockAuthService extends ChangeNotifier {
     _currentUser = null;
     notifyListeners();
   }
-} 
+}
