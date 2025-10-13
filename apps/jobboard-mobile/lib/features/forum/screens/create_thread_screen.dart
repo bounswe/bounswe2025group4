@@ -5,6 +5,7 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/models/discussion_thread.dart';
 import '../../../core/services/tag_recommendation_service.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class CreateThreadScreen extends StatefulWidget {
   final DiscussionThread? thread;
@@ -74,7 +75,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                         final title = _titleCtrl.text.trim();
                         if (title.isEmpty) {
                           setModalState(() {
-                            _suggestError = "Please enter a title to get tag suggestions.";
+                            _suggestError = AppLocalizations.of(context)!.createThread_enterTitleForSuggestions;
                           });
                           return;
                         }
@@ -90,7 +91,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                           }
                         });
                       },
-                      child: const Text("Suggest Tags"),
+                      child: Text(AppLocalizations.of(context)!.createThread_suggestTags),
                     ),
                     if (_suggestError != null)
                       Padding(
@@ -130,8 +131,8 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                         Expanded(
                           child: TextField(
                             controller: _modalTagController,
-                            decoration: const InputDecoration(
-                              labelText: 'Add a new tag',
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.createThread_addNewTag,
                             ),
                             onChanged: (value) {
                               setModalState(() {
@@ -146,13 +147,13 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                             final newTag = _modalTagController.text.trim();
                             if (newTag.isEmpty) {
                               setModalState(() {
-                                _tagError = "Tag name cannot be empty.";
+                                _tagError = AppLocalizations.of(context)!.createThread_tagEmpty;
                               });
                               return;
                             }
                             if (newTag.length > 255) {
                               setModalState(() {
-                                _tagError = "Tag name must be at most 255 characters.";
+                                _tagError = AppLocalizations.of(context)!.createThread_tagMaxLength;
                               });
                               return;
                             }
@@ -215,7 +216,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                         });
                         Navigator.pop(context);
                       },
-                      child: const Text('Done'),
+                      child: Text(AppLocalizations.of(context)!.createThread_done),
                     ),
                   ],
                 ),
@@ -232,7 +233,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Discussion' : 'New Discussion'),
+        title: Text(isEditing ? AppLocalizations.of(context)!.createThread_editTitle : AppLocalizations.of(context)!.createThread_newTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -246,16 +247,16 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                   padding: const EdgeInsets.all(12),
                   child: TextFormField(
                     controller: _titleCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Title',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)!.createThread_titleLabel,
+                      border: const OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter a title';
+                        return AppLocalizations.of(context)!.createThread_titleRequired;
                       }
                       if (value.trim().length > 100) {
-                        return 'Title must be at most 100 characters';
+                        return AppLocalizations.of(context)!.createThread_titleMaxLength;
                       }
                       return null;
                     },
@@ -271,15 +272,15 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                     padding: const EdgeInsets.all(12),
                     child: TextFormField(
                       controller: _bodyCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'What’s on your mind?',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.createThread_bodyLabel,
+                        border: const OutlineInputBorder(),
                       ),
                       maxLines: null,
                       expands: true,
                       validator: (value) =>
                       (value == null || value.trim().isEmpty)
-                          ? 'Please enter content'
+                          ? AppLocalizations.of(context)!.createThread_bodyRequired
                           : null,
                     ),
                   ),
@@ -294,13 +295,13 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Tags', style: Theme.of(context).textTheme.bodyLarge),
+                      Text(AppLocalizations.of(context)!.createThread_tags, style: Theme.of(context).textTheme.bodyLarge),
                       const SizedBox(height: 8),
 
                       /// New tag input
                       ElevatedButton(
                         onPressed: _showTagSelectionSheet,
-                        child: const Text('Select Tags'),
+                        child: Text(AppLocalizations.of(context)!.createThread_selectTags),
                       ),
                       const SizedBox(height: 8),
 
@@ -342,15 +343,15 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                       navigator.pop(saved);
                     } on SocketException {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Failed to create/edit discussion. Please check your connection.", style: TextStyle(color: Colors.red))),
+                        SnackBar(content: Text(AppLocalizations.of(context)!.createThread_createError, style: const TextStyle(color: Colors.red))),
                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Failed to create/edit discussion.", style: TextStyle(color: Colors.red))),
+                        SnackBar(content: Text(AppLocalizations.of(context)!.createThread_generalError, style: const TextStyle(color: Colors.red))),
                       );
                     }
                   },
-                  child: Text(isEditing ? 'Save' : 'Post'),
+                  child: Text(isEditing ? AppLocalizations.of(context)!.createThread_save : AppLocalizations.of(context)!.createThread_post),
                 ),
               ),
             ],

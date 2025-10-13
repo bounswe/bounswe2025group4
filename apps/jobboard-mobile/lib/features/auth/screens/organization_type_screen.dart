@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/company_policies_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 
 class OrganizationTypeScreen extends StatefulWidget {
   const OrganizationTypeScreen({super.key});
@@ -14,13 +15,15 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
   final TextEditingController _otherController = TextEditingController();
   bool showOtherField = false;
 
-  final List<String> organizationTypes = [
-    'Company',
-    'Startup',
-    'Non-profit',
-    'Freelancer hiring for a project',
-    'Other',
-  ];
+  List<String> _getOrganizationTypes(BuildContext context) {
+    return [
+      AppLocalizations.of(context)!.organizationTypeScreen_company,
+      AppLocalizations.of(context)!.organizationTypeScreen_startup,
+      AppLocalizations.of(context)!.organizationTypeScreen_nonprofit,
+      AppLocalizations.of(context)!.organizationTypeScreen_freelancer,
+      AppLocalizations.of(context)!.organizationTypeScreen_other,
+    ];
+  }
 
   @override
   void dispose() {
@@ -48,9 +51,9 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'What type of organization do you represent?',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.organizationTypeScreen_question,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -58,13 +61,13 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
                     const SizedBox(height: 32),
                     Expanded(
                       child: ListView.separated(
-                        itemCount: organizationTypes.length,
+                        itemCount: _getOrganizationTypes(context).length,
                         separatorBuilder:
                             (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
-                          final type = organizationTypes[index];
+                          final type = _getOrganizationTypes(context)[index];
                           final isSelected = selectedType == type;
-                          final isOther = type == 'Other';
+                          final isOther = type == AppLocalizations.of(context)!.organizationTypeScreen_other;
 
                           return Column(
                             children: [
@@ -131,10 +134,10 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: TextField(
                                     controller: _otherController,
-                                    decoration: const InputDecoration(
-                                      hintText: 'Please specify',
-                                      border: OutlineInputBorder(),
-                                      contentPadding: EdgeInsets.symmetric(
+                                    decoration: InputDecoration(
+                                      hintText: AppLocalizations.of(context)!.organizationTypeScreen_pleaseSpecify,
+                                      border: const OutlineInputBorder(),
+                                      contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 16,
                                         vertical: 12,
                                       ),
@@ -172,9 +175,9 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Continue',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        child: Text(
+                          AppLocalizations.of(context)!.userTypeScreen_continue,
+                          style: const TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),

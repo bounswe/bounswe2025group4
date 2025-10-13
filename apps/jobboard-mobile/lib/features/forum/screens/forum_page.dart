@@ -6,6 +6,7 @@ import 'create_thread_screen.dart';
 import 'thread_detail_screen.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class ForumPage extends StatefulWidget {
   const ForumPage({super.key});
@@ -63,9 +64,9 @@ class _ForumPageState extends State<ForumPage> {
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: TextField(
-                      decoration: const InputDecoration(
-                        labelText: 'Search tags',
-                        prefixIcon: Icon(Icons.search),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.forumPage_searchTags,
+                        prefixIcon: const Icon(Icons.search),
                       ),
                       onChanged: (value) {
                         setModalState(() => searchQuery = value);
@@ -110,14 +111,14 @@ class _ForumPageState extends State<ForumPage> {
                             setState(() => _selectedTags = tempSelected);
                             Navigator.pop(context);
                           },
-                          child: const Text('Filter'),
+                          child: Text(AppLocalizations.of(context)!.forumPage_filter),
                         ),
                         OutlinedButton(
                           onPressed: () {
                             setState(() => _selectedTags.clear());
                             Navigator.pop(context);
                           },
-                          child: const Text('Reset'),
+                          child: Text(AppLocalizations.of(context)!.forumPage_reset),
                         ),
                       ],
                     ),
@@ -158,7 +159,7 @@ class _ForumPageState extends State<ForumPage> {
   @override
   Widget build(BuildContext ctx) {
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: false, title: const Text('Forum')),
+      appBar: AppBar(automaticallyImplyLeading: false, title: Text(AppLocalizations.of(context)!.forumPage_title)),
       body: Stack(
         children: [
           if (_isLoading)
@@ -168,17 +169,17 @@ class _ForumPageState extends State<ForumPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Failed to load Forum: Please check your connection and try again.', style: TextStyle(color: Colors.red)),
+                  Text(AppLocalizations.of(context)!.forumPage_loadError, style: const TextStyle(color: Colors.red)),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: _loadThreads,
-                    child: const Text('Retry'),
+                    child: Text(AppLocalizations.of(context)!.common_retry),
                   ),
                 ],
               ),
             )
           else if (_threads.isEmpty)
-              const Center(child: Text('No discussions yet'))
+              Center(child: Text(AppLocalizations.of(context)!.forumPage_noDiscussions))
             else ...[
                 Column(
                   children: [
@@ -189,7 +190,7 @@ class _ForumPageState extends State<ForumPage> {
                         child: ElevatedButton.icon(
                           onPressed: _showFilterModal,
                           icon: const Icon(Icons.filter_list),
-                          label: const Text('Filter'),
+                          label: Text(AppLocalizations.of(context)!.forumPage_filter),
                         ),
                       ),
                     ),
