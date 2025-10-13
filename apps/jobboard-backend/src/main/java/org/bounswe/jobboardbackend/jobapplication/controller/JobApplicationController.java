@@ -22,7 +22,7 @@ public class JobApplicationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<JobApplicationResponse>> getFiltered(
+    public ResponseEntity<?> getFiltered(
             @RequestParam(required = false) Long jobSeekerId,
             @RequestParam(required = false) Long jobPostId
     ) {
@@ -31,8 +31,10 @@ public class JobApplicationController {
         } else if (jobPostId != null) {
             return ResponseEntity.ok(service.getByJobPostId(jobPostId));
         } else {
-            // If no filter provided, return empty list or throw error
-            return ResponseEntity.ok(List.of());
+            // If no filter provided, return error message
+            return ResponseEntity
+                    .badRequest()
+                    .body("At least one filter parameter is required: jobSeekerId or jobPostId");
         }
     }
 
