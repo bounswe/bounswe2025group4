@@ -55,7 +55,7 @@ jobs:
             --min-instances 0 \
             --max-instances 1 \
             --concurrency 80 \
-            --set-env-vars "ENV=test" \
+            --set-env-vars "APP_ENV=test" \
             --set-env-vars "SPRING_DATASOURCE_URL=jdbc:postgresql://ep-lucky-brook-ag2dzxqz-pooler.c-2.eu-central-1.aws.neon.tech:5432/jobboard?sslmode=require" \
             --set-env-vars "SPRING_DATASOURCE_USERNAME=jobboard_owner" \
             --set-env-vars "APP_VERIFY_EMAIL_URL=https://bounswe-jobboard-test.pages.dev" \
