@@ -7,6 +7,7 @@ import '../providers/mentor_provider.dart';
 import 'package:mobile/core/models/mentorship_request.dart';
 import './direct_message_screen.dart';
 import './mentor_profile_screen.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 // Find Mentors tab content - updated to use real API data
 class FindMentorsTab extends StatefulWidget {
@@ -92,18 +93,18 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text('Request Mentorship from $mentorName'),
+            title: Text(AppLocalizations.of(context)!.menteeScreen_requestMentorshipTitle(mentorName)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Please provide a message for your mentorship request:',
+                Text(
+                  AppLocalizations.of(context)!.menteeScreen_provideMessage,
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _messageController,
-                  decoration: const InputDecoration(
-                    hintText: 'I would like you to be my mentor because...',
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)!.menteeScreen_messageHint,
                     border: OutlineInputBorder(),
                   ),
                   maxLines: 3,
@@ -113,15 +114,15 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
               ),
               TextButton(
                 onPressed: () {
                   if (_messageController.text.trim().length < 10) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
+                      SnackBar(
                         content: Text(
-                          'Please enter a message of at least 10 characters',
+                          AppLocalizations.of(context)!.menteeScreen_messageMinLength,
                         ),
                       ),
                     );
@@ -135,7 +136,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                   Navigator.pop(context);
                   _messageController.clear();
                 },
-                child: const Text('Send Request'),
+                child: Text(AppLocalizations.of(context)!.menteeScreen_sendRequest),
               ),
             ],
           ),
@@ -157,7 +158,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
 
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Mentorship requested for $mentorName')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.menteeScreen_requestSent(mentorName))),
         );
         // Refresh mentee requests to show the new request
         await mentorProvider.fetchMenteeRequests();
@@ -165,8 +166,8 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('There is an error while requesting'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.menteeScreen_requestError),
             backgroundColor: Colors.red,
             duration: Duration(seconds: 5),
           ),
@@ -199,13 +200,13 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                     mentorProvider.clearError();
                     _loadMentors();
                   },
-                  child: const Text('Retry Loading Mentors'),
+                  child: Text(AppLocalizations.of(context)!.menteeScreen_retryLoadingMentors),
                 ),
               ],
             ),
           );
         } else if (mentors.isEmpty) {
-          contentWidget = const Center(child: Text('No mentors found.'));
+          contentWidget = Center(child: Text(AppLocalizations.of(context)!.menteeScreen_noMentorsFound));
         } else {
           contentWidget = ListView.builder(
             itemCount: mentors.length,
@@ -243,7 +244,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search mentors by name, role, company...',
+                  hintText: AppLocalizations.of(context)!.menteeScreen_searchMentors,
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
@@ -422,22 +423,22 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
             padding: const EdgeInsets.all(16.0),
             children: [
               Text(
-                'Pending Requests',
+                AppLocalizations.of(context)!.menteeScreen_pendingRequests,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
-              const Text(
-                'No pending requests.',
+              Text(
+                AppLocalizations.of(context)!.menteeScreen_noPendingRequests,
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
               const Divider(height: 32),
               Text(
-                'Active Mentorships',
+                AppLocalizations.of(context)!.menteeScreen_activeMentorships,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
-              const Text(
-                'No active mentorships.',
+              Text(
+                AppLocalizations.of(context)!.menteeScreen_noActiveMentorships,
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ],
@@ -451,15 +452,15 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
               child: Text(
-                'Pending Requests',
+                AppLocalizations.of(context)!.menteeScreen_pendingRequests,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             if (pendingRequests.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Text(
-                  'No pending requests.',
+                  AppLocalizations.of(context)!.menteeScreen_noPendingRequests,
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
               )
@@ -477,15 +478,15 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
               child: Text(
-                'Active Mentorships',
+                AppLocalizations.of(context)!.menteeScreen_activeMentorships,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             if (acceptedRequests.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Text(
-                  'No active mentorships.',
+                  AppLocalizations.of(context)!.menteeScreen_noActiveMentorships,
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
               )
@@ -560,11 +561,14 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mentorship'),
+        title: Text(AppLocalizations.of(context)!.mentorshipPage_title),
         automaticallyImplyLeading: false,
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [Tab(text: 'Find Mentors'), Tab(text: 'My Mentorships')],
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.menteeScreen_findMentors), 
+            Tab(text: AppLocalizations.of(context)!.menteeScreen_myMentorships)
+          ],
         ),
       ),
       body: TabBarView(

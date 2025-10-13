@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/models/experience.dart';
 import '../../../core/providers/profile_provider.dart';
 import 'package:intl/intl.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class WorkExperienceDialog extends StatefulWidget {
   final Experience? experience;
@@ -134,8 +135,8 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(widget.experience == null
-          ? 'Add Work Experience'
-          : 'Edit Work Experience'),
+          ? AppLocalizations.of(context)!.workExperienceDialog_addTitle
+          : AppLocalizations.of(context)!.workExperienceDialog_editTitle),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -144,12 +145,12 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
             children: [
               TextFormField(
                 controller: _companyController,
-                decoration: const InputDecoration(
-                  labelText: 'Company',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.workExperienceDialog_company,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a company name';
+                    return AppLocalizations.of(context)!.workExperienceDialog_companyRequired;
                   }
                   return null;
                 },
@@ -157,12 +158,12 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _positionController,
-                decoration: const InputDecoration(
-                  labelText: 'Position',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.workExperienceDialog_position,
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a position';
+                    return AppLocalizations.of(context)!.workExperienceDialog_positionRequired;
                   }
                   return null;
                 },
@@ -171,7 +172,7 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
               TextFormField(
                 controller: _startDateController,
                 decoration: InputDecoration(
-                  labelText: 'Start Date (MM/YYYY)',
+                  labelText: AppLocalizations.of(context)!.workExperienceDialog_startDate,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.calendar_today),
                     onPressed: () => _selectDate(context, _startDateController),
@@ -180,7 +181,7 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
                 readOnly: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a start date';
+                    return AppLocalizations.of(context)!.workExperienceDialog_startDateRequired;
                   }
                   return null;
                 },
@@ -199,7 +200,7 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
                       });
                     },
                   ),
-                  const Text('I currently work here'),
+                  Text(AppLocalizations.of(context)!.workExperienceDialog_currentlyWorking),
                 ],
               ),
               if (!_isCurrentPosition) ...[
@@ -207,7 +208,7 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
                 TextFormField(
                   controller: _endDateController,
                   decoration: InputDecoration(
-                    labelText: 'End Date (MM/YYYY)',
+                    labelText: AppLocalizations.of(context)!.workExperienceDialog_endDate,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.calendar_today),
                       onPressed: () => _selectDate(context, _endDateController),
@@ -216,7 +217,7 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
                   readOnly: true,
                   validator: (value) {
                     if (!_isCurrentPosition && (value == null || value.isEmpty)) {
-                      return 'Please enter an end date';
+                      return AppLocalizations.of(context)!.workExperienceDialog_endDateRequired;
                     }
                     return null;
                   },
@@ -225,13 +226,13 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.workExperienceDialog_description,
                 ),
                 maxLines: 3,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a description';
+                    return AppLocalizations.of(context)!.workExperienceDialog_descriptionRequired;
                   }
                   return null;
                 },
@@ -242,11 +243,11 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
       ),
       actions: [
         TextButton(
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.profileWidgets_cancel),
           onPressed: () => Navigator.of(context).pop(),
         ),
         ElevatedButton(
-          child: const Text('Save'),
+          child: Text(AppLocalizations.of(context)!.workExperienceDialog_save),
           onPressed: _save,
         ),
       ],

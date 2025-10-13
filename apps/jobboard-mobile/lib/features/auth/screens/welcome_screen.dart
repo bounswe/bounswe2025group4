@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/user_type_screen.dart';
 import 'package:mobile/features/auth/screens/sign_in_screen.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -95,9 +96,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               if (_isLoading)
                 const CircularProgressIndicator()
               else if (_hasError)
-                const Text(
-                  'Stay motivated!',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.welcomeScreen_stayMotivated,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontStyle: FontStyle.italic,
                     color: Colors.grey,
@@ -146,15 +147,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               const SizedBox(height: 32),
               Image.asset('assets/logo.jpeg', width: 120, height: 120),
               const SizedBox(height: 32),
-              const Text(
-                'Welcome to Ethical Job Platform',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              Text(
+                AppLocalizations.of(context)!.welcomeScreen_title,
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Connect with companies that share your values and build an ethical career path',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+              Text(
+                AppLocalizations.of(context)!.welcomeScreen_subtitle,
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),
@@ -176,9 +177,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'Get Started',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!.welcomeScreen_getStarted,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),
@@ -201,9 +202,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'I already have an account',
-                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!.welcomeScreen_alreadyHaveAccount,
+                    style: const TextStyle(color: Colors.blue, fontSize: 16),
                   ),
                 ),
               ),

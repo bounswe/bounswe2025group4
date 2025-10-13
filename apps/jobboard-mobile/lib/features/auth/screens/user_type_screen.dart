@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/career_status_screen.dart';
 import 'package:mobile/features/auth/screens/organization_type_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
 import 'package:mobile/core/models/user_type.dart';
@@ -33,16 +34,15 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
             children: [
               const OnboardingProgressBar(currentStep: 1, totalSteps: 5),
               const SizedBox(height: 24),
-              const Text(
-                'How will you use our platform?',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Text(
+                AppLocalizations.of(context)!.userTypeScreen_question,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 32),
               _buildUserTypeCard(
                 context: context,
-                title: 'Job Seeker',
-                description:
-                    'Find ethical companies and opportunities aligned with your values',
+                title: AppLocalizations.of(context)!.userTypeScreen_jobSeeker,
+                description: AppLocalizations.of(context)!.userTypeScreen_jobSeekerDesc,
                 icon: Icons.person_outline,
                 onTap: () {
                   setState(() {
@@ -54,9 +54,8 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
               const SizedBox(height: 16),
               _buildUserTypeCard(
                 context: context,
-                title: 'Employer',
-                description:
-                    'Post jobs and find candidates who share your company\'s values',
+                title: AppLocalizations.of(context)!.userTypeScreen_employer,
+                description: AppLocalizations.of(context)!.userTypeScreen_employerDesc,
                 icon: Icons.business_outlined,
                 onTap: () {
                   setState(() {
@@ -101,9 +100,9 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'Continue',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!.userTypeScreen_continue,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),

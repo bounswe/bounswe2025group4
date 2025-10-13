@@ -6,6 +6,7 @@ import 'package:mobile/core/models/mentorship_status.dart';
 import '../providers/mentor_provider.dart';
 import './mentee_mentorship_screen.dart';
 import './mentor_mentorship_screen.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class MentorshipPage extends StatefulWidget {
   const MentorshipPage({super.key});
@@ -70,13 +71,13 @@ class _MentorshipPageState extends State<MentorshipPage> {
     if (!authProvider.isLoggedIn) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Mentorship'),
+          title: Text(AppLocalizations.of(context)!.mentorshipPage_title),
           automaticallyImplyLeading: false,
         ),
-        body: const Center(
+        body: Center(
           child: Text(
-            'Please log in to access mentorship features.',
-            style: TextStyle(fontSize: 16),
+            AppLocalizations.of(context)!.mentorshipPage_loginRequired,
+            style: const TextStyle(fontSize: 16),
           ),
         ),
       );
@@ -86,7 +87,7 @@ class _MentorshipPageState extends State<MentorshipPage> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Mentorship'),
+          title: Text(AppLocalizations.of(context)!.mentorshipPage_title),
           automaticallyImplyLeading: false,
         ),
         body: const Center(child: CircularProgressIndicator()),
