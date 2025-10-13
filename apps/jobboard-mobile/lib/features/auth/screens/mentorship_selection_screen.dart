@@ -273,7 +273,7 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.blue : Colors.black,
+                      color: isSelected ? Colors.blue : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),

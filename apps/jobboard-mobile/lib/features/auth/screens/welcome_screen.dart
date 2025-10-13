@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/user_type_screen.dart';
 import 'package:mobile/features/auth/screens/sign_in_screen.dart';
 import 'package:mobile/generated/l10n/app_localizations.dart';
+import 'package:mobile/core/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -93,6 +95,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Positioned(
+                top: 16,
+                right: 24,
+                child: ThemeToggleSwitch(),
+              ),
               if (_isLoading)
                 const CircularProgressIndicator()
               else if (_hasError)
@@ -212,6 +219,39 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+
+class ThemeToggleSwitch extends StatelessWidget {
+  const ThemeToggleSwitch({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final color = Theme.of(context).primaryColor;
+    final isDarkMode = themeProvider.isDarkMode;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          isDarkMode ? Icons.dark_mode : Icons.light_mode,
+          color: isDarkMode ? Colors.white : color,
+        ),
+        const SizedBox(width: 8),
+        Switch.adaptive(
+          value: isDarkMode,
+          onChanged: (value) {
+            Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
+          },
+          activeColor: Colors.amber,
+          activeTrackColor: Colors.amber.withOpacity(0.5),
+          inactiveThumbColor: isDarkMode ? Colors.white : Colors.grey.shade400,
+          inactiveTrackColor: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300,
+        ),
+      ],
     );
   }
 }
