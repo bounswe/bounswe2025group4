@@ -146,7 +146,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                       fontSize: 18,
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? Colors.blue : Colors.black,
+                      color: isSelected ? Colors.blue : Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),

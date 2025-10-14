@@ -5,6 +5,7 @@ import 'generated/l10n/app_localizations.dart';
 import 'core/providers/auth_provider.dart';
 import 'core/providers/font_size_provider.dart';
 import 'core/providers/locale_provider.dart';
+import 'core/providers/theme_provider.dart';
 import 'features/auth/screens/welcome_screen.dart';
 import 'features/main_scaffold/main_scaffold.dart';
 
@@ -13,8 +14,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<FontSizeProvider, LocaleProvider>(
-      builder: (context, fontSizeProvider, localeProvider, child) {
+    return Consumer3<FontSizeProvider, LocaleProvider, ThemeProvider>(
+      builder: (context, fontSizeProvider, localeProvider, themeProvider, child) {
         return MaterialApp(
           title: 'EthicaJobs',
           
@@ -39,11 +40,38 @@ class MyApp extends StatelessWidget {
             // If not supported, return the first supported locale (English)
             return supportedLocales.first;
           },
-          
+
+          themeMode: themeProvider.themeMode,
           theme: ThemeData(
+            brightness: Brightness.light,
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity,
             textTheme: ThemeData.light().textTheme.copyWith(
+              bodyLarge: TextStyle(
+                fontSize: fontSizeProvider.getScaledFontSize(16),
+              ),
+              bodyMedium: TextStyle(
+                fontSize: fontSizeProvider.getScaledFontSize(14),
+              ),
+              bodySmall: TextStyle(
+                fontSize: fontSizeProvider.getScaledFontSize(12),
+              ),
+              titleLarge: TextStyle(
+                fontSize: fontSizeProvider.getScaledFontSize(22),
+              ),
+              titleMedium: TextStyle(
+                fontSize: fontSizeProvider.getScaledFontSize(18),
+              ),
+              titleSmall: TextStyle(
+                fontSize: fontSizeProvider.getScaledFontSize(16),
+              ),
+            ),
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+            textTheme: ThemeData.dark().textTheme.copyWith(
               bodyLarge: TextStyle(
                 fontSize: fontSizeProvider.getScaledFontSize(16),
               ),
