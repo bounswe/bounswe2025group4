@@ -6,8 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Set;
-
 @Data
 @AllArgsConstructor
 public class RegisterRequest {
@@ -20,7 +18,8 @@ public class RegisterRequest {
     @Email
     private String email;
 
-    private Set<String> role;
+    @NotBlank
+    private String role;
 
     @NotBlank
     @Size(min = 6, max = 40)
