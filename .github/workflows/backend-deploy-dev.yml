@@ -60,7 +60,7 @@ jobs:
             --set-env-vars "SPRING_DATASOURCE_USERNAME=jobboard_owner" \
             --set-env-vars "APP_VERIFY_EMAIL_URL=https://bounswe-jobboard-dev.pages.dev" \
             --set-env-vars "APP_RESET_PASSWORD_URL=https://bounswe-jobboard-dev.pages.dev/api/auth/reset-password" \
-            --set-env-vars "APP_CORS_ALLOWED_ORIGINS=https://bounswe-jobboard-dev.pages.dev" \
+            --set-env-vars "APP_CORS_ALLOWED_ORIGINS=https://bounswe-jobboard-dev.pages.dev,http://localhost:5173" \
             --set-env-vars "MAIL_USERNAME=ethicaljobb@gmail.com" \
             --set-env-vars "APP_GCS_BUCKET=bounswe-jobboard" \
             --set-secrets "SPRING_DATASOURCE_PASSWORD=jobboard-neon-db-pass:latest" \
