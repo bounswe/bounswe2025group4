@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/mentorship_selection_screen.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 
 class IndustrySelectionScreen extends StatefulWidget {
   const IndustrySelectionScreen({super.key});
@@ -16,14 +17,16 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
   final TextEditingController _otherController = TextEditingController();
   bool showOtherField = false;
 
-  final List<String> industries = [
-    'Tech',
-    'Healthcare',
-    'Education',
-    'Finance',
-    'Creative Arts',
-    'Other',
-  ];
+  List<String> _getIndustries(BuildContext context) {
+    return [
+      AppLocalizations.of(context)!.industrySelectionScreen_tech,
+      AppLocalizations.of(context)!.industrySelectionScreen_healthcare,
+      AppLocalizations.of(context)!.industrySelectionScreen_education,
+      AppLocalizations.of(context)!.industrySelectionScreen_finance,
+      AppLocalizations.of(context)!.industrySelectionScreen_creativeArts,
+      AppLocalizations.of(context)!.organizationTypeScreen_other,
+    ];
+  }
 
   @override
   void dispose() {
@@ -51,30 +54,30 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Which industries are you most interested in?',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.industrySelectionScreen_question,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Select all that apply',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    Text(
+                      AppLocalizations.of(context)!.jobPrioritiesScreen_selectAll,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 24),
                     Expanded(
                       child: ListView.separated(
-                        itemCount: industries.length,
+                        itemCount: _getIndustries(context).length,
                         separatorBuilder:
                             (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
-                          final industry = industries[index];
+                          final industry = _getIndustries(context)[index];
                           final isSelected = selectedIndustries.contains(
                             industry,
                           );
-                          final isOther = industry == 'Other';
+                          final isOther = industry == AppLocalizations.of(context)!.organizationTypeScreen_other;
 
                           return Column(
                             children: [
@@ -138,10 +141,10 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: TextField(
                                     controller: _otherController,
-                                    decoration: const InputDecoration(
-                                      hintText: 'Please specify',
-                                      border: OutlineInputBorder(),
-                                      contentPadding: EdgeInsets.symmetric(
+                                    decoration: InputDecoration(
+                                      hintText: AppLocalizations.of(context)!.organizationTypeScreen_pleaseSpecify,
+                                      border: const OutlineInputBorder(),
+                                      contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 16,
                                         vertical: 12,
                                       ),
@@ -179,9 +182,9 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Continue',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        child: Text(
+                          AppLocalizations.of(context)!.userTypeScreen_continue,
+                          style: const TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),

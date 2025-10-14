@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/profile_provider.dart';
 import '../../../core/providers/font_size_provider.dart';
+import '../../../core/providers/locale_provider.dart';
 import '../../auth/screens/welcome_screen.dart';
 import '../../../core/widgets/a11y.dart';
 import '../widgets/profile_picture.dart';
@@ -54,7 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Profile',
+          AppLocalizations.of(context)!.profilePage_title,
           style: TextStyle(fontSize: fontSizeProvider.getScaledFontSize(20)),
         ),
         automaticallyImplyLeading: false,
@@ -62,7 +64,7 @@ class _ProfilePageState extends State<ProfilePage> {
           if (!profileProvider.isLoading && profile != null)
             IconButton(
               icon: const Icon(Icons.edit),
-              tooltip: 'Edit profile',
+              tooltip: AppLocalizations.of(context)!.profilePage_editProfile,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -72,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             IconButton(
               icon: const Icon(Icons.logout),
-              tooltip: 'Logout',
+              tooltip: AppLocalizations.of(context)!.profilePage_logout,
               onPressed: () async {
               await authProvider.logout();
               if (!context.mounted) return;
@@ -88,7 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
           profileProvider.isLoading
               ? const Center(child: CircularProgressIndicator())
               : profile == null
-              ? const Center(child: Text('Failed to load profile'))
+              ? Center(child: Text(AppLocalizations.of(context)!.profilePage_failedToLoad))
               : RefreshIndicator(
                 onRefresh: () async {
                   await profileProvider.fetchMyProfile();
@@ -121,6 +123,9 @@ class _ProfilePageState extends State<ProfilePage> {
             _buildFontSizeSelector(),
             const SizedBox(height: 24),
 
+            _buildLanguageSelector(),
+            const SizedBox(height: 24),
+
             WorkExperienceList(experiences: experiences, isEditable: true),
             const SizedBox(height: 24),
 
@@ -132,10 +137,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
             EditableChipList(
               items: profile.skills,
-              title: 'Skills',
-              emptyMessage: 'No skills added yet.',
-              addDialogTitle: 'Add Skill',
-              addDialogHint: 'Enter a skill',
+              title: AppLocalizations.of(context)!.profilePage_skills,
+              emptyMessage: AppLocalizations.of(context)!.profilePage_noSkills,
+              addDialogTitle: AppLocalizations.of(context)!.profilePage_addSkill,
+              addDialogHint: AppLocalizations.of(context)!.profilePage_enterSkill,
               onSave: (updatedSkills) {
                 profileProvider.updateSkills(updatedSkills);
               },
@@ -145,10 +150,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
             EditableChipList(
               items: profile.interests,
-              title: 'Interests',
-              emptyMessage: 'No interests added yet.',
-              addDialogTitle: 'Add Interest',
-              addDialogHint: 'Enter an interest',
+              title: AppLocalizations.of(context)!.profilePage_interests,
+              emptyMessage: AppLocalizations.of(context)!.profilePage_noInterests,
+              addDialogTitle: AppLocalizations.of(context)!.profilePage_addInterest,
+              addDialogHint: AppLocalizations.of(context)!.profilePage_enterInterest,
               onSave: (updatedInterests) {
                 profileProvider.updateInterests(updatedInterests);
               },
@@ -192,7 +197,7 @@ class _ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Username: ${user?.username}',
+                AppLocalizations.of(context)!.profilePage_username(user?.username ?? ''),
                 style: TextStyle(
                   fontSize: fontSizeProvider.getScaledFontSize(14),
                   color: Colors.grey[700],
@@ -200,7 +205,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               Text(
-                'Email: ${user?.email}',
+                AppLocalizations.of(context)!.profilePage_email(user?.email ?? ''),
                 style: TextStyle(
                   fontSize: fontSizeProvider.getScaledFontSize(14),
                   color: Colors.grey[700],
@@ -285,7 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Font Size',
+                  AppLocalizations.of(context)!.profilePage_fontSize,
                   style: TextStyle(
                     fontSize: fontSizeProvider.getScaledFontSize(18),
                     fontWeight: FontWeight.bold,
@@ -299,7 +304,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         fontSizeProvider,
                         FontSizeOption.small,
-                        'Small',
+                        AppLocalizations.of(context)!.profilePage_small,
                         Icons.text_fields,
                       ),
                     ),
@@ -309,7 +314,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         fontSizeProvider,
                         FontSizeOption.medium,
-                        'Medium',
+                        AppLocalizations.of(context)!.profilePage_medium,
                         Icons.text_fields,
                       ),
                     ),
@@ -319,7 +324,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context,
                         fontSizeProvider,
                         FontSizeOption.large,
-                        'Large',
+                        AppLocalizations.of(context)!.profilePage_large,
                         Icons.text_fields,
                       ),
                     ),
@@ -353,7 +358,7 @@ class _ProfilePageState extends State<ProfilePage> {
         fontSizeProvider.setFontSize(option);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Font size changed to $label'),
+            content: Text(AppLocalizations.of(context)!.profilePage_fontSizeChanged(label)),
             duration: const Duration(seconds: 1),
           ),
         );
@@ -389,6 +394,92 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLanguageSelector() {
+    return Consumer<LocaleProvider>(
+      builder: (context, localeProvider, _) {
+        return Card(
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.language, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      AppLocalizations.of(context)!.profilePage_language,
+                      style: TextStyle(
+                        fontSize: Provider.of<FontSizeProvider>(context).getScaledFontSize(18),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                ...LocaleProvider.supportedLocales.map((locale) {
+                  final isSelected = localeProvider.locale.languageCode == locale.languageCode;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: InkWell(
+                      onTap: () async {
+                        await localeProvider.setLocale(locale);
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(context)!.profilePage_languageChanged(
+                                localeProvider.getLocaleDisplayName(locale),
+                              ),
+                            ),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+                          border: Border.all(
+                            color: isSelected ? Colors.blue : Colors.grey.shade300,
+                            width: isSelected ? 2 : 1,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                localeProvider.getLocaleDisplayName(locale),
+                                style: TextStyle(
+                                  fontSize: Provider.of<FontSizeProvider>(context).getScaledFontSize(16),
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                  color: isSelected ? Colors.blue : Colors.grey.shade700,
+                                ),
+                              ),
+                            ),
+                            if (isSelected)
+                              const Icon(
+                                Icons.check_circle,
+                                color: Colors.blue,
+                                size: 20,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

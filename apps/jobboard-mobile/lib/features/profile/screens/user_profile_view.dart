@@ -7,6 +7,7 @@ import '../widgets/work_experience_list.dart';
 import '../widgets/education_list.dart';
 import '../widgets/badge_list.dart';
 import '../../../core/models/mentorship_status.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class UserProfileView extends StatefulWidget {
   final int userId;
@@ -55,7 +56,7 @@ class _UserProfileViewState extends State<UserProfileView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(userProfile?.profile.fullName ?? 'User Profile'),
+        title: Text(userProfile?.profile.fullName ?? AppLocalizations.of(context)!.userProfile_title),
       ),
       body: profileProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -64,13 +65,13 @@ class _UserProfileViewState extends State<UserProfileView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Failed to load user profile'),
+            Text(AppLocalizations.of(context)!.userProfile_loadError),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 profileProvider.fetchUserProfile(widget.userId);
               },
-              child: const Text('Try Again'),
+              child: Text(AppLocalizations.of(context)!.userProfile_tryAgain),
             ),
           ],
         ),
@@ -172,7 +173,7 @@ class _UserProfileViewState extends State<UserProfileView> {
             const SizedBox(height: 24),
             if (userProfile.profile.skills.isNotEmpty) ...[
               Text(
-                'Skills',
+                AppLocalizations.of(context)!.userProfile_skills,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
@@ -187,7 +188,7 @@ class _UserProfileViewState extends State<UserProfileView> {
             ],
             if (userProfile.profile.interests.isNotEmpty) ...[
               Text(
-                'Interests',
+                AppLocalizations.of(context)!.userProfile_interests,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),

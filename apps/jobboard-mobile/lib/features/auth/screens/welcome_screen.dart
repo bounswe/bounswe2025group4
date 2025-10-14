@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/user_type_screen.dart';
 import 'package:mobile/features/auth/screens/sign_in_screen.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
+import 'package:mobile/core/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
+import '../../../core/widgets/a11y.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -92,12 +96,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Positioned(
+                top: 16,
+                right: 24,
+                child: ThemeToggleSwitch(),
+              ),
               if (_isLoading)
                 const CircularProgressIndicator()
               else if (_hasError)
-                const Text(
-                  'Stay motivated!',
-                  style: TextStyle(
+                Text(
+                  AppLocalizations.of(context)!.welcomeScreen_stayMotivated,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontStyle: FontStyle.italic,
                     color: Colors.grey,
@@ -154,15 +163,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
-                'Welcome to Ethical Job Platform',
-                style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              Text(
+                AppLocalizations.of(context)!.welcomeScreen_title,
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Connect with companies that share your values and build an ethical career path',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+              Text(
+                AppLocalizations.of(context)!.welcomeScreen_subtitle,
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),
@@ -184,9 +193,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'Get Started',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!.welcomeScreen_getStarted,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),
@@ -209,15 +218,61 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'I already have an account',
-                    style: TextStyle(color: Colors.blue, fontSize: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!.welcomeScreen_alreadyHaveAccount,
+                    style: const TextStyle(color: Colors.blue, fontSize: 16),
                   ),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+class ThemeToggleSwitch extends StatelessWidget {
+  const ThemeToggleSwitch({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final color = Theme.of(context).primaryColor;
+    final isDarkMode = themeProvider.isDarkMode;
+
+    return A11y(
+      label: isDarkMode 
+          ? AppLocalizations.of(context)!.common_darkMode 
+          : AppLocalizations.of(context)!.common_lightMode,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          A11y(
+            label: isDarkMode 
+                ? AppLocalizations.of(context)!.common_darkModeIcon 
+                : AppLocalizations.of(context)!.common_lightModeIcon,
+            child: Icon(
+              isDarkMode ? Icons.dark_mode : Icons.light_mode,
+              color: isDarkMode ? Colors.white : color,
+            ),
+          ),
+          const SizedBox(width: 8),
+          A11y(
+            label: AppLocalizations.of(context)!.common_themeToggle,
+            child: Switch.adaptive(
+              value: isDarkMode,
+              onChanged: (value) {
+                Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
+              },
+              activeColor: Colors.amber,
+              activeTrackColor: Colors.amber.withOpacity(0.5),
+              inactiveThumbColor: isDarkMode ? Colors.white : Colors.grey.shade400,
+              inactiveTrackColor: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300,
+            ),
+          ),
+        ],
       ),
     );
   }

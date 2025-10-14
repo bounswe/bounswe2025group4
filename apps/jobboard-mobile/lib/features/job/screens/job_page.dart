@@ -12,6 +12,7 @@ import './job_applications_screen.dart'; // Import placeholder
 import '../widgets/job_filter_dialog.dart'; // Import the filter dialog
 import '../../application/screens/my_applications_screen.dart'; // Import the new screen
 import 'dart:async'; // Import for Timer
+import '../../../generated/l10n/app_localizations.dart';
 
 class JobPage extends StatefulWidget {
   const JobPage({super.key});
@@ -116,7 +117,7 @@ class _JobPageState extends State<JobPage> {
       print("Error loading data: $e"); // Debug print
       if (mounted) {
         setState(() {
-          _errorMessage = "Failed to load jobs. Please try again.";
+          _errorMessage = AppLocalizations.of(context)!.jobPage_loadError;
         });
       }
     } finally {
@@ -323,7 +324,7 @@ class _JobPageState extends State<JobPage> {
               padding: const EdgeInsets.only(right: 8.0), // Add some padding
               child: TextButton.icon(
                 icon: const Icon(Icons.assignment_turned_in_outlined),
-                label: const Text('My Applications'),
+                label: Text(AppLocalizations.of(context)!.jobPage_myApplications),
                 onPressed: _navigateToMyApplications,
                 style: TextButton.styleFrom(
                   // Use AppBar theme color or specify
@@ -341,7 +342,7 @@ class _JobPageState extends State<JobPage> {
           _userRole == UserType.EMPLOYER
               ? FloatingActionButton(
                 onPressed: _navigateToCreateJobPost,
-                tooltip: 'Create Job Post',
+                tooltip: AppLocalizations.of(context)!.jobPage_createJob,
                 child: const Icon(Icons.add),
               )
               : null,
@@ -363,7 +364,7 @@ class _JobPageState extends State<JobPage> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search jobs',
+                    hintText: AppLocalizations.of(context)!.jobPage_search,
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
@@ -383,7 +384,7 @@ class _JobPageState extends State<JobPage> {
                   Icons.filter_list,
                   color: filtersActive ? Theme.of(context).primaryColor : null,
                 ),
-                tooltip: 'Filter Jobs',
+                tooltip: AppLocalizations.of(context)!.jobPage_filter,
                 onPressed: _openFilterDialog,
               ),
             ],
@@ -403,7 +404,7 @@ class _JobPageState extends State<JobPage> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Your Posted Jobs',
+            AppLocalizations.of(context)!.jobPage_yourPostedJobs,
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
@@ -435,7 +436,7 @@ class _JobPageState extends State<JobPage> {
                             ? _searchController.text
                             : null,
                   ),
-              child: const Text('Retry'),
+              child: Text(AppLocalizations.of(context)!.common_retry),
             ),
           ],
         ),
@@ -446,8 +447,8 @@ class _JobPageState extends State<JobPage> {
       return Center(
         child: Text(
           _userRole == UserType.EMPLOYER
-              ? 'You have not posted any jobs yet.'
-              : 'No jobs found matching your criteria.',
+              ? AppLocalizations.of(context)!.jobPage_noPostedJobs
+              : AppLocalizations.of(context)!.jobPage_noJobs,
           style: Theme.of(context).textTheme.bodySmall,
         ),
       );
@@ -538,7 +539,7 @@ class _JobPageState extends State<JobPage> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          'Posted: ${dateFormat.format(job.datePosted!)}',
+                          '${AppLocalizations.of(context)!.jobPage_posted}: ${dateFormat.format(job.datePosted!)}',
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(color: Colors.grey.shade600),
                         ),

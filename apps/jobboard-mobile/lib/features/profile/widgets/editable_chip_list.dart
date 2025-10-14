@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class EditableChipList extends StatefulWidget {
   final List<String> items;
@@ -58,11 +59,11 @@ class _EditableChipListState extends State<EditableChipList> {
         ),
         actions: [
           TextButton(
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.profileWidgets_cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           ElevatedButton(
-            child: const Text('Add'),
+            child: Text(AppLocalizations.of(context)!.profileWidgets_add),
             onPressed: () {
               _addItem(textController.text);
               Navigator.of(context).pop();
@@ -106,7 +107,7 @@ class _EditableChipListState extends State<EditableChipList> {
             if (widget.isEditable)
               TextButton.icon(
                 icon: const Icon(Icons.add),
-                label: const Text('Add'),
+                label: Text(AppLocalizations.of(context)!.profileWidgets_add),
                 onPressed: _showAddDialog,
               ),
           ],

@@ -4,6 +4,7 @@ import '../../../core/models/education.dart';
 import '../../../core/providers/profile_provider.dart';
 import 'education_item.dart';
 import '../dialogs/education_dialog.dart';
+import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
 
 class EducationList extends StatelessWidget {
@@ -25,22 +26,22 @@ class EducationList extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Education',
+              AppLocalizations.of(context)!.profileWidgets_education,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             if (isEditable)
               TextButton.icon(
                 icon: const A11y(label: 'Add education', child: Icon(Icons.add)),
-                label: const Text('Add'),
+                label: Text(AppLocalizations.of(context)!.profileWidgets_add),
                 onPressed: () => _showEducationDialog(context),
               ),
           ],
         ),
         const SizedBox(height: 8),
         if (educationHistory.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text('No education history added yet.'),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(AppLocalizations.of(context)!.profileWidgets_noEducation),
           )
         else
           ListView.builder(
@@ -80,17 +81,17 @@ class EducationList extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Education'),
+        title: Text(AppLocalizations.of(context)!.profileWidgets_deleteEducation),
         content: Text(
-          'Are you sure you want to delete your education at ${education.school}?'
+          AppLocalizations.of(context)!.profileWidgets_confirmDeleteEducation(education.school)
         ),
         actions: [
           TextButton(
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.profileWidgets_cancel),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context)!.profileWidgets_delete, style: TextStyle(color: Colors.red)),
             onPressed: () {
               final profileProvider = Provider.of<ProfileProvider>(
                 context,

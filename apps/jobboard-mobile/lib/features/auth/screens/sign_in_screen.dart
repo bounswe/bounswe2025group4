@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/main_scaffold/main_scaffold.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
 import 'package:mobile/core/providers/profile_provider.dart';
@@ -47,8 +48,8 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login Failed. Please check your credentials.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.signInScreen_loginFailed),
             backgroundColor: Colors.red,
           ),
         );
@@ -67,7 +68,7 @@ class _SignInScreenState extends State<SignInScreen> {
           tooltip: 'Back',
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Sign In'),
+        title: Text(AppLocalizations.of(context)!.signInScreen_title),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -77,21 +78,21 @@ class _SignInScreenState extends State<SignInScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Welcome back!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.signInScreen_welcomeBack,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _usernameController,
                   keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.signInScreen_username,
+                    border: const OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your username';
+                      return AppLocalizations.of(context)!.signInScreen_usernameRequired;
                     }
                     return null;
                   },
@@ -101,7 +102,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: AppLocalizations.of(context)!.signInScreen_password,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: A11y(
@@ -121,7 +122,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
+                      return AppLocalizations.of(context)!.signInScreen_passwordRequired;
                     }
                     return null;
                   },
@@ -147,9 +148,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                 color: Colors.white,
                               ),
                             )
-                            : const Text(
-                              'Sign In',
-                              style: TextStyle(
+                            : Text(
+                              AppLocalizations.of(context)!.signInScreen_signInButton,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                               ),
@@ -160,7 +161,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Don\'t have an account?'),
+                    Text(AppLocalizations.of(context)!.signInScreen_dontHaveAccount),
                     TextButton(
                       onPressed: () {
                         Navigator.pushReplacement(
@@ -170,7 +171,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         );
                       },
-                      child: const Text('Sign Up'),
+                      child: Text(AppLocalizations.of(context)!.signInScreen_signUpLink),
                     ),
                   ],
                 ),

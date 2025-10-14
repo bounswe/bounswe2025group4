@@ -3,6 +3,7 @@ import 'package:mobile/features/auth/screens/mentorship_selection_screen.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
 import '../../../core/widgets/a11y.dart';
+import 'package:mobile/generated/l10n/app_localizations.dart';
 
 class CompanyPoliciesScreen extends StatefulWidget {
   const CompanyPoliciesScreen({super.key});
@@ -14,31 +15,30 @@ class CompanyPoliciesScreen extends StatefulWidget {
 class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
   final Set<String> selectedPolicies = {};
 
-  final List<CompanyPolicy> policies = [
-    CompanyPolicy(
-      title: 'Fair wage commitment',
-      description:
-          'Ensuring competitive compensation and transparent pay practices',
-    ),
-    CompanyPolicy(
-      title: 'Diversity & inclusion policy',
-      description: 'Promoting an inclusive workplace with equal opportunities',
-    ),
-    CompanyPolicy(
-      title: 'Employee well-being programs',
-      description:
-          'Supporting mental health, work-life balance, and personal growth',
-    ),
-    CompanyPolicy(
-      title: 'Remote-friendly culture',
-      description: 'Offering flexible work arrangements and remote options',
-    ),
-    CompanyPolicy(
-      title: 'Sustainability/environmental goals',
-      description:
-          'Implementing eco-friendly practices and reducing environmental impact',
-    ),
-  ];
+  List<CompanyPolicy> _getCompanyPolicies(BuildContext context) {
+    return [
+      CompanyPolicy(
+        title: AppLocalizations.of(context)!.companyPoliciesScreen_fairWage,
+        description: AppLocalizations.of(context)!.companyPoliciesScreen_fairWageDesc,
+      ),
+      CompanyPolicy(
+        title: AppLocalizations.of(context)!.companyPoliciesScreen_diversity,
+        description: AppLocalizations.of(context)!.companyPoliciesScreen_diversityDesc,
+      ),
+      CompanyPolicy(
+        title: AppLocalizations.of(context)!.companyPoliciesScreen_wellbeing,
+        description: AppLocalizations.of(context)!.companyPoliciesScreen_wellbeingDesc,
+      ),
+      CompanyPolicy(
+        title: AppLocalizations.of(context)!.companyPoliciesScreen_remotePolicy,
+        description: AppLocalizations.of(context)!.companyPoliciesScreen_remotePolicyDesc,
+      ),
+      CompanyPolicy(
+        title: AppLocalizations.of(context)!.companyPoliciesScreen_sustainabilityPolicy,
+        description: AppLocalizations.of(context)!.companyPoliciesScreen_sustainabilityPolicyDesc,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,26 +61,26 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Which ethical policies does your company follow?',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.companyPoliciesScreen_question,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Select all that apply',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    Text(
+                      AppLocalizations.of(context)!.jobPrioritiesScreen_selectAll,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                     const SizedBox(height: 24),
                     Expanded(
                       child: ListView.separated(
-                        itemCount: policies.length,
+                        itemCount: _getCompanyPolicies(context).length,
                         separatorBuilder:
                             (context, index) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
-                          final policy = policies[index];
+                          final policy = _getCompanyPolicies(context)[index];
                           final isSelected = selectedPolicies.contains(
                             policy.title,
                           );
@@ -179,9 +179,9 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Continue',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        child: Text(
+                          AppLocalizations.of(context)!.userTypeScreen_continue,
+                          style: const TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),

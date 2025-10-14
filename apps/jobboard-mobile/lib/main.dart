@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/providers/auth_provider.dart'; // Adjust path
+import 'core/providers/theme_provider.dart';
 import 'core/providers/quote_provider.dart';
 import 'core/providers/profile_provider.dart';
 import 'core/providers/font_size_provider.dart';
+import 'core/providers/locale_provider.dart';
 import 'core/services/api_service.dart';
 import 'app.dart'; // Adjust path
 
@@ -16,6 +18,8 @@ void main() {
           create: (context) => QuoteProvider(),
         ), // Add QuoteProvider
         ChangeNotifierProvider(create: (context) => FontSizeProvider()),
+        ChangeNotifierProvider(create: (context) => LocaleProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
         ProxyProvider<AuthProvider, ApiService>(
           update:
               (context, authProvider, _) =>

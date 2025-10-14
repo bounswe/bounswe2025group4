@@ -37,3 +37,4 @@ build/
 .env.local
 .env.development
 .env.production
+jobboard-local-service-account-key.json

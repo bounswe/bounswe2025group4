@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
 // import 'package:file_picker/file_picker.dart'; // Import if you use file_picker
 // import 'package:image_picker/image_picker.dart'; // Import if you use image_picker
@@ -76,14 +77,14 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     */
     print('Attach file button pressed for mentor ${widget.mentorId}');
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('File attachment not implemented yet.')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.directMessage_fileNotImplemented)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.mentorName)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.directMessage_title(widget.mentorName))),
       body: Column(
         children: [
           // Message List Area
@@ -162,14 +163,14 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
               color: theme.iconTheme.color?.withOpacity(0.7),
             )),
             onPressed: _attachFile,
-            tooltip: 'Attach file',
+            tooltip: AppLocalizations.of(context)!.directMessage_attachFile,
           ),
           // Message Text Field
           Expanded(
             child: TextField(
               controller: _messageController,
               decoration: InputDecoration(
-                hintText: 'Type a message...',
+                hintText: AppLocalizations.of(context)!.directMessage_typeMessage,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20.0),
                   borderSide: BorderSide.none,
@@ -192,7 +193,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
           IconButton(
             icon: A11y(label: 'Send message', child: Icon(Icons.send, color: theme.colorScheme.primary)),
             onPressed: _sendMessage,
-            tooltip: 'Send message',
+            tooltip: AppLocalizations.of(context)!.directMessage_sendMessage,
           ),
         ],
       ),

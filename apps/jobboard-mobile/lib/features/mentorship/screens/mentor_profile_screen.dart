@@ -5,7 +5,7 @@ import 'package:mobile/core/models/mentor_profile.dart';
 import 'package:mobile/core/models/mentor_review.dart';
 import 'package:mobile/core/services/api_service.dart';
 import 'package:mobile/core/providers/quote_provider.dart';
-import '../providers/mentor_provider.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class MentorProfileScreen extends StatefulWidget {
   final int mentorId;
@@ -68,7 +68,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
     } catch (e) {
       setState(() {
         _errorMessage =
-            'Failed to load mentor profile or reviews: ${e.toString()}';
+            AppLocalizations.of(context).mentorProfile_loadError(e.toString());
         _isLoading = false;
       });
     }
@@ -83,11 +83,11 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           (dialogContext) => StatefulBuilder(
             builder:
                 (context, setDialogState) => AlertDialog(
-                  title: Text('Rate ${widget.mentorName}'),
+                  title: Text(AppLocalizations.of(context).mentorProfile_rateTitle(widget.mentorName)),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('Select a rating:'),
+                      Text(AppLocalizations.of(context).mentorProfile_selectRating),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -115,8 +115,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                       const SizedBox(height: 16),
                       TextField(
                         controller: _commentController,
-                        decoration: const InputDecoration(
-                          labelText: 'Comment (optional)',
+                        decoration: InputDecoration(
+                          labelText: AppLocalizations.of(context).mentorProfile_commentOptional,
                           border: OutlineInputBorder(),
                         ),
                         maxLines: 3,
@@ -132,7 +132,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                           _commentController.clear();
                         });
                       },
-                      child: const Text('Cancel'),
+                      child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
                     ),
                     ElevatedButton(
                       onPressed:
@@ -145,7 +145,9 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               }
                               : null,
                       child: Text(
-                        _isSubmittingRating ? 'Submitting...' : 'Submit',
+                        _isSubmittingRating 
+                            ? AppLocalizations.of(context)!.mentorProfile_submitting 
+                            : AppLocalizations.of(context)!.mentorProfile_submit,
                       ),
                     ),
                   ],
@@ -158,7 +160,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
     if (_selectedRating == 0) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Please select a rating')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.mentorProfile_selectRatingError)));
       return;
     }
 
@@ -179,7 +181,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Rating submitted successfully')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.mentorProfile_ratingSubmitted)),
         );
         setState(() {
           _selectedRating = 0;
@@ -193,7 +195,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error submitting rating: ${e.toString()}'),
+            content: Text(AppLocalizations.of(context)!.mentorProfile_ratingError(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -210,7 +212,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Mentor Profile: ${widget.mentorName}')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.mentorProfile_title(widget.mentorName))),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -223,7 +225,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: _loadMentorProfile,
-                      child: const Text('Retry'),
+                      child: Text(AppLocalizations.of(context)!.common_retry),
                     ),
                   ],
                 ),
@@ -234,7 +236,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               ? FloatingActionButton(
                 onPressed: _showRatingDialog,
                 child: const Icon(Icons.star),
-                tooltip: 'Rate this mentor',
+                tooltip: AppLocalizations.of(context)!.mentorProfile_rateMentor,
               )
               : null,
     );
@@ -242,7 +244,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
 
   Widget _buildProfileContent() {
     if (_mentorProfile == null) {
-      return const Center(child: Text('No profile data available'));
+      return Center(child: Text(AppLocalizations.of(context)!.mentorProfile_noProfileData));
     }
 
     return SingleChildScrollView(
@@ -282,7 +284,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                         ),
                       if (_mentorProfile!.user.company != null)
                         Text(
-                          'at ${_mentorProfile!.user.company!}',
+                          AppLocalizations.of(context)!.mentorProfile_atCompany(_mentorProfile!.user.company!),
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey[600],
@@ -338,9 +340,9 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Rating',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.mentorProfile_rating,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -360,7 +362,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '${_mentorProfile!.averageRating.toStringAsFixed(1)} (${_mentorProfile!.reviewCount} reviews)',
+                          '${_mentorProfile!.averageRating.toStringAsFixed(1)} (${AppLocalizations.of(context)!.mentorProfile_reviews(_mentorProfile!.reviewCount)})',
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],
@@ -377,23 +379,26 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Mentorship Information',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.mentorProfile_mentorshipInfo,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
                     _buildInfoRow(
-                      'Capacity',
-                      '${_mentorProfile!.currentMenteeCount}/${_mentorProfile!.capacity} mentees',
+                      AppLocalizations.of(context)!.mentorProfile_capacity,
+                      AppLocalizations.of(context)!.mentorProfile_mentees(
+                        _mentorProfile!.currentMenteeCount, 
+                        _mentorProfile!.capacity
+                      ),
                     ),
                     _buildInfoRow(
-                      'Status',
+                      AppLocalizations.of(context)!.mentorProfile_status,
                       _mentorProfile!.isAvailable
-                          ? 'Available for mentorship'
-                          : 'Not available for mentorship',
+                          ? AppLocalizations.of(context)!.mentorProfile_available
+                          : AppLocalizations.of(context)!.mentorProfile_notAvailable,
                     ),
                   ],
                 ),
@@ -408,9 +413,9 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'About',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.mentorProfile_about,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -455,14 +460,14 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Reviews',
+            Text(
+              AppLocalizations.of(context)!.mentorProfile_rating,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             if (_reviews.isEmpty)
-              const Text(
-                'No reviews yet.',
+              Text(
+                AppLocalizations.of(context)!.mentorProfile_noReviews,
                 style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
               )
             else
@@ -504,7 +509,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               }),
                             ),
                             Text(
-                              'By: ${review.mentee.username}',
+                              AppLocalizations.of(context)!.mentorProfile_byUser(review.mentee.username),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[600],
