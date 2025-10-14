@@ -55,13 +55,14 @@ jobs:
             --min-instances 0 \
             --max-instances 1 \
             --concurrency 80 \
-            --set-env-vars "ENV=dev" \
+            --set-env-vars "APP_ENV=dev" \
             --set-env-vars "SPRING_DATASOURCE_URL=jdbc:postgresql://ep-summer-lab-agmn03ff-pooler.c-2.eu-central-1.aws.neon.tech:5432/jobboard?sslmode=require" \
             --set-env-vars "SPRING_DATASOURCE_USERNAME=jobboard_owner" \
             --set-env-vars "APP_VERIFY_EMAIL_URL=https://bounswe-jobboard-dev.pages.dev" \
             --set-env-vars "APP_RESET_PASSWORD_URL=https://bounswe-jobboard-dev.pages.dev/api/auth/reset-password" \
             --set-env-vars "APP_CORS_ALLOWED_ORIGINS=https://bounswe-jobboard-dev.pages.dev" \
             --set-env-vars "MAIL_USERNAME=ethicaljobb@gmail.com" \
+            --set-env-vars "APP_GCS_BUCKET=bounswe-jobboard" \
             --set-secrets "SPRING_DATASOURCE_PASSWORD=jobboard-neon-db-pass:latest" \
             --set-secrets "APP_JWT_SECRET=jobboard-jwt-secret-dev:latest" \
             --set-secrets "MAIL_PASSWORD=jobboard-mail-password:latest"
