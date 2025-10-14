@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Builder
@@ -35,8 +33,9 @@ public class User {
     private String email;
     private String password;
 
-    @Builder.Default
-    private Set<Role> roles = new HashSet<>();
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @Column(nullable = false)
     @Builder.Default

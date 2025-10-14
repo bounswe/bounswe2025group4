@@ -26,9 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -64,11 +62,12 @@ public class AuthService {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
+        String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("User has no role assigned"));
 
-        return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles);
+        return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), role);
     }
 
 
@@ -88,34 +87,16 @@ public class AuthService {
                 encoder.encode(registerRequest.getPassword()
                 ));
 
-        Set<String> strRoles = registerRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+        String strRole = registerRequest.getRole();
+        
+        Role role = switch (strRole) {
+            case "ROLE_ADMIN" -> Role.ROLE_ADMIN;
+            case "ROLE_EMPLOYER" -> Role.ROLE_EMPLOYER;
+            case "ROLE_JOBSEEKER" -> Role.ROLE_JOBSEEKER;
+            default -> throw new IllegalArgumentException("Invalid role: " + strRole);
+        };
 
-        if (strRoles == null) {
-            Role userRole = Role.ROLE_JOBSEEKER;
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "ROLE_ADMIN":
-                        Role adminRole = Role.ROLE_ADMIN;
-
-                        roles.add(adminRole);
-
-                    case "ROLE_EMPLOYER":
-                        Role employerRole = Role.ROLE_EMPLOYER;
-                        roles.add(employerRole);
-
-                    default:
-                        Role jobseekerRole = Role.ROLE_JOBSEEKER;
-
-                        roles.add(jobseekerRole);
-                        break;
-                }
-            });
-        }
-
-        user.setRoles(roles);
+        user.setRole(role);
         user.setEmailVerified(false);
         userRepository.save(user);
 
@@ -238,10 +219,7 @@ public class AuthService {
         User user = userRepository.findById(userDetails.getId())
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
-        List<String> roles = user.getRoles()
-                .stream()
-                .map(Enum::name)
-                .collect(Collectors.toList());
-        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), roles);
+        String role = user.getRole().name();
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), role);
     }
 }

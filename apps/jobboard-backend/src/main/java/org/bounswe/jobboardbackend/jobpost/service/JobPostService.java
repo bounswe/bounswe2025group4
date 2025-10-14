@@ -61,7 +61,7 @@ public class JobPostService {
     public JobPostResponse create(CreateJobPostRequest dto) {
         User employer = getCurrentUser();
 
-        if (!employer.getRoles().contains(Role.ROLE_EMPLOYER)) {
+        if (employer.getRole() != Role.ROLE_EMPLOYER) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only users with EMPLOYER role can post jobs.");
         }
 

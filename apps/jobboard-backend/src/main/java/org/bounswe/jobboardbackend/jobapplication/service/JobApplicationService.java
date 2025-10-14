@@ -63,7 +63,7 @@ public class JobApplicationService {
         User jobSeeker = getCurrentUser();
 
         // Check if user has JOBSEEKER role
-        if (!jobSeeker.getRoles().contains(Role.ROLE_JOBSEEKER)) {
+        if (jobSeeker.getRole() != Role.ROLE_JOBSEEKER) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only users with JOBSEEKER role can apply for jobs");
         }
 
