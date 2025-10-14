@@ -43,3 +43,14 @@ app:
     public: true
   cors:
     allowed-origins: ${APP_CORS_ALLOWED_ORIGINS}
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    display-request-duration: true
+    doc-expansion: none # none | list | full
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json

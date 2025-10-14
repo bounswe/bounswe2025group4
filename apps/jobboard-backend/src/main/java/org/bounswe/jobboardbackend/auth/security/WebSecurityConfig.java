@@ -70,7 +70,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/verify-email", "/api/auth/password-reset/**").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/verify-email", "/api/auth/password-reset/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
                         .requestMatchers("/api/auth/password-change").authenticated()
                         .anyRequest().authenticated()
                 );
