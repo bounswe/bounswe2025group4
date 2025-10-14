@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/profile_provider.dart';
 import '../widgets/profile_picture.dart';
+import '../../../core/widgets/a11y.dart';
 import '../widgets/work_experience_list.dart';
 import '../widgets/education_list.dart';
 import '../widgets/badge_list.dart';
@@ -82,18 +83,21 @@ class _UserProfileViewState extends State<UserProfileView> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipOval(
-                  child: Image.network(
-                    userProfile.profile.profilePicture ?? '',
-                    key: ValueKey(userProfile.profile.profilePicture),
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
+                A11y(
+                  label: 'User profile picture',
+                  child: ClipOval(
+                    child: Image.network(
+                      userProfile.profile.profilePicture ?? '',
+                      key: ValueKey(userProfile.profile.profilePicture),
                       width: 100,
                       height: 100,
-                      color: Colors.grey[300],
-                      child: Icon(Icons.person, size: 50, color: Colors.grey[600]),
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[300],
+                        child: Icon(Icons.person, size: 50, color: Colors.grey[600]),
+                      ),
                     ),
                   ),
                 ),
@@ -133,7 +137,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                           padding: const EdgeInsets.only(top: 8),
                           child: Row(
                             children: [
-                              Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+                              const A11y(label: 'Location', child: Icon(Icons.location_on, size: 16, color: Colors.grey)),
                               const SizedBox(width: 4),
                               Text(
                                 userProfile.profile.location!,

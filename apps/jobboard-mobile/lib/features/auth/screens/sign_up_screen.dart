@@ -6,6 +6,7 @@ import 'package:mobile/core/providers/auth_provider.dart';
 import 'package:mobile/core/models/user_type.dart';
 import 'package:mobile/core/models/mentorship_status.dart';
 import 'package:mobile/core/providers/profile_provider.dart';
+import '../../../core/widgets/a11y.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -120,6 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'Back',
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text('Sign Up'),
@@ -176,10 +178,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     labelText: 'Password',
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(
+                      icon: A11y(
+                        label: _obscurePassword ? 'Show password' : 'Hide password',
+                        child: Icon(
                         _obscurePassword
                             ? Icons.visibility
                             : Icons.visibility_off,
+                        ),
                       ),
                       onPressed: () {
                         setState(() {
@@ -206,10 +211,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     labelText: 'Confirm Password',
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(
+                      icon: A11y(
+                        label: _obscureConfirmPassword ? 'Show password' : 'Hide password',
+                        child: Icon(
                         _obscureConfirmPassword
                             ? Icons.visibility
                             : Icons.visibility_off,
+                        ),
                       ),
                       onPressed: () {
                         setState(() {

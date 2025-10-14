@@ -144,7 +144,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ],
                 ),
               const SizedBox(height: 32),
-              Image.asset('assets/logo.jpeg', width: 120, height: 120),
+              Semantics(
+                label: 'Application logo',
+                child: Image.asset(
+                  'assets/logo.jpeg',
+                  width: 120,
+                  height: 120,
+                  semanticLabel: 'Application logo',
+                ),
+              ),
               const SizedBox(height: 32),
               const Text(
                 'Welcome to Ethical Job Platform',

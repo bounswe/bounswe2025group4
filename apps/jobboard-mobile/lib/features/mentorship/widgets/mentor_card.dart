@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/a11y.dart';
 
 class MentorCard extends StatelessWidget {
   final String mentorId;
@@ -42,13 +43,16 @@ class MentorCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: theme.colorScheme.primaryContainer,
-                child: Text(
-                  name.isNotEmpty ? name[0] : '?',
-                  style: textTheme.headlineSmall?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer,
+              A11y(
+                label: 'Mentor avatar for $name',
+                child: CircleAvatar(
+                  radius: 28,
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  child: Text(
+                    name.isNotEmpty ? name[0] : '?',
+                    style: textTheme.headlineSmall?.copyWith(
+                      color: theme.colorScheme.onPrimaryContainer,
+                    ),
                   ),
                 ),
               ),
@@ -73,22 +77,14 @@ class MentorCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(
-                          Icons.people_outline,
-                          size: 16,
-                          color: theme.hintColor,
-                        ),
+                        const A11y(label: 'Mentee count', child: Icon(Icons.people_outline, size: 16)),
                         const SizedBox(width: 4),
                         Text(
                           '$currentMenteeCount / $maxMenteeCount mentees',
                           style: textTheme.bodySmall,
                         ),
                         const Spacer(),
-                        Icon(
-                          Icons.star_border,
-                          size: 16,
-                          color: Colors.amber.shade700,
-                        ),
+                        A11y(label: 'Average rating', child: Icon(Icons.star_border, size: 16, color: Colors.amber.shade700)),
                         const SizedBox(width: 4),
                         Text(
                           averageRating.toStringAsFixed(1),

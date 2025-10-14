@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/a11y.dart';
 // import 'package:file_picker/file_picker.dart'; // Import if you use file_picker
 // import 'package:image_picker/image_picker.dart'; // Import if you use image_picker
 
@@ -156,10 +157,10 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
         children: [
           // Attach File Button
           IconButton(
-            icon: Icon(
+            icon: A11y(label: 'Attach file', child: Icon(
               Icons.attach_file,
               color: theme.iconTheme.color?.withOpacity(0.7),
-            ),
+            )),
             onPressed: _attachFile,
             tooltip: 'Attach file',
           ),
@@ -189,7 +190,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
           const SizedBox(width: 4),
           // Send Button
           IconButton(
-            icon: Icon(Icons.send, color: theme.colorScheme.primary),
+            icon: A11y(label: 'Send message', child: Icon(Icons.send, color: theme.colorScheme.primary)),
             onPressed: _sendMessage,
             tooltip: 'Send message',
           ),
