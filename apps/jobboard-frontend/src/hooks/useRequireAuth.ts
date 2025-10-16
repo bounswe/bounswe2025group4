@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { UserRole } from '../types/auth.types';
+import type { UserRole } from '../types/auth.types';
 
 /**
  * Options for useRequireAuth hook

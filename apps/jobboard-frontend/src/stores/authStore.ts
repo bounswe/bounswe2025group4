@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { AuthStore, LoginResponse, User } from '../types/auth.types';
+import type { AuthStore, LoginResponse, User } from '../types/auth.types';
 import { getUserFromToken, isTokenValid } from '../utils/jwt.utils';
 
 /**

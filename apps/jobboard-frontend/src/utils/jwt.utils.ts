@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-import { JwtPayload, User } from '../types/auth.types';
+import type { JwtPayload, User } from '../types/auth.types';
 
 /**
  * Token expiry buffer in seconds (60s)

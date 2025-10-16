@@ -2,11 +2,11 @@ import {
   createContext,
   useContext,
   useEffect,
-  ReactNode,
   useCallback,
 } from 'react';
+import type { ReactNode } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { User, LoginResponse } from '../types/auth.types';
+import type { User, LoginResponse } from '../types/auth.types';
 
 /**
  * Auth context type definition
