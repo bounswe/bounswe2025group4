@@ -475,6 +475,7 @@
   "common_themeToggle": "تبديل المظهر",
   "common_darkModeIcon": "أيقونة الوضع المظلم",
   "common_lightModeIcon": "أيقونة الوضع المضيء",
+  "common_back": "رجوع",
 
   "profilePage_languageChanged": "تم تغيير اللغة إلى {language}"
 }

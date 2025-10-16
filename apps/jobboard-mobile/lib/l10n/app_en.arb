@@ -1902,6 +1902,10 @@
   "common_lightModeIcon": "Light mode icon",
   "@common_lightModeIcon": {
     "description": "Light mode icon label"
+  },
+  "common_back": "Back",
+  "@common_back": {
+    "description": "Back button tooltip"
   }
 }
 

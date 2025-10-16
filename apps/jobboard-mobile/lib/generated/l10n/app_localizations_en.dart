@@ -1468,4 +1468,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get common_lightModeIcon => 'Light mode icon';
+
+  @override
+  String get common_back => 'Back';
 }

@@ -1478,4 +1478,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get common_lightModeIcon => 'Aydınlık mod ikonu';
+
+  @override
+  String get common_back => 'Geri';
 }

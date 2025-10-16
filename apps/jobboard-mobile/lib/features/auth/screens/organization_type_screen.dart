@@ -37,6 +37,7 @@ class _OrganizationTypeScreenState extends State<OrganizationTypeScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: AppLocalizations.of(context)!.common_back,
           onPressed: () => Navigator.pop(context),
         ),
       ),

@@ -2703,6 +2703,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Light mode icon'**
   String get common_lightModeIcon;
+
+  /// Back button tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get common_back;
 }
 
 class _AppLocalizationsDelegate

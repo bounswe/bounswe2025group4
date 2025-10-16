@@ -1459,4 +1459,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get common_lightModeIcon => 'أيقونة الوضع المضيء';
+
+  @override
+  String get common_back => 'رجوع';
 }

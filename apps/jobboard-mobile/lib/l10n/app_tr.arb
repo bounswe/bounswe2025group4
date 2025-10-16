@@ -475,6 +475,7 @@
   "common_themeToggle": "Tema Değiştir",
   "common_darkModeIcon": "Karanlık mod ikonu",
   "common_lightModeIcon": "Aydınlık mod ikonu",
+  "common_back": "Geri",
 
   "profilePage_languageChanged": "Dil {language} olarak değiştirildi"
 }
