@@ -28,6 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -73,15 +74,19 @@ public class AuthService {
 
     @Transactional
     public MessageResponse registerAndSendVerification(@Valid RegisterRequest registerRequest) {
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            throw new HandleException(ErrorCode.USERNAME_ALREADY_USED, "Username is already used.");
+
+        Optional<User> user = userRepository.findByUsername(registerRequest.getUsername());
+
+        if(user.isPresent()) {
+            if(user.get().getEmailVerified()) {
+                throw new HandleException(ErrorCode.USER_ALREADY_EXISTS, "User already exists with verified email");
+            }
+            sendEmailForRegister(user.get());
+            return new MessageResponse("Registration is already exists, verification link is sent again. Please verify your email.");
         }
 
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new HandleException(ErrorCode.EMAIL_ALREADY_USED, "Email is already used");
-        }
 
-        User user = new User(
+        User newUser = new User(
                 registerRequest.getUsername(),
                 registerRequest.getEmail(),
                 encoder.encode(registerRequest.getPassword()
@@ -96,29 +101,12 @@ public class AuthService {
             default -> throw new HandleException(ErrorCode.ROLE_INVALID, "User has no role assigned");
         };
 
-        user.setRole(role);
-        user.setEmailVerified(false);
-        userRepository.save(user);
+        newUser.setRole(role);
+        newUser.setEmailVerified(false);
+        userRepository.save(newUser);
+        sendEmailForRegister(newUser);
 
-        String token = UUID.randomUUID().toString();
-        Instant expires = Instant.now().plus(Duration.ofMinutes(20));
-        tokenRepository.deleteByUserId(user.getId());
-        tokenRepository.save(new EmailVerificationToken(token, user.getId(), expires));
-        String link = UriComponentsBuilder
-                .fromUriString(verifyEmailUrl)
-                .queryParam("token", token)
-                .build().toUriString();
-
-        String body = """
-                    Please click to verify your email (expires in ~20m):
-                    %s
-                    If you didn't request this, ignore.
-                """.formatted(link);
-
-        emailService.sendEmail(user.getEmail(), "Verify your email", body);
-
-
-        return new MessageResponse("Verification email sent. Please verify your email.");
+        return new MessageResponse("User registered. Please verify your email.");
     }
 
     @Transactional
@@ -222,5 +210,24 @@ public class AuthService {
 
         String role = user.getRole().name();
         return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), role);
+    }
+
+    private void sendEmailForRegister(User user) {
+        String token = UUID.randomUUID().toString();
+        Instant expires = Instant.now().plus(Duration.ofMinutes(20));
+        tokenRepository.deleteByUserId(user.getId());
+        tokenRepository.save(new EmailVerificationToken(token, user.getId(), expires));
+        String link = UriComponentsBuilder
+                .fromUriString(verifyEmailUrl)
+                .queryParam("token", token)
+                .build().toUriString();
+
+        String body = """
+                    Please click to verify your email (expires in ~20m):
+                    %s
+                    If you didn't request this, ignore.
+                """.formatted(link);
+
+        emailService.sendEmail(user.getEmail(), "Verify your email", body);
     }
 }
