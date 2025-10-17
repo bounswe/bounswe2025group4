@@ -7,6 +7,7 @@ import '../../../core/providers/font_size_provider.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../auth/screens/welcome_screen.dart';
 import '../../../core/widgets/a11y.dart';
+import '../../auth/screens/welcome_screen.dart' show ThemeToggleSwitch;
 import '../widgets/profile_picture.dart';
 import '../widgets/work_experience_list.dart';
 import '../widgets/editable_chip_list.dart';
@@ -181,13 +182,10 @@ class _ProfilePageState extends State<ProfilePage> {
           builder: (context, provider, _) {
             final imageUrl =
                 provider.currentUserProfile?.profile.profilePicture;
-            return A11y(
-              label: 'Profile picture. Tap to change.',
-              child: ProfilePicture(
-                imageUrl: imageUrl,
-                size: 100,
-                isEditable: true,
-              ),
+            return ProfilePicture(
+              imageUrl: imageUrl,
+              size: 100,
+              isEditable: true,
             );
           },
         ),
@@ -204,12 +202,21 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
 
-              Text(
-                AppLocalizations.of(context)!.profilePage_email(user?.email ?? ''),
-                style: TextStyle(
-                  fontSize: fontSizeProvider.getScaledFontSize(14),
-                  color: Colors.grey[700],
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)!.profilePage_email(user?.email ?? ''),
+                      style: TextStyle(
+                        fontSize: fontSizeProvider.getScaledFontSize(14),
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Reuse the same theme toggle used on the welcome screen
+                  const ThemeToggleSwitch(),
+                ],
               ),
               Text(
                 profile.fullName,

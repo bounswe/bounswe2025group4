@@ -121,7 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back',
+          tooltip: AppLocalizations.of(context)!.common_back,
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.signUpScreen_title),
@@ -179,7 +179,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: A11y(
-                        label: _obscurePassword ? 'Show password' : 'Hide password',
+                        label: _obscurePassword
+                            ? AppLocalizations.of(context)!.common_showPassword
+                            : AppLocalizations.of(context)!.common_hidePassword,
                         child: Icon(
                         _obscurePassword
                             ? Icons.visibility
@@ -212,7 +214,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: A11y(
-                        label: _obscureConfirmPassword ? 'Show password' : 'Hide password',
+                        label: _obscureConfirmPassword
+                            ? AppLocalizations.of(context)!.common_showPassword
+                            : AppLocalizations.of(context)!.common_hidePassword,
                         child: Icon(
                         _obscureConfirmPassword
                             ? Icons.visibility

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import '../../../core/providers/profile_provider.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/widgets/a11y.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class ProfilePicture extends StatefulWidget {
   final double size;
@@ -41,7 +42,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile picture updated')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.common_save)),
             );
           }
         });
@@ -75,7 +76,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile picture deleted')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.common_delete)),
             );
           }
         });
@@ -86,7 +87,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to delete profile picture: $e')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.common_error)),
             );
           }
         });
@@ -114,11 +115,15 @@ class _ProfilePictureState extends State<ProfilePicture> {
                     return CircleAvatar(
                       radius: widget.size / 2,
                       backgroundColor: Colors.grey[300],
-                      child: const CircularProgressIndicator(),
+                      child: const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
                     );
                   } else if (snapshot.hasData) {
                     return A11y(
-                      label: 'User profile picture',
+                      label: AppLocalizations.of(context)!.profilePage_title,
                       child: CircleAvatar(
                         radius: widget.size / 2,
                         backgroundImage: MemoryImage(snapshot.data!),
@@ -126,7 +131,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
                     );
                   } else {
                     return A11y(
-                      label: 'Default profile picture',
+                      label: AppLocalizations.of(context)!.editProfile_title,
                       child: CircleAvatar(
                         radius: widget.size / 2,
                         backgroundColor: Colors.grey[300],
@@ -137,33 +142,26 @@ class _ProfilePictureState extends State<ProfilePicture> {
                 },
               ),
 
+              // Small delete button at bottom-left
               if (widget.isEditable && profilePictureUrl.isNotEmpty)
                 Positioned(
-                  bottom: 0,
-                  left: 0,
+                  left: 6,
+                  bottom: 6,
                   child: A11y(
-                    label: 'Delete profile picture',
-                    child: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteImage(context),
-                    ),
-                  ),
-                ),
-
-              if (widget.isEditable)
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: A11y(
-                    label: 'Change profile picture',
+                    label: AppLocalizations.of(context)!.common_delete,
                     child: Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.9),
                         shape: BoxShape.circle,
-                        color: Colors.blue,
                       ),
+                      height: 28,
+                      width: 28,
                       child: IconButton(
-                        icon: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
-                        onPressed: () => _pickImage(context),
+                        padding: EdgeInsets.zero,
+                        iconSize: 16,
+                        icon: const Icon(Icons.delete, color: Colors.white),
+                        onPressed: () => _deleteImage(context),
+                        tooltip: AppLocalizations.of(context)!.common_delete,
                       ),
                     ),
                   ),

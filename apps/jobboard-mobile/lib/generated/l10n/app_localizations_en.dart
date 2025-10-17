@@ -1152,7 +1152,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get editProfile_title => 'Edit Profile';
+  String get editProfile_title => 'Edit';
 
   @override
   String get editProfile_saveChanges => 'Save changes';
@@ -1471,4 +1471,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get common_back => 'Back';
+
+  @override
+  String get common_showPassword => 'Show password';
+
+  @override
+  String get common_hidePassword => 'Hide password';
 }

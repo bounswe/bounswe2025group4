@@ -65,7 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back',
+          tooltip: AppLocalizations.of(context)!.common_back,
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.signInScreen_title),
@@ -106,7 +106,9 @@ class _SignInScreenState extends State<SignInScreen> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: A11y(
-                        label: _obscurePassword ? 'Show password' : 'Hide password',
+                        label: _obscurePassword
+                            ? AppLocalizations.of(context)!.common_showPassword
+                            : AppLocalizations.of(context)!.common_hidePassword,
                         child: Icon(
                         _obscurePassword
                             ? Icons.visibility_off

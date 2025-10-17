@@ -2119,7 +2119,7 @@ abstract class AppLocalizations {
   /// Edit profile screen title
   ///
   /// In en, this message translates to:
-  /// **'Edit Profile'**
+  /// **'Edit'**
   String get editProfile_title;
 
   /// Save changes tooltip
@@ -2709,6 +2709,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get common_back;
+
+  /// Accessibility label to reveal password
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get common_showPassword;
+
+  /// Accessibility label to hide password
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get common_hidePassword;
 }
 
 class _AppLocalizationsDelegate

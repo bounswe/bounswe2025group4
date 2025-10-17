@@ -1430,7 +1430,7 @@
   },
 
   "@@_PROFILE": {},
-  "editProfile_title": "Edit Profile",
+  "editProfile_title": "Edit",
   "@editProfile_title": {
     "description": "Edit profile screen title"
   },
@@ -1906,6 +1906,14 @@
   "common_back": "Back",
   "@common_back": {
     "description": "Back button tooltip"
+  },
+  "common_showPassword": "Show password",
+  "@common_showPassword": {
+    "description": "Accessibility label to reveal password"
+  },
+  "common_hidePassword": "Hide password",
+  "@common_hidePassword": {
+    "description": "Accessibility label to hide password"
   }
 }
 

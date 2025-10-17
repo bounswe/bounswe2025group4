@@ -154,7 +154,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 controller: _locationController,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.editProfile_location,
-                  prefixIcon: A11y(label: 'Location', child: Icon(Icons.location_on)),
+                  prefixIcon: const Icon(Icons.location_on),
                 ),
               ),
               const SizedBox(height: 8),
@@ -162,7 +162,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 controller: _phoneController,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.editProfile_phone,
-                  prefixIcon: A11y(label: 'Phone', child: Icon(Icons.phone)),
+                  prefixIcon: const Icon(Icons.phone),
                 ),
               ),
               const SizedBox(height: 16),

@@ -1462,4 +1462,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get common_back => 'رجوع';
+
+  @override
+  String get common_showPassword => 'Show password';
+
+  @override
+  String get common_hidePassword => 'Hide password';
 }

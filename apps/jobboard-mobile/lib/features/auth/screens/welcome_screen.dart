@@ -242,38 +242,29 @@ class ThemeToggleSwitch extends StatelessWidget {
     final color = Theme.of(context).primaryColor;
     final isDarkMode = themeProvider.isDarkMode;
 
-    return A11y(
-      label: isDarkMode 
-          ? AppLocalizations.of(context)!.common_darkMode 
-          : AppLocalizations.of(context)!.common_lightMode,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          A11y(
-            label: isDarkMode 
-                ? AppLocalizations.of(context)!.common_darkModeIcon 
-                : AppLocalizations.of(context)!.common_lightModeIcon,
-            child: Icon(
-              isDarkMode ? Icons.dark_mode : Icons.light_mode,
-              color: isDarkMode ? Colors.white : color,
-            ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          isDarkMode ? Icons.dark_mode : Icons.light_mode,
+          color: isDarkMode ? Colors.white : color,
+        ),
+        const SizedBox(width: 8),
+        // Keep only the "theme toggle" tooltip/semantics
+        A11y(
+          label: AppLocalizations.of(context)!.common_themeToggle,
+          child: Switch.adaptive(
+            value: isDarkMode,
+            onChanged: (value) {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
+            },
+            activeColor: Colors.amber,
+            activeTrackColor: Colors.amber.withOpacity(0.5),
+            inactiveThumbColor: isDarkMode ? Colors.white : Colors.grey.shade400,
+            inactiveTrackColor: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300,
           ),
-          const SizedBox(width: 8),
-          A11y(
-            label: AppLocalizations.of(context)!.common_themeToggle,
-            child: Switch.adaptive(
-              value: isDarkMode,
-              onChanged: (value) {
-                Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
-              },
-              activeColor: Colors.amber,
-              activeTrackColor: Colors.amber.withOpacity(0.5),
-              inactiveThumbColor: isDarkMode ? Colors.white : Colors.grey.shade400,
-              inactiveTrackColor: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
