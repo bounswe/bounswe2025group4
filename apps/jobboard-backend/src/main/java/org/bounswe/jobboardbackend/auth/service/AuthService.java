@@ -14,6 +14,8 @@ import org.bounswe.jobboardbackend.auth.repository.PasswordResetTokenRepository;
 import org.bounswe.jobboardbackend.auth.repository.TokenRepository;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.security.JwtUtils;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,9 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -50,10 +50,10 @@ public class AuthService {
     @Transactional
     public JwtResponse authUser(@Valid LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+                .orElseThrow(() ->  new HandleException(ErrorCode.USER_NOT_FOUND, "User not found. Please check your username."));
 
         if (!Boolean.TRUE.equals(user.getEmailVerified())) {
-            throw new IllegalStateException("Email not verified. Please verify your email before logging in.");
+            throw new HandleException(ErrorCode.EMAIL_NOT_VERIFIED, "Email not verified. Please verify your email.");
         }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -65,7 +65,7 @@ public class AuthService {
         String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("User has no role assigned"));
+                .orElseThrow(() -> new HandleException(ErrorCode.ROLE_INVALID, "User has no role assigned"));
 
         return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), role);
     }
@@ -74,11 +74,11 @@ public class AuthService {
     @Transactional
     public MessageResponse registerAndSendVerification(@Valid RegisterRequest registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            return new MessageResponse("Error: Username is already taken!");
+            throw new HandleException(ErrorCode.USERNAME_ALREADY_USED, "Username is already used.");
         }
 
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            return new MessageResponse("Error: Email is already in use!");
+            throw new HandleException(ErrorCode.EMAIL_ALREADY_USED, "Email is already used");
         }
 
         User user = new User(
@@ -93,7 +93,7 @@ public class AuthService {
             case "ROLE_ADMIN" -> Role.ROLE_ADMIN;
             case "ROLE_EMPLOYER" -> Role.ROLE_EMPLOYER;
             case "ROLE_JOBSEEKER" -> Role.ROLE_JOBSEEKER;
-            default -> throw new IllegalArgumentException("Invalid role: " + strRole);
+            default -> throw new HandleException(ErrorCode.ROLE_INVALID, "User has no role assigned");
         };
 
         user.setRole(role);
@@ -124,14 +124,15 @@ public class AuthService {
     @Transactional
     public void verifyEmailToken(String token) {
         EmailVerificationToken verificationToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
+                .orElseThrow(() -> new HandleException(ErrorCode.INVALID_TOKEN, "Invalid token"));
+
         if (verificationToken.getExpiresAt().isBefore(Instant.now())) {
             tokenRepository.delete(verificationToken);
-            throw new IllegalArgumentException("Token expired");
+            throw new HandleException(ErrorCode.TOKEN_EXPIRED, "Token expired");
         }
 
         User user = userRepository.findById(verificationToken.getUserId())
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
 
         user.setEmailVerified(true);
         userRepository.save(user);
@@ -142,10 +143,10 @@ public class AuthService {
     public void issueResetTokenIfExists(String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, email + " not found"));
 
 
-        if (!Boolean.TRUE.equals(user.getEmailVerified())) return;
+        if (!Boolean.TRUE.equals(user.getEmailVerified())) throw new HandleException(ErrorCode.EMAIL_NOT_VERIFIED, "Email not verified.");
 
         passwordResetTokenRepository.deleteByUserId(user.getId());
         String token = UUID.randomUUID().toString();
@@ -196,18 +197,18 @@ public class AuthService {
     public void changePassword(Authentication auth, @NotBlank String currentPassword, @Size(min = 8, max = 128) String newPassword) {
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
         User user = userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
 
         if (!Boolean.TRUE.equals(user.getEmailVerified())) {
-            throw new IllegalStateException("Account is not active.");
+            throw new HandleException(ErrorCode.EMAIL_NOT_VERIFIED, "Email not verified.");
         }
 
         if (!encoder.matches(currentPassword, user.getPassword())) {
-            throw new IllegalArgumentException("Invalid current password");
+            throw new HandleException(ErrorCode.CURRENT_PASSWORD_INVALID, "Current password is invalid.");
         }
 
         if (encoder.matches(newPassword, user.getPassword())) {
-            throw new IllegalArgumentException("New password must be different from the current one.");
+            throw new HandleException(ErrorCode.PASSWORD_SAME_AS_OLD, "New password must be different from the current one.");
         }
 
         user.setPassword(encoder.encode(newPassword));
@@ -217,7 +218,7 @@ public class AuthService {
     public UserResponse getUserDetails(Authentication auth) {
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
         User user = userRepository.findById(userDetails.getId())
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
 
         String role = user.getRole().name();
         return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), role);
