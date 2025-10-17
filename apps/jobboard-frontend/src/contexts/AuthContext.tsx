@@ -37,42 +37,50 @@ interface AuthProviderProps {
  * Automatically restores session on mount
  */
 export function AuthProvider({ children }: AuthProviderProps) {
-  const store = useAuthStore();
+  // Get state from store
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  
+  // Get actions from store
+  const storeLogin = useAuthStore((state) => state.login);
+  const storeLogout = useAuthStore((state) => state.logout);
+  const restoreSession = useAuthStore((state) => state.restoreSession);
 
   // Restore session on mount
   useEffect(() => {
-    store.restoreSession();
-  }, [store]);
+    restoreSession();
+  }, [restoreSession]);
 
   // Login function - wraps store login
   const login = useCallback(
     (response: LoginResponse) => {
-      store.login(response);
+      storeLogin(response);
     },
-    [store]
+    [storeLogin]
   );
 
   // Logout function - wraps store logout
   const logout = useCallback(() => {
-    store.logout();
-  }, [store]);
+    storeLogout();
+  }, [storeLogout]);
 
   // Refresh function - stub for future implementation
   // Will be called by API client on 401 errors
   const refresh = useCallback(async () => {
     // TODO: Implement token refresh logic when backend supports it
     // For now, just validate and restore session
-    store.restoreSession();
+    restoreSession();
 
     // If session is invalid after restore, logout
-    if (!store.isAuthenticated) {
-      store.logout();
+    const currentAuth = useAuthStore.getState().isAuthenticated;
+    if (!currentAuth) {
+      storeLogout();
     }
-  }, [store]);
+  }, [restoreSession, storeLogout]);
 
   const contextValue: AuthContextType = {
-    user: store.user,
-    isAuthenticated: store.isAuthenticated,
+    user,
+    isAuthenticated,
     login,
     logout,
     refresh,
