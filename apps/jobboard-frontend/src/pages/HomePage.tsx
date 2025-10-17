@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   Search,
   Briefcase,
@@ -18,6 +19,8 @@ import {
 } from "lucide-react";
 
 export default function HomePage() {
+  const isMediumOrLarger = useMediaQuery('(min-width: 768px)');
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -48,7 +51,7 @@ export default function HomePage() {
                 <Search className="text-gray-400 size-5" />
                 <Input
                   type="text"
-                  placeholder="Search for jobs, e.g. 'Software Engineer'"
+                  placeholder={isMediumOrLarger ? "Search for jobs, e.g. 'Software Engineer'" : "Search for jobs"}
                   className="border-0 shadow-none focus-visible:ring-0"
                 />
               </div>
