@@ -44,7 +44,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="flex flex-col md:hidden items-center justify-center gap-4">
-        <p className="text-sm text-muted-foreground text-center">
+          <p className="text-sm text-muted-foreground text-center">
             <Link to="/" className="hover:text-foreground transition-colors font-medium">
               Ethica Jobs 
             </Link>
