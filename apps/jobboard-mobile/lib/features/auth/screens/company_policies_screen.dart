@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/features/auth/screens/mentorship_selection_screen.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
+import '../../../core/widgets/a11y.dart';
 import 'package:mobile/generated/l10n/app_localizations.dart';
 
 class CompanyPoliciesScreen extends StatefulWidget {
@@ -45,6 +46,7 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'Back',
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -137,9 +139,12 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                                     ),
                                   ),
                                   if (isSelected)
-                                    const Icon(
-                                      Icons.check_circle,
-                                      color: Colors.blue,
+                                    const A11y(
+                                      label: 'Selected',
+                                      child: Icon(
+                                        Icons.check_circle,
+                                        color: Colors.blue,
+                                      ),
                                     ),
                                 ],
                               ),

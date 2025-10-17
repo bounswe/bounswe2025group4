@@ -1444,4 +1444,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String common_from(String amount) {
     return 'من $amount';
   }
+
+  @override
+  String get common_darkMode => 'الوضع المظلم';
+
+  @override
+  String get common_lightMode => 'الوضع المضيء';
+
+  @override
+  String get common_themeToggle => 'تبديل المظهر';
+
+  @override
+  String get common_darkModeIcon => 'أيقونة الوضع المظلم';
+
+  @override
+  String get common_lightModeIcon => 'أيقونة الوضع المضيء';
+
+  @override
+  String get common_back => 'رجوع';
 }

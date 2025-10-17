@@ -470,6 +470,12 @@
   "common_notSpecified": "غير محدد",
   "common_upTo": "حتى {amount}",
   "common_from": "من {amount}",
+  "common_darkMode": "الوضع المظلم",
+  "common_lightMode": "الوضع المضيء",
+  "common_themeToggle": "تبديل المظهر",
+  "common_darkModeIcon": "أيقونة الوضع المظلم",
+  "common_lightModeIcon": "أيقونة الوضع المضيء",
+  "common_back": "رجوع",
 
   "profilePage_languageChanged": "تم تغيير اللغة إلى {language}"
 }

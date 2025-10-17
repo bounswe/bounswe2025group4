@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/a11y.dart';
 import '../../../core/services/api_service.dart'; // To get available filters
 import '../../../core/utils/string_extensions.dart'; // Import shared extension
 import '../../../generated/l10n/app_localizations.dart';

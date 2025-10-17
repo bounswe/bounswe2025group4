@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/core/models/mentorship_request.dart';
+import '../../../core/widgets/a11y.dart';
 
 class MentorshipRequestCard extends StatelessWidget {
   final MentorshipRequest request;
@@ -24,8 +25,11 @@ class MentorshipRequestCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  child: Text(request.mentee.username[0].toUpperCase()),
+                A11y(
+                  label: 'Mentee avatar for ${request.mentee.username}',
+                  child: CircleAvatar(
+                    child: Text(request.mentee.username[0].toUpperCase()),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

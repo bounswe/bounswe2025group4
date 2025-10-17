@@ -7,6 +7,8 @@ import 'thread_detail_screen.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../core/widgets/a11y.dart';
+import '../../../core/widgets/a11y.dart';
 
 class ForumPage extends StatefulWidget {
   const ForumPage({super.key});
@@ -66,7 +68,7 @@ class _ForumPageState extends State<ForumPage> {
                     child: TextField(
                       decoration: InputDecoration(
                         labelText: AppLocalizations.of(context)!.forumPage_searchTags,
-                        prefixIcon: const Icon(Icons.search),
+                        prefixIcon: A11y(label: 'Search tags', child: const Icon(Icons.search)),
                       ),
                       onChanged: (value) {
                         setModalState(() => searchQuery = value);
@@ -103,7 +105,7 @@ class _ForumPageState extends State<ForumPage> {
                   const Divider(height: 1),
                   Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Row(
+                        child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ElevatedButton(
@@ -189,7 +191,7 @@ class _ForumPageState extends State<ForumPage> {
                         alignment: Alignment.centerLeft,
                         child: ElevatedButton.icon(
                           onPressed: _showFilterModal,
-                          icon: const Icon(Icons.filter_list),
+                          icon: const A11y(label: 'Open filters', child: Icon(Icons.filter_list)),
                           label: Text(AppLocalizations.of(context)!.forumPage_filter),
                         ),
                       ),
@@ -256,7 +258,7 @@ class _ForumPageState extends State<ForumPage> {
             bottom: 16,
             right: 16,
             child: FloatingActionButton(
-              child: const Icon(Icons.add),
+            child: const A11y(label: 'Create new discussion', child: Icon(Icons.add)),
               onPressed: () async {
                 final created = await Navigator.push<DiscussionThread>(
                   ctx,

@@ -5,6 +5,7 @@ import '../../../core/providers/profile_provider.dart';
 import 'work_experience_item.dart';
 import '../dialogs/work_experience_dialog.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../core/widgets/a11y.dart';
 
 class WorkExperienceList extends StatelessWidget {
   final List<Experience> experiences;
@@ -30,7 +31,7 @@ class WorkExperienceList extends StatelessWidget {
             ),
             if (isEditable)
               TextButton.icon(
-                icon: const Icon(Icons.add),
+                icon: const A11y(label: 'Add work experience', child: Icon(Icons.add)),
                 label: Text(AppLocalizations.of(context)!.profileWidgets_add),
                 onPressed: () => _showWorkExperienceDialog(context),
               ),

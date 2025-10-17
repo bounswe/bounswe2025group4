@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/providers/profile_provider.dart';
 import '../../../core/providers/auth_provider.dart';
+import '../../../core/widgets/a11y.dart';
 
 class ProfilePicture extends StatefulWidget {
   final double size;
@@ -116,15 +117,21 @@ class _ProfilePictureState extends State<ProfilePicture> {
                       child: const CircularProgressIndicator(),
                     );
                   } else if (snapshot.hasData) {
-                    return CircleAvatar(
-                      radius: widget.size / 2,
-                      backgroundImage: MemoryImage(snapshot.data!),
+                    return A11y(
+                      label: 'User profile picture',
+                      child: CircleAvatar(
+                        radius: widget.size / 2,
+                        backgroundImage: MemoryImage(snapshot.data!),
+                      ),
                     );
                   } else {
-                    return CircleAvatar(
-                      radius: widget.size / 2,
-                      backgroundColor: Colors.grey[300],
-                      child: Icon(Icons.person, size: widget.size / 2, color: Colors.grey[600]),
+                    return A11y(
+                      label: 'Default profile picture',
+                      child: CircleAvatar(
+                        radius: widget.size / 2,
+                        backgroundColor: Colors.grey[300],
+                        child: Icon(Icons.person, size: widget.size / 2, color: Colors.grey[600]),
+                      ),
                     );
                   }
                 },
@@ -134,9 +141,12 @@ class _ProfilePictureState extends State<ProfilePicture> {
                 Positioned(
                   bottom: 0,
                   left: 0,
-                  child: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _deleteImage(context),
+                  child: A11y(
+                    label: 'Delete profile picture',
+                    child: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () => _deleteImage(context),
+                    ),
                   ),
                 ),
 
@@ -144,14 +154,17 @@ class _ProfilePictureState extends State<ProfilePicture> {
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.blue,
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
-                      onPressed: () => _pickImage(context),
+                  child: A11y(
+                    label: 'Change profile picture',
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.blue,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
+                        onPressed: () => _pickImage(context),
+                      ),
                     ),
                   ),
                 ),

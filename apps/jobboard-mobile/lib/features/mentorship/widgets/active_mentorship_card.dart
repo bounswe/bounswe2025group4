@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/a11y.dart';
 
 class ActiveMentorshipCard extends StatelessWidget {
   final String mentorId;
@@ -29,12 +30,15 @@ class ActiveMentorshipCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: CircleAvatar(
-              backgroundColor: theme.colorScheme.primaryContainer,
-              child: Text(
-                mentorName.isNotEmpty ? mentorName[0] : '?',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onPrimaryContainer,
+            leading: A11y(
+              label: 'Mentor avatar for $mentorName',
+              child: CircleAvatar(
+                backgroundColor: theme.colorScheme.primaryContainer,
+                child: Text(
+                  mentorName.isNotEmpty ? mentorName[0] : '?',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.colorScheme.onPrimaryContainer,
+                  ),
                 ),
               ),
             ),
@@ -48,7 +52,7 @@ class ActiveMentorshipCard extends StatelessWidget {
                       ),
                     )
                     : null,
-            trailing: const Icon(Icons.message_outlined, size: 20),
+            trailing: const A11y(label: 'Open messages', child: Icon(Icons.message_outlined, size: 20)),
             onTap: onTap, // Trigger navigation
           ),
           if (onCompleteTap != null || onCancelTap != null)
