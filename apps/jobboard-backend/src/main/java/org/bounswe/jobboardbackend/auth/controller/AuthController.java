@@ -31,7 +31,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
 
-
         return new ResponseEntity<>(authService.registerAndSendVerification(registerRequest), HttpStatus.CREATED);
 
     }
@@ -56,15 +55,15 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Password has been reset. You can log in now."));
     }
 
-    @PostMapping("/password-change")
     @PreAuthorize("isAuthenticated()")
+    @PostMapping("/password-change")
     public ResponseEntity<MessageResponse> changePassword(@Valid @RequestBody PasswordChangeRequest req, Authentication auth) {
         authService.changePassword(auth, req.getCurrentPassword(), req.getNewPassword());
         return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
     }
 
-    @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
+    @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(Authentication auth) {
         return new ResponseEntity<>(authService.getUserDetails(auth), HttpStatus.OK);
     }
