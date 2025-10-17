@@ -114,6 +114,9 @@ public class ProfileService {
             throw new HandleException(ErrorCode.VALIDATION_ERROR, "No changes provided");
         }
 
+        if (dto.getFirstName() != null) requireNotBlank(dto.getFirstName(), "firstName");
+        if (dto.getLastName()  != null) requireNotBlank(dto.getLastName(),  "lastName");
+
         if (dto.getFirstName() != null) profile.setFirstName(dto.getFirstName());
         if (dto.getLastName()  != null) profile.setLastName(dto.getLastName());
         if (dto.getBio()       != null) profile.setBio(dto.getBio());
@@ -247,6 +250,8 @@ public class ProfileService {
 
         requireNotNull(dto);
         requireNotBlank(dto.getSchool(), "school");
+        requireNotBlank(dto.getDegree(), "degree");
+        requireNotBlank(dto.getField(), "field");
         requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate());
 
         Education e = Education.builder()
@@ -275,7 +280,20 @@ public class ProfileService {
         if (dto.getSchool() == null && dto.getDegree() == null && dto.getField() == null && dto.getStartDate() == null && dto.getEndDate() == null && dto.getDescription() == null) {
             throw new HandleException(ErrorCode.VALIDATION_ERROR, "No changes provided");
         }
-        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate());
+        if (dto.getStartDate() != null && dto.getEndDate() != null) {
+            requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate());
+        }
+        if(dto.getStartDate() != null && dto.getEndDate() == null) {
+            requireStartBeforeEnd(dto.getStartDate(), e.getEndDate());
+        }
+        if(dto.getEndDate() != null && dto.getStartDate() == null) {
+            requireStartBeforeEnd(e.getStartDate(), dto.getEndDate());
+        }
+
+        if (dto.getSchool() != null) requireNotBlank(dto.getSchool(), "school");
+        if (dto.getDegree() != null) requireNotBlank(dto.getDegree(), "degree");
+        if (dto.getField()  != null) requireNotBlank(dto.getField(),  "field");
+
 
         if (dto.getSchool()      != null) e.setSchool(dto.getSchool());
         if (dto.getDegree()      != null) e.setDegree(dto.getDegree());
@@ -337,7 +355,18 @@ public class ProfileService {
         if (dto.getCompany() == null && dto.getPosition() == null && dto.getDescription() == null && dto.getStartDate() == null && dto.getEndDate() == null) {
             throw new HandleException(ErrorCode.VALIDATION_ERROR, "No changes provided");
         }
-        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate());
+        if (dto.getStartDate() != null && dto.getEndDate() != null) {
+            requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate());
+        }
+        if(dto.getStartDate() != null && dto.getEndDate() == null) {
+            requireStartBeforeEnd(dto.getStartDate(), ex.getEndDate());
+        }
+        if(dto.getEndDate() != null && dto.getStartDate() == null) {
+            requireStartBeforeEnd(ex.getStartDate(), dto.getEndDate());
+        }
+
+        if (dto.getCompany()  != null) requireNotBlank(dto.getCompany(),  "company");
+        if (dto.getPosition() != null) requireNotBlank(dto.getPosition(), "position");
 
         if (dto.getCompany()     != null) ex.setCompany(dto.getCompany());
         if (dto.getPosition()    != null) ex.setPosition(dto.getPosition());
