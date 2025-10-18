@@ -4,8 +4,11 @@ import { useAuthStore } from '../stores/authStore';
 
 /**
  * Base API URL - must be set via VITE_API_URL environment variable
+ * Appends /api if not already present
  */
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
+  ? import.meta.env.VITE_API_URL 
+  : (import.meta.env.VITE_API_URL || '') + '/api';
 
 /**
  * Create axios instance with base configuration

@@ -7,7 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
+  ? import.meta.env.VITE_API_URL 
+  : (import.meta.env.VITE_API_URL || '') + '/api';
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);

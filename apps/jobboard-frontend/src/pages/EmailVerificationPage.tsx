@@ -2,7 +2,9 @@ import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
+  ? import.meta.env.VITE_API_URL 
+  : (import.meta.env.VITE_API_URL || '') + '/api';
 
 export default function EmailVerificationPage() {
   const navigate = useNavigate();
