@@ -11,6 +11,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
   ? import.meta.env.VITE_API_URL 
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
+console.log('LoginPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('LoginPage - API_BASE_URL:', API_BASE_URL);
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,15 +56,30 @@ export default function LoginPage() {
         password: data.password,
       });
 
-      if (response.status === 200 && response.data.token) {
-        // Store token
-        localStorage.setItem('token', response.data.token);
-        
-        // Dispatch custom event to update header
-        window.dispatchEvent(new Event('auth-change'));
-        
-        // Redirect to home
-        navigate('/');
+      console.log('Login response:', response);
+      console.log('Login response data:', response.data);
+      console.log('Token:', response.data.token);
+
+      if (response.status === 200) {
+        // Check if 2FA is required
+        if (response.data.temporaryToken) {
+          // 2FA required - redirect to OTP verification
+          navigate('/verify-otp', {
+            state: {
+              temporaryToken: response.data.temporaryToken,
+              username: data.username,
+            },
+          });
+        } else if (response.data.token) {
+          // No 2FA - direct login
+          localStorage.setItem('token', response.data.token);
+          
+          // Dispatch custom event to update header
+          window.dispatchEvent(new Event('auth-change'));
+          
+          // Redirect to home
+          navigate('/');
+        }
       }
     } catch (error: any) {
       if (error.response?.status === 401) {

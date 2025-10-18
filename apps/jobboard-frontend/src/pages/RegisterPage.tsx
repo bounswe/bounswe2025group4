@@ -11,6 +11,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
   ? import.meta.env.VITE_API_URL 
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
+console.log('RegisterPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('RegisterPage - API_BASE_URL:', API_BASE_URL);
+
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');

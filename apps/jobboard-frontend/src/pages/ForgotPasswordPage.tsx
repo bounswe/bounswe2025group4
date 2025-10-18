@@ -11,6 +11,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
   ? import.meta.env.VITE_API_URL 
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
+console.log('ForgotPasswordPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('ForgotPasswordPage - API_BASE_URL:', API_BASE_URL);
+
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');

@@ -11,6 +11,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
   ? import.meta.env.VITE_API_URL 
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
+console.log('ResetPasswordPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
+console.log('ResetPasswordPage - API_BASE_URL:', API_BASE_URL);
+
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
