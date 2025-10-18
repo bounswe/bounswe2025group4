@@ -3,9 +3,9 @@ import type { InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../stores/authStore';
 
 /**
- * Base API URL - defaults to localhost backend
+ * Base API URL - must be set via VITE_API_URL environment variable
  */
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Create axios instance with base configuration
