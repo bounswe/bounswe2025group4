@@ -42,9 +42,9 @@ export default function VerifyOtpPage() {
     setErrorMessage('');
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/verify-otp`, {
+      const response = await axios.post(`${API_BASE_URL}/auth/login/verify`, {
         username: username,
-        otp: data.otp,
+        otpCode: data.otp,
         temporaryToken: temporaryToken,
       });
 
