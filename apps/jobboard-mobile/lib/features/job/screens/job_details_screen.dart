@@ -91,7 +91,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.jobDetails_applySuccess(_jobPost!.title)),
+            content: Text(
+              AppLocalizations.of(
+                context,
+              )!.jobDetails_applySuccess(_jobPost!.title),
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -124,7 +128,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         // Show job title in AppBar if loaded
-        title: Text(_jobPost?.title ?? AppLocalizations.of(context)!.jobDetails_title),
+        title: Text(
+          _jobPost?.title ?? AppLocalizations.of(context)!.jobDetails_title,
+        ),
       ),
       body: _buildContent(),
       // Add Apply button at the bottom
@@ -161,7 +167,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     }
 
     if (_jobPost == null) {
-      return Center(child: Text(AppLocalizations.of(context)!.jobDetails_notFound));
+      return Center(
+        child: Text(AppLocalizations.of(context)!.jobDetails_notFound),
+      );
     }
 
     final job = _jobPost!;
@@ -187,9 +195,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             ],
           ),
           const SizedBox(height: 4.0),
-          if (job.datePosted != null)
+          if (job.postedDate != null)
             Text(
-              '${AppLocalizations.of(context)!.jobPage_posted}: ${dateFormat.format(job.datePosted!)}',
+              '${AppLocalizations.of(context)!.jobPage_posted}: ${dateFormat.format(job.postedDate!)}',
               style: Theme.of(
                 context,
               ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
@@ -208,7 +216,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           const Divider(height: 32.0),
 
           // Ethical Policies Section
-          Text(AppLocalizations.of(context)!.jobDetails_ethicalTags, style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            AppLocalizations.of(context)!.jobDetails_ethicalTags,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 8.0),
           if (job.ethicalTags.isNotEmpty)
             Wrap(
@@ -237,7 +248,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           const Divider(height: 32.0),
 
           // Salary Section
-          Text(AppLocalizations.of(context)!.jobDetails_salaryRange, style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            AppLocalizations.of(context)!.jobDetails_salaryRange,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 8.0),
           if (job.minSalary != null || job.maxSalary != null)
             Text(
@@ -246,7 +260,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             )
           else
             Text(
-              job.salaryRange ?? AppLocalizations.of(context)!.common_notSpecified,
+              job.salaryRange ??
+                  AppLocalizations.of(context)!.common_notSpecified,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
 
@@ -264,6 +279,30 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 ? job.contactInformation!
                 : AppLocalizations.of(context)!.common_notSpecified,
             style: Theme.of(context).textTheme.bodyMedium,
+          ),
+
+          const Divider(height: 32.0),
+
+          // Job Properties Section
+          Row(
+            children: [
+              if (job.remote)
+                Chip(
+                  label: const Text('Remote'),
+                  backgroundColor: Colors.blue.shade50,
+                  side: BorderSide.none,
+                  avatar: const Icon(Icons.home_work, size: 16),
+                ),
+              if (job.remote && job.inclusiveOpportunity)
+                const SizedBox(width: 8.0),
+              if (job.inclusiveOpportunity)
+                Chip(
+                  label: const Text('Inclusive Opportunity'),
+                  backgroundColor: Colors.green.shade50,
+                  side: BorderSide.none,
+                  avatar: const Icon(Icons.diversity_3, size: 16),
+                ),
+            ],
           ),
           const SizedBox(height: 24.0), // Space before apply button area
         ],
@@ -293,7 +332,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   ),
                 )
                 : const Icon(Icons.send),
-        label: Text(_isApplying ? AppLocalizations.of(context)!.jobDetails_applying : AppLocalizations.of(context)!.jobDetails_apply),
+        label: Text(
+          _isApplying
+              ? AppLocalizations.of(context)!.jobDetails_applying
+              : AppLocalizations.of(context)!.jobDetails_apply,
+        ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.teal, // Or theme primary color
           foregroundColor: Colors.white,
@@ -307,7 +350,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     );
   }
 
-  String _formatSalaryRange(double? minSalary, double? maxSalary) {
+  String _formatSalaryRange(int? minSalary, int? maxSalary) {
     // Use NumberFormat from intl package for currency formatting
     final formatter = NumberFormat.currency(symbol: '\$', decimalDigits: 0);
 
@@ -315,10 +358,14 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       return AppLocalizations.of(context)!.common_notSpecified;
     }
     if (minSalary == null) {
-      return AppLocalizations.of(context)!.common_upTo(formatter.format(maxSalary));
+      return AppLocalizations.of(
+        context,
+      )!.common_upTo(formatter.format(maxSalary));
     }
     if (maxSalary == null) {
-      return AppLocalizations.of(context)!.common_from(formatter.format(minSalary));
+      return AppLocalizations.of(
+        context,
+      )!.common_from(formatter.format(minSalary));
     }
     return '${formatter.format(minSalary)} - ${formatter.format(maxSalary)}';
   }

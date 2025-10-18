@@ -36,6 +36,7 @@ class _JobPageState extends State<JobPage> {
     'minSalary': null,
     'maxSalary': null,
     'isRemote': null,
+    'inclusiveOpportunity': null,
     'jobTypes': <String>[],
   };
   UserType? _userRole; // Changed type to UserType?
@@ -96,11 +97,21 @@ class _JobPageState extends State<JobPage> {
               _hasActiveFilters() &&
                       (_selectedFilters['ethicalTags'] as List<String>)
                           .isNotEmpty
-                  ? (_selectedFilters['ethicalTags'] as List<String>).join(',')
+                  ? (_selectedFilters['ethicalTags'] as List<String>)
                   : null,
-          minSalary: _hasActiveFilters() ? _selectedFilters['minSalary'] : null,
-          maxSalary: _hasActiveFilters() ? _selectedFilters['maxSalary'] : null,
-          remote: _hasActiveFilters() ? _selectedFilters['isRemote'] : null,
+          minSalary:
+              _hasActiveFilters() && _selectedFilters['minSalary'] != null
+                  ? (_selectedFilters['minSalary'] as num).toInt()
+                  : null,
+          maxSalary:
+              _hasActiveFilters() && _selectedFilters['maxSalary'] != null
+                  ? (_selectedFilters['maxSalary'] as num).toInt()
+                  : null,
+          isRemote: _hasActiveFilters() ? _selectedFilters['isRemote'] : null,
+          inclusiveOpportunity:
+              _hasActiveFilters()
+                  ? _selectedFilters['inclusiveOpportunity']
+                  : null,
           additionalFilters:
               _hasActiveFilters() &&
                       (_selectedFilters['jobTypes'] as List<String>).isNotEmpty
@@ -324,7 +335,9 @@ class _JobPageState extends State<JobPage> {
               padding: const EdgeInsets.only(right: 8.0), // Add some padding
               child: TextButton.icon(
                 icon: const Icon(Icons.assignment_turned_in_outlined),
-                label: Text(AppLocalizations.of(context)!.jobPage_myApplications),
+                label: Text(
+                  AppLocalizations.of(context)!.jobPage_myApplications,
+                ),
                 onPressed: _navigateToMyApplications,
                 style: TextButton.styleFrom(
                   // Use AppBar theme color or specify
@@ -535,11 +548,11 @@ class _JobPageState extends State<JobPage> {
                                 .toList(),
                       ),
                     const SizedBox(height: 8.0),
-                    if (job.datePosted != null)
+                    if (job.postedDate != null)
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          '${AppLocalizations.of(context)!.jobPage_posted}: ${dateFormat.format(job.datePosted!)}',
+                          '${AppLocalizations.of(context)!.jobPage_posted}: ${dateFormat.format(job.postedDate!)}',
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(color: Colors.grey.shade600),
                         ),

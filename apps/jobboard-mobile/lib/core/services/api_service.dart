@@ -58,8 +58,7 @@ class ApiService {
     final token = _authProvider.token;
     if (token != null) {
       headers['Authorization'] = 'Bearer $token';
-    } else {
-    }
+    } else {}
     return headers;
   }
 
@@ -126,10 +125,11 @@ class ApiService {
     String? title,
     String? company,
     String? location,
-    bool? remote,
-    String? ethicalTags,
-    double? minSalary,
-    double? maxSalary,
+    bool? isRemote,
+    List<String>? ethicalTags,
+    int? minSalary,
+    int? maxSalary,
+    bool? inclusiveOpportunity,
     Map<String, dynamic>? additionalFilters,
   }) async {
     final queryParams = <String, dynamic>{};
@@ -141,12 +141,17 @@ class ApiService {
 
     // Add specific filters if provided
     if (title != null) queryParams['title'] = title;
-    if (company != null) queryParams['company'] = company;
+    if (company != null) queryParams['companyName'] = company;
     if (location != null) queryParams['location'] = location;
-    if (remote != null) queryParams['remote'] = remote;
-    if (ethicalTags != null) queryParams['ethicalTags'] = ethicalTags;
+    if (isRemote != null) queryParams['isRemote'] = isRemote;
+    if (ethicalTags != null && ethicalTags.isNotEmpty) {
+      queryParams['ethicalTags'] = ethicalTags;
+    }
     if (minSalary != null) queryParams['minSalary'] = minSalary;
     if (maxSalary != null) queryParams['maxSalary'] = maxSalary;
+    if (inclusiveOpportunity != null) {
+      queryParams['inclusiveOpportunity'] = inclusiveOpportunity;
+    }
 
     // Add any additional filters
     if (additionalFilters != null) {
@@ -165,9 +170,8 @@ class ApiService {
     }
   }
 
-  /// GET /api/jobs (filtered by employerId)
+  /// GET /api/jobs/employer/{employerId}
   /// Fetches job postings created by a specific employer.
-  /// Assumes filtering is done via query parameter.
   Future<List<JobPost>> fetchEmployerJobPostings(String employerId) async {
     final uri = _buildUri('/jobs/employer/$employerId');
 
@@ -184,7 +188,6 @@ class ApiService {
   /// GET /api/jobs/{id}
   /// Fetches details for a specific job post.
   Future<JobPost> getJobDetails(String jobId) async {
-
     final uri = _buildUri('/jobs/$jobId');
 
     try {
@@ -199,49 +202,48 @@ class ApiService {
 
   /// POST /api/jobs
   /// Creates a new job post.
+  /// Note: employerId is determined from the auth token, not sent in request body.
   Future<JobPost> createJobPost({
-    // Required fields based on JobPostDto & UI
-    required String employerId,
+    // Required fields based on backend API
     required String title,
     required String description,
     required String company,
     required String location,
     required bool remote,
     required String ethicalTags,
+    required bool inclusiveOpportunity,
 
+    // Optional fields
     String? contactInformation,
-    String? jobType,
-    double? minSalary,
-    double? maxSalary,
+    int? minSalary,
+    int? maxSalary,
   }) async {
-
     final uri = _buildUri('/jobs');
 
-    // Construct the body based on JobPostDto structure + potentially employerId
+    // Construct the body based on backend API specification
     final body = jsonEncode({
-      'employerId': employerId,
       'title': title,
       'description': description,
       'company': company,
       'location': location,
       'remote': remote,
       'ethicalTags': ethicalTags,
+      'inclusiveOpportunity': inclusiveOpportunity,
       // Optional fields, only include if not null
       if (contactInformation != null) 'contact': contactInformation,
-      if (jobType != null) 'jobType': jobType,
       if (minSalary != null) 'minSalary': minSalary,
       if (maxSalary != null) 'maxSalary': maxSalary,
     });
 
     try {
-      // Use dynamically generated headers
+      // Use dynamically generated headers (includes auth token)
       final response = await _client.post(
         uri,
         headers: _getHeaders(),
         body: body,
       );
       final dynamic data = await _handleResponse(response);
-      // Assuming the API returns the created JobPost object
+      // Backend returns the created JobPost object with id, employerId, and postedDate
       return JobPost.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to create job post. $e');
@@ -295,8 +297,6 @@ class ApiService {
       // Match DTO: jobSeekerId, jobPostingId
       'jobSeekerId': userId,
       'jobPostingId': jobId,
-      // submissionDate is likely handled by backend
-      // status defaults to PENDING on backend
     });
 
     try {
@@ -903,7 +903,10 @@ class ApiService {
 
   /// PATCH /api/profile/{userId}
   /// Updates a user profile
-  Future<Profile> updateProfile(int userId, Map<String, dynamic> profileData) async {
+  Future<Profile> updateProfile(
+    int userId,
+    Map<String, dynamic> profileData,
+  ) async {
     final uri = _buildUri('/profile/$userId');
 
     try {
@@ -942,7 +945,6 @@ class ApiService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return response.body;
       } else {
@@ -952,7 +954,6 @@ class ApiService {
       throw Exception('Failed to upload profile picture: $e');
     }
   }
-
 
   /// GET /api/profile/{userId}/profile-picture
   /// Fetches the profile picture as a direct image URL (used by Image.network)
@@ -973,6 +974,7 @@ class ApiService {
       throw Exception('Failed to delete profile picture. $e');
     }
   }
+
   /// PATCH /api/profile/{userId}/skills
   /// Updates user skills
   Future<List<String>> updateSkills(int userId, List<String> skills) async {
@@ -993,7 +995,10 @@ class ApiService {
 
   /// PATCH /api/profile/{userId}/interests
   /// Updates user interests
-  Future<List<String>> updateInterests(int userId, List<String> interests) async {
+  Future<List<String>> updateInterests(
+    int userId,
+    List<String> interests,
+  ) async {
     final uri = _buildUri('/profile/$userId/interests');
 
     try {
@@ -1013,7 +1018,10 @@ class ApiService {
 
   /// POST /api/profile/{userId}/experience
   /// Creates a new work experience entry
-  Future<Experience> createExperience(int userId, Map<String, dynamic> experienceData) async {
+  Future<Experience> createExperience(
+    int userId,
+    Map<String, dynamic> experienceData,
+  ) async {
     final uri = _buildUri('/profile/$userId/experience');
 
     try {
@@ -1032,7 +1040,10 @@ class ApiService {
   /// PUT /api/profile/{userId}/experience/{experienceId}
   /// Updates an existing work experience entry
   Future<Experience> updateExperience(
-      int userId, int experienceId, Map<String, dynamic> experienceData) async {
+    int userId,
+    int experienceId,
+    Map<String, dynamic> experienceData,
+  ) async {
     final uri = _buildUri('/profile/$userId/experience/$experienceId');
 
     try {
@@ -1060,9 +1071,13 @@ class ApiService {
       throw Exception('Failed to delete experience. $e');
     }
   }
+
   /// POST /api/profile/{userId}/education
   /// Creates a new education entry
-  Future<Education> createEducation(int userId, Map<String, dynamic> educationData) async {
+  Future<Education> createEducation(
+    int userId,
+    Map<String, dynamic> educationData,
+  ) async {
     final uri = _buildUri('/profile/$userId/education');
 
     try {
@@ -1081,7 +1096,10 @@ class ApiService {
   /// PUT /api/profile/{userId}/education/{educationId}
   /// Updates an existing education entry
   Future<Education> updateEducation(
-      int userId, int educationId, Map<String, dynamic> educationData) async {
+    int userId,
+    int educationId,
+    Map<String, dynamic> educationData,
+  ) async {
     final uri = _buildUri('/profile/$userId/education/$educationId');
 
     try {
@@ -1109,6 +1127,7 @@ class ApiService {
       throw Exception('Failed to delete education entry. $e');
     }
   }
+
   /// POST /api/profile
   /// Creates a new user profile
   Future<Profile> createProfile(Map<String, dynamic> profileData) async {
@@ -1157,6 +1176,7 @@ class ApiService {
       throw Exception('Failed to add badge. $e');
     }
   }
+
   /// DELETE /api/profile/{userId}/badges/{badgeId}
   /// Removes a badge from a user
   Future<void> removeBadgeFromUser(int userId, int badgeId) async {
