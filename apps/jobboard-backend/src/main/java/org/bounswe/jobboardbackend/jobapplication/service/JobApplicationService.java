@@ -211,7 +211,9 @@ public class JobApplicationService {
         String ext = (originalFilename != null && originalFilename.contains("."))
                 ? originalFilename.substring(originalFilename.lastIndexOf('.'))
                 : ".pdf";
-        return appEnv + "/" + "cvs/" + "application_" + applicationId + ext;
+        // Add timestamp to avoid cache issues when updating CV
+        long timestamp = System.currentTimeMillis();
+        return appEnv + "/" + "cvs/" + "application_" + applicationId + "_" + timestamp + ext;
     }
 
     private String publicUrl(String objectName) {
