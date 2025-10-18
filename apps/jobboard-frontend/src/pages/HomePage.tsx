@@ -28,7 +28,15 @@ export default function HomePage() {
 
   useEffect(() => {
     const token = searchParams.get('token');
+    
+    // Check if this is a password reset link (has /api/auth prefix issue)
+    // Password reset links may come with token parameter too, but from different context
+    // For now, assume token parameter is for email verification
+    // Backend should send proper reset-password URL
+    
     if (token) {
+      // Could be email verification or password reset
+      // Try to detect based on URL structure or add separate parameter
       navigate(`/verify-email?token=${token}`, { replace: true });
     }
   }, [searchParams, navigate]);
