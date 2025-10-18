@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '../schemas/login.schema';
 import { Button } from '../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import axios from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
@@ -61,7 +62,14 @@ export default function LoginPage() {
         navigate('/');
       }
     } catch (error: any) {
-      if (error.response?.data?.message) {
+      if (error.response?.status === 401) {
+        // Could be wrong credentials or backend config issue
+        if (error.response?.data?.message?.includes('Full authentication')) {
+          setErrorMessage('Service temporarily unavailable. Please try again later or contact support.');
+        } else {
+          setErrorMessage('Invalid username or password. Please try again.');
+        }
+      } else if (error.response?.data?.message) {
         setErrorMessage(error.response.data.message);
       } else if (error.response?.data?.error) {
         setErrorMessage(error.response.data.error);
@@ -77,15 +85,16 @@ export default function LoginPage() {
 
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md space-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold">Welcome Back</h1>
-          <p className="text-muted-foreground">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
+          <CardDescription>
             Sign in to your account to continue
-          </p>
-        </div>
+          </CardDescription>
+        </CardHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Username */}
           <div className="space-y-2">
             <label htmlFor="username" className="text-sm font-medium">
@@ -186,8 +195,9 @@ export default function LoginPage() {
               Sign up
             </Link>
           </p>
-        </form>
-      </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

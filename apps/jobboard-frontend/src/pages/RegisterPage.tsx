@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterFormData } from '../schemas/register.schema';
 import { Button } from '../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -66,7 +67,10 @@ export default function RegisterPage() {
         // Don't auto-redirect, let user verify email first
       }
     } catch (error: any) {
-      if (error.response?.data?.message) {
+      if (error.response?.status === 401) {
+        // Backend authentication issue
+        setErrorMessage('Service temporarily unavailable. Please try again later or contact support.');
+      } else if (error.response?.data?.message) {
         setErrorMessage(error.response.data.message);
       } else if (error.response?.data?.error) {
         setErrorMessage(error.response.data.error);
@@ -82,15 +86,16 @@ export default function RegisterPage() {
 
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md space-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold">Create an Account</h1>
-          <p className="text-muted-foreground">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold">Create an Account</CardTitle>
+          <CardDescription>
             Sign up to access the job board platform
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Username */}
           <div className="space-y-2">
             <label htmlFor="username" className="text-sm font-medium">
@@ -331,8 +336,9 @@ export default function RegisterPage() {
               Sign in
             </Link>
           </p>
-        </form>
-      </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

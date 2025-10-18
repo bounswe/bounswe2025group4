@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { resetPasswordSchema, type ResetPasswordFormData } from '../schemas/reset-password.schema';
 import { Button } from '../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -37,16 +38,28 @@ export default function ResetPasswordPage() {
     setErrorMessage('');
 
     try {
-      await axios.post(`${API_BASE_URL}/auth/password-reset/confirm`, {
+      const response = await axios.post(`${API_BASE_URL}/auth/password-reset/confirm`, {
         token,
         newPassword: data.password,
       });
 
-      // Success: redirect to login with success message
-      navigate('/login', {
-        replace: true,
-        state: { message: 'Password reset successful! You can now log in with your new password.' }
-      });
+      // Check if response contains error even with 200 status
+      if (response.data?.message && response.data.message.toLowerCase().includes('error')) {
+        const backendMsg = response.data.message;
+        if (backendMsg.includes('same as the old password')) {
+          setErrorMessage('New password cannot be the same as your old password. Please choose a different password.');
+        } else {
+          setErrorMessage(backendMsg);
+        }
+      } else if (response.data?.error) {
+        setErrorMessage(response.data.error);
+      } else {
+        // Success: redirect to login with success message
+        navigate('/login', {
+          replace: true,
+          state: { message: 'Password reset successful! You can now log in with your new password.' }
+        });
+      }
     } catch (error: any) {
       if (error.response?.data?.message) {
         const backendMsg = error.response.data.message;
@@ -70,30 +83,35 @@ export default function ResetPasswordPage() {
   if (!token) {
     return (
       <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md space-y-6 text-center">
-          <h1 className="text-3xl font-bold">Invalid Reset Link</h1>
-          <p className="text-muted-foreground">
-            This password reset link is invalid or has expired.
-          </p>
-          <Button variant="default" onClick={() => navigate('/forgot-password')}>
-            Request New Link
-          </Button>
-        </div>
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1 text-center">
+            <CardTitle className="text-3xl font-bold">Invalid Reset Link</CardTitle>
+            <CardDescription>
+              This password reset link is invalid or has expired.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <Button variant="default" onClick={() => navigate('/forgot-password')}>
+              Request New Link
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
-      <div className="w-full max-w-md space-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold">Reset Password</h1>
-          <p className="text-muted-foreground">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold">Reset Password</CardTitle>
+          <CardDescription>
             Enter your new password below
-          </p>
-        </div>
+          </CardDescription>
+        </CardHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Password */}
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -188,8 +206,9 @@ export default function ResetPasswordPage() {
           >
             {isLoading ? 'Resetting Password...' : 'Reset Password'}
           </Button>
-        </form>
-      </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }
