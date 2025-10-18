@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.jobapplication.dto.CreateJobApplicationRequest;
+import org.bounswe.jobboardbackend.jobapplication.dto.CvUploadResponse;
 import org.bounswe.jobboardbackend.jobapplication.dto.JobApplicationResponse;
 import org.bounswe.jobboardbackend.jobapplication.dto.UpdateJobApplicationRequest;
 import org.bounswe.jobboardbackend.jobapplication.service.JobApplicationService;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -73,6 +75,43 @@ public class JobApplicationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // --------------------------------
+    // CV / Resume endpoints
+    // --------------------------------
+
+    /**
+     * POST /api/applications/{id}/cv
+     * Upload CV for an application (multipart/form-data)
+     */
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(path = "/{id}/cv", consumes = {"multipart/form-data"})
+    public ResponseEntity<CvUploadResponse> uploadCv(
+            @PathVariable Long id,
+            @RequestPart("file") MultipartFile file) {
+        return ResponseEntity.ok(service.uploadCv(id, file));
+    }
+
+    /**
+     * GET /api/applications/{id}/cv
+     * Get CV URL for an application
+     */
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}/cv")
+    public ResponseEntity<String> getCvUrl(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getCvUrl(id));
+    }
+
+    /**
+     * DELETE /api/applications/{id}/cv
+     * Delete CV for an application
+     */
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{id}/cv")
+    public ResponseEntity<Void> deleteCv(@PathVariable Long id) {
+        service.deleteCv(id);
         return ResponseEntity.noContent().build();
     }
 }
