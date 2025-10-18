@@ -12,9 +12,8 @@ import org.bounswe.jobboardbackend.auth.service.UserDetailsServiceImpl;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.CredentialsExpiredException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,17 +34,20 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUserNameFromJwtToken(jwt);
+            String token = parseJwt(request);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            if (StringUtils.hasText(token) && jwtUtils.validateJwtToken(token)) {
+
+                if (!jwtUtils.isAccessToken(token)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
+                Authentication authentication = jwtUtils.buildAuthenticationFromAccessToken(token, userDetailsService);
+
+                if (authentication instanceof org.springframework.security.authentication.AbstractAuthenticationToken aat) {
+                    aat.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                }
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
@@ -58,9 +60,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         } catch (SignatureException e) {
             SecurityContextHolder.clearContext();
             throw new BadCredentialsException("Invalid JWT signature", e);
+        } finally {
+            filterChain.doFilter(request, response);
         }
 
-        filterChain.doFilter(request, response);
     }
 
     private String parseJwt(HttpServletRequest request) {

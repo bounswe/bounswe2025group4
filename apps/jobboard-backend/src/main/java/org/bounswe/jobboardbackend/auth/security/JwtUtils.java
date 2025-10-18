@@ -6,10 +6,15 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -25,30 +30,43 @@ public class JwtUtils {
     @Value("${app.jwtExpirationInMs}")
     private int jwtExpirationMs;
 
-    public String generateJwtToken(Authentication authentication) {
+
+
+    public String generateOtpToken(Authentication authentication) {
+        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        return JwtGenerator(userPrincipal.getUsername(), 300000, "preauth", "OTP");
+
+    }
+
+    public String generateAccessToken(Authentication authentication) {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-
-        return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(key())
-                .compact();
+        return JwtGenerator(userPrincipal.getUsername(), jwtExpirationMs, "auth", "ACCESS");
     }
 
-    private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+
+    public Authentication buildAuthenticationFromAccessToken(String token, UserDetailsService uds) {
+        Claims claims = getClaims(token);
+        if (!"ACCESS".equals(claims.get("purpose")) || !"auth".equals(claims.getAudience())) {
+            throw new HandleException(ErrorCode.INVALID_CREDENTIALS, "Token purpose/audience invalid");
+        }
+
+        String subject = claims.getSubject();
+
+        UserDetails userDetails = uds.loadUserByUsername(subject);
+
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
     }
 
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key()).build()
-                .parseClaimsJws(token).getBody().getSubject();
-    }
+
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(authToken);
+            jwtParser().parseClaimsJws(authToken);
             logger.info("Valid JWT token.");
             return true;
         } catch (SignatureException ex) {
@@ -57,5 +75,48 @@ public class JwtUtils {
             logger.debug("Invalid JWT token: {}", ex.getMessage());
         }
         return false;
+    }
+
+
+    public Claims getClaims(String token) {
+        return jwtParser().parseClaimsJws(token).getBody();
+    }
+
+    public boolean isAccessToken(String token) {
+        Claims claim = getClaims(token);
+        return "ACCESS".equals(claim.get("purpose")) && "auth".equals(claim.getAudience());
+    }
+
+    public boolean isPreauthToken(String token) {
+        Claims claim = getClaims(token);
+        return "OTP".equals(claim.get("purpose")) && "preauth".equals(claim.getAudience());
+    }
+
+    public String getUserNameFromJwtToken(String token) {
+        return getClaims(token).getSubject();
+    }
+
+
+
+    private Key key() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+    }
+
+    private String JwtGenerator(String username, int expirationTime, String audience, String purpose) {
+        Date now = new Date();
+        Date exp = new Date(now.getTime() + expirationTime);
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                .setAudience(audience)
+                .claim("purpose", purpose)
+                .signWith(key(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private JwtParser jwtParser() {
+        return Jwts.parserBuilder().setSigningKey(key()).build();
     }
 }

@@ -22,10 +22,15 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<OtpRequestResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        return new ResponseEntity<>(authService.authUser(loginRequest), HttpStatus.OK);
+        return new ResponseEntity<>(authService.initiateLogin(loginRequest), HttpStatus.OK);
 
+    }
+
+    @PostMapping("/login/verify")
+    public ResponseEntity<JwtResponse> verifyOtp(@Valid @RequestBody OtpVerifyRequest otpVerifyRequest) {
+        return new ResponseEntity<>(authService.completeLogin(otpVerifyRequest), HttpStatus.OK);
     }
 
     @PostMapping("/register")

@@ -6,10 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.auth.dto.*;
-import org.bounswe.jobboardbackend.auth.model.EmailVerificationToken;
-import org.bounswe.jobboardbackend.auth.model.PasswordResetToken;
-import org.bounswe.jobboardbackend.auth.model.Role;
-import org.bounswe.jobboardbackend.auth.model.User;
+import org.bounswe.jobboardbackend.auth.model.*;
+import org.bounswe.jobboardbackend.auth.repository.OtpRepository;
 import org.bounswe.jobboardbackend.auth.repository.PasswordResetTokenRepository;
 import org.bounswe.jobboardbackend.auth.repository.TokenRepository;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
@@ -22,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -43,32 +42,74 @@ public class AuthService {
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final OtpService otpService;
+    private final OtpRepository otpRepository;
+    private final UserDetailsServiceImpl userDetailsService;
+
     @Value("${app.verifyEmailUrl}")
     private String verifyEmailUrl;
     @Value("${app.resetPasswordUrl}")
     private String resetPasswordUrl;
 
+
+
     @Transactional
-    public JwtResponse authUser(@Valid LoginRequest loginRequest) {
+    public OtpRequestResponse initiateLogin(@Valid LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() ->  new HandleException(ErrorCode.USER_NOT_FOUND, "User not found. Please check your username."));
 
         if (!Boolean.TRUE.equals(user.getEmailVerified())) {
             throw new HandleException(ErrorCode.EMAIL_NOT_VERIFIED, "Email not verified. Please verify your email.");
         }
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        String temporaryToken = jwtUtils.generateOtpToken(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        otpService.sendOtp(user.getUsername(), temporaryToken);
+
+        return new OtpRequestResponse(
+                user.getUsername(),
+                "Verification code to login has been sent to your mail",
+                temporaryToken
+        );
+    }
+
+
+    @Transactional
+    public JwtResponse completeLogin(OtpVerifyRequest otpRequest) {
+
+        User user = userRepository.findByUsername(otpRequest.getUsername())
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
+
+        if (!Boolean.TRUE.equals(user.getEmailVerified())) {
+            throw new HandleException(ErrorCode.EMAIL_NOT_VERIFIED, "Email not verified. Please verify your email.");
+        }
+
+        Otp otp = otpService.validateOtpAndToken(
+                otpRequest.getUsername(),
+                otpRequest.getOtpCode(),
+                otpRequest.getTemporaryToken()
+        );
+
+        otpRepository.delete(otp);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        String accessToken = jwtUtils.generateAccessToken(auth);
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+
         String role = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
                 .orElseThrow(() -> new HandleException(ErrorCode.ROLE_INVALID, "User has no role assigned"));
 
-        return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), role);
+        return new JwtResponse(accessToken, user.getId(), user.getUsername(), user.getEmail(), role);
     }
 
 
