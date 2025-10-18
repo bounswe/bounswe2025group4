@@ -20,6 +20,8 @@ public class JobApplicationResponse {
     private JobApplicationStatus status;
     private String specialNeeds;
     private String feedback;
+    private String cvUrl;
+    private String coverLetter;
     private LocalDateTime appliedDate;
 }
 
