@@ -1,8 +1,9 @@
 package org.bounswe.jobboardbackend.jobapplication.service;
 
-import org.bounswe.jobboardbackend.auth.model.Role;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.jobapplication.dto.CreateJobApplicationRequest;
 import org.bounswe.jobboardbackend.jobapplication.dto.JobApplicationResponse;
 import org.bounswe.jobboardbackend.jobapplication.model.JobApplication;
@@ -10,13 +11,13 @@ import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,21 +56,19 @@ public class JobApplicationService {
     public JobApplicationResponse getById(Long id) {
         return applicationRepository.findById(id)
                 .map(this::toResponseDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with ID " + id + " not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.JOB_APPLICATION_NOT_FOUND, "Application with ID " + id + " not found"));
     }
 
     @Transactional
+    @PreAuthorize( "hasRole('ROLE_JOBSEEKER')")
     public JobApplicationResponse create(CreateJobApplicationRequest dto) {
         User jobSeeker = getCurrentUser();
 
-        // Check if user has JOBSEEKER role
-        if (jobSeeker.getRole() != Role.ROLE_JOBSEEKER) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only users with JOBSEEKER role can apply for jobs");
-        }
+
 
         // Get job post
         JobPost jobPost = jobPostRepository.findById(dto.getJobPostId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job post with ID " + dto.getJobPostId() + " not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.JOB_POST_NOT_FOUND, "Job post with ID " + dto.getJobPostId() + " not found"));
 
         // Create application
         JobApplication application = JobApplication.builder()
@@ -86,13 +85,13 @@ public class JobApplicationService {
     @Transactional
     public JobApplicationResponse approve(Long id, String feedback) {
         JobApplication application = applicationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with ID " + id + " not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.JOB_APPLICATION_NOT_FOUND, "Application with ID " + id + " not found"));
 
         // Check authorization: only the employer who posted the job can approve
         User employer = getCurrentUser();
 
         if (!application.getJobPost().getEmployer().getId().equals(employer.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the employer who posted the job can approve applications");
+            throw new HandleException(ErrorCode.USER_UNAUTHORIZED, "Only the employer who posted the job can approve applications");
         }
 
         // Update status
@@ -107,13 +106,13 @@ public class JobApplicationService {
     @Transactional
     public JobApplicationResponse reject(Long id, String feedback) {
         JobApplication application = applicationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with ID " + id + " not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.JOB_APPLICATION_NOT_FOUND, "Application with ID " + id + " not found"));
 
         // Check authorization: only the employer who posted the job can reject
         User employer = getCurrentUser();
 
         if (!application.getJobPost().getEmployer().getId().equals(employer.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the employer who posted the job can reject applications");
+            throw new HandleException(ErrorCode.USER_UNAUTHORIZED, "Only the employer who posted the job can reject applications");
         }
 
         // Update status
@@ -128,13 +127,13 @@ public class JobApplicationService {
     @Transactional
     public void delete(Long id) {
         JobApplication application = applicationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application with ID " + id + " not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.JOB_APPLICATION_NOT_FOUND, "Application with ID " + id + " not found"));
 
         // Check authorization: only the applicant can delete their own application
         User user = getCurrentUser();
 
         if (!application.getJobSeeker().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the applicant can delete their own application");
+            throw new HandleException(ErrorCode.USER_UNAUTHORIZED, "Only the applicant can delete their own application");
         }
 
         applicationRepository.delete(application);
@@ -161,19 +160,19 @@ public class JobApplicationService {
     private User getCurrentUser() {
         String username = getCurrentUsername();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found in the system"));
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "Authenticated user not found in the system"));
     }
 
     private String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No authentication context found");
+            throw new HandleException(ErrorCode.USER_UNAUTHORIZED, "No authentication context found");
         }
         
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails userDetails) {
             return userDetails.getUsername();
         }
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authentication context");
+        throw new HandleException(ErrorCode.INVALID_CREDENTIALS, "Invalid authentication context");
     }
 }
