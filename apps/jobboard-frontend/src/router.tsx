@@ -4,6 +4,9 @@ import RootLayout from './layouts/RootLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import CenteredLoader from './components/CenteredLoader';
 import HomePage from './pages/HomePage';
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import EmailVerificationPage from './pages/EmailVerificationPage';
 
 const router = createBrowserRouter([
   {
@@ -41,6 +44,18 @@ const router = createBrowserRouter([
             <h1 className="text-2xl font-bold">Forum Page</h1>
           </div>
         ),
+      },
+      {
+        path: 'register',
+        element: <RegisterPage />,
+      },
+      {
+        path: 'login',
+        element: <LoginPage />,
+      },
+      {
+        path: 'verify-email',
+        element: <EmailVerificationPage />,
       },
     ],
   },
