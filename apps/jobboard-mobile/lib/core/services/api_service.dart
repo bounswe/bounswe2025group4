@@ -290,65 +290,80 @@ class ApiService {
   // --- Job Application Endpoints ---
 
   /// POST /api/applications
-  /// Applies the user to a job.
-  Future<void> applyToJob(String userId, String jobId) async {
+  /// Applies to a job post.
+  /// Note: jobSeekerId is determined from the auth token.
+  Future<JobApplication> applyToJob(
+    String jobPostId, {
+    String? specialNeeds,
+  }) async {
     final uri = _buildUri('/applications');
     final body = jsonEncode({
-      // Match DTO: jobSeekerId, jobPostingId
-      'jobSeekerId': userId,
-      'jobPostingId': jobId,
+      'jobPostId': int.parse(jobPostId), // Convert to int for backend
+      if (specialNeeds != null) 'specialNeeds': specialNeeds,
     });
 
     try {
-      // Use dynamically generated headers
+      // Use dynamically generated headers (includes auth token)
       final response = await _client.post(
         uri,
         headers: _getHeaders(),
         body: body,
       );
-      await _handleResponse(response); // Check for 201 Created or similar
+      final dynamic data = await _handleResponse(response);
+      // Backend returns the created JobApplication object
+      return JobApplication.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to submit application. $e');
     }
   }
 
-  /// GET /api/applications/{jobId}
-  /// Gets applications for a specific job.
-  Future<List<JobApplication>> getApplicationsForJob(String jobId) async {
-    // Endpoint updated: GET /api/applications/{jobId}
-    final uri = _buildUri('/applications/$jobId');
+  /// GET /api/applications
+  /// Gets applications filtered by query parameters.
+  /// Can filter by jobSeekerId and/or jobPostId.
+  Future<List<JobApplication>> getApplicationsForJob(String jobPostId) async {
+    final uri = _buildUri('/applications', {'jobPostId': jobPostId});
 
     try {
       // Use dynamically generated headers
       final response = await _client.get(uri, headers: _getHeaders());
       final List<dynamic> data = await _handleResponse(response);
-      // Ensure JobApplication.fromJson is implemented correctly
       return data.map((json) => JobApplication.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to load job applications. $e');
     }
   }
 
-  /// GET /api/applications?userId={userId}
-  /// Fetches the current user's job applications.
-  Future<List<JobApplication>> fetchMyApplications(String userId) async {
-    // Endpoint confirmed: GET /api/applications?userId={userId} (Based on backend error)
-    final uri = _buildUri('/applications', {
-      'userId': userId,
-    }); // Use userId based on backend requirement
+  /// GET /api/applications?jobSeekerId={jobSeekerId}
+  /// Fetches applications for a specific job seeker.
+  Future<List<JobApplication>> fetchMyApplications(String jobSeekerId) async {
+    final uri = _buildUri('/applications', {'jobSeekerId': jobSeekerId});
 
     try {
       // Use dynamically generated headers
       final response = await _client.get(uri, headers: _getHeaders());
       final List<dynamic> data = await _handleResponse(response);
-      // Ensure JobApplication.fromJson is implemented correctly
       return data.map((json) => JobApplication.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to load your applications. $e');
     }
   }
 
-  /// PUT /api/applications/{applicationId} (Assumed Endpoint) -> Confirmed
+  /// GET /api/applications/{id}
+  /// Fetches a specific job application by ID.
+  Future<JobApplication> getApplicationById(String applicationId) async {
+    final uri = _buildUri('/applications/$applicationId');
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return JobApplication.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to load application details. $e');
+    }
+  }
+
+  /// PUT /api/applications/{applicationId}
   /// Updates the status of a job application.
   Future<JobApplication> updateApplicationStatus(
     String applicationId,
@@ -378,6 +393,52 @@ class ApiService {
       return JobApplication.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to update application status. $e');
+    }
+  }
+
+  /// PUT /api/applications/{id}/approve
+  /// Approves a job application with optional feedback.
+  Future<JobApplication> approveApplication(
+    String applicationId, {
+    String? feedback,
+  }) async {
+    final uri = _buildUri('/applications/$applicationId/approve');
+    final body = jsonEncode({if (feedback != null) 'feedback': feedback});
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return JobApplication.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to approve application. $e');
+    }
+  }
+
+  /// PUT /api/applications/{id}/reject
+  /// Rejects a job application with optional feedback.
+  Future<JobApplication> rejectApplication(
+    String applicationId, {
+    String? feedback,
+  }) async {
+    final uri = _buildUri('/applications/$applicationId/reject');
+    final body = jsonEncode({if (feedback != null) 'feedback': feedback});
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return JobApplication.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to reject application. $e');
     }
   }
 

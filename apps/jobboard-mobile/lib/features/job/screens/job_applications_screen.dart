@@ -56,7 +56,8 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
         // Handle case where user is not logged in or user object is missing ID
         if (mounted) {
           setState(() {
-            _errorMessage = AppLocalizations.of(context)!.jobApplications_userError;
+            _errorMessage =
+                AppLocalizations.of(context)!.jobApplications_userError;
             _isLoading = false;
           });
         }
@@ -77,7 +78,8 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       print("Error loading applications for job: $e");
       if (mounted) {
         setState(() {
-          _errorMessage = AppLocalizations.of(context)!.jobApplications_loadError;
+          _errorMessage =
+              AppLocalizations.of(context)!.jobApplications_loadError;
         });
       }
     } finally {
@@ -94,11 +96,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     ApplicationStatus newStatus,
   ) async {
     String? feedback = await _showFeedbackDialog(newStatus);
-    // If user cancelled dialog (null feedback), don't proceed unless rejecting without feedback is allowed
-    if (feedback == null && newStatus == ApplicationStatus.approved)
-      return; // Require feedback for approval? Or handle null case
-    if (feedback == null && newStatus == ApplicationStatus.rejected)
-      feedback = ""; // Allow empty feedback for rejection
+
+    // If user cancelled dialog, don't proceed
+    if (feedback == null) return;
 
     if (!mounted) return;
     setState(() {
@@ -106,13 +106,28 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     });
 
     try {
-      final updatedApplication = await _apiService.updateApplicationStatus(
-        application.id,
-        newStatus,
-        jobPostingId: application.jobId,
-        jobSeekerId: application.jobSeekerId,
-        feedback: feedback,
-      );
+      // Use new dedicated endpoints for approve/reject
+      final JobApplication updatedApplication;
+      if (newStatus == ApplicationStatus.approved) {
+        updatedApplication = await _apiService.approveApplication(
+          application.id,
+          feedback: feedback.isEmpty ? null : feedback,
+        );
+      } else if (newStatus == ApplicationStatus.rejected) {
+        updatedApplication = await _apiService.rejectApplication(
+          application.id,
+          feedback: feedback.isEmpty ? null : feedback,
+        );
+      } else {
+        // For pending status (unlikely but handle it)
+        updatedApplication = await _apiService.updateApplicationStatus(
+          application.id,
+          newStatus,
+          jobPostingId: application.jobPostId,
+          jobSeekerId: application.jobSeekerId,
+          feedback: feedback.isEmpty ? null : feedback,
+        );
+      }
 
       // Update the list locally
       if (mounted) {
@@ -124,22 +139,31 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             _applications[index] = updatedApplication;
           }
         });
+
+        final statusMessage =
+            newStatus == ApplicationStatus.approved
+                ? 'Application approved successfully'
+                : newStatus == ApplicationStatus.rejected
+                ? 'Application rejected'
+                : 'Application status updated';
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.jobApplications_statusUpdated(newStatus.name)),
-            backgroundColor: Colors.green,
-          ),
+          SnackBar(content: Text(statusMessage), backgroundColor: Colors.green),
         );
       }
     } catch (e) {
       print("Error updating application status: $e");
       if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!.jobApplications_updateError(e.toString().replaceFirst("Exception: ", ""))),
-              backgroundColor: Colors.red,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.jobApplications_updateError(
+                e.toString().replaceFirst("Exception: ", ""),
+              ),
             ),
-          );
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -152,43 +176,79 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
 
   Future<String?> _showFeedbackDialog(ApplicationStatus action) async {
     final controller = TextEditingController();
+    final isApproving = action == ApplicationStatus.approved;
+
     return showDialog<String>(
       context: context,
       builder:
           (context) => AlertDialog(
             title: Text(
-              'Provide Feedback (Optional) for ${action.name.capitalizeFirst()}',
+              isApproving ? 'Approve Application' : 'Reject Application',
             ),
-            content: TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                hintText: 'Enter feedback here...',
-                border: OutlineInputBorder(),
-              ),
-              maxLines: 3,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isApproving
+                      ? 'Provide feedback to the applicant (optional):'
+                      : 'Provide reason for rejection (optional):',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    hintText:
+                        isApproving
+                            ? 'e.g., Great qualifications! We\'ll contact you soon.'
+                            : 'e.g., We have selected other candidates at this time.',
+                    border: const OutlineInputBorder(),
+                    contentPadding: const EdgeInsets.all(12),
+                  ),
+                  maxLines: 4,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'The applicant will see this feedback.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey.shade600,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(), // Cancel
+                onPressed: () => Navigator.of(context).pop(null),
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.of(
-                    context,
-                  ).pop(controller.text.trim()); // Return feedback
-                },
-                child: const Text('Submit'),
+                onPressed:
+                    () => Navigator.of(context).pop(controller.text.trim()),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isApproving ? Colors.green : Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(isApproving ? 'Approve' : 'Reject'),
               ),
             ],
           ),
-    );
+    ).then((value) {
+      controller.dispose();
+      return value;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.jobTitle ?? AppLocalizations.of(context)!.jobApplications_title)),
+      appBar: AppBar(
+        title: Text(
+          widget.jobTitle ??
+              AppLocalizations.of(context)!.jobApplications_title,
+        ),
+      ),
       body: _buildContent(),
     );
   }
@@ -223,7 +283,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
 
     if (_applications.isEmpty) {
       return Center(
-        child: Text(AppLocalizations.of(context)!.jobApplications_noApplications),
+        child: Text(
+          AppLocalizations.of(context)!.jobApplications_noApplications,
+        ),
       );
     }
 
@@ -282,12 +344,23 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
               'Applied: ${dateFormat.format(application.dateApplied)}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            if (application.employerFeedback != null &&
-                application.employerFeedback!.isNotEmpty)
+            if (application.specialNeeds != null &&
+                application.specialNeeds!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
-                  'Feedback: ${application.employerFeedback}',
+                  'Special Needs: ${application.specialNeeds}',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.blue.shade700),
+                ),
+              ),
+            if (application.feedback != null &&
+                application.feedback!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  'Feedback: ${application.feedback}',
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),

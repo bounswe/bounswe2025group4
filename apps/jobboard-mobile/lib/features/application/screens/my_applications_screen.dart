@@ -61,7 +61,8 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       print("Error loading applications: $e");
       if (mounted) {
         setState(() {
-          _errorMessage = AppLocalizations.of(context)!.myApplications_loadError;
+          _errorMessage =
+              AppLocalizations.of(context)!.myApplications_loadError;
         });
       }
     } finally {
@@ -76,7 +77,9 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.myApplications_title)),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.myApplications_title),
+      ),
       body: _buildContent(),
     );
   }
@@ -110,7 +113,11 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     }
 
     if (_applications.isEmpty) {
-      return Center(child: Text(AppLocalizations.of(context)!.myApplications_noApplications));
+      return Center(
+        child: Text(
+          AppLocalizations.of(context)!.myApplications_noApplications,
+        ),
+      );
     }
 
     return RefreshIndicator(
@@ -143,13 +150,28 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('${application.companyName}'),
-            Text(AppLocalizations.of(context)!.myApplications_applied(dateFormat.format(application.dateApplied))),
-            if (application.employerFeedback != null &&
-                application.employerFeedback!.isNotEmpty)
+            Text(
+              AppLocalizations.of(context)!.myApplications_applied(
+                dateFormat.format(application.dateApplied),
+              ),
+            ),
+            if (application.specialNeeds != null &&
+                application.specialNeeds!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
-                  AppLocalizations.of(context)!.myApplications_feedback(application.employerFeedback!),
+                  'Special Needs: ${application.specialNeeds}',
+                  style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
+                ),
+              ),
+            if (application.feedback != null &&
+                application.feedback!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.myApplications_feedback(application.feedback!),
                   style: TextStyle(
                     fontStyle: FontStyle.italic,
                     color: Theme.of(context).primaryColor,
@@ -171,18 +193,24 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
         isThreeLine: true,
         onTap: () {
           // Show a more detailed feedback in a dialog if available
-          if (application.employerFeedback != null &&
-              application.employerFeedback!.isNotEmpty) {
+          if (application.feedback != null &&
+              application.feedback!.isNotEmpty) {
             showDialog(
               context: context,
               builder:
                   (context) => AlertDialog(
-                    title: Text(AppLocalizations.of(context)!.myApplications_feedbackTitle(application.jobTitle)),
-                    content: Text(application.employerFeedback!),
+                    title: Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.myApplications_feedbackTitle(application.jobTitle),
+                    ),
+                    content: Text(application.feedback!),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        child: Text(AppLocalizations.of(context)!.myApplications_close),
+                        child: Text(
+                          AppLocalizations.of(context)!.myApplications_close,
+                        ),
                       ),
                     ],
                   ),

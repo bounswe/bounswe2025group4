@@ -68,9 +68,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   }
 
   Future<void> _applyToJob() async {
-    final userId =
-        Provider.of<AuthProvider>(context, listen: false).currentUser?.id;
-    if (userId == null) {
+    // Check if user is logged in (auth token should be present)
+    final currentUser =
+        Provider.of<AuthProvider>(context, listen: false).currentUser;
+    if (currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context)!.jobDetails_applyError),
@@ -82,12 +83,22 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
     if (_jobPost == null) return;
 
+    // Show dialog to optionally collect special needs
+    final specialNeeds = await _showSpecialNeedsDialog();
+
+    // User cancelled the dialog
+    if (specialNeeds == null) return;
+
     setState(() {
       _isApplying = true;
     });
 
     try {
-      await _apiService.applyToJob(userId, _jobPost!.id);
+      // jobSeekerId is now determined from auth token on backend
+      await _apiService.applyToJob(
+        _jobPost!.id,
+        specialNeeds: specialNeeds.isEmpty ? null : specialNeeds,
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -121,6 +132,74 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         });
       }
     }
+  }
+
+  /// Shows a dialog to collect optional special needs information
+  Future<String?> _showSpecialNeedsDialog() async {
+    final TextEditingController controller = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Apply to Job'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'You are applying for: ${_jobPost!.title}',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Special Needs or Accommodations (Optional)',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: controller,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  hintText:
+                      'e.g., Wheelchair accessibility, flexible hours, remote work options...',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(12),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'This information will help employers accommodate your needs.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey.shade600,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(null),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed:
+                  () => Navigator.of(context).pop(controller.text.trim()),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Submit Application'),
+            ),
+          ],
+        );
+      },
+    ).then((value) {
+      controller.dispose();
+      return value;
+    });
   }
 
   @override
