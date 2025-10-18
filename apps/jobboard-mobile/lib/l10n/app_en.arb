@@ -1882,6 +1882,30 @@
         "type": "String"
       }
     }
+  },
+  "common_darkMode": "Dark Mode",
+  "@common_darkMode": {
+    "description": "Dark mode label"
+  },
+  "common_lightMode": "Light Mode",
+  "@common_lightMode": {
+    "description": "Light mode label"
+  },
+  "common_themeToggle": "Toggle Theme",
+  "@common_themeToggle": {
+    "description": "Theme toggle label"
+  },
+  "common_darkModeIcon": "Dark mode icon",
+  "@common_darkModeIcon": {
+    "description": "Dark mode icon label"
+  },
+  "common_lightModeIcon": "Light mode icon",
+  "@common_lightModeIcon": {
+    "description": "Light mode icon label"
+  },
+  "common_back": "Back",
+  "@common_back": {
+    "description": "Back button tooltip"
   }
 }
 

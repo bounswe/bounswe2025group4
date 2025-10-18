@@ -1463,4 +1463,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String common_from(String amount) {
     return '$amount\'den başlayarak';
   }
+
+  @override
+  String get common_darkMode => 'Karanlık Mod';
+
+  @override
+  String get common_lightMode => 'Aydınlık Mod';
+
+  @override
+  String get common_themeToggle => 'Tema Değiştir';
+
+  @override
+  String get common_darkModeIcon => 'Karanlık mod ikonu';
+
+  @override
+  String get common_lightModeIcon => 'Aydınlık mod ikonu';
+
+  @override
+  String get common_back => 'Geri';
 }

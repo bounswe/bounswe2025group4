@@ -6,6 +6,7 @@ import '../../../core/providers/profile_provider.dart';
 import '../../../core/providers/font_size_provider.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../auth/screens/welcome_screen.dart';
+import '../../../core/widgets/a11y.dart';
 import '../widgets/profile_picture.dart';
 import '../widgets/work_experience_list.dart';
 import '../widgets/editable_chip_list.dart';
@@ -71,10 +72,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
               },
             ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: AppLocalizations.of(context)!.profilePage_logout,
-            onPressed: () async {
+            IconButton(
+              icon: const Icon(Icons.logout),
+              tooltip: AppLocalizations.of(context)!.profilePage_logout,
+              onPressed: () async {
               await authProvider.logout();
               if (!context.mounted) return;
               Navigator.of(context).pushAndRemoveUntil(
@@ -180,10 +181,13 @@ class _ProfilePageState extends State<ProfilePage> {
           builder: (context, provider, _) {
             final imageUrl =
                 provider.currentUserProfile?.profile.profilePicture;
-            return ProfilePicture(
-              imageUrl: imageUrl,
-              size: 100,
-              isEditable: true,
+            return A11y(
+              label: 'Profile picture. Tap to change.',
+              child: ProfilePicture(
+                imageUrl: imageUrl,
+                size: 100,
+                isEditable: true,
+              ),
             );
           },
         ),
@@ -226,7 +230,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+                    A11y(
+                      label: 'Location',
+                      child: Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       profile.location!,
@@ -242,7 +249,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.phone, size: 16, color: Colors.grey[600]),
+                    A11y(
+                      label: 'Phone',
+                      child: Icon(Icons.phone, size: 16, color: Colors.grey[600]),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       profile.phone!,

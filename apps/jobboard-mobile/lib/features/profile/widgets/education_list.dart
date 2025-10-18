@@ -5,6 +5,7 @@ import '../../../core/providers/profile_provider.dart';
 import 'education_item.dart';
 import '../dialogs/education_dialog.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../core/widgets/a11y.dart';
 
 class EducationList extends StatelessWidget {
   final List<Education> educationHistory;
@@ -30,7 +31,7 @@ class EducationList extends StatelessWidget {
             ),
             if (isEditable)
               TextButton.icon(
-                icon: const Icon(Icons.add),
+                icon: const A11y(label: 'Add education', child: Icon(Icons.add)),
                 label: Text(AppLocalizations.of(context)!.profileWidgets_add),
                 onPressed: () => _showEducationDialog(context),
               ),

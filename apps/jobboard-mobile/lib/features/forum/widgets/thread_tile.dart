@@ -5,6 +5,7 @@ import '../../../core/models/discussion_thread.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../profile/screens/user_profile_view.dart';
+import '../../../core/widgets/a11y.dart';
 
 class ThreadTile extends StatefulWidget {
   final DiscussionThread thread;
@@ -152,7 +153,7 @@ class _ThreadTileState extends State<ThreadTile> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 16),
+                      const A11y(label: 'Created at', child: Icon(Icons.calendar_today, size: 16)),
                       const SizedBox(width: 4),
                       Text(
                         'Created: ${widget.thread.createdAt.toLocal().toString().split(".").first}',
@@ -164,7 +165,7 @@ class _ThreadTileState extends State<ThreadTile> {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.edit, size: 16),
+                        const A11y(label: 'Edited at', child: Icon(Icons.edit, size: 16)),
                         const SizedBox(width: 4),
                         Text(
                           'Edited: ${widget.thread.editedAt!.toLocal().toString().split(".").first}',
@@ -180,7 +181,7 @@ class _ThreadTileState extends State<ThreadTile> {
               // Comments count
               Row(
                 children: [
-                  const Icon(Icons.comment, size: 20),
+                  const A11y(label: 'Comments', child: Icon(Icons.comment, size: 20)),
                   const SizedBox(width: 4),
                   Text(
                     '${widget.thread.commentCount} comments',

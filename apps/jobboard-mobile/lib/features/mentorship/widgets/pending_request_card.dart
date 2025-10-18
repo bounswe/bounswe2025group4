@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/a11y.dart';
 
 class PendingRequestCard extends StatelessWidget {
   final String mentorName;
@@ -19,12 +20,15 @@ class PendingRequestCard extends StatelessWidget {
       elevation: 1.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: theme.colorScheme.secondaryContainer,
-          child: Icon(
-            Icons.hourglass_top_rounded,
-            color: theme.colorScheme.onSecondaryContainer,
-            size: 20,
+        leading: A11y(
+          label: 'Pending request',
+          child: CircleAvatar(
+            backgroundColor: theme.colorScheme.secondaryContainer,
+            child: Icon(
+              Icons.hourglass_top_rounded,
+              color: theme.colorScheme.onSecondaryContainer,
+              size: 20,
+            ),
           ),
         ),
         title: Text(mentorName, style: theme.textTheme.titleSmall),

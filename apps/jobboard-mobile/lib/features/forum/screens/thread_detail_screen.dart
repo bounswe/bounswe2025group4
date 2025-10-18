@@ -10,6 +10,7 @@ import '../widgets/comment_tile.dart';
 import '../../profile/screens/user_profile_view.dart';
 import 'package:flutter/gestures.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../core/widgets/a11y.dart';
 
 class ThreadDetailScreen extends StatefulWidget {
   final DiscussionThread thread;
@@ -241,7 +242,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 // Timestamps
                                 Row(
                                   children: [
-                                    const Icon(Icons.calendar_today, size: 16),
+                                    const A11y(label: 'Created at', child: Icon(Icons.calendar_today, size: 16)),
                                     const SizedBox(width: 4),
                                     Text(AppLocalizations.of(context)!.threadDetail_created(_currentThread.createdAt.toLocal().toString().split(".").first)),
                                   ],
@@ -249,7 +250,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 if (_currentThread.editedAt != null)
                                   Row(
                                     children: [
-                                      const Icon(Icons.edit, size: 16),
+                                      const A11y(label: 'Edited at', child: Icon(Icons.edit, size: 16)),
                                       const SizedBox(width: 4),
                                       Text(AppLocalizations.of(context)!.threadDetail_edited(_currentThread.editedAt!.toLocal().toString().split(".").first)),
                                     ],
@@ -337,7 +338,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.send),
+                    icon: const A11y(label: 'Send comment', child: Icon(Icons.send)),
                     onPressed: _postComment,
                   ),
                 ],

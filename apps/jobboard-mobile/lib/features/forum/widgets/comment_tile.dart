@@ -6,6 +6,7 @@ import '../../../core/models/comment.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../profile/screens/user_profile_view.dart';
+import '../../../core/widgets/a11y.dart';
 
 class CommentTile extends StatefulWidget {
   final Comment comment;
@@ -85,7 +86,7 @@ class _CommentTileState extends State<CommentTile> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.calendar_today, size: 14),
+                  const A11y(label: 'Created at', child: Icon(Icons.calendar_today, size: 14)),
                   const SizedBox(width: 4),
                   Text(
                     'Created: ${widget.comment.createdAt.toLocal().toString().split(".").first}',
@@ -97,7 +98,7 @@ class _CommentTileState extends State<CommentTile> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.edit, size: 14),
+                    const A11y(label: 'Edited at', child: Icon(Icons.edit, size: 14)),
                     const SizedBox(width: 4),
                     Text(
                       'Edited: ${widget.comment.editedAt!.toLocal().toString().split(".").first}',

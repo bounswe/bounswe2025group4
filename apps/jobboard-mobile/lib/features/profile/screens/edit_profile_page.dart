@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/providers/profile_provider.dart';
 import '../widgets/profile_picture.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../core/widgets/a11y.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -101,14 +102,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: profile.profilePicture != null
-                        ? NetworkImage(profile.profilePicture!)
-                        : null,
-                    child: profile.profilePicture == null
-                        ? const Icon(Icons.person, size: 50)
-                        : null,
+                  A11y(
+                    label: profile.profilePicture == null
+                        ? 'Default profile picture'
+                        : 'User profile picture',
+                    child: ProfilePicture(
+                      size: 100,
+                      imageUrl: profile.profilePicture,
+                      isEditable: false,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -152,7 +154,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 controller: _locationController,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.editProfile_location,
-                  prefixIcon: Icon(Icons.location_on),
+                  prefixIcon: A11y(label: 'Location', child: Icon(Icons.location_on)),
                 ),
               ),
               const SizedBox(height: 8),
@@ -160,7 +162,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 controller: _phoneController,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.editProfile_phone,
-                  prefixIcon: Icon(Icons.phone),
+                  prefixIcon: A11y(label: 'Phone', child: Icon(Icons.phone)),
                 ),
               ),
               const SizedBox(height: 16),

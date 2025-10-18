@@ -2673,6 +2673,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'From {amount}'**
   String common_from(String amount);
+
+  /// Dark mode label
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get common_darkMode;
+
+  /// Light mode label
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get common_lightMode;
+
+  /// Theme toggle label
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle Theme'**
+  String get common_themeToggle;
+
+  /// Dark mode icon label
+  ///
+  /// In en, this message translates to:
+  /// **'Dark mode icon'**
+  String get common_darkModeIcon;
+
+  /// Light mode icon label
+  ///
+  /// In en, this message translates to:
+  /// **'Light mode icon'**
+  String get common_lightModeIcon;
+
+  /// Back button tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get common_back;
 }
 
 class _AppLocalizationsDelegate

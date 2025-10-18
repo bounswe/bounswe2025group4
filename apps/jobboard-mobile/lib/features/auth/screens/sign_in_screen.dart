@@ -5,6 +5,7 @@ import 'package:mobile/generated/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
 import 'package:mobile/core/providers/profile_provider.dart';
+import '../../../core/widgets/a11y.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -64,6 +65,7 @@ class _SignInScreenState extends State<SignInScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'Back',
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.signInScreen_title),
@@ -103,10 +105,13 @@ class _SignInScreenState extends State<SignInScreen> {
                     labelText: AppLocalizations.of(context)!.signInScreen_password,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(
+                      icon: A11y(
+                        label: _obscurePassword ? 'Show password' : 'Hide password',
+                        child: Icon(
                         _obscurePassword
                             ? Icons.visibility_off
                             : Icons.visibility,
+                        ),
                       ),
                       onPressed: () {
                         setState(() {

@@ -470,6 +470,12 @@
   "common_notSpecified": "Belirtilmemiş",
   "common_upTo": "{amount} kadar",
   "common_from": "{amount}'den başlayarak",
+  "common_darkMode": "Karanlık Mod",
+  "common_lightMode": "Aydınlık Mod",
+  "common_themeToggle": "Tema Değiştir",
+  "common_darkModeIcon": "Karanlık mod ikonu",
+  "common_lightModeIcon": "Aydınlık mod ikonu",
+  "common_back": "Geri",
 
   "profilePage_languageChanged": "Dil {language} olarak değiştirildi"
 }
