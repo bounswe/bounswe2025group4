@@ -54,10 +54,10 @@ export default function HomePage() {
               role="search"
               aria-label="Job search form"
               onSubmit={(e) => e.preventDefault()}
-              className="flex gap-2 bg-white rounded-lg p-2 shadow-lg"
+              className="flex gap-2 bg-card rounded-lg p-2 shadow-lg border border-border"
             >
               <div className="flex-1 flex items-center gap-2 px-2">
-                <Search className="text-gray-400 size-5" aria-hidden="true" />
+                <Search className="text-muted-foreground size-5" aria-hidden="true" />
                 <label htmlFor="job-search-input" className="sr-only">
                   Search for jobs
                 </label>
@@ -65,7 +65,7 @@ export default function HomePage() {
                   id="job-search-input"
                   type="search"
                   placeholder={isMediumOrLarger ? "Search for jobs, e.g. 'Software Engineer'" : "Search for jobs"}
-                  className="border-0 shadow-none focus-visible:ring-2 focus-visible:ring-primary text-base md:text-lg"
+                  className="border-0 shadow-none focus-visible:ring-2 focus-visible:ring-primary text-base md:text-lg bg-transparent"
                   aria-label="Job search input"
                 />
               </div>
