@@ -18,9 +18,20 @@ import {
   Heart,
   Globe,
 } from "lucide-react";
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function HomePage() {
   const isMediumOrLarger = useMediaQuery('(min-width: 768px)');
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const token = searchParams.get('token');
+    if (token) {
+      navigate(`/verify-email?token=${token}`, { replace: true });
+    }
+  }, [searchParams, navigate]);
 
   return (
     <div className="min-h-screen">
