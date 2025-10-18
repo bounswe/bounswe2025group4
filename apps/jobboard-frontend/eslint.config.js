@@ -8,7 +8,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default defineConfig([
-  globalIgnores(['dist', 'build', 'coverage', 'node_modules', '*.min.*', '*.lock']),
+  globalIgnores(['dist', 'build', 'coverage', 'node_modules', '*.min.*', '*.lock', 'src/components/ui']),
 
   // node files
   {
