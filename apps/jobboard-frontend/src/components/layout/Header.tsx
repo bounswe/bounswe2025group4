@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -12,7 +12,32 @@ import {
 import { ThemeToggle } from '../ThemeToggle';
 
 export default function Header() {
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in (token exists)
+    const checkAuth = () => {
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    window.addEventListener('auth-change', checkAuth);
+    
+    return () => {
+      window.removeEventListener('auth-change', checkAuth);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.dispatchEvent(new Event('auth-change'));
+    navigate('/');
+  };
 
   return (
     <>
@@ -40,12 +65,20 @@ export default function Header() {
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" asChild>
-              <Link to="/">Login</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/">Register</Link>
-            </Button>
+            {isLoggedIn ? (
+              <Button variant="outline" onClick={handleLogout}>
+                Logout
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Login</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/register">Sign Up</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -79,13 +112,24 @@ export default function Header() {
                 </Button>
               </nav>
 
-              <div className="flex flex-col gap-2 p-2 border-t">
-                <Button variant="outline" asChild>
-                  <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
-                </Button>
-                <Button asChild>
-                  <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>Register</Link>
-                </Button>
+              <div className="flex flex-col gap-2 p-2 border-t mt-4">
+                {isLoggedIn ? (
+                  <Button variant="outline" onClick={() => {
+                    handleLogout();
+                    setIsMobileMenuOpen(false);
+                  }}>
+                    Logout
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="outline" asChild>
+                      <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
+                    </Button>
+                    <Button asChild>
+                      <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>Sign Up</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>
