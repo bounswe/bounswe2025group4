@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../generated/l10n/app_localizations.dart';
 import '../forum/screens/forum_page.dart';
@@ -6,7 +7,6 @@ import '../job/screens/job_page.dart';
 import '../mentorship/screens/mentorship_page.dart';
 import '../profile/screens/profile_page.dart';
 import '../workplaces/screens/workplaces_page.dart';
-import '../../core/providers/auth_provider.dart';
 import '../../core/providers/quote_provider.dart';
 
 class MainScaffold extends StatefulWidget {
@@ -28,6 +28,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   ];
 
   void _onItemTapped(int index) {
+    HapticFeedback.selectionClick();
     setState(() {
       _selectedIndex = index;
     });

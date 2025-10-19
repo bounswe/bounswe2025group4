@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/widgets/a11y.dart';
+import 'package:flutter/services.dart';
 import '../../../core/services/api_service.dart'; // To get available filters
 import '../../../core/utils/string_extensions.dart'; // Import shared extension
 import '../../../generated/l10n/app_localizations.dart';
@@ -147,6 +147,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
               title: Text(AppLocalizations.of(context)!.jobFilter_remoteOnly),
               value: _isRemote,
               onChanged: (value) {
+                HapticFeedback.lightImpact();
                 setState(() {
                   _isRemote = value;
                   _selectedFilters['isRemote'] = value;
@@ -168,11 +169,15 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(), // Cancel
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            Navigator.of(context).pop();
+          }, // Cancel
           child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
         ),
         TextButton(
           onPressed: () {
+            HapticFeedback.lightImpact();
             // Clear all selections
             setState(() {
               _titleController.clear();
@@ -193,6 +198,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
         ),
         ElevatedButton(
           onPressed: () {
+            HapticFeedback.mediumImpact();
             // Return the selected filters
             Navigator.of(context).pop(_selectedFilters);
           },
@@ -225,6 +231,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
                   label: Text(item.formatFilterName()),
                   selected: isSelected,
                   onSelected: (selected) {
+                    HapticFeedback.lightImpact();
                     setState(() {
                       if (selected) {
                         selectedItems.add(item);

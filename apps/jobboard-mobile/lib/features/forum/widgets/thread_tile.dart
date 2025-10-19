@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/discussion_thread.dart';
 import '../../../core/providers/auth_provider.dart';
@@ -33,7 +34,10 @@ class _ThreadTileState extends State<ThreadTile> {
     final isOwner = widget.thread.creatorId.toString() == currentUser;
 
     return GestureDetector(
-      onTap: widget.onTap,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        widget.onTap();
+      },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -75,6 +79,7 @@ class _ThreadTileState extends State<ThreadTile> {
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
+                            HapticFeedback.lightImpact();
                             Navigator.push(
                               context,
                               MaterialPageRoute(

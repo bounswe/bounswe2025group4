@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../../../core/models/job_post.dart';
 import '../../../core/models/user_type.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
@@ -57,8 +57,10 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
   }
 
   Future<void> _submitForm() async {
+    HapticFeedback.mediumImpact();
     if (_formKey.currentState?.validate() ?? false) {
       if (_selectedJobType == null) {
+        HapticFeedback.vibrate();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.createJob_selectJobTypeError),
@@ -68,6 +70,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         return;
       }
       if (_selectedPolicies.isEmpty) {
+        HapticFeedback.vibrate();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.createJob_selectPolicyError),
@@ -164,6 +167,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         );
 
         if (mounted) {
+          HapticFeedback.heavyImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.createJob_success(newJob.title)),
@@ -176,6 +180,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
       } catch (e) {
         print("Error creating job post: $e");
         if (mounted) {
+          HapticFeedback.vibrate();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.createJob_error(e.toString().replaceFirst("Exception: ", ""))),
@@ -278,6 +283,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               title: const Text('Remote Job'),
               value: _isRemote,
               onChanged: (bool? value) {
+                HapticFeedback.lightImpact();
                 setState(() {
                   _isRemote = value ?? false;
                 });
@@ -428,6 +434,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                       label: Text(policy.formatFilterName()),
                       selected: isSelected,
                       onSelected: (selected) {
+                        HapticFeedback.lightImpact();
                         setState(() {
                           if (selected) {
                             _selectedPolicies.add(policy);

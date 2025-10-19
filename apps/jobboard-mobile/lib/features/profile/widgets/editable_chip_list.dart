@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../generated/l10n/app_localizations.dart';
 
 class EditableChipList extends StatefulWidget {
@@ -60,11 +61,15 @@ class _EditableChipListState extends State<EditableChipList> {
         actions: [
           TextButton(
             child: Text(AppLocalizations.of(context)!.profileWidgets_cancel),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.of(context).pop();
+            },
           ),
           ElevatedButton(
             child: Text(AppLocalizations.of(context)!.profileWidgets_add),
             onPressed: () {
+              HapticFeedback.mediumImpact();
               _addItem(textController.text);
               Navigator.of(context).pop();
             },
@@ -108,7 +113,10 @@ class _EditableChipListState extends State<EditableChipList> {
               TextButton.icon(
                 icon: const Icon(Icons.add),
                 label: Text(AppLocalizations.of(context)!.profileWidgets_add),
-                onPressed: _showAddDialog,
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  _showAddDialog();
+                },
               ),
           ],
         ),
@@ -126,7 +134,10 @@ class _EditableChipListState extends State<EditableChipList> {
               return Chip(
                 label: Text(item),
                 deleteIcon: widget.isEditable ? const Icon(Icons.close, size: 18) : null,
-                onDeleted: widget.isEditable ? () => _removeItem(item) : null,
+                onDeleted: widget.isEditable ? () {
+                  HapticFeedback.lightImpact();
+                  _removeItem(item);
+                } : null,
               );
             }).toList(),
           ),

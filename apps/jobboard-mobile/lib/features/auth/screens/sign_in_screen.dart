@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile/features/main_scaffold/main_scaffold.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
 import 'package:mobile/generated/l10n/app_localizations.dart';
@@ -28,6 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _handleSignIn() async {
+    HapticFeedback.mediumImpact();
     if (_formKey.currentState!.validate()) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
@@ -39,6 +41,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (!mounted) return;
 
       if (success) {
+        HapticFeedback.heavyImpact();
         final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
         profileProvider.clearCurrentUserProfile();
         await profileProvider.fetchMyProfile();
@@ -47,6 +50,7 @@ class _SignInScreenState extends State<SignInScreen> {
           MaterialPageRoute(builder: (context) => const MainScaffold()),
         );
       } else {
+        HapticFeedback.vibrate();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.signInScreen_loginFailed),
@@ -66,7 +70,10 @@ class _SignInScreenState extends State<SignInScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           tooltip: 'Back',
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            Navigator.pop(context);
+          },
         ),
         title: Text(AppLocalizations.of(context)!.signInScreen_title),
       ),
@@ -114,6 +121,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         setState(() {
                           _obscurePassword = !_obscurePassword;
                         });
@@ -164,6 +172,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     Text(AppLocalizations.of(context)!.signInScreen_dontHaveAccount),
                     TextButton(
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(

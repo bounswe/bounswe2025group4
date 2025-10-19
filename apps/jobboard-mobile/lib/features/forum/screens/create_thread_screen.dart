@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
 import '../../../core/providers/auth_provider.dart';
@@ -72,6 +73,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () async {
+                        HapticFeedback.lightImpact();
                         final title = _titleCtrl.text.trim();
                         if (title.isEmpty) {
                           setModalState(() {
@@ -112,6 +114,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                           backgroundColor: Colors.orange.shade100,
                           avatar: const Icon(Icons.lightbulb_outline, size: 18),
                           onPressed: () {
+                            HapticFeedback.lightImpact();
                             setModalState(() {
                               if (!_availableTags.contains(tag)) {
                                 _availableTags.insert(0, tag);
@@ -144,6 +147,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                         IconButton(
                           icon: const Icon(Icons.add),
                           onPressed: () {
+                            HapticFeedback.lightImpact();
                             final newTag = _modalTagController.text.trim();
                             if (newTag.isEmpty) {
                               setModalState(() {
@@ -194,6 +198,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                                 title: Text(tag),
                                 value: selected,
                                 onChanged: (checked) {
+                                  HapticFeedback.lightImpact();
                                   setModalState(() {
                                     if (checked!) {
                                       tempSelectedTags.add(tag);
@@ -211,6 +216,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                     const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () {
+                        HapticFeedback.mediumImpact();
                         setState(() {
                           _selectedTags = List.from(tempSelectedTags);
                         });
@@ -300,7 +306,10 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
 
                       /// New tag input
                       ElevatedButton(
-                        onPressed: _showTagSelectionSheet,
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                          _showTagSelectionSheet();
+                        },
                         child: Text(AppLocalizations.of(context)!.createThread_selectTags),
                       ),
                       const SizedBox(height: 8),
@@ -320,6 +329,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                 padding: const EdgeInsets.only(top: 16),
                 child: ElevatedButton(
                   onPressed: () async {
+                    HapticFeedback.mediumImpact();
                     final navigator = Navigator.of(context);
                     final valid = _formKey.currentState!.validate();
                     if (!valid) return;
@@ -340,12 +350,15 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                         _selectedTags,
                       );
                       if (!mounted) return;
+                      HapticFeedback.heavyImpact();
                       navigator.pop(saved);
                     } on SocketException {
+                      HapticFeedback.vibrate();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(AppLocalizations.of(context)!.createThread_createError, style: const TextStyle(color: Colors.red))),
                       );
                     } catch (e) {
+                      HapticFeedback.vibrate();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(AppLocalizations.of(context)!.createThread_generalError, style: const TextStyle(color: Colors.red))),
                       );
