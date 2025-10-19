@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile/features/auth/screens/user_type_screen.dart';
 import 'package:mobile/features/auth/screens/sign_in_screen.dart';
 import 'package:mobile/generated/l10n/app_localizations.dart';
@@ -129,10 +130,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         children: [
                           Text(
                             _quote,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: Colors.black87,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white.withOpacity(0.9)
+                                  : Colors.black87,
                               height: 1.4,
                             ),
                             textAlign: TextAlign.center,
@@ -140,10 +143,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           const SizedBox(height: 8),
                           Text(
                             '- $_author',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Colors.blue,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.blue.shade300
+                                  : Colors.blue,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -264,6 +269,7 @@ class ThemeToggleSwitch extends StatelessWidget {
             child: Switch.adaptive(
               value: isDarkMode,
               onChanged: (value) {
+                HapticFeedback.selectionClick();
                 Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
               },
               activeColor: Colors.blue, // Use blue to match design language
