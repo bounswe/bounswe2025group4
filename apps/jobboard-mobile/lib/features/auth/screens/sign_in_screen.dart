@@ -34,11 +34,11 @@ class _SignInScreenState extends State<SignInScreen> {
       final username = _usernameController.text.trim();
       final password = _passwordController.text.trim();
 
-      bool success = await authProvider.login(username, password);
+      final ok = await authProvider.login(username, password);
 
       if (!mounted) return;
 
-      if (success) {
+      if (ok) {
         final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
         profileProvider.clearCurrentUserProfile();
         await profileProvider.fetchMyProfile();
@@ -47,15 +47,78 @@ class _SignInScreenState extends State<SignInScreen> {
           MaterialPageRoute(builder: (context) => const MainScaffold()),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.signInScreen_loginFailed),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (authProvider.hasPendingOtp) {
+          _showOtpDialog(context);
+          return;
+        }
+        else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  AppLocalizations.of(context)!.signInScreen_loginFailed),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
+  void _showOtpDialog(BuildContext context) {
+    final otpController = TextEditingController();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Enter verification code'),
+          content: TextField(
+            controller: otpController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: '6-digit code',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final code = otpController.text.trim();
+                if (code.isEmpty) return;
+
+                final success = await context.read<AuthProvider>()
+                    .verifyOtpAndCompleteLogin(code);
+
+                if (!mounted) return;
+
+                if (success) {
+                  Navigator.of(ctx).pop(); // close dialog
+                  // proceed to app
+                  final profileProvider = context.read<ProfileProvider>();
+                  profileProvider.clearCurrentUserProfile();
+                  await profileProvider.fetchMyProfile();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MainScaffold()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Invalid code. Try again.')),
+                  );
+                }
+              },
+              child: const Text('Verify'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {

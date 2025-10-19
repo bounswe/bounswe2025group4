@@ -7,7 +7,9 @@ import '../models/register_request_dto.dart';
 import '../models/auth_response_dto.dart';
 import '../../features/auth/services/auth_service.dart'; // Import the real service
 import '../services/api_service.dart'; // Import the API service
-
+import '../models/register_outcome.dart'; // Import the enum
+import '../models/auth_errors.dart'; // Import the custom exception
+import 'package:mobile/core/models/login_result.dart';
 // Remove MentorshipPreference if not used in registration API, or keep if needed for UI flow
 // enum MentorshipPreference { mentor, mentee, none }
 
@@ -16,6 +18,12 @@ class AuthProvider with ChangeNotifier {
   User? _currentUser;
   String? _token; // Store the auth token
   bool _isLoading = false;
+
+  String? _pendingUsername;
+  String? _pendingTemporaryToken;
+
+  String? get pendingUsername => _pendingUsername;
+  bool get hasPendingOtp => _pendingUsername != null && _pendingTemporaryToken != null;
 
   // --- Onboarding State (If mentorship preference is part of the flow but not API) ---
   UserType? _onboardingUserType; // Changed from UserRole
@@ -75,6 +83,7 @@ class AuthProvider with ChangeNotifier {
       final storedEmployerId = prefs.getString('employerId');
       final storedMentorshipStatusName = prefs.getString('mentorshipStatus');
       final storedMaxMenteeCount = prefs.getInt('maxMenteeCount');
+      final _emailVerified = prefs.getBool('emailVerified');
 
       if (storedToken != null &&
           storedId != null &&
@@ -125,41 +134,42 @@ class AuthProvider with ChangeNotifier {
   Future<bool> login(String username, String password) async {
     _isLoading = true;
     notifyListeners();
+    print(">>> In the login function in Provider");
     try {
-      final authResponse = await _authService.login(username, password);
-      String? tempToken = authResponse.token;
+      final result = await _authService.login(username, password);
 
-      // Store initial data first
-      await _storeInitialAuthData(authResponse);
+      if (result is LoginSuccess) {
+        final auth = result.auth;
+        await _storeInitialAuthData(auth);
 
-      print(
-        "Login successful (initial). User: ${authResponse.username}, Role: ${authResponse.userType}",
-      );
-
-      // Now, fetch and update full details
-      if (_currentUser?.id != null && tempToken != null) {
-        try {
-          print("Fetching full user details after login...");
-          final userDetails = await _authService.getUserDetails(
-            _currentUser!.id, // Use the ID we got from login response
-            tempToken, // Token is non-null here
-          );
-          print("User details: $userDetails");
-          await _updateAndPersistUserDetails(userDetails);
-          print("Successfully updated full user details.");
-        } catch (e) {
-          print(
-            "Warning: Failed to fetch/update full user details after login: $e",
-          );
-          // Continue even if detail fetch fails
+        // (optional) fetch details
+        if (_currentUser?.id != null && _token != null) {
+          try {
+            final details = await _authService.getUserDetails(_currentUser!.id, _token!);
+            await _updateAndPersistUserDetails(details);
+          } catch (_) {}
         }
+
+        _isLoading = false;
+        notifyListeners();
+        return true;
       }
 
+      if (result is LoginNeedsOtp) {
+        // Keep pending state; UI should now prompt for the OTP
+        _pendingUsername = result.username;
+        _pendingTemporaryToken = result.temporaryToken;
+
+        _isLoading = false;
+        notifyListeners();
+        return false; // not logged in YET
+      }
+
+      // Shouldn’t reach
       _isLoading = false;
-      notifyListeners(); // Notify after all updates (initial + details)
-      return true; // Return true after everything
+      notifyListeners();
+      return false;
     } catch (e) {
-      print("Login failed: $e");
       _token = null;
       _currentUser = null;
       _isLoading = false;
@@ -168,7 +178,46 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> register(
+  Future<bool> verifyOtpAndCompleteLogin(String otpCode) async {
+    if (!hasPendingOtp) return false;
+    print(">>> In the verify otp function in Provider");
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final auth = await _authService.verifyLoginOtp(
+        username: _pendingUsername!,
+        otpCode: otpCode,
+        temporaryToken: _pendingTemporaryToken!,
+      );
+
+      print(">>> In the provider, auth: $auth");
+
+      // success → clear pending and store real token/user
+      _pendingUsername = null;
+      _pendingTemporaryToken = null;
+
+      await _storeInitialAuthData(auth);
+
+      if (_currentUser?.id != null && _token != null) {
+        try {
+          final details = await _authService.getUserDetails(_currentUser!.id, _token!);
+          await _updateAndPersistUserDetails(details);
+        } catch (_) {}
+      }
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print("Caught an error: $e");
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<RegisterOutcome> register(
     String username,
     String email,
     String password,
@@ -185,14 +234,24 @@ class AuthProvider with ChangeNotifier {
         username: username,
         email: email,
         password: password,
-        bio: bio,
-        userType: userType,
-        mentorshipStatus: mentorshipStatus,
-        maxMenteeCount: maxMenteeCount,
+        role: userType,
       );
-      print('RegisterRequestDto: ' + requestDto.toJson().toString());
 
-      final authResponse = await _authService.register(requestDto);
+      print('RegisterRequestDto: ' + requestDto.toJson().toString());
+      late AuthResponseDto authResponse; // <— declare it
+
+      try {
+        authResponse = await _authService.register(requestDto);
+      } on NeedsEmailVerificationException catch (e) {
+        // 201 path: no token, no current user. Tell UI to show “check email”.
+        print("Registration needs verification: ${e.message}");
+        _token = null;
+        _currentUser = null;
+        _isLoading = false;
+        notifyListeners();
+        return RegisterOutcome.needsVerification;
+      }
+
       tempToken = authResponse.token;
 
       // Store initial data first
@@ -230,7 +289,7 @@ class AuthProvider with ChangeNotifier {
               // Don't continue if mentor profile creation fails
               _isLoading = false;
               notifyListeners();
-              throw Exception('Failed to create mentor profile: $e');
+              return RegisterOutcome.failure;
             }
           }
         } catch (e) {
@@ -240,7 +299,7 @@ class AuthProvider with ChangeNotifier {
           _token = null; // Clear token since registration is incomplete
           _currentUser = null; // Clear user since registration is incomplete
           notifyListeners();
-          throw Exception('Registration failed: $e');
+          return RegisterOutcome.failure;
         }
       }
 
@@ -249,14 +308,14 @@ class AuthProvider with ChangeNotifier {
       _onboardingMentorshipStatus = null;
       _onboardingMaxMenteeCount = null;
       notifyListeners(); // Notify after all updates
-      return true; // Return true after everything
+      return RegisterOutcome.success; // Return true after everything
     } catch (e) {
       print("Registration failed: $e");
       _token = null;
       _currentUser = null;
       _isLoading = false;
       notifyListeners();
-      return false;
+      return RegisterOutcome.failure;
     }
   }
 
@@ -278,6 +337,7 @@ class AuthProvider with ChangeNotifier {
       await prefs.remove('employerId');
       await prefs.remove('mentorshipStatus');
       await prefs.remove('maxMenteeCount');
+      await prefs.remove('emailVerified');
       print("Logged out and cleared stored user data.");
     } catch (e) {
       print("Error clearing data on logout: $e");
@@ -404,4 +464,6 @@ class AuthProvider with ChangeNotifier {
       print("User changed during detail fetch, aborting update.");
     }
   }
+
+
 }

@@ -11,10 +11,10 @@ class RegisterRequestDto with _$RegisterRequestDto {
     required String username,
     required String email,
     required String password,
-    String? bio,
-    required UserType userType, // Ensure UserType enum is imported
-    MentorshipStatus? mentorshipStatus,
-    int? maxMenteeCount,
+    //String? bio,
+    required UserType role, // Ensure UserType enum is imported
+    //MentorshipStatus? mentorshipStatus,
+    //int? maxMenteeCount,
   }) = _RegisterRequestDto;
 
   factory RegisterRequestDto.fromJson(Map<String, dynamic> json) =>

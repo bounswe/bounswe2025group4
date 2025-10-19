@@ -77,7 +77,7 @@ class _JobPageState extends State<JobPage> {
 
     try {
       List<JobPost> postings;
-      if (_userRole == UserType.EMPLOYER) {
+      if (_userRole == UserType.ROLE_EMPLOYER) {
         // TODO: Get actual employer ID
         final employerId =
             Provider.of<AuthProvider>(context, listen: false).currentUser?.id ??
@@ -295,10 +295,10 @@ class _JobPageState extends State<JobPage> {
 
     // Display different content based on the user role
     switch (_userRole) {
-      case UserType.JOB_SEEKER:
+      case UserType.ROLE_JOBSEEKER:
         content = _buildJobSeekerView(context);
         break;
-      case UserType.EMPLOYER:
+      case UserType.ROLE_EMPLOYER:
         content = _buildEmployerView(context);
         break;
       default:
@@ -319,7 +319,7 @@ class _JobPageState extends State<JobPage> {
         automaticallyImplyLeading: false,
         actions: [
           // Conditionally show the "My Applications" button for job seekers
-          if (_userRole == UserType.JOB_SEEKER)
+          if (_userRole == UserType.ROLE_JOBSEEKER)
             Padding(
               padding: const EdgeInsets.only(right: 8.0), // Add some padding
               child: TextButton.icon(
@@ -339,7 +339,7 @@ class _JobPageState extends State<JobPage> {
       // Remove RefreshIndicator, ListView provides scrollability
       body: content,
       floatingActionButton:
-          _userRole == UserType.EMPLOYER
+          _userRole == UserType.ROLE_EMPLOYER
               ? FloatingActionButton(
                 onPressed: _navigateToCreateJobPost,
                 tooltip: AppLocalizations.of(context)!.jobPage_createJob,
@@ -446,7 +446,7 @@ class _JobPageState extends State<JobPage> {
     if (_jobPostings.isEmpty) {
       return Center(
         child: Text(
-          _userRole == UserType.EMPLOYER
+          _userRole == UserType.ROLE_EMPLOYER
               ? AppLocalizations.of(context)!.jobPage_noPostedJobs
               : AppLocalizations.of(context)!.jobPage_noJobs,
           style: Theme.of(context).textTheme.bodySmall,
@@ -474,7 +474,7 @@ class _JobPageState extends State<JobPage> {
             margin: const EdgeInsets.symmetric(vertical: 6.0),
             child: InkWell(
               onTap: () {
-                if (_userRole == UserType.EMPLOYER) {
+                if (_userRole == UserType.ROLE_EMPLOYER) {
                   _navigateToJobApplications(job);
                 } else {
                   _navigateToJobDetails(job);
