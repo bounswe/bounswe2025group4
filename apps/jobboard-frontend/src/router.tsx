@@ -11,6 +11,12 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyOtpPage from './pages/VerifyOtpPage';
 import ProfilePage from './pages/ProfilePage';
+import JobsPage from './pages/JobsPage';
+import JobDetailPage from './pages/JobDetailPage';
+import EmployerDashboardPage from './pages/EmployerDashboardPage';
+import CreateJobPostPage from './pages/CreateJobPostPage';
+import EmployerJobPostDetailsPage from './pages/EmployerJobPostDetailsPage';
+import JobApplicationReviewPage from './pages/JobApplicationReviewPage';
 
 const router = createBrowserRouter([
   {
@@ -27,11 +33,15 @@ const router = createBrowserRouter([
       },
       {
         path: 'jobs',
-        element: (
-          <div className="p-8">
-            <h1 className="text-2xl font-bold">Jobs Page</h1>
-          </div>
-        ),
+        element: <JobsPage />,
+      },
+      {
+        path: 'jobs/:id',
+        element: <JobDetailPage />,
+      },
+      {
+        path: 'apply/:jobId',
+        element: <ApplyJobPage />,
       },
       {
         path: 'mentorship',
@@ -82,6 +92,22 @@ const router = createBrowserRouter([
         element: (
             <ProfilePage />
         ),
+      },
+      {
+        path: 'employer/dashboard',
+        element: <EmployerDashboardPage />,
+      },
+      {
+        path: 'employer/jobs/create',
+        element: <CreateJobPostPage />,
+      },
+      {
+        path: 'employer/jobs/:id',
+        element: <EmployerJobPostDetailsPage />,
+      },
+      {
+        path: 'employer/jobs/:jobId/applications/:applicationId',
+        element: <JobApplicationReviewPage />,
       },
     ],
   },
