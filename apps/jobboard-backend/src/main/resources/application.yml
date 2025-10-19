@@ -12,7 +12,7 @@ spring:
     hibernate:
       ddl-auto: update
   mail:
-    host: smtp.gmail.com
+    host: smtp.sendgrid.net
     port: 587
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
@@ -22,6 +22,7 @@ spring:
           auth: true
           starttls:
             enable: true
+          from: ${APP_MAIL_FROM}
   servlet:
     multipart:
       max-file-size: 5MB
