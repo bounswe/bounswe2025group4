@@ -66,7 +66,7 @@ class _ThreadTileState extends State<ThreadTile> {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1565C0),
+                          color: Colors.blue, // Use blue to match design language
                           decoration: TextDecoration.underline,
                           letterSpacing: 0.3,
                           shadows: [

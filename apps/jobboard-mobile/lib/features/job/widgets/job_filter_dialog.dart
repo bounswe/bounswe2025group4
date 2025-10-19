@@ -240,8 +240,8 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
                       }
                     });
                   },
-                  selectedColor: Colors.teal.shade100,
-                  checkmarkColor: Colors.teal.shade800,
+                  selectedColor: Colors.blue.withOpacity(0.2), // Blue selection to match design
+                  checkmarkColor: Colors.blue, // Blue checkmark
                 );
               }).toList(),
         ),

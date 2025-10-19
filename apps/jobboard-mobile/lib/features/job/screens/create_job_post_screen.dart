@@ -443,8 +443,8 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                           }
                         });
                       },
-                      selectedColor: Colors.teal.shade100,
-                      checkmarkColor: Colors.teal.shade800,
+                      selectedColor: Colors.blue.withOpacity(0.2), // Blue selection to match design
+                      checkmarkColor: Colors.blue, // Blue checkmark
                     );
                   }).toList(),
             ),

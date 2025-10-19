@@ -81,7 +81,7 @@ class _MainScaffoldState extends State<MainScaffold> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800], // Customize color
+        selectedItemColor: Colors.blue, // Use blue to match onboarding design
         unselectedItemColor: Colors.grey, // Ensure unselected items are visible
         showUnselectedLabels: true, // Make labels always visible
         onTap: _onItemTapped,

@@ -111,8 +111,8 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                             .where((tag) => !tempSelectedTags.contains(tag))
                             .map((tag) => InputChip(
                           label: Text(tag),
-                          backgroundColor: Colors.orange.shade100,
-                          avatar: const Icon(Icons.lightbulb_outline, size: 18),
+                          backgroundColor: Colors.blue.withOpacity(0.15), // Blue to match design language
+                          avatar: const Icon(Icons.lightbulb_outline, size: 18, color: Colors.blue),
                           onPressed: () {
                             HapticFeedback.lightImpact();
                             setModalState(() {

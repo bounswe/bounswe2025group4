@@ -266,8 +266,8 @@ class ThemeToggleSwitch extends StatelessWidget {
               onChanged: (value) {
                 Provider.of<ThemeProvider>(context, listen: false).toggleTheme(value);
               },
-              activeColor: Colors.amber,
-              activeTrackColor: Colors.amber.withOpacity(0.5),
+              activeColor: Colors.blue, // Use blue to match design language
+              activeTrackColor: Colors.blue.withOpacity(0.5),
               inactiveThumbColor: isDarkMode ? Colors.white : Colors.grey.shade400,
               inactiveTrackColor: isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300,
             ),
