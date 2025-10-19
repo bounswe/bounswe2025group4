@@ -14,7 +14,6 @@ import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.security.JwtUtils;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,7 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -46,10 +44,6 @@ public class AuthService {
     private final OtpRepository otpRepository;
     private final UserDetailsServiceImpl userDetailsService;
 
-    @Value("${app.verifyEmailUrl}")
-    private String verifyEmailUrl;
-    @Value("${app.resetPasswordUrl}")
-    private String resetPasswordUrl;
 
 
 
@@ -182,24 +176,8 @@ public class AuthService {
         Instant expires = Instant.now().plus(Duration.ofMinutes(20));
         passwordResetTokenRepository.save(new PasswordResetToken(null, token, user.getId(), expires, null));
 
+        emailService.sendPasswordResetEmail(user.getEmail(), token);
 
-        String link = UriComponentsBuilder
-                .fromUriString(resetPasswordUrl)
-                .queryParam("token", token)
-                .build()
-                .toUriString();
-
-        emailService.sendEmail(
-                user.getEmail(),
-                "Reset your password",
-                """
-                        You requested a password reset. This link expires in ~20 minutes.
-                        
-                        %s
-                        
-                        If you didn't request this, you can ignore this email.
-                        """.formatted(link)
-        );
     }
 
     @Transactional
@@ -258,17 +236,7 @@ public class AuthService {
         Instant expires = Instant.now().plus(Duration.ofMinutes(20));
         tokenRepository.deleteByUserId(user.getId());
         tokenRepository.save(new EmailVerificationToken(token, user.getId(), expires));
-        String link = UriComponentsBuilder
-                .fromUriString(verifyEmailUrl)
-                .queryParam("token", token)
-                .build().toUriString();
 
-        String body = """
-                    Please click to verify your email (expires in ~20m):
-                    %s
-                    If you didn't request this, ignore.
-                """.formatted(link);
-
-        emailService.sendEmail(user.getEmail(), "Verify your email", body);
+        emailService.sendVerificationEmail(user.getEmail(), token);
     }
 }
