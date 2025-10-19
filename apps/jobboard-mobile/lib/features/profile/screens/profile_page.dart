@@ -143,7 +143,10 @@ class _ProfilePageState extends State<ProfilePage> {
               addDialogTitle: AppLocalizations.of(context)!.profilePage_addSkill,
               addDialogHint: AppLocalizations.of(context)!.profilePage_enterSkill,
               onSave: (updatedSkills) {
-                profileProvider.updateSkills(updatedSkills);
+                // For now, we'll need to implement individual skill management
+                // This requires UI changes to support add/edit/delete individual skills
+                // For now, we'll just refresh the profile
+                profileProvider.fetchMyProfile();
               },
               isEditable: true,
             ),
@@ -156,7 +159,10 @@ class _ProfilePageState extends State<ProfilePage> {
               addDialogTitle: AppLocalizations.of(context)!.profilePage_addInterest,
               addDialogHint: AppLocalizations.of(context)!.profilePage_enterInterest,
               onSave: (updatedInterests) {
-                profileProvider.updateInterests(updatedInterests);
+                // For now, we'll need to implement individual interest management
+                // This requires UI changes to support add/edit/delete individual interests
+                // For now, we'll just refresh the profile
+                profileProvider.fetchMyProfile();
               },
               isEditable: true,
             ),
