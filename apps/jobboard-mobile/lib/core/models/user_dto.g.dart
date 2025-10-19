@@ -25,7 +25,7 @@ Map<String, dynamic> _$$UserDtoImplToJson(_$UserDtoImpl instance) =>
     };
 
 const _$UserTypeEnumMap = {
-  UserType.EMPLOYER: 'EMPLOYER',
-  UserType.JOB_SEEKER: 'JOB_SEEKER',
-  UserType.MENTOR: 'MENTOR',
+  UserType.ROLE_EMPLOYER: 'ROLE_EMPLOYER',
+  UserType.ROLE_JOBSEEKER: 'ROLE_JOBSEEKER',
+  UserType.ROLE_ADMIN: 'ROLE_ADMIN',
 };

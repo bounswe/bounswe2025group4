@@ -3,18 +3,20 @@ package org.bounswe.jobboardbackend.profile.service;
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.profile.dto.*;
 import org.bounswe.jobboardbackend.profile.model.*;
 import org.bounswe.jobboardbackend.profile.repository.*;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import com.google.cloud.storage.*;
 import org.springframework.beans.factory.annotation.Value;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
 import java.net.URL;
 
@@ -33,22 +35,19 @@ public class ProfileService {
     private final SkillRepository skillRepository;
     private final InterestRepository interestRepository;
 
-    private static void require(boolean condition, HttpStatus status, String message) {
-        if (!condition) throw new ResponseStatusException(status, message);
-    }
     private static void requireNotBlank(String value, String field) {
         if (value == null || value.trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, field + " is required");
+            throw new HandleException(ErrorCode.VALIDATION_ERROR, field + " is required");
         }
     }
-    private static void requireNotNull(Object value, String field) {
+    private static void requireNotNull(Object value) {
         if (value == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, field + " is required");
+            throw new HandleException(ErrorCode.VALIDATION_ERROR, "body" + " is required");
         }
     }
-    private static void requireStartBeforeEnd(java.time.LocalDate start, java.time.LocalDate end, String startName, String endName) {
+    private static void requireStartBeforeEnd(LocalDate start, LocalDate end) {
         if (start != null && end != null && end.isBefore(start)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, endName + " must be after " + startName);
+            throw new HandleException(ErrorCode.VALIDATION_ERROR, "endDate" + " must be after " + "startDate");
         }
     }
 
@@ -76,13 +75,13 @@ public class ProfileService {
     @Transactional
     public ProfileResponseDto createProfile(Long userId, CreateProfileRequestDto dto) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
 
         if (profileRepository.findByUserId(userId).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Profile already exists for this user");
+            throw new HandleException(ErrorCode.PROFILE_ALREADY_EXISTS, "Profile already exists for this user");
         }
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         requireNotBlank(dto.getFirstName(), "firstName");
         requireNotBlank(dto.getLastName(), "lastName");
 
@@ -101,19 +100,22 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public ProfileResponseDto getFullProfile(Long userId) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
         return toProfileDto(profile);
     }
 
     @Transactional
     public ProfileResponseDto updateProfile(Long userId, UpdateProfileRequestDto dto) {
         Profile profile = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         if (dto.getFirstName() == null && dto.getLastName() == null && dto.getBio() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+            throw new HandleException(ErrorCode.VALIDATION_ERROR, "No changes provided");
         }
+
+        if (dto.getFirstName() != null) requireNotBlank(dto.getFirstName(), "firstName");
+        if (dto.getLastName()  != null) requireNotBlank(dto.getLastName(),  "lastName");
 
         if (dto.getFirstName() != null) profile.setFirstName(dto.getFirstName());
         if (dto.getLastName()  != null) profile.setLastName(dto.getLastName());
@@ -125,7 +127,7 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public PublicProfileResponseDto getPublicProfile(Long userId) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         return PublicProfileResponseDto.builder()
                 .userId(p.getUser().getId())
@@ -190,15 +192,15 @@ public class ProfileService {
     @Transactional
     public ProfileImageResponseDto uploadImage(Long userId, MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image file is required");
+            throw new HandleException(ErrorCode.IMAGE_FILE_REQUIRED, "Image file is required");
         }
         String ct = file.getContentType();
         if (ct == null || !ct.startsWith("image/")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only image files are allowed");
+            throw new HandleException(ErrorCode.IMAGE_CONTENT_TYPE_INVALID, "Only image files are allowed");
         }
 
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         if (p.getImageUrl() != null) {
             String oldObject = extractObjectNameFromUrl(p.getImageUrl());
@@ -212,7 +214,7 @@ public class ProfileService {
         try {
             url = uploadToGcs(file.getBytes(), ct, objectName);
         } catch (IOException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Upload failed", e);
+            throw new HandleException(ErrorCode.IMAGE_UPLOAD_FAILED, "Upload failed", e);
         }
 
         p.setImageUrl(url);
@@ -226,7 +228,7 @@ public class ProfileService {
     @Transactional
     public void deleteImage(Long userId) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         if (p.getImageUrl() != null) {
             String objectName = extractObjectNameFromUrl(p.getImageUrl());
@@ -244,11 +246,13 @@ public class ProfileService {
     @Transactional
     public EducationResponseDto addEducation(Long userId, CreateEducationRequestDto dto) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         requireNotBlank(dto.getSchool(), "school");
-        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate(), "startDate", "endDate");
+        requireNotBlank(dto.getDegree(), "degree");
+        requireNotBlank(dto.getField(), "field");
+        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate());
 
         Education e = Education.builder()
                 .profile(p)
@@ -267,16 +271,29 @@ public class ProfileService {
     @Transactional
     public EducationResponseDto updateEducation(Long userId, Long eduId, UpdateEducationRequestDto dto) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         Education e = educationRepository.findByIdAndProfileId(eduId, p.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Education not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.EDUCATION_NOT_FOUND, "Education not found"));
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         if (dto.getSchool() == null && dto.getDegree() == null && dto.getField() == null && dto.getStartDate() == null && dto.getEndDate() == null && dto.getDescription() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+            throw new HandleException(ErrorCode.VALIDATION_ERROR, "No changes provided");
         }
-        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate(), "startDate", "endDate");
+        if (dto.getStartDate() != null && dto.getEndDate() != null) {
+            requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate());
+        }
+        if(dto.getStartDate() != null && dto.getEndDate() == null) {
+            requireStartBeforeEnd(dto.getStartDate(), e.getEndDate());
+        }
+        if(dto.getEndDate() != null && dto.getStartDate() == null) {
+            requireStartBeforeEnd(e.getStartDate(), dto.getEndDate());
+        }
+
+        if (dto.getSchool() != null) requireNotBlank(dto.getSchool(), "school");
+        if (dto.getDegree() != null) requireNotBlank(dto.getDegree(), "degree");
+        if (dto.getField()  != null) requireNotBlank(dto.getField(),  "field");
+
 
         if (dto.getSchool()      != null) e.setSchool(dto.getSchool());
         if (dto.getDegree()      != null) e.setDegree(dto.getDegree());
@@ -291,10 +308,10 @@ public class ProfileService {
     @Transactional
     public void deleteEducation(Long userId, Long eduId) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         Education e = educationRepository.findByIdAndProfileId(eduId, p.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Education not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.EDUCATION_NOT_FOUND, "Education not found"));
 
         educationRepository.delete(e);
     }
@@ -306,12 +323,12 @@ public class ProfileService {
     @Transactional
     public ExperienceResponseDto addExperience(Long userId, CreateExperienceRequestDto dto) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         requireNotBlank(dto.getCompany(), "company");
         requireNotBlank(dto.getPosition(), "position");
-        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate(), "startDate", "endDate");
+        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate());
 
         Experience ex = Experience.builder()
                 .profile(p)
@@ -329,16 +346,27 @@ public class ProfileService {
     @Transactional
     public ExperienceResponseDto updateExperience(Long userId, Long expId, UpdateExperienceRequestDto dto) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         Experience ex = experienceRepository.findByIdAndProfileId(expId, p.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Experience not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.EXPERIENCE_NOT_FOUND, "Experience not found"));
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         if (dto.getCompany() == null && dto.getPosition() == null && dto.getDescription() == null && dto.getStartDate() == null && dto.getEndDate() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+            throw new HandleException(ErrorCode.VALIDATION_ERROR, "No changes provided");
         }
-        requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate(), "startDate", "endDate");
+        if (dto.getStartDate() != null && dto.getEndDate() != null) {
+            requireStartBeforeEnd(dto.getStartDate(), dto.getEndDate());
+        }
+        if(dto.getStartDate() != null && dto.getEndDate() == null) {
+            requireStartBeforeEnd(dto.getStartDate(), ex.getEndDate());
+        }
+        if(dto.getEndDate() != null && dto.getStartDate() == null) {
+            requireStartBeforeEnd(ex.getStartDate(), dto.getEndDate());
+        }
+
+        if (dto.getCompany()  != null) requireNotBlank(dto.getCompany(),  "company");
+        if (dto.getPosition() != null) requireNotBlank(dto.getPosition(), "position");
 
         if (dto.getCompany()     != null) ex.setCompany(dto.getCompany());
         if (dto.getPosition()    != null) ex.setPosition(dto.getPosition());
@@ -352,10 +380,10 @@ public class ProfileService {
     @Transactional
     public void deleteExperience(Long userId, Long expId) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         Experience ex = experienceRepository.findByIdAndProfileId(expId, p.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Experience not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Experience not found"));
 
         experienceRepository.delete(ex);
     }
@@ -367,9 +395,9 @@ public class ProfileService {
     @Transactional
     public SkillResponseDto addSkill(Long userId, CreateSkillRequestDto dto) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         requireNotBlank(dto.getName(), "name");
 
         Skill s = Skill.builder()
@@ -385,14 +413,14 @@ public class ProfileService {
     @Transactional
     public SkillResponseDto updateSkill(Long userId, Long skillId, UpdateSkillRequestDto dto) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         Skill s = skillRepository.findByIdAndProfileId(skillId, p.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Skill not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.SKILL_NOT_FOUND, "Skill not found"));
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         if (dto.getName() == null && dto.getLevel() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+            throw new HandleException(ErrorCode.VALIDATION_ERROR, "No changes provided");
         }
         if (dto.getName() != null) requireNotBlank(dto.getName(), "name");
 
@@ -405,10 +433,10 @@ public class ProfileService {
     @Transactional
     public void deleteSkill(Long userId, Long skillId) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         Skill s = skillRepository.findByIdAndProfileId(skillId, p.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Skill not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.SKILL_NOT_FOUND, "Skill not found"));
 
         skillRepository.delete(s);
     }
@@ -420,9 +448,9 @@ public class ProfileService {
     @Transactional
     public InterestResponseDto addInterest(Long userId, CreateInterestRequestDto dto) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         requireNotBlank(dto.getName(), "name");
 
         Interest i = Interest.builder()
@@ -437,14 +465,14 @@ public class ProfileService {
     @Transactional
     public InterestResponseDto updateInterest(Long userId, Long interestId, UpdateInterestRequestDto dto) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         Interest i = interestRepository.findByIdAndProfileId(interestId, p.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Interest not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.INTEREST_NOT_FOUND, "Interest not found"));
 
-        requireNotNull(dto, "body");
+        requireNotNull(dto);
         if (dto.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No changes provided");
+            throw new HandleException(ErrorCode.VALIDATION_ERROR, "No changes provided");
         }
         requireNotBlank(dto.getName(), "name");
 
@@ -455,10 +483,10 @@ public class ProfileService {
     @Transactional
     public void deleteInterest(Long userId, Long interestId) {
         Profile p = profileRepository.findByUserId(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Profile not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         Interest i = interestRepository.findByIdAndProfileId(interestId, p.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Interest not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.INTEREST_NOT_FOUND, "Interest not found"));
 
         interestRepository.delete(i);
     }

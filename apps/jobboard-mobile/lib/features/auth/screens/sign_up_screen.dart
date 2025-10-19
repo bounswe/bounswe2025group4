@@ -7,7 +7,9 @@ import 'package:mobile/core/providers/auth_provider.dart';
 import 'package:mobile/core/models/user_type.dart';
 import 'package:mobile/core/models/mentorship_status.dart';
 import 'package:mobile/core/providers/profile_provider.dart';
+import 'package:mobile/features/auth/screens/welcome_screen.dart';
 import '../../../core/widgets/a11y.dart';
+import 'package:mobile/core/models/register_outcome.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -59,7 +61,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
 
       try {
-        bool success = await authProvider.register(
+        final outcome = await context.read<AuthProvider>().register(
           username,
           email,
           password,
@@ -71,15 +73,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         if (!mounted) return;
 
-        if (success) {
+        if (outcome == RegisterOutcome.success) {
           final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
           profileProvider.clearCurrentUserProfile();
           await profileProvider.fetchMyProfile();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Registration successful!"),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const MainScaffold()),
+            MaterialPageRoute(
+              builder: (_) => MainScaffold(), // the screen we wrote earlier
+            ),
           );
-        } else {
+        }
+        else if (outcome == RegisterOutcome.needsVerification) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Please check your email for the verification token."),
+              backgroundColor: Colors.orange,
+            ),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const WelcomeScreen(),
+            ),
+          );
+        }
+        else {
           // This branch might not be reached since errors now throw exceptions,
           // but keeping it for robustness
           ScaffoldMessenger.of(context).showSnackBar(

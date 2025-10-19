@@ -15,5 +15,8 @@ public class CreateJobApplicationRequest {
 
     @Size(max = 500)
     private String specialNeeds;  // Optional: disabilities or special needs
+
+    @Size(max = 2000, message = "Cover letter must not exceed 2000 characters")
+    private String coverLetter;  // Optional: Cover letter / motivation letter
 }
 

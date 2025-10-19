@@ -79,7 +79,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
 
       final currentUser =
           Provider.of<AuthProvider>(context, listen: false).currentUser;
-      if (currentUser == null || currentUser.role != UserType.EMPLOYER) {
+      if (currentUser == null || currentUser.role != UserType.ROLE_EMPLOYER) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.createJob_employerError),

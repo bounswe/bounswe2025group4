@@ -178,11 +178,11 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                                   // Set user type based on selection
                                   if (widget.isJobSeeker) {
                                     authProvider.setOnboardingUserType(
-                                      UserType.JOB_SEEKER,
+                                      UserType.ROLE_JOBSEEKER,
                                     );
                                   } else {
                                     authProvider.setOnboardingUserType(
-                                      UserType.EMPLOYER,
+                                      UserType.ROLE_EMPLOYER,
                                     );
                                   }
 

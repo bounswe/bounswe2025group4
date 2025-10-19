@@ -79,8 +79,8 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                             );
                             final type =
                                 selectedType == 'Job Seeker'
-                                    ? UserType.JOB_SEEKER
-                                    : UserType.EMPLOYER;
+                                    ? UserType.ROLE_JOBSEEKER
+                                    : UserType.ROLE_EMPLOYER;
                             authProvider.setOnboardingUserType(type);
 
                             Navigator.push(

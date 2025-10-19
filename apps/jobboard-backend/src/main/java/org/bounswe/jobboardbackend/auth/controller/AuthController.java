@@ -22,15 +22,19 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<OtpRequestResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        return new ResponseEntity<>(authService.authUser(loginRequest), HttpStatus.OK);
+        return new ResponseEntity<>(authService.initiateLogin(loginRequest), HttpStatus.OK);
 
+    }
+
+    @PostMapping("/login/verify")
+    public ResponseEntity<JwtResponse> verifyOtp(@Valid @RequestBody OtpVerifyRequest otpVerifyRequest) {
+        return new ResponseEntity<>(authService.completeLogin(otpVerifyRequest), HttpStatus.OK);
     }
 
     @PostMapping("/register")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
-
 
         return new ResponseEntity<>(authService.registerAndSendVerification(registerRequest), HttpStatus.CREATED);
 
@@ -56,15 +60,15 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Password has been reset. You can log in now."));
     }
 
-    @PostMapping("/password-change")
     @PreAuthorize("isAuthenticated()")
+    @PostMapping("/password-change")
     public ResponseEntity<MessageResponse> changePassword(@Valid @RequestBody PasswordChangeRequest req, Authentication auth) {
         authService.changePassword(auth, req.getCurrentPassword(), req.getNewPassword());
         return ResponseEntity.ok(new MessageResponse("Password changed successfully."));
     }
 
-    @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
+    @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(Authentication auth) {
         return new ResponseEntity<>(authService.getUserDetails(auth), HttpStatus.OK);
     }

@@ -23,12 +23,8 @@ RegisterRequestDto _$RegisterRequestDtoFromJson(Map<String, dynamic> json) {
 mixin _$RegisterRequestDto {
   String get username => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
-  String get password => throw _privateConstructorUsedError;
-  String? get bio => throw _privateConstructorUsedError;
-  UserType get userType =>
-      throw _privateConstructorUsedError; // Ensure UserType enum is imported
-  MentorshipStatus? get mentorshipStatus => throw _privateConstructorUsedError;
-  int? get maxMenteeCount => throw _privateConstructorUsedError;
+  String get password => throw _privateConstructorUsedError; //String? bio,
+  UserType get role => throw _privateConstructorUsedError;
 
   /// Serializes this RegisterRequestDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,15 +43,7 @@ abstract class $RegisterRequestDtoCopyWith<$Res> {
     $Res Function(RegisterRequestDto) then,
   ) = _$RegisterRequestDtoCopyWithImpl<$Res, RegisterRequestDto>;
   @useResult
-  $Res call({
-    String username,
-    String email,
-    String password,
-    String? bio,
-    UserType userType,
-    MentorshipStatus? mentorshipStatus,
-    int? maxMenteeCount,
-  });
+  $Res call({String username, String email, String password, UserType role});
 }
 
 /// @nodoc
@@ -76,10 +64,7 @@ class _$RegisterRequestDtoCopyWithImpl<$Res, $Val extends RegisterRequestDto>
     Object? username = null,
     Object? email = null,
     Object? password = null,
-    Object? bio = freezed,
-    Object? userType = null,
-    Object? mentorshipStatus = freezed,
-    Object? maxMenteeCount = freezed,
+    Object? role = null,
   }) {
     return _then(
       _value.copyWith(
@@ -98,26 +83,11 @@ class _$RegisterRequestDtoCopyWithImpl<$Res, $Val extends RegisterRequestDto>
                     ? _value.password
                     : password // ignore: cast_nullable_to_non_nullable
                         as String,
-            bio:
-                freezed == bio
-                    ? _value.bio
-                    : bio // ignore: cast_nullable_to_non_nullable
-                        as String?,
-            userType:
-                null == userType
-                    ? _value.userType
-                    : userType // ignore: cast_nullable_to_non_nullable
+            role:
+                null == role
+                    ? _value.role
+                    : role // ignore: cast_nullable_to_non_nullable
                         as UserType,
-            mentorshipStatus:
-                freezed == mentorshipStatus
-                    ? _value.mentorshipStatus
-                    : mentorshipStatus // ignore: cast_nullable_to_non_nullable
-                        as MentorshipStatus?,
-            maxMenteeCount:
-                freezed == maxMenteeCount
-                    ? _value.maxMenteeCount
-                    : maxMenteeCount // ignore: cast_nullable_to_non_nullable
-                        as int?,
           )
           as $Val,
     );
@@ -133,15 +103,7 @@ abstract class _$$RegisterRequestDtoImplCopyWith<$Res>
   ) = __$$RegisterRequestDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String username,
-    String email,
-    String password,
-    String? bio,
-    UserType userType,
-    MentorshipStatus? mentorshipStatus,
-    int? maxMenteeCount,
-  });
+  $Res call({String username, String email, String password, UserType role});
 }
 
 /// @nodoc
@@ -161,10 +123,7 @@ class __$$RegisterRequestDtoImplCopyWithImpl<$Res>
     Object? username = null,
     Object? email = null,
     Object? password = null,
-    Object? bio = freezed,
-    Object? userType = null,
-    Object? mentorshipStatus = freezed,
-    Object? maxMenteeCount = freezed,
+    Object? role = null,
   }) {
     return _then(
       _$RegisterRequestDtoImpl(
@@ -183,26 +142,11 @@ class __$$RegisterRequestDtoImplCopyWithImpl<$Res>
                 ? _value.password
                 : password // ignore: cast_nullable_to_non_nullable
                     as String,
-        bio:
-            freezed == bio
-                ? _value.bio
-                : bio // ignore: cast_nullable_to_non_nullable
-                    as String?,
-        userType:
-            null == userType
-                ? _value.userType
-                : userType // ignore: cast_nullable_to_non_nullable
+        role:
+            null == role
+                ? _value.role
+                : role // ignore: cast_nullable_to_non_nullable
                     as UserType,
-        mentorshipStatus:
-            freezed == mentorshipStatus
-                ? _value.mentorshipStatus
-                : mentorshipStatus // ignore: cast_nullable_to_non_nullable
-                    as MentorshipStatus?,
-        maxMenteeCount:
-            freezed == maxMenteeCount
-                ? _value.maxMenteeCount
-                : maxMenteeCount // ignore: cast_nullable_to_non_nullable
-                    as int?,
       ),
     );
   }
@@ -215,10 +159,7 @@ class _$RegisterRequestDtoImpl implements _RegisterRequestDto {
     required this.username,
     required this.email,
     required this.password,
-    this.bio,
-    required this.userType,
-    this.mentorshipStatus,
-    this.maxMenteeCount,
+    required this.role,
   });
 
   factory _$RegisterRequestDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -230,19 +171,13 @@ class _$RegisterRequestDtoImpl implements _RegisterRequestDto {
   final String email;
   @override
   final String password;
+  //String? bio,
   @override
-  final String? bio;
-  @override
-  final UserType userType;
-  // Ensure UserType enum is imported
-  @override
-  final MentorshipStatus? mentorshipStatus;
-  @override
-  final int? maxMenteeCount;
+  final UserType role;
 
   @override
   String toString() {
-    return 'RegisterRequestDto(username: $username, email: $email, password: $password, bio: $bio, userType: $userType, mentorshipStatus: $mentorshipStatus, maxMenteeCount: $maxMenteeCount)';
+    return 'RegisterRequestDto(username: $username, email: $email, password: $password, role: $role)';
   }
 
   @override
@@ -255,27 +190,12 @@ class _$RegisterRequestDtoImpl implements _RegisterRequestDto {
             (identical(other.email, email) || other.email == email) &&
             (identical(other.password, password) ||
                 other.password == password) &&
-            (identical(other.bio, bio) || other.bio == bio) &&
-            (identical(other.userType, userType) ||
-                other.userType == userType) &&
-            (identical(other.mentorshipStatus, mentorshipStatus) ||
-                other.mentorshipStatus == mentorshipStatus) &&
-            (identical(other.maxMenteeCount, maxMenteeCount) ||
-                other.maxMenteeCount == maxMenteeCount));
+            (identical(other.role, role) || other.role == role));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    username,
-    email,
-    password,
-    bio,
-    userType,
-    mentorshipStatus,
-    maxMenteeCount,
-  );
+  int get hashCode => Object.hash(runtimeType, username, email, password, role);
 
   /// Create a copy of RegisterRequestDto
   /// with the given fields replaced by the non-null parameter values.
@@ -299,10 +219,7 @@ abstract class _RegisterRequestDto implements RegisterRequestDto {
     required final String username,
     required final String email,
     required final String password,
-    final String? bio,
-    required final UserType userType,
-    final MentorshipStatus? mentorshipStatus,
-    final int? maxMenteeCount,
+    required final UserType role,
   }) = _$RegisterRequestDtoImpl;
 
   factory _RegisterRequestDto.fromJson(Map<String, dynamic> json) =
@@ -313,15 +230,9 @@ abstract class _RegisterRequestDto implements RegisterRequestDto {
   @override
   String get email;
   @override
-  String get password;
+  String get password; //String? bio,
   @override
-  String? get bio;
-  @override
-  UserType get userType; // Ensure UserType enum is imported
-  @override
-  MentorshipStatus? get mentorshipStatus;
-  @override
-  int? get maxMenteeCount;
+  UserType get role;
 
   /// Create a copy of RegisterRequestDto
   /// with the given fields replaced by the non-null parameter values.
