@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '../schemas/forgot-password.schema';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
   ? import.meta.env.VITE_API_URL 
@@ -18,6 +19,7 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const { t } = useTranslation('common');
 
   const {
     register,
@@ -43,18 +45,16 @@ export default function ForgotPasswordPage() {
       } else if (response.data?.error) {
         setErrorMessage(response.data.error);
       } else {
-        setSuccessMessage(
-          'Password reset link has been sent to your email. Please check your inbox.'
-        );
+        setSuccessMessage(t('auth.forgot.success'));
       }
     } catch (error: any) {
       if (error.response?.status === 401) {
         // Backend authentication issue - likely endpoint protection problem
-        setErrorMessage('Service temporarily unavailable. Please try again later or contact support.');
+        setErrorMessage(t('auth.forgot.errors.serviceUnavailable'));
       } else if (error.response?.data?.message) {
         const backendMsg = error.response.data.message;
         if (backendMsg.includes('Full authentication')) {
-          setErrorMessage('Service temporarily unavailable. Please try again later or contact support.');
+          setErrorMessage(t('auth.forgot.errors.serviceUnavailable'));
         } else {
           setErrorMessage(backendMsg);
         }
@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
       } else if (error.message) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage('Failed to send reset link. Please try again.');
+        setErrorMessage(t('auth.forgot.errors.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -74,9 +74,9 @@ export default function ForgotPasswordPage() {
     <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Forgot Password</CardTitle>
+          <CardTitle className="text-3xl font-bold">{t('auth.forgot.title')}</CardTitle>
           <CardDescription>
-            Enter your email address and we'll send you a link to reset your password
+            {t('auth.forgot.description')}
           </CardDescription>
         </CardHeader>
 
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
           {/* Email */}
           <div className="space-y-2">
             <label htmlFor="email" className="text-sm font-medium">
-              Email *
+              {t('auth.forgot.email')}
             </label>
             <input
               id="email"
@@ -93,7 +93,7 @@ export default function ForgotPasswordPage() {
               {...register('email')}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="john@example.com"
-              aria-label="Email address"
+              aria-label={t('auth.forgot.email')}
               aria-required="true"
               aria-invalid={!!errors.email}
               aria-describedby={errors.email ? 'email-error' : undefined}
@@ -125,16 +125,16 @@ export default function ForgotPasswordPage() {
             variant="default"
             className="w-full"
             disabled={isLoading}
-            aria-label="Send reset link"
+            aria-label={t('auth.forgot.submit')}
           >
-            {isLoading ? 'Sending...' : 'Send Reset Link'}
+            {isLoading ? t('auth.forgot.submitting') : t('auth.forgot.submit')}
           </Button>
 
           {/* Back to Login Link */}
           <p className="text-center text-sm text-muted-foreground">
-            Remember your password?{' '}
+            {t('auth.forgot.loginPrompt')}{' '}
             <Link to="/login" className="text-primary underline">
-              Back to login
+              {t('auth.forgot.loginLink')}
             </Link>
           </p>
           </form>
