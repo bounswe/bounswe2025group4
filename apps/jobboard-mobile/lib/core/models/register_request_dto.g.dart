@@ -12,13 +12,7 @@ _$RegisterRequestDtoImpl _$$RegisterRequestDtoImplFromJson(
   username: json['username'] as String,
   email: json['email'] as String,
   password: json['password'] as String,
-  bio: json['bio'] as String?,
-  userType: $enumDecode(_$UserTypeEnumMap, json['userType']),
-  mentorshipStatus: $enumDecodeNullable(
-    _$MentorshipStatusEnumMap,
-    json['mentorshipStatus'],
-  ),
-  maxMenteeCount: (json['maxMenteeCount'] as num?)?.toInt(),
+  role: $enumDecode(_$UserTypeEnumMap, json['role']),
 );
 
 Map<String, dynamic> _$$RegisterRequestDtoImplToJson(
@@ -27,19 +21,11 @@ Map<String, dynamic> _$$RegisterRequestDtoImplToJson(
   'username': instance.username,
   'email': instance.email,
   'password': instance.password,
-  'bio': instance.bio,
-  'userType': _$UserTypeEnumMap[instance.userType]!,
-  'mentorshipStatus': _$MentorshipStatusEnumMap[instance.mentorshipStatus],
-  'maxMenteeCount': instance.maxMenteeCount,
+  'role': _$UserTypeEnumMap[instance.role]!,
 };
 
 const _$UserTypeEnumMap = {
-  UserType.EMPLOYER: 'EMPLOYER',
-  UserType.JOB_SEEKER: 'JOB_SEEKER',
-  UserType.MENTOR: 'MENTOR',
-};
-
-const _$MentorshipStatusEnumMap = {
-  MentorshipStatus.MENTOR: 'MENTOR',
-  MentorshipStatus.MENTEE: 'MENTEE',
+  UserType.ROLE_EMPLOYER: 'ROLE_EMPLOYER',
+  UserType.ROLE_JOBSEEKER: 'ROLE_JOBSEEKER',
+  UserType.ROLE_ADMIN: 'ROLE_ADMIN',
 };

@@ -25,7 +25,10 @@ class AuthResponseDto with _$AuthResponseDto {
     required String token,
     @JsonKey(name: 'id', fromJson: _readIdAsString) required String userId,
     required String username,
+    @JsonKey(name: 'role')
     required UserType userType,
+    @JsonKey(name: 'type') String? tokenType,
+    @JsonKey(name: 'email') String? email,
   }) = _AuthResponseDto;
 
   factory AuthResponseDto.fromJson(Map<String, dynamic> json) =>

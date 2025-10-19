@@ -275,7 +275,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     // Only show button if job loaded and user is a job seeker
     final userRole =
         Provider.of<AuthProvider>(context, listen: false).currentUser?.role;
-    if (_isLoading || _jobPost == null || userRole != UserType.JOB_SEEKER) {
+    if (_isLoading || _jobPost == null || userRole != UserType.ROLE_JOBSEEKER) {
       return null;
     }
 

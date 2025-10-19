@@ -46,7 +46,7 @@ class User {
       username: json['username'] ?? '',
       email: json['email'] ?? '',
       role: UserType.values.byName(
-        json['userType'] ?? UserType.JOB_SEEKER.name,
+        json['userType'] ?? UserType.ROLE_JOBSEEKER.name,
       ),
       firstName: json['firstName'],
       lastName: json['lastName'],
