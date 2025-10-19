@@ -71,13 +71,9 @@ export interface JobsFilterParams {
 // ============================================================================
 
 /**
- * Application status enum
+ * Application status type
  */
-export enum JobApplicationStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-}
+export type JobApplicationStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 /**
  * Job application response from API
