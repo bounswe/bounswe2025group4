@@ -343,6 +343,8 @@ class _JobPageState extends State<JobPage> {
               ? FloatingActionButton(
                 onPressed: _navigateToCreateJobPost,
                 tooltip: AppLocalizations.of(context)!.jobPage_createJob,
+                backgroundColor: Colors.blue, // Use blue to match design language
+                foregroundColor: Colors.white,
                 child: const Icon(Icons.add),
               )
               : null,

@@ -196,12 +196,12 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   Color _getStatusColor(ApplicationStatus status) {
     switch (status) {
       case ApplicationStatus.approved:
-        return Colors.green.shade700;
+        return Colors.blue; // Use blue to match design language
       case ApplicationStatus.rejected:
-        return Colors.red.shade700;
+        return Colors.red.shade700; // Keep red for rejection
       case ApplicationStatus.pending:
       default:
-        return Colors.orange.shade700;
+        return Colors.grey.shade600; // Use neutral grey for pending
     }
   }
 }

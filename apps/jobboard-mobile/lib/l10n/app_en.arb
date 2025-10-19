@@ -1577,6 +1577,31 @@
   "@profilePage_enterInterest": {
     "description": "Add interest dialog hint"
   },
+  "profilePage_theme": "Theme",
+  "@profilePage_theme": {
+    "description": "Theme section title"
+  },
+  "profilePage_lightMode": "Light",
+  "@profilePage_lightMode": {
+    "description": "Light theme option"
+  },
+  "profilePage_darkMode": "Dark",
+  "@profilePage_darkMode": {
+    "description": "Dark theme option"
+  },
+  "profilePage_systemMode": "System",
+  "@profilePage_systemMode": {
+    "description": "System theme option"
+  },
+  "profilePage_themeChanged": "Theme changed to {theme}",
+  "@profilePage_themeChanged": {
+    "description": "Theme change notification",
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
+  },
   "profilePage_fontSize": "Font Size",
   "@profilePage_fontSize": {
     "description": "Font size section title"
