@@ -65,6 +65,9 @@ class _EditableChipListState extends State<EditableChipList> {
               HapticFeedback.lightImpact();
               Navigator.of(context).pop();
             },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.blue,
+            ),
           ),
           ElevatedButton(
             child: Text(AppLocalizations.of(context)!.profileWidgets_add),
@@ -73,6 +76,10 @@ class _EditableChipListState extends State<EditableChipList> {
               _addItem(textController.text);
               Navigator.of(context).pop();
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
           ),
         ],
       ),
@@ -117,6 +124,9 @@ class _EditableChipListState extends State<EditableChipList> {
                   HapticFeedback.lightImpact();
                   _showAddDialog();
                 },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                ),
               ),
           ],
         ),
