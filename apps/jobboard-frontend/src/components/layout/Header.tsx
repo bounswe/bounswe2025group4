@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -10,32 +10,16 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { ThemeToggle } from '../ThemeToggle';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function Header() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // Check if user is logged in (token exists)
-    const checkAuth = () => {
-      const token = localStorage.getItem('token');
-      setIsLoggedIn(!!token);
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    window.addEventListener('auth-change', checkAuth);
-    
-    return () => {
-      window.removeEventListener('auth-change', checkAuth);
-    };
-  }, []);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const logout = useAuthStore((state) => state.logout);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.dispatchEvent(new Event('auth-change'));
+    logout();
     navigate('/');
   };
 
@@ -65,7 +49,7 @@ export default function Header() {
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center gap-2">
             <ThemeToggle />
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <Button variant="outline" onClick={handleLogout}>
                 Logout
               </Button>
@@ -113,7 +97,7 @@ export default function Header() {
               </nav>
 
               <div className="flex flex-col gap-2 p-2 border-t mt-4">
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                   <Button variant="outline" onClick={() => {
                     handleLogout();
                     setIsMobileMenuOpen(false);

@@ -6,17 +6,16 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
   ? import.meta.env.VITE_API_URL 
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
-console.log('VerifyOtpPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('VerifyOtpPage - API_BASE_URL:', API_BASE_URL);
-
 export default function VerifyOtpPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -48,15 +47,9 @@ export default function VerifyOtpPage() {
         temporaryToken: temporaryToken,
       });
 
-      console.log('Verify OTP response:', response);
-      console.log('Verify OTP response data:', response.data);
-
       if (response.status === 200 && response.data.token) {
-        // Store token
-        localStorage.setItem('token', response.data.token);
-        
-        // Dispatch custom event to update header
-        window.dispatchEvent(new Event('auth-change'));
+        // Login using authStore
+        login(response.data);
         
         // Redirect to home
         navigate('/');
