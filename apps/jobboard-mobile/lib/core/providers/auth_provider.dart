@@ -10,6 +10,7 @@ import '../services/api_service.dart'; // Import the API service
 import '../models/register_outcome.dart'; // Import the enum
 import '../models/auth_errors.dart'; // Import the custom exception
 import 'package:mobile/core/models/login_result.dart';
+import 'package:mobile/core/models/pass_reset_req_result.dart';
 // Remove MentorshipPreference if not used in registration API, or keep if needed for UI flow
 // enum MentorshipPreference { mentor, mentee, none }
 
@@ -412,6 +413,77 @@ class AuthProvider with ChangeNotifier {
       print("Error saving initial auth data: $e");
     }
   }
+
+  Future<PasswordResetRequestResult> requestPasswordReset(String email) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final result = await _authService.requestPasswordReset(email);
+      _isLoading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return PasswordResetRequestResult(
+        PasswordResetRequestStatus.failed,
+        'Unexpected error: $e',
+      );
+    }
+  }
+
+  Future<bool> confirmPasswordReset({
+    required String token,
+    required String newPassword,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final msg = await _authService.confirmPasswordReset(
+        token: token,
+        newPassword: newPassword,
+      );
+      print('confirmPasswordReset: $msg');
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print('confirmPasswordReset error: $e');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // Function to change the password in the edit profile
+  Future<bool> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    if (_token == null) {
+      print('changePassword: not logged in');
+      return false;
+    }
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final msg = await _authService.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        authToken: _token!,
+      );
+      print('changePassword: $msg');
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print('changePassword error: $e');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
 
   // Updates _currentUser and persists the additional details
   Future<void> _updateAndPersistUserDetails(User fullDetails) async {

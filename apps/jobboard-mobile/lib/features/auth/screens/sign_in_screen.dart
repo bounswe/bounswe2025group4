@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/features/main_scaffold/main_scaffold.dart';
 import 'package:mobile/features/auth/screens/sign_up_screen.dart';
+import 'package:mobile/features/auth/screens/forgot_password_screen.dart';
 import 'package:mobile/generated/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
@@ -220,6 +221,24 @@ class _SignInScreenState extends State<SignInScreen> {
                             ),
                   ),
                 ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ForgotPasswordScreen(),
+                          ),
+                        );
+                      },
+                      child: Text("Forgot password?"),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

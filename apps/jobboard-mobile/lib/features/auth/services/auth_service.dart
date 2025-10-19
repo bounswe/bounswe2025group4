@@ -8,6 +8,7 @@ import 'package:mobile/core/models/user.dart';
 import 'package:mobile/core/models/auth_errors.dart';
 import 'package:mobile/core/models/login_request_dto.dart';
 import 'package:mobile/core/models/login_result.dart';
+import 'package:mobile/core/models/pass_reset_req_result.dart';
 class AuthService {
   final String _baseUrl = AppConstants.baseUrl;
 
@@ -27,7 +28,6 @@ class AuthService {
     final requestDto = LoginRequestDto(username: username, password: password);
     print('Sending login request to: $url');
     print('Request body: ${jsonEncode(requestDto.toJson())}');
-    print(">>> In the login function in Service");
 
     try {
       final response = await http.post(
@@ -77,7 +77,6 @@ class AuthService {
     required String otpCode,
     required String temporaryToken,
   }) async {
-    print(">>> In the verifyLoginOTP function in Service");
     final url = Uri.parse('$_baseUrl/auth/login/verify');
     final payload = {
       'username': username,
@@ -94,13 +93,10 @@ class AuthService {
       print(">>> Response in the verifyLoginOTP: ${res} Body: ${res.body} Response code: ${res.statusCode}");
       final body = res.body;
       final data = body.isNotEmpty ? jsonDecode(body) as Map<String, dynamic> : null;
-      print("data: $data");
 
       if (res.statusCode == 200 && data != null) {
-        print("Service returning...");
         return AuthResponseDto.fromJson(data);
       }
-      print("Status code invalid in service");
 
       final msg = data?['message']?.toString();
       throw Exception('Failed to verify OTP: ${res.statusCode} ${res.reasonPhrase}'
@@ -184,6 +180,87 @@ class AuthService {
       throw Exception('Failed to fetch user details.');
     }
   }
+
+  // auth_service.dart (add these)
+  Future<PasswordResetRequestResult> requestPasswordReset(String email) async {
+    final url = Uri.parse('$_baseUrl/auth/password-reset');
+    final payload = {'email': email};
+
+    final res = await http.post(
+      url,
+      headers: _getHeaders(null),
+      body: jsonEncode(payload),
+    );
+    final Map<String, dynamic>? data = res.body.isNotEmpty ? jsonDecode(res.body) as Map<String, dynamic> : null;
+    final msg = data?['message']?.toString();
+
+    if (res.statusCode == 200 || res.statusCode == 202) {
+      return PasswordResetRequestResult(
+        PasswordResetRequestStatus.sent,
+        msg ?? 'A reset link has been sent to the mail.',
+      );
+    }
+
+    if (res.statusCode == 404) {
+      return PasswordResetRequestResult(
+        PasswordResetRequestStatus.notFound,
+        msg ?? 'Email not found.',
+      );
+    }
+
+    return PasswordResetRequestResult(
+      PasswordResetRequestStatus.failed,
+      'Failed to request reset: ${res.statusCode} ${res.reasonPhrase}'
+          '${msg != null ? " – $msg" : ""}',
+    );
+  }
+
+  Future<String> confirmPasswordReset({
+    required String token,
+    required String newPassword,
+  }) async {
+    final url = Uri.parse('$_baseUrl/auth/password-reset/confirm');
+    final payload = {'token': token, 'newPassword': newPassword};
+
+    final res = await http.post(
+      url,
+      headers: _getHeaders(null),
+      body: jsonEncode(payload),
+    );
+    final data = res.body.isNotEmpty ? jsonDecode(res.body) as Map<String, dynamic> : null;
+
+    if (res.statusCode == 200) {
+      return data?['message']?.toString() ?? 'Password has been reset.';
+    }
+    final msg = data?['message']?.toString();
+    throw Exception('Failed to confirm reset: ${res.statusCode} ${res.reasonPhrase}'
+        '${msg != null ? " – $msg" : ""}');
+  }
+
+  // Function to change the password in the edit profile
+  Future<String> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String authToken, // use your stored _token
+  }) async {
+    final url = Uri.parse('$_baseUrl/auth/password-change');
+    final payload = {'currentPassword': currentPassword, 'newPassword': newPassword};
+
+    final res = await http.post(
+      url,
+      headers: _getHeaders(authToken),
+      body: jsonEncode(payload),
+    );
+    final data = res.body.isNotEmpty ? jsonDecode(res.body) as Map<String, dynamic> : null;
+
+    if (res.statusCode == 200) {
+      return data?['message']?.toString() ?? 'Password changed.';
+    }
+    final msg = data?['message']?.toString();
+    throw Exception('Failed to change password: ${res.statusCode} ${res.reasonPhrase}'
+        '${msg != null ? " – $msg" : ""}');
+  }
+
 
 
 }
