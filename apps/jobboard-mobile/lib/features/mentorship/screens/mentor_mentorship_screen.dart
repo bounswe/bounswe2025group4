@@ -93,6 +93,9 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                ),
               ),
               TextButton(
                 onPressed: () {
@@ -100,6 +103,9 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                   Navigator.pop(context);
                 },
                 child: Text(AppLocalizations.of(context)!.mentorScreen_update),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                ),
               ),
             ],
           ),
@@ -132,6 +138,9 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext),
                 child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                ),
               ),
               TextButton(
                 onPressed: () async {
@@ -177,6 +186,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
             Tab(text: AppLocalizations.of(context)!.mentorScreen_currentMentees), 
             Tab(text: AppLocalizations.of(context)!.mentorScreen_requests)
           ],
+          indicatorColor: Colors.blue,
+          labelColor: Colors.blue,
         ),
       ),
       body: Consumer<MentorProvider>(
@@ -208,6 +219,10 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                           ElevatedButton(
                             onPressed: _showCapacityDialog,
                             child: Text(AppLocalizations.of(context)!.mentorScreen_updateCapacity),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                            ),
                           ),
                         ],
                       ),

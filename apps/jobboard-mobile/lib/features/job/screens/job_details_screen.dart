@@ -295,7 +295,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 : const Icon(Icons.send),
         label: Text(_isApplying ? AppLocalizations.of(context)!.jobDetails_applying : AppLocalizations.of(context)!.jobDetails_apply),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.teal, // Or theme primary color
+          backgroundColor: Colors.blue, // Use blue to match onboarding design
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 50), // Full width button
           textStyle: Theme.of(

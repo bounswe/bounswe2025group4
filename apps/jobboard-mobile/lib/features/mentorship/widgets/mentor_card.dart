@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/widgets/a11y.dart';
 import '../../../generated/l10n/app_localizations.dart';
 
@@ -37,7 +38,10 @@ class MentorCard extends StatelessWidget {
       elevation: 2.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          onTap();
+        },
         borderRadius: BorderRadius.circular(12.0),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -115,7 +119,10 @@ class MentorCard extends StatelessWidget {
                                   ? Colors.grey.shade600
                                   : theme.colorScheme.onPrimary,
                         ),
-                        onPressed: isFull ? null : onRequestTap,
+                        onPressed: isFull ? null : () {
+                          HapticFeedback.mediumImpact();
+                          onRequestTap();
+                        },
                         child: Text(isFull
                             ? AppLocalizations.of(context)!.mentorProfile_notAvailable
                             : AppLocalizations.of(context)!.menteeScreen_sendRequest),

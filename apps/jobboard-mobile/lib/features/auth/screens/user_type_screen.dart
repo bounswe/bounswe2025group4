@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile/features/auth/screens/career_status_screen.dart';
 import 'package:mobile/features/auth/screens/organization_type_screen.dart';
 import 'package:mobile/features/auth/widgets/onboarding_progress_bar.dart';
@@ -24,7 +25,10 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           tooltip: AppLocalizations.of(context)!.common_back,
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            Navigator.pop(context);
+          },
         ),
       ),
       body: SafeArea(
@@ -46,6 +50,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                 description: AppLocalizations.of(context)!.userTypeScreen_jobSeekerDesc,
                 icon: Icons.person_outline,
                 onTap: () {
+                  HapticFeedback.selectionClick();
                   setState(() {
                     selectedType = 'Job Seeker';
                   });
@@ -59,6 +64,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                 description: AppLocalizations.of(context)!.userTypeScreen_employerDesc,
                 icon: Icons.business_outlined,
                 onTap: () {
+                  HapticFeedback.selectionClick();
                   setState(() {
                     selectedType = 'Employer';
                   });
@@ -73,6 +79,7 @@ class _UserTypeScreenState extends State<UserTypeScreen> {
                   onPressed:
                       selectedType != null
                           ? () {
+                            HapticFeedback.mediumImpact();
                             final authProvider = Provider.of<AuthProvider>(
                               context,
                               listen: false,

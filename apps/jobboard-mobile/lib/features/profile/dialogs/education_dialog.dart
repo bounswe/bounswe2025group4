@@ -242,10 +242,17 @@ class _EducationDialogState extends State<EducationDialog> {
         TextButton(
           child: Text(AppLocalizations.of(context)!.profileWidgets_cancel),
           onPressed: () => Navigator.of(context).pop(),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.blue,
+          ),
         ),
         ElevatedButton(
           child: Text(AppLocalizations.of(context)!.educationDialog_save),
           onPressed: _save,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+          ),
         ),
       ],
     );

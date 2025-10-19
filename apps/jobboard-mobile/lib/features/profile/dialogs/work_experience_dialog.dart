@@ -199,6 +199,7 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
                         }
                       });
                     },
+                    activeColor: Colors.blue,
                   ),
                   Text(AppLocalizations.of(context)!.workExperienceDialog_currentlyWorking),
                 ],
@@ -245,10 +246,17 @@ class _WorkExperienceDialogState extends State<WorkExperienceDialog> {
         TextButton(
           child: Text(AppLocalizations.of(context)!.profileWidgets_cancel),
           onPressed: () => Navigator.of(context).pop(),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.blue,
+          ),
         ),
         ElevatedButton(
           child: Text(AppLocalizations.of(context)!.workExperienceDialog_save),
           onPressed: _save,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.white,
+          ),
         ),
       ],
     );

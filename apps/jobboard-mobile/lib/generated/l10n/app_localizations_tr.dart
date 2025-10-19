@@ -1265,6 +1265,23 @@ class AppLocalizationsTr extends AppLocalizations {
   String get profilePage_enterInterest => 'Bir ilgi alanı girin';
 
   @override
+  String get profilePage_theme => 'Tema';
+
+  @override
+  String get profilePage_lightMode => 'Açık';
+
+  @override
+  String get profilePage_darkMode => 'Koyu';
+
+  @override
+  String get profilePage_systemMode => 'Sistem';
+
+  @override
+  String profilePage_themeChanged(String theme) {
+    return 'Tema $theme olarak değiştirildi';
+  }
+
+  @override
   String get profilePage_fontSize => 'Yazı Boyutu';
 
   @override

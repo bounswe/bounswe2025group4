@@ -1251,6 +1251,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profilePage_enterInterest => 'أدخل اهتمام';
 
   @override
+  String get profilePage_theme => 'السمة';
+
+  @override
+  String get profilePage_lightMode => 'فاتح';
+
+  @override
+  String get profilePage_darkMode => 'داكن';
+
+  @override
+  String get profilePage_systemMode => 'النظام';
+
+  @override
+  String profilePage_themeChanged(String theme) {
+    return 'تم تغيير السمة إلى $theme';
+  }
+
+  @override
   String get profilePage_fontSize => 'حجم الخط';
 
   @override
