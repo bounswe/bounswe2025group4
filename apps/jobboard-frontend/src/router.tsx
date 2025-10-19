@@ -4,6 +4,8 @@ import RootLayout from './layouts/RootLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import CenteredLoader from './components/CenteredLoader';
 import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
+//import ProtectedRoute from './components/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +42,14 @@ const router = createBrowserRouter([
           <div className="p-8">
             <h1 className="text-2xl font-bold">Forum Page</h1>
           </div>
+        ),
+      },
+      {
+        path: 'profile',
+        element: (
+          //<ProtectedRoute>
+            <ProfilePage />
+          //</ProtectedRoute>
         ),
       },
     ],
