@@ -10,6 +10,8 @@ import EmailVerificationPage from './pages/EmailVerificationPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyOtpPage from './pages/VerifyOtpPage';
+import ProfilePage from './pages/ProfilePage';
+//import ProtectedRoute from './components/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -75,6 +77,14 @@ const router = createBrowserRouter([
       {
         path: 'api/auth/reset-password',
         element: <ResetPasswordPage />,
+      },
+      {
+        path: 'profile',
+        element: (
+          //<ProtectedRoute>
+            <ProfilePage />
+          //</ProtectedRoute>
+        ),
       },
     ],
   },
