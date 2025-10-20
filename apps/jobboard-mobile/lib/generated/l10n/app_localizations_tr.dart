@@ -1184,7 +1184,7 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get editProfile_title => 'Profili Düzenle';
+  String get editProfile_title => 'Düzenle';
 
   @override
   String get editProfile_saveChanges => 'Değişiklikleri kaydet';
@@ -1523,4 +1523,10 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get common_back => 'Geri';
+
+  @override
+  String get common_showPassword => 'Şifreyi göster';
+
+  @override
+  String get common_hidePassword => 'Şifreyi gizle';
 }

@@ -73,7 +73,7 @@ class _ForumPageState extends State<ForumPage> {
                         labelText:
                             AppLocalizations.of(context)!.forumPage_searchTags,
                         prefixIcon: A11y(
-                          label: 'Search tags',
+                          label: AppLocalizations.of(context)!.forumPage_searchTags,
                           child: const Icon(Icons.search),
                         ),
                       ),
@@ -226,9 +226,9 @@ class _ForumPageState extends State<ForumPage> {
                     alignment: Alignment.centerLeft,
                     child: ElevatedButton.icon(
                       onPressed: _showFilterModal,
-                      icon: const A11y(
-                        label: 'Open filters',
-                        child: Icon(Icons.filter_list),
+                      icon: A11y(
+                        label: AppLocalizations.of(context)!.forumPage_filter,
+                        child: const Icon(Icons.filter_list),
                       ),
                       label: Text(
                         AppLocalizations.of(context)!.forumPage_filter,
@@ -312,9 +312,9 @@ class _ForumPageState extends State<ForumPage> {
             bottom: 16,
             right: 16,
             child: FloatingActionButton(
-              child: const A11y(
-                label: 'Create new discussion',
-                child: Icon(Icons.add),
+              child: A11y(
+                label: AppLocalizations.of(context)!.createThread_newTitle,
+                child: const Icon(Icons.add),
               ),
               onPressed: () async {
                 final created = await Navigator.push<DiscussionThread>(

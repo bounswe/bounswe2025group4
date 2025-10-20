@@ -31,7 +31,7 @@ class EducationList extends StatelessWidget {
             ),
             if (isEditable)
               TextButton.icon(
-                icon: const A11y(label: 'Add education', child: Icon(Icons.add)),
+                icon: const Icon(Icons.add),
                 label: Text(AppLocalizations.of(context)!.profileWidgets_add),
                 onPressed: () => _showEducationDialog(context),
               ),

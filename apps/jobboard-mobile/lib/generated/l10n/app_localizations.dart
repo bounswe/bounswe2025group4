@@ -2164,7 +2164,7 @@ abstract class AppLocalizations {
   /// **'{count} reviews'**
   String workplaces_reviews(int count);
 
-  /// Edit profile screen title
+  /// Edit profile page title
   ///
   /// In en, this message translates to:
   /// **'Edit Profile'**
@@ -2787,6 +2787,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get common_back;
+
+  /// Accessibility label to reveal password
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get common_showPassword;
+
+  /// Accessibility label to hide password
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get common_hidePassword;
 }
 
 class _AppLocalizationsDelegate

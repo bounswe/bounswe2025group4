@@ -46,7 +46,7 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back',
+          tooltip: AppLocalizations.of(context)!.common_back,
           onPressed: () => Navigator.pop(context),
         ),
       ),
