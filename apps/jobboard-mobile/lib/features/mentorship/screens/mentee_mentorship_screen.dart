@@ -7,6 +7,9 @@ import '../providers/mentor_provider.dart';
 import 'package:mobile/core/models/mentorship_request.dart';
 import './direct_message_screen.dart';
 import './mentor_profile_screen.dart';
+import 'package:mobile/core/models/mentor_profile.dart';
+import 'package:mobile/core/models/user.dart';
+import 'package:mobile/core/models/user_type.dart';
 import '../../../generated/l10n/app_localizations.dart';
 
 // Find Mentors tab content - updated to use real API data
@@ -70,20 +73,20 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   }
 
   void _navigateToMentorProfile(
-    String userId,
-    int mentorId,
-    String mentorName,
-  ) {
+      String userId,
+      int mentorId,
+      String mentorName,
+      ) {
     print('Navigating to mentor profile for $mentorId');
     Navigator.push(
       context,
       MaterialPageRoute(
         builder:
             (context) => MentorProfileScreen(
-              userId: userId,
-              mentorId: mentorId,
-              mentorName: mentorName,
-            ),
+          userId: userId,
+          mentorId: mentorId,
+          mentorName: mentorName,
+        ),
       ),
     );
   }
@@ -93,67 +96,67 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text(AppLocalizations.of(context)!.menteeScreen_requestMentorshipTitle(mentorName)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.menteeScreen_provideMessage,
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _messageController,
-                  decoration: InputDecoration(
-                    hintText: AppLocalizations.of(context)!.menteeScreen_messageHint,
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                ),
-              ],
+        title: Text(AppLocalizations.of(context)!.menteeScreen_requestMentorshipTitle(mentorName)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.menteeScreen_provideMessage,
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.menteeScreen_messageHint,
+                border: OutlineInputBorder(),
               ),
-              TextButton(
-                onPressed: () {
-                  if (_messageController.text.trim().length < 10) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(context)!.menteeScreen_messageMinLength,
-                        ),
-                      ),
-                    );
-                    return;
-                  }
-                  _handleRequestMentorship(
-                    mentorId,
-                    mentorName,
-                    _messageController.text,
-                  );
-                  Navigator.pop(context);
-                  _messageController.clear();
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                ),
-                child: Text(AppLocalizations.of(context)!.menteeScreen_sendRequest),
-              ),
-            ],
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.blue,
+            ),
           ),
+          TextButton(
+            onPressed: () {
+              if (_messageController.text.trim().length < 10) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      AppLocalizations.of(context)!.menteeScreen_messageMinLength,
+                    ),
+                  ),
+                );
+                return;
+              }
+              _handleRequestMentorship(
+                mentorId,
+                mentorName,
+                _messageController.text,
+              );
+              Navigator.pop(context);
+              _messageController.clear();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.blue,
+            ),
+            child: Text(AppLocalizations.of(context)!.menteeScreen_sendRequest),
+          ),
+        ],
+      ),
     );
   }
 
   Future<void> _handleRequestMentorship(
-    int mentorId,
-    String mentorName,
-    String message,
-  ) async {
+      int mentorId,
+      String mentorName,
+      String message,
+      ) async {
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
 
     try {
@@ -186,8 +189,108 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   Widget build(BuildContext context) {
     return Consumer<MentorProvider>(
       builder: (context, mentorProvider, child) {
-        final mentors =
-            _isFiltered ? _filteredMentors : mentorProvider.availableMentors;
+        // Uncomment after fully implemented:
+        //final mentors =
+        //    _isFiltered ? _filteredMentors : mentorProvider.availableMentors;
+        // Mock Mentors:
+        List<MentorProfile> mentors = [
+          MentorProfile(
+            id: 1,
+            user: User(
+              id: "101",
+              username: "alicejohnson",
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: "Alice",
+              lastName: "Johnson",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            capacity: 15,
+            currentMenteeCount: 10,
+            averageRating: 4.8,
+            reviewCount: 50,
+            isAvailable: true,
+          ),
+
+          MentorProfile(
+            id: 2,
+            user: User(
+              id: "115",
+              username: "emreozdemir",
+              email: "emre.ozdemir@dream.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Emre",
+              lastName: "Özdemir",
+              jobTitle: "UI Designer",
+              company: "Dream Games",
+            ),
+            capacity: 5,
+            currentMenteeCount: 2,
+            averageRating: 4.3,
+            reviewCount: 10,
+            isAvailable: true,
+          ),
+
+          MentorProfile(
+            id: 3,
+            user: User(
+              id: "126",
+              username: "jack_daniels",
+              email: "jack.deniz@udemy.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Jack Deniz",
+              lastName: "Türkoğlu",
+              jobTitle: "English Teacher",
+              company: "Udemy",
+            ),
+            capacity: 10,
+            currentMenteeCount: 8,
+            averageRating: 4.2,
+            reviewCount: 30,
+            isAvailable: true,
+          ),
+
+          MentorProfile(
+            id: 4,
+            user: User(
+              id: "151",
+              username: "lichen",
+              email: "li.chen@meta.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Li",
+              lastName: "Chen",
+              jobTitle: "Research Engineer",
+              company: "Meta",
+            ),
+            capacity: 4,
+            currentMenteeCount: 3,
+            averageRating: 4.8,
+            reviewCount: 8,
+            isAvailable: false,
+          ),
+
+          MentorProfile(
+            id: 5,
+            user: User(
+              id: "198",
+              username: "brcklc",
+              email: "burcu.kılıç@bogazici.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Burcu",
+              lastName: "Kılıç",
+              jobTitle: "Computer Engineering Student",
+              company: "Boğaziçi University",
+            ),
+            capacity: 5,
+            currentMenteeCount: 3,
+            averageRating: 5.0,
+            reviewCount: 6,
+            isAvailable: true,
+          ),
+
+
+        ];
 
         Widget contentWidget;
 
@@ -233,15 +336,15 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                 averageRating: mentor.averageRating,
                 onTap:
                     () => _navigateToMentorProfile(
-                      mentor.user.id,
-                      mentor.id,
-                      mentor.user.name,
-                    ),
+                  mentor.user.id,
+                  mentor.id,
+                  mentor.user.name,
+                ),
                 onRequestTap:
                     () => _showRequestMentorshipDialog(
-                      mentor.id,
-                      mentor.user.name,
-                    ),
+                  mentor.id,
+                  mentor.user.name,
+                ),
               );
             },
           );
@@ -260,31 +363,31 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   suffixIcon:
-                      _searchController.text.isNotEmpty
-                          ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                            },
-                          )
-                          : null,
+                  _searchController.text.isNotEmpty
+                      ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  )
+                      : null,
                 ),
               ),
             ),
             Expanded(
               // Always wrap in a scrollable widget for RefreshIndicator
               child:
-                  mentors.isEmpty && !mentorProvider.isLoadingMentors
-                      ? ListView(
-                        // Use ListView with a centered item instead of just Center
-                        children: [
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height / 3,
-                          ),
-                          contentWidget,
-                        ],
-                      )
-                      : contentWidget,
+              mentors.isEmpty && !mentorProvider.isLoadingMentors
+                  ? ListView(
+                // Use ListView with a centered item instead of just Center
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 3,
+                  ),
+                  contentWidget,
+                ],
+              )
+                  : contentWidget,
             ),
           ],
         );
@@ -321,20 +424,20 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
       MaterialPageRoute(
         builder:
             (context) =>
-                DirectMessageScreen(mentorId: mentorId, mentorName: mentorName),
+            DirectMessageScreen(mentorId: mentorId, mentorName: mentorName),
       ),
     );
   }
 
   void _showMentorshipActionDialog(
-    int requestId,
-    String mentorName,
-    MentorshipRequestStatus status,
-  ) {
+      int requestId,
+      String mentorName,
+      MentorshipRequestStatus status,
+      ) {
     final actionText =
-        status == MentorshipRequestStatus.COMPLETED ? 'complete' : 'cancel';
+    status == MentorshipRequestStatus.COMPLETED ? 'complete' : 'cancel';
     final actionColor =
-        status == MentorshipRequestStatus.COMPLETED ? Colors.green : Colors.red;
+    status == MentorshipRequestStatus.COMPLETED ? Colors.green : Colors.red;
 
     // Capture the provider before showing dialog
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
@@ -343,40 +446,40 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
       context: context,
       builder:
           (dialogContext) => AlertDialog(
-            title: Text('$actionText Mentorship'),
-            content: Text(
-              'Are you sure you want to $actionText your mentorship with $mentorName?'
+        title: Text('$actionText Mentorship'),
+        content: Text(
+          'Are you sure you want to $actionText your mentorship with $mentorName?'
               '${status == MentorshipRequestStatus.COMPLETED ? '\n\nThis will mark the mentorship as successfully completed.' : '\n\nThis will end the mentorship relationship.'}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.blue,
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Cancel'),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.pop(dialogContext);
-                  // Use the captured provider instead of trying to get it from the dialog context
-                  final success = await mentorProvider.updateRequestStatus(
-                    requestId: requestId,
-                    status: status,
-                  );
-                  if (success && mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Mentorship ${actionText}d successfully'),
-                        backgroundColor: actionColor.withOpacity(0.8),
-                      ),
-                    );
-                  }
-                },
-                child: Text('Confirm', style: TextStyle(color: actionColor)),
-              ),
-            ],
           ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              // Use the captured provider instead of trying to get it from the dialog context
+              final success = await mentorProvider.updateRequestStatus(
+                requestId: requestId,
+                status: status,
+              );
+              if (success && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Mentorship ${actionText}d successfully'),
+                    backgroundColor: actionColor.withOpacity(0.8),
+                  ),
+                );
+              }
+            },
+            child: Text('Confirm', style: TextStyle(color: actionColor)),
+          ),
+        ],
+      ),
     );
   }
 
@@ -386,14 +489,14 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
       builder: (context, mentorProvider, child) {
         // Filter requests by status
         final pendingRequests =
-            mentorProvider.menteeRequests
-                .where((req) => req.status == MentorshipRequestStatus.PENDING)
-                .toList();
+        mentorProvider.menteeRequests
+            .where((req) => req.status == MentorshipRequestStatus.PENDING)
+            .toList();
 
         final acceptedRequests =
-            mentorProvider.menteeRequests
-                .where((req) => req.status == MentorshipRequestStatus.ACCEPTED)
-                .toList();
+        mentorProvider.menteeRequests
+            .where((req) => req.status == MentorshipRequestStatus.ACCEPTED)
+            .toList();
 
         if (mentorProvider.isLoadingMenteeRequests) {
           // For loading state, still use ListView to ensure it's scrollable for RefreshIndicator
@@ -515,21 +618,21 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                   mentorRole: req.mentor.jobTitle,
                   onTap:
                       () => _navigateToDirectMessage(
-                        req.mentor.id.toString(),
-                        req.mentor.name,
-                      ),
+                    req.mentor.id.toString(),
+                    req.mentor.name,
+                  ),
                   onCompleteTap:
                       () => _showMentorshipActionDialog(
-                        req.id,
-                        req.mentor.name,
-                        MentorshipRequestStatus.COMPLETED,
-                      ),
+                    req.id,
+                    req.mentor.name,
+                    MentorshipRequestStatus.COMPLETED,
+                  ),
                   onCancelTap:
                       () => _showMentorshipActionDialog(
-                        req.id,
-                        req.mentor.name,
-                        MentorshipRequestStatus.CANCELLED,
-                      ),
+                    req.id,
+                    req.mentor.name,
+                    MentorshipRequestStatus.CANCELLED,
+                  ),
                 );
               }).toList(),
           ],
@@ -583,7 +686,7 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: AppLocalizations.of(context)!.menteeScreen_findMentors), 
+            Tab(text: AppLocalizations.of(context)!.menteeScreen_findMentors),
             Tab(text: AppLocalizations.of(context)!.menteeScreen_myMentorships)
           ],
         ),
