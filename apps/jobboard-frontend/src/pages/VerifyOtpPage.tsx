@@ -15,7 +15,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
 export default function VerifyOtpPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuthActions();
   const [errorMessage, setErrorMessage] = useState('');

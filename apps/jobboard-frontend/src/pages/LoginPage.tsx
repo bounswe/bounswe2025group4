@@ -15,7 +15,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
