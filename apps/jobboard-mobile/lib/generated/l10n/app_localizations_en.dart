@@ -93,11 +93,39 @@ class AppLocalizationsEn extends AppLocalizations {
       'Password must be at least 6 characters';
 
   @override
+  String get signUpScreen_passwordNoUppercase =>
+      'Password must contain at least 1 uppercase letter';
+
+  @override
+  String get signUpScreen_passwordNoLowercase =>
+      'Password must contain at least 1 lowercase letter';
+
+  @override
+  String get signUpScreen_passwordNoNumber =>
+      'Password must contain at least 1 number';
+
+  @override
+  String get signUpScreen_passwordNoSpecialChar =>
+      'Password must contain at least 1 special character.';
+
+  @override
   String get signUpScreen_confirmPasswordRequired =>
       'Please confirm your password';
 
   @override
   String get signUpScreen_passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get signUpScreen_gender => 'Gender';
+
+  @override
+  String get signUpScreen_male => 'Male';
+
+  @override
+  String get signUpScreen_female => 'Female';
+
+  @override
+  String get signUpScreen_other => 'Other';
 
   @override
   String get signUpScreen_bioRequired => 'Please enter a bio';

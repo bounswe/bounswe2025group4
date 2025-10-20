@@ -26,6 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _bioController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  String? _selectedGender;
 
   @override
   void dispose() {
@@ -232,8 +233,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     if (value == null || value.isEmpty) {
                       return AppLocalizations.of(context)!.signUpScreen_passwordRequired;
                     }
-                    if (value.length < 6) {
+                    if (value.length < 8) {
                       return AppLocalizations.of(context)!.signUpScreen_passwordTooShort;
+                    }
+                    if (!value.contains(RegExp(r'[A-Z]'))) {
+                      return AppLocalizations.of(context)!.signUpScreen_passwordNoUppercase;
+                    }
+                    if (!value.contains(RegExp(r'[a-z]'))) {
+                      return AppLocalizations.of(context)!.signUpScreen_passwordNoLowercase;
+                    }
+                    if (!value.contains(RegExp(r'[0-9]'))) {
+                      return AppLocalizations.of(context)!.signUpScreen_passwordNoNumber;
+                    }
+                    if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                      return AppLocalizations.of(context)!.signUpScreen_passwordNoSpecialChar;
                     }
                     return null;
                   },
@@ -274,6 +287,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: _selectedGender,
+                  items: [
+                    DropdownMenuItem(
+                      value: 'female',
+                      child: Text(AppLocalizations.of(context)!.signUpScreen_female),
+                    ),
+                    DropdownMenuItem(
+                      value: 'male',
+                      child: Text(AppLocalizations.of(context)!.signUpScreen_male),
+                    ),
+                    DropdownMenuItem(
+                      value: 'other',
+                      child: Text(AppLocalizations.of(context)!.signUpScreen_other),
+                    ),
+                  ],
+                  onChanged: (val) => setState(() => _selectedGender = val),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.signUpScreen_gender,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _bioController,

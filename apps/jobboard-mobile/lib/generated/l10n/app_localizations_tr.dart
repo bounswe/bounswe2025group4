@@ -94,11 +94,36 @@ class AppLocalizationsTr extends AppLocalizations {
       'Şifre en az 6 karakter olmalıdır';
 
   @override
+  String get signUpScreen_passwordNoUppercase => 'Şifre büyük harf içermelidir';
+
+  @override
+  String get signUpScreen_passwordNoLowercase => 'Şifre küçük harf içermelidir';
+
+  @override
+  String get signUpScreen_passwordNoNumber => 'Şifre rakam içermelidir';
+
+  @override
+  String get signUpScreen_passwordNoSpecialChar =>
+      'Şifre özel karakter içermelidir';
+
+  @override
   String get signUpScreen_confirmPasswordRequired =>
       'Lütfen şifrenizi onaylayın';
 
   @override
   String get signUpScreen_passwordsDoNotMatch => 'Şifreler eşleşmiyor';
+
+  @override
+  String get signUpScreen_gender => 'Cinsiyet';
+
+  @override
+  String get signUpScreen_male => 'Erkek';
+
+  @override
+  String get signUpScreen_female => 'Kadın';
+
+  @override
+  String get signUpScreen_other => 'Diğer';
 
   @override
   String get signUpScreen_bioRequired => 'Lütfen bir biyografi girin';

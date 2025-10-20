@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { resetPasswordSchema, type ResetPasswordFormData } from '../schemas/reset-password.schema';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import axios from 'axios';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
   ? import.meta.env.VITE_API_URL 
@@ -21,6 +22,7 @@ export default function ResetPasswordPage() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { t } = useTranslation('common');
 
   const {
     register,
@@ -35,7 +37,7 @@ export default function ResetPasswordPage() {
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!token) {
-      setErrorMessage('Invalid or missing reset token.');
+      setErrorMessage(t('auth.reset.errors.missingToken'));
       return;
     }
 
@@ -52,7 +54,7 @@ export default function ResetPasswordPage() {
       if (response.data?.message && response.data.message.toLowerCase().includes('error')) {
         const backendMsg = response.data.message;
         if (backendMsg.includes('same as the old password')) {
-          setErrorMessage('New password cannot be the same as your old password. Please choose a different password.');
+          setErrorMessage(t('auth.reset.errors.sameAsOld'));
         } else {
           setErrorMessage(backendMsg);
         }
@@ -62,23 +64,41 @@ export default function ResetPasswordPage() {
         // Success: redirect to login with success message
         navigate('/login', {
           replace: true,
-          state: { message: 'Password reset successful! You can now log in with your new password.' }
+          state: { message: t('auth.reset.success') }
         });
       }
-    } catch (error: any) {
-      if (error.response?.data?.message) {
-        const backendMsg = error.response.data.message;
-        if (backendMsg.includes('same as the old password')) {
-          setErrorMessage('New password cannot be the same as your old password. Please choose a different password.');
-        } else {
-          setErrorMessage(backendMsg);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data as { message?: string; error?: string } | undefined;
+        const backendMsg = responseData?.message;
+
+        if (backendMsg) {
+          if (backendMsg.includes('same as the old password')) {
+            setErrorMessage(t('auth.reset.errors.sameAsOld'));
+          } else {
+            setErrorMessage(backendMsg);
+          }
+          return;
         }
-      } else if (error.response?.data?.error) {
-        setErrorMessage(error.response.data.error);
-      } else if (error.message) {
+
+        if (responseData?.error) {
+          setErrorMessage(responseData.error);
+          return;
+        }
+
+        if (error.message) {
+          setErrorMessage(error.message);
+          return;
+        }
+
+        setErrorMessage(t('auth.reset.errors.generic'));
+        return;
+      }
+
+      if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage('Failed to reset password. Please try again.');
+        setErrorMessage(t('auth.reset.errors.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -90,14 +110,14 @@ export default function ResetPasswordPage() {
       <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-3xl font-bold">Invalid Reset Link</CardTitle>
+            <CardTitle className="text-3xl font-bold">{t('auth.reset.invalidTitle')}</CardTitle>
             <CardDescription>
-              This password reset link is invalid or has expired.
+              {t('auth.reset.invalidDescription')}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <Button variant="default" onClick={() => navigate('/forgot-password')}>
-              Request New Link
+              {t('auth.reset.requestNew')}
             </Button>
           </CardContent>
         </Card>
@@ -109,9 +129,9 @@ export default function ResetPasswordPage() {
     <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Reset Password</CardTitle>
+          <CardTitle className="text-3xl font-bold">{t('auth.reset.title')}</CardTitle>
           <CardDescription>
-            Enter your new password below
+            {t('auth.reset.description')}
           </CardDescription>
         </CardHeader>
 
@@ -121,33 +141,33 @@ export default function ResetPasswordPage() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <label htmlFor="password" className="text-sm font-medium">
-                New Password *
+                {t('auth.reset.newPassword')}
               </label>
               <div className="group relative">
                 <button
                   type="button"
                   className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-muted-foreground/30 text-xs text-muted-foreground hover:bg-muted"
-                  aria-label="Password requirements"
+                  aria-label={t('auth.register.passwordInfo')}
                 >
                   i
                 </button>
                 <div className="invisible absolute left-0 top-6 z-10 w-64 rounded-md border border-border bg-popover p-3 text-xs shadow-md group-hover:visible">
-                  <p className="font-medium mb-1">Password must contain:</p>
+                  <p className="font-medium mb-1">{t('auth.register.passwordInfo')}</p>
                   <ul className="list-disc list-inside space-y-0.5">
                     <li className={password?.length >= 8 ? 'text-green-600' : ''}>
-                      At least 8 characters
+                      {t('auth.register.passwordRules.length')}
                     </li>
                     <li className={/[A-Z]/.test(password || '') ? 'text-green-600' : ''}>
-                      One uppercase letter
+                      {t('auth.register.passwordRules.uppercase')}
                     </li>
                     <li className={/[a-z]/.test(password || '') ? 'text-green-600' : ''}>
-                      One lowercase letter
+                      {t('auth.register.passwordRules.lowercase')}
                     </li>
                     <li className={/[0-9]/.test(password || '') ? 'text-green-600' : ''}>
-                      One number
+                      {t('auth.register.passwordRules.number')}
                     </li>
                     <li className={/[^A-Za-z0-9]/.test(password || '') ? 'text-green-600' : ''}>
-                      One special character
+                      {t('auth.register.passwordRules.special')}
                     </li>
                   </ul>
                 </div>
@@ -159,7 +179,7 @@ export default function ResetPasswordPage() {
               {...register('password')}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="••••••••"
-              aria-label="New password"
+              aria-label={t('auth.reset.newPassword')}
               aria-required="true"
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? 'password-error' : undefined}
@@ -174,7 +194,7 @@ export default function ResetPasswordPage() {
           {/* Confirm Password */}
           <div className="space-y-2">
             <label htmlFor="confirmPassword" className="text-sm font-medium">
-              Confirm New Password *
+              {t('auth.reset.confirmPassword')}
             </label>
             <input
               id="confirmPassword"
@@ -182,7 +202,7 @@ export default function ResetPasswordPage() {
               {...register('confirmPassword')}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="••••••••"
-              aria-label="Confirm new password"
+              aria-label={t('auth.reset.confirmPassword')}
               aria-required="true"
               aria-invalid={!!errors.confirmPassword}
               aria-describedby={errors.confirmPassword ? 'confirm-password-error' : undefined}
@@ -207,9 +227,9 @@ export default function ResetPasswordPage() {
             variant="default"
             className="w-full"
             disabled={isLoading}
-            aria-label="Reset password"
+            aria-label={t('auth.reset.submit')}
           >
-            {isLoading ? 'Resetting Password...' : 'Reset Password'}
+            {isLoading ? t('auth.reset.submitting') : t('auth.reset.submit')}
           </Button>
           </form>
         </CardContent>

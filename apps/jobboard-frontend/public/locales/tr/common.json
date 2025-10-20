@@ -1,0 +1,574 @@
+{
+  "languageSwitcher": {
+    "label": "Dil",
+    "english": "İngilizce",
+    "turkish": "Türkçe",
+    "arabic": "Arapça"
+  },
+  "header": {
+    "brand": "Ethica Jobs",
+    "menu": "Menü",
+    "nav": {
+      "home": "Ana Sayfa",
+      "jobs": "İlanlar",
+      "mentorship": "Mentorluk",
+      "forum": "Forum",
+      "employerDashboard": "İşveren Paneli"
+    },
+    "auth": {
+      "login": "Giriş Yap",
+      "signup": "Kayıt Ol",
+      "logout": "Çıkış Yap"
+    }
+  },
+  "footer": {
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Şartları",
+    "brandSuffix": "Ethica Jobs"
+  },
+  "home": {
+    "hero": {
+      "title": "Amacınıza Uygun Kariyeri Keşfedin",
+      "subtitle": "Etik ve sürdürülebilirliği önceleyen şirketlerle bağlantı kurun. Değerlerinizle uyumlu fırsatları keşfedin ve dünyaya olumlu bir etki bırakın.",
+      "searchLabel": "İş ara",
+      "searchPlaceholderDesktop": "Örn. 'Yazılım Mühendisi' gibi işler ara",
+      "searchPlaceholderMobile": "İş ara",
+      "searchButton": "Ara"
+    },
+    "quote": {
+      "title": "Günün İlham Verici Sözü",
+      "text": "Gelecek, hayallerinin güzelliğine inananlara aittir.",
+      "author": "Eleanor Roosevelt"
+    },
+    "jobSeekers": {
+      "title": "İş Arayanlar İçin",
+      "description": "Kariyer Yolculuğunuzu Güçlendiriyoruz. Değerlerinizle örtüşen tatmin edici bir kariyer bulmanız için ihtiyaç duyduğunuz araçları ve kaynakları sunuyoruz.",
+      "cards": {
+        "ethical": {
+          "title": "Etik İş İlanları",
+          "description": "Etik uygulamalara ve sosyal sorumluluğa bağlı şirketlerden seçilmiş iş ilanlarına göz atın."
+        },
+        "resources": {
+          "title": "Kariyer Gelişim Kaynakları",
+          "description": "Özgeçmiş atölyeleri, mülakat ipuçları ve kariyer koçluğu dahil olmak üzere becerilerinizi geliştirecek kaynaklara erişin."
+        },
+        "community": {
+          "title": "Topluluk Forumu",
+          "description": "Benzer düşüncelere sahip profesyonellerle iletişim kurun, deneyimlerinizi paylaşın ve etik liderlerle ağ oluşturun."
+        }
+      }
+    },
+    "employers": {
+      "title": "İşverenler İçin",
+      "description": "Daha İyi Bir İş Gücü Oluşturun. Fark yaratmaya istekli yetenekli kişilerle bağlantı kurun.",
+      "cards": {
+        "talent": {
+          "title": "En İyi Yetenekleri Çekin",
+          "description": "Fark yaratmaya tutkuyla bağlı profesyonellerle bağlantı kurun."
+        },
+        "values": {
+          "title": "Değerlerinizi Sergileyin",
+          "description": "Şirketinizin etik, sürdürülebilirlik ve sosyal etkiye olan bağlılığını öne çıkarın."
+        },
+        "brand": {
+          "title": "Daha Güçlü Bir Marka Oluşturun",
+          "description": "İtibarınızı güçlendirin ve etik iş uygulamalarına değer veren müşterileri çekin."
+        }
+      }
+    },
+    "cta": {
+      "title": "Etik Kariyerler Topluluğuna Katılın",
+      "description": "Daha anlamlı ve etkili bir kariyer yolculuğuna başlamak için hemen kaydolun.",
+      "button": "Hemen Başla"
+    }
+  },
+  "jobs": {
+    "filtersHeading": "Filtreler",
+    "searchPlaceholder": "Yazılım Mühendisi",
+    "searchAria": "İş ara",
+    "clearSearch": "Aramayı temizle",
+    "error": "İlanlar yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "retry": "Tekrar Dene",
+    "results": "{{count}} ilan bulundu",
+    "results_plural": "{{count}} ilan bulundu",
+    "resultsDescription": "Mevcut filtrelerinize uygun {{count}} fırsat var.",
+    "noResults": "Kriterlerinize uygun ilan bulunamadı.",
+    "resetFilters": "Filtreleri Sıfırla",
+    "authRequired": {
+      "title": "Hesap Gerekli",
+      "description": "İş ilanlarını görüntülemek ve pozisyonlara başvurmak için bir hesap oluşturmanız gerekiyor.",
+      "invitation": "Bugün Ethica Jobs'a katılın ve değerlerinize uygun, amaç odaklı kariyer fırsatlarını keşfedin!",
+      "signUp": "Hesap Oluştur",
+      "login": "Zaten hesabınız var mı? Giriş Yapın"
+    }
+  },
+  "jobFilters": {
+    "policies": "Etik Çalışma Politikaları",
+    "salary": "Maaş Aralığı",
+    "salaryRangeValue": "${{min}}k - ${{max}}k",
+    "jobType": "İş Türü",
+    "location": "Konum",
+    "locationPlaceholder": "Şehir, Ülke veya Uzaktan",
+    "policyOptions": {
+      "fairLabor": "Adil Çalışma Uygulamaları",
+      "environment": "Çevresel Sürdürülebilirlik",
+      "diversity": "Çeşitlilik ve Kapsayıcılık"
+    },
+    "jobTypeOptions": {
+      "fullTime": "Tam zamanlı",
+      "partTime": "Yarı zamanlı",
+      "contract": "Sözleşmeli"
+    },
+    "salaryEndpoint": "${{value}}k"
+  },
+  "jobCard": {
+    "remote": "Uzaktan"
+  },
+  "mobileFilters": {
+    "open": "Filtreleri aç",
+    "title": "Filtreler",
+    "reset": "Sıfırla",
+    "apply": "Uygula"
+  },
+  "jobDetail": {
+    "breadcrumb": {
+      "jobs": "İlanlar"
+    },
+    "error": {
+      "title": "İlan Yüklenemedi",
+      "missing": "İlan bulunamadı",
+      "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir.",
+      "fetch": "İlan detayları yüklenemedi. Lütfen daha sonra tekrar deneyin."
+    },
+    "backToJobs": "İlanlara Dön",
+    "applyNow": "Hemen Başvur",
+    "description": "İlan Açıklaması",
+    "responsibilities": {
+      "title": "Sorumluluklar",
+      "items": [
+        "Müşteri ihtiyaçlarını karşılayan yazılım çözümleri tasarlamak ve geliştirmek",
+        "Temiz, belgelenmiş ve verimli kod yazmak",
+        "Yüksek kaliteli ürünler sunmak için mühendisler, ürün yöneticileri ve tasarımcılarla iş birliği yapmak",
+        "Kod incelemelerine katılmak ve yapıcı geri bildirim sağlamak"
+      ]
+    },
+    "qualifications": {
+      "title": "Nitelikler",
+      "items": [
+        "Bilgisayar Bilimi veya ilgili bir alanda lisans derecesi",
+        "Yazılım mühendisliğinde 5+ yıl deneyim",
+        "Java, Python veya benzeri bir dilde güçlü programlama becerileri",
+        "Çevik geliştirme metodolojileri deneyimi"
+      ]
+    },
+    "ethicalPolicy": {
+      "title": "Etik Politika Uyumu",
+      "description": "Tech Innovators Inc. etik iş uygulamaları ve sosyal sorumluluğa bağlıdır. Tüm operasyonlarımızda en yüksek dürüstlük ve şeffaflık standartlarını benimseriz. Etik politikamız çevresel sürdürülebilirlik, adil çalışma koşulları ve toplumsal katkıyı içerir. Çalışmalarımızla topluma ve çevreye olumlu katkı sağlamayı amaçlıyoruz."
+    },
+    "contact": {
+      "title": "İletişim Bilgileri"
+    }
+  },
+  "employerDashboard": {
+    "brand": "Ethical Careers",
+    "sidebar": {
+      "dashboard": "Panel",
+      "jobs": "İlanlar",
+      "profile": "Şirket Profili",
+      "settings": "Ayarlar",
+      "support": "Yardım ve Destek"
+    },
+    "title": "İşveren Paneli",
+    "currentPostings": "Mevcut İş İlanları",
+    "createJob": "Yeni İş İlanı Oluştur",
+    "loadingError": "İş ilanları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "emptyState": "Henüz herhangi bir iş ilanı oluşturmadınız.",
+    "emptyCta": "İlk İlanınızı Oluşturun",
+    "table": {
+      "jobTitle": "İş Başlığı",
+      "status": "Durum",
+      "applications": "Başvurular",
+      "views": "Görüntülenme",
+      "actions": "İşlemler"
+    },
+    "actions": {
+      "manage": "Yönet",
+      "view": "Görüntüle"
+    },
+    "statusLabels": {
+      "open": "Açık",
+      "active": "Aktif",
+      "paused": "Durduruldu"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Tekrar Hoş Geldiniz",
+      "description": "Devam etmek için hesabınıza giriş yapın",
+      "username": "Kullanıcı Adı *",
+      "password": "Şifre *",
+      "rememberMe": "Beni hatırla",
+      "forgotPassword": "Şifrenizi mi unuttunuz?",
+      "submit": "Giriş Yap",
+      "submitting": "Giriş yapılıyor...",
+      "registerPrompt": "Hesabınız yok mu?",
+      "registerLink": "Kayıt ol",
+      "success": "E-posta doğrulandı! Artık giriş yapabilirsiniz.",
+      "errors": {
+        "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.",
+        "invalidCredentials": "Kullanıcı adı veya şifre hatalı. Lütfen tekrar deneyin.",
+        "generic": "Giriş işlemi başarısız oldu. Lütfen tekrar deneyin."
+      }
+    },
+    "register": {
+      "title": "Hesap Oluştur",
+      "createAccount": "Hesap Oluştur",
+      "checkEmail": "E-postanızı Kontrol Edin",
+      "description": "İş ilanı platformuna erişmek için kaydolun",
+      "verificationLink": "Size bir doğrulama bağlantısı gönderdik. Hesabınızı etkinleştirmek için lütfen e-postanızı kontrol edin ve bağlantıya tıklayın.",
+      "username": "Kullanıcı Adı *",
+      "email": "E-posta *",
+      "password": "Şifre *",
+      "confirmPassword": "Şifreyi Onayla *",
+      "role": "Rol *",
+      "passwordInfo": "Şifre aşağıdakileri içermelidir:",
+      "passwordRules": {
+        "length": "En az 8 karakter",
+        "uppercase": "Bir büyük harf",
+        "lowercase": "Bir küçük harf",
+        "number": "Bir rakam",
+        "special": "Bir özel karakter"
+      },
+      "roles": {
+        "jobSeeker": "İş Arayan",
+        "employer": "İşveren"
+      },
+      "genderOptional": "Cinsiyet (Opsiyonel)",
+      "pronounsOptional": "Zamirler (Opsiyonel)",
+      "genderPlaceholder": "örn. Erkek, Kadın",
+      "pronounsPlaceholder": "örn. o/onu, she/her",
+      "termsLabel": "<TermsLink>Şartlar ve Koşullar</TermsLink> ile <PrivacyLink>Gizlilik Politikasını</PrivacyLink> kabul ediyorum *",
+      "termsLabelPlain": "Şartlar ve Koşullar ile Gizlilik Politikasını kabul ediyorum",
+      "submit": "Kayıt Ol",
+      "submitting": "Hesap oluşturuluyor...",
+      "loginPrompt": "Zaten bir hesabınız var mı?",
+      "loginLink": "Giriş yap",
+      "success": "Kayıt başarılı! Giriş yapmadan önce lütfen e-postanızı doğrulayın.",
+      "errors": {
+        "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.",
+        "emailInUse": "E-posta zaten kullanımda. Henüz doğrulamadıysanız, doğrulama bağlantısı için e-postanızı kontrol edin.",
+        "usernameInUse": "Kullanıcı adı zaten alınmış. Lütfen farklı bir kullanıcı adı seçin.",
+        "generic": "Kayıt işlemi başarısız oldu. Lütfen tekrar deneyin."
+      }
+    },
+    "forgot": {
+      "title": "Şifremi Unuttum",
+      "description": "E-posta adresinizi girin, şifrenizi sıfırlamak için bir bağlantı gönderelim",
+      "email": "E-posta *",
+      "submit": "Sıfırlama Bağlantısı Gönder",
+      "submitting": "Gönderiliyor...",
+      "success": "Şifre sıfırlama bağlantısı e-postanıza gönderildi. Lütfen gelen kutunuzu kontrol edin.",
+      "loginPrompt": "Şifrenizi hatırladınız mı?",
+      "loginLink": "Girişe dön",
+      "errors": {
+        "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.",
+        "generic": "Sıfırlama bağlantısı gönderilemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "reset": {
+      "invalidTitle": "Geçersiz Sıfırlama Bağlantısı",
+      "invalidDescription": "Bu şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş.",
+      "requestNew": "Yeni Bağlantı İste",
+      "title": "Şifreyi Sıfırla",
+      "description": "Yeni şifrenizi aşağıya girin",
+      "newPassword": "Yeni Şifre *",
+      "confirmPassword": "Yeni Şifreyi Onayla *",
+      "submit": "Şifreyi Sıfırla",
+      "submitting": "Şifre sıfırlanıyor...",
+      "success": "Şifre sıfırlama başarılı! Artık yeni şifrenizle giriş yapabilirsiniz.",
+      "errors": {
+        "sameAsOld": "Yeni şifre eski şifrenizle aynı olamaz. Lütfen farklı bir şifre seçin.",
+        "missingToken": "Geçersiz veya eksik sıfırlama belirteci.",
+        "generic": "Şifre sıfırlama başarısız oldu. Lütfen tekrar deneyin."
+      }
+    },
+    "otp": {
+      "title": "OTP Doğrula",
+      "description": "E-postanıza gönderilen doğrulama kodunu girin",
+      "code": "Doğrulama Kodu *",
+      "placeholder": "6 haneli kodu girin",
+      "submit": "Doğrula",
+      "submitting": "Doğrulanıyor...",
+      "backToLogin": "Girişe Dön",
+      "errors": {
+        "invalid": "Geçersiz veya süresi dolmuş OTP kodu. Lütfen tekrar deneyin.",
+        "generic": "OTP doğrulaması başarısız oldu. Lütfen tekrar deneyin."
+      }
+    }
+  },
+  "profile": {
+    "tabs": {
+      "about": "Hakkında",
+      "activity": "Aktivite",
+      "posts": "Gönderiler"
+    },
+    "page": {
+      "loadErrorTitle": "Profil yüklenemedi",
+      "emptyTitle": "Profil bulunamadı",
+      "emptyDescription": "Devam etmek için lütfen profilinizi oluşturun",
+      "dangerZone": {
+        "title": "Hesap Verilerini Silme",
+        "description": "Tüm profil verilerinizi kalıcı olarak silin (GDPR/KVKK uyumlu). Bu işlem geri alınamaz.",
+        "button": "Tüm Verileri Sil"
+      },
+      "alerts": {
+        "deleteFailed": "Profil verileri silinemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "header": {
+      "openToOpportunities": "Fırsatlara açık",
+      "currentRole": "{{company}} bünyesinde {{position}}",
+      "joined": "{{year}} yılında katıldı",
+      "stats": {
+        "posts": "Gönderi",
+        "badges": "Rozet"
+      },
+      "actions": {
+        "editImage": "Profil fotoğrafını düzenle"
+      }
+    },
+    "actions": {
+      "add": "Ekle",
+      "cancel": "İptal",
+      "saveChanges": "Değişiklikleri Kaydet",
+      "continue": "Devam Et",
+      "back": "Geri"
+    },
+    "common": {
+      "present": "Devam ediyor"
+    },
+    "about": {
+      "title": "Hakkında",
+      "addBio": "Biyografi ekle",
+      "modal": {
+        "title": "Hakkında'yı Düzenle",
+        "bioLabel": "Biyografi",
+        "placeholder": "Kendinizden bahsedin...",
+        "characterCount": "{{count}} / 1000 karakter"
+      }
+    },
+    "experience": {
+      "title": "Deneyim",
+      "empty": "Deneyim ekle",
+      "modal": {
+        "addTitle": "Deneyim Ekle",
+        "editTitle": "Deneyimi Düzenle",
+        "fields": {
+          "company": {
+            "label": "Şirket",
+            "placeholder": "Şirket adı"
+          },
+          "position": {
+            "label": "Pozisyon",
+            "placeholder": "İş unvanı"
+          },
+          "startDate": {
+            "label": "Başlangıç Tarihi"
+          },
+          "endDate": {
+            "label": "Bitiş Tarihi"
+          },
+          "current": {
+            "label": "Şu anda burada çalışıyorum"
+          },
+          "description": {
+            "label": "Açıklama",
+            "placeholder": "Rolünüzü ve başarılarınızı açıklayın..."
+          }
+        },
+        "submitAdd": "Deneyim Ekle",
+        "submitEdit": "Değişiklikleri Kaydet"
+      }
+    },
+    "education": {
+      "title": "Eğitim",
+      "empty": "Eğitim ekle",
+      "modal": {
+        "addTitle": "Eğitim Ekle",
+        "editTitle": "Eğitimi Düzenle",
+        "fields": {
+          "school": {
+            "label": "Okul",
+            "placeholder": "Okul adı"
+          },
+          "degree": {
+            "label": "Derece",
+            "placeholder": "örn. Fen Bilimleri Lisans"
+          },
+          "field": {
+            "label": "Çalışma Alanı",
+            "placeholder": "örn. Bilgisayar Bilimleri"
+          },
+          "startDate": {
+            "label": "Başlangıç Tarihi"
+          },
+          "endDate": {
+            "label": "Bitiş Tarihi"
+          },
+          "current": {
+            "label": "Şu anda burada öğrenim görüyorum"
+          },
+          "description": {
+            "label": "Açıklama",
+            "placeholder": "Aktiviteler, başarılar, dersler..."
+          }
+        },
+        "submitAdd": "Eğitim Ekle",
+        "submitEdit": "Değişiklikleri Kaydet"
+      }
+    },
+    "skills": {
+      "title": "Yetenekler",
+      "empty": "Yetenek ekle",
+      "modal": {
+        "addTitle": "Yetenek Ekle",
+        "editTitle": "Yetenek Düzenle",
+        "fields": {
+          "name": {
+            "label": "Yetenek Adı",
+            "placeholder": "örn. JavaScript, Proje Yönetimi"
+          }
+        },
+        "delete": "Yetenek Sil",
+        "submitAdd": "Yetenek Ekle",
+        "submitEdit": "Değişiklikleri Kaydet"
+      }
+    },
+    "interests": {
+      "title": "İlgi Alanları",
+      "empty": "İlgi alanı ekle",
+      "modal": {
+        "addTitle": "İlgi Alanı Ekle",
+        "editTitle": "İlgi Alanını Düzenle",
+        "fields": {
+          "name": {
+            "label": "İlgi Alanı",
+            "placeholder": "örn. Sürdürülebilir Tasarım, Açık Kaynak"
+          }
+        },
+        "helper": "Tutkulu olduğunuz konuları veya alanları ekleyin",
+        "delete": "İlgi Alanını Sil",
+        "submitAdd": "İlgi Alanı Ekle",
+        "submitEdit": "Değişiklikleri Kaydet"
+      }
+    },
+    "create": {
+      "title": "Profilinizi Oluşturun",
+      "description": "Hoş geldiniz! Başlamak için profesyonel profilinizi oluşturalım.",
+      "fields": {
+        "firstName": {
+          "label": "Ad",
+          "placeholder": "Adınızı girin"
+        },
+        "lastName": {
+          "label": "Soyad",
+          "placeholder": "Soyadınızı girin"
+        },
+        "bio": {
+          "label": "Biyografi (Opsiyonel)",
+          "placeholder": "Kendinizden bahsedin..."
+        }
+      },
+      "helper": "Kendinizi ve profesyonel geçmişinizi kısaca paylaşın",
+      "submit": "Profili Oluştur"
+    },
+    "imageModal": {
+      "title": "Profil Fotoğrafı",
+      "current": "Mevcut profil fotoğrafı",
+      "preview": "Önizleme",
+      "uploadTitle": "Fotoğraf yükleyin",
+      "uploadDescription": "Sürükleyip bırakın veya göz atmak için tıklayın",
+      "chooseFile": "Dosya Seç",
+      "fileTypes": "PNG, JPG en fazla 10MB",
+      "removePhoto": "Fotoğrafı Kaldır",
+      "upload": "Fotoğraf Yükle",
+      "uploading": "Yükleniyor..."
+    },
+    "deleteModal": {
+      "title": "Hesap Verilerini Sil",
+      "warningTitle": "Uyarı: Bu işlem geri alınamaz",
+      "warningDescription": "Bu işlem tüm profil verilerinizi kalıcı olarak silecek.",
+      "summaryTitle": "Kalıcı olarak silinecek veriler:",
+      "items": {
+        "profilePicture": "Profil fotoğrafı",
+        "bio": "Biyografi ve kişisel bilgiler",
+        "experiences": "İş deneyimleri",
+        "education": "Eğitim geçmişi",
+        "skills": "Yetenekler ve ilgi alanları"
+      },
+      "compliance": "Bu işlem GDPR/KVKK veri koruma düzenlemeleriyle uyumludur.",
+      "buttons": {
+        "cancel": "İptal",
+        "continue": "Devam Et",
+        "back": "Geri",
+        "delete": "Tüm Verileri Sil",
+        "deleting": "Siliniyor..."
+      },
+      "confirmKeyword": "SİL",
+      "confirmPrompt": "Silme işlemini onaylamak için lütfen <code>{{keyword}}</code> ifadesini aşağıya yazın:",
+      "confirmationLabel": "Onay",
+      "confirmationPlaceholder": "Onaylamak için {{keyword}} yazın"
+    },
+    "activity": {
+      "items": [
+        {
+          "type": "application",
+          "text": "Innovation Labs'ta Kıdemli Ürün Tasarımcısı pozisyonuna başvurdu",
+          "date": "2 gün önce"
+        },
+        {
+          "type": "forum",
+          "text": "Forumda şu konuda bir başlık açtı: \"Tasarımda erişilebilirlik için en iyi uygulamalar\"",
+          "date": "5 gün önce"
+        },
+        {
+          "type": "comment",
+          "text": "\"Tasarımcılar için uzaktan çalışma stratejileri\" gönderisine yorum yaptı",
+          "date": "1 hafta önce"
+        },
+        {
+          "type": "like",
+          "text": "\"Tasarım sistemi uygulaması\" konusundaki bir yorumu beğendi",
+          "date": "1 hafta önce"
+        },
+        {
+          "type": "application",
+          "text": "Creative Studio'da UX Tasarımcısı pozisyonuna başvurdu",
+          "date": "2 hafta önce"
+        }
+      ]
+    },
+    "posts": {
+      "replyLabel": "{{value}} yanıt",
+      "repliesLabel": "{{value}} yanıt",
+      "likeLabel": "{{value}} beğeni",
+      "likesLabel": "{{value}} beğeni",
+      "items": [
+        {
+          "title": "Kullanıcı araştırması teknikleri nasıl geliştirilebilir",
+          "date": "3 gün önce"
+        },
+        {
+          "title": "Ürün tasarımına uzanan yolculuğum",
+          "date": "1 hafta önce"
+        },
+        {
+          "title": "Bir tasarımcı olarak günlük kullandığım araçlar",
+          "date": "2 hafta önce"
+        }
+      ]
+    }
+  }
+}

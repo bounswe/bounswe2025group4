@@ -1,18 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { loginSchema, type LoginFormData } from '../schemas/login.schema';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import axios from 'axios';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuthActions } from '@/stores/authStore';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
   ? import.meta.env.VITE_API_URL 
   : (import.meta.env.VITE_API_URL || '') + '/api';
-
-console.log('LoginPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('LoginPage - API_BASE_URL:', API_BASE_URL);
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -20,6 +19,8 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const { login } = useAuthActions();
+  const { t } = useTranslation('common');
 
   const {
     register,
@@ -56,10 +57,6 @@ export default function LoginPage() {
         password: data.password,
       });
 
-      console.log('Login response:', response);
-      console.log('Login response data:', response.data);
-      console.log('Token:', response.data.token);
-
       if (response.status === 200) {
         // Check if 2FA is required
         if (response.data.temporaryToken) {
@@ -72,31 +69,49 @@ export default function LoginPage() {
           });
         } else if (response.data.token) {
           // No 2FA - direct login
-          localStorage.setItem('token', response.data.token);
-          
-          // Dispatch custom event to update header
-          window.dispatchEvent(new Event('auth-change'));
+          login(response.data);
           
           // Redirect to home
           navigate('/');
         }
       }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        // Could be wrong credentials or backend config issue
-        if (error.response?.data?.message?.includes('Full authentication')) {
-          setErrorMessage('Service temporarily unavailable. Please try again later or contact support.');
-        } else {
-          setErrorMessage('Invalid username or password. Please try again.');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data as { message?: string; error?: string } | undefined;
+
+        if (error.response?.status === 401) {
+          // Could be wrong credentials or backend config issue
+          if (responseData?.message?.includes('Full authentication')) {
+            setErrorMessage(t('auth.login.errors.serviceUnavailable'));
+          } else {
+            setErrorMessage(t('auth.login.errors.invalidCredentials'));
+          }
+          return;
         }
-      } else if (error.response?.data?.message) {
-        setErrorMessage(error.response.data.message);
-      } else if (error.response?.data?.error) {
-        setErrorMessage(error.response.data.error);
-      } else if (error.message) {
+
+        if (responseData?.message) {
+          setErrorMessage(responseData.message);
+          return;
+        }
+
+        if (responseData?.error) {
+          setErrorMessage(responseData.error);
+          return;
+        }
+
+        if (error.message) {
+          setErrorMessage(error.message);
+          return;
+        }
+
+        setErrorMessage(t('auth.login.errors.generic'));
+        return;
+      }
+
+      if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage('Login failed. Please try again.');
+        setErrorMessage(t('auth.login.errors.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -107,9 +122,9 @@ export default function LoginPage() {
     <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
+          <CardTitle className="text-3xl font-bold">{t('auth.login.title')}</CardTitle>
           <CardDescription>
-            Sign in to your account to continue
+            {t('auth.login.description')}
           </CardDescription>
         </CardHeader>
 
@@ -118,7 +133,7 @@ export default function LoginPage() {
           {/* Username */}
           <div className="space-y-2">
             <label htmlFor="username" className="text-sm font-medium">
-              Username *
+              {t('auth.login.username')}
             </label>
             <input
               id="username"
@@ -126,7 +141,7 @@ export default function LoginPage() {
               {...register('username')}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="johndoe"
-              aria-label="Username"
+              aria-label={t('auth.login.username')}
               aria-required="true"
               aria-invalid={!!errors.username}
               aria-describedby={errors.username ? 'username-error' : undefined}
@@ -142,13 +157,13 @@ export default function LoginPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="password" className="text-sm font-medium">
-                Password *
+                {t('auth.login.password')}
               </label>
               <Link
                 to="/forgot-password"
                 className="text-sm text-primary hover:underline"
               >
-                Forgot password?
+                {t('auth.login.forgotPassword')}
               </Link>
             </div>
             <input
@@ -157,7 +172,7 @@ export default function LoginPage() {
               {...register('password')}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="••••••••"
-              aria-label="Password"
+              aria-label={t('auth.login.password')}
               aria-required="true"
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? 'password-error' : undefined}
@@ -176,10 +191,10 @@ export default function LoginPage() {
               type="checkbox"
               {...register('rememberMe')}
               className="h-4 w-4 rounded border-input"
-              aria-label="Remember me"
+              aria-label={t('auth.login.rememberMe')}
             />
             <label htmlFor="rememberMe" className="text-sm leading-none cursor-pointer">
-              Remember me
+              {t('auth.login.rememberMe')}
             </label>
           </div>
 
@@ -203,16 +218,16 @@ export default function LoginPage() {
             variant="default"
             className="w-full"
             disabled={isLoading}
-            aria-label="Sign in"
+            aria-label={t('auth.login.submit')}
           >
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? t('auth.login.submitting') : t('auth.login.submit')}
           </Button>
 
           {/* Register Link */}
           <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
+            {t('auth.login.registerPrompt')}{' '}
             <Link to="/register" className="text-primary underline">
-              Sign up
+              {t('auth.login.registerLink')}
             </Link>
           </p>
           </form>

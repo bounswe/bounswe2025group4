@@ -59,8 +59,7 @@ class ApiService {
     final token = _authProvider.token;
     if (token != null) {
       headers['Authorization'] = 'Bearer $token';
-    } else {
-    }
+    } else {}
     return headers;
   }
 
@@ -185,7 +184,6 @@ class ApiService {
   /// GET /api/jobs/{id}
   /// Fetches details for a specific job post.
   Future<JobPost> getJobDetails(String jobId) async {
-
     final uri = _buildUri('/jobs/$jobId');
 
     try {
@@ -215,7 +213,6 @@ class ApiService {
     double? minSalary,
     double? maxSalary,
   }) async {
-
     final uri = _buildUri('/jobs');
 
     // Construct the body based on JobPostDto structure + potentially employerId
@@ -1180,6 +1177,7 @@ class ApiService {
       throw Exception('Failed to delete education entry. $e');
     }
   }
+
   /// POST /api/profile
   /// Creates a new user profile
   Future<Profile> createProfile(Map<String, dynamic> profileData) async {
@@ -1228,6 +1226,7 @@ class ApiService {
       throw Exception('Failed to add badge. $e');
     }
   }
+
   /// DELETE /api/profile/{userId}/badges/{badgeId}
   /// Removes a badge from a user
   Future<void> removeBadgeFromUser(int userId, int badgeId) async {
