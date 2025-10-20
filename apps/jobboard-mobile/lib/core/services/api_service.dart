@@ -58,8 +58,7 @@ class ApiService {
     final token = _authProvider.token;
     if (token != null) {
       headers['Authorization'] = 'Bearer $token';
-    } else {
-    }
+    } else {}
     return headers;
   }
 
@@ -184,7 +183,6 @@ class ApiService {
   /// GET /api/jobs/{id}
   /// Fetches details for a specific job post.
   Future<JobPost> getJobDetails(String jobId) async {
-
     final uri = _buildUri('/jobs/$jobId');
 
     try {
@@ -214,7 +212,6 @@ class ApiService {
     double? minSalary,
     double? maxSalary,
   }) async {
-
     final uri = _buildUri('/jobs');
 
     // Construct the body based on JobPostDto structure + potentially employerId
@@ -903,7 +900,10 @@ class ApiService {
 
   /// PATCH /api/profile/{userId}
   /// Updates a user profile
-  Future<Profile> updateProfile(int userId, Map<String, dynamic> profileData) async {
+  Future<Profile> updateProfile(
+    int userId,
+    Map<String, dynamic> profileData,
+  ) async {
     final uri = _buildUri('/profile/$userId');
 
     try {
@@ -942,7 +942,6 @@ class ApiService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return response.body;
       } else {
@@ -952,7 +951,6 @@ class ApiService {
       throw Exception('Failed to upload profile picture: $e');
     }
   }
-
 
   /// GET /api/profile/{userId}/profile-picture
   /// Fetches the profile picture as a direct image URL (used by Image.network)
@@ -973,6 +971,7 @@ class ApiService {
       throw Exception('Failed to delete profile picture. $e');
     }
   }
+
   /// PATCH /api/profile/{userId}/skills
   /// Updates user skills
   Future<List<String>> updateSkills(int userId, List<String> skills) async {
@@ -993,7 +992,10 @@ class ApiService {
 
   /// PATCH /api/profile/{userId}/interests
   /// Updates user interests
-  Future<List<String>> updateInterests(int userId, List<String> interests) async {
+  Future<List<String>> updateInterests(
+    int userId,
+    List<String> interests,
+  ) async {
     final uri = _buildUri('/profile/$userId/interests');
 
     try {
@@ -1013,7 +1015,10 @@ class ApiService {
 
   /// POST /api/profile/{userId}/experience
   /// Creates a new work experience entry
-  Future<Experience> createExperience(int userId, Map<String, dynamic> experienceData) async {
+  Future<Experience> createExperience(
+    int userId,
+    Map<String, dynamic> experienceData,
+  ) async {
     final uri = _buildUri('/profile/$userId/experience');
 
     try {
@@ -1032,7 +1037,10 @@ class ApiService {
   /// PUT /api/profile/{userId}/experience/{experienceId}
   /// Updates an existing work experience entry
   Future<Experience> updateExperience(
-      int userId, int experienceId, Map<String, dynamic> experienceData) async {
+    int userId,
+    int experienceId,
+    Map<String, dynamic> experienceData,
+  ) async {
     final uri = _buildUri('/profile/$userId/experience/$experienceId');
 
     try {
@@ -1060,9 +1068,13 @@ class ApiService {
       throw Exception('Failed to delete experience. $e');
     }
   }
+
   /// POST /api/profile/{userId}/education
   /// Creates a new education entry
-  Future<Education> createEducation(int userId, Map<String, dynamic> educationData) async {
+  Future<Education> createEducation(
+    int userId,
+    Map<String, dynamic> educationData,
+  ) async {
     final uri = _buildUri('/profile/$userId/education');
 
     try {
@@ -1081,7 +1093,10 @@ class ApiService {
   /// PUT /api/profile/{userId}/education/{educationId}
   /// Updates an existing education entry
   Future<Education> updateEducation(
-      int userId, int educationId, Map<String, dynamic> educationData) async {
+    int userId,
+    int educationId,
+    Map<String, dynamic> educationData,
+  ) async {
     final uri = _buildUri('/profile/$userId/education/$educationId');
 
     try {
@@ -1109,6 +1124,7 @@ class ApiService {
       throw Exception('Failed to delete education entry. $e');
     }
   }
+
   /// POST /api/profile
   /// Creates a new user profile
   Future<Profile> createProfile(Map<String, dynamic> profileData) async {
@@ -1157,6 +1173,7 @@ class ApiService {
       throw Exception('Failed to add badge. $e');
     }
   }
+
   /// DELETE /api/profile/{userId}/badges/{badgeId}
   /// Removes a badge from a user
   Future<void> removeBadgeFromUser(int userId, int badgeId) async {

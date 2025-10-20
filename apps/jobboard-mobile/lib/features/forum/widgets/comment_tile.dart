@@ -5,7 +5,6 @@ import 'dart:io';
 import '../../../core/models/comment.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
-import '../../profile/screens/user_profile_view.dart';
 import '../../../core/widgets/a11y.dart';
 
 class CommentTile extends StatefulWidget {
@@ -60,15 +59,17 @@ class _CommentTileState extends State<CommentTile> {
                   ),
                 ],
               ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => UserProfileView(userId: int.parse(widget.comment.author.id)),
-                    ),
-                  );
-                },
+              recognizer:
+                  TapGestureRecognizer()
+                    ..onTap = () {
+                      // Disabled for mock data - will be enabled when API is ready
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) => UserProfileView(userId: int.parse(widget.comment.author.id)),
+                      //   ),
+                      // );
+                    },
             ),
           ],
         ),
@@ -86,7 +87,10 @@ class _CommentTileState extends State<CommentTile> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const A11y(label: 'Created at', child: Icon(Icons.calendar_today, size: 14)),
+                  const A11y(
+                    label: 'Created at',
+                    child: Icon(Icons.calendar_today, size: 14),
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     'Created: ${widget.comment.createdAt.toLocal().toString().split(".").first}',
@@ -98,7 +102,10 @@ class _CommentTileState extends State<CommentTile> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const A11y(label: 'Edited at', child: Icon(Icons.edit, size: 14)),
+                    const A11y(
+                      label: 'Edited at',
+                      child: Icon(Icons.edit, size: 14),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'Edited: ${widget.comment.editedAt!.toLocal().toString().split(".").first}',
@@ -114,42 +121,50 @@ class _CommentTileState extends State<CommentTile> {
         onSelected: (action) async {
           final messenger = ScaffoldMessenger.of(ctx);
           if (action == 'Report') {
-            try {
-              await api.reportComment(widget.comment.id);
-              messenger.showSnackBar(
-                const SnackBar(content: Text('Comment reported', style: TextStyle(color: Colors.green))),
-              );
-            } on SocketException {
-              messenger.showSnackBar(
-                const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
-              );
-            } catch (e) {
-              messenger.showSnackBar(
-                const SnackBar(content: Text('Failed: This comment is no longer available.', style: TextStyle(color: Colors.red))),
-              );
-            }
+            // Show "Reported!" dialog for now (mock implementation)
+            showDialog(
+              context: ctx,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Reported!'),
+                  content: const Text(
+                    'Thank you for reporting this comment. We will review it soon.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
           } else if (action == 'Edit' && isOwner) {
             final controller = TextEditingController(text: widget.comment.body);
             final edited = await showDialog<String>(
               context: ctx,
-              builder: (_) => AlertDialog(
-                title: const Text('Edit Comment'),
-                content: TextField(
-                  controller: controller,
-                  maxLines: null,
-                  decoration: const InputDecoration(hintText: 'Update your comment'),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text('Cancel'),
+              builder:
+                  (_) => AlertDialog(
+                    title: const Text('Edit Comment'),
+                    content: TextField(
+                      controller: controller,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        hintText: 'Update your comment',
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed:
+                            () => Navigator.pop(ctx, controller.text.trim()),
+                        child: const Text('Save'),
+                      ),
+                    ],
                   ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-                    child: const Text('Save'),
-                  ),
-                ],
-              ),
             );
             if (edited != null && edited.isNotEmpty) {
               try {
@@ -157,11 +172,21 @@ class _CommentTileState extends State<CommentTile> {
                 widget.onUpdate?.call(widget.comment.id, edited);
               } on SocketException {
                 messenger.showSnackBar(
-                  const SnackBar(content: Text('Failed: Please check your connection and refresh the page.', style: TextStyle(color: Colors.red))),
+                  const SnackBar(
+                    content: Text(
+                      'Failed: Please check your connection and refresh the page.',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
                 );
               } catch (e) {
                 messenger.showSnackBar(
-                  const SnackBar(content: Text("Failed: This discussion is no longer available.", style: TextStyle(color: Colors.red))),
+                  const SnackBar(
+                    content: Text(
+                      "Failed: This discussion is no longer available.",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
                 );
               }
             }
@@ -169,13 +194,14 @@ class _CommentTileState extends State<CommentTile> {
             widget.onDelete?.call(widget.comment.id);
           }
         },
-        itemBuilder: (_) => [
-          const PopupMenuItem(value: 'Report', child: Text('Report')),
-          if (isOwner) ...[
-            const PopupMenuItem(value: 'Edit', child: Text('Edit')),
-            const PopupMenuItem(value: 'Delete', child: Text('Delete')),
-          ],
-        ],
+        itemBuilder:
+            (_) => [
+              const PopupMenuItem(value: 'Report', child: Text('Report')),
+              if (isOwner) ...[
+                const PopupMenuItem(value: 'Edit', child: Text('Edit')),
+                const PopupMenuItem(value: 'Delete', child: Text('Delete')),
+              ],
+            ],
       ),
     );
   }
