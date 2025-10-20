@@ -110,7 +110,7 @@
   "@signUpScreen_passwordRequired": {
     "description": "Password validation error"
   },
-  "signUpScreen_passwordTooShort": "Password must be at least 6 characters",
+  "signUpScreen_passwordTooShort": "Password must be at least 8 characters",
   "@signUpScreen_passwordTooShort": {
     "description": "Password length validation error"
   },

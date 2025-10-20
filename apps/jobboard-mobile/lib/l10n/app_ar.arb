@@ -29,7 +29,7 @@
   "signUpScreen_emailRequired": "الرجاء إدخال بريدك الإلكتروني",
   "signUpScreen_emailInvalid": "الرجاء إدخال بريد إلكتروني صالح",
   "signUpScreen_passwordRequired": "الرجاء إدخال كلمة المرور",
-  "signUpScreen_passwordTooShort": "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+  "signUpScreen_passwordTooShort": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل",
   "signUpScreen_passwordNoUppercase": "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل",
   "signUpScreen_passwordNoLowercase": "يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل",
   "signUpScreen_passwordNoNumber": "يجب أن تحتوي كلمة المرور على رقم واحد على الأقل",
