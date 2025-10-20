@@ -12,12 +12,10 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
   ? import.meta.env.VITE_API_URL 
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
-console.log('LoginPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('LoginPage - API_BASE_URL:', API_BASE_URL);
-
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -57,10 +55,6 @@ export default function LoginPage() {
         username: data.username,
         password: data.password,
       });
-
-      console.log('Login response:', response);
-      console.log('Login response data:', response.data);
-      console.log('Token:', response.data.token);
 
       if (response.status === 200) {
         // Check if 2FA is required

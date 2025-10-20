@@ -12,12 +12,10 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
   ? import.meta.env.VITE_API_URL 
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
-console.log('VerifyOtpPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('VerifyOtpPage - API_BASE_URL:', API_BASE_URL);
-
 export default function VerifyOtpPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuthActions();
   const [errorMessage, setErrorMessage] = useState('');
@@ -49,9 +47,6 @@ export default function VerifyOtpPage() {
         otpCode: data.otp,
         temporaryToken: temporaryToken,
       });
-
-      console.log('Verify OTP response:', response);
-      console.log('Verify OTP response data:', response.data);
 
       if (response.status === 200 && response.data.token) {
         // Store token in auth store
