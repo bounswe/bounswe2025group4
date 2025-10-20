@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Download, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { getApplicationById, approveApplication, rejectApplication } from '@/services/applications.service';
 import type { JobApplicationResponse } from '@/types/api.types';
@@ -68,10 +67,6 @@ export default function JobApplicationReviewPage() {
     }
   };
 
-  const handleDownload = (type: 'resume' | 'coverLetter') => {
-    // TODO: Implement actual download functionality when API supports it
-    console.log(`Downloading ${type}`);
-  };
 
   // Format date
   const formatDate = (isoDate: string) => {

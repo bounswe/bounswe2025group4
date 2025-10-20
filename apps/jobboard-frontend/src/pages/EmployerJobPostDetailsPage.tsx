@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ChevronRight, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { getJobById } from '@/services/jobs.service';
 import { getApplications } from '@/services/applications.service';
 import type { JobPostResponse, JobApplicationResponse } from '@/types/api.types';

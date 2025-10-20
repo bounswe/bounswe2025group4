@@ -96,14 +96,14 @@ export default function ProfilePage() {
         console.error('Failed to load profile:', err);
         console.error('Error details:', {
           message: err instanceof Error ? err.message : 'Unknown error',
-          response: (err as any)?.response?.data,
-          status: (err as any)?.response?.status,
+          response: (err as unknown as { response?: { data?: unknown } })?.response?.data,
+          status: (err as unknown as { response?: { status?: number } })?.response?.status,
         });
 
         // Check if it's a profile not found error
-        const errorResponse = (err as any)?.response?.data;
+        const errorResponse = (err as unknown as { response?: { data?: unknown } })?.response?.data;
         const isProfileNotFound =
-          (err as any)?.response?.status === 404 && errorResponse?.code === 'PROFILE_NOT_FOUND';
+          (err as unknown as { response?: { status?: number } })?.response?.status === 404 && (errorResponse as { code?: string })?.code === 'PROFILE_NOT_FOUND';
 
         if (isProfileNotFound) {
           console.log('ProfilePage: Profile not found, showing create modal');

@@ -14,7 +14,6 @@ import { useFilters } from '@/hooks/useFilters';
 
 type MobileJobFiltersProps = {
   isOpen: boolean;
-  // eslint-disable-next-line no-unused-vars
   onOpenChange: (open: boolean) => void;
   onResetFilters?: () => void;
   filtersContent: React.ReactNode;

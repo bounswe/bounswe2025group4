@@ -5,6 +5,7 @@ import type {
   UpdateJobPostRequest,
   JobsFilterParams,
 } from '@/types/api.types';
+import type { AxiosRequestConfig } from 'axios';
 
 /**
  * Jobs Service
@@ -37,8 +38,8 @@ export async function getJobs(filters?: JobsFilterParams): Promise<JobPostRespon
 
   const response = await api.get<JobPostResponse[]>(url, {
     skipAuthRedirect: true,
-  } as any);
-  return response.data;
+  } as unknown as AxiosRequestConfig);
+  return response.data as JobPostResponse[];
 }
 
 /**

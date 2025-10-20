@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Briefcase, MapPin, Download, ExternalLink, Trash2, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,13 +17,11 @@ import CenteredLoader from '@/components/CenteredLoader';
 import type { JobApplicationResponse, JobApplicationStatus } from '@/types/api.types';
 import { getApplications, deleteApplication, getCvUrl } from '@/services/applications.service';
 import { useAuth } from '@/contexts/AuthContext';
-import { cn } from '@/lib/utils';
 
 type FilterType = 'all' | 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export default function MyApplicationsPage() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const { t, i18n } = useTranslation('common');
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
