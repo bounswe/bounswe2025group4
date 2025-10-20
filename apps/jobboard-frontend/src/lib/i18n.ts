@@ -5,6 +5,8 @@ import { initReactI18next } from 'react-i18next';
 
 const supportedLngs = ['en', 'tr', 'ar'] as const;
 
+const basePath = import.meta.env.BASE_URL || '/';
+
 void i18n
   .use(HttpBackend)
   .use(LanguageDetector)
@@ -18,7 +20,8 @@ void i18n
       escapeValue: false,
     },
     backend: {
-      loadPath: '/locales/{{lng}}/{{ns}}.json',
+      // Use Vite base path so assets load under non-root deployments
+      loadPath: `${basePath}locales/{{lng}}/{{ns}}.json`,
     },
     detection: {
       order: ['localStorage', 'querystring', 'navigator'],
