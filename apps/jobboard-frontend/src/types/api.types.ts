@@ -7,6 +7,8 @@
  */
 export interface JobPostResponse {
   id: number;
+  jobId?: number;
+  jobPostId?: number;
   employerId: number;
   title: string;
   description: string;

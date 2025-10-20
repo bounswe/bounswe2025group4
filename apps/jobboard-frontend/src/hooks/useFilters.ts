@@ -13,7 +13,9 @@ export function useFilters() {
     Number(searchParams.get('minSalary')) || BASE_SALARY_RANGE[0],
     Number(searchParams.get('maxSalary')) || BASE_SALARY_RANGE[1],
   ];
-  const locationFilter = searchParams.get('location') || '';
+  const companyNameFilter = searchParams.get('companyName') || '';
+  const isRemoteOnly = searchParams.get('isRemote') === 'true';
+  const isDisabilityInclusive = searchParams.get('isDisabilityInclusive') === 'true';
 
   // Update functions
   const setEthicalTags = (tags: EthicalTag[]) => {
@@ -51,12 +53,34 @@ export function useFilters() {
     });
   };
 
-  const setLocation = (location: string) => {
+  const setCompanyName = (companyName: string) => {
     setSearchParams((prev) => {
-      if (location) {
-        prev.set('location', location);
+      if (companyName) {
+        prev.set('companyName', companyName);
       } else {
-        prev.delete('location');
+        prev.delete('companyName');
+      }
+      return prev;
+    });
+  };
+
+  const setIsRemote = (isRemote: boolean) => {
+    setSearchParams((prev) => {
+      if (isRemote) {
+        prev.set('isRemote', 'true');
+      } else {
+        prev.delete('isRemote');
+      }
+      return prev;
+    });
+  };
+
+  const setIsDisabilityInclusive = (isDisabilityInclusive: boolean) => {
+    setSearchParams((prev) => {
+      if (isDisabilityInclusive) {
+        prev.set('isDisabilityInclusive', 'true');
+      } else {
+        prev.delete('isDisabilityInclusive');
       }
       return prev;
     });
@@ -68,7 +92,9 @@ export function useFilters() {
       prev.delete('jobTypes');
       prev.delete('minSalary');
       prev.delete('maxSalary');
-      prev.delete('location');
+      prev.delete('companyName');
+      prev.delete('isRemote');
+      prev.delete('isDisabilityInclusive');
       return prev;
     });
   };
@@ -77,11 +103,15 @@ export function useFilters() {
     selectedEthicalTags,
     selectedJobTypes,
     salaryRange,
-    locationFilter,
+    companyNameFilter,
+    isRemoteOnly,
+    isDisabilityInclusive,
     setEthicalTags,
     setJobTypes,
     setSalaryRange,
-    setLocation,
+    setCompanyName,
+    setIsRemote,
+    setIsDisabilityInclusive,
     resetFilters,
   };
 }

@@ -6,18 +6,9 @@ import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { MultiSelectDropdown } from '@/components/ui/multi-select-dropdown';
 import { cn } from '@/lib/utils';
-import { type JobType } from '@/types/job';
 import { useFilters } from '@/hooks/useFilters';
 
-const jobTypeOptions: JobType[] = ['Full-time', 'Part-time', 'Contract'];
-
 const BASE_SALARY_RANGE: [number, number] = [40, 120];
-
-const jobTypeLabelKeyMap: Record<JobType, string> = {
-  'Full-time': 'jobFilters.jobTypeOptions.fullTime',
-  'Part-time': 'jobFilters.jobTypeOptions.partTime',
-  'Contract': 'jobFilters.jobTypeOptions.contract',
-};
 
 type JobFiltersProps = {
   className?: string;
@@ -29,13 +20,15 @@ export function JobFilters({
   const { t } = useTranslation('common');
   const {
     selectedEthicalTags,
-    selectedJobTypes,
     salaryRange,
-    locationFilter,
+    companyNameFilter,
+    isRemoteOnly,
+    isDisabilityInclusive,
     setEthicalTags,
-    setJobTypes,
     setSalaryRange,
-    setLocation,
+    setCompanyName,
+    setIsRemote,
+    setIsDisabilityInclusive,
   } = useFilters();
   const filtersContent = (
     <div className={cn('space-y-6', className)}>
@@ -79,42 +72,50 @@ export function JobFilters({
       <Separator />
 
       <section className="space-y-3">
-        <h3 className="text-lg font-semibold">{t('jobFilters.jobType')}</h3>
+        <h3 className="text-lg font-semibold">{t('jobFilters.workArrangement')}</h3>
         <div className="space-y-2">
-          {jobTypeOptions.map((jobType) => {
-            const id = `job-type-${jobType.replace(/\s+/g, '-').toLowerCase()}`;
-            return (
-              <div key={jobType} className="flex items-center space-x-3 rounded-md px-2 py-1">
-                <Checkbox
-                  id={id}
-                  checked={selectedJobTypes.includes(jobType)}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setJobTypes([...selectedJobTypes, jobType]);
-                    } else {
-                      setJobTypes(selectedJobTypes.filter((t) => t !== jobType));
-                    }
-                  }}
-                  aria-label={t(jobTypeLabelKeyMap[jobType])}
-                />
-                <Label htmlFor={id} className="text-sm">
-                  {t(jobTypeLabelKeyMap[jobType])}
-                </Label>
-              </div>
-            );
-          })}
+          <div className="flex items-center space-x-3 rounded-md px-2 py-1">
+            <Checkbox
+              id="filter-remote"
+              checked={isRemoteOnly}
+              onCheckedChange={(checked) => setIsRemote(checked === true)}
+              aria-label={t('jobFilters.remoteOnly')}
+            />
+            <Label htmlFor="filter-remote" className="text-sm">
+              {t('jobFilters.remoteOnly')}
+            </Label>
+          </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      <section className="space-y-3">
+        <h3 className="text-lg font-semibold">{t('jobFilters.inclusivity')}</h3>
+        <div className="space-y-2">
+          <div className="flex items-center space-x-3 rounded-md px-2 py-1">
+            <Checkbox
+              id="filter-disability-inclusive"
+              checked={isDisabilityInclusive}
+              onCheckedChange={(checked) => setIsDisabilityInclusive(checked === true)}
+              aria-label={t('jobFilters.disabilityInclusive')}
+            />
+            <Label htmlFor="filter-disability-inclusive" className="text-sm">
+              {t('jobFilters.disabilityInclusive')}
+            </Label>
+          </div>
         </div>
       </section>
 
       <Separator />
 
       <section className="space-y-2">
-        <h3 className="text-lg font-semibold">{t('jobFilters.location')}</h3>
+        <h3 className="text-lg font-semibold">{t('jobFilters.companyName')}</h3>
         <Input
-          value={locationFilter}
-          onChange={(event) => setLocation(event.target.value)}
-          placeholder={t('jobFilters.locationPlaceholder')}
-          aria-label={t('jobFilters.location')}
+          value={companyNameFilter}
+          onChange={(event) => setCompanyName(event.target.value)}
+          placeholder={t('jobFilters.companyNamePlaceholder')}
+          aria-label={t('jobFilters.companyName')}
         />
       </section>
     </div>

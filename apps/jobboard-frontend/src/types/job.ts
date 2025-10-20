@@ -87,6 +87,7 @@ export type Job = {
   minSalary: number;
   maxSalary: number;
   logoUrl?: string;
+  inclusiveOpportunity: boolean;
 };
 
 // Extended job type for job details from API

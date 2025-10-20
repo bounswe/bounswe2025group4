@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Briefcase } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,13 +8,13 @@ import { getJobsByEmployer } from '@/services/jobs.service';
 import { getApplications } from '@/services/applications.service';
 import CenteredLoader from '@/components/CenteredLoader';
 import { useAuthStore } from '@/stores/authStore';
+import type { JobPostResponse } from '@/types/api.types';
 
 type JobPosting = {
   id: number;
   title: string;
   status: string;
   applications: number;
-  views: number;
 };
 
 export default function EmployerDashboardPage() {
@@ -44,28 +43,38 @@ export default function EmployerDashboardPage() {
         const jobs = await getJobsByEmployer(user.id);
 
         // Fetch application counts for each job
-        const jobsWithCounts = await Promise.all(
-          jobs.map(async (job) => {
-            try {
-              const applications = await getApplications({ jobPostId: job.id });
-              return {
-                id: job.id,
-                title: job.title,
-                status: 'OPEN', // API doesn't provide status, default to OPEN
-                applications: applications.length,
-                views: 0, // API doesn't provide views
-              };
-            } catch {
-              return {
-                id: job.id,
-                title: job.title,
-                status: 'OPEN',
-                applications: 0,
-                views: 0,
-              };
-            }
-          })
-        );
+        const getNormalizedJobId = (job: JobPostResponse) =>
+          job.id ?? job.jobPostId ?? job.jobId;
+
+        const jobsWithCounts = (
+          await Promise.all(
+            jobs.map(async (job) => {
+              const normalizedId = getNormalizedJobId(job);
+
+              if (normalizedId === undefined) {
+                console.warn('Employer job is missing an id field', job);
+                return null;
+              }
+
+              try {
+                const applications = await getApplications({ jobPostId: normalizedId });
+                return {
+                  id: normalizedId,
+                  title: job.title,
+                  status: 'OPEN', // API doesn't provide status, default to OPEN
+                  applications: applications.length,
+                };
+              } catch {
+                return {
+                  id: normalizedId,
+                  title: job.title,
+                  status: 'OPEN',
+                  applications: 0,
+                };
+              }
+            })
+          )
+        ).filter((job): job is JobPosting => job !== null);
 
         setJobPostings(jobsWithCounts);
       } catch (err) {
@@ -108,12 +117,6 @@ export default function EmployerDashboardPage() {
     <div dir={isRtl ? 'rtl' : 'ltr'}>
       <div className="container mx-auto px-4 py-8">
         <header className="mb-8 flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Briefcase className="size-5" aria-hidden />
-            <span className="text-sm font-medium uppercase tracking-wide">
-              {t('employerDashboard.brand')}
-            </span>
-          </div>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground">
@@ -175,9 +178,6 @@ export default function EmployerDashboardPage() {
                         {t('employerDashboard.table.applications')}
                       </th>
                       <th className="pb-3 text-left text-sm font-semibold text-foreground">
-                        {t('employerDashboard.table.views')}
-                      </th>
-                      <th className="pb-3 text-left text-sm font-semibold text-foreground">
                         {t('employerDashboard.table.actions')}
                       </th>
                     </tr>
@@ -192,7 +192,6 @@ export default function EmployerDashboardPage() {
                           </Badge>
                         </td>
                         <td className="py-4 text-sm text-muted-foreground">{job.applications}</td>
-                        <td className="py-4 text-sm text-muted-foreground">{job.views || 'N/A'}</td>
                         <td className="py-4">
                           <div className="flex flex-wrap gap-2">
                             <Button
@@ -201,13 +200,6 @@ export default function EmployerDashboardPage() {
                               onClick={() => navigate(`/employer/jobs/${job.id}`)}
                             >
                               {t('employerDashboard.actions.manage')}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => navigate(`/employer/jobs/${job.id}`)}
-                            >
-                              {t('employerDashboard.actions.view')}
                             </Button>
                           </div>
                         </td>

@@ -50,6 +50,7 @@ function convertJobPostToJob(jobPost: JobPostResponse): Job {
     minSalary: Math.floor(jobPost.minSalary / 1000), // Convert to 'k' format
     maxSalary: Math.floor(jobPost.maxSalary / 1000),
     logoUrl: undefined, // API doesn't provide logo
+    inclusiveOpportunity: jobPost.inclusiveOpportunity,
   };
 }
 
@@ -68,8 +69,14 @@ export default function JobsPage() {
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
 
-  const { selectedEthicalTags, selectedJobTypes, salaryRange, locationFilter, resetFilters } =
-    useFilters();
+  const {
+    selectedEthicalTags,
+    salaryRange,
+    companyNameFilter,
+    isRemoteOnly,
+    isDisabilityInclusive,
+    resetFilters
+  } = useFilters();
   const ethicalTagsKey = selectedEthicalTags.join(',');
   const salaryKey = `${salaryRange[0]}-${salaryRange[1]}`;
 
@@ -95,10 +102,12 @@ export default function JobsPage() {
         // Build filter params based on user selections
         const filters = {
           title: searchFilter || undefined,
+          company: companyNameFilter || undefined,
           ethicalTags: selectedEthicalTags.length > 0 ? selectedEthicalTags : undefined,
           minSalary: salaryRange[0] * 1000, // Convert back to actual salary
           maxSalary: salaryRange[1] * 1000,
-          isRemote: locationFilter?.toLowerCase() === 'remote' ? true : undefined,
+          isRemote: isRemoteOnly ? true : undefined,
+          inclusiveOpportunity: isDisabilityInclusive ? true : undefined,
         };
 
         const jobPosts = await getJobs(filters);
@@ -120,23 +129,10 @@ export default function JobsPage() {
     };
 
     fetchJobs();
-  }, [searchFilter, ethicalTagsKey, salaryKey, locationFilter]);
+  }, [searchFilter, ethicalTagsKey, salaryKey, companyNameFilter, isRemoteOnly, isDisabilityInclusive]);
 
-  const filteredJobs = useMemo(() => {
-    return jobs.filter((job) => {
-      const matchesJobTypes =
-        selectedJobTypes.length > 0
-          ? job.type.some((type) => selectedJobTypes.includes(type))
-          : true;
-
-      const matchesLocation =
-        locationFilter && locationFilter.toLowerCase() !== 'remote'
-          ? job.location.toLowerCase().includes(locationFilter.toLowerCase())
-          : true;
-
-      return matchesJobTypes && matchesLocation;
-    });
-  }, [jobs, selectedJobTypes, locationFilter]);
+  // Jobs are now filtered on the server, so we just use them directly
+  const filteredJobs = jobs;
 
   const totalPages = Math.max(1, Math.ceil(filteredJobs.length / ITEMS_PER_PAGE));
 

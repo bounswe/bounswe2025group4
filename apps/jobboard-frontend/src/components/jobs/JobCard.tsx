@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Briefcase, DollarSign, MapPin } from 'lucide-react';
+import { Briefcase, DollarSign, MapPin, Accessibility } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -54,6 +54,15 @@ export function JobCard({ job }: JobCardProps) {
         </Avatar>
         <div className="flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
+            {job.inclusiveOpportunity && (
+              <Badge
+                variant="secondary"
+                className="border-0 bg-blue-500 text-xs font-medium text-white hover:bg-blue-600 flex items-center gap-1"
+              >
+                <Accessibility className="size-3" aria-hidden />
+                {t('jobCard.inclusiveOpportunity')}
+              </Badge>
+            )}
             {ethicalTagLabels.slice(0, 3).map((tag, idx) => (
               <Badge
                 key={idx}

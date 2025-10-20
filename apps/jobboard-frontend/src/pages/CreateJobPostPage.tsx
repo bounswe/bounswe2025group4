@@ -23,7 +23,10 @@ type JobPostFormData = {
   inclusiveOpportunity: boolean;
 };
 
+import { useTranslation } from 'react-i18next';
+
 export default function CreateJobPostPage() {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,7 +66,7 @@ export default function CreateJobPostPage() {
       navigate('/employer/dashboard');
     } catch (err) {
       console.error('Error creating job:', err);
-      setError('Failed to create job posting. Please try again.');
+      setError(t('createJob.submitError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -76,81 +79,81 @@ export default function CreateJobPostPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
-            Create a New Job Posting
+            {t('createJob.title')}
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Fill in the information below to post a new job opportunity to your company's profile
+            {t('createJob.subtitle')}
           </p>
         </div>
 
         {/* Form Card */}
         <Card className="border border-border bg-card shadow-sm">
-          <form onSubmit={handleSubmit} className="p-6 lg:p-8">
+          <form onSubmit={handleSubmit} className="p-4 lg:p-6">
             {/* Job Title */}
-            <div className="mb-6">
+            <div className="mb-4">
               <Label htmlFor="title" className="text-sm font-semibold">
-                Job Title
+                {t('createJob.jobTitle')}
               </Label>
               <Input
                 id="title"
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="eg: Senior Product Manager"
+                placeholder={t('createJob.jobTitlePlaceholder')}
                 className="mt-2"
                 required
               />
             </div>
 
             {/* Job Description */}
-            <div className="mb-6">
+            <div className="mb-4">
               <Label htmlFor="description" className="text-sm font-semibold">
-                Job Description
+                {t('createJob.jobDescription')}
               </Label>
               <textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Provide a detailed description of the role, responsibilities, qualifications, and company culture"
+                placeholder={t('createJob.jobDescriptionPlaceholder')}
                 className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[150px] resize-y"
                 required
               />
             </div>
 
             {/* Company Name */}
-            <div className="mb-6">
+            <div className="mb-4">
               <Label htmlFor="company" className="text-sm font-semibold">
-                Company Name
+                {t('createJob.companyName')}
               </Label>
               <Input
                 id="company"
                 type="text"
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                placeholder="eg: Tech Innovators Inc."
+                placeholder={t('createJob.companyNamePlaceholder')}
                 className="mt-2"
                 required
               />
             </div>
 
             {/* Location */}
-            <div className="mb-6">
+            <div className="mb-4">
               <Label htmlFor="location" className="text-sm font-semibold">
-                Location
+                {t('createJob.location')}
               </Label>
               <Input
                 id="location"
                 type="text"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder="eg: San Francisco, CA"
+                placeholder={t('createJob.locationPlaceholder')}
                 className="mt-2"
                 required
               />
             </div>
 
             {/* Remote Work */}
-            <div className="mb-6">
+            <div className="mb-4">
               <div className="flex items-start gap-3">
                 <Checkbox
                   id="remote"
@@ -160,43 +163,43 @@ export default function CreateJobPostPage() {
                 />
                 <div className="flex-1">
                   <Label htmlFor="remote" className="text-sm font-medium cursor-pointer">
-                    Remote Work Available
+                    {t('createJob.remoteWork')}
                   </Label>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Check this if the position offers remote work options
+                    {t('createJob.remoteWorkDescription')}
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Salary Range */}
-            <div className="mb-6">
-              <Label className="text-sm font-semibold">Salary Range (USD)</Label>
+            <div className="mb-4">
+              <Label className="text-sm font-semibold">{t('createJob.salaryRange')}</Label>
               <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
-                    Minimum
+                    {t('createJob.minimum')}
                   </Label>
                   <Input
                     id="minSalary"
                     type="number"
                     value={formData.minSalary}
                     onChange={(e) => setFormData({ ...formData, minSalary: e.target.value })}
-                    placeholder="e.g., 80000"
+                    placeholder={t('createJob.minSalaryPlaceholder')}
                     className="mt-1"
                     required
                   />
                 </div>
                 <div>
                   <Label htmlFor="maxSalary" className="text-xs text-muted-foreground">
-                    Maximum
+                    {t('createJob.maximum')}
                   </Label>
                   <Input
                     id="maxSalary"
                     type="number"
                     value={formData.maxSalary}
                     onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value })}
-                    placeholder="e.g., 120000"
+                    placeholder={t('createJob.maxSalaryPlaceholder')}
                     className="mt-1"
                     required
                   />
@@ -205,36 +208,36 @@ export default function CreateJobPostPage() {
             </div>
 
             {/* Contact Email */}
-            <div className="mb-6">
+            <div className="mb-4">
               <Label htmlFor="contactEmail" className="text-sm font-semibold">
-                Contact Email
+                {t('createJob.contactEmail')}
               </Label>
               <Input
                 id="contactEmail"
                 type="email"
                 value={formData.contactEmail}
                 onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-                placeholder="Enter contact email for applicants"
+                placeholder={t('createJob.contactEmailPlaceholder')}
                 className="mt-2"
                 required
               />
             </div>
 
             {/* Ethical Tags */}
-            <div className="mb-6">
-              <Label className="text-sm font-semibold">Ethical Tags</Label>
+            <div className="mb-4">
+              <Label className="text-sm font-semibold">{t('createJob.ethicalTags')}</Label>
               <p className="text-xs text-muted-foreground mt-1 mb-3">
-                Select tags that represent your company's ethical commitments and values
+                {t('createJob.ethicalTagsDescription')}
               </p>
               <MultiSelectDropdown
                 selectedTags={formData.ethicalTags}
                 onTagsChange={(tags) => setFormData({ ...formData, ethicalTags: tags })}
-                placeholder="Select ethical tags"
+                placeholder={t('createJob.ethicalTagsPlaceholder')}
               />
             </div>
 
-            {/* Inclusive Opportunity */}
-            <div className="mb-8">
+            {/* Inclusive Opportunity for People with Disabilities */}
+            <div className="mb-6 p-4 rounded-lg border-2 border-primary/20 bg-primary/5">
               <div className="flex items-start gap-3">
                 <Checkbox
                   id="inclusiveOpportunity"
@@ -245,17 +248,20 @@ export default function CreateJobPostPage() {
                   className="mt-0.5"
                 />
                 <div className="flex-1">
-                  <Label htmlFor="inclusiveOpportunity" className="text-sm font-medium cursor-pointer">
-                    More on Inclusive Opportunity
+                  <Label htmlFor="inclusiveOpportunity" className="text-sm font-semibold cursor-pointer">
+                    {t('createJob.inclusiveOpportunity')}
                   </Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t('createJob.inclusiveOpportunityDescription')}
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Error Display */}
             {error && (
-              <div className="mb-6 p-4 rounded-md bg-destructive/10 border border-destructive">
-                <p className="text-sm text-destructive">{error}</p>
+              <div className="mb-4 p-4 rounded-md bg-destructive/10 border border-destructive">
+                <p className="text-sm text-destructive">{t('createJob.submitError')}</p>
               </div>
             )}
 
@@ -267,7 +273,7 @@ export default function CreateJobPostPage() {
                 disabled={isSubmitting}
                 className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
               >
-                {isSubmitting ? 'Creating...' : 'Submit Job Posting'}
+                {isSubmitting ? t('createJob.submitting') : t('createJob.submit')}
               </Button>
             </div>
           </form>

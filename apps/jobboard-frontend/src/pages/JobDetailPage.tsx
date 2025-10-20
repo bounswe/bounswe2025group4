@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, MapPin, DollarSign } from 'lucide-react';
+import { ChevronRight, MapPin, DollarSign, Accessibility } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -104,7 +104,7 @@ export default function JobDetailPage() {
                   <span>·</span>
                   <span className="flex items-center gap-1">
                     <MapPin className="size-4" aria-hidden />
-                    {job.location}
+                    {job.remote ? t('jobCard.remote') : job.location}
                   </span>
                   <span>·</span>
                   <span className="flex items-center gap-1">
@@ -127,24 +127,31 @@ export default function JobDetailPage() {
             </section>
 
             {/* Ethical Tags */}
-            {job.ethicalTags && (
+            {(job.ethicalTags || job.inclusiveOpportunity) && (
               <section className="mt-8">
                 <div className="rounded-lg bg-primary/10 p-6">
                   <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
                     {t('jobDetail.ethicalPolicy.title')}
                   </h2>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {job.ethicalTags.split(',').map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="text-sm">
-                        {tag.trim()}
-                      </Badge>
-                    ))}
-                  </div>
+
+                  {/* Inclusive Opportunity Badge */}
                   {job.inclusiveOpportunity && (
                     <div className="mt-3">
-                      <Badge variant="success" className="text-sm">
+                      <Badge className="bg-blue-500 text-white hover:bg-blue-600 text-sm flex items-center gap-1 w-fit">
+                        <Accessibility className="size-4" aria-hidden />
                         {t('jobDetail.inclusiveOpportunity')}
                       </Badge>
+                    </div>
+                  )}
+
+                  {/* Ethical Tags */}
+                  {job.ethicalTags && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {job.ethicalTags.split(',').map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="text-sm">
+                          {tag.trim()}
+                        </Badge>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -156,18 +163,16 @@ export default function JobDetailPage() {
               <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
                 {t('jobDetail.contact.title')}
               </h2>
-              <Card className="mt-4 border border-border bg-background">
-                <div className="p-6">
-                  <p className="font-semibold text-foreground">{contactInfo.name}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{contactInfo.title}</p>
-                  <a
-                    href={`mailto:${contactInfo.email}`}
-                    className="mt-2 inline-block text-sm text-primary hover:underline"
-                  >
-                    {contactInfo.email}
-                  </a>
-                </div>
-              </Card>
+              <div className="mt-2">
+                <p className="text-sm font-semibold text-foreground">{contactInfo.name}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{contactInfo.title}</p>
+                <a
+                  href={`mailto:${contactInfo.email}`}
+                  className="mt-1 inline-block text-xs text-primary hover:underline"
+                >
+                  {contactInfo.email}
+                </a>
+              </div>
             </section>
           </div>
         </Card>

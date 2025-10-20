@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { AuthStore, LoginResponse, User } from '../types/auth.types';
 import { getUserFromToken, isTokenValid } from '../utils/jwt.utils';
+import { useEffect, useState } from 'react';
 
 /**
  * Zustand store for authentication state management
@@ -47,7 +48,13 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       restoreSession: () => {
-        const { accessToken } = get();
+        const { accessToken, user: existingUser, isAuthenticated } = get();
+
+        // If we already have a valid session with user data, verify token is still valid
+        if (existingUser && isAuthenticated && accessToken && isTokenValid(accessToken)) {
+          // Session is already restored and valid, no need to do anything
+          return;
+        }
 
         // Check if token exists in auth store and is valid
         if (accessToken && isTokenValid(accessToken)) {
@@ -106,12 +113,33 @@ export const useAuthStore = create<AuthStore>()(
 );
 
 /**
- * Hook to get auth state
+ * Hook to get auth state with hydration check
+ * This ensures the store is hydrated from localStorage before returning values
  */
 export const useAuth = () => {
+  const [hydrated, setHydrated] = useState(false);
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const accessToken = useAuthStore((state) => state.accessToken);
+
+  useEffect(() => {
+    // Wait for Zustand persist to rehydrate from localStorage
+    const unsubscribe = useAuthStore.persist.onFinishHydration(() => {
+      setHydrated(true);
+    });
+
+    // Check if already hydrated
+    if (useAuthStore.persist.hasHydrated()) {
+      setHydrated(true);
+    }
+
+    return unsubscribe;
+  }, []);
+
+  // Return null values until hydration is complete to prevent flashing
+  if (!hydrated) {
+    return { user: null, isAuthenticated: false, accessToken: null };
+  }
 
   return { user, isAuthenticated, accessToken };
 };

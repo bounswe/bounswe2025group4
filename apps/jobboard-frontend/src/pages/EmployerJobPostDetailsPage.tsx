@@ -9,8 +9,11 @@ import { getApplications } from '@/services/applications.service';
 import type { JobPostResponse, JobApplicationResponse } from '@/types/api.types';
 import CenteredLoader from '@/components/CenteredLoader';
 
+import { useTranslation } from 'react-i18next';
+
 export default function EmployerJobPostDetailsPage() {
-  const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation('common');
+  const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
   const [jobPost, setJobPost] = useState<JobPostResponse | null>(null);
   const [applications, setApplications] = useState<JobApplicationResponse[]>([]);
@@ -19,32 +22,32 @@ export default function EmployerJobPostDetailsPage() {
 
   useEffect(() => {
     const fetchJobAndApplications = async () => {
-      if (!id) return;
+      if (!jobId) return;
 
       try {
         setIsLoading(true);
         setError(null);
 
-        const jobId = parseInt(id, 10);
+        const jobIdAsInt = parseInt(jobId, 10);
 
         // Fetch job details and applications in parallel
         const [jobData, applicationsData] = await Promise.all([
-          getJobById(jobId),
-          getApplications({ jobPostId: jobId }),
+          getJobById(jobIdAsInt),
+          getApplications({ jobPostId: jobIdAsInt }),
         ]);
 
         setJobPost(jobData);
         setApplications(applicationsData);
       } catch (err) {
         console.error('Error fetching job details:', err);
-        setError('Failed to load job details. Please try again later.');
+        setError(t('employerJobPostDetails.error.load'));
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchJobAndApplications();
-  }, [id]);
+  }, [jobId, t]);
 
   const formatSalary = (min: number, max: number) => {
     return `$${min.toLocaleString()} - $${max.toLocaleString()} per year`;
@@ -57,9 +60,9 @@ export default function EmployerJobPostDetailsPage() {
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return 'Applied today';
-    if (diffDays === 1) return 'Applied 1 day ago';
-    return `Applied ${diffDays} days ago`;
+    if (diffDays === 0) return t('employerJobPostDetails.applied.today');
+    if (diffDays === 1) return t('employerJobPostDetails.applied.yesterday');
+    return t('employerJobPostDetails.applied.daysAgo', { count: diffDays });
   };
 
   if (isLoading) {
@@ -70,13 +73,13 @@ export default function EmployerJobPostDetailsPage() {
     return (
       <div className="container mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-semibold">
-          {error ? 'Error Loading Job' : 'Job not found'}
+          {error ? t('employerJobPostDetails.error.title') : t('employerJobPostDetails.error.notFound')}
         </h1>
         <p className="mt-2 text-muted-foreground">
-          {error || "The job you're looking for doesn't exist or has been removed."}
+          {error || t('employerJobPostDetails.error.description')}
         </p>
         <Button asChild className="mt-6">
-          <Link to="/employer/dashboard">Back to Dashboard</Link>
+          <Link to="/employer/dashboard">{t('employerJobPostDetails.backToDashboard')}</Link>
         </Button>
       </div>
     );
@@ -93,13 +96,24 @@ export default function EmployerJobPostDetailsPage() {
   }
 
   const ethicalTags = jobPost.ethicalTags ? jobPost.ethicalTags.split(',').map((tag) => tag.trim()) : [];
+  const jobPostId = jobPost.id ?? jobPost.jobPostId ?? jobPost.jobId;
+
+  const handleEditClick = () => {
+    if (!jobPostId) return;
+    navigate(`/employer/jobs/${jobPostId}/edit`);
+  };
+
+  const handleViewApplication = (applicationId: number) => {
+    if (!jobPostId) return;
+    navigate(`/employer/jobs/${jobPostId}/applications/${applicationId}`);
+  };
 
   return (
     <div className="container mx-auto px-4 py-6 lg:py-8">
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
         <Link to="/employer/dashboard" className="hover:text-foreground transition-colors">
-          Jobs
+          {t('employerJobPostDetails.breadcrumb.jobs')}
         </Link>
         <ChevronRight className="size-4" aria-hidden />
         <span className="text-foreground">{jobPost.title}</span>
@@ -117,22 +131,22 @@ export default function EmployerJobPostDetailsPage() {
               <Button
                 variant="outline"
                 className="gap-2"
-                onClick={() => navigate(`/employer/jobs/${id}/edit`)}
+                onClick={handleEditClick}
               >
                 <Edit className="size-4" />
-                Edit Job Post
+                {t('employerJobPostDetails.editJobPost')}
               </Button>
             </div>
 
             {/* Job Description */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">Job Description</h2>
+              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employerJobPostDetails.jobDescription')}</h2>
               <p className="mt-3 leading-relaxed text-muted-foreground">{jobPost.description}</p>
             </section>
 
             {/* Salary Range */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">Salary Range</h2>
+              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employerJobPostDetails.salaryRange')}</h2>
               <p className="mt-3 text-muted-foreground">
                 {formatSalary(jobPost.minSalary, jobPost.maxSalary)}
               </p>
@@ -140,9 +154,9 @@ export default function EmployerJobPostDetailsPage() {
 
             {/* Location */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">Location</h2>
+              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employerJobPostDetails.location')}</h2>
               <p className="mt-3 text-muted-foreground">
-                {jobPost.remote ? 'Remote' : jobPost.location}
+                {jobPost.remote ? t('employerJobPostDetails.remote') : jobPost.location}
                 {jobPost.remote && jobPost.location && ` (${jobPost.location})`}
               </p>
             </section>
@@ -150,7 +164,7 @@ export default function EmployerJobPostDetailsPage() {
             {/* Contact Information */}
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
-                Contact Information
+                {t('employerJobPostDetails.contact')}
               </h2>
               <p className="mt-3 text-muted-foreground">
                 {contactInfo.name && `${contactInfo.name}: `}
@@ -161,7 +175,7 @@ export default function EmployerJobPostDetailsPage() {
             {/* Ethical Tags */}
             {ethicalTags.length > 0 && (
               <section className="mb-8">
-                <h2 className="text-xl font-semibold text-foreground lg:text-2xl">Ethical Policies</h2>
+                <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employerJobPostDetails.ethicalPolicies')}</h2>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {ethicalTags.map((tag, index) => (
                     <span
@@ -179,10 +193,10 @@ export default function EmployerJobPostDetailsPage() {
             {jobPost.inclusiveOpportunity && (
               <section className="mb-8">
                 <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
-                  Inclusive Opportunity
+                  {t('employerJobPostDetails.inclusiveOpportunity')}
                 </h2>
                 <p className="mt-3 leading-relaxed text-muted-foreground">
-                  This position is designated as an inclusive opportunity, welcoming candidates from diverse backgrounds.
+                  {t('employerJobPostDetails.inclusiveOpportunityDescription')}
                 </p>
               </section>
             )}
@@ -190,10 +204,10 @@ export default function EmployerJobPostDetailsPage() {
             {/* Applications Received */}
             <section>
               <h2 className="mb-4 text-xl font-semibold text-foreground lg:text-2xl">
-                Applications Received ({applications.length})
+                {t('employerJobPostDetails.applicationsReceived', { count: applications.length })}
               </h2>
               {applications.length === 0 ? (
-                <p className="text-muted-foreground">No applications received yet.</p>
+                <p className="text-muted-foreground">{t('employerJobPostDetails.noApplications')}</p>
               ) : (
                 <div className="space-y-3">
                   {applications.map((application) => (
@@ -216,9 +230,9 @@ export default function EmployerJobPostDetailsPage() {
                         </div>
                         <Button
                           variant="outline"
-                          onClick={() => navigate(`/employer/jobs/${id}/applications/${application.id}`)}
+                          onClick={() => handleViewApplication(application.id)}
                         >
-                          View Application
+                          {t('employerJobPostDetails.viewApplication')}
                         </Button>
                       </div>
                     </Card>
