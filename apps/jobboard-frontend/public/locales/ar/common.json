@@ -11,6 +11,7 @@
     "nav": {
       "home": "الرئيسية",
       "jobs": "الوظائف",
+      "myApplications": "طلباتي",
       "mentorship": "الإرشاد",
       "forum": "المنتدى",
       "employerDashboard": "لوحة صاحب العمل"
@@ -18,7 +19,8 @@
     "auth": {
       "login": "تسجيل الدخول",
       "signup": "إنشاء حساب",
-      "logout": "تسجيل الخروج"
+      "logout": "تسجيل الخروج",
+      "profile": "الملف الشخصي"
     }
   },
   "footer": {
@@ -105,17 +107,17 @@
     }
   },
   "jobFilters": {
-    "policies": "سياسات العمل الأخلاقية",
+    "ethicalTags": "العلامات الأخلاقية",
+    "selectEthicalTags": "اختر العلامات الأخلاقية",
     "salary": "نطاق الراتب",
     "salaryRangeValue": "${{min}}k - ${{max}}k",
     "jobType": "نوع الوظيفة",
-    "location": "الموقع",
-    "locationPlaceholder": "مدينة أو دولة أو عن بُعد",
-    "policyOptions": {
-      "fairLabor": "ممارسات عمل عادلة",
-      "environment": "استدامة بيئية",
-      "diversity": "تنوع وشمول"
-    },
+    "workArrangement": "ترتيب العمل",
+    "remoteOnly": "عن بُعد فقط",
+    "inclusivity": "الشمولية",
+    "disabilityInclusive": "فرص شاملة للأشخاص ذوي الإعاقة",
+    "companyName": "اسم الشركة",
+    "companyNamePlaceholder": "البحث باسم الشركة",
     "jobTypeOptions": {
       "fullTime": "دوام كامل",
       "partTime": "دوام جزئي",
@@ -123,8 +125,51 @@
     },
     "salaryEndpoint": "${{value}}k"
   },
+  "ethicalTags": {
+    "select": "اختر العلامات الأخلاقية",
+    "selectEthicalTags": "اختر العلامات الأخلاقية",
+    "selectedCount": "تم اختيار {{count}} علامة",
+    "selectedCount_plural": "تم اختيار {{count}} علامات",
+    "clearAll": "مسح الكل",
+    "removeTag": "إزالة {{tag}}",
+    "categories": {
+      "compensationAndBenefits": "التعويضات والمزايا",
+      "workLifeBalance": "توازن العمل والحياة",
+      "diversityAndInclusion": "التنوع والشمول",
+      "careerDevelopment": "التطوير المهني",
+      "environmentalAndSocialImpact": "التأثير البيئي والاجتماعي"
+    },
+    "tags": {
+      "salaryTransparency": "شفافية الرواتب",
+      "equalPayPolicy": "سياسة الأجر المتساوي",
+      "livingWageEmployer": "صاحب عمل يدفع أجراً معيشياً",
+      "comprehensiveHealthInsurance": "تأمين صحي شامل",
+      "performanceBasedBonus": "مكافأة على أساس الأداء",
+      "retirementPlanSupport": "دعم خطة التقاعد",
+      "paidParentalLeave": "إجازة والدية مدفوعة",
+      "flexibleHours": "ساعات عمل مرنة",
+      "remoteFriendly": "صديق للعمل عن بُعد",
+      "noAfterHoursWorkCulture": "لا ثقافة العمل بعد ساعات العمل",
+      "mentalHealthSupport": "دعم الصحة النفسية",
+      "generousPaidTimeOff": "إجازة مدفوعة سخية",
+      "inclusiveHiringPractices": "ممارسات توظيف شاملة",
+      "diverseLeadership": "قيادة متنوعة",
+      "lgbtqFriendlyWorkplace": "مكان عمل صديق لمجتمع LGBTQ+",
+      "disabilityInclusiveWorkplace": "مكان عمل شامل للأشخاص ذوي الإعاقة",
+      "supportsWomenInLeadership": "يدعم النساء في القيادة",
+      "mentorshipProgram": "برنامج الإرشاد",
+      "learningDevelopmentBudget": "ميزانية التعلم والتطوير",
+      "transparentPromotionPaths": "مسارات ترقية شفافة",
+      "internalMobility": "التنقل الداخلي",
+      "sustainabilityFocused": "مركّز على الاستدامة",
+      "ethicalSupplyChain": "سلسلة توريد أخلاقية",
+      "communityVolunteering": "التطوع المجتمعي",
+      "certifiedBCorporation": "شركة B معتمدة"
+    }
+  },
   "jobCard": {
-    "remote": "عن بُعد"
+    "remote": "عن بُعد",
+    "inclusiveOpportunity": "فرصة شاملة"
   },
   "mobileFilters": {
     "open": "فتح عوامل التصفية",
@@ -145,28 +190,10 @@
     "backToJobs": "العودة إلى الوظائف",
     "applyNow": "قدّم الآن",
     "description": "وصف الوظيفة",
-    "responsibilities": {
-      "title": "المسؤوليات",
-      "items": [
-        "تصميم وتطوير حلول برمجية تلبي احتياجات عملائنا",
-        "كتابة كود نظيف ومُوثّق وفعّال",
-        "التعاون مع المهندسين ومديري المنتجات والمصممين لتقديم منتجات عالية الجودة",
-        "المشاركة في مراجعات الكود وتقديم ملاحظات بنّاءة"
-      ]
-    },
-    "qualifications": {
-      "title": "المؤهلات",
-      "items": [
-        "درجة بكالوريوس في علوم الحاسب أو مجال ذي صلة",
-        "خبرة 5 سنوات أو أكثر في الهندسة البرمجية",
-        "مهارات برمجية قوية في Java أو Python أو لغة مشابهة",
-        "خبرة في منهجيات التطوير الرشيق"
-      ]
-    },
     "ethicalPolicy": {
-      "title": "الامتثال للسياسة الأخلاقية",
-      "description": "تلتزم شركة Tech Innovators Inc. بممارسات العمل الأخلاقية والمسؤولية الاجتماعية. نلتزم بأعلى معايير النزاهة والشفافية في جميع عملياتنا. تشمل سياستنا الأخلاقية الالتزام بالاستدامة البيئية وممارسات العمل العادلة والمشاركة المجتمعية. نؤمن بإحداث تأثير إيجابي في المجتمع والبيئة من خلال أعمالنا."
+      "title": "العلامات الأخلاقية والامتثال"
     },
+    "inclusiveOpportunity": "فرصة شاملة",
     "contact": {
       "title": "معلومات التواصل"
     }
@@ -569,6 +596,131 @@
           "date": "منذ أسبوعين"
         }
       ]
+    }
+  },
+  "jobApplication": {
+    "title": "التقديم على {{jobTitle}}",
+    "breadcrumb": {
+      "jobs": "الوظائف",
+      "apply": "التقديم"
+    },
+    "jobDetails": {
+      "title": "تفاصيل الوظيفة",
+      "company": "الشركة",
+      "location": "الموقع",
+      "salary": "الراتب",
+      "remote": "عن بعد",
+      "onSite": "في الموقع",
+      "postedOn": "نُشر في {{date}}"
+    },
+    "form": {
+      "title": "نموذج التقديم",
+      "coverLetter": {
+        "label": "خطاب التقديم (اختياري)",
+        "placeholder": "قدم نفسك واشرح لماذا أنت مرشح مثالي لهذا الدور...",
+        "characterCount": "{{count}} / 2000 حرف"
+      },
+      "specialNeeds": {
+        "label": "الاحتياجات الخاصة أو الترتيبات (اختياري)",
+        "placeholder": "أخبرنا إذا كنت بحاجة إلى أي ترتيبات خاصة...",
+        "characterCount": "{{count}} / 500 حرف"
+      },
+      "cv": {
+        "label": "رفع السيرة الذاتية",
+        "required": "السيرة الذاتية مطلوبة",
+        "dragDrop": "اسحب وأفلت سيرتك الذاتية هنا، أو انقر للتصفح",
+        "chooseFile": "اختر ملف",
+        "fileTypes": "PDF، DOC، DOCX حتى 10 ميجابايت",
+        "selected": "المحدد: {{fileName}}",
+        "change": "تغيير الملف",
+        "remove": "إزالة الملف"
+      },
+      "submit": "إرسال الطلب",
+      "submitting": "جارٍ الإرسال...",
+      "cancel": "إلغاء"
+    },
+    "success": {
+      "title": "تم إرسال الطلب!",
+      "message": "تم إرسال طلبك بنجاح. سنخطرك بمجرد أن يراجع صاحب العمل طلبك.",
+      "viewApplications": "عرض طلباتي",
+      "backToJobs": "العودة إلى الوظائف"
+    },
+    "errors": {
+      "loadJob": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة مرة أخرى.",
+      "submitFailed": "فشل إرسال الطلب. يرجى المحاولة مرة أخرى.",
+      "uploadFailed": "فشل رفع السيرة الذاتية. يرجى المحاولة مرة أخرى.",
+      "fileTooLarge": "يجب أن يكون حجم الملف أقل من 10 ميجابايت",
+      "invalidFileType": "نوع ملف غير صالح. يرجى رفع PDF أو DOC أو DOCX",
+      "alreadyApplied": "لقد قدمت بالفعل على هذه الوظيفة."
+    },
+    "alreadyApplied": {
+      "title": "تم التقديم مسبقاً",
+      "message": "لقد قدمت بالفعل طلباً لهذه الوظيفة.",
+      "status": "حالة الطلب: {{status}}",
+      "viewApplication": "عرض الطلب",
+      "backToJobs": "العودة إلى الوظائف"
+    }
+  },
+  "myApplications": {
+    "title": "طلباتي",
+    "subtitle": "تتبع وإدارة طلبات الوظائف الخاصة بك",
+    "filters": {
+      "all": "الكل",
+      "pending": "قيد الانتظار",
+      "approved": "مقبول",
+      "rejected": "مرفوض"
+    },
+    "stats": {
+      "total": "إجمالي الطلبات",
+      "pending": "قيد الانتظار",
+      "approved": "مقبول",
+      "rejected": "مرفوض"
+    },
+    "applicationCard": {
+      "appliedOn": "تم التقديم في {{date}}",
+      "status": {
+        "PENDING": "قيد الانتظار",
+        "APPROVED": "مقبول",
+        "REJECTED": "مرفوض"
+      },
+      "actions": {
+        "viewDetails": "عرض التفاصيل",
+        "viewJob": "عرض الوظيفة",
+        "downloadCV": "تنزيل السيرة الذاتية",
+        "withdraw": "سحب الطلب"
+      },
+      "salary": "${{min}}k - ${{max}}k",
+      "remote": "عن بعد",
+      "onSite": "في الموقع"
+    },
+    "details": {
+      "title": "تفاصيل الطلب",
+      "coverLetter": "خطاب التقديم",
+      "specialNeeds": "الاحتياجات الخاصة",
+      "feedback": "ملاحظات صاحب العمل",
+      "noFeedback": "لا توجد ملاحظات بعد",
+      "cv": "السيرة الذاتية",
+      "downloadCV": "تنزيل السيرة الذاتية",
+      "status": "الحالة",
+      "appliedDate": "تاريخ التقديم",
+      "close": "إغلاق"
+    },
+    "empty": {
+      "title": "لا توجد طلبات بعد",
+      "message": "لم تتقدم لأي وظائف بعد. تصفح الوظائف المتاحة وابدأ بالتقديم!",
+      "browseJobs": "تصفح الوظائف"
+    },
+    "withdraw": {
+      "title": "سحب الطلب",
+      "message": "هل أنت متأكد من أنك تريد سحب هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirm": "نعم، سحب",
+      "cancel": "إلغاء",
+      "success": "تم سحب الطلب بنجاح",
+      "error": "فشل سحب الطلب. يرجى المحاولة مرة أخرى."
+    },
+    "errors": {
+      "loadFailed": "فشل تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+      "deleteFailed": "فشل حذف الطلب. يرجى المحاولة مرة أخرى."
     }
   }
 }

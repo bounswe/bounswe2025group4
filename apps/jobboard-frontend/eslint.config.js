@@ -37,9 +37,8 @@ export default defineConfig([
       ecmaVersion: 'latest',
       sourceType: 'module',
       parser: tseslint.parser,
-      globals: { ...globals.browser },
+      globals: { ...globals.browser, React: true },
     },
-    globals: { React: true },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
       react,

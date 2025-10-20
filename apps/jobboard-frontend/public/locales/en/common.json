@@ -11,6 +11,7 @@
     "nav": {
       "home": "Home",
       "jobs": "Jobs",
+      "myApplications": "My Applications",
       "mentorship": "Mentorship",
       "forum": "Forum",
       "employerDashboard": "Employer Dashboard"
@@ -18,7 +19,8 @@
     "auth": {
       "login": "Login",
       "signup": "Sign Up",
-      "logout": "Logout"
+      "logout": "Logout",
+      "profile": "Profile"
     }
   },
   "footer": {
@@ -105,17 +107,17 @@
     }
   },
   "jobFilters": {
-    "policies": "Ethical Work Policies",
+    "ethicalTags": "Ethical Tags",
+    "selectEthicalTags": "Select ethical tags",
     "salary": "Salary Range",
     "salaryRangeValue": "${{min}}k - ${{max}}k",
     "jobType": "Job Type",
-    "location": "Location",
-    "locationPlaceholder": "City, State, or Remote",
-    "policyOptions": {
-      "fairLabor": "Fair Labor Practices",
-      "environment": "Environmental Sustainability",
-      "diversity": "Diversity & Inclusion"
-    },
+    "workArrangement": "Work Arrangement",
+    "remoteOnly": "Remote Only",
+    "inclusivity": "Inclusivity",
+    "disabilityInclusive": "Disability-Inclusive Opportunities",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Search by company name",
     "jobTypeOptions": {
       "fullTime": "Full-time",
       "partTime": "Part-time",
@@ -123,8 +125,51 @@
     },
     "salaryEndpoint": "${{value}}k"
   },
+  "ethicalTags": {
+    "select": "Select ethical tags",
+    "selectEthicalTags": "Select Ethical Tags",
+    "selectedCount": "{{count}} tag selected",
+    "selectedCount_plural": "{{count}} tags selected",
+    "clearAll": "Clear all",
+    "removeTag": "Remove {{tag}}",
+    "categories": {
+      "compensationAndBenefits": "Compensation & Benefits",
+      "workLifeBalance": "Work-Life Balance",
+      "diversityAndInclusion": "Diversity & Inclusion",
+      "careerDevelopment": "Career Development",
+      "environmentalAndSocialImpact": "Environmental & Social Impact"
+    },
+    "tags": {
+      "salaryTransparency": "Salary Transparency",
+      "equalPayPolicy": "Equal Pay Policy",
+      "livingWageEmployer": "Living Wage Employer",
+      "comprehensiveHealthInsurance": "Comprehensive Health Insurance",
+      "performanceBasedBonus": "Performance-Based Bonus",
+      "retirementPlanSupport": "Retirement Plan Support",
+      "paidParentalLeave": "Paid Parental Leave",
+      "flexibleHours": "Flexible Hours",
+      "remoteFriendly": "Remote-Friendly",
+      "noAfterHoursWorkCulture": "No After-Hours Work Culture",
+      "mentalHealthSupport": "Mental Health Support",
+      "generousPaidTimeOff": "Generous Paid Time Off",
+      "inclusiveHiringPractices": "Inclusive Hiring Practices",
+      "diverseLeadership": "Diverse Leadership",
+      "lgbtqFriendlyWorkplace": "LGBTQ+ Friendly Workplace",
+      "disabilityInclusiveWorkplace": "Disability-Inclusive Workplace",
+      "supportsWomenInLeadership": "Supports Women in Leadership",
+      "mentorshipProgram": "Mentorship Program",
+      "learningDevelopmentBudget": "Learning & Development Budget",
+      "transparentPromotionPaths": "Transparent Promotion Paths",
+      "internalMobility": "Internal Mobility",
+      "sustainabilityFocused": "Sustainability-Focused",
+      "ethicalSupplyChain": "Ethical Supply Chain",
+      "communityVolunteering": "Community Volunteering",
+      "certifiedBCorporation": "Certified B-Corporation"
+    }
+  },
   "jobCard": {
-    "remote": "Remote"
+    "remote": "Remote",
+    "inclusiveOpportunity": "Inclusive Opportunity"
   },
   "mobileFilters": {
     "open": "Open filters",
@@ -145,28 +190,10 @@
     "backToJobs": "Back to Jobs",
     "applyNow": "Apply Now",
     "description": "Job Description",
-    "responsibilities": {
-      "title": "Responsibilities",
-      "items": [
-        "Design and develop software solutions that meet the needs of our clients",
-        "Write clean, well-documented, and efficient code",
-        "Collaborate with other engineers, product managers, and designers to deliver high-quality products",
-        "Participate in code reviews and provide constructive feedback"
-      ]
-    },
-    "qualifications": {
-      "title": "Qualifications",
-      "items": [
-        "Bachelor's degree in Computer Science or a related field",
-        "5+ years of experience in software engineering",
-        "Strong programming skills in Java, Python, or a similar language",
-        "Experience with Agile development methodologies"
-      ]
-    },
     "ethicalPolicy": {
-      "title": "Ethical Policy Compliance",
-      "description": "Tech Innovators Inc. is committed to ethical business practices and social responsibility. We adhere to the highest standards of integrity and transparency in all our operations. Our ethical policy includes a commitment to environmental sustainability, fair labor practices, and community engagement. We believe in creating a positive impact on society and the environment through our work."
+      "title": "Ethical Tags & Compliance"
     },
+    "inclusiveOpportunity": "Inclusive Opportunity",
     "contact": {
       "title": "Contact Information"
     }
@@ -202,6 +229,35 @@
       "active": "Active",
       "paused": "Paused"
     }
+  },
+  "employerJobPostDetails": {
+    "error": {
+      "load": "Failed to load job details. Please try again later.",
+      "title": "Error Loading Job",
+      "notFound": "Job not found",
+      "description": "The job you're looking for doesn't exist or has been removed."
+    },
+    "applied": {
+      "today": "Applied today",
+      "yesterday": "Applied 1 day ago",
+      "daysAgo": "Applied {{count}} days ago"
+    },
+    "backToDashboard": "Back to Dashboard",
+    "breadcrumb": {
+      "jobs": "Jobs"
+    },
+    "editJobPost": "Edit Job Post",
+    "jobDescription": "Job Description",
+    "salaryRange": "Salary Range",
+    "location": "Location",
+    "remote": "Remote",
+    "contact": "Contact Information",
+    "ethicalPolicies": "Ethical Policies",
+    "inclusiveOpportunity": "Inclusive Opportunity",
+    "inclusiveOpportunityDescription": "This position is designated as an inclusive opportunity, welcoming candidates from diverse backgrounds.",
+    "applicationsReceived": "Applications Received ({{count}})",
+    "noApplications": "No applications received yet.",
+    "viewApplication": "View Application"
   },
   "auth": {
     "login": {
@@ -569,6 +625,166 @@
           "date": "2 weeks ago"
         }
       ]
+    }
+  },
+  "jobApplication": {
+    "title": "Apply for {{jobTitle}}",
+    "breadcrumb": {
+      "jobs": "Jobs",
+      "apply": "Apply"
+    },
+    "jobDetails": {
+      "title": "Job Details",
+      "company": "Company",
+      "location": "Location",
+      "salary": "Salary",
+      "remote": "Remote",
+      "onSite": "On-site",
+      "postedOn": "Posted on {{date}}"
+    },
+    "form": {
+      "title": "Application Form",
+      "coverLetter": {
+        "label": "Cover Letter (Optional)",
+        "placeholder": "Introduce yourself and explain why you're a great fit for this role...",
+        "characterCount": "{{count}} / 2000 characters"
+      },
+      "specialNeeds": {
+        "label": "Special Needs or Accommodations (Optional)",
+        "placeholder": "Let us know if you require any special accommodations...",
+        "characterCount": "{{count}} / 500 characters"
+      },
+      "cv": {
+        "label": "Upload CV/Resume",
+        "required": "CV is required",
+        "dragDrop": "Drag and drop your CV here, or click to browse",
+        "chooseFile": "Choose File",
+        "fileTypes": "PDF, DOC, DOCX up to 10MB",
+        "selected": "Selected: {{fileName}}",
+        "change": "Change File",
+        "remove": "Remove File"
+      },
+      "submit": "Submit Application",
+      "submitting": "Submitting...",
+      "cancel": "Cancel"
+    },
+    "success": {
+      "title": "Application Submitted!",
+      "message": "Your application has been successfully submitted. We'll notify you once the employer reviews your application.",
+      "viewApplications": "View My Applications",
+      "backToJobs": "Back to Jobs"
+    },
+    "errors": {
+      "loadJob": "Failed to load job details. Please try again.",
+      "submitFailed": "Failed to submit application. Please try again.",
+      "uploadFailed": "Failed to upload CV. Please try again.",
+      "fileTooLarge": "File size must be less than 10MB",
+      "invalidFileType": "Invalid file type. Please upload PDF, DOC, or DOCX",
+      "alreadyApplied": "You have already applied to this position."
+    },
+    "alreadyApplied": {
+      "title": "Already Applied",
+      "message": "You have already submitted an application for this position.",
+      "status": "Application Status: {{status}}",
+      "viewApplication": "View Application",
+      "backToJobs": "Back to Jobs"
+    }
+  },
+  "jobApplicationReview": {
+    "noCv": "No CV found for this application",
+    "error": {
+      "load": "Failed to load application details. Please try again later.",
+      "approve": "Failed to approve application. Please try again.",
+      "reject": "Failed to reject application. Please try again.",
+      "title": "Error Loading Application"
+    },
+    "applied": {
+      "today": "today",
+      "yesterday": "1 day ago",
+      "daysAgo": "{{count}} days ago"
+    },
+    "backToJob": "Back to Job",
+    "title": "Application for {{jobTitle}}",
+    "atCompany": "at {{company}}",
+    "applicantInfo": "Applicant Information",
+    "status": "Status",
+    "applied": "Applied",
+    "coverLetter": "Cover Letter",
+    "specialNeeds": "Special Needs or Accommodations",
+    "cv": "CV / Resume",
+    "loadingCv": "Loading CV...",
+    "resumeOf": "{{name}}'s Resume",
+    "downloadToView": "Click download to view the CV",
+    "download": "Download",
+    "noCvAttached": "No CV attached to this application",
+    "existingFeedback": "Existing Feedback",
+    "decision": "Decision",
+    "feedback": "Feedback (optional)",
+    "feedbackPlaceholder": "Provide feedback for the applicant",
+    "processing": "Processing...",
+    "reject": "Reject",
+    "approve": "Approve"
+  },
+  "myApplications": {
+    "title": "My Applications",
+    "subtitle": "Track and manage your job applications",
+    "filters": {
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "stats": {
+      "total": "Total Applications",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "applicationCard": {
+      "appliedOn": "Applied on {{date}}",
+      "status": {
+        "PENDING": "Pending",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      },
+      "actions": {
+        "viewDetails": "View Details",
+        "viewJob": "View Job",
+        "downloadCV": "Download CV",
+        "withdraw": "Withdraw Application"
+      },
+      "salary": "${{min}}k - ${{max}}k",
+      "remote": "Remote",
+      "onSite": "On-site"
+    },
+    "details": {
+      "title": "Application Details",
+      "coverLetter": "Cover Letter",
+      "specialNeeds": "Special Needs",
+      "feedback": "Employer Feedback",
+      "noFeedback": "No feedback yet",
+      "cv": "CV/Resume",
+      "downloadCV": "Download CV",
+      "status": "Status",
+      "appliedDate": "Applied Date",
+      "close": "Close"
+    },
+    "empty": {
+      "title": "No Applications Yet",
+      "message": "You haven't applied to any jobs yet. Browse available positions and start applying!",
+      "browseJobs": "Browse Jobs"
+    },
+    "withdraw": {
+      "title": "Withdraw Application",
+      "message": "Are you sure you want to withdraw this application? This action cannot be undone.",
+      "confirm": "Yes, Withdraw",
+      "cancel": "Cancel",
+      "success": "Application withdrawn successfully",
+      "error": "Failed to withdraw application. Please try again."
+    },
+    "errors": {
+      "loadFailed": "Failed to load applications. Please try again.",
+      "deleteFailed": "Failed to delete application. Please try again."
     }
   }
 }

@@ -17,11 +17,13 @@ import { LanguageSwitcher } from '../LanguageSwitcher';
 export default function Header() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { logout } = useAuthActions();
   const { t, i18n } = useTranslation('common');
   const currentLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(currentLanguage) === 'rtl';
+  const isEmployer = user?.role === 'ROLE_EMPLOYER';
+  const isJobSeeker = user?.role === 'ROLE_JOBSEEKER';
 
   const handleLogout = () => {
     logout();
@@ -39,15 +41,28 @@ export default function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-2">
-              <Button variant="ghost" asChild>
-                <Link to="/jobs">{t('header.nav.jobs')}</Link>
-              </Button>
-              <Button variant="ghost" asChild>
-                <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
-              </Button>
-              <Button variant="ghost" asChild>
-                <Link to="/forum">{t('header.nav.forum')}</Link>
-              </Button>
+              {isEmployer ? (
+                <Button variant="ghost" asChild>
+                  <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button variant="ghost" asChild>
+                    <Link to="/jobs">{t('header.nav.jobs')}</Link>
+                  </Button>
+                  {isAuthenticated && isJobSeeker && (
+                    <Button variant="ghost" asChild>
+                      <Link to="/applications">{t('header.nav.myApplications')}</Link>
+                    </Button>
+                  )}
+                  <Button variant="ghost" asChild>
+                    <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/forum">{t('header.nav.forum')}</Link>
+                  </Button>
+                </>
+              )}
             </nav>
           </div>
 
@@ -55,13 +70,10 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-2">
             <LanguageSwitcher />
             <ThemeToggle />
-            <Button variant="outline" asChild>
-              <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
-            </Button>
             {isAuthenticated ? (
               <>
                 <Button variant="ghost" asChild>
-                  <Link to="/profile">Profile</Link>
+                  <Link to="/profile">{t('header.auth.profile')}</Link>
                 </Button>
                 <Button variant="outline" onClick={handleLogout}>
                   {t('header.auth.logout')}
@@ -97,30 +109,45 @@ export default function Header() {
               </SheetHeader>
 
               <nav className="flex flex-col gap-2">
-                <Button variant="ghost" asChild className="justify-start">
-                  <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>{t('header.nav.home')}</Link>
-                </Button>
-                <Button variant="ghost" asChild className="justify-start">
-                  <Link to="/jobs" onClick={() => setIsMobileMenuOpen(false)}>{t('header.nav.jobs')}</Link>
-                </Button>
-                <Button variant="ghost" asChild className="justify-start">
-                  <Link to="/mentorship" onClick={() => setIsMobileMenuOpen(false)}>{t('header.nav.mentorship')}</Link>
-                </Button>
-                <Button variant="ghost" asChild className="justify-start">
-                  <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>{t('header.nav.forum')}</Link>
-                </Button>
-                <Button variant="outline" asChild className="justify-start">
-                  <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                    {t('header.nav.employerDashboard')}
-                  </Link>
-                </Button>
+                {isEmployer ? (
+                  <Button variant="ghost" asChild className="justify-start">
+                    <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                      {t('header.nav.employerDashboard')}
+                    </Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/jobs" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.jobs')}
+                      </Link>
+                    </Button>
+                    {isAuthenticated && isJobSeeker && (
+                      <Button variant="ghost" asChild className="justify-start">
+                        <Link to="/applications" onClick={() => setIsMobileMenuOpen(false)}>
+                          {t('header.nav.myApplications')}
+                        </Link>
+                      </Button>
+                    )}
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/mentorship" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.mentorship')}
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.forum')}
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </nav>
 
               <div className="flex flex-col gap-2 p-2 border-t mt-4">
                 {isAuthenticated ? (
                   <>
                     <Button variant="ghost" asChild className="justify-start">
-                      <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
+                      <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>{t('header.auth.profile')}</Link>
                     </Button>
                     <Button
                     variant="outline"
