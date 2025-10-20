@@ -110,7 +110,7 @@
   "@signUpScreen_passwordRequired": {
     "description": "Password validation error"
   },
-  "signUpScreen_passwordTooShort": "Password must be at least 6 characters",
+  "signUpScreen_passwordTooShort": "Password must be at least 8 characters",
   "@signUpScreen_passwordTooShort": {
     "description": "Password length validation error"
   },
@@ -538,6 +538,93 @@
   "jobDetails_applying": "Applying...",
   "@jobDetails_applying": {
     "description": "Applying button loading state"
+  },
+  "jobDetails_alreadyApplied": "You have already applied to this job.",
+  "@jobDetails_alreadyApplied": {
+    "description": "Already applied message"
+  },
+  "jobDetails_cvUploadFailed": "Application submitted but CV upload failed: {error}",
+  "@jobDetails_cvUploadFailed": {
+    "description": "CV upload failed message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "jobDetails_applyErrorGeneric": "Error applying: {error}",
+  "@jobDetails_applyErrorGeneric": {
+    "description": "Generic apply error",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "jobDetails_applyDialogTitle": "Apply to Job",
+  "@jobDetails_applyDialogTitle": {
+    "description": "Apply dialog title"
+  },
+  "jobDetails_applyDialogMessage": "You are applying for: {jobTitle}",
+  "@jobDetails_applyDialogMessage": {
+    "description": "Apply dialog message",
+    "placeholders": {
+      "jobTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "jobDetails_cvLabel": "Upload CV *",
+  "@jobDetails_cvLabel": {
+    "description": "CV upload label"
+  },
+  "jobDetails_cvPlaceholder": "Choose File (PDF, DOC, DOCX)",
+  "@jobDetails_cvPlaceholder": {
+    "description": "CV file picker placeholder"
+  },
+  "jobDetails_coverLetterLabel": "Cover Letter (Optional)",
+  "@jobDetails_coverLetterLabel": {
+    "description": "Cover letter label"
+  },
+  "jobDetails_coverLetterHint": "Explain why you are a great fit for this position...",
+  "@jobDetails_coverLetterHint": {
+    "description": "Cover letter hint text"
+  },
+  "jobDetails_specialNeedsLabel": "Special Needs or Accommodations (Optional)",
+  "@jobDetails_specialNeedsLabel": {
+    "description": "Special needs label"
+  },
+  "jobDetails_specialNeedsHint": "e.g., Wheelchair accessibility, flexible hours...",
+  "@jobDetails_specialNeedsHint": {
+    "description": "Special needs hint text"
+  },
+  "jobDetails_specialNeedsMessage": "This information will help employers accommodate your needs.",
+  "@jobDetails_specialNeedsMessage": {
+    "description": "Special needs help message"
+  },
+  "jobDetails_cancelButton": "Cancel",
+  "@jobDetails_cancelButton": {
+    "description": "Cancel button"
+  },
+  "jobDetails_submitButton": "Submit Application",
+  "@jobDetails_submitButton": {
+    "description": "Submit application button"
+  },
+  "jobDetails_checkingStatus": "Checking...",
+  "@jobDetails_checkingStatus": {
+    "description": "Checking application status"
+  },
+  "jobDetails_alreadyAppliedButton": "Already Applied",
+  "@jobDetails_alreadyAppliedButton": {
+    "description": "Already applied button text"
+  },
+  "jobDetails_remote": "Remote",
+  "@jobDetails_remote": {
+    "description": "Remote job label"
+  },
+  "jobDetails_inclusiveOpportunity": "Inclusive Opportunity",
+  "@jobDetails_inclusiveOpportunity": {
+    "description": "Inclusive opportunity label"
   },
 
   "@@_FORUM": {},
@@ -1259,6 +1346,91 @@
       }
     }
   },
+  "createJob_invalidMinSalaryFormat": "Invalid minimum salary format. Please enter whole numbers only.",
+  "@createJob_invalidMinSalaryFormat": {
+    "description": "Invalid min salary format error"
+  },
+  "createJob_invalidMaxSalaryFormat": "Invalid maximum salary format. Please enter whole numbers only.",
+  "@createJob_invalidMaxSalaryFormat": {
+    "description": "Invalid max salary format error"
+  },
+  "createJob_salaryRangeInvalid": "Minimum salary cannot be greater than maximum salary.",
+  "@createJob_salaryRangeInvalid": {
+    "description": "Salary range validation error"
+  },
+  "createJob_companyNameRequired": "Please enter the company name",
+  "@createJob_companyNameRequired": {
+    "description": "Company name required error"
+  },
+  "createJob_locationLabel": "Location (e.g., City, State, Country)",
+  "@createJob_locationLabel": {
+    "description": "Location field label"
+  },
+  "createJob_locationRequiredError": "Please enter a location",
+  "@createJob_locationRequiredError": {
+    "description": "Location required error"
+  },
+  "createJob_remoteLabel": "Remote Job",
+  "@createJob_remoteLabel": {
+    "description": "Remote job checkbox label"
+  },
+  "createJob_inclusiveLabel": "Inclusive Opportunity",
+  "@createJob_inclusiveLabel": {
+    "description": "Inclusive opportunity checkbox label"
+  },
+  "createJob_inclusiveSubtitle": "This position is open to underrepresented groups",
+  "@createJob_inclusiveSubtitle": {
+    "description": "Inclusive opportunity subtitle"
+  },
+  "createJob_descriptionLabel": "Job Description",
+  "@createJob_descriptionLabel": {
+    "description": "Description field label"
+  },
+  "createJob_descriptionRequiredError": "Please enter a job description",
+  "@createJob_descriptionRequiredError": {
+    "description": "Description required error"
+  },
+  "createJob_contactLabel": "Contact Information (Email/Phone/Link)",
+  "@createJob_contactLabel": {
+    "description": "Contact info field label"
+  },
+  "createJob_contactRequiredError": "Please provide contact information",
+  "@createJob_contactRequiredError": {
+    "description": "Contact info required error"
+  },
+  "createJob_minSalaryLabel": "Minimum Salary (Optional)",
+  "@createJob_minSalaryLabel": {
+    "description": "Min salary field label"
+  },
+  "createJob_minSalaryPlaceholder": "e.g., 50000",
+  "@createJob_minSalaryPlaceholder": {
+    "description": "Min salary placeholder"
+  },
+  "createJob_maxSalaryLabel": "Maximum Salary (Optional)",
+  "@createJob_maxSalaryLabel": {
+    "description": "Max salary field label"
+  },
+  "createJob_maxSalaryPlaceholder": "e.g., 70000",
+  "@createJob_maxSalaryPlaceholder": {
+    "description": "Max salary placeholder"
+  },
+  "createJob_validNumberError": "Please enter a valid whole number",
+  "@createJob_validNumberError": {
+    "description": "Valid number validation error"
+  },
+  "createJob_ethicalPoliciesLabel": "Ethical Policies Compliance",
+  "@createJob_ethicalPoliciesLabel": {
+    "description": "Ethical policies section label"
+  },
+  "createJob_policiesSelected": "{count} selected",
+  "@createJob_policiesSelected": {
+    "description": "Selected policies count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
 
   "@@_JOB_APPLICATIONS": {},
   "jobApplications_title": "Job Applications",
@@ -1337,6 +1509,173 @@
   "jobApplications_submit": "Submit",
   "@jobApplications_submit": {
     "description": "Submit button"
+  },
+  "jobApplications_approveDialogTitle": "Approve Application",
+  "@jobApplications_approveDialogTitle": {
+    "description": "Approve dialog title"
+  },
+  "jobApplications_rejectDialogTitle": "Reject Application",
+  "@jobApplications_rejectDialogTitle": {
+    "description": "Reject dialog title"
+  },
+  "jobApplications_approveFeedbackPrompt": "Provide feedback to the applicant (optional):",
+  "@jobApplications_approveFeedbackPrompt": {
+    "description": "Approve feedback prompt"
+  },
+  "jobApplications_rejectFeedbackPrompt": "Provide reason for rejection (optional):",
+  "@jobApplications_rejectFeedbackPrompt": {
+    "description": "Reject feedback prompt"
+  },
+  "jobApplications_approveFeedbackHint": "e.g., Great qualifications! We'll contact you soon.",
+  "@jobApplications_approveFeedbackHint": {
+    "description": "Approve feedback hint"
+  },
+  "jobApplications_rejectFeedbackHint": "e.g., We have selected other candidates at this time.",
+  "@jobApplications_rejectFeedbackHint": {
+    "description": "Reject feedback hint"
+  },
+  "jobApplications_feedbackMessage": "The applicant will see this feedback.",
+  "@jobApplications_feedbackMessage": {
+    "description": "Feedback message info"
+  },
+  "jobApplications_cancelButton": "Cancel",
+  "@jobApplications_cancelButton": {
+    "description": "Cancel button"
+  },
+  "jobApplications_approveButton": "Approve",
+  "@jobApplications_approveButton": {
+    "description": "Approve button"
+  },
+  "jobApplications_rejectButton": "Reject",
+  "@jobApplications_rejectButton": {
+    "description": "Reject button"
+  },
+  "jobApplications_approvedSuccess": "Application approved successfully",
+  "@jobApplications_approvedSuccess": {
+    "description": "Approve success message"
+  },
+  "jobApplications_rejectedSuccess": "Application rejected",
+  "@jobApplications_rejectedSuccess": {
+    "description": "Reject success message"
+  },
+  "jobApplications_statusUpdatedSuccess": "Application status updated",
+  "@jobApplications_statusUpdatedSuccess": {
+    "description": "Status updated message"
+  },
+  "jobApplications_appliedLabel": "Applied: {date}",
+  "@jobApplications_appliedLabel": {
+    "description": "Applied date label",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_specialNeedsLabel": "Special Needs: {needs}",
+  "@jobApplications_specialNeedsLabel": {
+    "description": "Special needs label",
+    "placeholders": {
+      "needs": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_cvLabel": "CV Attached (tap to view)",
+  "@jobApplications_cvLabel": {
+    "description": "CV attached label"
+  },
+  "jobApplications_coverLetterLabel": "Cover Letter",
+  "@jobApplications_coverLetterLabel": {
+    "description": "Cover letter label"
+  },
+  "jobApplications_feedbackLabel": "Feedback: {feedback}",
+  "@jobApplications_feedbackLabel": {
+    "description": "Feedback label",
+    "placeholders": {
+      "feedback": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_downloadingCV": "Downloading CV...",
+  "@jobApplications_downloadingCV": {
+    "description": "Downloading CV message"
+  },
+  "jobApplications_cvSaved": "CV saved to {path}",
+  "@jobApplications_cvSaved": {
+    "description": "CV saved message",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_cvDownloadFailed": "Failed to download CV: {error}",
+  "@jobApplications_cvDownloadFailed": {
+    "description": "CV download failed message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_noCVUploaded": "No CV uploaded for this application",
+  "@jobApplications_noCVUploaded": {
+    "description": "No CV uploaded message"
+  },
+  "jobApplications_viewCVBrowser": "View CV in Browser",
+  "@jobApplications_viewCVBrowser": {
+    "description": "View CV in browser option"
+  },
+  "jobApplications_viewCVBrowserSubtitle": "Open CV in your browser",
+  "@jobApplications_viewCVBrowserSubtitle": {
+    "description": "View CV in browser subtitle"
+  },
+  "jobApplications_cvOpenFailed": "Unable to open CV. No app available to handle PDF files.",
+  "@jobApplications_cvOpenFailed": {
+    "description": "CV open failed message"
+  },
+  "jobApplications_cvOpenError": "Error opening CV: {error}",
+  "@jobApplications_cvOpenError": {
+    "description": "CV open error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_statusPending": "Pending",
+  "@jobApplications_statusPending": {
+    "description": "Application status: pending"
+  },
+  "jobApplications_statusApproved": "Approved",
+  "@jobApplications_statusApproved": {
+    "description": "Application status: approved"
+  },
+  "jobApplications_statusRejected": "Rejected",
+  "@jobApplications_statusRejected": {
+    "description": "Application status: rejected"
+  },
+  "jobApplications_downloadCV": "Download CV",
+  "@jobApplications_downloadCV": {
+    "description": "Download CV option"
+  },
+  "jobApplications_downloadCVSubtitle": "Save CV to your device",
+  "@jobApplications_downloadCVSubtitle": {
+    "description": "Download CV subtitle"
+  },
+  "jobApplications_cvDownloadedSuccess": "CV downloaded successfully\n{path}",
+  "@jobApplications_cvDownloadedSuccess": {
+    "description": "CV downloaded success message",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "jobApplications_openButton": "OPEN",
+  "@jobApplications_openButton": {
+    "description": "Open button text"
   },
 
   "@@_JOB_FILTER": {},
@@ -1419,6 +1758,15 @@
     "description": "Applied date label",
     "placeholders": {
       "date": {
+        "type": "String"
+      }
+    }
+  },
+  "myApplications_specialNeeds": "Special Needs: {specialNeeds}",
+  "@myApplications_specialNeeds": {
+    "description": "Special needs label",
+    "placeholders": {
+      "specialNeeds": {
         "type": "String"
       }
     }
@@ -1971,6 +2319,33 @@
   "common_hidePassword": "Hide password",
   "@common_hidePassword": {
     "description": "Accessibility label to hide password"
-  }
+  },
+
+  "@@_ETHICAL_POLICIES": {},
+  "ethicalPolicy_salary_transparency": "Salary Transparency",
+  "ethicalPolicy_equal_pay_policy": "Equal Pay Policy",
+  "ethicalPolicy_living_wage_employer": "Living Wage Employer",
+  "ethicalPolicy_comprehensive_health_insurance": "Comprehensive Health Insurance",
+  "ethicalPolicy_performance_based_bonus": "Performance-Based Bonus",
+  "ethicalPolicy_retirement_plan_support": "Retirement Plan Support",
+  "ethicalPolicy_flexible_hours": "Flexible Hours",
+  "ethicalPolicy_remote_friendly": "Remote-Friendly",
+  "ethicalPolicy_no_after_hours_work_culture": "No After-Hours Work Culture",
+  "ethicalPolicy_mental_health_support": "Mental Health Support",
+  "ethicalPolicy_generous_paid_time_off": "Generous Paid Time Off",
+  "ethicalPolicy_paid_parental_leave": "Paid Parental Leave",
+  "ethicalPolicy_inclusive_hiring_practices": "Inclusive Hiring Practices",
+  "ethicalPolicy_diverse_leadership": "Diverse Leadership",
+  "ethicalPolicy_lgbtq_friendly_workplace": "LGBTQ+ Friendly Workplace",
+  "ethicalPolicy_disability_inclusive_workplace": "Disability-Inclusive Workplace",
+  "ethicalPolicy_supports_women_in_leadership": "Supports Women in Leadership",
+  "ethicalPolicy_mentorship_program": "Mentorship Program",
+  "ethicalPolicy_learning_development_budget": "Learning & Development Budget",
+  "ethicalPolicy_transparent_promotion_paths": "Transparent Promotion Paths",
+  "ethicalPolicy_internal_mobility": "Internal Mobility",
+  "ethicalPolicy_sustainability_focused": "Sustainability-Focused",
+  "ethicalPolicy_ethical_supply_chain": "Ethical Supply Chain",
+  "ethicalPolicy_community_volunteering": "Community Volunteering",
+  "ethicalPolicy_certified_b_corporation": "Certified B-Corporation"
 }
 

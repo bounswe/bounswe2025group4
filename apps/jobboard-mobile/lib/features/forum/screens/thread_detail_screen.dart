@@ -282,17 +282,25 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                             AppLocalizations.of(
                                               context,
                                             )!.threadDetail_creator,
-                                        style: const TextStyle(
-                                          color: Colors.black87,
+                                        style: TextStyle(
+                                          color:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.grey.shade300
+                                                  : Colors.black87,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       TextSpan(
                                         text: _currentThread.creatorUsername,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: Color(0xFF1565C0),
+                                          color:
+                                              Theme.of(context).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.blue.shade300
+                                                  : Color(0xFF1565C0),
                                           decoration: TextDecoration.underline,
                                         ),
                                         recognizer:
@@ -326,16 +334,24 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                   )!.threadDetail_content,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.grey[700],
+                                    color:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.grey.shade400
+                                            : Colors.grey[700],
                                   ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   _currentThread.body,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black87,
+                                    color:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.grey.shade300
+                                            : Colors.black87,
                                     height: 1.4,
                                   ),
                                 ),
@@ -349,7 +365,11 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                   )!.threadDetail_tags,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.grey[700],
+                                    color:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.grey.shade400
+                                            : Colors.grey[700],
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -357,7 +377,33 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                   spacing: 6,
                                   children:
                                       _currentThread.tags
-                                          .map((tag) => Chip(label: Text(tag)))
+                                          .map(
+                                            (tag) => Chip(
+                                              label: Text(
+                                                tag,
+                                                style: TextStyle(
+                                                  color:
+                                                      Theme.of(
+                                                                context,
+                                                              ).brightness ==
+                                                              Brightness.dark
+                                                          ? Colors.blue.shade200
+                                                          : Colors
+                                                              .blue
+                                                              .shade900,
+                                                ),
+                                              ),
+                                              backgroundColor:
+                                                  Theme.of(
+                                                            context,
+                                                          ).brightness ==
+                                                          Brightness.dark
+                                                      ? Colors.blue.shade900
+                                                          .withOpacity(0.3)
+                                                      : Colors.blue.shade50,
+                                              side: BorderSide.none,
+                                            ),
+                                          )
                                           .toList(),
                                 ),
 

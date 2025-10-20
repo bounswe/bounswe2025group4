@@ -73,7 +73,10 @@ class _ForumPageState extends State<ForumPage> {
                         labelText:
                             AppLocalizations.of(context)!.forumPage_searchTags,
                         prefixIcon: A11y(
-                          label: AppLocalizations.of(context)!.forumPage_searchTags,
+                          label:
+                              AppLocalizations.of(
+                                context,
+                              )!.forumPage_searchTags,
                           child: const Icon(Icons.search),
                         ),
                       ),
@@ -94,8 +97,21 @@ class _ForumPageState extends State<ForumPage> {
                           children:
                               filteredTags.map((tag) {
                                 final isSelected = tempSelected.contains(tag);
+                                final isDark =
+                                    Theme.of(context).brightness ==
+                                    Brightness.dark;
                                 return FilterChip(
-                                  label: Text(tag),
+                                  label: Text(
+                                    tag,
+                                    style: TextStyle(
+                                      color:
+                                          isSelected
+                                              ? (isDark
+                                                  ? Colors.blue.shade200
+                                                  : Colors.blue.shade900)
+                                              : null,
+                                    ),
+                                  ),
                                   selected: isSelected,
                                   onSelected: (selected) {
                                     setModalState(() {
@@ -104,8 +120,18 @@ class _ForumPageState extends State<ForumPage> {
                                           : tempSelected.remove(tag);
                                     });
                                   },
-                                  selectedColor: Colors.blue.withOpacity(0.2),
-                                  checkmarkColor: Colors.blue,
+                                  selectedColor:
+                                      isDark
+                                          ? Colors.blue.shade900.withOpacity(
+                                            0.3,
+                                          )
+                                          : Colors.blue.withOpacity(0.2),
+                                  checkmarkColor:
+                                      isDark
+                                          ? Colors.blue.shade300
+                                          : Colors.blue,
+                                  backgroundColor:
+                                      isDark ? Colors.grey.shade800 : null,
                                 );
                               }).toList(),
                         ),
