@@ -19,7 +19,8 @@
     "auth": {
       "login": "Login",
       "signup": "Sign Up",
-      "logout": "Logout"
+      "logout": "Logout",
+      "profile": "Profile"
     }
   },
   "footer": {
@@ -106,23 +107,61 @@
     }
   },
   "jobFilters": {
-    "policies": "Ethical Work Policies",
+    "ethicalTags": "Ethical Tags",
+    "selectEthicalTags": "Select ethical tags",
     "salary": "Salary Range",
     "salaryRangeValue": "${{min}}k - ${{max}}k",
     "jobType": "Job Type",
     "location": "Location",
     "locationPlaceholder": "City, State, or Remote",
-    "policyOptions": {
-      "fairLabor": "Fair Labor Practices",
-      "environment": "Environmental Sustainability",
-      "diversity": "Diversity & Inclusion"
-    },
     "jobTypeOptions": {
       "fullTime": "Full-time",
       "partTime": "Part-time",
       "contract": "Contract"
     },
     "salaryEndpoint": "${{value}}k"
+  },
+  "ethicalTags": {
+    "select": "Select ethical tags",
+    "selectEthicalTags": "Select Ethical Tags",
+    "selectedCount": "{{count}} tag selected",
+    "selectedCount_plural": "{{count}} tags selected",
+    "clearAll": "Clear all",
+    "removeTag": "Remove {{tag}}",
+    "categories": {
+      "compensationAndBenefits": "Compensation & Benefits",
+      "workLifeBalance": "Work-Life Balance",
+      "diversityAndInclusion": "Diversity & Inclusion",
+      "careerDevelopment": "Career Development",
+      "environmentalAndSocialImpact": "Environmental & Social Impact"
+    },
+    "tags": {
+      "salaryTransparency": "Salary Transparency",
+      "equalPayPolicy": "Equal Pay Policy",
+      "livingWageEmployer": "Living Wage Employer",
+      "comprehensiveHealthInsurance": "Comprehensive Health Insurance",
+      "performanceBasedBonus": "Performance-Based Bonus",
+      "retirementPlanSupport": "Retirement Plan Support",
+      "paidParentalLeave": "Paid Parental Leave",
+      "flexibleHours": "Flexible Hours",
+      "remoteFriendly": "Remote-Friendly",
+      "noAfterHoursWorkCulture": "No After-Hours Work Culture",
+      "mentalHealthSupport": "Mental Health Support",
+      "generousPaidTimeOff": "Generous Paid Time Off",
+      "inclusiveHiringPractices": "Inclusive Hiring Practices",
+      "diverseLeadership": "Diverse Leadership",
+      "lgbtqFriendlyWorkplace": "LGBTQ+ Friendly Workplace",
+      "disabilityInclusiveWorkplace": "Disability-Inclusive Workplace",
+      "supportsWomenInLeadership": "Supports Women in Leadership",
+      "mentorshipProgram": "Mentorship Program",
+      "learningDevelopmentBudget": "Learning & Development Budget",
+      "transparentPromotionPaths": "Transparent Promotion Paths",
+      "internalMobility": "Internal Mobility",
+      "sustainabilityFocused": "Sustainability-Focused",
+      "ethicalSupplyChain": "Ethical Supply Chain",
+      "communityVolunteering": "Community Volunteering",
+      "certifiedBCorporation": "Certified B-Corporation"
+    }
   },
   "jobCard": {
     "remote": "Remote"

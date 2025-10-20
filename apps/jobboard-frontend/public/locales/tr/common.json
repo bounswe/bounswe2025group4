@@ -19,7 +19,8 @@
     "auth": {
       "login": "Giriş Yap",
       "signup": "Kayıt Ol",
-      "logout": "Çıkış Yap"
+      "logout": "Çıkış Yap",
+      "profile": "Profil"
     }
   },
   "footer": {
@@ -106,23 +107,61 @@
     }
   },
   "jobFilters": {
-    "policies": "Etik Çalışma Politikaları",
+    "ethicalTags": "Etik Etiketler",
+    "selectEthicalTags": "Etik etiketleri seçin",
     "salary": "Maaş Aralığı",
     "salaryRangeValue": "${{min}}k - ${{max}}k",
     "jobType": "İş Türü",
     "location": "Konum",
     "locationPlaceholder": "Şehir, Ülke veya Uzaktan",
-    "policyOptions": {
-      "fairLabor": "Adil Çalışma Uygulamaları",
-      "environment": "Çevresel Sürdürülebilirlik",
-      "diversity": "Çeşitlilik ve Kapsayıcılık"
-    },
     "jobTypeOptions": {
       "fullTime": "Tam zamanlı",
       "partTime": "Yarı zamanlı",
       "contract": "Sözleşmeli"
     },
     "salaryEndpoint": "${{value}}k"
+  },
+  "ethicalTags": {
+    "select": "Etik etiketleri seçin",
+    "selectEthicalTags": "Etik Etiketleri Seçin",
+    "selectedCount": "{{count}} etiket seçildi",
+    "selectedCount_plural": "{{count}} etiket seçildi",
+    "clearAll": "Tümünü temizle",
+    "removeTag": "{{tag}} kaldır",
+    "categories": {
+      "compensationAndBenefits": "Ücret ve Yan Haklar",
+      "workLifeBalance": "İş-Yaşam Dengesi",
+      "diversityAndInclusion": "Çeşitlilik ve Kapsayıcılık",
+      "careerDevelopment": "Kariyer Gelişimi",
+      "environmentalAndSocialImpact": "Çevresel ve Sosyal Etki"
+    },
+    "tags": {
+      "salaryTransparency": "Maaş Şeffaflığı",
+      "equalPayPolicy": "Eşit Ücret Politikası",
+      "livingWageEmployer": "Yaşanabilir Ücret İşvereni",
+      "comprehensiveHealthInsurance": "Kapsamlı Sağlık Sigortası",
+      "performanceBasedBonus": "Performansa Dayalı Bonus",
+      "retirementPlanSupport": "Emeklilik Planı Desteği",
+      "paidParentalLeave": "Ücretli Ebeveyn İzni",
+      "flexibleHours": "Esnek Çalışma Saatleri",
+      "remoteFriendly": "Uzaktan Çalışma Dostu",
+      "noAfterHoursWorkCulture": "Mesai Sonrası Çalışma Yok",
+      "mentalHealthSupport": "Ruh Sağlığı Desteği",
+      "generousPaidTimeOff": "Bol Ücretli İzin",
+      "inclusiveHiringPractices": "Kapsayıcı İşe Alım Uygulamaları",
+      "diverseLeadership": "Çeşitli Liderlik",
+      "lgbtqFriendlyWorkplace": "LGBTQ+ Dostu İşyeri",
+      "disabilityInclusiveWorkplace": "Engelli Dostu İşyeri",
+      "supportsWomenInLeadership": "Liderlikte Kadınları Destekler",
+      "mentorshipProgram": "Mentorluk Programı",
+      "learningDevelopmentBudget": "Öğrenme ve Gelişim Bütçesi",
+      "transparentPromotionPaths": "Şeffaf Terfi Yolları",
+      "internalMobility": "İç Mobilite",
+      "sustainabilityFocused": "Sürdürülebilirlik Odaklı",
+      "ethicalSupplyChain": "Etik Tedarik Zinciri",
+      "communityVolunteering": "Toplum Gönüllülüğü",
+      "certifiedBCorporation": "Sertifikalı B-Corporation"
+    }
   },
   "jobCard": {
     "remote": "Uzaktan"

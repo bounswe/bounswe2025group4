@@ -19,7 +19,8 @@
     "auth": {
       "login": "تسجيل الدخول",
       "signup": "إنشاء حساب",
-      "logout": "تسجيل الخروج"
+      "logout": "تسجيل الخروج",
+      "profile": "الملف الشخصي"
     }
   },
   "footer": {
@@ -106,23 +107,61 @@
     }
   },
   "jobFilters": {
-    "policies": "سياسات العمل الأخلاقية",
+    "ethicalTags": "العلامات الأخلاقية",
+    "selectEthicalTags": "اختر العلامات الأخلاقية",
     "salary": "نطاق الراتب",
     "salaryRangeValue": "${{min}}k - ${{max}}k",
     "jobType": "نوع الوظيفة",
     "location": "الموقع",
     "locationPlaceholder": "مدينة أو دولة أو عن بُعد",
-    "policyOptions": {
-      "fairLabor": "ممارسات عمل عادلة",
-      "environment": "استدامة بيئية",
-      "diversity": "تنوع وشمول"
-    },
     "jobTypeOptions": {
       "fullTime": "دوام كامل",
       "partTime": "دوام جزئي",
       "contract": "عقد"
     },
     "salaryEndpoint": "${{value}}k"
+  },
+  "ethicalTags": {
+    "select": "اختر العلامات الأخلاقية",
+    "selectEthicalTags": "اختر العلامات الأخلاقية",
+    "selectedCount": "تم اختيار {{count}} علامة",
+    "selectedCount_plural": "تم اختيار {{count}} علامات",
+    "clearAll": "مسح الكل",
+    "removeTag": "إزالة {{tag}}",
+    "categories": {
+      "compensationAndBenefits": "التعويضات والمزايا",
+      "workLifeBalance": "توازن العمل والحياة",
+      "diversityAndInclusion": "التنوع والشمول",
+      "careerDevelopment": "التطوير المهني",
+      "environmentalAndSocialImpact": "التأثير البيئي والاجتماعي"
+    },
+    "tags": {
+      "salaryTransparency": "شفافية الرواتب",
+      "equalPayPolicy": "سياسة الأجر المتساوي",
+      "livingWageEmployer": "صاحب عمل يدفع أجراً معيشياً",
+      "comprehensiveHealthInsurance": "تأمين صحي شامل",
+      "performanceBasedBonus": "مكافأة على أساس الأداء",
+      "retirementPlanSupport": "دعم خطة التقاعد",
+      "paidParentalLeave": "إجازة والدية مدفوعة",
+      "flexibleHours": "ساعات عمل مرنة",
+      "remoteFriendly": "صديق للعمل عن بُعد",
+      "noAfterHoursWorkCulture": "لا ثقافة العمل بعد ساعات العمل",
+      "mentalHealthSupport": "دعم الصحة النفسية",
+      "generousPaidTimeOff": "إجازة مدفوعة سخية",
+      "inclusiveHiringPractices": "ممارسات توظيف شاملة",
+      "diverseLeadership": "قيادة متنوعة",
+      "lgbtqFriendlyWorkplace": "مكان عمل صديق لمجتمع LGBTQ+",
+      "disabilityInclusiveWorkplace": "مكان عمل شامل للأشخاص ذوي الإعاقة",
+      "supportsWomenInLeadership": "يدعم النساء في القيادة",
+      "mentorshipProgram": "برنامج الإرشاد",
+      "learningDevelopmentBudget": "ميزانية التعلم والتطوير",
+      "transparentPromotionPaths": "مسارات ترقية شفافة",
+      "internalMobility": "التنقل الداخلي",
+      "sustainabilityFocused": "مركّز على الاستدامة",
+      "ethicalSupplyChain": "سلسلة توريد أخلاقية",
+      "communityVolunteering": "التطوع المجتمعي",
+      "certifiedBCorporation": "شركة B معتمدة"
+    }
   },
   "jobCard": {
     "remote": "عن بُعد"
