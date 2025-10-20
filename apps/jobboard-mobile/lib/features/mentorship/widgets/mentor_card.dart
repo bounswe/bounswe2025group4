@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../core/widgets/a11y.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class MentorCard extends StatelessWidget {
   final String mentorId;
@@ -48,7 +49,7 @@ class MentorCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               A11y(
-                label: 'Mentor avatar for $name',
+                label: AppLocalizations.of(context)!.mentorScreen_openChat(name),
                 child: CircleAvatar(
                   radius: 28,
                   backgroundColor: theme.colorScheme.primaryContainer,
@@ -81,14 +82,14 @@ class MentorCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const A11y(label: 'Mentee count', child: Icon(Icons.people_outline, size: 16)),
+                        A11y(label: AppLocalizations.of(context)!.mentorScreen_currentMentees, child: const Icon(Icons.people_outline, size: 16)),
                         const SizedBox(width: 4),
                         Text(
                           '$currentMenteeCount / $maxMenteeCount mentees',
                           style: textTheme.bodySmall,
                         ),
                         const Spacer(),
-                        A11y(label: 'Average rating', child: Icon(Icons.star_border, size: 16, color: Colors.amber.shade700)),
+                        A11y(label: AppLocalizations.of(context)!.mentorProfile_rating, child: Icon(Icons.star_border, size: 16, color: Colors.amber.shade700)),
                         const SizedBox(width: 4),
                         Text(
                           averageRating.toStringAsFixed(1),
@@ -122,9 +123,9 @@ class MentorCard extends StatelessWidget {
                           HapticFeedback.mediumImpact();
                           onRequestTap();
                         },
-                        child: Text(
-                          isFull ? 'Mentorship Full' : 'Request Mentorship',
-                        ),
+                        child: Text(isFull
+                            ? AppLocalizations.of(context)!.mentorProfile_notAvailable
+                            : AppLocalizations.of(context)!.menteeScreen_sendRequest),
                       ),
                     ),
                   ],

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import '../../../core/providers/profile_provider.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/widgets/a11y.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class ProfilePicture extends StatefulWidget {
   final double size;
@@ -32,34 +33,42 @@ class _ProfilePictureState extends State<ProfilePicture> {
     if (image != null) {
       if (!context.mounted) return;
       final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-      await profileProvider.uploadProfilePicture(File(image.path));
+      
+      try {
+        await profileProvider.uploadProfilePicture(File(image.path));
 
-      if (!context.mounted) return;
-      await profileProvider.fetchMyProfile();
+        if (!context.mounted) return;
+        await profileProvider.fetchMyProfile();
 
-      if (context.mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile picture updated')),
-            );
-          }
-        });
-        setState(() {});
+        if (context.mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(AppLocalizations.of(context)!.common_save)),
+              );
+            }
+          });
+          setState(() {});
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Upload hatası: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
   Future<Uint8List?> _fetchImageWithAuth(String url, String token) async {
     try {
-      final response = await http.get(Uri.parse(url), headers: {
-        'Authorization': 'Bearer $token',
-      });
-
+      final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         return response.bodyBytes;
-      } else {
-        return null;
       }
+      return null;
     } catch (e) {
       return null;
     }
@@ -71,11 +80,10 @@ class _ProfilePictureState extends State<ProfilePicture> {
       await provider.deleteProfilePicture();
 
       if (context.mounted) {
-        await provider.fetchMyProfile();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile picture deleted')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.common_delete)),
             );
           }
         });
@@ -86,7 +94,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to delete profile picture: $e')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.common_error)),
             );
           }
         });
@@ -99,71 +107,56 @@ class _ProfilePictureState extends State<ProfilePicture> {
     return Consumer<ProfileProvider>(
       builder: (context, provider, child) {
         final profilePictureUrl = provider.currentUserProfile?.profile.profilePicture ?? '';
-        final token = Provider.of<AuthProvider>(context, listen: false).token ?? '';
+        
         return GestureDetector(
           onTap: widget.isEditable ? () => _pickImage(context) : null,
           child: Stack(
             alignment: Alignment.center,
             children: [
-              FutureBuilder<Uint8List?>(
-                future: profilePictureUrl.isNotEmpty
-                    ? _fetchImageWithAuth(profilePictureUrl, token)
-                    : Future.value(null),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircleAvatar(
-                      radius: widget.size / 2,
-                      backgroundColor: Colors.grey[300],
-                      child: const CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasData) {
-                    return A11y(
-                      label: 'User profile picture',
-                      child: CircleAvatar(
-                        radius: widget.size / 2,
-                        backgroundImage: MemoryImage(snapshot.data!),
-                      ),
-                    );
-                  } else {
-                    return A11y(
-                      label: 'Default profile picture',
-                      child: CircleAvatar(
-                        radius: widget.size / 2,
-                        backgroundColor: Colors.grey[300],
-                        child: Icon(Icons.person, size: widget.size / 2, color: Colors.grey[600]),
-                      ),
-                    );
-                  }
-                },
-              ),
-
-              if (widget.isEditable && profilePictureUrl.isNotEmpty)
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  child: A11y(
-                    label: 'Delete profile picture',
-                    child: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteImage(context),
-                    ),
+              if (profilePictureUrl.isNotEmpty)
+                A11y(
+                  label: widget.isEditable 
+                      ? AppLocalizations.of(context)!.editProfile_title
+                      : '',
+                  child: CircleAvatar(
+                    radius: widget.size / 2,
+                    backgroundImage: NetworkImage('$profilePictureUrl?t=${DateTime.now().millisecondsSinceEpoch}'),
+                    onBackgroundImageError: (exception, stackTrace) {
+                    },
+                  ),
+                )
+              else
+                A11y(
+                  label: widget.isEditable 
+                      ? AppLocalizations.of(context)!.editProfile_title
+                      : '',
+                  child: CircleAvatar(
+                    radius: widget.size / 2,
+                    backgroundColor: Colors.grey[300],
+                    child: Icon(Icons.person, size: widget.size / 2, color: Colors.grey[600]),
                   ),
                 ),
 
-              if (widget.isEditable)
+              // Small delete button at bottom-left
+              if (widget.isEditable && profilePictureUrl.isNotEmpty)
                 Positioned(
-                  bottom: 0,
-                  right: 0,
+                  left: 6,
+                  bottom: 6,
                   child: A11y(
-                    label: 'Change profile picture',
+                    label: AppLocalizations.of(context)!.common_delete,
                     child: Container(
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.9),
                         shape: BoxShape.circle,
-                        color: Colors.blue,
                       ),
+                      height: 28,
+                      width: 28,
                       child: IconButton(
-                        icon: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
-                        onPressed: () => _pickImage(context),
+                        padding: EdgeInsets.zero,
+                        iconSize: 16,
+                        icon: const Icon(Icons.delete, color: Colors.white),
+                        onPressed: () => _deleteImage(context),
+                        tooltip: AppLocalizations.of(context)!.common_delete,
                       ),
                     ),
                   ),

@@ -24,9 +24,10 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
   final _companyController = TextEditingController();
   final _locationController = TextEditingController();
 
-  String? _selectedJobType;
   List<String> _selectedPolicies = [];
   bool _isRemote = false;
+  bool _isInclusiveOpportunity = false;
+  bool _isPoliciesExpanded = false;
 
   bool _isLoading = false;
 
@@ -59,21 +60,13 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
   Future<void> _submitForm() async {
     HapticFeedback.mediumImpact();
     if (_formKey.currentState?.validate() ?? false) {
-      if (_selectedJobType == null) {
-        HapticFeedback.vibrate();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.createJob_selectJobTypeError),
-            backgroundColor: Colors.orange,
-          ),
-        );
-        return;
-      }
       if (_selectedPolicies.isEmpty) {
         HapticFeedback.vibrate();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.createJob_selectPolicyError),
+            content: Text(
+              AppLocalizations.of(context)!.createJob_selectPolicyError,
+            ),
             backgroundColor: Colors.orange,
           ),
         );
@@ -85,7 +78,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
       if (currentUser == null || currentUser.role != UserType.ROLE_EMPLOYER) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.createJob_employerError),
+            content: Text(
+              AppLocalizations.of(context)!.createJob_employerError,
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -93,16 +88,16 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
       }
 
       // Parse salaries
-      double? minSalary;
+      int? minSalary;
       if (_minSalaryController.text.isNotEmpty) {
-        minSalary = double.tryParse(
-          _minSalaryController.text.replaceAll(RegExp(r'[^0-9.]'), ''),
+        minSalary = int.tryParse(
+          _minSalaryController.text.replaceAll(RegExp(r'[^0-9]'), ''),
         );
         if (minSalary == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Invalid minimum salary format. Please enter numbers only.',
+                AppLocalizations.of(context)!.createJob_invalidMinSalaryFormat,
               ),
               backgroundColor: Colors.orange,
             ),
@@ -111,16 +106,16 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         }
       }
 
-      double? maxSalary;
+      int? maxSalary;
       if (_maxSalaryController.text.isNotEmpty) {
-        maxSalary = double.tryParse(
-          _maxSalaryController.text.replaceAll(RegExp(r'[^0-9.]'), ''),
+        maxSalary = int.tryParse(
+          _maxSalaryController.text.replaceAll(RegExp(r'[^0-9]'), ''),
         );
         if (maxSalary == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Invalid maximum salary format. Please enter numbers only.',
+                AppLocalizations.of(context)!.createJob_invalidMaxSalaryFormat,
               ),
               backgroundColor: Colors.orange,
             ),
@@ -131,9 +126,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
 
       if (minSalary != null && maxSalary != null && minSalary > maxSalary) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Minimum salary cannot be greater than maximum salary.',
+              AppLocalizations.of(context)!.createJob_salaryRangeInvalid,
             ),
             backgroundColor: Colors.orange,
           ),
@@ -147,7 +142,6 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
 
       try {
         final newJob = await _apiService.createJobPost(
-          employerId: currentUser.id,
           company:
               _companyController.text.isNotEmpty
                   ? _companyController.text
@@ -157,11 +151,11 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
           location: _locationController.text,
           remote: _isRemote,
           ethicalTags: _selectedPolicies.join(','),
+          inclusiveOpportunity: _isInclusiveOpportunity,
           contactInformation:
               _contactInfoController.text.isNotEmpty
                   ? _contactInfoController.text
                   : null,
-          jobType: _selectedJobType,
           minSalary: minSalary,
           maxSalary: maxSalary,
         );
@@ -170,7 +164,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
           HapticFeedback.heavyImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.createJob_success(newJob.title)),
+              content: Text(
+                AppLocalizations.of(context)!.createJob_success(newJob.title),
+              ),
               backgroundColor: Colors.green,
             ),
           );
@@ -183,7 +179,11 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
           HapticFeedback.vibrate();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.createJob_error(e.toString().replaceFirst("Exception: ", ""))),
+              content: Text(
+                AppLocalizations.of(context)!.createJob_error(
+                  e.toString().replaceFirst("Exception: ", ""),
+                ),
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -201,11 +201,12 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
   @override
   Widget build(BuildContext context) {
     // Get available options from service
-    final availableJobTypes = _apiService.availableJobTypes;
     final availablePolicies = _apiService.availableEthicalPolicies;
 
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.createJob_title)),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.createJob_title),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -227,7 +228,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               validator:
                   (value) =>
                       (value == null || value.isEmpty)
-                          ? AppLocalizations.of(context)!.createJob_jobTitleRequired
+                          ? AppLocalizations.of(
+                            context,
+                          )!.createJob_jobTitleRequired
                           : null,
             ),
             const SizedBox(height: 16.0),
@@ -255,7 +258,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                         listen: false,
                       ).currentUser?.company ==
                       null) {
-                    return 'Please enter the company name';
+                    return AppLocalizations.of(
+                      context,
+                    )!.createJob_companyNameRequired;
                   }
                 }
                 return null;
@@ -266,21 +271,24 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             // --- Location ---
             TextFormField(
               controller: _locationController,
-              decoration: const InputDecoration(
-                labelText: 'Location (e.g., City, State, Country)',
+              decoration: InputDecoration(
+                labelText:
+                    AppLocalizations.of(context)!.createJob_locationLabel,
                 border: OutlineInputBorder(),
               ),
               validator:
                   (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Please enter a location'
+                          ? AppLocalizations.of(
+                            context,
+                          )!.createJob_locationRequiredError
                           : null,
             ),
             const SizedBox(height: 16.0),
 
             // --- Remote Checkbox ---
             CheckboxListTile(
-              title: const Text('Remote Job'),
+              title: Text(AppLocalizations.of(context)!.createJob_remoteLabel),
               value: _isRemote,
               onChanged: (bool? value) {
                 HapticFeedback.lightImpact();
@@ -291,13 +299,33 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               controlAffinity: ListTileControlAffinity.leading,
               contentPadding: EdgeInsets.zero,
             ),
+            const SizedBox(height: 8.0),
+
+            // --- Inclusive Opportunity Checkbox ---
+            CheckboxListTile(
+              title: Text(
+                AppLocalizations.of(context)!.createJob_inclusiveLabel,
+              ),
+              subtitle: Text(
+                AppLocalizations.of(context)!.createJob_inclusiveSubtitle,
+              ),
+              value: _isInclusiveOpportunity,
+              onChanged: (bool? value) {
+                setState(() {
+                  _isInclusiveOpportunity = value ?? false;
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.zero,
+            ),
             const SizedBox(height: 16.0),
 
             // --- Description ---
             TextFormField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Job Description',
+              decoration: InputDecoration(
+                labelText:
+                    AppLocalizations.of(context)!.createJob_descriptionLabel,
                 border: OutlineInputBorder(),
                 alignLabelWithHint: true,
               ),
@@ -305,34 +333,18 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               validator:
                   (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Please enter a job description'
+                          ? AppLocalizations.of(
+                            context,
+                          )!.createJob_descriptionRequiredError
                           : null,
-            ),
-            const SizedBox(height: 16.0),
-
-            // --- Job Type Dropdown ---
-            DropdownButtonFormField<String>(
-              value: _selectedJobType,
-              decoration: const InputDecoration(
-                labelText: 'Job Type',
-                border: OutlineInputBorder(),
-              ),
-              hint: const Text('Select Job Type'),
-              items:
-                  availableJobTypes.map((type) {
-                    return DropdownMenuItem(value: type, child: Text(type));
-                  }).toList(),
-              onChanged: (value) => setState(() => _selectedJobType = value),
-              validator:
-                  (value) => value == null ? 'Please select a job type' : null,
             ),
             const SizedBox(height: 16.0),
 
             // --- Contact Info ---
             TextFormField(
               controller: _contactInfoController,
-              decoration: const InputDecoration(
-                labelText: 'Contact Information (Email/Phone/Link)',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.createJob_contactLabel,
                 border: OutlineInputBorder(),
               ),
               keyboardType:
@@ -341,7 +353,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               validator:
                   (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Please provide contact information'
+                          ? AppLocalizations.of(
+                            context,
+                          )!.createJob_contactRequiredError
                           : null,
             ),
             const SizedBox(height: 16.0),
@@ -349,27 +363,30 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             // --- Min Salary (Optional) ---
             TextFormField(
               controller: _minSalaryController,
-              decoration: const InputDecoration(
-                labelText: 'Minimum Salary (Optional)',
-                hintText: 'e.g., 50000',
+              decoration: InputDecoration(
+                labelText:
+                    AppLocalizations.of(context)!.createJob_minSalaryLabel,
+                hintText:
+                    AppLocalizations.of(
+                      context,
+                    )!.createJob_minSalaryPlaceholder,
                 border: OutlineInputBorder(),
                 prefixText: '\$', // Optional: Add a currency symbol
               ),
               keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+                decimal: false,
               ),
               validator: (value) {
                 if (value != null && value.isNotEmpty) {
-                  // Allow only numbers and a single decimal point
+                  // Allow only whole numbers
                   final sanitizedValue = value.replaceAll(
-                    RegExp(r'[^0-9.]'),
+                    RegExp(r'[^0-9]'),
                     '',
                   );
-                  if (double.tryParse(sanitizedValue) == null) {
-                    return 'Please enter a valid number';
-                  }
-                  if (sanitizedValue.split('.').length > 2) {
-                    return 'Invalid number format (too many decimal points)';
+                  if (int.tryParse(sanitizedValue) == null) {
+                    return AppLocalizations.of(
+                      context,
+                    )!.createJob_validNumberError;
                   }
                 }
                 return null;
@@ -380,37 +397,42 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             // --- Max Salary (Optional) ---
             TextFormField(
               controller: _maxSalaryController,
-              decoration: const InputDecoration(
-                labelText: 'Maximum Salary (Optional)',
-                hintText: 'e.g., 70000',
+              decoration: InputDecoration(
+                labelText:
+                    AppLocalizations.of(context)!.createJob_maxSalaryLabel,
+                hintText:
+                    AppLocalizations.of(
+                      context,
+                    )!.createJob_maxSalaryPlaceholder,
                 border: OutlineInputBorder(),
                 prefixText: '\$', // Optional: Add a currency symbol
               ),
               keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+                decimal: false,
               ),
               validator: (value) {
                 if (value != null && value.isNotEmpty) {
                   final sanitizedValue = value.replaceAll(
-                    RegExp(r'[^0-9.]'),
+                    RegExp(r'[^0-9]'),
                     '',
                   );
-                  if (double.tryParse(sanitizedValue) == null) {
-                    return 'Please enter a valid number';
-                  }
-                  if (sanitizedValue.split('.').length > 2) {
-                    return 'Invalid number format (too many decimal points)';
+                  if (int.tryParse(sanitizedValue) == null) {
+                    return AppLocalizations.of(
+                      context,
+                    )!.createJob_validNumberError;
                   }
                   final minSalaryText = _minSalaryController.text.replaceAll(
-                    RegExp(r'[^0-9.]'),
+                    RegExp(r'[^0-9]'),
                     '',
                   );
                   if (minSalaryText.isNotEmpty &&
-                      double.tryParse(minSalaryText) != null) {
-                    final minSal = double.parse(minSalaryText);
-                    final maxSal = double.tryParse(sanitizedValue);
+                      int.tryParse(minSalaryText) != null) {
+                    final minSal = int.parse(minSalaryText);
+                    final maxSal = int.tryParse(sanitizedValue);
                     if (maxSal != null && minSal > maxSal) {
-                      return 'Max salary must be >= min salary';
+                      return AppLocalizations.of(
+                        context,
+                      )!.createJob_maxSalaryError;
                     }
                   }
                 }
@@ -418,36 +440,85 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               },
             ),
             const SizedBox(height: 24.0), // Spacing after salary fields
-            // --- Ethical Policies Checkboxes/Chips ---
-            Text(
-              'Ethical Policies Compliance',
-              style: Theme.of(context).textTheme.titleMedium,
+            // --- Ethical Policies Expandable Section ---
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _isPoliciesExpanded = !_isPoliciesExpanded;
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.createJob_ethicalPoliciesLabel,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          if (_selectedPolicies.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.createJob_policiesSelected(
+                                  _selectedPolicies.length,
+                                ),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: Colors.blue),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      _isPoliciesExpanded
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 8.0),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children:
-                  availablePolicies.map((policy) {
-                    final isSelected = _selectedPolicies.contains(policy);
-                    return FilterChip(
-                      label: Text(policy.formatFilterName()),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        HapticFeedback.lightImpact();
-                        setState(() {
-                          if (selected) {
-                            _selectedPolicies.add(policy);
-                          } else {
-                            _selectedPolicies.remove(policy);
-                          }
-                        });
-                      },
-                      selectedColor: Colors.blue.withOpacity(0.2), // Blue selection to match design
-                      checkmarkColor: Colors.blue, // Blue checkmark
-                    );
-                  }).toList(),
-            ),
+            if (_isPoliciesExpanded) ...[
+              const SizedBox(height: 8.0),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children:
+                    availablePolicies.map((policy) {
+                      final isSelected = _selectedPolicies.contains(policy);
+                      return FilterChip(
+                        label: Text(
+                          policy.formatLocalizedEthicalPolicy(context),
+                        ),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          HapticFeedback.lightImpact();
+                          setState(() {
+                            if (selected) {
+                              _selectedPolicies.add(policy);
+                            } else {
+                              _selectedPolicies.remove(policy);
+                            }
+                          });
+                        },
+                        selectedColor: Colors.blue.withOpacity(
+                          0.2,
+                        ), // Blue selection to match design
+                        checkmarkColor: Colors.blue, // Blue checkmark
+                      );
+                    }).toList(),
+              ),
+            ],
             const SizedBox(height: 32.0),
 
             // --- Submit Button ---
@@ -463,7 +534,11 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                         ),
                       )
                       : const Icon(Icons.publish),
-              label: Text(_isLoading ? AppLocalizations.of(context)!.createJob_creatingPost : AppLocalizations.of(context)!.createJob_createPost),
+              label: Text(
+                _isLoading
+                    ? AppLocalizations.of(context)!.createJob_creatingPost
+                    : AppLocalizations.of(context)!.createJob_createPost,
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
                 foregroundColor: Colors.white,

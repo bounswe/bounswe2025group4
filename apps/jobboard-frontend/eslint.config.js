@@ -39,6 +39,7 @@ export default defineConfig([
       parser: tseslint.parser,
       globals: { ...globals.browser },
     },
+    globals: { React: true },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
       react,

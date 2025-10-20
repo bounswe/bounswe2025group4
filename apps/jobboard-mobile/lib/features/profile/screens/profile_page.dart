@@ -9,6 +9,7 @@ import '../../../core/providers/locale_provider.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../auth/screens/welcome_screen.dart';
 import '../../../core/widgets/a11y.dart';
+import '../../auth/screens/welcome_screen.dart' show ThemeToggleSwitch;
 import '../widgets/profile_picture.dart';
 import '../widgets/work_experience_list.dart';
 import '../widgets/editable_chip_list.dart';
@@ -29,12 +30,31 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final profileProvider = Provider.of<ProfileProvider>(
         context,
         listen: false,
       );
 
+      authProvider.debugAuthStatus();
+      
+      if (!authProvider.isLoggedIn) {
+        return;
+      }
+
       await profileProvider.fetchMyProfile();
+
+      if (profileProvider.error?.contains('Profile not found') == true) {
+        try {
+          await profileProvider.createProfile({
+            'firstName': 'Edit:',
+            'lastName': 'Your name',
+            'bio': '',
+          });
+        } catch (e) {
+          // Profile creation failed, user can create manually later
+        }
+      }
 
       final userId = profileProvider.currentUserProfile?.profile.userId;
       if (userId != null) {
@@ -92,10 +112,76 @@ class _ProfilePageState extends State<ProfilePage> {
           profileProvider.isLoading
               ? const Center(child: CircularProgressIndicator())
               : profile == null
-              ? Center(child: Text(AppLocalizations.of(context)!.profilePage_failedToLoad))
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Colors.red[300],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)!.profilePage_failedToLoad,
+                        style: const TextStyle(fontSize: 18),
+                        textAlign: TextAlign.center,
+                      ),
+                      if (profileProvider.error != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'Error: ${profileProvider.error}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              await profileProvider.fetchMyProfile();
+                              
+                              if (profileProvider.error?.contains('Profile not found') == true) {
+                                try {
+                                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                                  await profileProvider.createProfile({
+                                    'firstName': 'Edit:',
+                                    'lastName': 'Your name',
+                                    'bio': '',
+                                  });
+                                } catch (e) {
+                                  // Profile creation failed
+                                }
+                              }
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
               : RefreshIndicator(
                 onRefresh: () async {
                   await profileProvider.fetchMyProfile();
+                  
+                  if (profileProvider.error?.contains('Profile not found') == true) {
+                    try {
+                      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                      await profileProvider.createProfile({
+                        'firstName': 'Edit:',
+                        'lastName': 'Your name',
+                        'bio': '',
+                      });
+                    } catch (e) {
+                      // Profile creation failed
+                    }
+                  }
                 },
                 child: _buildProfileContent(context, profileProvider, profile),
               ),
@@ -146,8 +232,18 @@ class _ProfilePageState extends State<ProfilePage> {
               emptyMessage: AppLocalizations.of(context)!.profilePage_noSkills,
               addDialogTitle: AppLocalizations.of(context)!.profilePage_addSkill,
               addDialogHint: AppLocalizations.of(context)!.profilePage_enterSkill,
-              onSave: (updatedSkills) {
-                profileProvider.updateSkills(updatedSkills);
+              onSave: (updatedSkills) async {
+                // Find and add newly added skills
+                final currentSkills = profile.skills;
+                final newSkills = updatedSkills.where((skill) => !currentSkills.contains(skill)).toList();
+                
+                for (final skill in newSkills) {
+                  try {
+                    await profileProvider.addSkill(skill, 'Intermediate'); // Default level
+                  } catch (e) {
+                    print('Error adding skill: $e');
+                  }
+                }
               },
               isEditable: true,
             ),
@@ -159,8 +255,18 @@ class _ProfilePageState extends State<ProfilePage> {
               emptyMessage: AppLocalizations.of(context)!.profilePage_noInterests,
               addDialogTitle: AppLocalizations.of(context)!.profilePage_addInterest,
               addDialogHint: AppLocalizations.of(context)!.profilePage_enterInterest,
-              onSave: (updatedInterests) {
-                profileProvider.updateInterests(updatedInterests);
+              onSave: (updatedInterests) async {
+                // Find and add newly added interests
+                final currentInterests = profile.interests;
+                final newInterests = updatedInterests.where((interest) => !currentInterests.contains(interest)).toList();
+                
+                for (final interest in newInterests) {
+                  try {
+                    await profileProvider.addInterest(interest);
+                  } catch (e) {
+                    print('Error adding interest: $e');
+                  }
+                }
               },
               isEditable: true,
             ),
@@ -175,10 +281,10 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileHeader(profile) {
-    final user =
-        Provider.of<ProfileProvider>(context, listen: false).currentUser;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.currentUser;
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
-
+    
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -186,13 +292,10 @@ class _ProfilePageState extends State<ProfilePage> {
           builder: (context, provider, _) {
             final imageUrl =
                 provider.currentUserProfile?.profile.profilePicture;
-            return A11y(
-              label: 'Profile picture. Tap to change.',
-              child: ProfilePicture(
-                imageUrl: imageUrl,
-                size: 100,
-                isEditable: true,
-              ),
+            return ProfilePicture(
+              imageUrl: imageUrl,
+              size: 100,
+              isEditable: false,
             );
           },
         ),
@@ -202,19 +305,25 @@ class _ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppLocalizations.of(context)!.profilePage_username(user?.username ?? ''),
+                'Username: ${user?.username ?? 'Not available'}',
                 style: TextStyle(
                   fontSize: fontSizeProvider.getScaledFontSize(14),
                   color: Colors.grey[700],
                 ),
               ),
 
-              Text(
-                AppLocalizations.of(context)!.profilePage_email(user?.email ?? ''),
-                style: TextStyle(
-                  fontSize: fontSizeProvider.getScaledFontSize(14),
-                  color: Colors.grey[700],
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Email: ${user?.email ?? 'Not available'}',
+                      style: TextStyle(
+                        fontSize: fontSizeProvider.getScaledFontSize(14),
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Text(
                 profile.fullName,

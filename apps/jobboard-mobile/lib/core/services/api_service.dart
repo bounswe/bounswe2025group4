@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 
 import '../models/job_post.dart';
 import '../models/job_application.dart';
@@ -20,11 +22,31 @@ import '../constants/app_constants.dart'; // Imp// ort AppConstants
 import '../models/mentorship_status.dart';
 
 const List<String> _availableEthicalPolicies = [
-  'fair_wage',
-  'diversity',
-  'sustainability',
-  'wellbeing',
-  'transparency',
+  'salary_transparency',
+  'equal_pay_policy',
+  'living_wage_employer',
+  'comprehensive_health_insurance',
+  'performance_based_bonus',
+  'retirement_plan_support',
+  'flexible_hours',
+  'remote_friendly',
+  'no_after_hours_work_culture',
+  'mental_health_support',
+  'generous_paid_time_off',
+  'paid_parental_leave',
+  'inclusive_hiring_practices',
+  'diverse_leadership',
+  'lgbtq_friendly_workplace',
+  'disability_inclusive_workplace',
+  'supports_women_in_leadership',
+  'mentorship_program',
+  'learning_development_budget',
+  'transparent_promotion_paths',
+  'internal_mobility',
+  'sustainability_focused',
+  'ethical_supply_chain',
+  'community_volunteering',
+  'certified_b_corporation',
 ];
 const List<String> _availableJobTypes = [
   'Full-time',
@@ -58,8 +80,7 @@ class ApiService {
     final token = _authProvider.token;
     if (token != null) {
       headers['Authorization'] = 'Bearer $token';
-    } else {
-    }
+    } else {}
     return headers;
   }
 
@@ -126,10 +147,11 @@ class ApiService {
     String? title,
     String? company,
     String? location,
-    bool? remote,
-    String? ethicalTags,
-    double? minSalary,
-    double? maxSalary,
+    bool? isRemote,
+    List<String>? ethicalTags,
+    int? minSalary,
+    int? maxSalary,
+    bool? inclusiveOpportunity,
     Map<String, dynamic>? additionalFilters,
   }) async {
     final queryParams = <String, dynamic>{};
@@ -141,12 +163,17 @@ class ApiService {
 
     // Add specific filters if provided
     if (title != null) queryParams['title'] = title;
-    if (company != null) queryParams['company'] = company;
+    if (company != null) queryParams['companyName'] = company;
     if (location != null) queryParams['location'] = location;
-    if (remote != null) queryParams['remote'] = remote;
-    if (ethicalTags != null) queryParams['ethicalTags'] = ethicalTags;
+    if (isRemote != null) queryParams['isRemote'] = isRemote;
+    if (ethicalTags != null && ethicalTags.isNotEmpty) {
+      queryParams['ethicalTags'] = ethicalTags;
+    }
     if (minSalary != null) queryParams['minSalary'] = minSalary;
     if (maxSalary != null) queryParams['maxSalary'] = maxSalary;
+    if (inclusiveOpportunity != null) {
+      queryParams['inclusiveOpportunity'] = inclusiveOpportunity;
+    }
 
     // Add any additional filters
     if (additionalFilters != null) {
@@ -165,9 +192,8 @@ class ApiService {
     }
   }
 
-  /// GET /api/jobs (filtered by employerId)
+  /// GET /api/jobs/employer/{employerId}
   /// Fetches job postings created by a specific employer.
-  /// Assumes filtering is done via query parameter.
   Future<List<JobPost>> fetchEmployerJobPostings(String employerId) async {
     final uri = _buildUri('/jobs/employer/$employerId');
 
@@ -184,7 +210,6 @@ class ApiService {
   /// GET /api/jobs/{id}
   /// Fetches details for a specific job post.
   Future<JobPost> getJobDetails(String jobId) async {
-
     final uri = _buildUri('/jobs/$jobId');
 
     try {
@@ -199,49 +224,48 @@ class ApiService {
 
   /// POST /api/jobs
   /// Creates a new job post.
+  /// Note: employerId is determined from the auth token, not sent in request body.
   Future<JobPost> createJobPost({
-    // Required fields based on JobPostDto & UI
-    required String employerId,
+    // Required fields based on backend API
     required String title,
     required String description,
     required String company,
     required String location,
     required bool remote,
     required String ethicalTags,
+    required bool inclusiveOpportunity,
 
+    // Optional fields
     String? contactInformation,
-    String? jobType,
-    double? minSalary,
-    double? maxSalary,
+    int? minSalary,
+    int? maxSalary,
   }) async {
-
     final uri = _buildUri('/jobs');
 
-    // Construct the body based on JobPostDto structure + potentially employerId
+    // Construct the body based on backend API specification
     final body = jsonEncode({
-      'employerId': employerId,
       'title': title,
       'description': description,
       'company': company,
       'location': location,
       'remote': remote,
       'ethicalTags': ethicalTags,
+      'inclusiveOpportunity': inclusiveOpportunity,
       // Optional fields, only include if not null
       if (contactInformation != null) 'contact': contactInformation,
-      if (jobType != null) 'jobType': jobType,
       if (minSalary != null) 'minSalary': minSalary,
       if (maxSalary != null) 'maxSalary': maxSalary,
     });
 
     try {
-      // Use dynamically generated headers
+      // Use dynamically generated headers (includes auth token)
       final response = await _client.post(
         uri,
         headers: _getHeaders(),
         body: body,
       );
       final dynamic data = await _handleResponse(response);
-      // Assuming the API returns the created JobPost object
+      // Backend returns the created JobPost object with id, employerId, and postedDate
       return JobPost.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to create job post. $e');
@@ -288,67 +312,185 @@ class ApiService {
   // --- Job Application Endpoints ---
 
   /// POST /api/applications
-  /// Applies the user to a job.
-  Future<void> applyToJob(String userId, String jobId) async {
+  /// Applies to a job post.
+  /// Note: jobSeekerId is determined from the auth token.
+  Future<JobApplication> applyToJob(
+    String jobPostId, {
+    String? specialNeeds,
+    String? coverLetter,
+  }) async {
     final uri = _buildUri('/applications');
     final body = jsonEncode({
-      // Match DTO: jobSeekerId, jobPostingId
-      'jobSeekerId': userId,
-      'jobPostingId': jobId,
-      // submissionDate is likely handled by backend
-      // status defaults to PENDING on backend
+      'jobPostId': int.parse(jobPostId), // Convert to int for backend
+      if (specialNeeds != null && specialNeeds.isNotEmpty)
+        'specialNeeds': specialNeeds,
+      if (coverLetter != null && coverLetter.isNotEmpty)
+        'coverLetter': coverLetter,
     });
 
     try {
-      // Use dynamically generated headers
+      // Use dynamically generated headers (includes auth token)
       final response = await _client.post(
         uri,
         headers: _getHeaders(),
         body: body,
       );
-      await _handleResponse(response); // Check for 201 Created or similar
+      final dynamic data = await _handleResponse(response);
+      // Backend returns the created JobApplication object
+      return JobApplication.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to submit application. $e');
     }
   }
 
-  /// GET /api/applications/{jobId}
-  /// Gets applications for a specific job.
-  Future<List<JobApplication>> getApplicationsForJob(String jobId) async {
-    // Endpoint updated: GET /api/applications/{jobId}
-    final uri = _buildUri('/applications/$jobId');
+  /// POST /api/applications/{id}/cv
+  /// Uploads a CV file for a specific application.
+  /// Returns the CV URL and upload timestamp.
+  Future<Map<String, dynamic>> uploadCV(
+    String applicationId,
+    String filePath,
+  ) async {
+    final uri = _buildUri('/applications/$applicationId/cv');
+
+    try {
+      // Verify file exists
+      final file = File(filePath);
+      if (!await file.exists()) {
+        throw Exception('File not found: $filePath');
+      }
+
+      // Create multipart request
+      final request = http.MultipartRequest('POST', uri);
+
+      // Remove Content-Type from headers to let multipart handle it
+      final headers = Map<String, String>.from(_getHeaders());
+      headers.remove('Content-Type');
+      request.headers.addAll(headers);
+
+      // Determine content type based on file extension
+      String? contentType;
+      final extension = filePath.toLowerCase().split('.').last;
+      switch (extension) {
+        case 'pdf':
+          contentType = 'application/pdf';
+          break;
+        case 'doc':
+          contentType = 'application/msword';
+          break;
+        case 'docx':
+          contentType =
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          break;
+        default:
+          throw Exception(
+            'Unsupported file type: .$extension. Only PDF, DOC, and DOCX are allowed.',
+          );
+      }
+
+      // Add the file with proper content type
+      final multipartFile = await http.MultipartFile.fromPath(
+        'file', // Field name expected by backend
+        filePath,
+        contentType: MediaType.parse(contentType),
+      );
+      request.files.add(multipartFile);
+
+      // Send the request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      // Handle the response
+      final dynamic data = await _handleResponse(response);
+      return data as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Failed to upload CV. $e');
+    }
+  }
+
+  /// GET /api/applications/{id}/cv
+  /// Downloads the CV file for a specific application.
+  /// Returns the CV file bytes.
+  Future<List<int>> getCV(String applicationId) async {
+    final uri = _buildUri('/applications/$applicationId/cv');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      } else if (response.statusCode == 404) {
+        throw Exception('CV not found for this application.');
+      } else {
+        throw Exception('Failed to download CV: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to download CV. $e');
+    }
+  }
+
+  /// DELETE /api/applications/{id}/cv
+  /// Deletes the CV file for a specific application.
+  Future<void> deleteCV(String applicationId) async {
+    final uri = _buildUri('/applications/$applicationId/cv');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw Exception('Failed to delete CV: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete CV. $e');
+    }
+  }
+
+  /// GET /api/applications
+  /// Gets applications filtered by query parameters.
+  /// Can filter by jobSeekerId and/or jobPostId.
+  Future<List<JobApplication>> getApplicationsForJob(String jobPostId) async {
+    final uri = _buildUri('/applications', {'jobPostId': jobPostId});
 
     try {
       // Use dynamically generated headers
       final response = await _client.get(uri, headers: _getHeaders());
       final List<dynamic> data = await _handleResponse(response);
-      // Ensure JobApplication.fromJson is implemented correctly
       return data.map((json) => JobApplication.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to load job applications. $e');
     }
   }
 
-  /// GET /api/applications?userId={userId}
-  /// Fetches the current user's job applications.
-  Future<List<JobApplication>> fetchMyApplications(String userId) async {
-    // Endpoint confirmed: GET /api/applications?userId={userId} (Based on backend error)
-    final uri = _buildUri('/applications', {
-      'userId': userId,
-    }); // Use userId based on backend requirement
+  /// GET /api/applications?jobSeekerId={jobSeekerId}
+  /// Fetches applications for a specific job seeker.
+  Future<List<JobApplication>> fetchMyApplications(String jobSeekerId) async {
+    final uri = _buildUri('/applications', {'jobSeekerId': jobSeekerId});
 
     try {
       // Use dynamically generated headers
       final response = await _client.get(uri, headers: _getHeaders());
       final List<dynamic> data = await _handleResponse(response);
-      // Ensure JobApplication.fromJson is implemented correctly
       return data.map((json) => JobApplication.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to load your applications. $e');
     }
   }
 
-  /// PUT /api/applications/{applicationId} (Assumed Endpoint) -> Confirmed
+  /// GET /api/applications/{id}
+  /// Fetches a specific job application by ID.
+  Future<JobApplication> getApplicationById(String applicationId) async {
+    final uri = _buildUri('/applications/$applicationId');
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return JobApplication.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to load application details. $e');
+    }
+  }
+
+  /// PUT /api/applications/{applicationId}
   /// Updates the status of a job application.
   Future<JobApplication> updateApplicationStatus(
     String applicationId,
@@ -378,6 +520,52 @@ class ApiService {
       return JobApplication.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to update application status. $e');
+    }
+  }
+
+  /// PUT /api/applications/{id}/approve
+  /// Approves a job application with optional feedback.
+  Future<JobApplication> approveApplication(
+    String applicationId, {
+    String? feedback,
+  }) async {
+    final uri = _buildUri('/applications/$applicationId/approve');
+    final body = jsonEncode({if (feedback != null) 'feedback': feedback});
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return JobApplication.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to approve application. $e');
+    }
+  }
+
+  /// PUT /api/applications/{id}/reject
+  /// Rejects a job application with optional feedback.
+  Future<JobApplication> rejectApplication(
+    String applicationId, {
+    String? feedback,
+  }) async {
+    final uri = _buildUri('/applications/$applicationId/reject');
+    final body = jsonEncode({if (feedback != null) 'feedback': feedback});
+
+    try {
+      // Use dynamically generated headers
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return JobApplication.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to reject application. $e');
     }
   }
 
@@ -873,10 +1061,10 @@ class ApiService {
 
   // --- Profile Endpoints ---
 
-  /// GET /api/me
+  /// GET /api/profile
   /// Fetches the current user's profile data
   Future<FullProfile> getMyProfile() async {
-    final uri = _buildUri('/me');
+    final uri = _buildUri('/profile');
 
     try {
       final response = await _client.get(uri, headers: _getHeaders());
@@ -901,32 +1089,40 @@ class ApiService {
     }
   }
 
-  /// PATCH /api/profile/{userId}
-  /// Updates a user profile
-  Future<Profile> updateProfile(int userId, Map<String, dynamic> profileData) async {
-    final uri = _buildUri('/profile/$userId');
+  /// PUT /api/profile
+  /// Updates the current user's profile
+  Future<Profile> updateProfile(Map<String, dynamic> profileData) async {
+    final uri = _buildUri('/profile');
+
+    print('ProfileProvider: Updating profile with data: $profileData');
 
     try {
-      final response = await _client.patch(
+      final response = await _client.put(
         uri,
         headers: _getHeaders(),
         body: jsonEncode(profileData),
       );
       final data = await _handleResponse(response);
+      print('ProfileProvider: Update response: $data');
       return Profile.fromJson(data);
     } catch (e) {
       throw Exception('Failed to update profile. $e');
     }
   }
 
-  /// PUT /api/profile/{userId}/profile-picture
-  /// Uploads a profile picture using base64-encoded image in JSON
-  Future<String> uploadProfilePicture(int userId, File imageFile) async {
+  /// POST /api/profile/image
+  /// Uploads a profile picture using multipart form data
+  Future<Map<String, dynamic>> uploadProfilePicture(File imageFile) async {
     try {
-      final uri = _buildUri('/profile/$userId/profile-picture');
+      final uri = _buildUri('/profile/image');
 
-      final request = http.MultipartRequest('PUT', uri);
-      request.headers.addAll(_getHeaders());
+      final request = http.MultipartRequest('POST', uri);
+
+      // Add only auth header for multipart, remove Content-Type
+      final token = _authProvider.token;
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
 
       final fileStream = http.ByteStream(imageFile.openRead());
       final fileLength = await imageFile.length();
@@ -935,6 +1131,7 @@ class ApiService {
         fileStream,
         fileLength,
         filename: 'profile_image.jpg',
+        contentType: MediaType('image', 'jpeg'),
       );
 
       request.files.add(multipartFile);
@@ -942,9 +1139,9 @@ class ApiService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        return response.body;
+        final data = await _handleResponse(response);
+        return data as Map<String, dynamic>;
       } else {
         throw Exception('Failed to upload: ${response.body}');
       }
@@ -953,68 +1150,141 @@ class ApiService {
     }
   }
 
-
-  /// GET /api/profile/{userId}/profile-picture
+  /// GET /api/profile/image
   /// Fetches the profile picture as a direct image URL (used by Image.network)
-  Future<String> getProfilePicture(int userId) async {
+  Future<String> getProfilePicture() async {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    return '${AppConstants.baseUrl}/profile/$userId/profile-picture?t=$timestamp';
+    final url = '${AppConstants.baseUrl}/profile/image?t=$timestamp';
+    return url;
   }
 
-  /// DELETE /api/profile/{userId}/profile-picture
+  /// DELETE /api/profile/image
   /// Deletes the user's profile picture
-  Future<void> deleteProfilePicture(int userId) async {
-    final uri = _buildUri('/profile/$userId/profile-picture');
+  Future<void> deleteProfilePicture() async {
+    final uri = _buildUri('/profile/image');
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());
+
       await _handleResponse(response);
     } catch (e) {
       throw Exception('Failed to delete profile picture. $e');
     }
   }
-  /// PATCH /api/profile/{userId}/skills
-  /// Updates user skills
-  Future<List<String>> updateSkills(int userId, List<String> skills) async {
-    final uri = _buildUri('/profile/$userId/skills');
+
+  /// POST /api/profile/skill
+  /// Adds a new skill to the current user's profile
+  Future<Map<String, dynamic>> addSkill(String name, String level) async {
+    final uri = _buildUri('/profile/skill');
 
     try {
-      final response = await _client.patch(
+      final response = await _client.post(
         uri,
         headers: _getHeaders(),
-        body: jsonEncode({'skills': skills}),
+        body: jsonEncode({'name': name, 'level': level}),
       );
       final data = await _handleResponse(response);
-      return (data as List<dynamic>).cast<String>();
+      return data as Map<String, dynamic>;
     } catch (e) {
-      throw Exception('Failed to update skills. $e');
+      throw Exception('Failed to add skill. $e');
     }
   }
 
-  /// PATCH /api/profile/{userId}/interests
-  /// Updates user interests
-  Future<List<String>> updateInterests(int userId, List<String> interests) async {
-    final uri = _buildUri('/profile/$userId/interests');
+  /// PUT /api/profile/skill/{skillId}
+  /// Updates an existing skill
+  Future<Map<String, dynamic>> updateSkill(
+    int skillId,
+    String name,
+    String level,
+  ) async {
+    final uri = _buildUri('/profile/skill/$skillId');
 
     try {
-      final response = await _client.patch(
+      final response = await _client.put(
         uri,
         headers: _getHeaders(),
-        body: jsonEncode({'interests': interests}),
+        body: jsonEncode({'name': name, 'level': level}),
       );
       final data = await _handleResponse(response);
-      return (data as List<dynamic>).cast<String>();
+      return data as Map<String, dynamic>;
     } catch (e) {
-      throw Exception('Failed to update interests. $e');
+      throw Exception('Failed to update skill. $e');
+    }
+  }
+
+  /// DELETE /api/profile/skill/{skillId}
+  /// Deletes a skill from the current user's profile
+  Future<void> deleteSkill(int skillId) async {
+    final uri = _buildUri('/profile/skill/$skillId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to delete skill. $e');
+    }
+  }
+
+  /// POST /api/profile/interest
+  /// Adds a new interest to the current user's profile
+  Future<Map<String, dynamic>> addInterest(String name) async {
+    final uri = _buildUri('/profile/interest');
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode({'name': name}),
+      );
+      final data = await _handleResponse(response);
+      return data as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Failed to add interest. $e');
+    }
+  }
+
+  /// PUT /api/profile/interest/{interestId}
+  /// Updates an existing interest
+  Future<Map<String, dynamic>> updateInterest(
+    int interestId,
+    String name,
+  ) async {
+    final uri = _buildUri('/profile/interest/$interestId');
+
+    try {
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode({'name': name}),
+      );
+      final data = await _handleResponse(response);
+      return data as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Failed to update interest. $e');
+    }
+  }
+
+  /// DELETE /api/profile/interest/{interestId}
+  /// Deletes an interest from the current user's profile
+  Future<void> deleteInterest(int interestId) async {
+    final uri = _buildUri('/profile/interest/$interestId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to delete interest. $e');
     }
   }
 
   // --- Experience Endpoints ---
 
-  /// POST /api/profile/{userId}/experience
+  /// POST /api/profile/experience
   /// Creates a new work experience entry
-  Future<Experience> createExperience(int userId, Map<String, dynamic> experienceData) async {
-    final uri = _buildUri('/profile/$userId/experience');
+  Future<Experience> createExperience(
+    Map<String, dynamic> experienceData,
+  ) async {
+    final uri = _buildUri('/profile/experience');
 
     try {
       final response = await _client.post(
@@ -1029,11 +1299,13 @@ class ApiService {
     }
   }
 
-  /// PUT /api/profile/{userId}/experience/{experienceId}
+  /// PUT /api/profile/experience/{experienceId}
   /// Updates an existing work experience entry
   Future<Experience> updateExperience(
-      int userId, int experienceId, Map<String, dynamic> experienceData) async {
-    final uri = _buildUri('/profile/$userId/experience/$experienceId');
+    int experienceId,
+    Map<String, dynamic> experienceData,
+  ) async {
+    final uri = _buildUri('/profile/experience/$experienceId');
 
     try {
       final response = await _client.put(
@@ -1048,10 +1320,10 @@ class ApiService {
     }
   }
 
-  /// DELETE /api/profile/{userId}/experience/{experienceId}
+  /// DELETE /api/profile/experience/{experienceId}
   /// Deletes a work experience entry
-  Future<void> deleteExperience(int userId, int experienceId) async {
-    final uri = _buildUri('/profile/$userId/experience/$experienceId');
+  Future<void> deleteExperience(int experienceId) async {
+    final uri = _buildUri('/profile/experience/$experienceId');
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());
@@ -1060,10 +1332,11 @@ class ApiService {
       throw Exception('Failed to delete experience. $e');
     }
   }
-  /// POST /api/profile/{userId}/education
+
+  /// POST /api/profile/education
   /// Creates a new education entry
-  Future<Education> createEducation(int userId, Map<String, dynamic> educationData) async {
-    final uri = _buildUri('/profile/$userId/education');
+  Future<Education> createEducation(Map<String, dynamic> educationData) async {
+    final uri = _buildUri('/profile/education');
 
     try {
       final response = await _client.post(
@@ -1078,11 +1351,13 @@ class ApiService {
     }
   }
 
-  /// PUT /api/profile/{userId}/education/{educationId}
+  /// PUT /api/profile/education/{educationId}
   /// Updates an existing education entry
   Future<Education> updateEducation(
-      int userId, int educationId, Map<String, dynamic> educationData) async {
-    final uri = _buildUri('/profile/$userId/education/$educationId');
+    int educationId,
+    Map<String, dynamic> educationData,
+  ) async {
+    final uri = _buildUri('/profile/education/$educationId');
 
     try {
       final response = await _client.put(
@@ -1097,10 +1372,10 @@ class ApiService {
     }
   }
 
-  /// DELETE /api/profile/{userId}/education/{educationId}
+  /// DELETE /api/profile/education/{educationId}
   /// Deletes an education entry
-  Future<void> deleteEducation(int userId, int educationId) async {
-    final uri = _buildUri('/profile/$userId/education/$educationId');
+  Future<void> deleteEducation(int educationId) async {
+    final uri = _buildUri('/profile/education/$educationId');
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());
@@ -1109,6 +1384,7 @@ class ApiService {
       throw Exception('Failed to delete education entry. $e');
     }
   }
+
   /// POST /api/profile
   /// Creates a new user profile
   Future<Profile> createProfile(Map<String, dynamic> profileData) async {
@@ -1157,6 +1433,7 @@ class ApiService {
       throw Exception('Failed to add badge. $e');
     }
   }
+
   /// DELETE /api/profile/{userId}/badges/{badgeId}
   /// Removes a badge from a user
   Future<void> removeBadgeFromUser(int userId, int badgeId) async {

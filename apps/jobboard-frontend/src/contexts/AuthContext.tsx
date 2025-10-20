@@ -46,10 +46,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const storeLogout = useAuthStore((state) => state.logout);
   const restoreSession = useAuthStore((state) => state.restoreSession);
 
-  // Restore session on mount
+  // Restore session on mount (only once)
   useEffect(() => {
     restoreSession();
-  }, [restoreSession]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Login function - wraps store login
   const login = useCallback(

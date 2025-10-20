@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/profile_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 import '../widgets/profile_picture.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
@@ -17,9 +18,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _bioController;
-  late TextEditingController _locationController;
-  late TextEditingController _phoneController;
-  late TextEditingController _occupationController;
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
 
@@ -31,11 +29,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ?.profile;
     _nameController = TextEditingController(text: profile?.fullName);
     _bioController = TextEditingController(text: profile?.bio);
-    _locationController = TextEditingController(text: profile?.location);
-    _phoneController = TextEditingController(text: profile?.phone);
-    _occupationController =
-        TextEditingController(text: profile?.occupation);
-    final user = Provider.of<ProfileProvider>(context, listen: false).currentUser;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.currentUser;
     _usernameController = TextEditingController(text: user?.username);
     _emailController = TextEditingController(text: user?.email);
   }
@@ -44,35 +39,62 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void dispose() {
     _nameController.dispose();
     _bioController.dispose();
-    _locationController.dispose();
-    _phoneController.dispose();
-    _occupationController.dispose();
     _usernameController.dispose();
     _emailController.dispose();
     super.dispose();
   }
 
-  void _saveProfile() {
+  void _saveProfile() async {
     HapticFeedback.mediumImpact();
     if (_formKey.currentState!.validate()) {
       final profileProvider =
       Provider.of<ProfileProvider>(context, listen: false);
-      profileProvider.updateProfile({
-        'fullName': _nameController.text,
-        'bio': _bioController.text,
-        'location': _locationController.text,
-        'phone': _phoneController.text,
-        'occupation': _occupationController.text,
-      });
-      profileProvider.updateUser(
-        profileProvider.currentUser!.id,
-        {
-          'username': _usernameController.text,
-          'email': _emailController.text,
-        },
-      );
-      HapticFeedback.heavyImpact();
-      Navigator.pop(context);
+      
+      try {
+        if (profileProvider.currentUserProfile == null) {
+          final nameParts = _nameController.text.trim().split(' ');
+          final firstName = nameParts.isNotEmpty ? nameParts.first : '';
+          final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+          
+          await profileProvider.createProfile({
+            'firstName': firstName,
+            'lastName': lastName.isNotEmpty ? lastName : 'Your name',
+            'bio': _bioController.text,
+          });
+          
+          if (profileProvider.currentUser != null) {
+            await profileProvider.updateUser(
+              profileProvider.currentUser!.id,
+              {
+                'username': _usernameController.text,
+                'email': _emailController.text,
+              },
+            );
+          }
+        } else {
+          final nameParts = _nameController.text.trim().split(' ');
+          final firstName = nameParts.isNotEmpty ? nameParts.first : '';
+          final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+          
+          await profileProvider.updateProfile({
+            'firstName': firstName,
+            'lastName': lastName,
+            'bio': _bioController.text,
+          });
+        }
+        
+        HapticFeedback.heavyImpact();
+        Navigator.pop(context);
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error saving profile: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -93,9 +115,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           )
         ],
       ),
-      body: profile == null
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
@@ -105,15 +125,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  A11y(
-                    label: profile.profilePicture == null
-                        ? 'Default profile picture'
-                        : 'User profile picture',
-                    child: ProfilePicture(
-                      size: 100,
-                      imageUrl: profile.profilePicture,
-                      isEditable: false,
-                    ),
+                  Column(
+                    children: [
+                      A11y(
+                        label: profile?.profilePicture == null
+                            ? 'Default profile picture'
+                            : 'User profile picture',
+                        child: ProfilePicture(
+                          size: 100,
+                          imageUrl: profile?.profilePicture,
+                          isEditable: true,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -121,12 +145,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       children: [
                         TextFormField(
                           controller: _usernameController,
-                          decoration: InputDecoration(labelText: AppLocalizations.of(context)!.editProfile_username),
+                          enabled: false, // Username update not supported by backend
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.editProfile_username,
+                            hintText: 'Username cannot be changed',
+                          ),
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _emailController,
-                          decoration: InputDecoration(labelText: AppLocalizations.of(context)!.editProfile_email),
+                          enabled: false, // Email update not supported by backend
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)!.editProfile_email,
+                            hintText: 'Email cannot be changed',
+                          ),
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
@@ -138,35 +170,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your name';
                             }
+                            // Check if only one word is entered
+                            final nameParts = value.trim().split(' ');
+                            if (nameParts.length < 2) {
+                              return 'Please enter your name and surname';
+                            }
                             return null;
                           },
-                        ),
-                        TextFormField(
-                          controller: _occupationController,
-                          decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.editProfile_occupation,
-                          ),
                         ),
                       ],
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _locationController,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.editProfile_location,
-                  prefixIcon: A11y(label: 'Location', child: Icon(Icons.location_on)),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _phoneController,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.editProfile_phone,
-                  prefixIcon: A11y(label: 'Phone', child: Icon(Icons.phone)),
-                ),
               ),
               const SizedBox(height: 16),
               TextFormField(

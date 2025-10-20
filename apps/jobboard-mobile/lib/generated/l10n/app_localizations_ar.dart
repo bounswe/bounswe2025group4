@@ -93,10 +93,38 @@ class AppLocalizationsAr extends AppLocalizations {
       'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل';
 
   @override
+  String get signUpScreen_passwordNoUppercase =>
+      'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل';
+
+  @override
+  String get signUpScreen_passwordNoLowercase =>
+      'يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل';
+
+  @override
+  String get signUpScreen_passwordNoNumber =>
+      'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
+
+  @override
+  String get signUpScreen_passwordNoSpecialChar =>
+      'يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل';
+
+  @override
   String get signUpScreen_confirmPasswordRequired => 'الرجاء تأكيد كلمة المرور';
 
   @override
   String get signUpScreen_passwordsDoNotMatch => 'كلمات المرور غير متطابقة';
+
+  @override
+  String get signUpScreen_gender => 'الجنس';
+
+  @override
+  String get signUpScreen_male => 'ذكر';
+
+  @override
+  String get signUpScreen_female => 'أنثى';
+
+  @override
+  String get signUpScreen_other => 'آخر';
 
   @override
   String get signUpScreen_bioRequired => 'الرجاء إدخال السيرة الذاتية';
@@ -1479,4 +1507,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get common_back => 'رجوع';
+
+  @override
+  String get common_showPassword => 'Show password';
+
+  @override
+  String get common_hidePassword => 'Hide password';
 }

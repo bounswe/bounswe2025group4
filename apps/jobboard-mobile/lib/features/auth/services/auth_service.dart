@@ -152,7 +152,7 @@ class AuthService {
   /// Fetches user details from GET /api/users/{id}
   /// Requires the user ID and the authentication token.
   Future<User> getUserDetails(String userId, String token) async {
-    final url = Uri.parse('$_baseUrl/users/$userId'); // Use userId in the path
+    final url = Uri.parse('$_baseUrl/auth/me'); // Use /auth/me endpoint
     print('Fetching user details from: $url');
 
     try {

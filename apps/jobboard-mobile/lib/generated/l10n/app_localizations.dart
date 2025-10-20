@@ -262,6 +262,30 @@ abstract class AppLocalizations {
   /// **'Password must be at least 6 characters'**
   String get signUpScreen_passwordTooShort;
 
+  /// Password uppercase validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least 1 uppercase letter'**
+  String get signUpScreen_passwordNoUppercase;
+
+  /// Password lowercase validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least 1 lowercase letter'**
+  String get signUpScreen_passwordNoLowercase;
+
+  /// Password number validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least 1 number'**
+  String get signUpScreen_passwordNoNumber;
+
+  /// Password special character validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain at least 1 special character.'**
+  String get signUpScreen_passwordNoSpecialChar;
+
   /// Confirm password validation error
   ///
   /// In en, this message translates to:
@@ -273,6 +297,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get signUpScreen_passwordsDoNotMatch;
+
+  /// Gender field label
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get signUpScreen_gender;
+
+  /// Male option
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get signUpScreen_male;
+
+  /// Female option
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get signUpScreen_female;
+
+  /// Other option
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get signUpScreen_other;
 
   /// Bio validation error
   ///
@@ -2116,7 +2164,7 @@ abstract class AppLocalizations {
   /// **'{count} reviews'**
   String workplaces_reviews(int count);
 
-  /// Edit profile screen title
+  /// Edit profile page title
   ///
   /// In en, this message translates to:
   /// **'Edit Profile'**
@@ -2739,6 +2787,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get common_back;
+
+  /// Accessibility label to reveal password
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get common_showPassword;
+
+  /// Accessibility label to hide password
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get common_hidePassword;
 }
 
 class _AppLocalizationsDelegate

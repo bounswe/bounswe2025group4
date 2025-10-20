@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../../core/models/discussion_thread.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
-import '../../profile/screens/user_profile_view.dart';
 import '../../../core/widgets/a11y.dart';
 
 class ThreadTile extends StatefulWidget {
@@ -52,43 +51,61 @@ class _ThreadTileState extends State<ThreadTile> {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: RichText(
                   text: TextSpan(
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color:
+                          Theme.of(ctx).brightness == Brightness.dark
+                              ? Colors.grey.shade300
+                              : Colors.black87,
+                    ),
                     children: [
-                      const TextSpan(
+                      TextSpan(
                         text: 'Creator: ',
                         style: TextStyle(
-                          color: Colors.black87,
+                          color:
+                              Theme.of(ctx).brightness == Brightness.dark
+                                  ? Colors.grey.shade300
+                                  : Colors.black87,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       TextSpan(
                         text: widget.thread.creatorUsername,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue, // Use blue to match design language
+                          color:
+                              Theme.of(ctx).brightness == Brightness.dark
+                                  ? Colors.blue.shade300
+                                  : Colors
+                                      .blue, // Use blue to match design language
                           decoration: TextDecoration.underline,
                           letterSpacing: 0.3,
                           shadows: [
                             Shadow(
-                              color: Colors.black12,
+                              color:
+                                  Theme.of(ctx).brightness == Brightness.dark
+                                      ? Colors.black45
+                                      : Colors.black12,
                               offset: Offset(0.5, 0.5),
                               blurRadius: 1,
                             ),
                           ],
                         ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            HapticFeedback.lightImpact();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => UserProfileView(
-                                  userId: int.parse(widget.thread.creatorId),
-                                ),
-                              ),
-                            );
-                          },
+                        recognizer:
+                            TapGestureRecognizer()
+                              ..onTap = () {
+                                HapticFeedback.lightImpact();
+                                // Disabled for mock data - will be enabled when API is ready
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (_) => UserProfileView(
+                                //       userId: int.parse(widget.thread.creatorId),
+                                //     ),
+                                //   ),
+                                // );
+                              },
                       ),
                     ],
                   ),
@@ -108,10 +125,9 @@ class _ThreadTileState extends State<ThreadTile> {
               ),
               Text(
                 widget.thread.title,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
 
@@ -126,10 +142,13 @@ class _ThreadTileState extends State<ThreadTile> {
               ),
               Text(
                 widget.thread.body,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15.5,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color:
+                      Theme.of(ctx).brightness == Brightness.dark
+                          ? Colors.grey.shade300
+                          : Colors.black87,
                 ),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
@@ -142,13 +161,36 @@ class _ThreadTileState extends State<ThreadTile> {
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
-                  color: Colors.grey[700],
+                  color:
+                      Theme.of(ctx).brightness == Brightness.dark
+                          ? Colors.grey.shade400
+                          : Colors.grey[700],
                 ),
               ),
               Wrap(
                 spacing: 6,
                 children:
-                widget.thread.tags.map((tag) => Chip(label: Text(tag))).toList(),
+                    widget.thread.tags
+                        .map(
+                          (tag) => Chip(
+                            label: Text(
+                              tag,
+                              style: TextStyle(
+                                color:
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.blue.shade200
+                                        : Colors.blue.shade900,
+                              ),
+                            ),
+                            backgroundColor:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.blue.shade900.withOpacity(0.3)
+                                    : Colors.blue.shade50,
+                            side: BorderSide.none,
+                          ),
+                        )
+                        .toList(),
               ),
               const SizedBox(height: 12),
 
@@ -158,7 +200,10 @@ class _ThreadTileState extends State<ThreadTile> {
                 children: [
                   Row(
                     children: [
-                      const A11y(label: 'Created at', child: Icon(Icons.calendar_today, size: 16)),
+                      const A11y(
+                        label: 'Created at',
+                        child: Icon(Icons.calendar_today, size: 16),
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Created: ${widget.thread.createdAt.toLocal().toString().split(".").first}',
@@ -170,7 +215,10 @@ class _ThreadTileState extends State<ThreadTile> {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const A11y(label: 'Edited at', child: Icon(Icons.edit, size: 16)),
+                        const A11y(
+                          label: 'Edited at',
+                          child: Icon(Icons.edit, size: 16),
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Edited: ${widget.thread.editedAt!.toLocal().toString().split(".").first}',
@@ -186,7 +234,10 @@ class _ThreadTileState extends State<ThreadTile> {
               // Comments count
               Row(
                 children: [
-                  const A11y(label: 'Comments', child: Icon(Icons.comment, size: 20)),
+                  const A11y(
+                    label: 'Comments',
+                    child: Icon(Icons.comment, size: 20),
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     '${widget.thread.commentCount} comments',
