@@ -24,6 +24,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   bool _isApplying = false; // State for apply button loading
+  bool _hasAlreadyApplied = false; // Track if user already applied
+  bool _checkingApplication =
+      false; // Track if checking for existing application
 
   // Initialize ApiService late or in initState AFTER getting AuthProvider
   late final ApiService _apiService;
@@ -52,6 +55,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           _jobPost = jobPost;
         });
       }
+
+      // Check if user has already applied to this job
+      await _checkIfAlreadyApplied();
     } catch (e) {
       print("Error loading job details: $e");
       if (mounted) {
@@ -63,6 +69,49 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
+        });
+      }
+    }
+  }
+
+  /// Checks if the current user has already applied to this job
+  Future<void> _checkIfAlreadyApplied() async {
+    final currentUser =
+        Provider.of<AuthProvider>(context, listen: false).currentUser;
+
+    // Only check if user is logged in and is a job seeker
+    if (currentUser == null || currentUser.role != UserType.ROLE_JOBSEEKER) {
+      return;
+    }
+
+    try {
+      setState(() {
+        _checkingApplication = true;
+      });
+
+      // Fetch user's applications for this job
+      final applications = await _apiService.fetchMyApplications(
+        currentUser.id,
+      );
+
+      // Check if any application matches this job post
+      final hasApplied = applications.any(
+        (app) => app.jobPostId.toString() == widget.jobId,
+      );
+
+      if (mounted) {
+        setState(() {
+          _hasAlreadyApplied = hasApplied;
+        });
+      }
+    } catch (e) {
+      print("Error checking application status: $e");
+      // Don't show error to user, just log it
+      // If check fails, user can still try to apply and backend will handle it
+    } finally {
+      if (mounted) {
+        setState(() {
+          _checkingApplication = false;
         });
       }
     }
@@ -83,6 +132,18 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     }
 
     if (_jobPost == null) return;
+
+    // Check if user has already applied
+    if (_hasAlreadyApplied) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('You have already applied to this job.'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
 
     // Show dialog to collect application data (special needs, cover letter, CV)
     final applicationData = await _showApplicationDialog();
@@ -113,6 +174,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           print("Error uploading CV: $e");
           // Show warning but don't fail the entire application
           if (mounted) {
+            // Mark as already applied even if CV upload failed
+            setState(() {
+              _hasAlreadyApplied = true;
+            });
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -123,15 +189,17 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               ),
             );
           }
-          // Still return success since application was submitted
-          if (mounted) {
-            Navigator.of(context).pop();
-          }
+          // Application was submitted successfully, just CV upload failed
           return;
         }
       }
 
       if (mounted) {
+        // Mark as already applied
+        setState(() {
+          _hasAlreadyApplied = true;
+        });
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -142,8 +210,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        // Optional: Navigate back or update UI to show applied status
-        Navigator.of(context).pop(); // Go back after applying
+        // Don't navigate back - let user see the "Already Applied" button
       }
     } catch (e) {
       print("Error applying to job: $e");
@@ -530,11 +597,31 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       return null;
     }
 
+    // Show "Already Applied" state if user has already applied
+    if (_hasAlreadyApplied) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ElevatedButton.icon(
+          icon: const Icon(Icons.check_circle),
+          label: const Text('Already Applied'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey.shade600,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 50),
+            textStyle: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: Colors.white),
+          ),
+          onPressed: null, // Disabled - user already applied
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ElevatedButton.icon(
         icon:
-            _isApplying
+            _isApplying || _checkingApplication
                 ? const SizedBox(
                   width: 20,
                   height: 20,
@@ -547,6 +634,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         label: Text(
           _isApplying
               ? AppLocalizations.of(context)!.jobDetails_applying
+              : _checkingApplication
+              ? 'Checking...'
               : AppLocalizations.of(context)!.jobDetails_apply,
         ),
         style: ElevatedButton.styleFrom(
@@ -557,7 +646,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             context,
           ).textTheme.titleMedium?.copyWith(color: Colors.white),
         ),
-        onPressed: _isApplying ? null : _applyToJob, // Disable while applying
+        onPressed:
+            _isApplying || _checkingApplication
+                ? null
+                : _applyToJob, // Disable while applying or checking
       ),
     );
   }
