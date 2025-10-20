@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
+
 import '../../../core/models/job_application.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/utils/string_extensions.dart';
@@ -234,9 +239,11 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
               ),
             ],
           ),
-    ).then((value) {
-      controller.dispose();
-      return value;
+    ).whenComplete(() {
+      // Delay disposal to avoid _dependents.isEmpty error
+      Future.delayed(const Duration(milliseconds: 100), () {
+        controller.dispose();
+      });
     });
   }
 
@@ -355,6 +362,65 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                   ).textTheme.bodySmall?.copyWith(color: Colors.blue.shade700),
                 ),
               ),
+            if (application.cvUrl != null && application.cvUrl!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: InkWell(
+                  onTap: () => _showCVOptions(application),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.attach_file,
+                        size: 16,
+                        color: Colors.green,
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          'CV Attached (tap to view)',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(
+                            color: Colors.green.shade700,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 12,
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            if (application.coverLetter != null &&
+                application.coverLetter!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: ExpansionTile(
+                  tilePadding: EdgeInsets.zero,
+                  title: Text(
+                    'Cover Letter',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        application.coverLetter!,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             if (application.feedback != null &&
                 application.feedback!.isNotEmpty)
               Padding(
@@ -419,7 +485,8 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                               ApplicationStatus.approved,
                             ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue, // Use blue to match design language
+                          backgroundColor:
+                              Colors.blue, // Use blue to match design language
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 6,
@@ -446,6 +513,95 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       case ApplicationStatus.pending:
       default:
         return Colors.grey.shade600; // Use neutral grey for pending
+    }
+  }
+
+  /// Downloads and saves CV file locally
+  Future<void> _downloadAndOpenCV(JobApplication application) async {
+    try {
+      // Show loading indicator
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Downloading CV...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Download CV bytes from API
+      final cvBytes = await _apiService.getCV(application.id);
+
+      // Get temp directory
+      final directory = await getTemporaryDirectory();
+      final filePath = '${directory.path}/cv_${application.id}.pdf';
+
+      // Save file
+      final file = File(filePath);
+      await file.writeAsBytes(cvBytes);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('CV saved to ${file.path}'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error downloading CV: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to download CV: ${e.toString().replaceFirst("Exception: ", "")}',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Opens CV directly in browser for easy viewing
+  Future<void> _showCVOptions(JobApplication application) async {
+    if (application.cvUrl == null || application.cvUrl!.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No CV uploaded for this application'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
+
+    try {
+      final url = Uri.parse(application.cvUrl!);
+      // Try to launch with default browser mode
+      final launched = await launchUrl(url);
+
+      if (!launched && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Unable to open CV. No app available to handle PDF files.',
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error opening CV: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error opening CV: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 }

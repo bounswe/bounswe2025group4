@@ -12,6 +12,8 @@ class JobApplication {
   final DateTime dateApplied;
   final String? specialNeeds; // Special needs or requirements
   final String? feedback; // Feedback from employer
+  final String? cvUrl; // URL to uploaded CV
+  final String? coverLetter; // Cover letter text
 
   JobApplication({
     required this.id,
@@ -24,6 +26,8 @@ class JobApplication {
     required this.dateApplied,
     this.specialNeeds,
     this.feedback,
+    this.cvUrl,
+    this.coverLetter,
   });
 
   // Factory constructor for JSON parsing
@@ -72,6 +76,8 @@ class JobApplication {
       dateApplied: parseDate(json['appliedDate']) ?? DateTime.now(),
       specialNeeds: json['specialNeeds'],
       feedback: json['feedback'],
+      cvUrl: json['cvUrl'],
+      coverLetter: json['coverLetter'],
     );
   }
 }

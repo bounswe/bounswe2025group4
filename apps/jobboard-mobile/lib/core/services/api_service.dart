@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'dart:io';
 
 import '../models/job_post.dart';
@@ -295,11 +296,15 @@ class ApiService {
   Future<JobApplication> applyToJob(
     String jobPostId, {
     String? specialNeeds,
+    String? coverLetter,
   }) async {
     final uri = _buildUri('/applications');
     final body = jsonEncode({
       'jobPostId': int.parse(jobPostId), // Convert to int for backend
-      if (specialNeeds != null) 'specialNeeds': specialNeeds,
+      if (specialNeeds != null && specialNeeds.isNotEmpty)
+        'specialNeeds': specialNeeds,
+      if (coverLetter != null && coverLetter.isNotEmpty)
+        'coverLetter': coverLetter,
     });
 
     try {
@@ -314,6 +319,107 @@ class ApiService {
       return JobApplication.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to submit application. $e');
+    }
+  }
+
+  /// POST /api/applications/{id}/cv
+  /// Uploads a CV file for a specific application.
+  /// Returns the CV URL and upload timestamp.
+  Future<Map<String, dynamic>> uploadCV(
+    String applicationId,
+    String filePath,
+  ) async {
+    final uri = _buildUri('/applications/$applicationId/cv');
+
+    try {
+      // Verify file exists
+      final file = File(filePath);
+      if (!await file.exists()) {
+        throw Exception('File not found: $filePath');
+      }
+
+      // Create multipart request
+      final request = http.MultipartRequest('POST', uri);
+
+      // Remove Content-Type from headers to let multipart handle it
+      final headers = Map<String, String>.from(_getHeaders());
+      headers.remove('Content-Type');
+      request.headers.addAll(headers);
+
+      // Determine content type based on file extension
+      String? contentType;
+      final extension = filePath.toLowerCase().split('.').last;
+      switch (extension) {
+        case 'pdf':
+          contentType = 'application/pdf';
+          break;
+        case 'doc':
+          contentType = 'application/msword';
+          break;
+        case 'docx':
+          contentType =
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          break;
+        default:
+          throw Exception(
+            'Unsupported file type: .$extension. Only PDF, DOC, and DOCX are allowed.',
+          );
+      }
+
+      // Add the file with proper content type
+      final multipartFile = await http.MultipartFile.fromPath(
+        'file', // Field name expected by backend
+        filePath,
+        contentType: MediaType.parse(contentType),
+      );
+      request.files.add(multipartFile);
+
+      // Send the request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      // Handle the response
+      final dynamic data = await _handleResponse(response);
+      return data as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Failed to upload CV. $e');
+    }
+  }
+
+  /// GET /api/applications/{id}/cv
+  /// Downloads the CV file for a specific application.
+  /// Returns the CV file bytes.
+  Future<List<int>> getCV(String applicationId) async {
+    final uri = _buildUri('/applications/$applicationId/cv');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+
+      if (response.statusCode == 200) {
+        return response.bodyBytes;
+      } else if (response.statusCode == 404) {
+        throw Exception('CV not found for this application.');
+      } else {
+        throw Exception('Failed to download CV: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to download CV. $e');
+    }
+  }
+
+  /// DELETE /api/applications/{id}/cv
+  /// Deletes the CV file for a specific application.
+  Future<void> deleteCV(String applicationId) async {
+    final uri = _buildUri('/applications/$applicationId/cv');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+
+      if (response.statusCode != 200 && response.statusCode != 204) {
+        throw Exception('Failed to delete CV: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete CV. $e');
     }
   }
 

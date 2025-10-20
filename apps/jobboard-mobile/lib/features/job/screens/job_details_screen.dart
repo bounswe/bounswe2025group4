@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../../../core/models/job_post.dart';
 import '../../../core/models/user_type.dart';
@@ -83,22 +84,53 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
     if (_jobPost == null) return;
 
-    // Show dialog to optionally collect special needs
-    final specialNeeds = await _showSpecialNeedsDialog();
+    // Show dialog to collect application data (special needs, cover letter, CV)
+    final applicationData = await _showApplicationDialog();
 
     // User cancelled the dialog
-    if (specialNeeds == null) return;
+    if (applicationData == null) return;
 
     setState(() {
       _isApplying = true;
     });
 
     try {
-      // jobSeekerId is now determined from auth token on backend
-      await _apiService.applyToJob(
+      // Step 1: Submit the application
+      final jobApplication = await _apiService.applyToJob(
         _jobPost!.id,
-        specialNeeds: specialNeeds.isEmpty ? null : specialNeeds,
+        specialNeeds: applicationData['specialNeeds'],
+        coverLetter: applicationData['coverLetter'],
       );
+
+      // Step 2: Upload CV if provided
+      if (applicationData['cvPath'] != null) {
+        try {
+          await _apiService.uploadCV(
+            jobApplication.id,
+            applicationData['cvPath'] as String,
+          );
+        } catch (e) {
+          print("Error uploading CV: $e");
+          // Show warning but don't fail the entire application
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Application submitted but CV upload failed: ${e.toString().replaceFirst("Exception: ", "")}',
+                ),
+                backgroundColor: Colors.orange,
+                duration: const Duration(seconds: 5),
+              ),
+            );
+          }
+          // Still return success since application was submitted
+          if (mounted) {
+            Navigator.of(context).pop();
+          }
+          return;
+        }
+      }
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -134,71 +166,172 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     }
   }
 
-  /// Shows a dialog to collect optional special needs information
-  Future<String?> _showSpecialNeedsDialog() async {
-    final TextEditingController controller = TextEditingController();
+  /// Shows a dialog to collect application information
+  Future<Map<String, dynamic>?> _showApplicationDialog() async {
+    final specialNeedsController = TextEditingController();
+    final coverLetterController = TextEditingController();
+    String? cvPath;
+    String? cvFileName;
 
-    return showDialog<String>(
+    return showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Apply to Job'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'You are applying for: ${_jobPost!.title}',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Special Needs or Accommodations (Optional)',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: controller,
-                maxLines: 4,
-                decoration: const InputDecoration(
-                  hintText:
-                      'e.g., Wheelchair accessibility, flexible hours, remote work options...',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.all(12),
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (statefulContext, setDialogState) {
+            return AlertDialog(
+              title: const Text('Apply to Job'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'You are applying for: ${_jobPost!.title}',
+                      style: Theme.of(dialogContext).textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // CV Upload (Required)
+                    Text(
+                      'Upload CV *',
+                      style: Theme.of(dialogContext).textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        try {
+                          final result = await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['pdf', 'doc', 'docx'],
+                          );
+                          if (result != null &&
+                              result.files.single.path != null) {
+                            setDialogState(() {
+                              cvPath = result.files.single.path;
+                              cvFileName = result.files.single.name;
+                            });
+                          }
+                        } catch (e) {
+                          print('Error picking file: $e');
+                        }
+                      },
+                      icon: const Icon(Icons.upload_file),
+                      label: Text(cvFileName ?? 'Choose File (PDF, DOC, DOCX)'),
+                    ),
+                    if (cvFileName != null) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 16,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              cvFileName!,
+                              style: Theme.of(dialogContext).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.green),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+
+                    // Cover Letter
+                    Text(
+                      'Cover Letter (Optional)',
+                      style: Theme.of(dialogContext).textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: coverLetterController,
+                      maxLines: 5,
+                      decoration: const InputDecoration(
+                        hintText:
+                            'Explain why you are a great fit for this position...',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.all(12),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Special Needs
+                    Text(
+                      'Special Needs or Accommodations (Optional)',
+                      style: Theme.of(dialogContext).textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: specialNeedsController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(
+                        hintText:
+                            'e.g., Wheelchair accessibility, flexible hours...',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.all(12),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'This information will help employers accommodate your needs.',
+                      style: Theme.of(
+                        dialogContext,
+                      ).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey.shade600,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'This information will help employers accommodate your needs.',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey.shade600,
-                  fontStyle: FontStyle.italic,
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(null),
+                  child: const Text('Cancel'),
                 ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(null),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed:
-                  () => Navigator.of(context).pop(controller.text.trim()),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text('Submit Application'),
-            ),
-          ],
+                ElevatedButton(
+                  onPressed:
+                      cvPath == null
+                          ? null
+                          : () {
+                            Navigator.of(dialogContext).pop({
+                              'specialNeeds':
+                                  specialNeedsController.text.trim().isEmpty
+                                      ? null
+                                      : specialNeedsController.text.trim(),
+                              'coverLetter':
+                                  coverLetterController.text.trim().isEmpty
+                                      ? null
+                                      : coverLetterController.text.trim(),
+                              'cvPath': cvPath,
+                            });
+                          },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Submit Application'),
+                ),
+              ],
+            );
+          },
         );
       },
-    ).then((value) {
-      controller.dispose();
-      return value;
+    ).whenComplete(() {
+      // Use whenComplete to ensure disposal happens after dialog is fully closed
+      Future.delayed(const Duration(milliseconds: 100), () {
+        specialNeedsController.dispose();
+        coverLetterController.dispose();
+      });
     });
   }
 
