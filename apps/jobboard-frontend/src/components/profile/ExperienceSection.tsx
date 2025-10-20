@@ -15,12 +15,14 @@ interface ExperienceSectionProps {
   experiences: Experience[];
   onAdd?: () => void;
   onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
 export function ExperienceSection({
   experiences,
   onAdd,
   onEdit,
+  onDelete,
 }: ExperienceSectionProps) {
   return (
     <section className="space-y-3">
@@ -34,7 +36,7 @@ export function ExperienceSection({
       {experiences.length > 0 ? (
         <div className="space-y-3">
           {experiences.map((exp) => (
-            <ExperienceItem key={exp.id} experience={exp} onEdit={onEdit} />
+            <ExperienceItem key={exp.id} experience={exp} onEdit={onEdit} onDelete={onDelete} />
           ))}
         </div>
       ) : (

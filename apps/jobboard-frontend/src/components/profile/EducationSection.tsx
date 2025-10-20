@@ -16,12 +16,14 @@ interface EducationSectionProps {
   educations: Education[];
   onAdd?: () => void;
   onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
 export function EducationSection({
   educations,
   onAdd,
   onEdit,
+  onDelete,
 }: EducationSectionProps) {
   return (
     <section className="space-y-3">
@@ -35,7 +37,7 @@ export function EducationSection({
       {educations.length > 0 ? (
         <div className="space-y-3">
           {educations.map((edu) => (
-            <EducationItem key={edu.id} education={edu} onEdit={onEdit} />
+            <EducationItem key={edu.id} education={edu} onEdit={onEdit} onDelete={onDelete} />
           ))}
         </div>
       ) : (

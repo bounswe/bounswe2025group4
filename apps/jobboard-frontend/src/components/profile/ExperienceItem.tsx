@@ -1,4 +1,4 @@
-import { Pencil, Briefcase } from 'lucide-react';
+import { Pencil, Briefcase, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Experience {
@@ -13,9 +13,10 @@ interface Experience {
 interface ExperienceItemProps {
   experience: Experience;
   onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
-export function ExperienceItem({ experience, onEdit }: ExperienceItemProps) {
+export function ExperienceItem({ experience, onEdit, onDelete }: ExperienceItemProps) {
   const startDate = new Date(experience.startDate).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -36,6 +37,14 @@ export function ExperienceItem({ experience, onEdit }: ExperienceItemProps) {
           onClick={() => onEdit?.(experience.id)}
         >
           <Pencil className="h-3 w-3" />
+        </Button>
+        <Button
+          size="icon-sm"
+          variant="ghost"
+          onClick={() => onDelete?.(experience.id)}
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-3 w-3" />
         </Button>
       </div>
       <div className="flex gap-3">

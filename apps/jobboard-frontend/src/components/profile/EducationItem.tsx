@@ -1,4 +1,4 @@
-import { Pencil, GraduationCap } from 'lucide-react';
+import { Pencil, GraduationCap, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Education {
@@ -14,9 +14,10 @@ interface Education {
 interface EducationItemProps {
   education: Education;
   onEdit?: (id: number) => void;
+  onDelete?: (id: number) => void;
 }
 
-export function EducationItem({ education, onEdit }: EducationItemProps) {
+export function EducationItem({ education, onEdit, onDelete }: EducationItemProps) {
   const startYear = new Date(education.startDate).getFullYear();
   const endYear = education.endDate
     ? new Date(education.endDate).getFullYear()
@@ -31,6 +32,14 @@ export function EducationItem({ education, onEdit }: EducationItemProps) {
           onClick={() => onEdit?.(education.id)}
         >
           <Pencil className="h-3 w-3" />
+        </Button>
+        <Button
+          size="icon-sm"
+          variant="ghost"
+          onClick={() => onDelete?.(education.id)}
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-3 w-3" />
         </Button>
       </div>
       <div className="flex gap-3">

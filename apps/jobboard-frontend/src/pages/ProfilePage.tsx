@@ -221,6 +221,58 @@ export default function ProfilePage() {
     }
   };
 
+  const handleDeleteExperience = async (id: number) => {
+    try {
+      await profileService.deleteExperience(id);
+      // Refresh profile data
+      const updatedProfile = await profileService.getMyProfile();
+      setProfile(updatedProfile);
+      console.log('ProfilePage: Experience deleted successfully');
+    } catch (err) {
+      console.error('Failed to delete experience:', err);
+      // You might want to show a toast notification here
+    }
+  };
+
+  const handleDeleteEducation = async (id: number) => {
+    try {
+      await profileService.deleteEducation(id);
+      // Refresh profile data
+      const updatedProfile = await profileService.getMyProfile();
+      setProfile(updatedProfile);
+      console.log('ProfilePage: Education deleted successfully');
+    } catch (err) {
+      console.error('Failed to delete education:', err);
+      // You might want to show a toast notification here
+    }
+  };
+
+  const handleDeleteSkill = async (id: number) => {
+    try {
+      await profileService.deleteSkill(id);
+      // Refresh profile data
+      const updatedProfile = await profileService.getMyProfile();
+      setProfile(updatedProfile);
+      console.log('ProfilePage: Skill deleted successfully');
+    } catch (err) {
+      console.error('Failed to delete skill:', err);
+      // You might want to show a toast notification here
+    }
+  };
+
+  const handleDeleteInterest = async (id: number) => {
+    try {
+      await profileService.deleteInterest(id);
+      // Refresh profile data
+      const updatedProfile = await profileService.getMyProfile();
+      setProfile(updatedProfile);
+      console.log('ProfilePage: Interest deleted successfully');
+    } catch (err) {
+      console.error('Failed to delete interest:', err);
+      // You might want to show a toast notification here
+    }
+  };
+
   const handleSaveBio = async (bio: string) => {
     try {
       const updatedProfile = await profileService.updateProfile({ bio });
@@ -412,6 +464,7 @@ export default function ProfilePage() {
                   console.log('Editing experience:', exp);
                   openModal('experience', exp);
                 }}
+                onDelete={handleDeleteExperience}
               />
 
               <EducationSection
@@ -421,6 +474,7 @@ export default function ProfilePage() {
                   const edu = profile.educations.find((e) => e.id === id);
                   openModal('education', edu);
                 }}
+                onDelete={handleDeleteEducation}
               />
             </div>
 
@@ -477,6 +531,7 @@ export default function ProfilePage() {
         onClose={() => closeModal('skill')}
         skill={editingItem}
         onSave={handleSaveSkill}
+        onDelete={handleDeleteSkill}
       />
 
       <InterestModal
@@ -484,6 +539,7 @@ export default function ProfilePage() {
         onClose={() => closeModal('interest')}
         interest={editingItem}
         onSave={handleSaveInterest}
+        onDelete={handleDeleteInterest}
       />
 
       <ImageUploadModal

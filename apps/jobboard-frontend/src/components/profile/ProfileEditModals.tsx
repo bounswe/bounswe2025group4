@@ -61,6 +61,7 @@ interface SkillModalProps {
   onClose: () => void;
   skill?: Skill | null;
   onSave: (skill: Skill) => void;
+  onDelete?: (id: number) => void;
 }
 
 interface Interest {
@@ -73,6 +74,7 @@ interface InterestModalProps {
   onClose: () => void;
   interest?: Interest | null;
   onSave: (interest: Interest) => void;
+  onDelete?: (id: number) => void;
 }
 
 interface CreateProfileModalProps {
@@ -451,7 +453,7 @@ export function EducationModal({ isOpen, onClose, education, onSave }: Education
 }
 
 // Skill Modal
-export function SkillModal({ isOpen, onClose, skill, onSave }: SkillModalProps): JSX.Element {
+export function SkillModal({ isOpen, onClose, skill, onSave, onDelete }: SkillModalProps): JSX.Element {
   const [name, setName] = useState<string>('');
 
   useEffect(() => {
@@ -488,13 +490,30 @@ export function SkillModal({ isOpen, onClose, skill, onSave }: SkillModalProps):
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={!name}>
-            {skill ? 'Save Changes' : 'Add Skill'}
-          </Button>
+        <div className="flex justify-between pt-4 border-t">
+          <div>
+            {skill?.id && onDelete && (
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  onDelete(skill.id!);
+                  onClose();
+                }}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Skill
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={!name}>
+              {skill ? 'Save Changes' : 'Add Skill'}
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>
@@ -502,7 +521,7 @@ export function SkillModal({ isOpen, onClose, skill, onSave }: SkillModalProps):
 }
 
 // Interest Modal
-export function InterestModal({ isOpen, onClose, interest, onSave }: InterestModalProps): JSX.Element {
+export function InterestModal({ isOpen, onClose, interest, onSave, onDelete }: InterestModalProps): JSX.Element {
   const [name, setName] = useState<string>('');
 
   useEffect(() => {
@@ -542,13 +561,30 @@ export function InterestModal({ isOpen, onClose, interest, onSave }: InterestMod
           </p>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={!name}>
-            {interest ? 'Save Changes' : 'Add Interest'}
-          </Button>
+        <div className="flex justify-between pt-4 border-t">
+          <div>
+            {interest?.id && onDelete && (
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  onDelete(interest.id!);
+                  onClose();
+                }}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Interest
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={!name}>
+              {interest ? 'Save Changes' : 'Add Interest'}
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>
