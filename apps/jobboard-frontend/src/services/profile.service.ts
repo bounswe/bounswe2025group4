@@ -225,4 +225,80 @@ export const profileService = {
   deleteInterest: async (interestId: number): Promise<void> => {
     await apiClient.delete(`/profile/interest/${interestId}`);
   },
+
+  // ==================== ACCOUNT DELETION ====================
+
+  /**
+   * Delete all profile data (GDPR/KVKK compliance)
+   * This will delete:
+   * - Profile image
+   * - All experiences
+   * - All educations
+   * - All skills
+   * - All interests
+   * - Bio (by updating to empty)
+   */
+  deleteAllProfileData: async (): Promise<void> => {
+    try {
+      // Get current profile to know what needs to be deleted
+      const profile = await profileService.getMyProfile();
+
+      // Delete profile image if exists
+      if (profile.imageUrl) {
+        try {
+          await profileService.deleteImage();
+        } catch (err) {
+          console.warn('Failed to delete profile image:', err);
+        }
+      }
+
+      // Delete all experiences
+      for (const experience of profile.experiences) {
+        try {
+          await profileService.deleteExperience(experience.id);
+        } catch (err) {
+          console.warn(`Failed to delete experience ${experience.id}:`, err);
+        }
+      }
+
+      // Delete all educations
+      for (const education of profile.educations) {
+        try {
+          await profileService.deleteEducation(education.id);
+        } catch (err) {
+          console.warn(`Failed to delete education ${education.id}:`, err);
+        }
+      }
+
+      // Delete all skills
+      for (const skill of profile.skills) {
+        try {
+          await profileService.deleteSkill(skill.id);
+        } catch (err) {
+          console.warn(`Failed to delete skill ${skill.id}:`, err);
+        }
+      }
+
+      // Delete all interests
+      for (const interest of profile.interests) {
+        try {
+          await profileService.deleteInterest(interest.id);
+        } catch (err) {
+          console.warn(`Failed to delete interest ${interest.id}:`, err);
+        }
+      }
+
+      // Clear bio by updating to empty string
+      try {
+        await profileService.updateProfile({ bio: '' });
+      } catch (err) {
+        console.warn('Failed to clear bio:', err);
+      }
+
+      console.log('All profile data deleted successfully');
+    } catch (err) {
+      console.error('Failed to delete profile data:', err);
+      throw new Error('Failed to delete profile data. Please try again.');
+    }
+  },
 };

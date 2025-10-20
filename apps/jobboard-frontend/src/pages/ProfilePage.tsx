@@ -16,6 +16,7 @@ import {
   CreateProfileModal,
   ImageUploadModal,
 } from '@/components/profile/ProfileEditModals';
+import { DeleteAccountModal } from '@/components/profile/DeleteAccountModal';
 import type { Profile, Activity, Post } from '@/types/profile.types';
 import { profileService } from '@/services/profile.service';
 import CenteredLoader from '@/components/CenteredLoader';
@@ -29,6 +30,8 @@ export default function ProfilePage() {
   const [showCreateProfile, setShowCreateProfile] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   // Mock data for activity and posts (since no API endpoints for these yet)
   const mockActivity: Activity[] = [
@@ -355,6 +358,28 @@ export default function ProfilePage() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeletingAccount(true);
+      await profileService.deleteAllProfileData();
+      
+      // Refresh the profile to show empty state
+      const updatedProfile = await profileService.getMyProfile();
+      setProfile(updatedProfile);
+      
+      console.log('ProfilePage: All profile data deleted successfully');
+      
+      // Optionally, you could redirect the user or show a success message
+      // For now, we'll just refresh the profile to show the empty state
+    } catch (err) {
+      console.error('Failed to delete profile data:', err);
+      // You might want to show a toast notification here
+      alert('Failed to delete profile data. Please try again.');
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  };
+
   if (loading) {
     return <CenteredLoader />;
   }
@@ -489,6 +514,20 @@ export default function ProfilePage() {
                 }}
                 onDelete={handleDeleteEducation}
               />
+
+              {/* Danger Zone */}
+              <div className="border border-destructive/20 rounded-lg p-4 bg-destructive/5">
+                <h4 className="text-sm font-medium text-destructive mb-2">Account Data Deletion</h4>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Permanently delete all profile data (GDPR/KVKK compliant). This cannot be undone.
+                </p>
+                <button
+                  onClick={() => setShowDeleteAccount(true)}
+                  className="px-3 py-1.5 bg-destructive text-destructive-foreground rounded-md text-xs font-medium hover:bg-destructive/90 transition-colors"
+                >
+                  Delete All Data
+                </button>
+              </div>
             </div>
 
             <div className="space-y-6">
@@ -555,13 +594,20 @@ export default function ProfilePage() {
         onDelete={handleDeleteInterest}
       />
 
-      <ImageUploadModal
+            <ImageUploadModal
         isOpen={showImageUpload}
         onClose={() => setShowImageUpload(false)}
         currentImageUrl={profile?.imageUrl}
         onUpload={handleImageUpload}
         onDelete={profile?.imageUrl ? handleImageDelete : undefined}
         isUploading={isUploadingImage}
+      />
+
+      <DeleteAccountModal
+        isOpen={showDeleteAccount}
+        onClose={() => setShowDeleteAccount(false)}
+        onConfirm={handleDeleteAccount}
+        isDeleting={isDeletingAccount}
       />
     </div>
   );
