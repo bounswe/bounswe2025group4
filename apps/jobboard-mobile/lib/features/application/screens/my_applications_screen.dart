@@ -235,7 +235,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
           showDialog(
             context: context,
             builder:
-                (context) => AlertDialog(
+                (dialogContext) => AlertDialog(
                   title: Text('Application Details'),
                   content: SingleChildScrollView(
                     child: Column(
@@ -283,7 +283,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                           const SizedBox(height: 4),
                           InkWell(
                             onTap: () {
-                              Navigator.pop(context);
+                              Navigator.pop(dialogContext);
                               _showCVOptions(application);
                             },
                             child: Row(
@@ -331,10 +331,17 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                   ),
                   actions: [
                     TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () => Navigator.of(dialogContext).pop(),
                       child: Text(
                         AppLocalizations.of(context)!.myApplications_close,
                       ),
+                    ),
+                    TextButton(
+                      onPressed:
+                          () =>
+                              _withdrawApplication(application, dialogContext),
+                      style: TextButton.styleFrom(foregroundColor: Colors.red),
+                      child: const Text('Withdraw'),
                     ),
                   ],
                 ),
@@ -403,7 +410,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     }
   }
 
-  /// Shows options to view, replace, or delete CV
+  /// Shows options to view or download CV
   Future<void> _showCVOptions(JobApplication application) async {
     if (application.cvUrl == null || application.cvUrl!.isEmpty) {
       // No CV uploaded, offer to upload
@@ -411,29 +418,140 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       return;
     }
 
-    // Directly open CV URL in browser for easy viewing
-    try {
-      final url = Uri.parse(application.cvUrl!);
-      // Try to launch with default browser mode
-      final launched = await launchUrl(url);
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.visibility, color: Colors.blue),
+                title: const Text('View CV in Browser'),
+                subtitle: const Text('Open CV in your browser'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  try {
+                    final url = Uri.parse(application.cvUrl!);
+                    final launched = await launchUrl(url);
+                    if (!launched && mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Unable to open CV. No app available to handle PDF files.',
+                          ),
+                          backgroundColor: Colors.orange,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    print('Error opening CV: $e');
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error opening CV: ${e.toString()}'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.download, color: Colors.green),
+                title: const Text('Download CV'),
+                subtitle: const Text('Save CV to your device'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _downloadCV(application);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-      if (!launched && mounted) {
+  /// Downloads CV to device
+  Future<void> _downloadCV(JobApplication application) async {
+    try {
+      // Show loading indicator
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Downloading CV...'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Download CV bytes from API
+      final cvBytes = await _apiService.getCV(application.id);
+
+      // Get downloads directory (or temp for iOS)
+      Directory directory;
+      if (Platform.isAndroid) {
+        // For Android, try to use Downloads folder
+        directory = Directory('/storage/emulated/0/Download');
+        if (!await directory.exists()) {
+          directory = await getApplicationDocumentsDirectory();
+        }
+      } else {
+        // For iOS, use documents directory
+        directory = await getApplicationDocumentsDirectory();
+      }
+
+      // Determine file extension from CV URL
+      String extension = 'pdf'; // Default to PDF
+      if (application.cvUrl != null) {
+        final urlLower = application.cvUrl!.toLowerCase();
+        if (urlLower.endsWith('.doc')) {
+          extension = 'doc';
+        } else if (urlLower.endsWith('.docx')) {
+          extension = 'docx';
+        }
+      }
+
+      // Create filename with timestamp to avoid conflicts
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName =
+          'cv_${application.jobTitle.replaceAll(' ', '_')}_$timestamp.$extension';
+      final filePath = '${directory.path}/$fileName';
+
+      // Save file
+      final file = File(filePath);
+      await file.writeAsBytes(cvBytes);
+
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Unable to open CV. No app available to handle PDF files.',
+          SnackBar(
+            content: Text('CV downloaded successfully\n$filePath'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'OPEN',
+              textColor: Colors.white,
+              onPressed: () async {
+                try {
+                  final url = Uri.file(filePath);
+                  await launchUrl(url);
+                } catch (e) {
+                  print('Error opening downloaded file: $e');
+                }
+              },
             ),
-            backgroundColor: Colors.orange,
           ),
         );
       }
     } catch (e) {
-      print('Error opening CV: $e');
+      print('Error downloading CV: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error opening CV: ${e.toString()}'),
+            content: Text(
+              'Failed to download CV: ${e.toString().replaceFirst("Exception: ", "")}',
+            ),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -578,6 +696,66 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
           SnackBar(
             content: Text(
               'Failed to delete CV: ${e.toString().replaceFirst("Exception: ", "")}',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Delete/Withdraw entire application
+  Future<void> _withdrawApplication(
+    JobApplication application,
+    BuildContext dialogContext,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Withdraw Application'),
+            content: const Text(
+              'Are you sure you want to withdraw this application? This action cannot be undone.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Withdraw'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await _apiService.deleteApplication(application.id);
+
+      if (mounted) {
+        // Close the details dialog
+        Navigator.of(dialogContext).pop();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Application withdrawn successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // Reload applications to reflect the change
+        _loadApplications();
+      }
+    } catch (e) {
+      print('Error withdrawing application: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Failed to withdraw application: ${e.toString().replaceFirst("Exception: ", "")}',
             ),
             backgroundColor: Colors.red,
           ),
