@@ -55,16 +55,12 @@ export default function Header() {
                       <Link to="/applications">{t('header.nav.myApplications')}</Link>
                     </Button>
                   )}
-                  {!isAuthenticated && (
-                    <>
-                      <Button variant="ghost" asChild>
-                        <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
-                      </Button>
-                      <Button variant="ghost" asChild>
-                        <Link to="/forum">{t('header.nav.forum')}</Link>
-                      </Button>
-                    </>
-                  )}
+                  <Button variant="ghost" asChild>
+                    <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/forum">{t('header.nav.forum')}</Link>
+                  </Button>
                 </>
               )}
             </nav>
@@ -77,7 +73,7 @@ export default function Header() {
             {isAuthenticated ? (
               <>
                 <Button variant="ghost" asChild>
-                  <Link to="/profile">Profile</Link>
+                  <Link to="/profile">{t('header.auth.profile')}</Link>
                 </Button>
                 <Button variant="outline" onClick={handleLogout}>
                   {t('header.auth.logout')}
@@ -133,20 +129,16 @@ export default function Header() {
                         </Link>
                       </Button>
                     )}
-                    {!isAuthenticated && (
-                      <>
-                        <Button variant="ghost" asChild className="justify-start">
-                          <Link to="/mentorship" onClick={() => setIsMobileMenuOpen(false)}>
-                            {t('header.nav.mentorship')}
-                          </Link>
-                        </Button>
-                        <Button variant="ghost" asChild className="justify-start">
-                          <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>
-                            {t('header.nav.forum')}
-                          </Link>
-                        </Button>
-                      </>
-                    )}
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/mentorship" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.mentorship')}
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.forum')}
+                      </Link>
+                    </Button>
                   </>
                 )}
               </nav>
@@ -155,7 +147,7 @@ export default function Header() {
                 {isAuthenticated ? (
                   <>
                     <Button variant="ghost" asChild className="justify-start">
-                      <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
+                      <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>{t('header.auth.profile')}</Link>
                     </Button>
                     <Button
                     variant="outline"
