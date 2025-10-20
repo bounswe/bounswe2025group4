@@ -7,6 +7,9 @@ import '../providers/mentor_provider.dart';
 import 'package:mobile/core/models/mentorship_request.dart';
 import './direct_message_screen.dart';
 import './mentor_profile_screen.dart';
+import 'package:mobile/core/models/mentor_profile.dart';
+import 'package:mobile/core/models/user.dart';
+import 'package:mobile/core/models/user_type.dart';
 import '../../../generated/l10n/app_localizations.dart';
 
 // Find Mentors tab content - updated to use real API data
@@ -186,8 +189,108 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   Widget build(BuildContext context) {
     return Consumer<MentorProvider>(
       builder: (context, mentorProvider, child) {
-        final mentors =
-            _isFiltered ? _filteredMentors : mentorProvider.availableMentors;
+        // Uncomment after fully implemented:
+        //final mentors =
+        //    _isFiltered ? _filteredMentors : mentorProvider.availableMentors;
+        // Mock Mentors:
+        List<MentorProfile> mentors = [
+          MentorProfile(
+            id: 1,
+            user: User(
+              id: "101",
+              username: "alicejohnson",
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: "Alice",
+              lastName: "Johnson",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            capacity: 15,
+            currentMenteeCount: 10,
+            averageRating: 4.8,
+            reviewCount: 50,
+            isAvailable: true,
+          ),
+
+          MentorProfile(
+            id: 2,
+            user: User(
+              id: "115",
+              username: "emreozdemir",
+              email: "emre.ozdemir@dream.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Emre",
+              lastName: "Özdemir",
+              jobTitle: "UI Designer",
+              company: "Dream Games",
+            ),
+            capacity: 5,
+            currentMenteeCount: 2,
+            averageRating: 4.3,
+            reviewCount: 10,
+            isAvailable: true,
+          ),
+
+          MentorProfile(
+            id: 3,
+            user: User(
+              id: "126",
+              username: "jack_daniels",
+              email: "jack.deniz@udemy.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Jack Deniz",
+              lastName: "Türkoğlu",
+              jobTitle: "English Teacher",
+              company: "Udemy",
+            ),
+            capacity: 10,
+            currentMenteeCount: 8,
+            averageRating: 4.2,
+            reviewCount: 30,
+            isAvailable: true,
+          ),
+
+          MentorProfile(
+            id: 4,
+            user: User(
+              id: "151",
+              username: "lichen",
+              email: "li.chen@meta.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Li",
+              lastName: "Chen",
+              jobTitle: "Research Engineer",
+              company: "Meta",
+            ),
+            capacity: 4,
+            currentMenteeCount: 3,
+            averageRating: 4.8,
+            reviewCount: 8,
+            isAvailable: false,
+          ),
+
+          MentorProfile(
+            id: 5,
+            user: User(
+              id: "198",
+              username: "brcklc",
+              email: "burcu.kılıç@bogazici.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Burcu",
+              lastName: "Kılıç",
+              jobTitle: "Computer Engineering Student",
+              company: "Boğaziçi University",
+            ),
+            capacity: 5,
+            currentMenteeCount: 3,
+            averageRating: 5.0,
+            reviewCount: 6,
+            isAvailable: true,
+          ),
+
+
+        ];
 
         Widget contentWidget;
 
