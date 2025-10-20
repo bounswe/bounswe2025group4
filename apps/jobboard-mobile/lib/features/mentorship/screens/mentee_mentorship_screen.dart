@@ -47,7 +47,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
 
   Future<void> _loadMentors() async {
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
-    await mentorProvider.fetchAvailableMentors();
+    //await mentorProvider.fetchAvailableMentors();
   }
 
   void _filterMentors() {
@@ -416,7 +416,7 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
 
   Future<void> _loadData() async {
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
-    await mentorProvider.fetchMenteeRequests();
+    //await mentorProvider.fetchMenteeRequests();
   }
 
   void _navigateToDirectMessage(String mentorId, String mentorName) {
@@ -489,12 +489,174 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
       builder: (context, mentorProvider, child) {
         // Filter requests by status
         final pendingRequests =
-        mentorProvider.menteeRequests
+        //mentorProvider.menteeRequests
+        [
+          MentorshipRequest(
+            id: 1,
+            mentor: User(
+              id: "1234",
+              username: "berk_yilmaz",
+              email: "berk.yilmaz@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: "Berk",
+              lastName: "Yılmaz",
+              jobTitle: "Research Engineer",
+              company: "Meta",
+            ),
+            mentee: User(
+              id: "101",
+              username: "alicejohnson",
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Alice",
+              lastName: "Johnson",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            message: "I'm interested in your research project.",
+            status: MentorshipRequestStatus.PENDING,
+            createdAt: DateTime.now(),
+          ),
+          MentorshipRequest(
+            id: 1,
+            mentor: User(
+              id: "1234",
+              username: "George Konidaris",
+              email: "george.konidaris@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: "George",
+              lastName: "Konidaris",
+              jobTitle: "Professor",
+              company: "Brown University",
+            ),
+            mentee: User(
+              id: "101",
+              username: "alicejohnson",
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Alice",
+              lastName: "Johnson",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            message: "I'm very interested in AI research and would like to be your mentee.",
+            status: MentorshipRequestStatus.ACCEPTED,
+            createdAt: DateTime.now(),
+          ),
+          MentorshipRequest(
+            id: 1,
+            mentor: User(
+              id: "1234",
+              username: "Tom Silver",
+              email: "Tom.Silver@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: "Tom",
+              lastName: "Silver",
+              jobTitle: "Professor",
+              company: "MIT",
+            ),
+            mentee: User(
+              id: "101",
+              username: "alicejohnson",
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Alice",
+              lastName: "Johnson",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            message: "I follow your work greatly and would love to learn from you!",
+            status: MentorshipRequestStatus.PENDING,
+            createdAt: DateTime.now(),
+          ),
+
+        ]
             .where((req) => req.status == MentorshipRequestStatus.PENDING)
             .toList();
 
         final acceptedRequests =
-        mentorProvider.menteeRequests
+        [
+          MentorshipRequest(
+            id: 1,
+            mentor: User(
+              id: "1234",
+              username: "berk_yilmaz",
+              email: "berk.yilmaz@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: "Berk",
+              lastName: "Yılmaz",
+              jobTitle: "Research Engineer",
+              company: "Meta",
+            ),
+            mentee: User(
+              id: "101",
+              username: "alicejohnson",
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Alice",
+              lastName: "Johnson",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            message: "I'm interested in your research project.",
+            status: MentorshipRequestStatus.PENDING,
+            createdAt: DateTime.now(),
+          ),
+          MentorshipRequest(
+            id: 1,
+            mentor: User(
+              id: "1234",
+              username: "George Konidaris",
+              email: "george.konidaris@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: "George",
+              lastName: "Konidaris",
+              jobTitle: "Professor",
+              company: "Brown University",
+            ),
+            mentee: User(
+              id: "101",
+              username: "alicejohnson",
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Alice",
+              lastName: "Johnson",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            message: "I'm very interested in AI research and would like to be your mentee.",
+            status: MentorshipRequestStatus.ACCEPTED,
+            createdAt: DateTime.now(),
+          ),
+          MentorshipRequest(
+            id: 1,
+            mentor: User(
+              id: "1234",
+              username: "Tom Silver",
+              email: "Tom.Silver@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: "Tom",
+              lastName: "Silver",
+              jobTitle: "Professor",
+              company: "MIT",
+            ),
+            mentee: User(
+              id: "101",
+              username: "alicejohnson",
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Alice",
+              lastName: "Johnson",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            message: "I follow your work greatly and would love to learn from you!",
+            status: MentorshipRequestStatus.PENDING,
+            createdAt: DateTime.now(),
+          ),
+
+        ]
+        //mentorProvider.menteeRequests
             .where((req) => req.status == MentorshipRequestStatus.ACCEPTED)
             .toList();
 
@@ -508,7 +670,8 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
           );
         }
 
-        if (mentorProvider.error != null) {
+        // pass for mockup if (mentorProvider.error != null) {
+        if (pendingRequests.isEmpty && acceptedRequests.isEmpty) {
           // For error state, use ListView to ensure it's scrollable for RefreshIndicator
           return ListView(
             children: [
@@ -671,10 +834,10 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
 
     // Refresh all relevant data
-    await Future.wait([
-      mentorProvider.fetchMenteeRequests(),
-      mentorProvider.fetchAvailableMentors(),
-    ]);
+    //await Future.wait([
+    //  mentorProvider.fetchMenteeRequests(),
+    //  mentorProvider.fetchAvailableMentors(),
+    //]);
   }
 
   @override
