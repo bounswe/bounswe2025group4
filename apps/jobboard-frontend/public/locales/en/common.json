@@ -224,7 +224,10 @@
     },
     "register": {
       "title": "Create an Account",
+      "createAccount": "Create an Account",
+      "checkEmail": "Check Your Email",
       "description": "Sign up to access the job board platform",
+      "verificationLink": "We've sent you a verification link. Please check your email and click the link to activate your account.",
       "username": "Username *",
       "email": "Email *",
       "password": "Password *",

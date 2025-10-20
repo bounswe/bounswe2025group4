@@ -224,7 +224,10 @@
     },
     "register": {
       "title": "Hesap Oluştur",
+      "createAccount": "Hesap Oluştur",
+      "checkEmail": "E-postanızı Kontrol Edin",
       "description": "İş ilanı platformuna erişmek için kaydolun",
+      "verificationLink": "Size bir doğrulama bağlantısı gönderdik. Hesabınızı etkinleştirmek için lütfen e-postanızı kontrol edin ve bağlantıya tıklayın.",
       "username": "Kullanıcı Adı *",
       "email": "E-posta *",
       "password": "Şifre *",
