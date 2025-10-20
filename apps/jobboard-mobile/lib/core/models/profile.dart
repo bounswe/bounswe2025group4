@@ -25,17 +25,29 @@ class Profile {
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
+    final firstName = json['firstName'] ?? '';
+    final lastName = json['lastName'] ?? '';
+    final fullName = '$firstName $lastName'.trim();
+    
+    final skills = (json['skills'] as List<dynamic>?)
+        ?.map((skill) => skill['name'] as String)
+        .toList() ?? [];
+    
+    final interests = (json['interests'] as List<dynamic>?)
+        ?.map((interest) => interest['name'] as String)
+        .toList() ?? [];
+    
     return Profile(
       id: json['id'],
       userId: json['userId'],
-      fullName: json['fullName'] ?? '',
+      fullName: fullName,
       phone: json['phone'],
       location: json['location'],
       occupation: json['occupation'],
       bio: json['bio'] ?? '',
-      profilePicture: json['profilePicture'],
-      skills: (json['skills'] as List<dynamic>?)?.cast<String>() ?? [],
-      interests: (json['interests'] as List<dynamic>?)?.cast<String>() ?? [],
+      profilePicture: json['imageUrl'], // Backend'de imageUrl olarak geliyor
+      skills: skills,
+      interests: interests,
     );
   }
 

@@ -35,10 +35,15 @@ class ProfileProvider extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
+      print('ProfileProvider: Starting to fetch profile...');
       final profile = await _apiService.getMyProfile();
+      print('ProfileProvider: Profile fetched successfully');
+      
       final userId = profile.profile.userId;
+      print('ProfileProvider: User ID: $userId');
 
       final pictureUrl = await _apiService.getProfilePicture();
+      print('ProfileProvider: Profile picture URL: $pictureUrl');
 
       final updatedProfile = profile.profile.copyWith(
         profilePicture: pictureUrl,
@@ -50,8 +55,15 @@ class ProfileProvider extends ChangeNotifier {
         education: profile.education,
         badges: profile.badges,
       );
+      
+      print('ProfileProvider: Profile loaded successfully');
     } catch (e) {
+      print('ProfileProvider: Error fetching profile: $e');
       _error = e.toString();
+      
+      if (e.toString().contains('Profile not found')) {
+        _error = 'Profile not found. Would you like to create a new profile?';
+      }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -167,8 +179,6 @@ class ProfileProvider extends ChangeNotifier {
 
   // Add work experience
   Future<void> addWorkExperience(Map<String, dynamic> experienceData) async {
-    if (_currentUserProfile == null) return;
-
     try {
       _isLoading = true;
       _error = null;
@@ -176,16 +186,20 @@ class ProfileProvider extends ChangeNotifier {
 
       final newExperience = await _apiService.createExperience(experienceData);
 
-      final updatedExperiences = [..._currentUserProfile!.experience, newExperience];
-      _currentUserProfile = FullProfile(
-        profile: _currentUserProfile!.profile,
-        experience: updatedExperiences,
-        education: _currentUserProfile!.education,
-        badges: _currentUserProfile!.badges,
-      );
+      if (_currentUserProfile != null) {
+        final updatedExperiences = [..._currentUserProfile!.experience, newExperience];
+        _currentUserProfile = FullProfile(
+          profile: _currentUserProfile!.profile,
+          experience: updatedExperiences,
+          education: _currentUserProfile!.education,
+          badges: _currentUserProfile!.badges,
+        );
 
-      if (_viewedProfile?.profile.userId == _currentUserProfile?.profile.userId) {
-        _viewedProfile = _currentUserProfile;
+        if (_viewedProfile?.profile.userId == _currentUserProfile?.profile.userId) {
+          _viewedProfile = _currentUserProfile;
+        }
+      } else {
+        await fetchMyProfile();
       }
     } catch (e) {
       _error = e.toString();
@@ -269,32 +283,28 @@ class ProfileProvider extends ChangeNotifier {
 
   // Add skill
   Future<void> addSkill(String name, String level) async {
-    if (_currentUserProfile == null) return;
-
     try {
       await _apiService.addSkill(name, level);
       await fetchMyProfile(); // Refresh profile to get updated skills
     } catch (e) {
       _error = e.toString();
+      notifyListeners();
     }
   }
 
   // Add interest
   Future<void> addInterest(String name) async {
-    if (_currentUserProfile == null) return;
-
     try {
       await _apiService.addInterest(name);
       await fetchMyProfile(); // Refresh profile to get updated interests
     } catch (e) {
       _error = e.toString();
+      notifyListeners();
     }
   }
 
   // Add education
   Future<void> addEducation(Map<String, dynamic> educationData) async {
-    if (_currentUserProfile == null) return;
-
     try {
       _isLoading = true;
       _error = null;
@@ -302,16 +312,20 @@ class ProfileProvider extends ChangeNotifier {
 
       final newEducation = await _apiService.createEducation(educationData);
 
-      final updatedEducation = [..._currentUserProfile!.education, newEducation];
-      _currentUserProfile = FullProfile(
-        profile: _currentUserProfile!.profile,
-        experience: _currentUserProfile!.experience,
-        education: updatedEducation,
-        badges: _currentUserProfile!.badges,
-      );
+      if (_currentUserProfile != null) {
+        final updatedEducation = [..._currentUserProfile!.education, newEducation];
+        _currentUserProfile = FullProfile(
+          profile: _currentUserProfile!.profile,
+          experience: _currentUserProfile!.experience,
+          education: updatedEducation,
+          badges: _currentUserProfile!.badges,
+        );
 
-      if (_viewedProfile?.profile.userId == _currentUserProfile?.profile.userId) {
-        _viewedProfile = _currentUserProfile;
+        if (_viewedProfile?.profile.userId == _currentUserProfile?.profile.userId) {
+          _viewedProfile = _currentUserProfile;
+        }
+      } else {
+        await fetchMyProfile();
       }
     } catch (e) {
       _error = e.toString();
@@ -477,8 +491,10 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> updateMentorshipStatus(MentorshipStatus status) async {
     try {
       await _apiService.updateMentorshipStatus(status);
-      await fetchUserDetails(int.parse(_user!.id));
-      notifyListeners();
+      if (_user != null) {
+        await fetchUserDetails(int.parse(_user!.id));
+        notifyListeners();
+      }
     } catch (e) {
       throw Exception('Failed to update mentorship status: $e');
     }

@@ -30,10 +30,19 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final profileProvider = Provider.of<ProfileProvider>(
         context,
         listen: false,
       );
+
+      // Debug authentication status
+      authProvider.debugAuthStatus();
+      
+      if (!authProvider.isLoggedIn) {
+        print('ProfilePage: User is not logged in, cannot fetch profile');
+        return;
+      }
 
       await profileProvider.fetchMyProfile();
 
@@ -93,7 +102,61 @@ class _ProfilePageState extends State<ProfilePage> {
           profileProvider.isLoading
               ? const Center(child: CircularProgressIndicator())
               : profile == null
-              ? Center(child: Text(AppLocalizations.of(context)!.profilePage_failedToLoad))
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Colors.red[300],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)!.profilePage_failedToLoad,
+                        style: const TextStyle(fontSize: 18),
+                        textAlign: TextAlign.center,
+                      ),
+                      if (profileProvider.error != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          'Error: ${profileProvider.error}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              await profileProvider.fetchMyProfile();
+                            },
+                            child: const Text('Retry'),
+                          ),
+                          if (profileProvider.error?.contains('Profile not found') == true)
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const EditProfilePage()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Create Profile'),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
               : RefreshIndicator(
                 onRefresh: () async {
                   await profileProvider.fetchMyProfile();
@@ -147,11 +210,18 @@ class _ProfilePageState extends State<ProfilePage> {
               emptyMessage: AppLocalizations.of(context)!.profilePage_noSkills,
               addDialogTitle: AppLocalizations.of(context)!.profilePage_addSkill,
               addDialogHint: AppLocalizations.of(context)!.profilePage_enterSkill,
-              onSave: (updatedSkills) {
-                // For now, we'll need to implement individual skill management
-                // This requires UI changes to support add/edit/delete individual skills
-                // For now, we'll just refresh the profile
-                profileProvider.fetchMyProfile();
+              onSave: (updatedSkills) async {
+                // Find and add newly added skills
+                final currentSkills = profile.skills;
+                final newSkills = updatedSkills.where((skill) => !currentSkills.contains(skill)).toList();
+                
+                for (final skill in newSkills) {
+                  try {
+                    await profileProvider.addSkill(skill, 'Intermediate'); // Default level
+                  } catch (e) {
+                    print('Error adding skill: $e');
+                  }
+                }
               },
               isEditable: true,
             ),
@@ -163,11 +233,18 @@ class _ProfilePageState extends State<ProfilePage> {
               emptyMessage: AppLocalizations.of(context)!.profilePage_noInterests,
               addDialogTitle: AppLocalizations.of(context)!.profilePage_addInterest,
               addDialogHint: AppLocalizations.of(context)!.profilePage_enterInterest,
-              onSave: (updatedInterests) {
-                // For now, we'll need to implement individual interest management
-                // This requires UI changes to support add/edit/delete individual interests
-                // For now, we'll just refresh the profile
-                profileProvider.fetchMyProfile();
+              onSave: (updatedInterests) async {
+                // Find and add newly added interests
+                final currentInterests = profile.interests;
+                final newInterests = updatedInterests.where((interest) => !currentInterests.contains(interest)).toList();
+                
+                for (final interest in newInterests) {
+                  try {
+                    await profileProvider.addInterest(interest);
+                  } catch (e) {
+                    print('Error adding interest: $e');
+                  }
+                }
               },
               isEditable: true,
             ),
@@ -224,9 +301,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  // Reuse the same theme toggle used on the welcome screen
-                  const ThemeToggleSwitch(),
                 ],
               ),
               Text(

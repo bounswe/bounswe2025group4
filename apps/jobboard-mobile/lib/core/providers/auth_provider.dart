@@ -36,6 +36,14 @@ class AuthProvider with ChangeNotifier {
   bool get isLoggedIn => _token != null && _currentUser != null;
   bool get isLoading => _isLoading;
   String? get token => _token; // Allow access to token if needed
+  
+  // Debug method to check authentication status
+  void debugAuthStatus() {
+    print('AuthProvider Debug:');
+    print('  Token: ${_token != null ? "Present (${_token!.substring(0, 10)}...)" : "NULL"}');
+    print('  Current User: ${_currentUser != null ? "Present (${_currentUser!.username})" : "NULL"}');
+    print('  Is Logged In: $isLoggedIn');
+  }
 
   UserType? get onboardingUserType => _onboardingUserType; // Changed getter
   MentorshipStatus? get onboardingMentorshipStatus =>

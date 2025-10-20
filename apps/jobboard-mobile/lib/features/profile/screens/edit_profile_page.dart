@@ -52,27 +52,64 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 
-  void _saveProfile() {
+  void _saveProfile() async {
     HapticFeedback.mediumImpact();
     if (_formKey.currentState!.validate()) {
       final profileProvider =
       Provider.of<ProfileProvider>(context, listen: false);
-      profileProvider.updateProfile({
-        'fullName': _nameController.text,
-        'bio': _bioController.text,
-        'location': _locationController.text,
-        'phone': _phoneController.text,
-        'occupation': _occupationController.text,
-      });
-      profileProvider.updateUser(
-        profileProvider.currentUser!.id,
-        {
-          'username': _usernameController.text,
-          'email': _emailController.text,
-        },
-      );
-      HapticFeedback.heavyImpact();
-      Navigator.pop(context);
+      
+      try {
+        if (profileProvider.currentUserProfile == null) {
+          final nameParts = _nameController.text.trim().split(' ');
+          final firstName = nameParts.isNotEmpty ? nameParts.first : '';
+          final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+          
+          await profileProvider.createProfile({
+            'firstName': firstName,
+            'lastName': lastName,
+            'bio': _bioController.text,
+          });
+          
+          if (profileProvider.currentUser != null) {
+            await profileProvider.updateUser(
+              profileProvider.currentUser!.id,
+              {
+                'username': _usernameController.text,
+                'email': _emailController.text,
+              },
+            );
+          }
+        } else {
+          await profileProvider.updateProfile({
+            'fullName': _nameController.text,
+            'bio': _bioController.text,
+            'location': _locationController.text,
+            'phone': _phoneController.text,
+            'occupation': _occupationController.text,
+          });
+          if (profileProvider.currentUser != null) {
+            await profileProvider.updateUser(
+              profileProvider.currentUser!.id,
+              {
+                'username': _usernameController.text,
+                'email': _emailController.text,
+              },
+            );
+          }
+        }
+        
+        HapticFeedback.heavyImpact();
+        Navigator.pop(context);
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error saving profile: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -93,9 +130,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           )
         ],
       ),
-      body: profile == null
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
@@ -106,12 +141,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   A11y(
-                    label: profile.profilePicture == null
+                    label: profile?.profilePicture == null
                         ? 'Default profile picture'
                         : 'User profile picture',
                     child: ProfilePicture(
                       size: 100,
-                      imageUrl: profile.profilePicture,
+                      imageUrl: profile?.profilePicture,
                       isEditable: false,
                     ),
                   ),

@@ -19,11 +19,11 @@ class FullProfile {
 
   factory FullProfile.fromJson(Map<String, dynamic> json) {
     return FullProfile(
-      profile: Profile.fromJson(json['profile']),
-      experience: (json['experience'] as List<dynamic>?)
+      profile: Profile.fromJson(json), 
+      experience: (json['experiences'] as List<dynamic>?) 
           ?.map((e) => Experience.fromJson(e))
           .toList() ?? [],
-      education: (json['education'] as List<dynamic>?)
+      education: (json['educations'] as List<dynamic>?) 
           ?.map((e) => Education.fromJson(e))
           .toList() ?? [],
       badges: (json['badges'] as List<dynamic>?)
