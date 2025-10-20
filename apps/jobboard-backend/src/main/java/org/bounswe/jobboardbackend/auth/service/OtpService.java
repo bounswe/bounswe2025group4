@@ -45,7 +45,7 @@ public class OtpService {
         otp.setTemporaryToken(temporaryToken);
         otpRepository.save(otp);
 
-        sendOtpEmail(user.getEmail(), otpCode);
+        emailService.sendOtpEmail(user.getEmail(), otpCode);
     }
 
 
@@ -86,19 +86,5 @@ public class OtpService {
         return String.valueOf(number);
     }
 
-
-
-    private void sendOtpEmail(String email, String otpCode) {
-        String subject = "Your JobBoard Login Verification Code";
-        String body = """
-                Your verification code for JobBoard login is: %s
-                
-                This code will expire in 5 minutes.
-                
-                If you did not request this code, please ignore this email or contact support if you have concerns.
-                """.formatted(otpCode);
-
-        emailService.sendEmail(email, subject, body);
-    }
 
 }
