@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile/features/main_scaffold/main_scaffold.dart';
 import 'package:mobile/features/auth/screens/sign_in_screen.dart';
 import 'package:mobile/generated/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
-import 'package:mobile/core/models/user_type.dart';
-import 'package:mobile/core/models/mentorship_status.dart';
 import 'package:mobile/core/providers/profile_provider.dart';
 import 'package:mobile/features/auth/screens/welcome_screen.dart';
 import '../../../core/widgets/a11y.dart';
@@ -39,6 +38,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _handleSignUp() async {
+    HapticFeedback.mediumImpact();
     if (_formKey.currentState!.validate()) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final username = _usernameController.text.trim();
@@ -51,6 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final maxMenteeCount = authProvider.onboardingMaxMenteeCount;
 
       if (userType == null) {
+        HapticFeedback.vibrate();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.signUpScreen_userTypeMissing),
@@ -74,6 +75,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (!mounted) return;
 
         if (outcome == RegisterOutcome.success) {
+          HapticFeedback.heavyImpact();
           final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
           profileProvider.clearCurrentUserProfile();
           await profileProvider.fetchMyProfile();
@@ -110,6 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         else {
           // This branch might not be reached since errors now throw exceptions,
           // but keeping it for robustness
+          HapticFeedback.vibrate();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!.signUpScreen_signUpFailed),
@@ -120,6 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       } catch (e) {
         if (!mounted) return;
 
+        HapticFeedback.vibrate();
         // Display specific error message
         String errorMessage;
         if (e.toString().contains('mentor profile')) {
@@ -150,7 +154,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           tooltip: 'Back',
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            Navigator.pop(context);
+          },
         ),
         title: Text(AppLocalizations.of(context)!.signUpScreen_title),
       ),
@@ -215,6 +222,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         setState(() {
                           _obscurePassword = !_obscurePassword;
                         });
@@ -248,6 +256,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         setState(() {
                           _obscureConfirmPassword = !_obscureConfirmPassword;
                         });
@@ -315,6 +324,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Text(AppLocalizations.of(context)!.signUpScreen_alreadyHaveAccount),
                     TextButton(
                       onPressed: () {
+                        HapticFeedback.lightImpact();
                         Navigator.push(
                           context,
                           MaterialPageRoute(

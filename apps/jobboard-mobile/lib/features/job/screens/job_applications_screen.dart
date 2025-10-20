@@ -346,7 +346,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                               ApplicationStatus.approved,
                             ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade700,
+                          backgroundColor: Colors.blue, // Use blue to match design language
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 6,
@@ -367,12 +367,12 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
   Color _getStatusColor(ApplicationStatus status) {
     switch (status) {
       case ApplicationStatus.approved:
-        return Colors.green.shade700;
+        return Colors.blue; // Use blue to match design language
       case ApplicationStatus.rejected:
-        return Colors.red.shade700;
+        return Colors.red.shade700; // Keep red for rejection
       case ApplicationStatus.pending:
       default:
-        return Colors.orange.shade700;
+        return Colors.grey.shade600; // Use neutral grey for pending
     }
   }
 }

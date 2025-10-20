@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/profile_provider.dart';
 import '../../../core/providers/font_size_provider.dart';
 import '../../../core/providers/locale_provider.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../auth/screens/welcome_screen.dart';
 import '../../../core/widgets/a11y.dart';
 import '../widgets/profile_picture.dart';
@@ -118,6 +120,9 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildProfileHeader(profile),
+            const SizedBox(height: 24),
+
+            _buildThemeSelector(),
             const SizedBox(height: 24),
 
             _buildFontSizeSelector(),
@@ -276,6 +281,124 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildThemeSelector() {
+    return Consumer2<ThemeProvider, FontSizeProvider>(
+      builder: (context, themeProvider, fontSizeProvider, _) {
+        return Card(
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.profilePage_theme,
+                  style: TextStyle(
+                    fontSize: fontSizeProvider.getScaledFontSize(18),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildThemeOption(
+                        context,
+                        themeProvider,
+                        fontSizeProvider,
+                        ThemeMode.light,
+                        AppLocalizations.of(context)!.profilePage_lightMode,
+                        Icons.light_mode,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildThemeOption(
+                        context,
+                        themeProvider,
+                        fontSizeProvider,
+                        ThemeMode.dark,
+                        AppLocalizations.of(context)!.profilePage_darkMode,
+                        Icons.dark_mode,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _buildThemeOption(
+                        context,
+                        themeProvider,
+                        fontSizeProvider,
+                        ThemeMode.system,
+                        AppLocalizations.of(context)!.profilePage_systemMode,
+                        Icons.brightness_auto,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildThemeOption(
+    BuildContext context,
+    ThemeProvider themeProvider,
+    FontSizeProvider fontSizeProvider,
+    ThemeMode mode,
+    String label,
+    IconData icon,
+  ) {
+    final isSelected = themeProvider.themeMode == mode;
+
+    return InkWell(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        themeProvider.setThemeMode(mode);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.profilePage_themeChanged(label)),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.transparent,
+          border: Border.all(
+            color: isSelected ? Colors.blue : Colors.grey.shade300,
+            width: isSelected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 24,
+              color: isSelected ? Colors.blue : Colors.grey.shade600,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: fontSizeProvider.getScaledFontSize(12),
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? Colors.blue : Colors.grey.shade700,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

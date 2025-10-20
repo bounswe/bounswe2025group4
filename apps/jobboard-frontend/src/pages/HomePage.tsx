@@ -18,28 +18,8 @@ import {
   Heart,
   Globe,
 } from "lucide-react";
-import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-
 export default function HomePage() {
   const isMediumOrLarger = useMediaQuery('(min-width: 768px)');
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-
-  useEffect(() => {
-    const token = searchParams.get('token');
-    
-    // Check if this is a password reset link (has /api/auth prefix issue)
-    // Password reset links may come with token parameter too, but from different context
-    // For now, assume token parameter is for email verification
-    // Backend should send proper reset-password URL
-    
-    if (token) {
-      // Could be email verification or password reset
-      // Try to detect based on URL structure or add separate parameter
-      navigate(`/verify-email?token=${token}`, { replace: true });
-    }
-  }, [searchParams, navigate]);
 
   return (
     <div className="min-h-screen">

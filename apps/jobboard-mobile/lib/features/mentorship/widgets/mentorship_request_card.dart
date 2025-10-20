@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mobile/core/models/mentorship_request.dart';
 import '../../../core/widgets/a11y.dart';
 
@@ -59,10 +60,19 @@ class MentorshipRequestCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                TextButton(onPressed: onReject, child: const Text('Reject')),
+                TextButton(
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    onReject();
+                  },
+                  child: const Text('Reject'),
+                ),
                 const SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: onAccept,
+                  onPressed: () {
+                    HapticFeedback.mediumImpact();
+                    onAccept();
+                  },
                   child: const Text('Accept'),
                 ),
               ],
