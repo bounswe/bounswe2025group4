@@ -5,6 +5,9 @@ import 'package:mobile/core/models/mentorship_request.dart';
 import '../providers/mentor_provider.dart';
 import '../widgets/mentee_card.dart';
 import '../widgets/mentorship_request_card.dart';
+import 'package:mobile/core/models/mentor_profile.dart';
+import 'package:mobile/core/models/user.dart';
+import 'package:mobile/core/models/user_type.dart';
 import '../../../generated/l10n/app_localizations.dart';
 
 class MentorMentorshipScreen extends StatefulWidget {
@@ -37,6 +40,93 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
     _capacityController.dispose();
     super.dispose();
   }
+
+  final mockRequests = [
+    MentorshipRequest(
+      id: 1,
+      mentee: User(
+        id: "156",
+        username: "alice",
+        firstName: "Alice",
+        lastName: "Johnson",
+        role: UserType.ROLE_JOBSEEKER,
+        jobTitle: "Junior Developer",
+        company: "TechCorp",
+        email: "alice@nutritionai.com",
+      ),
+      mentor: User(
+        id: "1234",
+        username: "abcd",
+        firstName: "Jack",
+        lastName: "Deniz",
+        role: UserType.ROLE_JOBSEEKER,
+        jobTitle: "Junior Developer",
+        company: "Meta",
+        email: "jack@meta.com",
+      ),
+
+      status: MentorshipRequestStatus.PENDING,
+      message: "I’d love mentorship on mobile app development!",
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+    ),
+
+    MentorshipRequest(
+      id: 2,
+      mentee: User(
+        id: "123",
+        username: "mehmet-yilmaz",
+        firstName: "Mehmet",
+        lastName: "Yilmaz",
+        role: UserType.ROLE_JOBSEEKER,
+        jobTitle: "CS Student",
+        company: "TechCorp",
+        email: "alice@techcorp.com",
+      ),
+      mentor: User(
+        id: "1234",
+        username: "abcd",
+        firstName: "Jack",
+        lastName: "Deniz",
+        role: UserType.ROLE_JOBSEEKER,
+        jobTitle: "Junior Developer",
+        company: "Meta",
+        email: "jack@meta.com",
+      ),
+
+      status: MentorshipRequestStatus.ACCEPTED,
+      message: "Hi! I'm a successful student who would love your mentorship on software engineering!",
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+    ),
+
+    MentorshipRequest(
+      id: 3,
+      mentee: User(
+        id: "123",
+        username: "yann-lecun",
+        firstName: "Yann",
+        lastName: "LeCun",
+        role: UserType.ROLE_EMPLOYER,
+        jobTitle: "Researcher",
+        company: "Meta",
+        email: "yannle@meta.com",
+      ),
+      mentor: User(
+        id: "1234",
+        username: "abcd",
+        firstName: "Jack",
+        lastName: "Deniz",
+        role: UserType.ROLE_JOBSEEKER,
+        jobTitle: "Junior Developer",
+        company: "Meta",
+        email: "jack@meta.com",
+      ),
+
+      status: MentorshipRequestStatus.ACCEPTED,
+      message: "Hi! I'm a senior researcher at Meta, and I love your mentorship!",
+      createdAt: DateTime.now().subtract(const Duration(days: 1)),
+    ),
+
+  ];
 
   Future<void> _loadData() async {
     if (!mounted) return;
@@ -212,7 +302,7 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                         children: [
                           Text(
                             AppLocalizations.of(context)!.mentorScreen_currentCapacity(
-                              mentorProvider.currentUserMentorProfile?.capacity ?? 0
+                              mentorProvider.currentUserMentorProfile?.capacity ?? 10
                             ),
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
@@ -229,7 +319,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                     ),
                     Expanded(
                       child:
-                          mentorProvider.mentorRequests
+                          //mentorProvider.mentorRequests
+                          mockRequests
                                   .where(
                                     (r) =>
                                         r.status ==
@@ -267,7 +358,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                               )
                               : ListView.builder(
                                 itemCount:
-                                    mentorProvider.mentorRequests
+                                    //mentorProvider.mentorRequests
+                                    mockRequests
                                         .where(
                                           (r) =>
                                               r.status ==
@@ -276,7 +368,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                         .length,
                                 itemBuilder: (context, index) {
                                   final request =
-                                      mentorProvider.mentorRequests
+                                      //mentorProvider.mentorRequests
+                                      mockRequests
                                           .where(
                                             (r) =>
                                                 r.status ==
@@ -321,7 +414,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
               RefreshIndicator(
                 onRefresh: refresh,
                 child:
-                    mentorProvider.mentorRequests
+                    //mentorProvider.mentorRequests
+                    mockRequests
                             .where(
                               (r) =>
                                   r.status == MentorshipRequestStatus.PENDING,
@@ -357,7 +451,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                         )
                         : ListView.builder(
                           itemCount:
-                              mentorProvider.mentorRequests
+                              //mentorProvider.mentorRequests
+                              mockRequests
                                   .where(
                                     (r) =>
                                         r.status ==
@@ -366,7 +461,7 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                   .length,
                           itemBuilder: (context, index) {
                             final request =
-                                mentorProvider.mentorRequests
+                                mockRequests//mentorProvider.mentorRequests
                                     .where(
                                       (r) =>
                                           r.status ==

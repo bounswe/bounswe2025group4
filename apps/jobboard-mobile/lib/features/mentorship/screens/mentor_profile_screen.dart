@@ -5,6 +5,8 @@ import 'package:mobile/core/models/mentor_profile.dart';
 import 'package:mobile/core/models/mentor_review.dart';
 import 'package:mobile/core/services/api_service.dart';
 import 'package:mobile/core/providers/quote_provider.dart';
+import 'package:mobile/core/models/user.dart';
+import 'package:mobile/core/models/user_type.dart';
 import '../../../generated/l10n/app_localizations.dart';
 
 class MentorProfileScreen extends StatefulWidget {
@@ -53,16 +55,88 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final profile = await apiService.getMentorProfile(
-        int.parse(widget.userId),
+      final profile = MentorProfile(
+        id: widget.mentorId, // <- use named args + widget.*
+        user: User(
+          id: "101",
+          username: widget.mentorName,
+          email: "alice.johnson@openai.com",
+          role: UserType.ROLE_EMPLOYER,
+          firstName: widget.mentorName,
+          lastName: "",
+          jobTitle: "Machine Learning Engineer",
+          company: "OpenAI",
+        ),
+        capacity: 15,
+        currentMenteeCount: 10,
+        averageRating: 4.8,
+        reviewCount: 5,
+        isAvailable: true,
       );
-      final reviews = await apiService.getMentorReviews(
-        int.parse(widget.userId),
-      );
+      //await apiService.getMentorProfile(
+        //int.parse(widget.userId),
+      //);
+      final reviews = null;
+      //await apiService.getMentorReviews(
+      //  int.parse(widget.userId),
+      //);
 
       setState(() {
         _mentorProfile = profile;
-        _reviews = reviews;
+        _reviews = [
+          MentorReview(
+            id: 1,
+            mentor: User(
+              id: "101",
+              username: widget.mentorName,
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: widget.mentorName,
+              lastName: "",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            mentee: User(
+              id: "110",
+              username: "jacob_gun",
+              email: "jacob.gun@gmail.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Jacob",
+              lastName: "Gun",
+              jobTitle: "Student",
+              company: "Harvard University",
+            ),
+            rating: 4,
+            comment: "Great mentor! Really helped me with my project.",
+            createdAt: DateTime.now(),
+          ),
+          MentorReview(
+            id: 2,
+            mentor: User(
+              id: "101",
+              username: widget.mentorName,
+              email: "alice.johnson@openai.com",
+              role: UserType.ROLE_EMPLOYER,
+              firstName: widget.mentorName,
+              lastName: "",
+              jobTitle: "Machine Learning Engineer",
+              company: "OpenAI",
+            ),
+            mentee: User(
+              id: "119",
+              username: "cool_guy",
+              email: "henryk_laurent@gmail.com",
+              role: UserType.ROLE_JOBSEEKER,
+              firstName: "Henryk",
+              lastName: "Laurent",
+              jobTitle: "Software Engineering Intern",
+              company: "Dream Corp",
+            ),
+            rating: 5,
+            comment: "I'm so satisfied with your mentorship! You are the best mentor!",
+            createdAt: DateTime.now(),
+          )
+        ]; //reviews
         _isLoading = false;
       });
     } catch (e) {
