@@ -1430,9 +1430,9 @@
   },
 
   "@@_PROFILE": {},
-  "editProfile_tapToChange": "Tap to change",
-  "@editProfile_tapToChange": {
-    "description": "Tooltip for profile picture tap to change"
+  "editProfile_title": "Edit Profile",
+  "@editProfile_title": {
+    "description": "Edit profile page title"
   },
   "editProfile_saveChanges": "Save changes",
   "@editProfile_saveChanges": {

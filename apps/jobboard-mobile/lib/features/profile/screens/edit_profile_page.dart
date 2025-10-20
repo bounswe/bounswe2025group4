@@ -137,15 +137,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           isEditable: true,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Tap to change',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
                     ],
                   ),
                   const SizedBox(width: 16),

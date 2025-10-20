@@ -1152,7 +1152,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get editProfile_title => 'Edit';
+  String get editProfile_title => 'Edit Profile';
 
   @override
   String get editProfile_saveChanges => 'Save changes';

@@ -2116,10 +2116,10 @@ abstract class AppLocalizations {
   /// **'{count} reviews'**
   String workplaces_reviews(int count);
 
-  /// Edit profile screen title
+  /// Edit profile page title
   ///
   /// In en, this message translates to:
-  /// **'Edit'**
+  /// **'Edit Profile'**
   String get editProfile_title;
 
   /// Save changes tooltip
