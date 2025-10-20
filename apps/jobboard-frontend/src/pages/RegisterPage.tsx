@@ -11,13 +11,11 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
   ? import.meta.env.VITE_API_URL 
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
-console.log('RegisterPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('RegisterPage - API_BASE_URL:', API_BASE_URL);
-
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [registrationComplete, setRegistrationComplete] = useState(false);
 
   const {
     register,
@@ -68,6 +66,7 @@ export default function RegisterPage() {
         setSuccessMessage(
           'Registration successful! Please check your email to verify your account before logging in.'
         );
+        setRegistrationComplete(true);
         // Don't auto-redirect, let user verify email first
       }
     } catch (error: any) {
@@ -92,13 +91,34 @@ export default function RegisterPage() {
     <div className="container mx-auto flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold">Create an Account</CardTitle>
+          <CardTitle className="text-3xl font-bold">
+            {registrationComplete ? 'Check Your Email' : 'Create an Account'}
+          </CardTitle>
           <CardDescription>
-            Sign up to access the job board platform
+            {registrationComplete 
+              ? 'We\'ve sent you a verification link' 
+              : 'Sign up to access the job board platform'}
           </CardDescription>
         </CardHeader>
         
         <CardContent>
+          {registrationComplete ? (
+            <div className="space-y-4 text-center py-4">
+              <div className="rounded-md bg-green-50 p-4 text-sm text-green-800 dark:bg-green-900/20 dark:text-green-400" role="alert">
+                {successMessage}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Didn't receive the email? Check your spam folder or{' '}
+                <button
+                  onClick={() => setRegistrationComplete(false)}
+                  className="text-primary hover:underline font-medium"
+                  type="button"
+                >
+                  try again
+                </button>
+              </p>
+            </div>
+          ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Username */}
           <div className="space-y-2">
@@ -341,6 +361,7 @@ export default function RegisterPage() {
             </Link>
           </p>
           </form>
+          )}
         </CardContent>
       </Card>
     </div>
