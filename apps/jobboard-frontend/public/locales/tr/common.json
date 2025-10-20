@@ -307,5 +307,268 @@
         "generic": "OTP doğrulaması başarısız oldu. Lütfen tekrar deneyin."
       }
     }
+  },
+  "profile": {
+    "tabs": {
+      "about": "Hakkında",
+      "activity": "Aktivite",
+      "posts": "Gönderiler"
+    },
+    "page": {
+      "loadErrorTitle": "Profil yüklenemedi",
+      "emptyTitle": "Profil bulunamadı",
+      "emptyDescription": "Devam etmek için lütfen profilinizi oluşturun",
+      "dangerZone": {
+        "title": "Hesap Verilerini Silme",
+        "description": "Tüm profil verilerinizi kalıcı olarak silin (GDPR/KVKK uyumlu). Bu işlem geri alınamaz.",
+        "button": "Tüm Verileri Sil"
+      },
+      "alerts": {
+        "deleteFailed": "Profil verileri silinemedi. Lütfen tekrar deneyin."
+      }
+    },
+    "header": {
+      "openToOpportunities": "Fırsatlara açık",
+      "currentRole": "{{company}} bünyesinde {{position}}",
+      "joined": "{{year}} yılında katıldı",
+      "stats": {
+        "posts": "Gönderi",
+        "badges": "Rozet"
+      },
+      "actions": {
+        "editImage": "Profil fotoğrafını düzenle"
+      }
+    },
+    "actions": {
+      "add": "Ekle",
+      "cancel": "İptal",
+      "saveChanges": "Değişiklikleri Kaydet",
+      "continue": "Devam Et",
+      "back": "Geri"
+    },
+    "common": {
+      "present": "Devam ediyor"
+    },
+    "about": {
+      "title": "Hakkında",
+      "addBio": "Biyografi ekle",
+      "modal": {
+        "title": "Hakkında'yı Düzenle",
+        "bioLabel": "Biyografi",
+        "placeholder": "Kendinizden bahsedin...",
+        "characterCount": "{{count}} / 1000 karakter"
+      }
+    },
+    "experience": {
+      "title": "Deneyim",
+      "empty": "Deneyim ekle",
+      "modal": {
+        "addTitle": "Deneyim Ekle",
+        "editTitle": "Deneyimi Düzenle",
+        "fields": {
+          "company": {
+            "label": "Şirket",
+            "placeholder": "Şirket adı"
+          },
+          "position": {
+            "label": "Pozisyon",
+            "placeholder": "İş unvanı"
+          },
+          "startDate": {
+            "label": "Başlangıç Tarihi"
+          },
+          "endDate": {
+            "label": "Bitiş Tarihi"
+          },
+          "current": {
+            "label": "Şu anda burada çalışıyorum"
+          },
+          "description": {
+            "label": "Açıklama",
+            "placeholder": "Rolünüzü ve başarılarınızı açıklayın..."
+          }
+        },
+        "submitAdd": "Deneyim Ekle",
+        "submitEdit": "Değişiklikleri Kaydet"
+      }
+    },
+    "education": {
+      "title": "Eğitim",
+      "empty": "Eğitim ekle",
+      "modal": {
+        "addTitle": "Eğitim Ekle",
+        "editTitle": "Eğitimi Düzenle",
+        "fields": {
+          "school": {
+            "label": "Okul",
+            "placeholder": "Okul adı"
+          },
+          "degree": {
+            "label": "Derece",
+            "placeholder": "örn. Fen Bilimleri Lisans"
+          },
+          "field": {
+            "label": "Çalışma Alanı",
+            "placeholder": "örn. Bilgisayar Bilimleri"
+          },
+          "startDate": {
+            "label": "Başlangıç Tarihi"
+          },
+          "endDate": {
+            "label": "Bitiş Tarihi"
+          },
+          "current": {
+            "label": "Şu anda burada öğrenim görüyorum"
+          },
+          "description": {
+            "label": "Açıklama",
+            "placeholder": "Aktiviteler, başarılar, dersler..."
+          }
+        },
+        "submitAdd": "Eğitim Ekle",
+        "submitEdit": "Değişiklikleri Kaydet"
+      }
+    },
+    "skills": {
+      "title": "Yetenekler",
+      "empty": "Yetenek ekle",
+      "modal": {
+        "addTitle": "Yetenek Ekle",
+        "editTitle": "Yetenek Düzenle",
+        "fields": {
+          "name": {
+            "label": "Yetenek Adı",
+            "placeholder": "örn. JavaScript, Proje Yönetimi"
+          }
+        },
+        "delete": "Yetenek Sil",
+        "submitAdd": "Yetenek Ekle",
+        "submitEdit": "Değişiklikleri Kaydet"
+      }
+    },
+    "interests": {
+      "title": "İlgi Alanları",
+      "empty": "İlgi alanı ekle",
+      "modal": {
+        "addTitle": "İlgi Alanı Ekle",
+        "editTitle": "İlgi Alanını Düzenle",
+        "fields": {
+          "name": {
+            "label": "İlgi Alanı",
+            "placeholder": "örn. Sürdürülebilir Tasarım, Açık Kaynak"
+          }
+        },
+        "helper": "Tutkulu olduğunuz konuları veya alanları ekleyin",
+        "delete": "İlgi Alanını Sil",
+        "submitAdd": "İlgi Alanı Ekle",
+        "submitEdit": "Değişiklikleri Kaydet"
+      }
+    },
+    "create": {
+      "title": "Profilinizi Oluşturun",
+      "description": "Hoş geldiniz! Başlamak için profesyonel profilinizi oluşturalım.",
+      "fields": {
+        "firstName": {
+          "label": "Ad",
+          "placeholder": "Adınızı girin"
+        },
+        "lastName": {
+          "label": "Soyad",
+          "placeholder": "Soyadınızı girin"
+        },
+        "bio": {
+          "label": "Biyografi (Opsiyonel)",
+          "placeholder": "Kendinizden bahsedin..."
+        }
+      },
+      "helper": "Kendinizi ve profesyonel geçmişinizi kısaca paylaşın",
+      "submit": "Profili Oluştur"
+    },
+    "imageModal": {
+      "title": "Profil Fotoğrafı",
+      "current": "Mevcut profil fotoğrafı",
+      "preview": "Önizleme",
+      "uploadTitle": "Fotoğraf yükleyin",
+      "uploadDescription": "Sürükleyip bırakın veya göz atmak için tıklayın",
+      "chooseFile": "Dosya Seç",
+      "fileTypes": "PNG, JPG en fazla 10MB",
+      "removePhoto": "Fotoğrafı Kaldır",
+      "upload": "Fotoğraf Yükle",
+      "uploading": "Yükleniyor..."
+    },
+    "deleteModal": {
+      "title": "Hesap Verilerini Sil",
+      "warningTitle": "Uyarı: Bu işlem geri alınamaz",
+      "warningDescription": "Bu işlem tüm profil verilerinizi kalıcı olarak silecek.",
+      "summaryTitle": "Kalıcı olarak silinecek veriler:",
+      "items": {
+        "profilePicture": "Profil fotoğrafı",
+        "bio": "Biyografi ve kişisel bilgiler",
+        "experiences": "İş deneyimleri",
+        "education": "Eğitim geçmişi",
+        "skills": "Yetenekler ve ilgi alanları"
+      },
+      "compliance": "Bu işlem GDPR/KVKK veri koruma düzenlemeleriyle uyumludur.",
+      "buttons": {
+        "cancel": "İptal",
+        "continue": "Devam Et",
+        "back": "Geri",
+        "delete": "Tüm Verileri Sil",
+        "deleting": "Siliniyor..."
+      },
+      "confirmKeyword": "SİL",
+      "confirmPrompt": "Silme işlemini onaylamak için lütfen <code>{{keyword}}</code> ifadesini aşağıya yazın:",
+      "confirmationLabel": "Onay",
+      "confirmationPlaceholder": "Onaylamak için {{keyword}} yazın"
+    },
+    "activity": {
+      "items": [
+        {
+          "type": "application",
+          "text": "Innovation Labs'ta Kıdemli Ürün Tasarımcısı pozisyonuna başvurdu",
+          "date": "2 gün önce"
+        },
+        {
+          "type": "forum",
+          "text": "Forumda şu konuda bir başlık açtı: \"Tasarımda erişilebilirlik için en iyi uygulamalar\"",
+          "date": "5 gün önce"
+        },
+        {
+          "type": "comment",
+          "text": "\"Tasarımcılar için uzaktan çalışma stratejileri\" gönderisine yorum yaptı",
+          "date": "1 hafta önce"
+        },
+        {
+          "type": "like",
+          "text": "\"Tasarım sistemi uygulaması\" konusundaki bir yorumu beğendi",
+          "date": "1 hafta önce"
+        },
+        {
+          "type": "application",
+          "text": "Creative Studio'da UX Tasarımcısı pozisyonuna başvurdu",
+          "date": "2 hafta önce"
+        }
+      ]
+    },
+    "posts": {
+      "replyLabel": "{{value}} yanıt",
+      "repliesLabel": "{{value}} yanıt",
+      "likeLabel": "{{value}} beğeni",
+      "likesLabel": "{{value}} beğeni",
+      "items": [
+        {
+          "title": "Kullanıcı araştırması teknikleri nasıl geliştirilebilir",
+          "date": "3 gün önce"
+        },
+        {
+          "title": "Ürün tasarımına uzanan yolculuğum",
+          "date": "1 hafta önce"
+        },
+        {
+          "title": "Bir tasarımcı olarak günlük kullandığım araçlar",
+          "date": "2 hafta önce"
+        }
+      ]
+    }
   }
 }

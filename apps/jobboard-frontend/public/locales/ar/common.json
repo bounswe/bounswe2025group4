@@ -307,5 +307,268 @@
         "generic": "فشل التحقق من OTP. يرجى المحاولة لاحقًا."
       }
     }
+  },
+  "profile": {
+    "tabs": {
+      "about": "نبذة",
+      "activity": "النشاط",
+      "posts": "المنشورات"
+    },
+    "page": {
+      "loadErrorTitle": "تعذّر تحميل الملف الشخصي",
+      "emptyTitle": "لم يتم العثور على ملف شخصي",
+      "emptyDescription": "يرجى إنشاء ملفك الشخصي للمتابعة",
+      "dangerZone": {
+        "title": "حذف بيانات الحساب",
+        "description": "سيتم حذف جميع بيانات ملفك الشخصي نهائيًا (متوافق مع GDPR/KVKK). لا يمكن التراجع عن هذا الإجراء.",
+        "button": "حذف كل البيانات"
+      },
+      "alerts": {
+        "deleteFailed": "تعذّر حذف بيانات الملف الشخصي. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "header": {
+      "openToOpportunities": "متاح لفرص جديدة",
+      "currentRole": "{{position}} في {{company}}",
+      "joined": "انضم في {{year}}",
+      "stats": {
+        "posts": "منشورات",
+        "badges": "شارات"
+      },
+      "actions": {
+        "editImage": "تعديل صورة الملف الشخصي"
+      }
+    },
+    "actions": {
+      "add": "إضافة",
+      "cancel": "إلغاء",
+      "saveChanges": "حفظ التغييرات",
+      "continue": "متابعة",
+      "back": "رجوع"
+    },
+    "common": {
+      "present": "حتى الآن"
+    },
+    "about": {
+      "title": "نبذة",
+      "addBio": "أضف سيرة ذاتية",
+      "modal": {
+        "title": "تعديل النبذة",
+        "bioLabel": "السيرة الذاتية",
+        "placeholder": "حدّثنا عن نفسك...",
+        "characterCount": "{{count}} / 1000 حرف"
+      }
+    },
+    "experience": {
+      "title": "الخبرات",
+      "empty": "أضف خبرة",
+      "modal": {
+        "addTitle": "إضافة خبرة",
+        "editTitle": "تعديل الخبرة",
+        "fields": {
+          "company": {
+            "label": "الشركة",
+            "placeholder": "اسم الشركة"
+          },
+          "position": {
+            "label": "المسمّى الوظيفي",
+            "placeholder": "عنوان الوظيفة"
+          },
+          "startDate": {
+            "label": "تاريخ البدء"
+          },
+          "endDate": {
+            "label": "تاريخ الانتهاء"
+          },
+          "current": {
+            "label": "أعمل هنا حاليًا"
+          },
+          "description": {
+            "label": "الوصف",
+            "placeholder": "صف دورك وإنجازاتك..."
+          }
+        },
+        "submitAdd": "إضافة خبرة",
+        "submitEdit": "حفظ التغييرات"
+      }
+    },
+    "education": {
+      "title": "التعليم",
+      "empty": "أضف تعليماً",
+      "modal": {
+        "addTitle": "إضافة تعليم",
+        "editTitle": "تعديل التعليم",
+        "fields": {
+          "school": {
+            "label": "المؤسسة التعليمية",
+            "placeholder": "اسم المؤسسة التعليمية"
+          },
+          "degree": {
+            "label": "الدرجة العلمية",
+            "placeholder": "مثال: بكالوريوس علوم"
+          },
+          "field": {
+            "label": "مجال الدراسة",
+            "placeholder": "مثال: علوم الحاسوب"
+          },
+          "startDate": {
+            "label": "تاريخ البدء"
+          },
+          "endDate": {
+            "label": "تاريخ الانتهاء"
+          },
+          "current": {
+            "label": "أدرس هنا حاليًا"
+          },
+          "description": {
+            "label": "الوصف",
+            "placeholder": "الأنشطة، الإنجازات، الدورات..."
+          }
+        },
+        "submitAdd": "إضافة تعليم",
+        "submitEdit": "حفظ التغييرات"
+      }
+    },
+    "skills": {
+      "title": "المهارات",
+      "empty": "أضف مهارات",
+      "modal": {
+        "addTitle": "إضافة مهارة",
+        "editTitle": "تعديل المهارة",
+        "fields": {
+          "name": {
+            "label": "اسم المهارة",
+            "placeholder": "مثال: JavaScript، إدارة المشاريع"
+          }
+        },
+        "delete": "حذف المهارة",
+        "submitAdd": "إضافة مهارة",
+        "submitEdit": "حفظ التغييرات"
+      }
+    },
+    "interests": {
+      "title": "الاهتمامات",
+      "empty": "أضف اهتمامات",
+      "modal": {
+        "addTitle": "إضافة اهتمام",
+        "editTitle": "تعديل الاهتمام",
+        "fields": {
+          "name": {
+            "label": "الاهتمام",
+            "placeholder": "مثال: التصميم المستدام، المصادر المفتوحة"
+          }
+        },
+        "helper": "أضف الموضوعات أو المجالات التي تتحمس لها",
+        "delete": "حذف الاهتمام",
+        "submitAdd": "إضافة اهتمام",
+        "submitEdit": "حفظ التغييرات"
+      }
+    },
+    "create": {
+      "title": "أنشئ ملفك الشخصي",
+      "description": "مرحبًا! دعنا ننشئ ملفك المهني للبدء.",
+      "fields": {
+        "firstName": {
+          "label": "الاسم الأول",
+          "placeholder": "أدخل اسمك الأول"
+        },
+        "lastName": {
+          "label": "اسم العائلة",
+          "placeholder": "أدخل اسم العائلة"
+        },
+        "bio": {
+          "label": "السيرة الذاتية (اختياري)",
+          "placeholder": "حدّثنا عن نفسك..."
+        }
+      },
+      "helper": "شارك وصفًا مختصرًا عن نفسك وخلفيتك المهنية",
+      "submit": "إنشاء الملف الشخصي"
+    },
+    "imageModal": {
+      "title": "صورة الملف الشخصي",
+      "current": "الصورة الحالية للملف الشخصي",
+      "preview": "معاينة",
+      "uploadTitle": "حمّل صورة",
+      "uploadDescription": "اسحب وأفلت أو انقر للاستعراض",
+      "chooseFile": "اختر ملفًا",
+      "fileTypes": "PNG, JPG حتى 10 ميجابايت",
+      "removePhoto": "إزالة الصورة",
+      "upload": "رفع الصورة",
+      "uploading": "جارٍ الرفع..."
+    },
+    "deleteModal": {
+      "title": "حذف بيانات الحساب",
+      "warningTitle": "تحذير: هذا الإجراء لا يمكن التراجع عنه",
+      "warningDescription": "سيتم حذف جميع بيانات ملفك الشخصي نهائيًا.",
+      "summaryTitle": "سيتم حذف البيانات التالية نهائيًا:",
+      "items": {
+        "profilePicture": "صورة الملف الشخصي",
+        "bio": "السيرة الذاتية والمعلومات الشخصية",
+        "experiences": "الخبرات العملية",
+        "education": "السجل التعليمي",
+        "skills": "المهارات والاهتمامات"
+      },
+      "compliance": "يتم هذا الإجراء بما يتوافق مع لوائح حماية البيانات GDPR/KVKK.",
+      "buttons": {
+        "cancel": "إلغاء",
+        "continue": "متابعة",
+        "back": "رجوع",
+        "delete": "حذف كل البيانات",
+        "deleting": "جارٍ الحذف..."
+      },
+      "confirmKeyword": "حذف",
+      "confirmPrompt": "لتأكيد الحذف، يرجى كتابة <code>{{keyword}}</code> في الحقل أدناه:",
+      "confirmationLabel": "التأكيد",
+      "confirmationPlaceholder": "اكتب {{keyword}} للتأكيد"
+    },
+    "activity": {
+      "items": [
+        {
+          "type": "application",
+          "text": "تقدّم لوظيفة مصمم منتجات أول في Innovation Labs",
+          "date": "منذ يومين"
+        },
+        {
+          "type": "forum",
+          "text": "نشر موضوعًا في المنتدى بعنوان: \"أفضل الممارسات لتحقيق إمكانية الوصول في التصميم\"",
+          "date": "منذ 5 أيام"
+        },
+        {
+          "type": "comment",
+          "text": "علّق على \"استراتيجيات العمل عن بعد للمصممين\"",
+          "date": "منذ أسبوع"
+        },
+        {
+          "type": "like",
+          "text": "أُعجب بتعليق حول \"تنفيذ نظام التصميم\"",
+          "date": "منذ أسبوع"
+        },
+        {
+          "type": "application",
+          "text": "تقدّم لوظيفة مصمم تجربة مستخدم في Creative Studio",
+          "date": "منذ أسبوعين"
+        }
+      ]
+    },
+    "posts": {
+      "replyLabel": "{{value}} رد",
+      "repliesLabel": "{{value}} ردود",
+      "likeLabel": "{{value}} إعجاب",
+      "likesLabel": "{{value}} إعجابات",
+      "items": [
+        {
+          "title": "كيفية تحسين تقنيات أبحاث المستخدمين",
+          "date": "منذ 3 أيام"
+        },
+        {
+          "title": "رحلتي في تصميم المنتجات",
+          "date": "منذ أسبوع"
+        },
+        {
+          "title": "الأدوات التي أستخدمها يوميًا كمصمم",
+          "date": "منذ أسبوعين"
+        }
+      ]
+    }
   }
 }

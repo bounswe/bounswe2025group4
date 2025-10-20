@@ -307,5 +307,268 @@
         "generic": "OTP verification failed. Please try again."
       }
     }
+  },
+  "profile": {
+    "tabs": {
+      "about": "About",
+      "activity": "Activity",
+      "posts": "Posts"
+    },
+    "page": {
+      "loadErrorTitle": "Failed to load profile",
+      "emptyTitle": "No profile found",
+      "emptyDescription": "Please create your profile to continue",
+      "dangerZone": {
+        "title": "Account Data Deletion",
+        "description": "Permanently delete all profile data (GDPR/KVKK compliant). This cannot be undone.",
+        "button": "Delete All Data"
+      },
+      "alerts": {
+        "deleteFailed": "Failed to delete profile data. Please try again."
+      }
+    },
+    "header": {
+      "openToOpportunities": "Open to opportunities",
+      "currentRole": "{{position}} at {{company}}",
+      "joined": "Joined in {{year}}",
+      "stats": {
+        "posts": "Posts",
+        "badges": "Badges"
+      },
+      "actions": {
+        "editImage": "Edit profile photo"
+      }
+    },
+    "actions": {
+      "add": "Add",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "continue": "Continue",
+      "back": "Back"
+    },
+    "common": {
+      "present": "Present"
+    },
+    "about": {
+      "title": "About",
+      "addBio": "Add bio",
+      "modal": {
+        "title": "Edit About",
+        "bioLabel": "Bio",
+        "placeholder": "Tell us about yourself...",
+        "characterCount": "{{count}} / 1000 characters"
+      }
+    },
+    "experience": {
+      "title": "Experience",
+      "empty": "Add experience",
+      "modal": {
+        "addTitle": "Add Experience",
+        "editTitle": "Edit Experience",
+        "fields": {
+          "company": {
+            "label": "Company",
+            "placeholder": "Company name"
+          },
+          "position": {
+            "label": "Position",
+            "placeholder": "Job title"
+          },
+          "startDate": {
+            "label": "Start Date"
+          },
+          "endDate": {
+            "label": "End Date"
+          },
+          "current": {
+            "label": "I currently work here"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Describe your role and achievements..."
+          }
+        },
+        "submitAdd": "Add Experience",
+        "submitEdit": "Save Changes"
+      }
+    },
+    "education": {
+      "title": "Education",
+      "empty": "Add education",
+      "modal": {
+        "addTitle": "Add Education",
+        "editTitle": "Edit Education",
+        "fields": {
+          "school": {
+            "label": "School",
+            "placeholder": "School name"
+          },
+          "degree": {
+            "label": "Degree",
+            "placeholder": "e.g., Bachelor of Science"
+          },
+          "field": {
+            "label": "Field of Study",
+            "placeholder": "e.g., Computer Science"
+          },
+          "startDate": {
+            "label": "Start Date"
+          },
+          "endDate": {
+            "label": "End Date"
+          },
+          "current": {
+            "label": "I currently study here"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Activities, achievements, coursework..."
+          }
+        },
+        "submitAdd": "Add Education",
+        "submitEdit": "Save Changes"
+      }
+    },
+    "skills": {
+      "title": "Skills",
+      "empty": "Add skills",
+      "modal": {
+        "addTitle": "Add Skill",
+        "editTitle": "Edit Skill",
+        "fields": {
+          "name": {
+            "label": "Skill Name",
+            "placeholder": "e.g., JavaScript, Project Management"
+          }
+        },
+        "delete": "Delete Skill",
+        "submitAdd": "Add Skill",
+        "submitEdit": "Save Changes"
+      }
+    },
+    "interests": {
+      "title": "Interests",
+      "empty": "Add interests",
+      "modal": {
+        "addTitle": "Add Interest",
+        "editTitle": "Edit Interest",
+        "fields": {
+          "name": {
+            "label": "Interest",
+            "placeholder": "e.g., Sustainable Design, Open Source"
+          }
+        },
+        "helper": "Add topics or areas you're passionate about",
+        "delete": "Delete Interest",
+        "submitAdd": "Add Interest",
+        "submitEdit": "Save Changes"
+      }
+    },
+    "create": {
+      "title": "Create Your Profile",
+      "description": "Welcome! Let's create your professional profile to get started.",
+      "fields": {
+        "firstName": {
+          "label": "First Name",
+          "placeholder": "Enter your first name"
+        },
+        "lastName": {
+          "label": "Last Name",
+          "placeholder": "Enter your last name"
+        },
+        "bio": {
+          "label": "Bio (Optional)",
+          "placeholder": "Tell us about yourself..."
+        }
+      },
+      "helper": "Share a brief description about yourself and your professional background",
+      "submit": "Create Profile"
+    },
+    "imageModal": {
+      "title": "Profile Picture",
+      "current": "Current profile picture",
+      "preview": "Preview",
+      "uploadTitle": "Upload a photo",
+      "uploadDescription": "Drag and drop or click to browse",
+      "chooseFile": "Choose File",
+      "fileTypes": "PNG, JPG up to 10MB",
+      "removePhoto": "Remove Photo",
+      "upload": "Upload Photo",
+      "uploading": "Uploading..."
+    },
+    "deleteModal": {
+      "title": "Delete Account Data",
+      "warningTitle": "Warning: This action cannot be undone",
+      "warningDescription": "This will permanently delete all your profile data.",
+      "summaryTitle": "The following data will be permanently deleted:",
+      "items": {
+        "profilePicture": "Profile picture",
+        "bio": "Bio and personal information",
+        "experiences": "Work experiences",
+        "education": "Education history",
+        "skills": "Skills and interests"
+      },
+      "compliance": "This action is performed in compliance with GDPR/KVKK data protection regulations.",
+      "buttons": {
+        "cancel": "Cancel",
+        "continue": "Continue",
+        "back": "Back",
+        "delete": "Delete All Data",
+        "deleting": "Deleting..."
+      },
+      "confirmKeyword": "DELETE",
+      "confirmPrompt": "To confirm deletion, please type <code>{{keyword}}</code> in the field below:",
+      "confirmationLabel": "Confirmation",
+      "confirmationPlaceholder": "Type {{keyword}} to confirm"
+    },
+    "activity": {
+      "items": [
+        {
+          "type": "application",
+          "text": "Applied to Senior Product Designer at Innovation Labs",
+          "date": "2 days ago"
+        },
+        {
+          "type": "forum",
+          "text": "Posted a thread on forum: 'Best practices for accessibility in design'",
+          "date": "5 days ago"
+        },
+        {
+          "type": "comment",
+          "text": "Made a comment on 'Remote work strategies for designers'",
+          "date": "1 week ago"
+        },
+        {
+          "type": "like",
+          "text": "Liked a comment on 'Design system implementation'",
+          "date": "1 week ago"
+        },
+        {
+          "type": "application",
+          "text": "Applied to UX Designer at Creative Studio",
+          "date": "2 weeks ago"
+        }
+      ]
+    },
+    "posts": {
+      "replyLabel": "{{value}} reply",
+      "repliesLabel": "{{value}} replies",
+      "likeLabel": "{{value}} like",
+      "likesLabel": "{{value}} likes",
+      "items": [
+        {
+          "title": "How to improve user research techniques",
+          "date": "3 days ago"
+        },
+        {
+          "title": "My journey into product design",
+          "date": "1 week ago"
+        },
+        {
+          "title": "Tools I use daily as a designer",
+          "date": "2 weeks ago"
+        }
+      ]
+    }
   }
 }
