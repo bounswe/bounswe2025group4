@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ExperienceItem } from './ExperienceItem';
+import { useTranslation } from 'react-i18next';
 
 interface Experience {
   id: number;
@@ -24,13 +25,15 @@ export function ExperienceSection({
   onEdit,
   onDelete,
 }: ExperienceSectionProps) {
+  const { t } = useTranslation('common');
+
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Experience</h2>
+        <h2 className="text-xl font-semibold">{t('profile.experience.title')}</h2>
         <Button size="sm" variant="ghost" className="gap-2" onClick={onAdd}>
           <Plus className="h-4 w-4" />
-          Add
+          {t('profile.actions.add')}
         </Button>
       </div>
       {experiences.length > 0 ? (
@@ -45,7 +48,7 @@ export function ExperienceSection({
           onClick={onAdd}
         >
           <Plus className="h-4 w-4" />
-          <span>Add experience</span>
+          <span>{t('profile.experience.empty')}</span>
         </div>
       )}
     </section>

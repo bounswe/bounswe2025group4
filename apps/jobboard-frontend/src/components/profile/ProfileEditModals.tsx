@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef, type JSX } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, Briefcase, GraduationCap, Award, Heart, Upload, Trash2, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useTranslation } from 'react-i18next';
 
 // Types
 interface ModalProps {
@@ -93,7 +94,7 @@ interface ImageUploadModalProps {
 }
 
 // Modal Base Component
-function Modal({ isOpen, onClose, title, children }: ModalProps): JSX.Element | null {
+function Modal({ isOpen, onClose, title, children }: ModalProps): React.JSX.Element | null {
   if (!isOpen) return null;
 
   return (
@@ -113,8 +114,9 @@ function Modal({ isOpen, onClose, title, children }: ModalProps): JSX.Element | 
 }
 
 // Edit Bio Modal
-export function EditBioModal({ isOpen, onClose, initialBio = '', onSave }: EditBioModalProps): JSX.Element {
+export function EditBioModal({ isOpen, onClose, initialBio = '', onSave }: EditBioModalProps): React.JSX.Element {
   const [bio, setBio] = useState<string>(initialBio);
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     if (isOpen) {
@@ -128,27 +130,29 @@ export function EditBioModal({ isOpen, onClose, initialBio = '', onSave }: EditB
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Edit About">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('profile.about.modal.title')}>
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2">Bio</label>
+          <label className="block text-sm font-medium mb-2">
+            {t('profile.about.modal.bioLabel')}
+          </label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={6}
             className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-            placeholder="Tell us about yourself..."
+            placeholder={t('profile.about.modal.placeholder')}
             maxLength={1000}
           />
           <p className="text-xs text-muted-foreground mt-2">
-            {bio.length} / 1000 characters
+            {t('profile.about.modal.characterCount', { count: bio.length })}
           </p>
         </div>
         <div className="flex justify-end gap-3 pt-4">
           <Button variant="outline" onClick={onClose}>
-            Cancel
+            {t('profile.actions.cancel')}
           </Button>
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button onClick={handleSave}>{t('profile.actions.saveChanges')}</Button>
         </div>
       </div>
     </Modal>
@@ -156,7 +160,7 @@ export function EditBioModal({ isOpen, onClose, initialBio = '', onSave }: EditB
 }
 
 // Experience Modal
-export function ExperienceModal({ isOpen, onClose, experience, onSave }: ExperienceModalProps): JSX.Element {
+export function ExperienceModal({ isOpen, onClose, experience, onSave }: ExperienceModalProps): React.JSX.Element {
   const [formData, setFormData] = useState<Experience & { current: boolean }>({
     company: '',
     position: '',
@@ -165,6 +169,7 @@ export function ExperienceModal({ isOpen, onClose, experience, onSave }: Experie
     endDate: '',
     current: false,
   });
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     if (isOpen) {
@@ -200,13 +205,14 @@ export function ExperienceModal({ isOpen, onClose, experience, onSave }: Experie
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={experience ? 'Edit Experience' : 'Add Experience'}
+      title={experience ? t('profile.experience.modal.editTitle') : t('profile.experience.modal.addTitle')}
     >
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
             <label className="block text-sm font-medium mb-2">
-              Company <span className="text-destructive">*</span>
+              {t('profile.experience.modal.fields.company.label')}{' '}
+              <span className="text-destructive">*</span>
             </label>
             <div className="relative">
               <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -215,27 +221,29 @@ export function ExperienceModal({ isOpen, onClose, experience, onSave }: Experie
                 value={formData.company}
                 onChange={(e) => handleChange('company', e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Company name"
+                placeholder={t('profile.experience.modal.fields.company.placeholder')}
               />
             </div>
           </div>
 
           <div className="col-span-2">
             <label className="block text-sm font-medium mb-2">
-              Position <span className="text-destructive">*</span>
+              {t('profile.experience.modal.fields.position.label')}{' '}
+              <span className="text-destructive">*</span>
             </label>
             <input
               type="text"
               value={formData.position}
               onChange={(e) => handleChange('position', e.target.value)}
               className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Job title"
+              placeholder={t('profile.experience.modal.fields.position.placeholder')}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Start Date <span className="text-destructive">*</span>
+              {t('profile.experience.modal.fields.startDate.label')}{' '}
+              <span className="text-destructive">*</span>
             </label>
             <input
               type="date"
@@ -246,7 +254,9 @@ export function ExperienceModal({ isOpen, onClose, experience, onSave }: Experie
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">End Date</label>
+            <label className="block text-sm font-medium mb-2">
+              {t('profile.experience.modal.fields.endDate.label')}
+            </label>
             <input
               type="date"
               value={formData.endDate}
@@ -267,28 +277,34 @@ export function ExperienceModal({ isOpen, onClose, experience, onSave }: Experie
                 }}
                 className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
               />
-              <span className="text-sm font-medium">I currently work here</span>
+              <span className="text-sm font-medium">
+                {t('profile.experience.modal.fields.current.label')}
+              </span>
             </label>
           </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-medium mb-2">Description</label>
+            <label className="block text-sm font-medium mb-2">
+              {t('profile.experience.modal.fields.description.label')}
+            </label>
             <textarea
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
               rows={4}
               className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-              placeholder="Describe your role and achievements..."
+              placeholder={t('profile.experience.modal.fields.description.placeholder')}
             />
           </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button variant="outline" onClick={onClose}>
-            Cancel
+            {t('profile.actions.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!isFormValid()}>
-            {experience ? 'Save Changes' : 'Add Experience'}
+            {experience
+              ? t('profile.experience.modal.submitEdit')
+              : t('profile.experience.modal.submitAdd')}
           </Button>
         </div>
       </div>
@@ -297,7 +313,7 @@ export function ExperienceModal({ isOpen, onClose, experience, onSave }: Experie
 }
 
 // Education Modal
-export function EducationModal({ isOpen, onClose, education, onSave }: EducationModalProps): JSX.Element {
+export function EducationModal({ isOpen, onClose, education, onSave }: EducationModalProps): React.JSX.Element {
   const [formData, setFormData] = useState<Education & { current: boolean }>({
     school: '',
     degree: '',
@@ -307,6 +323,7 @@ export function EducationModal({ isOpen, onClose, education, onSave }: Education
     description: '',
     current: false,
   });
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     if (isOpen) {
@@ -343,13 +360,14 @@ export function EducationModal({ isOpen, onClose, education, onSave }: Education
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={education ? 'Edit Education' : 'Add Education'}
+      title={education ? t('profile.education.modal.editTitle') : t('profile.education.modal.addTitle')}
     >
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
             <label className="block text-sm font-medium mb-2">
-              School <span className="text-destructive">*</span>
+              {t('profile.education.modal.fields.school.label')}{' '}
+              <span className="text-destructive">*</span>
             </label>
             <div className="relative">
               <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -358,40 +376,43 @@ export function EducationModal({ isOpen, onClose, education, onSave }: Education
                 value={formData.school}
                 onChange={(e) => handleChange('school', e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="School name"
+                placeholder={t('profile.education.modal.fields.school.placeholder')}
               />
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Degree <span className="text-destructive">*</span>
+              {t('profile.education.modal.fields.degree.label')}{' '}
+              <span className="text-destructive">*</span>
             </label>
             <input
               type="text"
               value={formData.degree}
               onChange={(e) => handleChange('degree', e.target.value)}
               className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="e.g., Bachelor of Science"
+              placeholder={t('profile.education.modal.fields.degree.placeholder')}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Field of Study <span className="text-destructive">*</span>
+              {t('profile.education.modal.fields.field.label')}{' '}
+              <span className="text-destructive">*</span>
             </label>
             <input
               type="text"
               value={formData.field}
               onChange={(e) => handleChange('field', e.target.value)}
               className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="e.g., Computer Science"
+              placeholder={t('profile.education.modal.fields.field.placeholder')}
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Start Date <span className="text-destructive">*</span>
+              {t('profile.education.modal.fields.startDate.label')}{' '}
+              <span className="text-destructive">*</span>
             </label>
             <input
               type="date"
@@ -402,7 +423,9 @@ export function EducationModal({ isOpen, onClose, education, onSave }: Education
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">End Date</label>
+            <label className="block text-sm font-medium mb-2">
+              {t('profile.education.modal.fields.endDate.label')}
+            </label>
             <input
               type="date"
               value={formData.endDate}
@@ -423,28 +446,34 @@ export function EducationModal({ isOpen, onClose, education, onSave }: Education
                 }}
                 className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
               />
-              <span className="text-sm font-medium">I currently study here</span>
+              <span className="text-sm font-medium">
+                {t('profile.education.modal.fields.current.label')}
+              </span>
             </label>
           </div>
 
           <div className="col-span-2">
-            <label className="block text-sm font-medium mb-2">Description</label>
+            <label className="block text-sm font-medium mb-2">
+              {t('profile.education.modal.fields.description.label')}
+            </label>
             <textarea
               value={formData.description}
               onChange={(e) => handleChange('description', e.target.value)}
               rows={3}
               className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-              placeholder="Activities, achievements, coursework..."
+              placeholder={t('profile.education.modal.fields.description.placeholder')}
             />
           </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button variant="outline" onClick={onClose}>
-            Cancel
+            {t('profile.actions.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!isFormValid()}>
-            {education ? 'Save Changes' : 'Add Education'}
+            {education
+              ? t('profile.education.modal.submitEdit')
+              : t('profile.education.modal.submitAdd')}
           </Button>
         </div>
       </div>
@@ -453,8 +482,9 @@ export function EducationModal({ isOpen, onClose, education, onSave }: Education
 }
 
 // Skill Modal
-export function SkillModal({ isOpen, onClose, skill, onSave, onDelete }: SkillModalProps): JSX.Element {
+export function SkillModal({ isOpen, onClose, skill, onSave, onDelete }: SkillModalProps): React.JSX.Element {
   const [name, setName] = useState<string>('');
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     if (isOpen) {
@@ -472,11 +502,16 @@ export function SkillModal({ isOpen, onClose, skill, onSave, onDelete }: SkillMo
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={skill ? 'Edit Skill' : 'Add Skill'}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={skill ? t('profile.skills.modal.editTitle') : t('profile.skills.modal.addTitle')}
+    >
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-2">
-            Skill Name <span className="text-destructive">*</span>
+            {t('profile.skills.modal.fields.name.label')}{' '}
+            <span className="text-destructive">*</span>
           </label>
           <div className="relative">
             <Award className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -485,7 +520,7 @@ export function SkillModal({ isOpen, onClose, skill, onSave, onDelete }: SkillMo
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="e.g., JavaScript, Project Management"
+              placeholder={t('profile.skills.modal.fields.name.placeholder')}
             />
           </div>
         </div>
@@ -502,16 +537,16 @@ export function SkillModal({ isOpen, onClose, skill, onSave, onDelete }: SkillMo
                 className="text-destructive hover:text-destructive"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete Skill
+                {t('profile.skills.modal.delete')}
               </Button>
             )}
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={onClose}>
-              Cancel
+              {t('profile.actions.cancel')}
             </Button>
             <Button onClick={handleSave} disabled={!name}>
-              {skill ? 'Save Changes' : 'Add Skill'}
+              {skill ? t('profile.skills.modal.submitEdit') : t('profile.skills.modal.submitAdd')}
             </Button>
           </div>
         </div>
@@ -521,8 +556,9 @@ export function SkillModal({ isOpen, onClose, skill, onSave, onDelete }: SkillMo
 }
 
 // Interest Modal
-export function InterestModal({ isOpen, onClose, interest, onSave, onDelete }: InterestModalProps): JSX.Element {
+export function InterestModal({ isOpen, onClose, interest, onSave, onDelete }: InterestModalProps): React.JSX.Element {
   const [name, setName] = useState<string>('');
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     if (isOpen) {
@@ -540,11 +576,16 @@ export function InterestModal({ isOpen, onClose, interest, onSave, onDelete }: I
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={interest ? 'Edit Interest' : 'Add Interest'}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={interest ? t('profile.interests.modal.editTitle') : t('profile.interests.modal.addTitle')}
+    >
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-2">
-            Interest <span className="text-destructive">*</span>
+            {t('profile.interests.modal.fields.name.label')}{' '}
+            <span className="text-destructive">*</span>
           </label>
           <div className="relative">
             <Heart className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -553,19 +594,19 @@ export function InterestModal({ isOpen, onClose, interest, onSave, onDelete }: I
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="e.g., Sustainable Design, Open Source"
+              placeholder={t('profile.interests.modal.fields.name.placeholder')}
             />
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Add topics or areas you're passionate about
+            {t('profile.interests.modal.helper')}
           </p>
         </div>
 
         <div className="flex justify-between pt-4 border-t">
           <div>
             {interest?.id && onDelete && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
                   onDelete(interest.id!);
                   onClose();
@@ -573,16 +614,16 @@ export function InterestModal({ isOpen, onClose, interest, onSave, onDelete }: I
                 className="text-destructive hover:text-destructive"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Delete Interest
+                {t('profile.interests.modal.delete')}
               </Button>
             )}
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={onClose}>
-              Cancel
+              {t('profile.actions.cancel')}
             </Button>
             <Button onClick={handleSave} disabled={!name}>
-              {interest ? 'Save Changes' : 'Add Interest'}
+              {interest ? t('profile.interests.modal.submitEdit') : t('profile.interests.modal.submitAdd')}
             </Button>
           </div>
         </div>
@@ -592,10 +633,11 @@ export function InterestModal({ isOpen, onClose, interest, onSave, onDelete }: I
 }
 
 // Create Profile Modal
-export function CreateProfileModal({ isOpen, onClose, onSave }: CreateProfileModalProps): JSX.Element {
+export function CreateProfileModal({ isOpen, onClose, onSave }: CreateProfileModalProps): React.JSX.Element {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [bio, setBio] = useState('');
+  const { t } = useTranslation('common');
 
   const handleSave = () => {
     if (firstName.trim() && lastName.trim()) {
@@ -616,57 +658,63 @@ export function CreateProfileModal({ isOpen, onClose, onSave }: CreateProfileMod
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Create Your Profile">
+    <Modal isOpen={isOpen} onClose={handleClose} title={t('profile.create.title')}>
       <div className="space-y-6">
         <div className="text-center">
           <p className="text-muted-foreground">
-            Welcome! Let's create your professional profile to get started.
+            {t('profile.create.description')}
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-2">First Name *</label>
+            <label className="block text-sm font-medium mb-2">
+              {t('profile.create.fields.firstName.label')} <span className="text-destructive">*</span>
+            </label>
             <input
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Enter your first name"
+              placeholder={t('profile.create.fields.firstName.placeholder')}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">Last Name *</label>
+            <label className="block text-sm font-medium mb-2">
+              {t('profile.create.fields.lastName.label')} <span className="text-destructive">*</span>
+            </label>
             <input
               type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Enter your last name"
+              placeholder={t('profile.create.fields.lastName.placeholder')}
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Bio (Optional)</label>
+          <label className="block text-sm font-medium mb-2">
+            {t('profile.create.fields.bio.label')}
+          </label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="Tell us about yourself..."
+            placeholder={t('profile.create.fields.bio.placeholder')}
             rows={4}
           />
           <p className="text-xs text-muted-foreground mt-2">
-            Share a brief description about yourself and your professional background
+            {t('profile.create.helper')}
           </p>
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button variant="outline" onClick={handleClose}>
-            Cancel
+            {t('profile.actions.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!firstName.trim() || !lastName.trim()}>
-            Create Profile
+            {t('profile.create.submit')}
           </Button>
         </div>
       </div>
@@ -682,10 +730,11 @@ export function ImageUploadModal({
   onUpload, 
   onDelete, 
   isUploading = false 
-}: ImageUploadModalProps): JSX.Element {
+}: ImageUploadModalProps): React.JSX.Element {
   const [dragActive, setDragActive] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     if (!isOpen) {
@@ -693,22 +742,22 @@ export function ImageUploadModal({
     }
   }, [isOpen]);
 
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
+  const handleDrag = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.type === 'dragenter' || event.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === 'dragleave') {
+    } else if (event.type === 'dragleave') {
       setDragActive(false);
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
     setDragActive(false);
 
-    const files = e.dataTransfer.files;
+    const files = event.dataTransfer.files;
     if (files?.[0]) {
       handleFileSelect(files[0]);
     }
@@ -724,8 +773,8 @@ export function ImageUploadModal({
     }
   };
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       handleFileSelect(file);
     }
@@ -746,18 +795,18 @@ export function ImageUploadModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Profile Picture">
+    <Modal isOpen={isOpen} onClose={handleClose} title={t('profile.imageModal.title')}>
       <div className="space-y-6">
         {/* Current Image */}
         {currentImageUrl && !previewUrl && (
           <div className="text-center">
             <Avatar className="h-32 w-32 mx-auto mb-4">
-              <AvatarImage src={currentImageUrl} alt="Current profile" />
+              <AvatarImage src={currentImageUrl} alt={t('profile.imageModal.current')} />
               <AvatarFallback>
                 <Camera className="h-8 w-8" />
               </AvatarFallback>
             </Avatar>
-            <p className="text-sm text-muted-foreground">Current profile picture</p>
+            <p className="text-sm text-muted-foreground">{t('profile.imageModal.current')}</p>
           </div>
         )}
 
@@ -765,12 +814,12 @@ export function ImageUploadModal({
         {previewUrl && (
           <div className="text-center">
             <Avatar className="h-32 w-32 mx-auto mb-4">
-              <AvatarImage src={previewUrl} alt="Preview" />
+              <AvatarImage src={previewUrl} alt={t('profile.imageModal.preview')} />
               <AvatarFallback>
                 <Camera className="h-8 w-8" />
               </AvatarFallback>
             </Avatar>
-            <p className="text-sm text-muted-foreground">Preview</p>
+            <p className="text-sm text-muted-foreground">{t('profile.imageModal.preview')}</p>
           </div>
         )}
 
@@ -785,16 +834,16 @@ export function ImageUploadModal({
           onDrop={handleDrop}
         >
           <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-lg font-medium mb-2">Upload a photo</p>
+          <p className="text-lg font-medium mb-2">{t('profile.imageModal.uploadTitle')}</p>
           <p className="text-sm text-muted-foreground mb-4">
-            Drag and drop or click to browse
+            {t('profile.imageModal.uploadDescription')}
           </p>
           <Button 
             variant="outline" 
             onClick={() => fileInputRef.current?.click()}
             disabled={isUploading}
           >
-            Choose File
+            {t('profile.imageModal.chooseFile')}
           </Button>
           <input
             ref={fileInputRef}
@@ -804,7 +853,7 @@ export function ImageUploadModal({
             className="hidden"
           />
           <p className="text-xs text-muted-foreground mt-2">
-            PNG, JPG up to 10MB
+            {t('profile.imageModal.fileTypes')}
           </p>
         </div>
 
@@ -819,19 +868,19 @@ export function ImageUploadModal({
                 className="text-destructive hover:text-destructive"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Remove Photo
+                {t('profile.imageModal.removePhoto')}
               </Button>
             )}
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={handleClose} disabled={isUploading}>
-              Cancel
+              {t('profile.actions.cancel')}
             </Button>
             <Button 
               onClick={handleUpload} 
               disabled={!previewUrl || isUploading}
             >
-              {isUploading ? 'Uploading...' : 'Upload Photo'}
+              {isUploading ? t('profile.imageModal.uploading') : t('profile.imageModal.upload')}
             </Button>
           </div>
         </div>

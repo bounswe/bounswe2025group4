@@ -1,6 +1,7 @@
 import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useTranslation } from 'react-i18next';
 
 interface Experience {
   id: number;
@@ -34,6 +35,14 @@ export function ProfileHeader({
 }: ProfileHeaderProps) {
   const joinYear = new Date(createdAt).getFullYear();
   const currentJob = experiences.find((exp) => !exp.endDate);
+  const { t } = useTranslation('common');
+  const currentRoleLabel = currentJob
+    ? t('profile.header.currentRole', {
+        position: currentJob.position,
+        company: currentJob.company,
+      })
+    : t('profile.header.openToOpportunities');
+  const joinedLabel = t('profile.header.joined', { year: joinYear });
 
   return (
     <div className="flex items-start gap-6 pb-6">
@@ -50,6 +59,7 @@ export function ProfileHeader({
           variant="secondary"
           className="absolute bottom-0 right-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
           onClick={onEditImage}
+          aria-label={t('profile.header.actions.editImage')}
         >
           <Pencil className="h-3 w-3" />
         </Button>
@@ -61,24 +71,22 @@ export function ProfileHeader({
             <h1 className="text-3xl font-bold">
               {firstName} {lastName}
             </h1>
-            <p className="text-muted-foreground mt-1">
-              {currentJob
-                ? `${currentJob.position} at ${currentJob.company}`
-                : 'Open to opportunities'}
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Joined in {joinYear}
-            </p>
+            <p className="text-muted-foreground mt-1">{currentRoleLabel}</p>
+            <p className="text-sm text-muted-foreground mt-1">{joinedLabel}</p>
           </div>
 
           <div className="flex gap-6 text-center">
             <div>
               <div className="text-2xl font-bold">{postsCount}</div>
-              <div className="text-sm text-muted-foreground">Posts</div>
+              <div className="text-sm text-muted-foreground">
+                {t('profile.header.stats.posts')}
+              </div>
             </div>
             <div>
               <div className="text-2xl font-bold">{badgesCount}</div>
-              <div className="text-sm text-muted-foreground">Badges</div>
+              <div className="text-sm text-muted-foreground">
+                {t('profile.header.stats.badges')}
+              </div>
             </div>
           </div>
         </div>

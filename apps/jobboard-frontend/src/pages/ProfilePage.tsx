@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
 import { AboutSection } from '@/components/profile/AboutSection';
 import { ExperienceSection } from '@/components/profile/ExperienceSection';
@@ -17,10 +18,17 @@ import {
   ImageUploadModal,
 } from '@/components/profile/ProfileEditModals';
 import { DeleteAccountModal } from '@/components/profile/DeleteAccountModal';
-import type { Profile, Activity, Post } from '@/types/profile.types';
+import type { Profile, Activity, Post, Experience, Education, Skill, Interest } from '@/types/profile.types';
 import { profileService } from '@/services/profile.service';
 import CenteredLoader from '@/components/CenteredLoader';
 import { useAuthStore } from '@/stores/authStore';
+
+type ModalKey = 'bio' | 'experience' | 'education' | 'skill' | 'interest';
+
+type ExperienceFormData = Omit<Experience, 'id'> & { id?: number; current?: boolean };
+type EducationFormData = Omit<Education, 'id'> & { id?: number; current?: boolean };
+type SkillFormData = Omit<Skill, 'id'> & { id?: number };
+type InterestFormData = Omit<Interest, 'id'> & { id?: number };
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'posts'>('about');
@@ -32,81 +40,55 @@ export default function ProfilePage() {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const { t } = useTranslation('common');
+  const loadErrorFallback = t('profile.page.loadErrorTitle');
 
-  // Mock data for activity and posts (since no API endpoints for these yet)
-  const mockActivity: Activity[] = [
-    {
-      id: 1,
-      type: 'application',
-      text: 'Applied to Senior Product Designer at Innovation Labs',
-      date: '2 days ago',
-    },
-    {
-      id: 2,
-      type: 'forum',
-      text: "Posted a thread on forum: 'Best practices for accessibility in design'",
-      date: '5 days ago',
-    },
-    {
-      id: 3,
-      type: 'comment',
-      text: "Made a comment on 'Remote work strategies for designers'",
-      date: '1 week ago',
-    },
-    {
-      id: 4,
-      type: 'like',
-      text: "Liked a comment on 'Design system implementation'",
-      date: '1 week ago',
-    },
-    {
-      id: 5,
-      type: 'application',
-      text: 'Applied to UX Designer at Creative Studio',
-      date: '2 weeks ago',
-    },
-  ];
+  const mockActivity: Activity[] = useMemo(() => {
+    const items = t('profile.activity.items', {
+      returnObjects: true,
+    }) as Array<Pick<Activity, 'type' | 'text' | 'date'>>;
 
-  const mockPosts: Post[] = [
-    {
-      id: 1,
-      title: 'How to improve user research techniques',
-      replies: 12,
-      likes: 45,
-      date: '3 days ago',
-    },
-    {
-      id: 2,
-      title: 'My journey into product design',
-      replies: 8,
-      likes: 32,
-      date: '1 week ago',
-    },
-    {
-      id: 3,
-      title: 'Tools I use daily as a designer',
-      replies: 24,
-      likes: 67,
-      date: '2 weeks ago',
-    },
-  ];
+    return items.map((item, index) => ({
+      id: index + 1,
+      ...item,
+    }));
+  }, [t]);
 
-  // Load profile data on component mount
+  const mockPosts: Post[] = useMemo(() => {
+    const items = t('profile.posts.items', {
+      returnObjects: true,
+    }) as Array<Pick<Post, 'title' | 'date'>>;
+
+    const defaults = [
+      { replies: 12, likes: 45 },
+      { replies: 8, likes: 32 },
+      { replies: 24, likes: 67 },
+    ];
+
+    return items.map((item, index) => ({
+      id: index + 1,
+      title: item.title,
+      date: item.date,
+      replies: defaults[index]?.replies ?? 0,
+      likes: defaults[index]?.likes ?? 0,
+    }));
+  }, [t]);
+
   useEffect(() => {
     const loadProfile = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         // Debug: Check auth state
         console.log('ProfilePage: Loading profile...');
         const authState = useAuthStore.getState();
         console.log('ProfilePage: Auth state:', {
           isAuthenticated: authState.isAuthenticated,
           hasToken: !!authState.accessToken,
-          user: authState.user
+          user: authState.user,
         });
-        
+
         const profileData = await profileService.getMyProfile();
         setProfile(profileData);
         console.log('ProfilePage: Profile loaded successfully');
@@ -115,21 +97,20 @@ export default function ProfilePage() {
         console.error('Error details:', {
           message: err instanceof Error ? err.message : 'Unknown error',
           response: (err as any)?.response?.data,
-          status: (err as any)?.response?.status
+          status: (err as any)?.response?.status,
         });
 
         // Check if it's a profile not found error
         const errorResponse = (err as any)?.response?.data;
-        const isProfileNotFound = 
-          (err as any)?.response?.status === 404 && 
-          errorResponse?.code === 'PROFILE_NOT_FOUND';
+        const isProfileNotFound =
+          (err as any)?.response?.status === 404 && errorResponse?.code === 'PROFILE_NOT_FOUND';
 
         if (isProfileNotFound) {
           console.log('ProfilePage: Profile not found, showing create modal');
           setShowCreateProfile(true);
           setError(null);
         } else {
-          setError(err instanceof Error ? err.message : 'Failed to load profile');
+          setError(err instanceof Error ? err.message : loadErrorFallback);
         }
       } finally {
         setLoading(false);
@@ -137,29 +118,48 @@ export default function ProfilePage() {
     };
 
     loadProfile();
-  }, []);
+  }, [loadErrorFallback]);
 
-  // Modal states
-  const [modals, setModals] = useState({
+  const [modals, setModals] = useState<Record<ModalKey, boolean>>({
     bio: false,
     experience: false,
     education: false,
     skill: false,
     interest: false,
   });
-  const [editingItem, setEditingItem] = useState<any>(null);
+  const [editingExperience, setEditingExperience] = useState<ExperienceFormData | null>(null);
+  const [editingEducation, setEditingEducation] = useState<EducationFormData | null>(null);
+  const [editingSkill, setEditingSkill] = useState<SkillFormData | null>(null);
+  const [editingInterest, setEditingInterest] = useState<InterestFormData | null>(null);
 
-  const openModal = (type: string, item?: any) => {
-    setEditingItem(item || null);
-    setModals({ ...modals, [type]: true });
+  const openModal = (type: ModalKey, item?: unknown) => {
+    switch (type) {
+      case 'experience':
+        setEditingExperience((item as ExperienceFormData) ?? null);
+        break;
+      case 'education':
+        setEditingEducation((item as EducationFormData) ?? null);
+        break;
+      case 'skill':
+        setEditingSkill((item as SkillFormData) ?? null);
+        break;
+      case 'interest':
+        setEditingInterest((item as InterestFormData) ?? null);
+        break;
+      case 'bio':
+        break;
+    }
+    setModals((prev) => ({ ...prev, [type]: true }));
   };
 
-  const closeModal = (type: string) => {
-    setModals({ ...modals, [type]: false });
-    setEditingItem(null);
+  const closeModal = (type: ModalKey) => {
+    setModals((prev) => ({ ...prev, [type]: false }));
+    if (type === 'experience') setEditingExperience(null);
+    if (type === 'education') setEditingEducation(null);
+    if (type === 'skill') setEditingSkill(null);
+    if (type === 'interest') setEditingInterest(null);
   };
 
-  // Handlers for saving data
   const handleCreateProfile = async (data: { firstName: string; lastName: string; bio?: string }) => {
     try {
       setLoading(true);
@@ -180,7 +180,7 @@ export default function ProfilePage() {
     try {
       setIsUploadingImage(true);
       const result = await profileService.uploadImage(file);
-      
+
       // Update profile with new image URL
       if (profile) {
         setProfile({
@@ -189,7 +189,7 @@ export default function ProfilePage() {
           updatedAt: result.updatedAt,
         });
       }
-      
+
       setShowImageUpload(false);
       console.log('ProfilePage: Image uploaded successfully');
     } catch (err) {
@@ -204,7 +204,7 @@ export default function ProfilePage() {
     try {
       setIsUploadingImage(true);
       await profileService.deleteImage();
-      
+
       // Update profile to remove image URL
       if (profile) {
         setProfile({
@@ -213,7 +213,7 @@ export default function ProfilePage() {
           updatedAt: new Date().toISOString(),
         });
       }
-      
+
       setShowImageUpload(false);
       console.log('ProfilePage: Image deleted successfully');
     } catch (err) {
@@ -286,7 +286,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSaveExperience = async (data: any) => {
+  const handleSaveExperience = async (data: ExperienceFormData) => {
     try {
       if (data.id) {
         // Update existing
@@ -304,7 +304,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSaveEducation = async (data: any) => {
+  const handleSaveEducation = async (data: EducationFormData) => {
     try {
       if (data.id) {
         // Update existing
@@ -322,7 +322,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSaveSkill = async (data: any) => {
+  const handleSaveSkill = async (data: SkillFormData) => {
     try {
       if (data.id) {
         // Update existing
@@ -340,7 +340,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSaveInterest = async (data: any) => {
+  const handleSaveInterest = async (data: InterestFormData) => {
     try {
       if (data.id) {
         // Update existing
@@ -362,19 +362,18 @@ export default function ProfilePage() {
     try {
       setIsDeletingAccount(true);
       await profileService.deleteAllProfileData();
-      
+
       // Refresh the profile to show empty state
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-      
+
       console.log('ProfilePage: All profile data deleted successfully');
       
       // Optionally, you could redirect the user or show a success message
       // For now, we'll just refresh the profile to show the empty state
     } catch (err) {
       console.error('Failed to delete profile data:', err);
-      // You might want to show a toast notification here
-      alert('Failed to delete profile data. Please try again.');
+      alert(t('profile.page.alerts.deleteFailed'));
     } finally {
       setIsDeletingAccount(false);
     }
@@ -388,7 +387,7 @@ export default function ProfilePage() {
     return (
       <div className="max-w-5xl mx-auto space-y-6 py-16">
         <div className="bg-destructive/10 border border-destructive text-destructive rounded-lg p-6 text-center">
-          <p className="font-medium">Failed to load profile</p>
+          <p className="font-medium">{t('profile.page.loadErrorTitle')}</p>
           <p className="text-sm mt-2">{error}</p>
         </div>
       </div>
@@ -399,9 +398,9 @@ export default function ProfilePage() {
     return (
       <div className="max-w-5xl mx-auto space-y-6 py-16">
         <div className="bg-muted rounded-lg p-6 text-center">
-          <p className="font-medium">No profile found</p>
+          <p className="font-medium">{t('profile.page.emptyTitle')}</p>
           <p className="text-sm text-muted-foreground mt-2">
-            Please create your profile to continue
+            {t('profile.page.emptyDescription')}
           </p>
         </div>
       </div>
@@ -447,7 +446,7 @@ export default function ProfilePage() {
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
-              About
+              {t('profile.tabs.about')}
             </button>
             <button
               onClick={() => setActiveTab('activity')}
@@ -457,7 +456,7 @@ export default function ProfilePage() {
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
-              Activity
+              {t('profile.tabs.activity')}
             </button>
             <button
               onClick={() => setActiveTab('posts')}
@@ -467,7 +466,7 @@ export default function ProfilePage() {
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
-              Posts
+              {t('profile.tabs.posts')}
             </button>
           </div>
         </div>
@@ -476,10 +475,7 @@ export default function ProfilePage() {
         {activeTab === 'about' && (
           <div className="grid md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-6">
-              <AboutSection
-                bio={profile.bio}
-                onEdit={() => openModal('bio')}
-              />
+              <AboutSection bio={profile.bio} onEdit={() => openModal('bio')} />
 
               <ExperienceSection
                 experiences={profile.experiences.sort((a, b) => {
@@ -490,7 +486,7 @@ export default function ProfilePage() {
                     // If both are current, sort by startDate descending
                     return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
                   }
-                  
+
                   // Both have endDates, sort by endDate descending (most recent first)
                   const endDateA = a.endDate ? new Date(a.endDate) : new Date();
                   const endDateB = b.endDate ? new Date(b.endDate) : new Date();
@@ -517,15 +513,17 @@ export default function ProfilePage() {
 
               {/* Danger Zone */}
               <div className="border border-destructive/20 rounded-lg p-4 bg-destructive/5">
-                <h4 className="text-sm font-medium text-destructive mb-2">Account Data Deletion</h4>
+                <h4 className="text-sm font-medium text-destructive mb-2">
+                  {t('profile.page.dangerZone.title')}
+                </h4>
                 <p className="text-xs text-muted-foreground mb-3">
-                  Permanently delete all profile data (GDPR/KVKK compliant). This cannot be undone.
+                  {t('profile.page.dangerZone.description')}
                 </p>
                 <button
                   onClick={() => setShowDeleteAccount(true)}
                   className="px-3 py-1.5 bg-destructive text-destructive-foreground rounded-md text-xs font-medium hover:bg-destructive/90 transition-colors"
                 >
-                  Delete All Data
+                  {t('profile.page.dangerZone.button')}
                 </button>
               </div>
             </div>
@@ -567,21 +565,21 @@ export default function ProfilePage() {
       <ExperienceModal
         isOpen={modals.experience}
         onClose={() => closeModal('experience')}
-        experience={editingItem}
+        experience={editingExperience}
         onSave={handleSaveExperience}
       />
 
       <EducationModal
         isOpen={modals.education}
         onClose={() => closeModal('education')}
-        education={editingItem}
+        education={editingEducation}
         onSave={handleSaveEducation}
       />
 
       <SkillModal
         isOpen={modals.skill}
         onClose={() => closeModal('skill')}
-        skill={editingItem}
+        skill={editingSkill}
         onSave={handleSaveSkill}
         onDelete={handleDeleteSkill}
       />
@@ -589,12 +587,12 @@ export default function ProfilePage() {
       <InterestModal
         isOpen={modals.interest}
         onClose={() => closeModal('interest')}
-        interest={editingItem}
+        interest={editingInterest}
         onSave={handleSaveInterest}
         onDelete={handleDeleteInterest}
       />
 
-            <ImageUploadModal
+      <ImageUploadModal
         isOpen={showImageUpload}
         onClose={() => setShowImageUpload(false)}
         currentImageUrl={profile?.imageUrl}
