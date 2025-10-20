@@ -123,7 +123,9 @@ class _ProfilePictureState extends State<ProfilePicture> {
                     );
                   } else if (snapshot.hasData) {
                     return A11y(
-                      label: AppLocalizations.of(context)!.profilePage_title,
+                      label: widget.isEditable 
+                          ? AppLocalizations.of(context)!.editProfile_title
+                          : '',
                       child: CircleAvatar(
                         radius: widget.size / 2,
                         backgroundImage: MemoryImage(snapshot.data!),
@@ -131,7 +133,9 @@ class _ProfilePictureState extends State<ProfilePicture> {
                     );
                   } else {
                     return A11y(
-                      label: AppLocalizations.of(context)!.editProfile_title,
+                      label: widget.isEditable 
+                          ? AppLocalizations.of(context)!.editProfile_title
+                          : '',
                       child: CircleAvatar(
                         radius: widget.size / 2,
                         backgroundColor: Colors.grey[300],

@@ -154,9 +154,13 @@ class AuthProvider with ChangeNotifier {
         // (optional) fetch details
         if (_currentUser?.id != null && _token != null) {
           try {
+            print('AuthProvider: Fetching user details for user ID: ${_currentUser!.id}');
             final details = await _authService.getUserDetails(_currentUser!.id, _token!);
+            print('AuthProvider: Received user details: ${details.email}, ${details.username}');
             await _updateAndPersistUserDetails(details);
-          } catch (_) {}
+          } catch (e) {
+            print('Error fetching user details: $e');
+          }
         }
 
         _isLoading = false;
@@ -210,9 +214,13 @@ class AuthProvider with ChangeNotifier {
 
       if (_currentUser?.id != null && _token != null) {
         try {
+          print('AuthProvider: Fetching user details after OTP for user ID: ${_currentUser!.id}');
           final details = await _authService.getUserDetails(_currentUser!.id, _token!);
+          print('AuthProvider: Received user details after OTP: ${details.email}, ${details.username}');
           await _updateAndPersistUserDetails(details);
-        } catch (_) {}
+        } catch (e) {
+          print('Error fetching user details after OTP: $e');
+        }
       }
 
       _isLoading = false;
@@ -495,10 +503,12 @@ class AuthProvider with ChangeNotifier {
 
   // Updates _currentUser and persists the additional details
   Future<void> _updateAndPersistUserDetails(User fullDetails) async {
+    print('AuthProvider: Updating user details - Email: ${fullDetails.email}, Username: ${fullDetails.username}');
     // Ensure the core ID and username match before updating
     // This prevents potential race conditions if user logs out quickly
     if (_currentUser != null && _currentUser!.id == fullDetails.id) {
       _currentUser = fullDetails; // Update the in-memory user object
+      print('AuthProvider: Updated _currentUser with email: ${_currentUser!.email}');
 
       try {
         final prefs = await SharedPreferences.getInstance();

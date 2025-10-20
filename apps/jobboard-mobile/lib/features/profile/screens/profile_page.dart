@@ -259,9 +259,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileHeader(profile) {
-    final user =
-        Provider.of<ProfileProvider>(context, listen: false).currentUser;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.currentUser;
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+    
+    print('ProfilePage: User email: ${user?.email}');
+    print('ProfilePage: User username: ${user?.username}');
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +276,7 @@ class _ProfilePageState extends State<ProfilePage> {
             return ProfilePicture(
               imageUrl: imageUrl,
               size: 100,
-              isEditable: true,
+              isEditable: false,
             );
           },
         ),
@@ -283,7 +286,7 @@ class _ProfilePageState extends State<ProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppLocalizations.of(context)!.profilePage_username(user?.username ?? ''),
+                'Username: ${user?.username ?? 'Not available'}',
                 style: TextStyle(
                   fontSize: fontSizeProvider.getScaledFontSize(14),
                   color: Colors.grey[700],
@@ -294,7 +297,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   Expanded(
                     child: Text(
-                      AppLocalizations.of(context)!.profilePage_email(user?.email ?? ''),
+                      'Email: ${user?.email ?? 'Not available'}',
                       style: TextStyle(
                         fontSize: fontSizeProvider.getScaledFontSize(14),
                         color: Colors.grey[700],

@@ -905,6 +905,8 @@ class ApiService {
   /// Updates the current user's profile
   Future<Profile> updateProfile(Map<String, dynamic> profileData) async {
     final uri = _buildUri('/profile');
+    
+    print('ProfileProvider: Updating profile with data: $profileData');
 
     try {
       final response = await _client.put(
@@ -913,6 +915,7 @@ class ApiService {
         body: jsonEncode(profileData),
       );
       final data = await _handleResponse(response);
+      print('ProfileProvider: Update response: $data');
       return Profile.fromJson(data);
     } catch (e) {
       throw Exception('Failed to update profile. $e');
