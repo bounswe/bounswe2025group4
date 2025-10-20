@@ -6,7 +6,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import axios from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '../stores/authStore';
+import { useAuthActions } from '@/stores/authStore';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
   ? import.meta.env.VITE_API_URL 
@@ -15,10 +15,10 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const login = useAuthStore((state) => state.login);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const { login } = useAuthActions();
 
   const {
     register,
@@ -66,7 +66,7 @@ export default function LoginPage() {
             },
           });
         } else if (response.data.token) {
-          // No 2FA - direct login using authStore
+          // No 2FA - direct login
           login(response.data);
           
           // Redirect to home

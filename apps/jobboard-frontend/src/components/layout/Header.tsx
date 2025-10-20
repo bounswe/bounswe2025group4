@@ -10,13 +10,13 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { ThemeToggle } from '../ThemeToggle';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuth, useAuthActions } from '@/stores/authStore';
 
 export default function Header() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const logout = useAuthStore((state) => state.logout);
+  const { isAuthenticated } = useAuth();
+  const { logout } = useAuthActions();
 
   const handleLogout = () => {
     logout();
@@ -50,9 +50,14 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-2">
             <ThemeToggle />
             {isAuthenticated ? (
-              <Button variant="outline" onClick={handleLogout}>
-                Logout
-              </Button>
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/profile">Profile</Link>
+                </Button>
+                <Button variant="outline" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
             ) : (
               <>
                 <Button variant="ghost" asChild>
@@ -98,12 +103,17 @@ export default function Header() {
 
               <div className="flex flex-col gap-2 p-2 border-t mt-4">
                 {isAuthenticated ? (
-                  <Button variant="outline" onClick={() => {
-                    handleLogout();
-                    setIsMobileMenuOpen(false);
-                  }}>
-                    Logout
-                  </Button>
+                  <>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
+                    </Button>
+                    <Button variant="outline" onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }}>
+                      Logout
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Button variant="outline" asChild>
