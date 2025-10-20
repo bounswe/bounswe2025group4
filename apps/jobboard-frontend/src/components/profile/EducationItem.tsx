@@ -1,5 +1,6 @@
 import { Pencil, GraduationCap, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface Education {
   id: number;
@@ -18,10 +19,13 @@ interface EducationItemProps {
 }
 
 export function EducationItem({ education, onEdit, onDelete }: EducationItemProps) {
-  const startYear = new Date(education.startDate).getFullYear();
+  const { t, i18n } = useTranslation('common');
+  const locale = (i18n.resolvedLanguage ?? i18n.language) || 'en';
+  const yearFormatter = new Intl.DateTimeFormat(locale, { year: 'numeric' });
+  const startYear = yearFormatter.format(new Date(education.startDate));
   const endYear = education.endDate
-    ? new Date(education.endDate).getFullYear()
-    : 'Present';
+    ? yearFormatter.format(new Date(education.endDate))
+    : t('profile.common.present');
 
   return (
     <div className="bg-muted/30 rounded-lg p-4 group relative">

@@ -1,5 +1,6 @@
 import { Pencil, Briefcase, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface Experience {
   id: number;
@@ -17,16 +18,16 @@ interface ExperienceItemProps {
 }
 
 export function ExperienceItem({ experience, onEdit, onDelete }: ExperienceItemProps) {
-  const startDate = new Date(experience.startDate).toLocaleDateString('en-US', {
+  const { t, i18n } = useTranslation('common');
+  const locale = (i18n.resolvedLanguage ?? i18n.language) || 'en';
+  const dateFormatter = new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'short',
   });
+  const startDate = dateFormatter.format(new Date(experience.startDate));
   const endDate = experience.endDate
-    ? new Date(experience.endDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-      })
-    : 'Present';
+    ? dateFormatter.format(new Date(experience.endDate))
+    : t('profile.common.present');
 
   return (
     <div className="bg-muted/30 rounded-lg p-4 group relative">

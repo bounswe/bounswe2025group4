@@ -1,5 +1,6 @@
 import { Pencil, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface AboutSectionProps {
   bio?: string;
@@ -7,15 +8,18 @@ interface AboutSectionProps {
 }
 
 export function AboutSection({ bio, onEdit }: AboutSectionProps) {
+  const { t } = useTranslation('common');
+
   return (
     <section className="space-y-2 group">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">About</h2>
+        <h2 className="text-xl font-semibold">{t('profile.about.title')}</h2>
         <Button
           size="icon-sm"
           variant="ghost"
           className="opacity-0 group-hover:opacity-100 transition-opacity"
           onClick={onEdit}
+          aria-label={t('profile.about.modal.title')}
         >
           <Pencil className="h-4 w-4" />
         </Button>
@@ -28,7 +32,7 @@ export function AboutSection({ bio, onEdit }: AboutSectionProps) {
           onClick={onEdit}
         >
           <Plus className="h-4 w-4" />
-          <span>Add bio</span>
+          <span>{t('profile.about.addBio')}</span>
         </div>
       )}
     </section>

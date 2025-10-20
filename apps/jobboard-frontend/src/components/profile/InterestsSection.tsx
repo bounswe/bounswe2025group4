@@ -1,5 +1,6 @@
 import { Plus, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface Interest {
   id: number;
@@ -17,10 +18,12 @@ export function InterestsSection({
   onAdd,
   onEdit,
 }: InterestsSectionProps) {
+  const { t } = useTranslation('common');
+
   return (
     <section className="space-y-3 group">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Interests</h2>
+        <h2 className="text-xl font-semibold">{t('profile.interests.title')}</h2>
         <Button
           size="sm"
           variant="ghost"
@@ -28,7 +31,7 @@ export function InterestsSection({
           onClick={onAdd}
         >
           <Plus className="h-4 w-4" />
-          Add
+          {t('profile.actions.add')}
         </Button>
       </div>
       {interests.length > 0 ? (
@@ -56,7 +59,7 @@ export function InterestsSection({
           onClick={onAdd}
         >
           <Plus className="h-4 w-4" />
-          <span>Add interests</span>
+          <span>{t('profile.interests.empty')}</span>
         </div>
       )}
     </section>

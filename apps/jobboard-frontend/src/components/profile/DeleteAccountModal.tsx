@@ -1,6 +1,7 @@
-import { useState, type JSX } from 'react';
+import { useState } from 'react';
 import { Trash2, AlertTriangle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface DeleteAccountModalProps {
   isOpen: boolean;
@@ -15,7 +16,7 @@ function Modal({ isOpen, onClose, title, children }: {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-}): JSX.Element | null {
+}): React.JSX.Element | null {
   if (!isOpen) return null;
 
   return (
@@ -42,68 +43,70 @@ export function DeleteAccountModal({
   onClose,
   onConfirm,
   isDeleting,
-}: DeleteAccountModalProps): JSX.Element {
+}: DeleteAccountModalProps): React.JSX.Element {
   const [confirmText, setConfirmText] = useState('');
   const [step, setStep] = useState<'warning' | 'confirm'>('warning');
+  const { t } = useTranslation('common');
+  const confirmKeyword = t('profile.deleteModal.confirmKeyword');
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setStep('warning');
     setConfirmText('');
     onClose();
   };
 
-  const handleConfirm = async () => {
-    if (confirmText === 'DELETE') {
+  const handleConfirm = async (): Promise<void> => {
+    if (confirmText === confirmKeyword) {
       await onConfirm();
       handleClose();
     }
   };
 
-  const isConfirmValid = confirmText === 'DELETE';
+  const isConfirmValid = confirmText === confirmKeyword;
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Delete Account Data">
+    <Modal isOpen={isOpen} onClose={handleClose} title={t('profile.deleteModal.title')}>
       {step === 'warning' && (
         <div className="space-y-6">
           <div className="bg-destructive/10 border border-destructive rounded-lg p-4">
             <div className="flex items-center gap-2 text-destructive mb-2">
               <AlertTriangle className="h-4 w-4" />
-              <span className="font-medium">Warning: This action cannot be undone</span>
+              <span className="font-medium">{t('profile.deleteModal.warningTitle')}</span>
             </div>
             <p className="text-sm text-destructive/80">
-              This will permanently delete all your profile data.
+              {t('profile.deleteModal.warningDescription')}
             </p>
           </div>
 
           <div className="space-y-3">
             <p className="text-sm font-medium">
-              The following data will be permanently deleted:
+              {t('profile.deleteModal.summaryTitle')}
             </p>
             <ul className="text-sm text-muted-foreground space-y-1 ml-4">
-              <li>• Profile picture</li>
-              <li>• Bio and personal information</li>
-              <li>• Work experiences</li>
-              <li>• Education history</li>
-              <li>• Skills and interests</li>
+              <li>• {t('profile.deleteModal.items.profilePicture')}</li>
+              <li>• {t('profile.deleteModal.items.bio')}</li>
+              <li>• {t('profile.deleteModal.items.experiences')}</li>
+              <li>• {t('profile.deleteModal.items.education')}</li>
+              <li>• {t('profile.deleteModal.items.skills')}</li>
             </ul>
           </div>
 
           <div className="bg-muted rounded-lg p-3">
             <p className="text-xs text-muted-foreground">
-              This action is performed in compliance with GDPR/KVKK data protection regulations.
+              {t('profile.deleteModal.compliance')}
             </p>
           </div>
 
           <div className="flex gap-3 pt-4">
             <Button variant="outline" onClick={handleClose} className="flex-1">
-              Cancel
+              {t('profile.deleteModal.buttons.cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={() => setStep('confirm')}
               className="flex-1"
             >
-              Continue
+              {t('profile.deleteModal.buttons.continue')}
             </Button>
           </div>
         </div>
@@ -113,23 +116,24 @@ export function DeleteAccountModal({
         <div className="space-y-6">
           <div className="space-y-3">
             <p className="text-sm">
-              To confirm deletion, please type{' '}
-              <code className="bg-muted px-2 py-1 rounded text-destructive font-mono font-bold">
-                DELETE
-              </code>{' '}
-              in the field below:
+              <Trans
+                t={t}
+                i18nKey="profile.deleteModal.confirmPrompt"
+                values={{ keyword: confirmKeyword }}
+                components={{ code: <code className="bg-muted px-2 py-1 rounded text-destructive font-mono font-bold" /> }}
+              />
             </p>
 
             <div className="space-y-2">
               <label htmlFor="confirm-text" className="text-sm font-medium">
-                Confirmation
+                {t('profile.deleteModal.confirmationLabel')}
               </label>
               <input
                 id="confirm-text"
                 type="text"
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
-                placeholder="Type DELETE to confirm"
+                placeholder={t('profile.deleteModal.confirmationPlaceholder', { keyword: confirmKeyword })}
                 className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
               />
             </div>
@@ -137,7 +141,7 @@ export function DeleteAccountModal({
 
           <div className="flex gap-3 pt-4">
             <Button variant="outline" onClick={() => setStep('warning')} className="flex-1">
-              Back
+              {t('profile.deleteModal.buttons.back')}
             </Button>
             <Button
               variant="destructive"
@@ -145,7 +149,9 @@ export function DeleteAccountModal({
               disabled={!isConfirmValid || isDeleting}
               className="flex-1"
             >
-              {isDeleting ? 'Deleting...' : 'Delete All Data'}
+              {isDeleting
+                ? t('profile.deleteModal.buttons.deleting')
+                : t('profile.deleteModal.buttons.delete')}
             </Button>
           </div>
         </div>

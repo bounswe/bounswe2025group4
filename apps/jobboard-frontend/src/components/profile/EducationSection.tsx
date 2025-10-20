@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EducationItem } from './EducationItem';
+import { useTranslation } from 'react-i18next';
 
 interface Education {
   id: number;
@@ -25,13 +26,15 @@ export function EducationSection({
   onEdit,
   onDelete,
 }: EducationSectionProps) {
+  const { t } = useTranslation('common');
+
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Education</h2>
+        <h2 className="text-xl font-semibold">{t('profile.education.title')}</h2>
         <Button size="sm" variant="ghost" className="gap-2" onClick={onAdd}>
           <Plus className="h-4 w-4" />
-          Add
+          {t('profile.actions.add')}
         </Button>
       </div>
       {educations.length > 0 ? (
@@ -46,7 +49,7 @@ export function EducationSection({
           onClick={onAdd}
         >
           <Plus className="h-4 w-4" />
-          <span>Add education</span>
+          <span>{t('profile.education.empty')}</span>
         </div>
       )}
     </section>

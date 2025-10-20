@@ -1,5 +1,6 @@
 import { Plus, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface Skill {
   id: number;
@@ -14,10 +15,12 @@ interface SkillsSectionProps {
 }
 
 export function SkillsSection({ skills, onAdd, onEdit }: SkillsSectionProps) {
+  const { t } = useTranslation('common');
+
   return (
     <section className="space-y-3 group">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Skills</h2>
+        <h2 className="text-xl font-semibold">{t('profile.skills.title')}</h2>
         <Button
           size="sm"
           variant="ghost"
@@ -25,7 +28,7 @@ export function SkillsSection({ skills, onAdd, onEdit }: SkillsSectionProps) {
           onClick={onAdd}
         >
           <Plus className="h-4 w-4" />
-          Add
+          {t('profile.actions.add')}
         </Button>
       </div>
       {skills.length > 0 ? (
@@ -53,7 +56,7 @@ export function SkillsSection({ skills, onAdd, onEdit }: SkillsSectionProps) {
           onClick={onAdd}
         >
           <Plus className="h-4 w-4" />
-          <span>Add skills</span>
+          <span>{t('profile.skills.empty')}</span>
         </div>
       )}
     </section>
