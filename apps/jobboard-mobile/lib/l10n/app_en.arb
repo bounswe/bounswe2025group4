@@ -1422,6 +1422,15 @@
   "@createJob_ethicalPoliciesLabel": {
     "description": "Ethical policies section label"
   },
+  "createJob_policiesSelected": "{count} selected",
+  "@createJob_policiesSelected": {
+    "description": "Selected policies count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
 
   "@@_JOB_APPLICATIONS": {},
   "jobApplications_title": "Job Applications",
@@ -2310,6 +2319,33 @@
   "common_hidePassword": "Hide password",
   "@common_hidePassword": {
     "description": "Accessibility label to hide password"
-  }
+  },
+
+  "@@_ETHICAL_POLICIES": {},
+  "ethicalPolicy_salary_transparency": "Salary Transparency",
+  "ethicalPolicy_equal_pay_policy": "Equal Pay Policy",
+  "ethicalPolicy_living_wage_employer": "Living Wage Employer",
+  "ethicalPolicy_comprehensive_health_insurance": "Comprehensive Health Insurance",
+  "ethicalPolicy_performance_based_bonus": "Performance-Based Bonus",
+  "ethicalPolicy_retirement_plan_support": "Retirement Plan Support",
+  "ethicalPolicy_flexible_hours": "Flexible Hours",
+  "ethicalPolicy_remote_friendly": "Remote-Friendly",
+  "ethicalPolicy_no_after_hours_work_culture": "No After-Hours Work Culture",
+  "ethicalPolicy_mental_health_support": "Mental Health Support",
+  "ethicalPolicy_generous_paid_time_off": "Generous Paid Time Off",
+  "ethicalPolicy_paid_parental_leave": "Paid Parental Leave",
+  "ethicalPolicy_inclusive_hiring_practices": "Inclusive Hiring Practices",
+  "ethicalPolicy_diverse_leadership": "Diverse Leadership",
+  "ethicalPolicy_lgbtq_friendly_workplace": "LGBTQ+ Friendly Workplace",
+  "ethicalPolicy_disability_inclusive_workplace": "Disability-Inclusive Workplace",
+  "ethicalPolicy_supports_women_in_leadership": "Supports Women in Leadership",
+  "ethicalPolicy_mentorship_program": "Mentorship Program",
+  "ethicalPolicy_learning_development_budget": "Learning & Development Budget",
+  "ethicalPolicy_transparent_promotion_paths": "Transparent Promotion Paths",
+  "ethicalPolicy_internal_mobility": "Internal Mobility",
+  "ethicalPolicy_sustainability_focused": "Sustainability-Focused",
+  "ethicalPolicy_ethical_supply_chain": "Ethical Supply Chain",
+  "ethicalPolicy_community_volunteering": "Community Volunteering",
+  "ethicalPolicy_certified_b_corporation": "Certified B-Corporation"
 }
 

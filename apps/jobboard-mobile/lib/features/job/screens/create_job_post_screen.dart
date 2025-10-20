@@ -27,6 +27,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
   List<String> _selectedPolicies = [];
   bool _isRemote = false;
   bool _isInclusiveOpportunity = false;
+  bool _isPoliciesExpanded = false;
 
   bool _isLoading = false;
 
@@ -439,38 +440,85 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               },
             ),
             const SizedBox(height: 24.0), // Spacing after salary fields
-            // --- Ethical Policies Checkboxes/Chips ---
-            Text(
-              AppLocalizations.of(context)!.createJob_ethicalPoliciesLabel,
-              style: Theme.of(context).textTheme.titleMedium,
+            // --- Ethical Policies Expandable Section ---
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _isPoliciesExpanded = !_isPoliciesExpanded;
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.createJob_ethicalPoliciesLabel,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          if (_selectedPolicies.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.createJob_policiesSelected(
+                                  _selectedPolicies.length,
+                                ),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: Colors.blue),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      _isPoliciesExpanded
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 8.0),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children:
-                  availablePolicies.map((policy) {
-                    final isSelected = _selectedPolicies.contains(policy);
-                    return FilterChip(
-                      label: Text(policy.formatFilterName()),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        HapticFeedback.lightImpact();
-                        setState(() {
-                          if (selected) {
-                            _selectedPolicies.add(policy);
-                          } else {
-                            _selectedPolicies.remove(policy);
-                          }
-                        });
-                      },
-                      selectedColor: Colors.blue.withOpacity(
-                        0.2,
-                      ), // Blue selection to match design
-                      checkmarkColor: Colors.blue, // Blue checkmark
-                    );
-                  }).toList(),
-            ),
+            if (_isPoliciesExpanded) ...[
+              const SizedBox(height: 8.0),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children:
+                    availablePolicies.map((policy) {
+                      final isSelected = _selectedPolicies.contains(policy);
+                      return FilterChip(
+                        label: Text(
+                          policy.formatLocalizedEthicalPolicy(context),
+                        ),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          HapticFeedback.lightImpact();
+                          setState(() {
+                            if (selected) {
+                              _selectedPolicies.add(policy);
+                            } else {
+                              _selectedPolicies.remove(policy);
+                            }
+                          });
+                        },
+                        selectedColor: Colors.blue.withOpacity(
+                          0.2,
+                        ), // Blue selection to match design
+                        checkmarkColor: Colors.blue, // Blue checkmark
+                      );
+                    }).toList(),
+              ),
+            ],
             const SizedBox(height: 32.0),
 
             // --- Submit Button ---

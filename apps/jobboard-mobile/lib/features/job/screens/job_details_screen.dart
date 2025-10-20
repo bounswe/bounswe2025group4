@@ -410,7 +410,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                             });
                           },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor:
+                        Theme.of(dialogContext).brightness == Brightness.dark
+                            ? Colors.teal.shade700
+                            : Colors.teal,
                     foregroundColor: Colors.white,
                   ),
                   child: Text(
@@ -542,8 +545,20 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       .where((e) => e.isNotEmpty)
                       .map(
                         (tag) => Chip(
-                          label: Text(tag.formatFilterName()),
-                          backgroundColor: Colors.teal.shade50,
+                          label: Text(
+                            tag.formatLocalizedEthicalPolicy(context),
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.teal.shade200
+                                      : Colors.teal.shade900,
+                            ),
+                          ),
+                          backgroundColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.teal.shade900.withOpacity(0.3)
+                                  : Colors.teal.shade50,
                           side: BorderSide.none,
                         ),
                       )

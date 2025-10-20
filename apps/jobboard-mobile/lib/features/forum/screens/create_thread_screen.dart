@@ -58,9 +58,12 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.75),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.75,
+      ),
       builder: (_) {
-        final TextEditingController _modalTagController = TextEditingController();
+        final TextEditingController _modalTagController =
+            TextEditingController();
 
         return Padding(
           padding: MediaQuery.of(context).viewInsets,
@@ -77,15 +80,23 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                         final title = _titleCtrl.text.trim();
                         if (title.isEmpty) {
                           setModalState(() {
-                            _suggestError = AppLocalizations.of(context)!.createThread_enterTitleForSuggestions;
+                            _suggestError =
+                                AppLocalizations.of(
+                                  context,
+                                )!.createThread_enterTitleForSuggestions;
                           });
                           return;
                         }
-                        final result = await TagRecommendationService.fetchSuggestions(title);
+                        final result =
+                            await TagRecommendationService.fetchSuggestions(
+                              title,
+                            );
 
                         setModalState(() {
                           if (result['status'] == 'success') {
-                            _suggestedTags = List<String>.from(result['suggestions']);
+                            _suggestedTags = List<String>.from(
+                              result['suggestions'],
+                            );
                             _suggestError = null;
                           } else {
                             _suggestedTags = [];
@@ -93,7 +104,9 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                           }
                         });
                       },
-                      child: Text(AppLocalizations.of(context)!.createThread_suggestTags),
+                      child: Text(
+                        AppLocalizations.of(context)!.createThread_suggestTags,
+                      ),
                     ),
                     if (_suggestError != null)
                       Padding(
@@ -107,25 +120,53 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
-                        children: _suggestedTags
-                            .where((tag) => !tempSelectedTags.contains(tag))
-                            .map((tag) => InputChip(
-                          label: Text(tag),
-                          backgroundColor: Colors.blue.withOpacity(0.15), // Blue to match design language
-                          avatar: const Icon(Icons.lightbulb_outline, size: 18, color: Colors.blue),
-                          onPressed: () {
-                            HapticFeedback.lightImpact();
-                            setModalState(() {
-                              if (!_availableTags.contains(tag)) {
-                                _availableTags.insert(0, tag);
-                              }
-                              if (!tempSelectedTags.contains(tag)) {
-                                tempSelectedTags.add(tag);
-                              }
-                            });
-                          },
-                        ))
-                            .toList(),
+                        children:
+                            _suggestedTags
+                                .where((tag) => !tempSelectedTags.contains(tag))
+                                .map(
+                                  (tag) => InputChip(
+                                    label: Text(
+                                      tag,
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.blue.shade200
+                                                : Colors.blue.shade900,
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.blue.shade900.withOpacity(
+                                              0.3,
+                                            )
+                                            : Colors.blue.withOpacity(
+                                              0.15,
+                                            ), // Blue to match design language
+                                    avatar: Icon(
+                                      Icons.lightbulb_outline,
+                                      size: 18,
+                                      color:
+                                          Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.blue.shade300
+                                              : Colors.blue,
+                                    ),
+                                    onPressed: () {
+                                      HapticFeedback.lightImpact();
+                                      setModalState(() {
+                                        if (!_availableTags.contains(tag)) {
+                                          _availableTags.insert(0, tag);
+                                        }
+                                        if (!tempSelectedTags.contains(tag)) {
+                                          tempSelectedTags.add(tag);
+                                        }
+                                      });
+                                    },
+                                  ),
+                                )
+                                .toList(),
                       ),
                     ],
                     const Divider(),
@@ -135,7 +176,10 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                           child: TextField(
                             controller: _modalTagController,
                             decoration: InputDecoration(
-                              labelText: AppLocalizations.of(context)!.createThread_addNewTag,
+                              labelText:
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.createThread_addNewTag,
                             ),
                             onChanged: (value) {
                               setModalState(() {
@@ -151,17 +195,25 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                             final newTag = _modalTagController.text.trim();
                             if (newTag.isEmpty) {
                               setModalState(() {
-                                _tagError = AppLocalizations.of(context)!.createThread_tagEmpty;
+                                _tagError =
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.createThread_tagEmpty;
                               });
                               return;
                             }
                             if (newTag.length > 255) {
                               setModalState(() {
-                                _tagError = AppLocalizations.of(context)!.createThread_tagMaxLength;
+                                _tagError =
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.createThread_tagMaxLength;
                               });
                               return;
                             }
-                            if (!_availableTags.map((e) => e.toUpperCase()).contains(newTag.toUpperCase())) {
+                            if (!_availableTags
+                                .map((e) => e.toUpperCase())
+                                .contains(newTag.toUpperCase())) {
                               setModalState(() {
                                 _availableTags.insert(0, newTag);
                                 tempSelectedTags.add(newTag);
@@ -178,7 +230,10 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                           _tagError!,
-                          style: const TextStyle(color: Colors.red, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     const SizedBox(height: 12),
@@ -187,29 +242,37 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                         thumbVisibility: true,
                         child: ListView(
                           shrinkWrap: true,
-                          children: (() {
-                            final filteredTags = _availableTags
-                                .where((tag) => tag.toUpperCase().contains(_searchQuery))
-                                .toList();
+                          children:
+                              (() {
+                                final filteredTags =
+                                    _availableTags
+                                        .where(
+                                          (tag) => tag.toUpperCase().contains(
+                                            _searchQuery,
+                                          ),
+                                        )
+                                        .toList();
 
-                            return filteredTags.map((tag) {
-                              final selected = tempSelectedTags.contains(tag);
-                              return CheckboxListTile(
-                                title: Text(tag),
-                                value: selected,
-                                onChanged: (checked) {
-                                  HapticFeedback.lightImpact();
-                                  setModalState(() {
-                                    if (checked!) {
-                                      tempSelectedTags.add(tag);
-                                    } else {
-                                      tempSelectedTags.remove(tag);
-                                    }
-                                  });
-                                },
-                              );
-                            }).toList();
-                          })(),
+                                return filteredTags.map((tag) {
+                                  final selected = tempSelectedTags.contains(
+                                    tag,
+                                  );
+                                  return CheckboxListTile(
+                                    title: Text(tag),
+                                    value: selected,
+                                    onChanged: (checked) {
+                                      HapticFeedback.lightImpact();
+                                      setModalState(() {
+                                        if (checked!) {
+                                          tempSelectedTags.add(tag);
+                                        } else {
+                                          tempSelectedTags.remove(tag);
+                                        }
+                                      });
+                                    },
+                                  );
+                                }).toList();
+                              })(),
                         ),
                       ),
                     ),
@@ -222,7 +285,9 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                         });
                         Navigator.pop(context);
                       },
-                      child: Text(AppLocalizations.of(context)!.createThread_done),
+                      child: Text(
+                        AppLocalizations.of(context)!.createThread_done,
+                      ),
                     ),
                   ],
                 ),
@@ -233,13 +298,18 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.thread != null;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? AppLocalizations.of(context)!.createThread_editTitle : AppLocalizations.of(context)!.createThread_newTitle),
+        title: Text(
+          isEditing
+              ? AppLocalizations.of(context)!.createThread_editTitle
+              : AppLocalizations.of(context)!.createThread_newTitle,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -254,15 +324,20 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                   child: TextFormField(
                     controller: _titleCtrl,
                     decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.createThread_titleLabel,
+                      labelText:
+                          AppLocalizations.of(context)!.createThread_titleLabel,
                       border: const OutlineInputBorder(),
                     ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return AppLocalizations.of(context)!.createThread_titleRequired;
+                        return AppLocalizations.of(
+                          context,
+                        )!.createThread_titleRequired;
                       }
                       if (value.trim().length > 100) {
-                        return AppLocalizations.of(context)!.createThread_titleMaxLength;
+                        return AppLocalizations.of(
+                          context,
+                        )!.createThread_titleMaxLength;
                       }
                       return null;
                     },
@@ -279,15 +354,21 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                     child: TextFormField(
                       controller: _bodyCtrl,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.createThread_bodyLabel,
+                        labelText:
+                            AppLocalizations.of(
+                              context,
+                            )!.createThread_bodyLabel,
                         border: const OutlineInputBorder(),
                       ),
                       maxLines: null,
                       expands: true,
-                      validator: (value) =>
-                      (value == null || value.trim().isEmpty)
-                          ? AppLocalizations.of(context)!.createThread_bodyRequired
-                          : null,
+                      validator:
+                          (value) =>
+                              (value == null || value.trim().isEmpty)
+                                  ? AppLocalizations.of(
+                                    context,
+                                  )!.createThread_bodyRequired
+                                  : null,
                     ),
                   ),
                 ),
@@ -301,7 +382,10 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(AppLocalizations.of(context)!.createThread_tags, style: Theme.of(context).textTheme.bodyLarge),
+                      Text(
+                        AppLocalizations.of(context)!.createThread_tags,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
                       const SizedBox(height: 8),
 
                       /// New tag input
@@ -310,14 +394,40 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                           HapticFeedback.lightImpact();
                           _showTagSelectionSheet();
                         },
-                        child: Text(AppLocalizations.of(context)!.createThread_selectTags),
+                        child: Text(
+                          AppLocalizations.of(context)!.createThread_selectTags,
+                        ),
                       ),
                       const SizedBox(height: 8),
 
                       /// Selected tags shown as chips
                       Wrap(
                         spacing: 8,
-                        children: _selectedTags.map((tag) => Chip(label: Text(tag))).toList(),
+                        children:
+                            _selectedTags
+                                .map(
+                                  (tag) => Chip(
+                                    label: Text(
+                                      tag,
+                                      style: TextStyle(
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                    Brightness.dark
+                                                ? Colors.blue.shade200
+                                                : Colors.blue.shade900,
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.blue.shade900.withOpacity(
+                                              0.3,
+                                            )
+                                            : Colors.blue.shade50,
+                                    side: BorderSide.none,
+                                  ),
+                                )
+                                .toList(),
                       ),
                     ],
                   ),
@@ -337,34 +447,53 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                     final authProvider = context.read<AuthProvider>();
                     final api = ApiService(authProvider: authProvider);
                     try {
-                      final DiscussionThread saved = isEditing
-                          ? await api.editDiscussion(
-                        widget.thread!.id,
-                        _titleCtrl.text.trim(),
-                        _bodyCtrl.text.trim(),
-                        _selectedTags,
-                      )
-                          : await api.createDiscussionThread(
-                        _titleCtrl.text.trim(),
-                        _bodyCtrl.text.trim(),
-                        _selectedTags,
-                      );
+                      final DiscussionThread saved =
+                          isEditing
+                              ? await api.editDiscussion(
+                                widget.thread!.id,
+                                _titleCtrl.text.trim(),
+                                _bodyCtrl.text.trim(),
+                                _selectedTags,
+                              )
+                              : await api.createDiscussionThread(
+                                _titleCtrl.text.trim(),
+                                _bodyCtrl.text.trim(),
+                                _selectedTags,
+                              );
                       if (!mounted) return;
                       HapticFeedback.heavyImpact();
                       navigator.pop(saved);
                     } on SocketException {
                       HapticFeedback.vibrate();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(AppLocalizations.of(context)!.createThread_createError, style: const TextStyle(color: Colors.red))),
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.createThread_createError,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
                       );
                     } catch (e) {
                       HapticFeedback.vibrate();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(AppLocalizations.of(context)!.createThread_generalError, style: const TextStyle(color: Colors.red))),
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.createThread_generalError,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
                       );
                     }
                   },
-                  child: Text(isEditing ? AppLocalizations.of(context)!.createThread_save : AppLocalizations.of(context)!.createThread_post),
+                  child: Text(
+                    isEditing
+                        ? AppLocalizations.of(context)!.createThread_save
+                        : AppLocalizations.of(context)!.createThread_post,
+                  ),
                 ),
               ),
             ],

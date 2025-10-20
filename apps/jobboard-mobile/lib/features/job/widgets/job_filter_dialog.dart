@@ -25,6 +25,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
   final TextEditingController _minSalaryController = TextEditingController();
   final TextEditingController _maxSalaryController = TextEditingController();
   bool _isRemote = false;
+  bool _isPoliciesExpanded = false;
 
   @override
   void initState() {
@@ -89,7 +90,8 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
               controller: _companyNameController,
               decoration: InputDecoration(
                 labelText: AppLocalizations.of(context)!.jobFilter_companyName,
-                hintText: AppLocalizations.of(context)!.jobFilter_companyNameHint,
+                hintText:
+                    AppLocalizations.of(context)!.jobFilter_companyNameHint,
               ),
               onChanged: (value) {
                 _selectedFilters['companyName'] = value.isEmpty ? null : value;
@@ -113,8 +115,10 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
                   child: TextField(
                     controller: _minSalaryController,
                     decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.jobFilter_minSalary,
-                      hintText: AppLocalizations.of(context)!.jobFilter_minSalaryHint,
+                      labelText:
+                          AppLocalizations.of(context)!.jobFilter_minSalary,
+                      hintText:
+                          AppLocalizations.of(context)!.jobFilter_minSalaryHint,
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
@@ -128,8 +132,10 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
                   child: TextField(
                     controller: _maxSalaryController,
                     decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context)!.jobFilter_maxSalary,
-                      hintText: AppLocalizations.of(context)!.jobFilter_maxSalaryHint,
+                      labelText:
+                          AppLocalizations.of(context)!.jobFilter_maxSalary,
+                      hintText:
+                          AppLocalizations.of(context)!.jobFilter_maxSalaryHint,
                     ),
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
@@ -214,37 +220,87 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
     required List<String> selectedItems,
     required String filterKey,
   }) {
+    final isEthicalPolicies = filterKey == 'ethicalTags';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(title, style: Theme.of(context).textTheme.titleMedium),
-        ),
-        Wrap(
-          spacing: 8.0,
-          runSpacing: 4.0,
-          children:
-              availableItems.map((item) {
-                final isSelected = selectedItems.contains(item);
-                return FilterChip(
-                  label: Text(item.formatFilterName()),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    HapticFeedback.lightImpact();
-                    setState(() {
-                      if (selected) {
-                        selectedItems.add(item);
-                      } else {
-                        selectedItems.remove(item);
-                      }
-                    });
-                  },
-                  selectedColor: Colors.blue.withOpacity(0.2), // Blue selection to match design
-                  checkmarkColor: Colors.blue, // Blue checkmark
-                );
-              }).toList(),
-        ),
+        if (isEthicalPolicies)
+          InkWell(
+            onTap: () {
+              setState(() {
+                _isPoliciesExpanded = !_isPoliciesExpanded;
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        if (selectedItems.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.createJob_policiesSelected(
+                                selectedItems.length,
+                              ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.blue),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    _isPoliciesExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+          ),
+        if (!isEthicalPolicies || _isPoliciesExpanded)
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 4.0,
+            children:
+                availableItems.map((item) {
+                  final isSelected = selectedItems.contains(item);
+                  return FilterChip(
+                    label: Text(item.formatLocalizedEthicalPolicy(context)),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      HapticFeedback.lightImpact();
+                      setState(() {
+                        if (selected) {
+                          selectedItems.add(item);
+                        } else {
+                          selectedItems.remove(item);
+                        }
+                      });
+                    },
+                    selectedColor: Colors.blue.withOpacity(
+                      0.2,
+                    ), // Blue selection to match design
+                    checkmarkColor: Colors.blue, // Blue checkmark
+                  );
+                }).toList(),
+          ),
       ],
     );
   }

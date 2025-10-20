@@ -512,6 +512,7 @@
   "createJob_maxSalaryPlaceholder": "örn. 70000",
   "createJob_validNumberError": "Lütfen geçerli bir tam sayı girin",
   "createJob_ethicalPoliciesLabel": "Etik Politikalar Uyumu",
+  "createJob_policiesSelected": "{count} seçildi",
   
   "jobDetails_alreadyApplied": "Bu işe zaten başvurdunuz.",
   "jobDetails_cvUploadFailed": "Başvuru gönderildi ancak CV yükleme başarısız: {error}",
@@ -566,6 +567,32 @@
   "jobApplications_cvDownloadedSuccess": "CV başarıyla indirildi\n{path}",
   "jobApplications_openButton": "AÇ",
 
-  "profilePage_languageChanged": "Dil {language} olarak değiştirildi"
+  "profilePage_languageChanged": "Dil {language} olarak değiştirildi",
+
+  "ethicalPolicy_salary_transparency": "Maaş Şeffaflığı",
+  "ethicalPolicy_equal_pay_policy": "Eşit Ücret Politikası",
+  "ethicalPolicy_living_wage_employer": "Yaşanabilir Ücret İşveren",
+  "ethicalPolicy_comprehensive_health_insurance": "Kapsamlı Sağlık Sigortası",
+  "ethicalPolicy_performance_based_bonus": "Performansa Dayalı Bonus",
+  "ethicalPolicy_retirement_plan_support": "Emeklilik Planı Desteği",
+  "ethicalPolicy_flexible_hours": "Esnek Çalışma Saatleri",
+  "ethicalPolicy_remote_friendly": "Uzaktan Çalışma Dostu",
+  "ethicalPolicy_no_after_hours_work_culture": "Mesai Sonrası İş Yok Kültürü",
+  "ethicalPolicy_mental_health_support": "Ruh Sağlığı Desteği",
+  "ethicalPolicy_generous_paid_time_off": "Cömert Ücretli İzin",
+  "ethicalPolicy_paid_parental_leave": "Ücretli Ebeveyn İzni",
+  "ethicalPolicy_inclusive_hiring_practices": "Kapsayıcı İşe Alım Uygulamaları",
+  "ethicalPolicy_diverse_leadership": "Çeşitli Liderlik",
+  "ethicalPolicy_lgbtq_friendly_workplace": "LGBTQ+ Dostu İş Yeri",
+  "ethicalPolicy_disability_inclusive_workplace": "Engelli Dostu İş Yeri",
+  "ethicalPolicy_supports_women_in_leadership": "Liderlikte Kadınları Destekler",
+  "ethicalPolicy_mentorship_program": "Mentorluk Programı",
+  "ethicalPolicy_learning_development_budget": "Öğrenme ve Gelişim Bütçesi",
+  "ethicalPolicy_transparent_promotion_paths": "Şeffaf Terfi Yolları",
+  "ethicalPolicy_internal_mobility": "İç Mobilite",
+  "ethicalPolicy_sustainability_focused": "Sürdürülebilirlik Odaklı",
+  "ethicalPolicy_ethical_supply_chain": "Etik Tedarik Zinciri",
+  "ethicalPolicy_community_volunteering": "Toplum Gönüllülüğü",
+  "ethicalPolicy_certified_b_corporation": "Sertifikalı B-Corporation"
 }
 

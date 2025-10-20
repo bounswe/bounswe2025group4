@@ -537,16 +537,29 @@ class _JobPageState extends State<JobPage> {
                                 .map(
                                   (tag) => Chip(
                                     label: Text(
-                                      tag.formatFilterName(),
-                                    ), // Assuming formatFilterName works for tags
+                                      tag.formatLocalizedEthicalPolicy(context),
+                                    ),
                                     padding: EdgeInsets.zero,
                                     labelPadding: const EdgeInsets.symmetric(
                                       horizontal: 6.0,
                                     ),
-                                    labelStyle:
-                                        Theme.of(context).textTheme.labelSmall,
+                                    labelStyle: Theme.of(
+                                      context,
+                                    ).textTheme.labelSmall?.copyWith(
+                                      color:
+                                          Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.teal.shade200
+                                              : Colors.teal.shade900,
+                                    ),
                                     visualDensity: VisualDensity.compact,
-                                    backgroundColor: Colors.teal.shade50,
+                                    backgroundColor:
+                                        Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.teal.shade900.withOpacity(
+                                              0.3,
+                                            )
+                                            : Colors.teal.shade50,
                                     side: BorderSide.none,
                                   ),
                                 )

@@ -512,6 +512,7 @@
   "createJob_maxSalaryPlaceholder": "مثل: 70000",
   "createJob_validNumberError": "الرجاء إدخال رقم صحيح كامل",
   "createJob_ethicalPoliciesLabel": "الامتثال للسياسات الأخلاقية",
+  "createJob_policiesSelected": "{count} محدد",
   
   "jobDetails_alreadyApplied": "لقد تقدمت بالفعل لهذه الوظيفة.",
   "jobDetails_cvUploadFailed": "تم تقديم الطلب ولكن فشل رفع السيرة الذاتية: {error}",
@@ -566,6 +567,32 @@
   "jobApplications_cvDownloadedSuccess": "تم تنزيل السيرة الذاتية بنجاح\n{path}",
   "jobApplications_openButton": "فتح",
 
-  "profilePage_languageChanged": "تم تغيير اللغة إلى {language}"
+  "profilePage_languageChanged": "تم تغيير اللغة إلى {language}",
+
+  "ethicalPolicy_salary_transparency": "شفافية الرواتب",
+  "ethicalPolicy_equal_pay_policy": "سياسة المساواة في الأجور",
+  "ethicalPolicy_living_wage_employer": "صاحب عمل بأجر معيشي",
+  "ethicalPolicy_comprehensive_health_insurance": "تأمين صحي شامل",
+  "ethicalPolicy_performance_based_bonus": "مكافأة على أساس الأداء",
+  "ethicalPolicy_retirement_plan_support": "دعم خطة التقاعد",
+  "ethicalPolicy_flexible_hours": "ساعات عمل مرنة",
+  "ethicalPolicy_remote_friendly": "صديق للعمل عن بُعد",
+  "ethicalPolicy_no_after_hours_work_culture": "ثقافة عدم العمل بعد ساعات العمل",
+  "ethicalPolicy_mental_health_support": "دعم الصحة النفسية",
+  "ethicalPolicy_generous_paid_time_off": "إجازة مدفوعة سخية",
+  "ethicalPolicy_paid_parental_leave": "إجازة والدية مدفوعة",
+  "ethicalPolicy_inclusive_hiring_practices": "ممارسات توظيف شاملة",
+  "ethicalPolicy_diverse_leadership": "قيادة متنوعة",
+  "ethicalPolicy_lgbtq_friendly_workplace": "مكان عمل صديق لمجتمع LGBTQ+",
+  "ethicalPolicy_disability_inclusive_workplace": "مكان عمل شامل لذوي الإعاقة",
+  "ethicalPolicy_supports_women_in_leadership": "يدعم النساء في القيادة",
+  "ethicalPolicy_mentorship_program": "برنامج إرشاد",
+  "ethicalPolicy_learning_development_budget": "ميزانية التعلم والتطوير",
+  "ethicalPolicy_transparent_promotion_paths": "مسارات ترقية شفافة",
+  "ethicalPolicy_internal_mobility": "التنقل الداخلي",
+  "ethicalPolicy_sustainability_focused": "التركيز على الاستدامة",
+  "ethicalPolicy_ethical_supply_chain": "سلسلة توريد أخلاقية",
+  "ethicalPolicy_community_volunteering": "التطوع المجتمعي",
+  "ethicalPolicy_certified_b_corporation": "شركة B معتمدة"
 }
 
