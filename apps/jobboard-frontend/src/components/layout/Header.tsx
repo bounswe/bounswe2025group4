@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
@@ -10,32 +11,20 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { ThemeToggle } from '../ThemeToggle';
+import { useAuth, useAuthActions } from '@/stores/authStore';
+import { LanguageSwitcher } from '../LanguageSwitcher';
 
 export default function Header() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // Check if user is logged in (token exists)
-    const checkAuth = () => {
-      const token = localStorage.getItem('token');
-      setIsLoggedIn(!!token);
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    window.addEventListener('auth-change', checkAuth);
-    
-    return () => {
-      window.removeEventListener('auth-change', checkAuth);
-    };
-  }, []);
+  const { isAuthenticated } = useAuth();
+  const { logout } = useAuthActions();
+  const { t, i18n } = useTranslation('common');
+  const currentLanguage = i18n.resolvedLanguage ?? i18n.language;
+  const isRtl = i18n.dir(currentLanguage) === 'rtl';
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    window.dispatchEvent(new Event('auth-change'));
+    logout();
     navigate('/');
   };
 
@@ -45,37 +34,46 @@ export default function Header() {
         <div className="container mx-auto flex h-12 md:h-16 items-center px-5">
           <div className="flex flex-1 items-center gap-6">
             <Link to="/" className="flex items-center space-x-2">
-              <span className="text-xl font-bold">Ethica Jobs</span>
+              <span className="text-xl font-bold">{t('header.brand')}</span>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-2">
               <Button variant="ghost" asChild>
-                <Link to="/jobs">Jobs</Link>
+                <Link to="/jobs">{t('header.nav.jobs')}</Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link to="/mentorship">Mentorship</Link>
+                <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link to="/forum">Forum</Link>
+                <Link to="/forum">{t('header.nav.forum')}</Link>
               </Button>
             </nav>
           </div>
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center gap-2">
+            <LanguageSwitcher />
             <ThemeToggle />
-            {isLoggedIn ? (
-              <Button variant="outline" onClick={handleLogout}>
-                Logout
-              </Button>
+            <Button variant="outline" asChild>
+              <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
+            </Button>
+            {isAuthenticated ? (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/profile">Profile</Link>
+                </Button>
+                <Button variant="outline" onClick={handleLogout}>
+                  {t('header.auth.logout')}
+                </Button>
+              </>
             ) : (
               <>
                 <Button variant="ghost" asChild>
-                  <Link to="/login">Login</Link>
+                  <Link to="/login">{t('header.auth.login')}</Link>
                 </Button>
                 <Button asChild>
-                  <Link to="/register">Sign Up</Link>
+                  <Link to="/register">{t('header.auth.signup')}</Link>
                 </Button>
               </>
             )}
@@ -88,48 +86,69 @@ export default function Header() {
                 variant="ghost"
                 size="icon"
                 className="md:hidden"
+                aria-label={t('header.menu')}
               >
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-2/3">
+            <SheetContent side={isRtl ? 'left' : 'right'} className="w-2/3">
               <SheetHeader>
-                <SheetTitle>Menu</SheetTitle>
+                <SheetTitle>{t('header.menu')}</SheetTitle>
               </SheetHeader>
 
               <nav className="flex flex-col gap-2">
                 <Button variant="ghost" asChild className="justify-start">
-                  <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+                  <Link to="/" onClick={() => setIsMobileMenuOpen(false)}>{t('header.nav.home')}</Link>
                 </Button>
                 <Button variant="ghost" asChild className="justify-start">
-                  <Link to="/jobs" onClick={() => setIsMobileMenuOpen(false)}>Jobs</Link>
+                  <Link to="/jobs" onClick={() => setIsMobileMenuOpen(false)}>{t('header.nav.jobs')}</Link>
                 </Button>
                 <Button variant="ghost" asChild className="justify-start">
-                  <Link to="/mentorship" onClick={() => setIsMobileMenuOpen(false)}>Mentorship</Link>
+                  <Link to="/mentorship" onClick={() => setIsMobileMenuOpen(false)}>{t('header.nav.mentorship')}</Link>
                 </Button>
                 <Button variant="ghost" asChild className="justify-start">
-                  <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>Forum</Link>
+                  <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>{t('header.nav.forum')}</Link>
+                </Button>
+                <Button variant="outline" asChild className="justify-start">
+                  <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                    {t('header.nav.employerDashboard')}
+                  </Link>
                 </Button>
               </nav>
 
               <div className="flex flex-col gap-2 p-2 border-t mt-4">
-                {isLoggedIn ? (
-                  <Button variant="outline" onClick={() => {
-                    handleLogout();
-                    setIsMobileMenuOpen(false);
-                  }}>
-                    Logout
-                  </Button>
+                {isAuthenticated ? (
+                  <>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</Link>
+                    </Button>
+                    <Button
+                    variant="outline"
+                    onClick={() => {
+                        handleLogout();
+                        setIsMobileMenuOpen(false);
+                      }}
+                  >
+                      {t('header.auth.logout')}
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Button variant="outline" asChild>
-                      <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>Login</Link>
+                      <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.auth.login')}
+                      </Link>
                     </Button>
                     <Button asChild>
-                      <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>Sign Up</Link>
+                      <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.auth.signup')}
+                      </Link>
                     </Button>
                   </>
                 )}
+              </div>
+              <div className="border-t mt-4 pt-4">
+                <LanguageSwitcher showLabel />
               </div>
             </SheetContent>
           </Sheet>

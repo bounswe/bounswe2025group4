@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthStore>()(
       restoreSession: () => {
         const { accessToken } = get();
 
-        // Check if token exists and is valid
+        // Check if token exists in auth store and is valid
         if (accessToken && isTokenValid(accessToken)) {
           const user = getUserFromToken(accessToken);
           if (user) {
@@ -61,7 +61,24 @@ export const useAuthStore = create<AuthStore>()(
           }
         }
 
-        // If token is invalid or expired, clear session
+        // Migration: Check for old localStorage token format
+        const oldToken = localStorage.getItem('token');
+        if (oldToken && isTokenValid(oldToken)) {
+          const user = getUserFromToken(oldToken);
+          if (user) {
+            // Migrate to new auth store format
+            set({
+              user,
+              accessToken: oldToken,
+              isAuthenticated: true,
+            });
+            // Remove old token from localStorage
+            localStorage.removeItem('token');
+            return;
+          }
+        }
+
+        // If no valid token found, clear session
         get().clearSession();
       },
 
@@ -91,20 +108,24 @@ export const useAuthStore = create<AuthStore>()(
 /**
  * Hook to get auth state
  */
-export const useAuth = () => useAuthStore((state) => ({
-  user: state.user,
-  isAuthenticated: state.isAuthenticated,
-  accessToken: state.accessToken,
-}));
+export const useAuth = () => {
+  const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const accessToken = useAuthStore((state) => state.accessToken);
+
+  return { user, isAuthenticated, accessToken };
+};
 
 /**
  * Hook to get auth actions
  */
-export const useAuthActions = () => useAuthStore((state) => ({
-  login: state.login,
-  logout: state.logout,
-  setUser: state.setUser,
-  restoreSession: state.restoreSession,
-  clearSession: state.clearSession,
-}));
+export const useAuthActions = () => {
+  const login = useAuthStore((state) => state.login);
+  const logout = useAuthStore((state) => state.logout);
+  const setUser = useAuthStore((state) => state.setUser);
+  const restoreSession = useAuthStore((state) => state.restoreSession);
+  const clearSession = useAuthStore((state) => state.clearSession);
+
+  return { login, logout, setUser, restoreSession, clearSession };
+};
 

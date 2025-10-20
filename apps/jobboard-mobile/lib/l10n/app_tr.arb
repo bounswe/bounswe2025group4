@@ -30,6 +30,14 @@
   "signUpScreen_emailInvalid": "Lütfen geçerli bir e-posta adresi girin",
   "signUpScreen_passwordRequired": "Lütfen bir şifre girin",
   "signUpScreen_passwordTooShort": "Şifre en az 6 karakter olmalıdır",
+  "signUpScreen_gender": "Cinsiyet",
+  "signUpScreen_male": "Erkek",
+  "signUpScreen_female": "Kadın",
+  "signUpScreen_other": "Diğer",
+  "signUpScreen_passwordNoUppercase": "Şifre büyük harf içermelidir",
+  "signUpScreen_passwordNoLowercase": "Şifre küçük harf içermelidir",
+  "signUpScreen_passwordNoNumber": "Şifre rakam içermelidir",
+  "signUpScreen_passwordNoSpecialChar": "Şifre özel karakter içermelidir",
   "signUpScreen_confirmPasswordRequired": "Lütfen şifrenizi onaylayın",
   "signUpScreen_passwordsDoNotMatch": "Şifreler eşleşmiyor",
   "signUpScreen_bioRequired": "Lütfen bir biyografi girin",
@@ -369,7 +377,7 @@
   "workplaces_title": "İş Yerleri",
   "workplaces_reviews": "{count} yorum",
 
-  "editProfile_title": "Profili Düzenle",
+  "editProfile_title": "Düzenle",
   "editProfile_saveChanges": "Değişiklikleri kaydet",
   "editProfile_personalInfo": "Kişisel Bilgiler",
   "editProfile_fullName": "Ad Soyad",
@@ -481,6 +489,8 @@
   "common_darkModeIcon": "Karanlık mod ikonu",
   "common_lightModeIcon": "Aydınlık mod ikonu",
   "common_back": "Geri",
+  "common_showPassword": "Şifreyi göster",
+  "common_hidePassword": "Şifreyi gizle",
 
   "profilePage_languageChanged": "Dil {language} olarak değiştirildi"
 }

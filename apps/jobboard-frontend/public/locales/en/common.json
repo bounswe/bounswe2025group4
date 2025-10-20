@@ -1,0 +1,574 @@
+{
+  "languageSwitcher": {
+    "label": "Language",
+    "english": "English",
+    "turkish": "Türkçe",
+    "arabic": "العربية"
+  },
+  "header": {
+    "brand": "Ethica Jobs",
+    "menu": "Menu",
+    "nav": {
+      "home": "Home",
+      "jobs": "Jobs",
+      "mentorship": "Mentorship",
+      "forum": "Forum",
+      "employerDashboard": "Employer Dashboard"
+    },
+    "auth": {
+      "login": "Login",
+      "signup": "Sign Up",
+      "logout": "Logout"
+    }
+  },
+  "footer": {
+    "about": "About Us",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "brandSuffix": "Ethica Jobs"
+  },
+  "home": {
+    "hero": {
+      "title": "Find Your Purpose-Driven Career",
+      "subtitle": "Connect with companies that prioritize ethics and sustainability. Discover opportunities that align with your values and make a positive impact on the world.",
+      "searchLabel": "Search for jobs",
+      "searchPlaceholderDesktop": "Search for jobs, e.g. 'Software Engineer'",
+      "searchPlaceholderMobile": "Search for jobs",
+      "searchButton": "Search"
+    },
+    "quote": {
+      "title": "Daily Inspirational Quote",
+      "text": "The future belongs to those who believe in the beauty of their dreams.",
+      "author": "Eleanor Roosevelt"
+    },
+    "jobSeekers": {
+      "title": "For Job Seekers",
+      "description": "Empowering Your Career Journey. We provide the tools and resources you need to find a fulfilling career that aligns with your values.",
+      "cards": {
+        "ethical": {
+          "title": "Ethical Job Listings",
+          "description": "Browse a curated list of job openings from companies committed to ethical practices and social responsibility."
+        },
+        "resources": {
+          "title": "Career Development Resources",
+          "description": "Access resources to enhance your skills, including resume workshops, interview tips, and career coaching."
+        },
+        "community": {
+          "title": "Community Forum",
+          "description": "Engage with a community of like-minded professionals, share insights, and network with ethical leaders."
+        }
+      }
+    },
+    "employers": {
+      "title": "For Employers",
+      "description": "Building a Better Workforce. Connect with talented individuals who are passionate about making a difference.",
+      "cards": {
+        "talent": {
+          "title": "Attract Top Talent",
+          "description": "Connect with purpose-driven professionals who are passionate about making a difference."
+        },
+        "values": {
+          "title": "Showcase Your Values",
+          "description": "Highlight your company's commitment to ethics, sustainability, and social impact."
+        },
+        "brand": {
+          "title": "Build a Stronger Brand",
+          "description": "Enhance your reputation and attract customers who value ethical business practices."
+        }
+      }
+    },
+    "cta": {
+      "title": "Join the Ethical Careers Community",
+      "description": "Sign up today to start your journey towards a more meaningful and impactful career.",
+      "button": "Get Started"
+    }
+  },
+  "jobs": {
+    "filtersHeading": "Filters",
+    "searchPlaceholder": "Software Engineer",
+    "searchAria": "Search jobs",
+    "clearSearch": "Clear search",
+    "error": "Failed to load jobs. Please try again later.",
+    "retry": "Try Again",
+    "results": "{{count}} job found",
+    "results_plural": "{{count}} jobs found",
+    "resultsDescription": "{{count}} opportunities match your current filters.",
+    "noResults": "No jobs found matching your criteria.",
+    "resetFilters": "Reset Filters",
+    "authRequired": {
+      "title": "Account Required",
+      "description": "You need to create an account to view job listings and apply for positions.",
+      "invitation": "Join Ethica Jobs today and discover purpose-driven career opportunities that align with your values!",
+      "signUp": "Create Account",
+      "login": "Already have an account? Login"
+    }
+  },
+  "jobFilters": {
+    "policies": "Ethical Work Policies",
+    "salary": "Salary Range",
+    "salaryRangeValue": "${{min}}k - ${{max}}k",
+    "jobType": "Job Type",
+    "location": "Location",
+    "locationPlaceholder": "City, State, or Remote",
+    "policyOptions": {
+      "fairLabor": "Fair Labor Practices",
+      "environment": "Environmental Sustainability",
+      "diversity": "Diversity & Inclusion"
+    },
+    "jobTypeOptions": {
+      "fullTime": "Full-time",
+      "partTime": "Part-time",
+      "contract": "Contract"
+    },
+    "salaryEndpoint": "${{value}}k"
+  },
+  "jobCard": {
+    "remote": "Remote"
+  },
+  "mobileFilters": {
+    "open": "Open filters",
+    "title": "Filters",
+    "reset": "Reset",
+    "apply": "Apply"
+  },
+  "jobDetail": {
+    "breadcrumb": {
+      "jobs": "Jobs"
+    },
+    "error": {
+      "title": "Error Loading Job",
+      "missing": "Job not found",
+      "description": "The job you're looking for doesn't exist or has been removed.",
+      "fetch": "Failed to load job details. Please try again later."
+    },
+    "backToJobs": "Back to Jobs",
+    "applyNow": "Apply Now",
+    "description": "Job Description",
+    "responsibilities": {
+      "title": "Responsibilities",
+      "items": [
+        "Design and develop software solutions that meet the needs of our clients",
+        "Write clean, well-documented, and efficient code",
+        "Collaborate with other engineers, product managers, and designers to deliver high-quality products",
+        "Participate in code reviews and provide constructive feedback"
+      ]
+    },
+    "qualifications": {
+      "title": "Qualifications",
+      "items": [
+        "Bachelor's degree in Computer Science or a related field",
+        "5+ years of experience in software engineering",
+        "Strong programming skills in Java, Python, or a similar language",
+        "Experience with Agile development methodologies"
+      ]
+    },
+    "ethicalPolicy": {
+      "title": "Ethical Policy Compliance",
+      "description": "Tech Innovators Inc. is committed to ethical business practices and social responsibility. We adhere to the highest standards of integrity and transparency in all our operations. Our ethical policy includes a commitment to environmental sustainability, fair labor practices, and community engagement. We believe in creating a positive impact on society and the environment through our work."
+    },
+    "contact": {
+      "title": "Contact Information"
+    }
+  },
+  "employerDashboard": {
+    "brand": "Ethical Careers",
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "jobs": "Job Postings",
+      "profile": "Company Profile",
+      "settings": "Settings",
+      "support": "Help and Support"
+    },
+    "title": "Employer Dashboard",
+    "currentPostings": "Current Job Postings",
+    "createJob": "Create New Job Posting",
+    "loadingError": "Failed to load job postings. Please try again later.",
+    "emptyState": "You haven't created any job postings yet.",
+    "emptyCta": "Create Your First Job Posting",
+    "table": {
+      "jobTitle": "Job Title",
+      "status": "Status",
+      "applications": "Applications",
+      "views": "Views",
+      "actions": "Actions"
+    },
+    "actions": {
+      "manage": "Manage",
+      "view": "View"
+    },
+    "statusLabels": {
+      "open": "Open",
+      "active": "Active",
+      "paused": "Paused"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
+      "description": "Sign in to your account to continue",
+      "username": "Username *",
+      "password": "Password *",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign In",
+      "submitting": "Signing in...",
+      "registerPrompt": "Don't have an account?",
+      "registerLink": "Sign up",
+      "success": "Email verified successfully! You can now log in.",
+      "errors": {
+        "serviceUnavailable": "Service temporarily unavailable. Please try again later or contact support.",
+        "invalidCredentials": "Invalid username or password. Please try again.",
+        "generic": "Login failed. Please try again."
+      }
+    },
+    "register": {
+      "title": "Create an Account",
+      "createAccount": "Create an Account",
+      "checkEmail": "Check Your Email",
+      "description": "Sign up to access the job board platform",
+      "verificationLink": "We've sent you a verification link. Please check your email and click the link to activate your account.",
+      "username": "Username *",
+      "email": "Email *",
+      "password": "Password *",
+      "confirmPassword": "Confirm Password *",
+      "role": "Role *",
+      "passwordInfo": "Password must contain:",
+      "passwordRules": {
+        "length": "At least 8 characters",
+        "uppercase": "One uppercase letter",
+        "lowercase": "One lowercase letter",
+        "number": "One number",
+        "special": "One special character"
+      },
+      "roles": {
+        "jobSeeker": "Job Seeker",
+        "employer": "Employer"
+      },
+      "genderOptional": "Gender (Optional)",
+      "pronounsOptional": "Pronouns (Optional)",
+      "genderPlaceholder": "e.g., Male, Female",
+      "pronounsPlaceholder": "e.g., he/him, she/her",
+      "termsLabel": "I agree to the <TermsLink>Terms and Conditions</TermsLink> and <PrivacyLink>Privacy Policy</PrivacyLink> *",
+      "termsLabelPlain": "I agree to the Terms and Conditions and Privacy Policy",
+      "submit": "Sign Up",
+      "submitting": "Creating account...",
+      "loginPrompt": "Already have an account?",
+      "loginLink": "Log in",
+      "success": "Registration successful! Please check your email to verify your account before logging in.",
+      "errors": {
+        "serviceUnavailable": "Service temporarily unavailable. Please try again later or contact support.",
+        "emailInUse": "Email is already in use. If you haven't verified it yet, please check your email for the verification link.",
+        "usernameInUse": "Username is already taken. Please choose a different username.",
+        "generic": "Registration failed. Please try again."
+      }
+    },
+    "forgot": {
+      "title": "Forgot Password",
+      "description": "Enter your email address and we'll send you a link to reset your password",
+      "email": "Email *",
+      "submit": "Send Reset Link",
+      "submitting": "Sending...",
+      "success": "Password reset link has been sent to your email. Please check your inbox.",
+      "loginPrompt": "Remember your password?",
+      "loginLink": "Back to login",
+      "errors": {
+        "serviceUnavailable": "Service temporarily unavailable. Please try again later or contact support.",
+        "generic": "Failed to send reset link. Please try again."
+      }
+    },
+    "reset": {
+      "invalidTitle": "Invalid Reset Link",
+      "invalidDescription": "This password reset link is invalid or has expired.",
+      "requestNew": "Request New Link",
+      "title": "Reset Password",
+      "description": "Enter your new password below",
+      "newPassword": "New Password *",
+      "confirmPassword": "Confirm New Password *",
+      "submit": "Reset Password",
+      "submitting": "Resetting Password...",
+      "success": "Password reset successful! You can now log in with your new password.",
+      "errors": {
+        "sameAsOld": "New password cannot be the same as your old password. Please choose a different password.",
+        "missingToken": "Invalid or missing reset token.",
+        "generic": "Failed to reset password. Please try again."
+      }
+    },
+    "otp": {
+      "title": "Verify OTP",
+      "description": "Enter the verification code sent to your email",
+      "code": "Verification Code *",
+      "placeholder": "Enter 6-digit code",
+      "submit": "Verify",
+      "submitting": "Verifying...",
+      "backToLogin": "Back to Login",
+      "errors": {
+        "invalid": "Invalid or expired OTP code. Please try again.",
+        "generic": "OTP verification failed. Please try again."
+      }
+    }
+  },
+  "profile": {
+    "tabs": {
+      "about": "About",
+      "activity": "Activity",
+      "posts": "Posts"
+    },
+    "page": {
+      "loadErrorTitle": "Failed to load profile",
+      "emptyTitle": "No profile found",
+      "emptyDescription": "Please create your profile to continue",
+      "dangerZone": {
+        "title": "Account Data Deletion",
+        "description": "Permanently delete all profile data (GDPR/KVKK compliant). This cannot be undone.",
+        "button": "Delete All Data"
+      },
+      "alerts": {
+        "deleteFailed": "Failed to delete profile data. Please try again."
+      }
+    },
+    "header": {
+      "openToOpportunities": "Open to opportunities",
+      "currentRole": "{{position}} at {{company}}",
+      "joined": "Joined in {{year}}",
+      "stats": {
+        "posts": "Posts",
+        "badges": "Badges"
+      },
+      "actions": {
+        "editImage": "Edit profile photo"
+      }
+    },
+    "actions": {
+      "add": "Add",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "continue": "Continue",
+      "back": "Back"
+    },
+    "common": {
+      "present": "Present"
+    },
+    "about": {
+      "title": "About",
+      "addBio": "Add bio",
+      "modal": {
+        "title": "Edit About",
+        "bioLabel": "Bio",
+        "placeholder": "Tell us about yourself...",
+        "characterCount": "{{count}} / 1000 characters"
+      }
+    },
+    "experience": {
+      "title": "Experience",
+      "empty": "Add experience",
+      "modal": {
+        "addTitle": "Add Experience",
+        "editTitle": "Edit Experience",
+        "fields": {
+          "company": {
+            "label": "Company",
+            "placeholder": "Company name"
+          },
+          "position": {
+            "label": "Position",
+            "placeholder": "Job title"
+          },
+          "startDate": {
+            "label": "Start Date"
+          },
+          "endDate": {
+            "label": "End Date"
+          },
+          "current": {
+            "label": "I currently work here"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Describe your role and achievements..."
+          }
+        },
+        "submitAdd": "Add Experience",
+        "submitEdit": "Save Changes"
+      }
+    },
+    "education": {
+      "title": "Education",
+      "empty": "Add education",
+      "modal": {
+        "addTitle": "Add Education",
+        "editTitle": "Edit Education",
+        "fields": {
+          "school": {
+            "label": "School",
+            "placeholder": "School name"
+          },
+          "degree": {
+            "label": "Degree",
+            "placeholder": "e.g., Bachelor of Science"
+          },
+          "field": {
+            "label": "Field of Study",
+            "placeholder": "e.g., Computer Science"
+          },
+          "startDate": {
+            "label": "Start Date"
+          },
+          "endDate": {
+            "label": "End Date"
+          },
+          "current": {
+            "label": "I currently study here"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Activities, achievements, coursework..."
+          }
+        },
+        "submitAdd": "Add Education",
+        "submitEdit": "Save Changes"
+      }
+    },
+    "skills": {
+      "title": "Skills",
+      "empty": "Add skills",
+      "modal": {
+        "addTitle": "Add Skill",
+        "editTitle": "Edit Skill",
+        "fields": {
+          "name": {
+            "label": "Skill Name",
+            "placeholder": "e.g., JavaScript, Project Management"
+          }
+        },
+        "delete": "Delete Skill",
+        "submitAdd": "Add Skill",
+        "submitEdit": "Save Changes"
+      }
+    },
+    "interests": {
+      "title": "Interests",
+      "empty": "Add interests",
+      "modal": {
+        "addTitle": "Add Interest",
+        "editTitle": "Edit Interest",
+        "fields": {
+          "name": {
+            "label": "Interest",
+            "placeholder": "e.g., Sustainable Design, Open Source"
+          }
+        },
+        "helper": "Add topics or areas you're passionate about",
+        "delete": "Delete Interest",
+        "submitAdd": "Add Interest",
+        "submitEdit": "Save Changes"
+      }
+    },
+    "create": {
+      "title": "Create Your Profile",
+      "description": "Welcome! Let's create your professional profile to get started.",
+      "fields": {
+        "firstName": {
+          "label": "First Name",
+          "placeholder": "Enter your first name"
+        },
+        "lastName": {
+          "label": "Last Name",
+          "placeholder": "Enter your last name"
+        },
+        "bio": {
+          "label": "Bio (Optional)",
+          "placeholder": "Tell us about yourself..."
+        }
+      },
+      "helper": "Share a brief description about yourself and your professional background",
+      "submit": "Create Profile"
+    },
+    "imageModal": {
+      "title": "Profile Picture",
+      "current": "Current profile picture",
+      "preview": "Preview",
+      "uploadTitle": "Upload a photo",
+      "uploadDescription": "Drag and drop or click to browse",
+      "chooseFile": "Choose File",
+      "fileTypes": "PNG, JPG up to 10MB",
+      "removePhoto": "Remove Photo",
+      "upload": "Upload Photo",
+      "uploading": "Uploading..."
+    },
+    "deleteModal": {
+      "title": "Delete Account Data",
+      "warningTitle": "Warning: This action cannot be undone",
+      "warningDescription": "This will permanently delete all your profile data.",
+      "summaryTitle": "The following data will be permanently deleted:",
+      "items": {
+        "profilePicture": "Profile picture",
+        "bio": "Bio and personal information",
+        "experiences": "Work experiences",
+        "education": "Education history",
+        "skills": "Skills and interests"
+      },
+      "compliance": "This action is performed in compliance with GDPR/KVKK data protection regulations.",
+      "buttons": {
+        "cancel": "Cancel",
+        "continue": "Continue",
+        "back": "Back",
+        "delete": "Delete All Data",
+        "deleting": "Deleting..."
+      },
+      "confirmKeyword": "DELETE",
+      "confirmPrompt": "To confirm deletion, please type <code>{{keyword}}</code> in the field below:",
+      "confirmationLabel": "Confirmation",
+      "confirmationPlaceholder": "Type {{keyword}} to confirm"
+    },
+    "activity": {
+      "items": [
+        {
+          "type": "application",
+          "text": "Applied to Senior Product Designer at Innovation Labs",
+          "date": "2 days ago"
+        },
+        {
+          "type": "forum",
+          "text": "Posted a thread on forum: 'Best practices for accessibility in design'",
+          "date": "5 days ago"
+        },
+        {
+          "type": "comment",
+          "text": "Made a comment on 'Remote work strategies for designers'",
+          "date": "1 week ago"
+        },
+        {
+          "type": "like",
+          "text": "Liked a comment on 'Design system implementation'",
+          "date": "1 week ago"
+        },
+        {
+          "type": "application",
+          "text": "Applied to UX Designer at Creative Studio",
+          "date": "2 weeks ago"
+        }
+      ]
+    },
+    "posts": {
+      "replyLabel": "{{value}} reply",
+      "repliesLabel": "{{value}} replies",
+      "likeLabel": "{{value}} like",
+      "likesLabel": "{{value}} likes",
+      "items": [
+        {
+          "title": "How to improve user research techniques",
+          "date": "3 days ago"
+        },
+        {
+          "title": "My journey into product design",
+          "date": "1 week ago"
+        },
+        {
+          "title": "Tools I use daily as a designer",
+          "date": "2 weeks ago"
+        }
+      ]
+    }
+  }
+}

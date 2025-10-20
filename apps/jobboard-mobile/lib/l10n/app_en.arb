@@ -114,6 +114,22 @@
   "@signUpScreen_passwordTooShort": {
     "description": "Password length validation error"
   },
+  "signUpScreen_passwordNoUppercase": "Password must contain at least 1 uppercase letter",
+    "@signUpScreen_passwordNoUppercase": {
+      "description": "Password uppercase validation error"
+  },
+  "signUpScreen_passwordNoLowercase": "Password must contain at least 1 lowercase letter",
+  "@signUpScreen_passwordNoLowercase": {
+    "description": "Password lowercase validation error"
+  },
+  "signUpScreen_passwordNoNumber": "Password must contain at least 1 number",
+  "@signUpScreen_passwordNoNumber": {
+    "description": "Password number validation error"
+  },
+  "signUpScreen_passwordNoSpecialChar": "Password must contain at least 1 special character.",
+  "@signUpScreen_passwordNoSpecialChar": {
+    "description": "Password special character validation error"
+  },
   "signUpScreen_confirmPasswordRequired": "Please confirm your password",
   "@signUpScreen_confirmPasswordRequired": {
     "description": "Confirm password validation error"
@@ -121,6 +137,22 @@
   "signUpScreen_passwordsDoNotMatch": "Passwords do not match",
   "@signUpScreen_passwordsDoNotMatch": {
     "description": "Password mismatch error"
+  },
+  "signUpScreen_gender": "Gender",
+  "@signUpScreen_gender": {
+    "description": "Gender field label"
+  },
+  "signUpScreen_male": "Male",
+  "@signUpScreen_male": {
+    "description": "Male option"
+  },
+  "signUpScreen_female": "Female",
+  "@signUpScreen_female": {
+    "description": "Female option"
+   },
+  "signUpScreen_other": "Other",
+  "@signUpScreen_other": {
+    "description": "Other option"
   },
   "signUpScreen_bioRequired": "Please enter a bio",
   "@signUpScreen_bioRequired": {
@@ -1432,7 +1464,7 @@
   "@@_PROFILE": {},
   "editProfile_title": "Edit Profile",
   "@editProfile_title": {
-    "description": "Edit profile screen title"
+    "description": "Edit profile page title"
   },
   "editProfile_saveChanges": "Save changes",
   "@editProfile_saveChanges": {
@@ -1931,6 +1963,14 @@
   "common_back": "Back",
   "@common_back": {
     "description": "Back button tooltip"
+  },
+  "common_showPassword": "Show password",
+  "@common_showPassword": {
+    "description": "Accessibility label to reveal password"
+  },
+  "common_hidePassword": "Hide password",
+  "@common_hidePassword": {
+    "description": "Accessibility label to hide password"
   }
 }
 

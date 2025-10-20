@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 
 import '../models/job_post.dart';
 import '../models/job_application.dart';
@@ -1040,10 +1041,10 @@ class ApiService {
 
   // --- Profile Endpoints ---
 
-  /// GET /api/me
+  /// GET /api/profile
   /// Fetches the current user's profile data
   Future<FullProfile> getMyProfile() async {
-    final uri = _buildUri('/me');
+    final uri = _buildUri('/profile');
 
     try {
       final response = await _client.get(uri, headers: _getHeaders());
@@ -1068,35 +1069,40 @@ class ApiService {
     }
   }
 
-  /// PATCH /api/profile/{userId}
-  /// Updates a user profile
-  Future<Profile> updateProfile(
-    int userId,
-    Map<String, dynamic> profileData,
-  ) async {
-    final uri = _buildUri('/profile/$userId');
+  /// PUT /api/profile
+  /// Updates the current user's profile
+  Future<Profile> updateProfile(Map<String, dynamic> profileData) async {
+    final uri = _buildUri('/profile');
+
+    print('ProfileProvider: Updating profile with data: $profileData');
 
     try {
-      final response = await _client.patch(
+      final response = await _client.put(
         uri,
         headers: _getHeaders(),
         body: jsonEncode(profileData),
       );
       final data = await _handleResponse(response);
+      print('ProfileProvider: Update response: $data');
       return Profile.fromJson(data);
     } catch (e) {
       throw Exception('Failed to update profile. $e');
     }
   }
 
-  /// PUT /api/profile/{userId}/profile-picture
-  /// Uploads a profile picture using base64-encoded image in JSON
-  Future<String> uploadProfilePicture(int userId, File imageFile) async {
+  /// POST /api/profile/image
+  /// Uploads a profile picture using multipart form data
+  Future<Map<String, dynamic>> uploadProfilePicture(File imageFile) async {
     try {
-      final uri = _buildUri('/profile/$userId/profile-picture');
+      final uri = _buildUri('/profile/image');
 
-      final request = http.MultipartRequest('PUT', uri);
-      request.headers.addAll(_getHeaders());
+      final request = http.MultipartRequest('POST', uri);
+
+      // Add only auth header for multipart, remove Content-Type
+      final token = _authProvider.token;
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
 
       final fileStream = http.ByteStream(imageFile.openRead());
       final fileLength = await imageFile.length();
@@ -1105,6 +1111,7 @@ class ApiService {
         fileStream,
         fileLength,
         filename: 'profile_image.jpg',
+        contentType: MediaType('image', 'jpeg'),
       );
 
       request.files.add(multipartFile);
@@ -1113,7 +1120,8 @@ class ApiService {
       final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        return response.body;
+        final data = await _handleResponse(response);
+        return data as Map<String, dynamic>;
       } else {
         throw Exception('Failed to upload: ${response.body}');
       }
@@ -1122,74 +1130,141 @@ class ApiService {
     }
   }
 
-  /// GET /api/profile/{userId}/profile-picture
+  /// GET /api/profile/image
   /// Fetches the profile picture as a direct image URL (used by Image.network)
-  Future<String> getProfilePicture(int userId) async {
+  Future<String> getProfilePicture() async {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    return '${AppConstants.baseUrl}/profile/$userId/profile-picture?t=$timestamp';
+    final url = '${AppConstants.baseUrl}/profile/image?t=$timestamp';
+    return url;
   }
 
-  /// DELETE /api/profile/{userId}/profile-picture
+  /// DELETE /api/profile/image
   /// Deletes the user's profile picture
-  Future<void> deleteProfilePicture(int userId) async {
-    final uri = _buildUri('/profile/$userId/profile-picture');
+  Future<void> deleteProfilePicture() async {
+    final uri = _buildUri('/profile/image');
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());
+
       await _handleResponse(response);
     } catch (e) {
       throw Exception('Failed to delete profile picture. $e');
     }
   }
 
-  /// PATCH /api/profile/{userId}/skills
-  /// Updates user skills
-  Future<List<String>> updateSkills(int userId, List<String> skills) async {
-    final uri = _buildUri('/profile/$userId/skills');
+  /// POST /api/profile/skill
+  /// Adds a new skill to the current user's profile
+  Future<Map<String, dynamic>> addSkill(String name, String level) async {
+    final uri = _buildUri('/profile/skill');
 
     try {
-      final response = await _client.patch(
+      final response = await _client.post(
         uri,
         headers: _getHeaders(),
-        body: jsonEncode({'skills': skills}),
+        body: jsonEncode({'name': name, 'level': level}),
       );
       final data = await _handleResponse(response);
-      return (data as List<dynamic>).cast<String>();
+      return data as Map<String, dynamic>;
     } catch (e) {
-      throw Exception('Failed to update skills. $e');
+      throw Exception('Failed to add skill. $e');
     }
   }
 
-  /// PATCH /api/profile/{userId}/interests
-  /// Updates user interests
-  Future<List<String>> updateInterests(
-    int userId,
-    List<String> interests,
+  /// PUT /api/profile/skill/{skillId}
+  /// Updates an existing skill
+  Future<Map<String, dynamic>> updateSkill(
+    int skillId,
+    String name,
+    String level,
   ) async {
-    final uri = _buildUri('/profile/$userId/interests');
+    final uri = _buildUri('/profile/skill/$skillId');
 
     try {
-      final response = await _client.patch(
+      final response = await _client.put(
         uri,
         headers: _getHeaders(),
-        body: jsonEncode({'interests': interests}),
+        body: jsonEncode({'name': name, 'level': level}),
       );
       final data = await _handleResponse(response);
-      return (data as List<dynamic>).cast<String>();
+      return data as Map<String, dynamic>;
     } catch (e) {
-      throw Exception('Failed to update interests. $e');
+      throw Exception('Failed to update skill. $e');
+    }
+  }
+
+  /// DELETE /api/profile/skill/{skillId}
+  /// Deletes a skill from the current user's profile
+  Future<void> deleteSkill(int skillId) async {
+    final uri = _buildUri('/profile/skill/$skillId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to delete skill. $e');
+    }
+  }
+
+  /// POST /api/profile/interest
+  /// Adds a new interest to the current user's profile
+  Future<Map<String, dynamic>> addInterest(String name) async {
+    final uri = _buildUri('/profile/interest');
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode({'name': name}),
+      );
+      final data = await _handleResponse(response);
+      return data as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Failed to add interest. $e');
+    }
+  }
+
+  /// PUT /api/profile/interest/{interestId}
+  /// Updates an existing interest
+  Future<Map<String, dynamic>> updateInterest(
+    int interestId,
+    String name,
+  ) async {
+    final uri = _buildUri('/profile/interest/$interestId');
+
+    try {
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode({'name': name}),
+      );
+      final data = await _handleResponse(response);
+      return data as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Failed to update interest. $e');
+    }
+  }
+
+  /// DELETE /api/profile/interest/{interestId}
+  /// Deletes an interest from the current user's profile
+  Future<void> deleteInterest(int interestId) async {
+    final uri = _buildUri('/profile/interest/$interestId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to delete interest. $e');
     }
   }
 
   // --- Experience Endpoints ---
 
-  /// POST /api/profile/{userId}/experience
+  /// POST /api/profile/experience
   /// Creates a new work experience entry
   Future<Experience> createExperience(
-    int userId,
     Map<String, dynamic> experienceData,
   ) async {
-    final uri = _buildUri('/profile/$userId/experience');
+    final uri = _buildUri('/profile/experience');
 
     try {
       final response = await _client.post(
@@ -1204,14 +1279,13 @@ class ApiService {
     }
   }
 
-  /// PUT /api/profile/{userId}/experience/{experienceId}
+  /// PUT /api/profile/experience/{experienceId}
   /// Updates an existing work experience entry
   Future<Experience> updateExperience(
-    int userId,
     int experienceId,
     Map<String, dynamic> experienceData,
   ) async {
-    final uri = _buildUri('/profile/$userId/experience/$experienceId');
+    final uri = _buildUri('/profile/experience/$experienceId');
 
     try {
       final response = await _client.put(
@@ -1226,10 +1300,10 @@ class ApiService {
     }
   }
 
-  /// DELETE /api/profile/{userId}/experience/{experienceId}
+  /// DELETE /api/profile/experience/{experienceId}
   /// Deletes a work experience entry
-  Future<void> deleteExperience(int userId, int experienceId) async {
-    final uri = _buildUri('/profile/$userId/experience/$experienceId');
+  Future<void> deleteExperience(int experienceId) async {
+    final uri = _buildUri('/profile/experience/$experienceId');
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());
@@ -1239,13 +1313,10 @@ class ApiService {
     }
   }
 
-  /// POST /api/profile/{userId}/education
+  /// POST /api/profile/education
   /// Creates a new education entry
-  Future<Education> createEducation(
-    int userId,
-    Map<String, dynamic> educationData,
-  ) async {
-    final uri = _buildUri('/profile/$userId/education');
+  Future<Education> createEducation(Map<String, dynamic> educationData) async {
+    final uri = _buildUri('/profile/education');
 
     try {
       final response = await _client.post(
@@ -1260,14 +1331,13 @@ class ApiService {
     }
   }
 
-  /// PUT /api/profile/{userId}/education/{educationId}
+  /// PUT /api/profile/education/{educationId}
   /// Updates an existing education entry
   Future<Education> updateEducation(
-    int userId,
     int educationId,
     Map<String, dynamic> educationData,
   ) async {
-    final uri = _buildUri('/profile/$userId/education/$educationId');
+    final uri = _buildUri('/profile/education/$educationId');
 
     try {
       final response = await _client.put(
@@ -1282,10 +1352,10 @@ class ApiService {
     }
   }
 
-  /// DELETE /api/profile/{userId}/education/{educationId}
+  /// DELETE /api/profile/education/{educationId}
   /// Deletes an education entry
-  Future<void> deleteEducation(int userId, int educationId) async {
-    final uri = _buildUri('/profile/$userId/education/$educationId');
+  Future<void> deleteEducation(int educationId) async {
+    final uri = _buildUri('/profile/education/$educationId');
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());

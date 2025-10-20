@@ -36,20 +36,9 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
 
       final profile = await _apiService.getMyProfile();
-      final userId = profile.profile.userId;
 
-      final pictureUrl = await _apiService.getProfilePicture(userId);
+      _currentUserProfile = profile;
 
-      final updatedProfile = profile.profile.copyWith(
-        profilePicture: pictureUrl,
-      );
-
-      _currentUserProfile = FullProfile(
-        profile: updatedProfile,
-        experience: profile.experience,
-        education: profile.education,
-        badges: profile.badges,
-      );
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -66,15 +55,8 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
 
       final profile = await _apiService.getUserProfile(userId);
-      final pictureUrl = await _apiService.getProfilePicture(userId);
-
-      final updatedProfile = profile.profile.copyWith(profilePicture: pictureUrl);
-      _viewedProfile = FullProfile(
-        profile: updatedProfile,
-        experience: profile.experience,
-        education: profile.education,
-        badges: profile.badges,
-      );
+      // imageUrl comes from backend, assign directly
+      _viewedProfile = profile;
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -92,10 +74,7 @@ class ProfileProvider extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      final updatedProfile = await _apiService.updateProfile(
-        _currentUserProfile!.profile.userId,
-        profileData,
-      );
+      final updatedProfile = await _apiService.updateProfile(profileData);
 
       _currentUserProfile = FullProfile(
         profile: updatedProfile,
@@ -121,11 +100,10 @@ class ProfileProvider extends ChangeNotifier {
 
     try {
       final userId = _currentUserProfile!.profile.userId;
-      await _apiService.uploadProfilePicture(userId, imageFile);
+      
+      final uploadResult = await _apiService.uploadProfilePicture(imageFile);
 
-
-      final pictureUrl = await _apiService.getProfilePicture(userId);
-
+      final pictureUrl = uploadResult['imageUrl'] as String?;
 
       final updatedProfile = _currentUserProfile!.profile.copyWith(profilePicture: pictureUrl);
       _currentUserProfile = FullProfile(
@@ -142,12 +120,7 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<void> fetchProfilePicture(int userId) async {
     try {
-      final url = await _apiService.getProfilePicture(userId);
-      if (_currentUserProfile != null && _currentUserProfile!.profile.userId == userId) {
-        final updatedProfile = _currentUserProfile!.profile.copyWith(profilePicture: url);
-        _currentUserProfile = _currentUserProfile!.copyWith(profile: updatedProfile);
-        notifyListeners();
-      }
+      // Deprecated - kept for backward compatibility
     } catch (e) {
       rethrow;
     }
@@ -156,13 +129,20 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> deleteProfilePicture() async {
     try {
       final userId = _currentUserProfile!.profile.userId;
-      await _apiService.deleteProfilePicture(userId);
-
-      await fetchMyProfile();
-
-      final pictureUrl = _apiService.getProfilePicture(userId);
-
+      
+      // Update local state first (for immediate UI update)
+      final updated = _currentUserProfile!.profile.copyWith(profilePicture: null);
+      _currentUserProfile = FullProfile(
+        profile: updated,
+        experience: _currentUserProfile!.experience,
+        education: _currentUserProfile!.education,
+        badges: _currentUserProfile!.badges,
+      );
       notifyListeners();
+      
+      // Then delete from backend
+      await _apiService.deleteProfilePicture();
+      
     } catch (e) {
       rethrow;
     }
@@ -170,28 +150,27 @@ class ProfileProvider extends ChangeNotifier {
 
   // Add work experience
   Future<void> addWorkExperience(Map<String, dynamic> experienceData) async {
-    if (_currentUserProfile == null) return;
-
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
 
-      final newExperience = await _apiService.createExperience(
-        _currentUserProfile!.profile.userId,
-        experienceData,
-      );
+      final newExperience = await _apiService.createExperience(experienceData);
 
-      final updatedExperiences = [..._currentUserProfile!.experience, newExperience];
-      _currentUserProfile = FullProfile(
-        profile: _currentUserProfile!.profile,
-        experience: updatedExperiences,
-        education: _currentUserProfile!.education,
-        badges: _currentUserProfile!.badges,
-      );
+      if (_currentUserProfile != null) {
+        final updatedExperiences = [..._currentUserProfile!.experience, newExperience];
+        _currentUserProfile = FullProfile(
+          profile: _currentUserProfile!.profile,
+          experience: updatedExperiences,
+          education: _currentUserProfile!.education,
+          badges: _currentUserProfile!.badges,
+        );
 
-      if (_viewedProfile?.profile.userId == _currentUserProfile?.profile.userId) {
-        _viewedProfile = _currentUserProfile;
+        if (_viewedProfile?.profile.userId == _currentUserProfile?.profile.userId) {
+          _viewedProfile = _currentUserProfile;
+        }
+      } else {
+        await fetchMyProfile();
       }
     } catch (e) {
       _error = e.toString();
@@ -214,7 +193,6 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
 
       final updatedExperience = await _apiService.updateExperience(
-        _currentUserProfile!.profile.userId,
         experienceId,
         experienceData,
       );
@@ -250,10 +228,7 @@ class ProfileProvider extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _apiService.deleteExperience(
-        _currentUserProfile!.profile.userId,
-        experienceId,
-      );
+      await _apiService.deleteExperience(experienceId);
 
       final updatedExperiences = _currentUserProfile!.experience
           .where((e) => e.id != experienceId)
@@ -277,82 +252,51 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
-  // Update skills
-  Future<void> updateSkills(List<String> updatedSkills) async {
-    if (_currentUserProfile == null) return;
-
-    final updatedProfile = _currentUserProfile!.profile.copyWith(
-      skills: updatedSkills,
-    );
-    _currentUserProfile = FullProfile(
-      profile: updatedProfile,
-      experience: _currentUserProfile!.experience,
-      education: _currentUserProfile!.education,
-      badges: _currentUserProfile!.badges,
-    );
-
-    notifyListeners();
-
+  // Add skill
+  Future<void> addSkill(String name, String level) async {
     try {
-      await _apiService.updateSkills(
-        _currentUserProfile!.profile.userId,
-        updatedSkills,
-      );
+      await _apiService.addSkill(name, level);
+      await fetchMyProfile(); // Refresh profile to get updated skills
     } catch (e) {
       _error = e.toString();
+      notifyListeners();
     }
   }
 
-  // Update interests
-  Future<void> updateInterests(List<String> updatedInterests) async {
-    if (_currentUserProfile == null) return;
-
-    final updatedProfile = _currentUserProfile!.profile.copyWith(
-      interests: updatedInterests,
-    );
-    _currentUserProfile = FullProfile(
-      profile: updatedProfile,
-      experience: _currentUserProfile!.experience,
-      education: _currentUserProfile!.education,
-      badges: _currentUserProfile!.badges,
-    );
-
-    notifyListeners();
-
+  // Add interest
+  Future<void> addInterest(String name) async {
     try {
-      await _apiService.updateInterests(
-        _currentUserProfile!.profile.userId,
-        updatedInterests,
-      );
+      await _apiService.addInterest(name);
+      await fetchMyProfile(); // Refresh profile to get updated interests
     } catch (e) {
       _error = e.toString();
+      notifyListeners();
     }
   }
 
   // Add education
   Future<void> addEducation(Map<String, dynamic> educationData) async {
-    if (_currentUserProfile == null) return;
-
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
 
-      final newEducation = await _apiService.createEducation(
-        _currentUserProfile!.profile.userId,
-        educationData,
-      );
+      final newEducation = await _apiService.createEducation(educationData);
 
-      final updatedEducation = [..._currentUserProfile!.education, newEducation];
-      _currentUserProfile = FullProfile(
-        profile: _currentUserProfile!.profile,
-        experience: _currentUserProfile!.experience,
-        education: updatedEducation,
-        badges: _currentUserProfile!.badges,
-      );
+      if (_currentUserProfile != null) {
+        final updatedEducation = [..._currentUserProfile!.education, newEducation];
+        _currentUserProfile = FullProfile(
+          profile: _currentUserProfile!.profile,
+          experience: _currentUserProfile!.experience,
+          education: updatedEducation,
+          badges: _currentUserProfile!.badges,
+        );
 
-      if (_viewedProfile?.profile.userId == _currentUserProfile?.profile.userId) {
-        _viewedProfile = _currentUserProfile;
+        if (_viewedProfile?.profile.userId == _currentUserProfile?.profile.userId) {
+          _viewedProfile = _currentUserProfile;
+        }
+      } else {
+        await fetchMyProfile();
       }
     } catch (e) {
       _error = e.toString();
@@ -375,7 +319,6 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
 
       final updatedEducation = await _apiService.updateEducation(
-        _currentUserProfile!.profile.userId,
         educationId,
         educationData,
       );
@@ -411,10 +354,7 @@ class ProfileProvider extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      await _apiService.deleteEducation(
-        _currentUserProfile!.profile.userId,
-        educationId,
-      );
+      await _apiService.deleteEducation(educationId);
 
       final updatedEducation = _currentUserProfile!.education
           .where((e) => e.id != educationId)
@@ -450,6 +390,10 @@ class ProfileProvider extends ChangeNotifier {
   // Create profile
   Future<void> createProfile(Map<String, dynamic> profileData) async {
     try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
       final newProfile = await _apiService.createProfile(profileData);
       _currentUserProfile = FullProfile(
         profile: newProfile,
@@ -457,9 +401,13 @@ class ProfileProvider extends ChangeNotifier {
         education: [],
         badges: [],
       );
-      notifyListeners();
+      
     } catch (e) {
+      _error = e.toString();
       throw Exception('Failed to create profile: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -522,8 +470,10 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> updateMentorshipStatus(MentorshipStatus status) async {
     try {
       await _apiService.updateMentorshipStatus(status);
-      await fetchUserDetails(int.parse(_user!.id));
-      notifyListeners();
+      if (_user != null) {
+        await fetchUserDetails(int.parse(_user!.id));
+        notifyListeners();
+      }
     } catch (e) {
       throw Exception('Failed to update mentorship status: $e');
     }

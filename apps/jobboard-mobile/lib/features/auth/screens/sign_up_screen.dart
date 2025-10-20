@@ -26,6 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _bioController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  String? _selectedGender;
 
   @override
   void dispose() {
@@ -76,9 +77,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         if (outcome == RegisterOutcome.success) {
           HapticFeedback.heavyImpact();
-          final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-          profileProvider.clearCurrentUserProfile();
-          await profileProvider.fetchMyProfile();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Registration successful!"),
@@ -153,7 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          tooltip: 'Back',
+          tooltip: AppLocalizations.of(context)!.common_back,
           onPressed: () {
             HapticFeedback.lightImpact();
             Navigator.pop(context);
@@ -214,7 +212,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: A11y(
-                        label: _obscurePassword ? 'Show password' : 'Hide password',
+                        label: _obscurePassword
+                            ? AppLocalizations.of(context)!.common_showPassword
+                            : AppLocalizations.of(context)!.common_hidePassword,
                         child: Icon(
                         _obscurePassword
                             ? Icons.visibility
@@ -233,8 +233,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     if (value == null || value.isEmpty) {
                       return AppLocalizations.of(context)!.signUpScreen_passwordRequired;
                     }
-                    if (value.length < 6) {
+                    if (value.length < 8) {
                       return AppLocalizations.of(context)!.signUpScreen_passwordTooShort;
+                    }
+                    if (!value.contains(RegExp(r'[A-Z]'))) {
+                      return AppLocalizations.of(context)!.signUpScreen_passwordNoUppercase;
+                    }
+                    if (!value.contains(RegExp(r'[a-z]'))) {
+                      return AppLocalizations.of(context)!.signUpScreen_passwordNoLowercase;
+                    }
+                    if (!value.contains(RegExp(r'[0-9]'))) {
+                      return AppLocalizations.of(context)!.signUpScreen_passwordNoNumber;
+                    }
+                    if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+                      return AppLocalizations.of(context)!.signUpScreen_passwordNoSpecialChar;
                     }
                     return null;
                   },
@@ -248,7 +260,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: A11y(
-                        label: _obscureConfirmPassword ? 'Show password' : 'Hide password',
+                        label: _obscureConfirmPassword
+                            ? AppLocalizations.of(context)!.common_showPassword
+                            : AppLocalizations.of(context)!.common_hidePassword,
                         child: Icon(
                         _obscureConfirmPassword
                             ? Icons.visibility
@@ -273,6 +287,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: _selectedGender,
+                  items: [
+                    DropdownMenuItem(
+                      value: 'female',
+                      child: Text(AppLocalizations.of(context)!.signUpScreen_female),
+                    ),
+                    DropdownMenuItem(
+                      value: 'male',
+                      child: Text(AppLocalizations.of(context)!.signUpScreen_male),
+                    ),
+                    DropdownMenuItem(
+                      value: 'other',
+                      child: Text(AppLocalizations.of(context)!.signUpScreen_other),
+                    ),
+                  ],
+                  onChanged: (val) => setState(() => _selectedGender = val),
+                  decoration: InputDecoration(
+                    labelText: AppLocalizations.of(context)!.signUpScreen_gender,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _bioController,
