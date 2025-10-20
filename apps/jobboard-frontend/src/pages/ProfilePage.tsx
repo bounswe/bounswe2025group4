@@ -457,7 +457,20 @@ export default function ProfilePage() {
               />
 
               <ExperienceSection
-                experiences={profile.experiences}
+                experiences={profile.experiences.sort((a, b) => {
+                  // Current jobs (no endDate) should be first
+                  if (!a.endDate && b.endDate) return -1;
+                  if (a.endDate && !b.endDate) return 1;
+                  if (!a.endDate && !b.endDate) {
+                    // If both are current, sort by startDate descending
+                    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+                  }
+                  
+                  // Both have endDates, sort by endDate descending (most recent first)
+                  const endDateA = a.endDate ? new Date(a.endDate) : new Date();
+                  const endDateB = b.endDate ? new Date(b.endDate) : new Date();
+                  return endDateB.getTime() - endDateA.getTime();
+                })}
                 onAdd={() => openModal('experience')}
                 onEdit={(id) => {
                   const exp = profile.experiences.find((e) => e.id === id);
