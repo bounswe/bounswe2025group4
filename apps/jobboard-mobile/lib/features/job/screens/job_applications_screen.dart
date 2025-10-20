@@ -147,10 +147,12 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
 
         final statusMessage =
             newStatus == ApplicationStatus.approved
-                ? 'Application approved successfully'
+                ? AppLocalizations.of(context)!.jobApplications_approvedSuccess
                 : newStatus == ApplicationStatus.rejected
-                ? 'Application rejected'
-                : 'Application status updated';
+                ? AppLocalizations.of(context)!.jobApplications_rejectedSuccess
+                : AppLocalizations.of(
+                  context,
+                )!.jobApplications_statusUpdatedSuccess;
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(statusMessage), backgroundColor: Colors.green),
@@ -188,7 +190,13 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       builder:
           (context) => AlertDialog(
             title: Text(
-              isApproving ? 'Approve Application' : 'Reject Application',
+              isApproving
+                  ? AppLocalizations.of(
+                    context,
+                  )!.jobApplications_approveDialogTitle
+                  : AppLocalizations.of(
+                    context,
+                  )!.jobApplications_rejectDialogTitle,
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -196,8 +204,12 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
               children: [
                 Text(
                   isApproving
-                      ? 'Provide feedback to the applicant (optional):'
-                      : 'Provide reason for rejection (optional):',
+                      ? AppLocalizations.of(
+                        context,
+                      )!.jobApplications_approveFeedbackPrompt
+                      : AppLocalizations.of(
+                        context,
+                      )!.jobApplications_rejectFeedbackPrompt,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 12),
@@ -206,8 +218,12 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                   decoration: InputDecoration(
                     hintText:
                         isApproving
-                            ? 'e.g., Great qualifications! We\'ll contact you soon.'
-                            : 'e.g., We have selected other candidates at this time.',
+                            ? AppLocalizations.of(
+                              context,
+                            )!.jobApplications_approveFeedbackHint
+                            : AppLocalizations.of(
+                              context,
+                            )!.jobApplications_rejectFeedbackHint,
                     border: const OutlineInputBorder(),
                     contentPadding: const EdgeInsets.all(12),
                   ),
@@ -215,7 +231,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'The applicant will see this feedback.',
+                  AppLocalizations.of(context)!.jobApplications_feedbackMessage,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Colors.grey.shade600,
                     fontStyle: FontStyle.italic,
@@ -226,7 +242,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(null),
-                child: const Text('Cancel'),
+                child: Text(
+                  AppLocalizations.of(context)!.jobApplications_cancelButton,
+                ),
               ),
               ElevatedButton(
                 onPressed:
@@ -235,7 +253,15 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                   backgroundColor: isApproving ? Colors.green : Colors.red,
                   foregroundColor: Colors.white,
                 ),
-                child: Text(isApproving ? 'Approve' : 'Reject'),
+                child: Text(
+                  isApproving
+                      ? AppLocalizations.of(
+                        context,
+                      )!.jobApplications_approveButton
+                      : AppLocalizations.of(
+                        context,
+                      )!.jobApplications_rejectButton,
+                ),
               ),
             ],
           ),
@@ -310,9 +336,11 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
   }
 
   Widget _buildApplicationCard(JobApplication application) {
-    final dateFormat = DateFormat.yMMMd();
+    // Get current locale from context
+    final locale = Localizations.localeOf(context).toString();
+    final dateFormat = DateFormat.yMMMd(locale);
     final statusColor = _getStatusColor(application.status);
-    final statusText = application.status.name.capitalizeFirst();
+    final statusText = _getLocalizedStatus(application.status);
     final bool isPending = application.status == ApplicationStatus.pending;
     final bool isUpdating = _isUpdatingStatus[application.id] ?? false;
 
@@ -348,7 +376,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             ),
             const SizedBox(height: 4.0),
             Text(
-              'Applied: ${dateFormat.format(application.dateApplied)}',
+              AppLocalizations.of(context)!.jobApplications_appliedLabel(
+                dateFormat.format(application.dateApplied),
+              ),
               style: Theme.of(context).textTheme.bodySmall,
             ),
             if (application.specialNeeds != null &&
@@ -356,7 +386,11 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
-                  'Special Needs: ${application.specialNeeds}',
+                  AppLocalizations.of(
+                    context,
+                  )!.jobApplications_specialNeedsLabel(
+                    application.specialNeeds!,
+                  ),
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(color: Colors.blue.shade700),
@@ -377,7 +411,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          'CV Attached (tap to view)',
+                          AppLocalizations.of(context)!.jobApplications_cvLabel,
                           style: Theme.of(
                             context,
                           ).textTheme.bodySmall?.copyWith(
@@ -404,7 +438,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                 child: ExpansionTile(
                   tilePadding: EdgeInsets.zero,
                   title: Text(
-                    'Cover Letter',
+                    AppLocalizations.of(
+                      context,
+                    )!.jobApplications_coverLetterLabel,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.indigo,
@@ -426,7 +462,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Text(
-                  'Feedback: ${application.feedback}',
+                  AppLocalizations.of(
+                    context,
+                  )!.jobApplications_feedbackLabel(application.feedback!),
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
@@ -451,8 +489,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                           color: Colors.red,
                           size: 18,
                         ),
-                        label: const Text(
-                          'Reject',
+                        label: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.jobApplications_rejectButton,
                           style: TextStyle(color: Colors.red),
                         ),
                         onPressed:
@@ -475,8 +515,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                           color: Colors.white,
                           size: 18,
                         ),
-                        label: const Text(
-                          'Approve',
+                        label: Text(
+                          AppLocalizations.of(
+                            context,
+                          )!.jobApplications_approveButton,
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed:
@@ -504,6 +546,18 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     );
   }
 
+  String _getLocalizedStatus(ApplicationStatus status) {
+    switch (status) {
+      case ApplicationStatus.approved:
+        return AppLocalizations.of(context)!.jobApplications_statusApproved;
+      case ApplicationStatus.rejected:
+        return AppLocalizations.of(context)!.jobApplications_statusRejected;
+      case ApplicationStatus.pending:
+      default:
+        return AppLocalizations.of(context)!.jobApplications_statusPending;
+    }
+  }
+
   Color _getStatusColor(ApplicationStatus status) {
     switch (status) {
       case ApplicationStatus.approved:
@@ -522,8 +576,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       // Show loading indicator
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Downloading CV...'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.jobApplications_downloadingCV,
+          ),
           duration: Duration(seconds: 2),
         ),
       );
@@ -542,7 +598,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('CV saved to ${file.path}'),
+            content: Text(
+              AppLocalizations.of(context)!.jobApplications_cvSaved(file.path),
+            ),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 3),
           ),
@@ -554,7 +612,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Failed to download CV: ${e.toString().replaceFirst("Exception: ", "")}',
+              AppLocalizations.of(context)!.jobApplications_cvDownloadFailed(
+                e.toString().replaceFirst("Exception: ", ""),
+              ),
             ),
             backgroundColor: Colors.red,
           ),
@@ -568,8 +628,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     if (application.cvUrl == null || application.cvUrl!.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No CV uploaded for this application'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.jobApplications_noCVUploaded,
+            ),
             backgroundColor: Colors.orange,
           ),
         );
@@ -585,8 +647,14 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             children: [
               ListTile(
                 leading: const Icon(Icons.visibility, color: Colors.blue),
-                title: const Text('View CV in Browser'),
-                subtitle: const Text('Open CV in your browser'),
+                title: Text(
+                  AppLocalizations.of(context)!.jobApplications_viewCVBrowser,
+                ),
+                subtitle: Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.jobApplications_viewCVBrowserSubtitle,
+                ),
                 onTap: () async {
                   Navigator.pop(context);
                   try {
@@ -594,9 +662,11 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                     final launched = await launchUrl(url);
                     if (!launched && mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
-                            'Unable to open CV. No app available to handle PDF files.',
+                            AppLocalizations.of(
+                              context,
+                            )!.jobApplications_cvOpenFailed,
                           ),
                           backgroundColor: Colors.orange,
                         ),
@@ -607,7 +677,11 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Error opening CV: ${e.toString()}'),
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.jobApplications_cvOpenError(e.toString()),
+                          ),
                           backgroundColor: Colors.red,
                         ),
                       );
@@ -617,8 +691,14 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.download, color: Colors.green),
-                title: const Text('Download CV'),
-                subtitle: const Text('Save CV to your device'),
+                title: Text(
+                  AppLocalizations.of(context)!.jobApplications_downloadCV,
+                ),
+                subtitle: Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.jobApplications_downloadCVSubtitle,
+                ),
                 onTap: () {
                   Navigator.pop(context);
                   _downloadCV(application);
@@ -637,8 +717,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       // Show loading indicator
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Downloading CV...'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.jobApplications_downloadingCV,
+          ),
           duration: Duration(seconds: 2),
         ),
       );
@@ -683,11 +765,15 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('CV downloaded successfully\n$filePath'),
+            content: Text(
+              AppLocalizations.of(
+                context,
+              )!.jobApplications_cvDownloadedSuccess(filePath),
+            ),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
-              label: 'OPEN',
+              label: AppLocalizations.of(context)!.jobApplications_openButton,
               textColor: Colors.white,
               onPressed: () async {
                 try {
@@ -707,7 +793,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Failed to download CV: ${e.toString().replaceFirst("Exception: ", "")}',
+              AppLocalizations.of(context)!.jobApplications_cvDownloadFailed(
+                e.toString().replaceFirst("Exception: ", ""),
+              ),
             ),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 4),

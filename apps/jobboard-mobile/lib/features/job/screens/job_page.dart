@@ -356,7 +356,8 @@ class _JobPageState extends State<JobPage> {
               ? FloatingActionButton(
                 onPressed: _navigateToCreateJobPost,
                 tooltip: AppLocalizations.of(context)!.jobPage_createJob,
-                backgroundColor: Colors.blue, // Use blue to match design language
+                backgroundColor:
+                    Colors.blue, // Use blue to match design language
                 foregroundColor: Colors.white,
                 child: const Icon(Icons.add),
               )
@@ -482,7 +483,9 @@ class _JobPageState extends State<JobPage> {
         itemCount: _jobPostings.length,
         itemBuilder: (context, index) {
           final job = _jobPostings[index];
-          final dateFormat = DateFormat.yMMMd();
+          // Get current locale from context
+          final locale = Localizations.localeOf(context).toString();
+          final dateFormat = DateFormat.yMMMd(locale);
 
           return Card(
             elevation: 2.0,

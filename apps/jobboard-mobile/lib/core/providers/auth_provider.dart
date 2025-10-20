@@ -24,7 +24,8 @@ class AuthProvider with ChangeNotifier {
   String? _pendingTemporaryToken;
 
   String? get pendingUsername => _pendingUsername;
-  bool get hasPendingOtp => _pendingUsername != null && _pendingTemporaryToken != null;
+  bool get hasPendingOtp =>
+      _pendingUsername != null && _pendingTemporaryToken != null;
 
   // --- Onboarding State (If mentorship preference is part of the flow but not API) ---
   UserType? _onboardingUserType; // Changed from UserRole
@@ -36,12 +37,16 @@ class AuthProvider with ChangeNotifier {
   bool get isLoggedIn => _token != null && _currentUser != null;
   bool get isLoading => _isLoading;
   String? get token => _token; // Allow access to token if needed
-  
+
   // Debug method to check authentication status
   void debugAuthStatus() {
     print('AuthProvider Debug:');
-    print('  Token: ${_token != null ? "Present (${_token!.substring(0, 10)}...)" : "NULL"}');
-    print('  Current User: ${_currentUser != null ? "Present (${_currentUser!.username})" : "NULL"}');
+    print(
+      '  Token: ${_token != null ? "Present (${_token!.substring(0, 10)}...)" : "NULL"}',
+    );
+    print(
+      '  Current User: ${_currentUser != null ? "Present (${_currentUser!.username})" : "NULL"}',
+    );
     print('  Is Logged In: $isLoggedIn');
   }
 
@@ -154,11 +159,18 @@ class AuthProvider with ChangeNotifier {
         // (optional) fetch details
         if (_currentUser?.id != null && _token != null) {
           try {
-            print('AuthProvider: Fetching user details for user ID: ${_currentUser!.id}');
-            final details = await _authService.getUserDetails(_currentUser!.id, _token!);
-            print('AuthProvider: Received user details: ${details.email}, ${details.username}');
+            print(
+              'AuthProvider: Fetching user details for user ID: ${_currentUser!.id}',
+            );
+            final details = await _authService.getUserDetails(
+              _currentUser!.id,
+              _token!,
+            );
+            print(
+              'AuthProvider: Received user details: ${details.email}, ${details.username}',
+            );
             await _updateAndPersistUserDetails(details);
-            
+
             await _ensureUserHasProfile(username);
           } catch (e) {
             print('Error fetching user details: $e');
@@ -216,9 +228,16 @@ class AuthProvider with ChangeNotifier {
 
       if (_currentUser?.id != null && _token != null) {
         try {
-          print('AuthProvider: Fetching user details after OTP for user ID: ${_currentUser!.id}');
-          final details = await _authService.getUserDetails(_currentUser!.id, _token!);
-          print('AuthProvider: Received user details after OTP: ${details.email}, ${details.username}');
+          print(
+            'AuthProvider: Fetching user details after OTP for user ID: ${_currentUser!.id}',
+          );
+          final details = await _authService.getUserDetails(
+            _currentUser!.id,
+            _token!,
+          );
+          print(
+            'AuthProvider: Received user details after OTP: ${details.email}, ${details.username}',
+          );
           await _updateAndPersistUserDetails(details);
         } catch (e) {
           print('Error fetching user details after OTP: $e');
@@ -294,13 +313,13 @@ class AuthProvider with ChangeNotifier {
           // Create basic profile for all users
           try {
             final apiService = ApiService(authProvider: this);
-            
+
             await apiService.createProfile({
               'firstName': 'Edit:',
               'lastName': 'Your name',
               'bio': bio ?? '',
             });
-            
+
             if (userDetails.mentorshipStatus == MentorshipStatus.MENTOR) {
               try {
                 await apiService.createMentorProfile(
@@ -505,20 +524,27 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-
   // Updates _currentUser and persists the additional details
   Future<void> _updateAndPersistUserDetails(User fullDetails) async {
-    print('AuthProvider: Updating user details - Email: ${fullDetails.email}, Username: ${fullDetails.username}');
+    print(
+      'AuthProvider: Updating user details - Email: ${fullDetails.email}, Username: ${fullDetails.username}',
+    );
     // Ensure the core ID and username match before updating
     // This prevents potential race conditions if user logs out quickly
     if (_currentUser != null && _currentUser!.id == fullDetails.id) {
       _currentUser = fullDetails; // Update the in-memory user object
-      print('AuthProvider: Updated _currentUser with email: ${_currentUser!.email}');
+      print(
+        'AuthProvider: Updated _currentUser with email: ${_currentUser!.email}',
+      );
 
       try {
         final prefs = await SharedPreferences.getInstance();
         // Persist the newly fetched details
         await prefs.setString('email', _currentUser!.email);
+        await prefs.setString(
+          'userType',
+          _currentUser!.role.name,
+        ); // Re-persist role to ensure consistency
         if (_currentUser!.company != null) {
           await prefs.setString('companyName', _currentUser!.company!);
         } else {
@@ -563,7 +589,7 @@ class AuthProvider with ChangeNotifier {
   Future<void> _ensureUserHasProfile(String username) async {
     try {
       final apiService = ApiService(authProvider: this);
-      
+
       try {
         await apiService.getMyProfile();
         return;
@@ -580,5 +606,4 @@ class AuthProvider with ChangeNotifier {
       // Profile creation failed, user can create manually later
     }
   }
-
 }

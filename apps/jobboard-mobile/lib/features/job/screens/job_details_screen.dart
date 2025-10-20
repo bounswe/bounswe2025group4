@@ -136,8 +136,10 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     // Check if user has already applied
     if (_hasAlreadyApplied) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('You have already applied to this job.'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.jobDetails_alreadyApplied,
+          ),
           backgroundColor: Colors.orange,
           duration: Duration(seconds: 3),
         ),
@@ -182,7 +184,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'Application submitted but CV upload failed: ${e.toString().replaceFirst("Exception: ", "")}',
+                  AppLocalizations.of(context)!.jobDetails_cvUploadFailed(
+                    e.toString().replaceFirst("Exception: ", ""),
+                  ),
                 ),
                 backgroundColor: Colors.orange,
                 duration: const Duration(seconds: 5),
@@ -218,7 +222,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Error applying: ${e.toString().replaceFirst("Exception: ", "")}',
+              AppLocalizations.of(context)!.jobDetails_applyErrorGeneric(
+                e.toString().replaceFirst("Exception: ", ""),
+              ),
             ),
             backgroundColor: Colors.red,
           ),
@@ -247,14 +253,18 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         return StatefulBuilder(
           builder: (statefulContext, setDialogState) {
             return AlertDialog(
-              title: const Text('Apply to Job'),
+              title: Text(
+                AppLocalizations.of(dialogContext)!.jobDetails_applyDialogTitle,
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'You are applying for: ${_jobPost!.title}',
+                      AppLocalizations.of(
+                        dialogContext,
+                      )!.jobDetails_applyDialogMessage(_jobPost!.title),
                       style: Theme.of(dialogContext).textTheme.bodyMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -262,7 +272,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
                     // CV Upload (Required)
                     Text(
-                      'Upload CV *',
+                      AppLocalizations.of(dialogContext)!.jobDetails_cvLabel,
                       style: Theme.of(dialogContext).textTheme.bodyMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -286,7 +296,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         }
                       },
                       icon: const Icon(Icons.upload_file),
-                      label: Text(cvFileName ?? 'Choose File (PDF, DOC, DOCX)'),
+                      label: Text(
+                        cvFileName ??
+                            AppLocalizations.of(
+                              dialogContext,
+                            )!.jobDetails_cvPlaceholder,
+                      ),
                     ),
                     if (cvFileName != null) ...[
                       const SizedBox(height: 4),
@@ -313,7 +328,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
                     // Cover Letter
                     Text(
-                      'Cover Letter (Optional)',
+                      AppLocalizations.of(
+                        dialogContext,
+                      )!.jobDetails_coverLetterLabel,
                       style: Theme.of(dialogContext).textTheme.bodyMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -321,9 +338,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                     TextField(
                       controller: coverLetterController,
                       maxLines: 5,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText:
-                            'Explain why you are a great fit for this position...',
+                            AppLocalizations.of(
+                              dialogContext,
+                            )!.jobDetails_coverLetterHint,
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.all(12),
                       ),
@@ -332,7 +351,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
 
                     // Special Needs
                     Text(
-                      'Special Needs or Accommodations (Optional)',
+                      AppLocalizations.of(
+                        dialogContext,
+                      )!.jobDetails_specialNeedsLabel,
                       style: Theme.of(dialogContext).textTheme.bodyMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -340,16 +361,20 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                     TextField(
                       controller: specialNeedsController,
                       maxLines: 3,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText:
-                            'e.g., Wheelchair accessibility, flexible hours...',
+                            AppLocalizations.of(
+                              dialogContext,
+                            )!.jobDetails_specialNeedsHint,
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.all(12),
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'This information will help employers accommodate your needs.',
+                      AppLocalizations.of(
+                        dialogContext,
+                      )!.jobDetails_specialNeedsMessage,
                       style: Theme.of(
                         dialogContext,
                       ).textTheme.bodySmall?.copyWith(
@@ -363,7 +388,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(null),
-                  child: const Text('Cancel'),
+                  child: Text(
+                    AppLocalizations.of(dialogContext)!.jobDetails_cancelButton,
+                  ),
                 ),
                 ElevatedButton(
                   onPressed:
@@ -386,7 +413,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                     backgroundColor: Colors.teal,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Submit Application'),
+                  child: Text(
+                    AppLocalizations.of(dialogContext)!.jobDetails_submitButton,
+                  ),
                 ),
               ],
             );
@@ -452,7 +481,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     }
 
     final job = _jobPost!;
-    final dateFormat = DateFormat.yMMMd();
+    // Get current locale from context
+    final locale = Localizations.localeOf(context).toString();
+    final dateFormat = DateFormat.yMMMd(locale);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
@@ -567,7 +598,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             children: [
               if (job.remote)
                 Chip(
-                  label: const Text('Remote'),
+                  label: Text(AppLocalizations.of(context)!.jobDetails_remote),
                   backgroundColor: Colors.blue.shade50,
                   side: BorderSide.none,
                   avatar: const Icon(Icons.home_work, size: 16),
@@ -576,7 +607,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 const SizedBox(width: 8.0),
               if (job.inclusiveOpportunity)
                 Chip(
-                  label: const Text('Inclusive Opportunity'),
+                  label: Text(
+                    AppLocalizations.of(
+                      context,
+                    )!.jobDetails_inclusiveOpportunity,
+                  ),
                   backgroundColor: Colors.green.shade50,
                   side: BorderSide.none,
                   avatar: const Icon(Icons.diversity_3, size: 16),
@@ -603,7 +638,9 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton.icon(
           icon: const Icon(Icons.check_circle),
-          label: const Text('Already Applied'),
+          label: Text(
+            AppLocalizations.of(context)!.jobDetails_alreadyAppliedButton,
+          ),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey.shade600,
             foregroundColor: Colors.white,
@@ -635,7 +672,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
           _isApplying
               ? AppLocalizations.of(context)!.jobDetails_applying
               : _checkingApplication
-              ? 'Checking...'
+              ? AppLocalizations.of(context)!.jobDetails_checkingStatus
               : AppLocalizations.of(context)!.jobDetails_apply,
         ),
         style: ElevatedButton.styleFrom(

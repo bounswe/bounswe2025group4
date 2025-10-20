@@ -139,10 +139,11 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   }
 
   Widget _buildApplicationCard(JobApplication application) {
-    final dateFormat = DateFormat.yMMMd();
+    // Get current locale from context
+    final locale = Localizations.localeOf(context).toString();
+    final dateFormat = DateFormat.yMMMd(locale);
     final statusColor = _getStatusColor(application.status);
-    final statusText =
-        application.status.toString().split('.').last.capitalizeFirst();
+    final statusText = _getLocalizedStatus(application.status);
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6.0),
@@ -165,7 +166,9 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Text(
-                  'Special Needs: ${application.specialNeeds}',
+                  AppLocalizations.of(
+                    context,
+                  )!.myApplications_specialNeeds(application.specialNeeds!),
                   style: TextStyle(fontSize: 12, color: Colors.blue.shade700),
                 ),
               ),
@@ -351,6 +354,18 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     );
   }
 
+  String _getLocalizedStatus(ApplicationStatus status) {
+    switch (status) {
+      case ApplicationStatus.approved:
+        return AppLocalizations.of(context)!.jobApplications_statusApproved;
+      case ApplicationStatus.rejected:
+        return AppLocalizations.of(context)!.jobApplications_statusRejected;
+      case ApplicationStatus.pending:
+      default:
+        return AppLocalizations.of(context)!.jobApplications_statusPending;
+    }
+  }
+
   Color _getStatusColor(ApplicationStatus status) {
     switch (status) {
       case ApplicationStatus.approved:
@@ -369,8 +384,10 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       // Show loading indicator
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Downloading CV...'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.jobApplications_downloadingCV,
+          ),
           duration: Duration(seconds: 2),
         ),
       );
@@ -478,8 +495,10 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       // Show loading indicator
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Downloading CV...'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.jobApplications_downloadingCV,
+          ),
           duration: Duration(seconds: 2),
         ),
       );

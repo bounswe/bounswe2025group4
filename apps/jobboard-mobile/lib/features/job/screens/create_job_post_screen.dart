@@ -94,9 +94,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         );
         if (minSalary == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Invalid minimum salary format. Please enter whole numbers only.',
+                AppLocalizations.of(context)!.createJob_invalidMinSalaryFormat,
               ),
               backgroundColor: Colors.orange,
             ),
@@ -112,9 +112,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         );
         if (maxSalary == null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Invalid maximum salary format. Please enter whole numbers only.',
+                AppLocalizations.of(context)!.createJob_invalidMaxSalaryFormat,
               ),
               backgroundColor: Colors.orange,
             ),
@@ -125,9 +125,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
 
       if (minSalary != null && maxSalary != null && minSalary > maxSalary) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'Minimum salary cannot be greater than maximum salary.',
+              AppLocalizations.of(context)!.createJob_salaryRangeInvalid,
             ),
             backgroundColor: Colors.orange,
           ),
@@ -257,7 +257,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                         listen: false,
                       ).currentUser?.company ==
                       null) {
-                    return 'Please enter the company name';
+                    return AppLocalizations.of(
+                      context,
+                    )!.createJob_companyNameRequired;
                   }
                 }
                 return null;
@@ -268,21 +270,24 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             // --- Location ---
             TextFormField(
               controller: _locationController,
-              decoration: const InputDecoration(
-                labelText: 'Location (e.g., City, State, Country)',
+              decoration: InputDecoration(
+                labelText:
+                    AppLocalizations.of(context)!.createJob_locationLabel,
                 border: OutlineInputBorder(),
               ),
               validator:
                   (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Please enter a location'
+                          ? AppLocalizations.of(
+                            context,
+                          )!.createJob_locationRequiredError
                           : null,
             ),
             const SizedBox(height: 16.0),
 
             // --- Remote Checkbox ---
             CheckboxListTile(
-              title: const Text('Remote Job'),
+              title: Text(AppLocalizations.of(context)!.createJob_remoteLabel),
               value: _isRemote,
               onChanged: (bool? value) {
                 HapticFeedback.lightImpact();
@@ -297,9 +302,11 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
 
             // --- Inclusive Opportunity Checkbox ---
             CheckboxListTile(
-              title: const Text('Inclusive Opportunity'),
-              subtitle: const Text(
-                'This position is open to underrepresented groups',
+              title: Text(
+                AppLocalizations.of(context)!.createJob_inclusiveLabel,
+              ),
+              subtitle: Text(
+                AppLocalizations.of(context)!.createJob_inclusiveSubtitle,
               ),
               value: _isInclusiveOpportunity,
               onChanged: (bool? value) {
@@ -315,8 +322,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             // --- Description ---
             TextFormField(
               controller: _descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Job Description',
+              decoration: InputDecoration(
+                labelText:
+                    AppLocalizations.of(context)!.createJob_descriptionLabel,
                 border: OutlineInputBorder(),
                 alignLabelWithHint: true,
               ),
@@ -324,7 +332,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               validator:
                   (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Please enter a job description'
+                          ? AppLocalizations.of(
+                            context,
+                          )!.createJob_descriptionRequiredError
                           : null,
             ),
             const SizedBox(height: 16.0),
@@ -332,8 +342,8 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             // --- Contact Info ---
             TextFormField(
               controller: _contactInfoController,
-              decoration: const InputDecoration(
-                labelText: 'Contact Information (Email/Phone/Link)',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.createJob_contactLabel,
                 border: OutlineInputBorder(),
               ),
               keyboardType:
@@ -342,7 +352,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               validator:
                   (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Please provide contact information'
+                          ? AppLocalizations.of(
+                            context,
+                          )!.createJob_contactRequiredError
                           : null,
             ),
             const SizedBox(height: 16.0),
@@ -350,9 +362,13 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             // --- Min Salary (Optional) ---
             TextFormField(
               controller: _minSalaryController,
-              decoration: const InputDecoration(
-                labelText: 'Minimum Salary (Optional)',
-                hintText: 'e.g., 50000',
+              decoration: InputDecoration(
+                labelText:
+                    AppLocalizations.of(context)!.createJob_minSalaryLabel,
+                hintText:
+                    AppLocalizations.of(
+                      context,
+                    )!.createJob_minSalaryPlaceholder,
                 border: OutlineInputBorder(),
                 prefixText: '\$', // Optional: Add a currency symbol
               ),
@@ -367,7 +383,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                     '',
                   );
                   if (int.tryParse(sanitizedValue) == null) {
-                    return 'Please enter a valid whole number';
+                    return AppLocalizations.of(
+                      context,
+                    )!.createJob_validNumberError;
                   }
                 }
                 return null;
@@ -378,9 +396,13 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             // --- Max Salary (Optional) ---
             TextFormField(
               controller: _maxSalaryController,
-              decoration: const InputDecoration(
-                labelText: 'Maximum Salary (Optional)',
-                hintText: 'e.g., 70000',
+              decoration: InputDecoration(
+                labelText:
+                    AppLocalizations.of(context)!.createJob_maxSalaryLabel,
+                hintText:
+                    AppLocalizations.of(
+                      context,
+                    )!.createJob_maxSalaryPlaceholder,
                 border: OutlineInputBorder(),
                 prefixText: '\$', // Optional: Add a currency symbol
               ),
@@ -394,7 +416,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                     '',
                   );
                   if (int.tryParse(sanitizedValue) == null) {
-                    return 'Please enter a valid whole number';
+                    return AppLocalizations.of(
+                      context,
+                    )!.createJob_validNumberError;
                   }
                   final minSalaryText = _minSalaryController.text.replaceAll(
                     RegExp(r'[^0-9]'),
@@ -405,7 +429,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                     final minSal = int.parse(minSalaryText);
                     final maxSal = int.tryParse(sanitizedValue);
                     if (maxSal != null && minSal > maxSal) {
-                      return 'Max salary must be >= min salary';
+                      return AppLocalizations.of(
+                        context,
+                      )!.createJob_maxSalaryError;
                     }
                   }
                 }
@@ -415,7 +441,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             const SizedBox(height: 24.0), // Spacing after salary fields
             // --- Ethical Policies Checkboxes/Chips ---
             Text(
-              'Ethical Policies Compliance',
+              AppLocalizations.of(context)!.createJob_ethicalPoliciesLabel,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8.0),
