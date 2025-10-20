@@ -67,14 +67,35 @@ export default function RegisterPage() {
         setRegistrationComplete(true);
         // Don't auto-redirect, let user verify email first
       }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        setErrorMessage(t('auth.register.errors.serviceUnavailable'));
-      } else if (error.response?.data?.message) {
-        setErrorMessage(error.response.data.message);
-      } else if (error.response?.data?.error) {
-        setErrorMessage(error.response.data.error);
-      } else if (error.message) {
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data as { message?: string; error?: string } | undefined;
+
+        if (error.response?.status === 401) {
+          setErrorMessage(t('auth.register.errors.serviceUnavailable'));
+          return;
+        }
+
+        if (responseData?.message) {
+          setErrorMessage(responseData.message);
+          return;
+        }
+
+        if (responseData?.error) {
+          setErrorMessage(responseData.error);
+          return;
+        }
+
+        if (error.message) {
+          setErrorMessage(error.message);
+          return;
+        }
+
+        setErrorMessage(t('auth.register.errors.generic'));
+        return;
+      }
+
+      if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
         setErrorMessage(t('auth.register.errors.generic'));

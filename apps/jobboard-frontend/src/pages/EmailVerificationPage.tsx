@@ -39,20 +39,28 @@ export default function EmailVerificationPage() {
         if (response.status === 200) {
           setStatus('success');
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         setStatus('error');
-        
+
         let errorMsg = 'Email verification failed. Please try again or contact support.';
-        
-        if (error.response?.data?.message) {
-          const backendMsg = error.response.data.message;
-          if (backendMsg.includes('Full authentication') || backendMsg.includes('Token')) {
-            errorMsg = 'Verification link is invalid or has already been used.';
-          } else {
-            errorMsg = backendMsg;
+
+        if (axios.isAxiosError(error)) {
+          const responseData = error.response?.data as { message?: string; error?: string } | undefined;
+          const backendMsg = responseData?.message ?? responseData?.error;
+
+          if (backendMsg) {
+            if (backendMsg.includes('Full authentication') || backendMsg.includes('Token')) {
+              errorMsg = 'Verification link is invalid or has already been used.';
+            } else {
+              errorMsg = backendMsg;
+            }
+          } else if (error.message) {
+            errorMsg = error.message;
           }
+        } else if (error instanceof Error) {
+          errorMsg = error.message;
         }
-        
+
         setErrorMessage(errorMsg);
       }
     };

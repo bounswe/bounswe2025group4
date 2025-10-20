@@ -56,14 +56,35 @@ export default function VerifyOtpPage() {
         // Redirect to home
         navigate('/');
       }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        setErrorMessage(t('auth.otp.errors.invalid'));
-      } else if (error.response?.data?.message) {
-        setErrorMessage(error.response.data.message);
-      } else if (error.response?.data?.error) {
-        setErrorMessage(error.response.data.error);
-      } else if (error.message) {
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data as { message?: string; error?: string } | undefined;
+
+        if (error.response?.status === 401) {
+          setErrorMessage(t('auth.otp.errors.invalid'));
+          return;
+        }
+
+        if (responseData?.message) {
+          setErrorMessage(responseData.message);
+          return;
+        }
+
+        if (responseData?.error) {
+          setErrorMessage(responseData.error);
+          return;
+        }
+
+        if (error.message) {
+          setErrorMessage(error.message);
+          return;
+        }
+
+        setErrorMessage(t('auth.otp.errors.generic'));
+        return;
+      }
+
+      if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
         setErrorMessage(t('auth.otp.errors.generic'));

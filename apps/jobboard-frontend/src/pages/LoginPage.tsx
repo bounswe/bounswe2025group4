@@ -75,19 +75,40 @@ export default function LoginPage() {
           navigate('/');
         }
       }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        // Could be wrong credentials or backend config issue
-        if (error.response?.data?.message?.includes('Full authentication')) {
-          setErrorMessage(t('auth.login.errors.serviceUnavailable'));
-        } else {
-          setErrorMessage(t('auth.login.errors.invalidCredentials'));
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data as { message?: string; error?: string } | undefined;
+
+        if (error.response?.status === 401) {
+          // Could be wrong credentials or backend config issue
+          if (responseData?.message?.includes('Full authentication')) {
+            setErrorMessage(t('auth.login.errors.serviceUnavailable'));
+          } else {
+            setErrorMessage(t('auth.login.errors.invalidCredentials'));
+          }
+          return;
         }
-      } else if (error.response?.data?.message) {
-        setErrorMessage(error.response.data.message);
-      } else if (error.response?.data?.error) {
-        setErrorMessage(error.response.data.error);
-      } else if (error.message) {
+
+        if (responseData?.message) {
+          setErrorMessage(responseData.message);
+          return;
+        }
+
+        if (responseData?.error) {
+          setErrorMessage(responseData.error);
+          return;
+        }
+
+        if (error.message) {
+          setErrorMessage(error.message);
+          return;
+        }
+
+        setErrorMessage(t('auth.login.errors.generic'));
+        return;
+      }
+
+      if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
         setErrorMessage(t('auth.login.errors.generic'));

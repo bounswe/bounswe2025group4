@@ -47,20 +47,41 @@ export default function ForgotPasswordPage() {
       } else {
         setSuccessMessage(t('auth.forgot.success'));
       }
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        // Backend authentication issue - likely endpoint protection problem
-        setErrorMessage(t('auth.forgot.errors.serviceUnavailable'));
-      } else if (error.response?.data?.message) {
-        const backendMsg = error.response.data.message;
-        if (backendMsg.includes('Full authentication')) {
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data as { message?: string; error?: string } | undefined;
+
+        if (error.response?.status === 401) {
+          // Backend authentication issue - likely endpoint protection problem
           setErrorMessage(t('auth.forgot.errors.serviceUnavailable'));
-        } else {
-          setErrorMessage(backendMsg);
+          return;
         }
-      } else if (error.response?.data?.error) {
-        setErrorMessage(error.response.data.error);
-      } else if (error.message) {
+
+        const backendMsg = responseData?.message;
+        if (backendMsg) {
+          if (backendMsg.includes('Full authentication')) {
+            setErrorMessage(t('auth.forgot.errors.serviceUnavailable'));
+          } else {
+            setErrorMessage(backendMsg);
+          }
+          return;
+        }
+
+        if (responseData?.error) {
+          setErrorMessage(responseData.error);
+          return;
+        }
+
+        if (error.message) {
+          setErrorMessage(error.message);
+          return;
+        }
+
+        setErrorMessage(t('auth.forgot.errors.generic'));
+        return;
+      }
+
+      if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
         setErrorMessage(t('auth.forgot.errors.generic'));
