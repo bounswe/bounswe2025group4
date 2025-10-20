@@ -115,6 +115,9 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                ),
               ),
               TextButton(
                 onPressed: () {
@@ -136,6 +139,9 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                   Navigator.pop(context);
                   _messageController.clear();
                 },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                ),
                 child: Text(AppLocalizations.of(context)!.menteeScreen_sendRequest),
               ),
             ],
@@ -200,6 +206,10 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                     mentorProvider.clearError();
                     _loadMentors();
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                  ),
                   child: Text(AppLocalizations.of(context)!.menteeScreen_retryLoadingMentors),
                 ),
               ],
@@ -342,6 +352,9 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
               TextButton(
                 onPressed: () => Navigator.pop(dialogContext),
                 child: const Text('Cancel'),
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                ),
               ),
               TextButton(
                 onPressed: () async {
@@ -408,6 +421,10 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                         mentorProvider.clearError();
                         _loadData();
                       },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
                       child: const Text('Retry'),
                     ),
                   ],

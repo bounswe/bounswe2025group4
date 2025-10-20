@@ -25,7 +25,12 @@ mixin _$AuthResponseDto {
   @JsonKey(name: 'id', fromJson: _readIdAsString)
   String get userId => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
+  @JsonKey(name: 'role')
   UserType get userType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'type')
+  String? get tokenType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'email')
+  String? get email => throw _privateConstructorUsedError;
 
   /// Serializes this AuthResponseDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -48,7 +53,9 @@ abstract class $AuthResponseDtoCopyWith<$Res> {
     String token,
     @JsonKey(name: 'id', fromJson: _readIdAsString) String userId,
     String username,
-    UserType userType,
+    @JsonKey(name: 'role') UserType userType,
+    @JsonKey(name: 'type') String? tokenType,
+    @JsonKey(name: 'email') String? email,
   });
 }
 
@@ -71,6 +78,8 @@ class _$AuthResponseDtoCopyWithImpl<$Res, $Val extends AuthResponseDto>
     Object? userId = null,
     Object? username = null,
     Object? userType = null,
+    Object? tokenType = freezed,
+    Object? email = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -94,6 +103,16 @@ class _$AuthResponseDtoCopyWithImpl<$Res, $Val extends AuthResponseDto>
                     ? _value.userType
                     : userType // ignore: cast_nullable_to_non_nullable
                         as UserType,
+            tokenType:
+                freezed == tokenType
+                    ? _value.tokenType
+                    : tokenType // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            email:
+                freezed == email
+                    ? _value.email
+                    : email // ignore: cast_nullable_to_non_nullable
+                        as String?,
           )
           as $Val,
     );
@@ -113,7 +132,9 @@ abstract class _$$AuthResponseDtoImplCopyWith<$Res>
     String token,
     @JsonKey(name: 'id', fromJson: _readIdAsString) String userId,
     String username,
-    UserType userType,
+    @JsonKey(name: 'role') UserType userType,
+    @JsonKey(name: 'type') String? tokenType,
+    @JsonKey(name: 'email') String? email,
   });
 }
 
@@ -135,6 +156,8 @@ class __$$AuthResponseDtoImplCopyWithImpl<$Res>
     Object? userId = null,
     Object? username = null,
     Object? userType = null,
+    Object? tokenType = freezed,
+    Object? email = freezed,
   }) {
     return _then(
       _$AuthResponseDtoImpl(
@@ -158,6 +181,16 @@ class __$$AuthResponseDtoImplCopyWithImpl<$Res>
                 ? _value.userType
                 : userType // ignore: cast_nullable_to_non_nullable
                     as UserType,
+        tokenType:
+            freezed == tokenType
+                ? _value.tokenType
+                : tokenType // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        email:
+            freezed == email
+                ? _value.email
+                : email // ignore: cast_nullable_to_non_nullable
+                    as String?,
       ),
     );
   }
@@ -170,7 +203,9 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
     required this.token,
     @JsonKey(name: 'id', fromJson: _readIdAsString) required this.userId,
     required this.username,
-    required this.userType,
+    @JsonKey(name: 'role') required this.userType,
+    @JsonKey(name: 'type') this.tokenType,
+    @JsonKey(name: 'email') this.email,
   });
 
   factory _$AuthResponseDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -184,11 +219,18 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
   @override
   final String username;
   @override
+  @JsonKey(name: 'role')
   final UserType userType;
+  @override
+  @JsonKey(name: 'type')
+  final String? tokenType;
+  @override
+  @JsonKey(name: 'email')
+  final String? email;
 
   @override
   String toString() {
-    return 'AuthResponseDto(token: $token, userId: $userId, username: $username, userType: $userType)';
+    return 'AuthResponseDto(token: $token, userId: $userId, username: $username, userType: $userType, tokenType: $tokenType, email: $email)';
   }
 
   @override
@@ -201,13 +243,23 @@ class _$AuthResponseDtoImpl implements _AuthResponseDto {
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.userType, userType) ||
-                other.userType == userType));
+                other.userType == userType) &&
+            (identical(other.tokenType, tokenType) ||
+                other.tokenType == tokenType) &&
+            (identical(other.email, email) || other.email == email));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, token, userId, username, userType);
+  int get hashCode => Object.hash(
+    runtimeType,
+    token,
+    userId,
+    username,
+    userType,
+    tokenType,
+    email,
+  );
 
   /// Create a copy of AuthResponseDto
   /// with the given fields replaced by the non-null parameter values.
@@ -232,7 +284,9 @@ abstract class _AuthResponseDto implements AuthResponseDto {
     @JsonKey(name: 'id', fromJson: _readIdAsString)
     required final String userId,
     required final String username,
-    required final UserType userType,
+    @JsonKey(name: 'role') required final UserType userType,
+    @JsonKey(name: 'type') final String? tokenType,
+    @JsonKey(name: 'email') final String? email,
   }) = _$AuthResponseDtoImpl;
 
   factory _AuthResponseDto.fromJson(Map<String, dynamic> json) =
@@ -246,7 +300,14 @@ abstract class _AuthResponseDto implements AuthResponseDto {
   @override
   String get username;
   @override
+  @JsonKey(name: 'role')
   UserType get userType;
+  @override
+  @JsonKey(name: 'type')
+  String? get tokenType;
+  @override
+  @JsonKey(name: 'email')
+  String? get email;
 
   /// Create a copy of AuthResponseDto
   /// with the given fields replaced by the non-null parameter values.

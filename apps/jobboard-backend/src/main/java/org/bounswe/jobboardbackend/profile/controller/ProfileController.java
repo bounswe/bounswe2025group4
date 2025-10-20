@@ -4,9 +4,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.profile.dto.*;
 import org.bounswe.jobboardbackend.profile.service.ProfileService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +31,7 @@ public class ProfileController {
     /**
      * POST /api/profile
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ProfileResponseDto> createProfile(@Valid @RequestBody CreateProfileRequestDto dto) {
         Long userId = getCurrentUserId();
@@ -37,6 +41,7 @@ public class ProfileController {
     /**
      * GET /api/profile
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<ProfileResponseDto> getMyProfile() {
         Long userId = getCurrentUserId();
@@ -46,6 +51,7 @@ public class ProfileController {
     /**
      * PUT /api/profile
      */
+    @PreAuthorize("isAuthenticated()")
     @PutMapping
     public ResponseEntity<ProfileResponseDto> updateMyProfile(@Validated @RequestBody UpdateProfileRequestDto dto) {
         Long userId = getCurrentUserId();
@@ -59,6 +65,7 @@ public class ProfileController {
     /**
      * GET /api/profile/{userId}
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{userId}")
     public ResponseEntity<PublicProfileResponseDto> getPublicProfile(@PathVariable Long userId) {
         return ResponseEntity.ok(profileService.getPublicProfile(userId));
@@ -71,6 +78,7 @@ public class ProfileController {
     /**
      * POST /api/profile/image
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(path = "/image", consumes = {"multipart/form-data"})
     public ResponseEntity<ProfileImageResponseDto> uploadImage(@RequestPart("file") MultipartFile file) {
         Long userId = getCurrentUserId();
@@ -80,6 +88,7 @@ public class ProfileController {
     /**
      * DELETE /api/profile/image
      */
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/image")
     public ResponseEntity<Void> deleteImage() {
         Long userId = getCurrentUserId();
@@ -95,6 +104,7 @@ public class ProfileController {
     /**
      * POST /api/profile/education
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/education")
     public ResponseEntity<EducationResponseDto> addEducation(@Valid @RequestBody CreateEducationRequestDto dto) {
         Long userId = getCurrentUserId();
@@ -104,6 +114,7 @@ public class ProfileController {
     /**
      * PUT /api/profile/education/{educationId}
      */
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/education/{educationId}")
     public ResponseEntity<EducationResponseDto> updateEducation(@PathVariable Long educationId,
                                                                 @RequestBody UpdateEducationRequestDto dto) {
@@ -114,6 +125,7 @@ public class ProfileController {
     /**
      * DELETE /api/profile/education/{educationId}
      */
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/education/{educationId}")
     public ResponseEntity<Void> deleteEducation(@PathVariable Long educationId) {
         Long userId = getCurrentUserId();
@@ -129,6 +141,7 @@ public class ProfileController {
     /**
      * POST /api/profile/experience
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/experience")
     public ResponseEntity<ExperienceResponseDto> addExperience(@Valid @RequestBody CreateExperienceRequestDto dto) {
         Long userId = getCurrentUserId();
@@ -138,6 +151,7 @@ public class ProfileController {
     /**
      * PUT /api/profile/experience/{experienceId}
      */
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/experience/{experienceId}")
     public ResponseEntity<ExperienceResponseDto> updateExperience(@PathVariable Long experienceId,
                                                                   @RequestBody UpdateExperienceRequestDto dto) {
@@ -148,6 +162,7 @@ public class ProfileController {
     /**
      * DELETE /api/profile/experience/{experienceId}
      */
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/experience/{experienceId}")
     public ResponseEntity<Void> deleteExperience(@PathVariable Long experienceId) {
         Long userId = getCurrentUserId();
@@ -163,6 +178,7 @@ public class ProfileController {
     /**
      * POST /api/profile/skill
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/skill")
     public ResponseEntity<SkillResponseDto> addSkill(@Valid @RequestBody CreateSkillRequestDto dto) {
         Long userId = getCurrentUserId();
@@ -172,6 +188,7 @@ public class ProfileController {
     /**
      * PUT /api/profile/skill/{skillId}
      */
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/skill/{skillId}")
     public ResponseEntity<SkillResponseDto> updateSkill(@PathVariable Long skillId,
                                                         @RequestBody UpdateSkillRequestDto dto) {
@@ -182,6 +199,7 @@ public class ProfileController {
     /**
      * DELETE /api/profile/skill/{skillId}
      */
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/skill/{skillId}")
     public ResponseEntity<Void> deleteSkill(@PathVariable Long skillId) {
         Long userId = getCurrentUserId();
@@ -197,6 +215,7 @@ public class ProfileController {
     /**
      * POST /api/profile/interest
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/interest")
     public ResponseEntity<InterestResponseDto> addInterest(@Valid @RequestBody CreateInterestRequestDto dto) {
         Long userId = getCurrentUserId();
@@ -206,6 +225,7 @@ public class ProfileController {
     /**
      * PUT /api/profile/interest/{interestId}
      */
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/interest/{interestId}")
     public ResponseEntity<InterestResponseDto> updateInterest(@PathVariable Long interestId,
                                                               @RequestBody UpdateInterestRequestDto dto) {
@@ -216,6 +236,7 @@ public class ProfileController {
     /**
      * DELETE /api/profile/interest/{interestId}
      */
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/interest/{interestId}")
     public ResponseEntity<Void> deleteInterest(@PathVariable Long interestId) {
         Long userId = getCurrentUserId();
@@ -230,9 +251,9 @@ public class ProfileController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails ud) {
             User user = userRepository.findByUsername(ud.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
             return user.getId();
         }
-        throw new RuntimeException("Invalid authentication context");
+        throw new HandleException(ErrorCode.INVALID_CREDENTIALS, "Invalid authentication context");
     }
 }

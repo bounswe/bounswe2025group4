@@ -45,6 +45,20 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             brightness: Brightness.light,
             primarySwatch: Colors.blue,
+            primaryColor: Colors.blue,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              primary: Colors.blue,
+              secondary: Colors.blue,
+            ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
+            progressIndicatorTheme: const ProgressIndicatorThemeData(
+              color: Colors.blue,
+              circularTrackColor: Colors.transparent,
+            ),
             visualDensity: VisualDensity.adaptivePlatformDensity,
             textTheme: ThemeData.light().textTheme.copyWith(
               bodyLarge: TextStyle(
@@ -70,6 +84,21 @@ class MyApp extends StatelessWidget {
           darkTheme: ThemeData(
             brightness: Brightness.dark,
             primarySwatch: Colors.blue,
+            primaryColor: Colors.blue,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.blue,
+              primary: Colors.blue,
+              secondary: Colors.blue,
+              brightness: Brightness.dark,
+            ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+            ),
+            progressIndicatorTheme: const ProgressIndicatorThemeData(
+              color: Colors.blue,
+              circularTrackColor: Colors.transparent,
+            ),
             visualDensity: VisualDensity.adaptivePlatformDensity,
             textTheme: ThemeData.dark().textTheme.copyWith(
               bodyLarge: TextStyle(

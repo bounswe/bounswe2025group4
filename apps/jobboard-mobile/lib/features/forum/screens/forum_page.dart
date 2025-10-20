@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
-import '../../../core/widgets/a11y.dart';
 
 class ForumPage extends StatefulWidget {
   const ForumPage({super.key});
@@ -96,6 +95,8 @@ class _ForumPageState extends State<ForumPage> {
                                       : tempSelected.remove(tag);
                                 });
                               },
+                              selectedColor: Colors.blue.withOpacity(0.2),
+                              checkmarkColor: Colors.blue,
                             );
                           }).toList(),
                         ),
@@ -113,6 +114,10 @@ class _ForumPageState extends State<ForumPage> {
                             setState(() => _selectedTags = tempSelected);
                             Navigator.pop(context);
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                          ),
                           child: Text(AppLocalizations.of(context)!.forumPage_filter),
                         ),
                         OutlinedButton(
@@ -120,6 +125,10 @@ class _ForumPageState extends State<ForumPage> {
                             setState(() => _selectedTags.clear());
                             Navigator.pop(context);
                           },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.blue,
+                            side: const BorderSide(color: Colors.blue),
+                          ),
                           child: Text(AppLocalizations.of(context)!.forumPage_reset),
                         ),
                       ],
@@ -193,6 +202,10 @@ class _ForumPageState extends State<ForumPage> {
                           onPressed: _showFilterModal,
                           icon: const A11y(label: 'Open filters', child: Icon(Icons.filter_list)),
                           label: Text(AppLocalizations.of(context)!.forumPage_filter),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                          ),
                         ),
                       ),
                     ),

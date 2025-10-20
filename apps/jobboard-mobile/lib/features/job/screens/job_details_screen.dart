@@ -393,7 +393,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     // Only show button if job loaded and user is a job seeker
     final userRole =
         Provider.of<AuthProvider>(context, listen: false).currentUser?.role;
-    if (_isLoading || _jobPost == null || userRole != UserType.JOB_SEEKER) {
+    if (_isLoading || _jobPost == null || userRole != UserType.ROLE_JOBSEEKER) {
       return null;
     }
 
@@ -417,7 +417,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               : AppLocalizations.of(context)!.jobDetails_apply,
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.teal, // Or theme primary color
+          backgroundColor: Colors.blue, // Use blue to match onboarding design
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 50), // Full width button
           textStyle: Theme.of(

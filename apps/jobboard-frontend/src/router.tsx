@@ -4,6 +4,12 @@ import RootLayout from './layouts/RootLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import CenteredLoader from './components/CenteredLoader';
 import HomePage from './pages/HomePage';
+import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import EmailVerificationPage from './pages/EmailVerificationPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import VerifyOtpPage from './pages/VerifyOtpPage';
 
 const router = createBrowserRouter([
   {
@@ -41,6 +47,34 @@ const router = createBrowserRouter([
             <h1 className="text-2xl font-bold">Forum Page</h1>
           </div>
         ),
+      },
+      {
+        path: 'register',
+        element: <RegisterPage />,
+      },
+      {
+        path: 'login',
+        element: <LoginPage />,
+      },
+      {
+        path: 'verify-email',
+        element: <EmailVerificationPage />,
+      },
+      {
+        path: 'forgot-password',
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: 'reset-password',
+        element: <ResetPasswordPage />,
+      },
+      {
+        path: 'verify-otp',
+        element: <VerifyOtpPage />,
+      },
+      {
+        path: 'api/auth/reset-password',
+        element: <ResetPasswordPage />,
       },
     ],
   },

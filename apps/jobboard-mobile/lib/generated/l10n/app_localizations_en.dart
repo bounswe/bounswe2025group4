@@ -1258,6 +1258,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profilePage_enterInterest => 'Enter an interest';
 
   @override
+  String get profilePage_theme => 'Theme';
+
+  @override
+  String get profilePage_lightMode => 'Light';
+
+  @override
+  String get profilePage_darkMode => 'Dark';
+
+  @override
+  String get profilePage_systemMode => 'System';
+
+  @override
+  String profilePage_themeChanged(String theme) {
+    return 'Theme changed to $theme';
+  }
+
+  @override
   String get profilePage_fontSize => 'Font Size';
 
   @override

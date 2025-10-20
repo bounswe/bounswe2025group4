@@ -1,20 +1,21 @@
 package org.bounswe.jobboardbackend.jobpost.service;
 
-import org.bounswe.jobboardbackend.auth.model.Role;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.jobpost.dto.CreateJobPostRequest;
 import org.bounswe.jobboardbackend.jobpost.dto.UpdateJobPostRequest;
 import org.bounswe.jobboardbackend.jobpost.dto.JobPostResponse;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,16 +55,14 @@ public class JobPostService {
     public JobPostResponse getById(Long id) {
         return jobPostRepository.findById(id)
                 .map(this::toResponseDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "JobPost with ID " + id + " not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.JOB_POST_NOT_FOUND, "JobPost with ID " + id + " not found"));
     }
 
     @Transactional
+    @PreAuthorize( "hasRole('ROLE_EMPLOYER')")
     public JobPostResponse create(CreateJobPostRequest dto) {
         User employer = getCurrentUser();
 
-        if (employer.getRole() != Role.ROLE_EMPLOYER) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only users with EMPLOYER role can post jobs.");
-        }
 
         JobPost job = JobPost.builder()
                 .title(dto.getTitle())
@@ -86,7 +85,7 @@ public class JobPostService {
     @Transactional
     public void delete(Long id) {
         JobPost job = jobPostRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "JobPost with ID " + id + " not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.JOB_POST_NOT_FOUND, "JobPost with ID " + id + " not found"));
         
         User currentUser = getCurrentUser();
         validateJobOwnership(job, currentUser);
@@ -115,7 +114,7 @@ public class JobPostService {
     @Transactional
     public JobPostResponse update(Long id, UpdateJobPostRequest dto) {
         JobPost job = jobPostRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "JobPost with ID " + id + " not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.JOB_POST_NOT_FOUND, "JobPost with ID " + id + " not found"));
         
         User currentUser = getCurrentUser();
         validateJobOwnership(job, currentUser);
@@ -138,28 +137,28 @@ public class JobPostService {
     private User getCurrentUser() {
         String username = getCurrentUsername();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found in the system"));
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "Authenticated user not found in the system"));
     }
 
     private String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No authentication context found");
+            throw new HandleException(ErrorCode.USER_UNAUTHORIZED, "No authentication context found");
         }
         
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails userDetails) {
             return userDetails.getUsername();
         }
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authentication context");
+        throw new HandleException(ErrorCode.INVALID_CREDENTIALS, "Invalid authentication context");
     }
 
     private void validateJobOwnership(JobPost job, User user) {
         if (job.getEmployer() == null) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Job post has no employer assigned");
+            throw new HandleException(ErrorCode.JOB_POST_CORRUPT, "Job post has no employer assigned");
         }
         if (!job.getEmployer().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only the employer who posted the job can perform this action");
+            throw new HandleException(ErrorCode.JOB_POST_FORBIDDEN, "Only the employer who posted the job can perform this action");
         }
     }
 

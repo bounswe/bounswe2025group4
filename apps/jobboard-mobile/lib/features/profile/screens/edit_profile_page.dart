@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/profile_provider.dart';
 import '../widgets/profile_picture.dart';
@@ -52,6 +53,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _saveProfile() {
+    HapticFeedback.mediumImpact();
     if (_formKey.currentState!.validate()) {
       final profileProvider =
       Provider.of<ProfileProvider>(context, listen: false);
@@ -69,6 +71,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           'email': _emailController.text,
         },
       );
+      HapticFeedback.heavyImpact();
       Navigator.pop(context);
     }
   }

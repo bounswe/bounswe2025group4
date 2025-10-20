@@ -37,6 +37,12 @@ public class JobApplication {
     @Column(length = 1000)
     private String feedback;  // Optional: employer feedback when approving/rejecting
 
+    @Column(length = 1024)
+    private String cvUrl;  // Optional: CV/Resume file URL stored in GCS
+
+    @Column(length = 2000)
+    private String coverLetter;  // Optional: Cover letter / motivation letter
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime appliedDate;
 }

@@ -2320,6 +2320,36 @@ abstract class AppLocalizations {
   /// **'Enter an interest'**
   String get profilePage_enterInterest;
 
+  /// Theme section title
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get profilePage_theme;
+
+  /// Light theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get profilePage_lightMode;
+
+  /// Dark theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get profilePage_darkMode;
+
+  /// System theme option
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get profilePage_systemMode;
+
+  /// Theme change notification
+  ///
+  /// In en, this message translates to:
+  /// **'Theme changed to {theme}'**
+  String profilePage_themeChanged(String theme);
+
   /// Font size section title
   ///
   /// In en, this message translates to:

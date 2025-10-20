@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../core/models/user_type.dart';
 import '../../../core/providers/auth_provider.dart';
@@ -56,8 +57,10 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
   }
 
   Future<void> _submitForm() async {
+    HapticFeedback.mediumImpact();
     if (_formKey.currentState?.validate() ?? false) {
       if (_selectedPolicies.isEmpty) {
+        HapticFeedback.vibrate();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -71,7 +74,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
 
       final currentUser =
           Provider.of<AuthProvider>(context, listen: false).currentUser;
-      if (currentUser == null || currentUser.role != UserType.EMPLOYER) {
+      if (currentUser == null || currentUser.role != UserType.ROLE_EMPLOYER) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -157,6 +160,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         );
 
         if (mounted) {
+          HapticFeedback.heavyImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -171,6 +175,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
       } catch (e) {
         print("Error creating job post: $e");
         if (mounted) {
+          HapticFeedback.vibrate();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
@@ -280,6 +285,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               title: const Text('Remote Job'),
               value: _isRemote,
               onChanged: (bool? value) {
+                HapticFeedback.lightImpact();
                 setState(() {
                   _isRemote = value ?? false;
                 });
@@ -423,6 +429,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                       label: Text(policy.formatFilterName()),
                       selected: isSelected,
                       onSelected: (selected) {
+                        HapticFeedback.lightImpact();
                         setState(() {
                           if (selected) {
                             _selectedPolicies.add(policy);
@@ -431,8 +438,10 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                           }
                         });
                       },
-                      selectedColor: Colors.teal.shade100,
-                      checkmarkColor: Colors.teal.shade800,
+                      selectedColor: Colors.blue.withOpacity(
+                        0.2,
+                      ), // Blue selection to match design
+                      checkmarkColor: Colors.blue, // Blue checkmark
                     );
                   }).toList(),
             ),

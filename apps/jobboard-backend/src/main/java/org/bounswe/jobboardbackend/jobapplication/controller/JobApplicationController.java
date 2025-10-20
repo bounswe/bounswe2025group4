@@ -1,13 +1,18 @@
 package org.bounswe.jobboardbackend.jobapplication.controller;
 
 import jakarta.validation.Valid;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.jobapplication.dto.CreateJobApplicationRequest;
+import org.bounswe.jobboardbackend.jobapplication.dto.CvUploadResponse;
 import org.bounswe.jobboardbackend.jobapplication.dto.JobApplicationResponse;
 import org.bounswe.jobboardbackend.jobapplication.dto.UpdateJobApplicationRequest;
 import org.bounswe.jobboardbackend.jobapplication.service.JobApplicationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,8 +26,9 @@ public class JobApplicationController {
         this.service = service;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
-    public ResponseEntity<?> getFiltered(
+    public ResponseEntity<List<JobApplicationResponse>> getFiltered(
             @RequestParam(required = false) Long jobSeekerId,
             @RequestParam(required = false) Long jobPostId
     ) {
@@ -31,23 +37,23 @@ public class JobApplicationController {
         } else if (jobPostId != null) {
             return ResponseEntity.ok(service.getByJobPostId(jobPostId));
         } else {
-            // If no filter provided, return error message
-            return ResponseEntity
-                    .badRequest()
-                    .body("At least one filter parameter is required: jobSeekerId or jobPostId");
+            throw new HandleException(ErrorCode.MISSING_FILTER_PARAMETER, "Missing filter parameter, at least one of jobSeekerId or jobPostId must be provided");
         }
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<JobApplicationResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<JobApplicationResponse> create(@RequestBody @Valid CreateJobApplicationRequest dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{id}/approve")
     public ResponseEntity<JobApplicationResponse> approve(
             @PathVariable Long id,
@@ -56,6 +62,7 @@ public class JobApplicationController {
         return ResponseEntity.ok(service.approve(id, feedback));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/{id}/reject")
     public ResponseEntity<JobApplicationResponse> reject(
             @PathVariable Long id,
@@ -64,9 +71,47 @@ public class JobApplicationController {
         return ResponseEntity.ok(service.reject(id, feedback));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // --------------------------------
+    // CV / Resume endpoints
+    // --------------------------------
+
+    /**
+     * POST /api/applications/{id}/cv
+     * Upload CV for an application (multipart/form-data)
+     */
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(path = "/{id}/cv", consumes = {"multipart/form-data"})
+    public ResponseEntity<CvUploadResponse> uploadCv(
+            @PathVariable Long id,
+            @RequestPart("file") MultipartFile file) {
+        return ResponseEntity.ok(service.uploadCv(id, file));
+    }
+
+    /**
+     * GET /api/applications/{id}/cv
+     * Get CV URL for an application
+     */
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/{id}/cv")
+    public ResponseEntity<String> getCvUrl(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getCvUrl(id));
+    }
+
+    /**
+     * DELETE /api/applications/{id}/cv
+     * Delete CV for an application
+     */
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/{id}/cv")
+    public ResponseEntity<Void> deleteCv(@PathVariable Long id) {
+        service.deleteCv(id);
         return ResponseEntity.noContent().build();
     }
 }
