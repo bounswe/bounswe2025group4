@@ -21,6 +21,8 @@ import CreateJobPostPage from './pages/CreateJobPostPage';
 import EmployerJobPostDetailsPage from './pages/EmployerJobPostDetailsPage';
 import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import ForumPage from './pages/ForumPage';
+import MentorshipPage from './pages/MentorshipPage';
 
 const router = createBrowserRouter([
   {
@@ -101,21 +103,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'mentorship',
-        element: (
-          <div className="p-8">
-            <h1 className="text-2xl font-bold">Mentorship Page</h1>
-            <p className="mt-4 text-muted-foreground">Coming soon...</p>
-          </div>
-        ),
+        element: <MentorshipPage />,
       },
       {
         path: 'forum',
-        element: (
-          <div className="p-8">
-            <h1 className="text-2xl font-bold">Forum Page</h1>
-            <p className="mt-4 text-muted-foreground">Coming soon...</p>
-          </div>
-        ),
+        element: <ForumPage />,
       },
       {
         path: 'register',
