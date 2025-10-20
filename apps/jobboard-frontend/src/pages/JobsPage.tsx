@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/pagination';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { type Job, type JobType, type Policy } from '@/types/job';
+import { type Job, type JobType, type EthicalTag } from '@/types/job';
 import { useFilters } from '@/hooks/useFilters';
 import { getJobs } from '@/services/jobs.service';
 import type { JobPostResponse } from '@/types/api.types';
@@ -31,9 +31,9 @@ const ITEMS_PER_PAGE = 10;
  * Convert API JobPostResponse to Job type for JobCard component
  */
 function convertJobPostToJob(jobPost: JobPostResponse): Job {
-  // Parse ethical tags (comma-separated string) into Policy array
-  const policies = jobPost.ethicalTags
-    ? (jobPost.ethicalTags.split(',').map((tag) => tag.trim()) as Policy[])
+  // Parse ethical tags (comma-separated string) into EthicalTag array
+  const ethicalTags = jobPost.ethicalTags
+    ? (jobPost.ethicalTags.split(',').map((tag) => tag.trim()) as EthicalTag[])
     : [];
 
   // Note: API doesn't provide job type field, using default value
@@ -45,7 +45,7 @@ function convertJobPostToJob(jobPost: JobPostResponse): Job {
     title: jobPost.title,
     company: jobPost.company,
     location: jobPost.remote ? 'Remote' : jobPost.location,
-    policies,
+    ethicalTags,
     type,
     minSalary: Math.floor(jobPost.minSalary / 1000), // Convert to 'k' format
     maxSalary: Math.floor(jobPost.maxSalary / 1000),
@@ -68,9 +68,9 @@ export default function JobsPage() {
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
 
-  const { selectedPolicies, selectedJobTypes, salaryRange, locationFilter, resetFilters } =
+  const { selectedEthicalTags, selectedJobTypes, salaryRange, locationFilter, resetFilters } =
     useFilters();
-  const policiesKey = selectedPolicies.join(',');
+  const ethicalTagsKey = selectedEthicalTags.join(',');
   const salaryKey = `${salaryRange[0]}-${salaryRange[1]}`;
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function JobsPage() {
         // Build filter params based on user selections
         const filters = {
           title: searchFilter || undefined,
-          ethicalTags: selectedPolicies.length > 0 ? selectedPolicies : undefined,
+          ethicalTags: selectedEthicalTags.length > 0 ? selectedEthicalTags : undefined,
           minSalary: salaryRange[0] * 1000, // Convert back to actual salary
           maxSalary: salaryRange[1] * 1000,
           isRemote: locationFilter?.toLowerCase() === 'remote' ? true : undefined,
@@ -120,7 +120,7 @@ export default function JobsPage() {
     };
 
     fetchJobs();
-  }, [searchFilter, policiesKey, salaryKey, locationFilter]);
+  }, [searchFilter, ethicalTagsKey, salaryKey, locationFilter]);
 
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {

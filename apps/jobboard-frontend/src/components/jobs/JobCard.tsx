@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { type Job, type JobType, type Policy } from '@/types/job';
+import { type Job, type JobType } from '@/types/job';
+import { TAG_TO_KEY_MAP } from '@/constants/ethical-tags';
 
 type JobCardProps = {
   job: Job;
@@ -13,12 +14,6 @@ type JobCardProps = {
 function formatSalary(value: number) {
   return `$${value}k`;
 }
-
-const policyLabelKeyMap: Record<Policy, string> = {
-  'Fair Labor Practices': 'jobFilters.policyOptions.fairLabor',
-  'Environmental Sustainability': 'jobFilters.policyOptions.environment',
-  'Diversity & Inclusion': 'jobFilters.policyOptions.diversity',
-};
 
 const jobTypeLabelKeyMap: Record<JobType, string> = {
   'Full-time': 'jobFilters.jobTypeOptions.fullTime',
@@ -34,7 +29,9 @@ export function JobCard({ job }: JobCardProps) {
     navigate(`/jobs/${job.id}`);
   };
 
-  const policies = job.policies.map((policy) => t(policyLabelKeyMap[policy] ?? policy));
+  const ethicalTagLabels = job.ethicalTags.map((tag) =>
+    t(`ethicalTags.tags.${TAG_TO_KEY_MAP[tag]}`, tag)
+  );
   const jobTypes = job.type.map((type) => t(jobTypeLabelKeyMap[type] ?? type));
   const location =
     job.location.toLowerCase() === 'remote' ? t('jobCard.remote') : job.location;
@@ -57,15 +54,23 @@ export function JobCard({ job }: JobCardProps) {
         </Avatar>
         <div className="flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            {policies.map((policy) => (
+            {ethicalTagLabels.slice(0, 3).map((tag, idx) => (
               <Badge
-                key={policy}
+                key={idx}
                 variant="secondary"
                 className="border-0 bg-primary text-xs font-medium text-primary-foreground hover:bg-primary/90"
               >
-                {policy}
+                {tag}
               </Badge>
             ))}
+            {ethicalTagLabels.length > 3 && (
+              <Badge
+                variant="secondary"
+                className="border-0 bg-muted text-xs font-medium text-muted-foreground"
+              >
+                +{ethicalTagLabels.length - 3}
+              </Badge>
+            )}
           </div>
 
           {/* Job Title and Company */}

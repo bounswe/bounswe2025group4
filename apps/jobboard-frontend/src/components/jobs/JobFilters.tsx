@@ -4,25 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
+import { MultiSelectDropdown } from '@/components/ui/multi-select-dropdown';
 import { cn } from '@/lib/utils';
-import { type JobType, type Policy } from '@/types/job';
+import { type JobType } from '@/types/job';
 import { useFilters } from '@/hooks/useFilters';
-
-const policyOptions: Policy[] = [
-  'Fair Labor Practices',
-  'Environmental Sustainability',
-  'Diversity & Inclusion',
-];
 
 const jobTypeOptions: JobType[] = ['Full-time', 'Part-time', 'Contract'];
 
 const BASE_SALARY_RANGE: [number, number] = [40, 120];
-
-const policyLabelKeyMap: Record<Policy, string> = {
-  'Fair Labor Practices': 'jobFilters.policyOptions.fairLabor',
-  'Environmental Sustainability': 'jobFilters.policyOptions.environment',
-  'Diversity & Inclusion': 'jobFilters.policyOptions.diversity',
-};
 
 const jobTypeLabelKeyMap: Record<JobType, string> = {
   'Full-time': 'jobFilters.jobTypeOptions.fullTime',
@@ -39,11 +28,11 @@ export function JobFilters({
 }: JobFiltersProps) {
   const { t } = useTranslation('common');
   const {
-    selectedPolicies,
+    selectedEthicalTags,
     selectedJobTypes,
     salaryRange,
     locationFilter,
-    setPolicies,
+    setEthicalTags,
     setJobTypes,
     setSalaryRange,
     setLocation,
@@ -51,31 +40,12 @@ export function JobFilters({
   const filtersContent = (
     <div className={cn('space-y-6', className)}>
       <section className="space-y-3">
-        <h3 className="text-lg font-semibold">{t('jobFilters.policies')}</h3>
-        <div className="space-y-2">
-          {policyOptions.map((policy) => {
-            const id = `policy-${policy.replace(/\s+/g, '-').toLowerCase()}`;
-            return (
-              <div key={policy} className="flex items-center space-x-3 rounded-md px-2 py-1">
-                <Checkbox
-                  id={id}
-                  checked={selectedPolicies.includes(policy)}
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      setPolicies([...selectedPolicies, policy]);
-                    } else {
-                      setPolicies(selectedPolicies.filter((p) => p !== policy));
-                    }
-                  }}
-                  aria-label={t(policyLabelKeyMap[policy])}
-                />
-                <Label htmlFor={id} className="text-sm">
-                  {t(policyLabelKeyMap[policy])}
-                </Label>
-              </div>
-            );
-          })}
-        </div>
+        <h3 className="text-lg font-semibold">{t('jobFilters.ethicalTags')}</h3>
+        <MultiSelectDropdown
+          selectedTags={selectedEthicalTags}
+          onTagsChange={setEthicalTags}
+          placeholder={t('jobFilters.selectEthicalTags')}
+        />
       </section>
 
       <Separator />

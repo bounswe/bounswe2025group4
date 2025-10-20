@@ -5,8 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
+import { MultiSelectDropdown } from '@/components/ui/multi-select-dropdown';
 import { createJob } from '@/services/jobs.service';
 import type { CreateJobPostRequest } from '@/types/api.types';
+import type { EthicalTag } from '@/types/job';
 
 type JobPostFormData = {
   title: string;
@@ -17,12 +19,7 @@ type JobPostFormData = {
   minSalary: string;
   maxSalary: string;
   contactEmail: string;
-  ethicalPolicies: {
-    environmentalSustainability: boolean;
-    fairLaborPractices: boolean;
-    diversityInclusion: boolean;
-    communityEngagement: boolean;
-  };
+  ethicalTags: EthicalTag[];
   inclusiveOpportunity: boolean;
 };
 
@@ -39,12 +36,7 @@ export default function CreateJobPostPage() {
     minSalary: '',
     maxSalary: '',
     contactEmail: '',
-    ethicalPolicies: {
-      environmentalSustainability: false,
-      fairLaborPractices: false,
-      diversityInclusion: false,
-      communityEngagement: false,
-    },
+    ethicalTags: [],
     inclusiveOpportunity: false,
   });
 
@@ -54,21 +46,6 @@ export default function CreateJobPostPage() {
     setError(null);
 
     try {
-      // Build ethical tags string from selected policies
-      const selectedPolicies = [];
-      if (formData.ethicalPolicies.environmentalSustainability) {
-        selectedPolicies.push('Environmental Sustainability');
-      }
-      if (formData.ethicalPolicies.fairLaborPractices) {
-        selectedPolicies.push('Fair Labor Practices');
-      }
-      if (formData.ethicalPolicies.diversityInclusion) {
-        selectedPolicies.push('Diversity & Inclusion');
-      }
-      if (formData.ethicalPolicies.communityEngagement) {
-        selectedPolicies.push('Community Engagement');
-      }
-
       const requestData: CreateJobPostRequest = {
         title: formData.title,
         description: formData.description,
@@ -78,7 +55,7 @@ export default function CreateJobPostPage() {
         minSalary: parseInt(formData.minSalary, 10),
         maxSalary: parseInt(formData.maxSalary, 10),
         contact: formData.contactEmail,
-        ethicalTags: selectedPolicies.join(', '),
+        ethicalTags: formData.ethicalTags.join(', '),
         inclusiveOpportunity: formData.inclusiveOpportunity,
       };
 
@@ -92,15 +69,6 @@ export default function CreateJobPostPage() {
     }
   };
 
-  const handleCheckboxChange = (field: keyof JobPostFormData['ethicalPolicies']) => {
-    setFormData((prev) => ({
-      ...prev,
-      ethicalPolicies: {
-        ...prev.ethicalPolicies,
-        [field]: !prev.ethicalPolicies[field],
-      },
-    }));
-  };
 
   return (
     <div className="container mx-auto px-4 py-6 lg:py-8">
@@ -252,78 +220,17 @@ export default function CreateJobPostPage() {
               />
             </div>
 
-            {/* Ethical Policy Compliance */}
+            {/* Ethical Tags */}
             <div className="mb-6">
-              <Label className="text-sm font-semibold">Ethical Policy Compliance</Label>
-              <div className="mt-3 space-y-3">
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id="environmentalSustainability"
-                    checked={formData.ethicalPolicies.environmentalSustainability}
-                    onCheckedChange={() => handleCheckboxChange('environmentalSustainability')}
-                    className="mt-0.5"
-                  />
-                  <div className="flex-1">
-                    <Label
-                      htmlFor="environmentalSustainability"
-                      className="text-sm font-medium cursor-pointer"
-                    >
-                      Environmental Sustainability
-                    </Label>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id="fairLaborPractices"
-                    checked={formData.ethicalPolicies.fairLaborPractices}
-                    onCheckedChange={() => handleCheckboxChange('fairLaborPractices')}
-                    className="mt-0.5"
-                  />
-                  <div className="flex-1">
-                    <Label
-                      htmlFor="fairLaborPractices"
-                      className="text-sm font-medium cursor-pointer"
-                    >
-                      Fair Labor Practices
-                    </Label>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id="diversityInclusion"
-                    checked={formData.ethicalPolicies.diversityInclusion}
-                    onCheckedChange={() => handleCheckboxChange('diversityInclusion')}
-                    className="mt-0.5"
-                  />
-                  <div className="flex-1">
-                    <Label
-                      htmlFor="diversityInclusion"
-                      className="text-sm font-medium cursor-pointer"
-                    >
-                      Diversity and Inclusion
-                    </Label>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id="communityEngagement"
-                    checked={formData.ethicalPolicies.communityEngagement}
-                    onCheckedChange={() => handleCheckboxChange('communityEngagement')}
-                    className="mt-0.5"
-                  />
-                  <div className="flex-1">
-                    <Label
-                      htmlFor="communityEngagement"
-                      className="text-sm font-medium cursor-pointer"
-                    >
-                      Community Engagement
-                    </Label>
-                  </div>
-                </div>
-              </div>
+              <Label className="text-sm font-semibold">Ethical Tags</Label>
+              <p className="text-xs text-muted-foreground mt-1 mb-3">
+                Select tags that represent your company's ethical commitments and values
+              </p>
+              <MultiSelectDropdown
+                selectedTags={formData.ethicalTags}
+                onTagsChange={(tags) => setFormData({ ...formData, ethicalTags: tags })}
+                placeholder="Select ethical tags"
+              />
             </div>
 
             {/* Inclusive Opportunity */}

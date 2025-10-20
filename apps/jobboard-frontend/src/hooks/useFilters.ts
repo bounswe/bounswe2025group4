@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router';
-import { type JobType, type Policy } from '@/types/job';
+import { type JobType, type EthicalTag } from '@/types/job';
 
 const BASE_SALARY_RANGE: [number, number] = [40, 120];
 
@@ -7,7 +7,7 @@ export function useFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Parse filters from URL
-  const selectedPolicies = (searchParams.get('policies')?.split(',').filter(Boolean) || []) as Policy[];
+  const selectedEthicalTags = (searchParams.get('ethicalTags')?.split(',').filter(Boolean) || []) as EthicalTag[];
   const selectedJobTypes = (searchParams.get('jobTypes')?.split(',').filter(Boolean) || []) as JobType[];
   const salaryRange: [number, number] = [
     Number(searchParams.get('minSalary')) || BASE_SALARY_RANGE[0],
@@ -16,12 +16,12 @@ export function useFilters() {
   const locationFilter = searchParams.get('location') || '';
 
   // Update functions
-  const setPolicies = (policies: Policy[]) => {
+  const setEthicalTags = (tags: EthicalTag[]) => {
     setSearchParams((prev) => {
-      if (policies.length > 0) {
-        prev.set('policies', policies.join(','));
+      if (tags.length > 0) {
+        prev.set('ethicalTags', tags.join(','));
       } else {
-        prev.delete('policies');
+        prev.delete('ethicalTags');
       }
       return prev;
     });
@@ -64,7 +64,7 @@ export function useFilters() {
 
   const resetFilters = () => {
     setSearchParams((prev) => {
-      prev.delete('policies');
+      prev.delete('ethicalTags');
       prev.delete('jobTypes');
       prev.delete('minSalary');
       prev.delete('maxSalary');
@@ -74,11 +74,11 @@ export function useFilters() {
   };
 
   return {
-    selectedPolicies,
+    selectedEthicalTags,
     selectedJobTypes,
     salaryRange,
     locationFilter,
-    setPolicies,
+    setEthicalTags,
     setJobTypes,
     setSalaryRange,
     setLocation,
