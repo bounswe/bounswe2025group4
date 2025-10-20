@@ -36,15 +36,25 @@ class _ProfilePageState extends State<ProfilePage> {
         listen: false,
       );
 
-      // Debug authentication status
       authProvider.debugAuthStatus();
       
       if (!authProvider.isLoggedIn) {
-        print('ProfilePage: User is not logged in, cannot fetch profile');
         return;
       }
 
       await profileProvider.fetchMyProfile();
+
+      if (profileProvider.error?.contains('Profile not found') == true) {
+        try {
+          await profileProvider.createProfile({
+            'firstName': 'Edit:',
+            'lastName': 'Your name',
+            'bio': '',
+          });
+        } catch (e) {
+          // Profile creation failed, user can create manually later
+        }
+      }
 
       final userId = profileProvider.currentUserProfile?.profile.userId;
       if (userId != null) {
@@ -135,23 +145,22 @@ class _ProfilePageState extends State<ProfilePage> {
                           ElevatedButton(
                             onPressed: () async {
                               await profileProvider.fetchMyProfile();
+                              
+                              if (profileProvider.error?.contains('Profile not found') == true) {
+                                try {
+                                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                                  await profileProvider.createProfile({
+                                    'firstName': 'Edit:',
+                                    'lastName': 'Your name',
+                                    'bio': '',
+                                  });
+                                } catch (e) {
+                                  // Profile creation failed
+                                }
+                              }
                             },
                             child: const Text('Retry'),
                           ),
-                          if (profileProvider.error?.contains('Profile not found') == true)
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const EditProfilePage()),
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                              ),
-                              child: const Text('Create Profile'),
-                            ),
                         ],
                       ),
                     ],
@@ -160,6 +169,19 @@ class _ProfilePageState extends State<ProfilePage> {
               : RefreshIndicator(
                 onRefresh: () async {
                   await profileProvider.fetchMyProfile();
+                  
+                  if (profileProvider.error?.contains('Profile not found') == true) {
+                    try {
+                      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                      await profileProvider.createProfile({
+                        'firstName': 'Edit:',
+                        'lastName': 'Your name',
+                        'bio': '',
+                      });
+                    } catch (e) {
+                      // Profile creation failed
+                    }
+                  }
                 },
                 child: _buildProfileContent(context, profileProvider, profile),
               ),
@@ -263,9 +285,6 @@ class _ProfilePageState extends State<ProfilePage> {
     final user = authProvider.currentUser;
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
     
-    print('ProfilePage: User email: ${user?.email}');
-    print('ProfilePage: User username: ${user?.username}');
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

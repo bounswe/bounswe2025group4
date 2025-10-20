@@ -58,7 +58,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           
           await profileProvider.createProfile({
             'firstName': firstName,
-            'lastName': lastName,
+            'lastName': lastName.isNotEmpty ? lastName : 'Your name',
             'bio': _bioController.text,
           });
           
@@ -72,7 +72,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             );
           }
         } else {
-          // Split fullName into firstName and lastName for backend
           final nameParts = _nameController.text.trim().split(' ');
           final firstName = nameParts.isNotEmpty ? nameParts.first : '';
           final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
@@ -82,15 +81,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             'lastName': lastName,
             'bio': _bioController.text,
           });
-          // Username update disabled - backend endpoint not available
-          // if (profileProvider.currentUser != null) {
-          //   await profileProvider.updateUser(
-          //     profileProvider.currentUser!.id,
-          //     {
-          //       'username': _usernameController.text,
-          //     },
-          //   );
-          // }
         }
         
         HapticFeedback.heavyImpact();

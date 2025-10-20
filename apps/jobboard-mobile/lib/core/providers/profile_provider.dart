@@ -35,35 +35,12 @@ class ProfileProvider extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
-      print('ProfileProvider: Starting to fetch profile...');
       final profile = await _apiService.getMyProfile();
-      print('ProfileProvider: Profile fetched successfully');
-      
-      final userId = profile.profile.userId;
-      print('ProfileProvider: User ID: $userId');
 
-      final pictureUrl = await _apiService.getProfilePicture();
-      print('ProfileProvider: Profile picture URL: $pictureUrl');
+      _currentUserProfile = profile;
 
-      final updatedProfile = profile.profile.copyWith(
-        profilePicture: pictureUrl,
-      );
-
-      _currentUserProfile = FullProfile(
-        profile: updatedProfile,
-        experience: profile.experience,
-        education: profile.education,
-        badges: profile.badges,
-      );
-      
-      print('ProfileProvider: Profile loaded successfully');
     } catch (e) {
-      print('ProfileProvider: Error fetching profile: $e');
       _error = e.toString();
-      
-      if (e.toString().contains('Profile not found')) {
-        _error = 'Profile not found. Would you like to create a new profile?';
-      }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -78,15 +55,8 @@ class ProfileProvider extends ChangeNotifier {
       notifyListeners();
 
       final profile = await _apiService.getUserProfile(userId);
-      final pictureUrl = await _apiService.getProfilePicture();
-
-      final updatedProfile = profile.profile.copyWith(profilePicture: pictureUrl);
-      _viewedProfile = FullProfile(
-        profile: updatedProfile,
-        experience: profile.experience,
-        education: profile.education,
-        badges: profile.badges,
-      );
+      // imageUrl comes from backend, assign directly
+      _viewedProfile = profile;
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -130,11 +100,10 @@ class ProfileProvider extends ChangeNotifier {
 
     try {
       final userId = _currentUserProfile!.profile.userId;
-      await _apiService.uploadProfilePicture(imageFile);
+      
+      final uploadResult = await _apiService.uploadProfilePicture(imageFile);
 
-
-      final pictureUrl = await _apiService.getProfilePicture();
-
+      final pictureUrl = uploadResult['imageUrl'] as String?;
 
       final updatedProfile = _currentUserProfile!.profile.copyWith(profilePicture: pictureUrl);
       _currentUserProfile = FullProfile(
@@ -151,12 +120,7 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<void> fetchProfilePicture(int userId) async {
     try {
-      final url = await _apiService.getProfilePicture();
-      if (_currentUserProfile != null && _currentUserProfile!.profile.userId == userId) {
-        final updatedProfile = _currentUserProfile!.profile.copyWith(profilePicture: url);
-        _currentUserProfile = _currentUserProfile!.copyWith(profile: updatedProfile);
-        notifyListeners();
-      }
+      // Deprecated - kept for backward compatibility
     } catch (e) {
       rethrow;
     }
@@ -165,13 +129,20 @@ class ProfileProvider extends ChangeNotifier {
   Future<void> deleteProfilePicture() async {
     try {
       final userId = _currentUserProfile!.profile.userId;
-      await _apiService.deleteProfilePicture();
-
-      await fetchMyProfile();
-
-      final pictureUrl = _apiService.getProfilePicture();
-
+      
+      // Update local state first (for immediate UI update)
+      final updated = _currentUserProfile!.profile.copyWith(profilePicture: null);
+      _currentUserProfile = FullProfile(
+        profile: updated,
+        experience: _currentUserProfile!.experience,
+        education: _currentUserProfile!.education,
+        badges: _currentUserProfile!.badges,
+      );
       notifyListeners();
+      
+      // Then delete from backend
+      await _apiService.deleteProfilePicture();
+      
     } catch (e) {
       rethrow;
     }
@@ -419,6 +390,10 @@ class ProfileProvider extends ChangeNotifier {
   // Create profile
   Future<void> createProfile(Map<String, dynamic> profileData) async {
     try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
       final newProfile = await _apiService.createProfile(profileData);
       _currentUserProfile = FullProfile(
         profile: newProfile,
@@ -426,9 +401,13 @@ class ProfileProvider extends ChangeNotifier {
         education: [],
         badges: [],
       );
-      notifyListeners();
+      
     } catch (e) {
+      _error = e.toString();
       throw Exception('Failed to create profile: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 
 import '../models/job_post.dart';
 import '../models/job_application.dart';
@@ -929,15 +930,21 @@ class ApiService {
       final uri = _buildUri('/profile/image');
 
       final request = http.MultipartRequest('POST', uri);
-      request.headers.addAll(_getHeaders());
+      
+      // Add only auth header for multipart, remove Content-Type
+      final token = _authProvider.token;
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
 
       final fileStream = http.ByteStream(imageFile.openRead());
       final fileLength = await imageFile.length();
       final multipartFile = http.MultipartFile(
-        'file',
+        'file', 
         fileStream,
         fileLength,
         filename: 'profile_image.jpg',
+        contentType: MediaType('image', 'jpeg'), 
       );
 
       request.files.add(multipartFile);
@@ -960,7 +967,8 @@ class ApiService {
   /// Fetches the profile picture as a direct image URL (used by Image.network)
   Future<String> getProfilePicture() async {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
-    return '${AppConstants.baseUrl}/profile/image?t=$timestamp';
+    final url = '${AppConstants.baseUrl}/profile/image?t=$timestamp';
+    return url;
   }
 
   /// DELETE /api/profile/image
@@ -970,6 +978,7 @@ class ApiService {
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());
+      
       await _handleResponse(response);
     } catch (e) {
       throw Exception('Failed to delete profile picture. $e');

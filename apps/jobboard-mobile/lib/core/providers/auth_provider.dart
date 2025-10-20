@@ -158,6 +158,8 @@ class AuthProvider with ChangeNotifier {
             final details = await _authService.getUserDetails(_currentUser!.id, _token!);
             print('AuthProvider: Received user details: ${details.email}, ${details.username}');
             await _updateAndPersistUserDetails(details);
+            
+            await _ensureUserHasProfile(username);
           } catch (e) {
             print('Error fetching user details: $e');
           }
@@ -289,25 +291,28 @@ class AuthProvider with ChangeNotifier {
           await _updateAndPersistUserDetails(userDetails);
           print("Successfully updated full user details.");
 
-          // If user is a mentor, create mentor profile
-          if (userDetails.mentorshipStatus == MentorshipStatus.MENTOR) {
-            print("Creating mentor profile for new mentor user...");
-            try {
-              final apiService = ApiService(authProvider: this);
-              await apiService.createMentorProfile(
-                capacity:
-                    maxMenteeCount ??
-                    1, // Use provided maxMenteeCount or default to 1
-                isAvailable: true, // Start as available by default
-              );
-              print("Successfully created mentor profile.");
-            } catch (e) {
-              print("Error creating mentor profile: $e");
-              // Don't continue if mentor profile creation fails
-              _isLoading = false;
-              notifyListeners();
-              return RegisterOutcome.failure;
+          // Create basic profile for all users
+          try {
+            final apiService = ApiService(authProvider: this);
+            
+            await apiService.createProfile({
+              'firstName': 'Edit:',
+              'lastName': 'Your name',
+              'bio': bio ?? '',
+            });
+            
+            if (userDetails.mentorshipStatus == MentorshipStatus.MENTOR) {
+              try {
+                await apiService.createMentorProfile(
+                  capacity: maxMenteeCount ?? 1,
+                  isAvailable: true,
+                );
+              } catch (e) {
+                // Mentor profile creation failed, but basic profile is created
+              }
             }
+          } catch (e) {
+            // Profile creation failed, user can create manually later
           }
         } catch (e) {
           print("Error during registration process: $e");
@@ -555,5 +560,25 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> _ensureUserHasProfile(String username) async {
+    try {
+      final apiService = ApiService(authProvider: this);
+      
+      try {
+        await apiService.getMyProfile();
+        return;
+      } catch (e) {
+        if (e.toString().contains('Profile not found')) {
+          await apiService.createProfile({
+            'firstName': 'Edit:',
+            'lastName': 'Your name',
+            'bio': '',
+          });
+        }
+      }
+    } catch (e) {
+      // Profile creation failed, user can create manually later
+    }
+  }
 
 }

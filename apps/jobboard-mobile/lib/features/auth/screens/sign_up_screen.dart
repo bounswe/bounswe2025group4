@@ -76,9 +76,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         if (outcome == RegisterOutcome.success) {
           HapticFeedback.heavyImpact();
-          final profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-          profileProvider.clearCurrentUserProfile();
-          await profileProvider.fetchMyProfile();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Registration successful!"),
