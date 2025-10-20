@@ -112,8 +112,12 @@
     "salary": "نطاق الراتب",
     "salaryRangeValue": "${{min}}k - ${{max}}k",
     "jobType": "نوع الوظيفة",
-    "location": "الموقع",
-    "locationPlaceholder": "مدينة أو دولة أو عن بُعد",
+    "workArrangement": "ترتيب العمل",
+    "remoteOnly": "عن بُعد فقط",
+    "inclusivity": "الشمولية",
+    "disabilityInclusive": "فرص شاملة للأشخاص ذوي الإعاقة",
+    "companyName": "اسم الشركة",
+    "companyNamePlaceholder": "البحث باسم الشركة",
     "jobTypeOptions": {
       "fullTime": "دوام كامل",
       "partTime": "دوام جزئي",
@@ -164,7 +168,8 @@
     }
   },
   "jobCard": {
-    "remote": "عن بُعد"
+    "remote": "عن بُعد",
+    "inclusiveOpportunity": "فرصة شاملة"
   },
   "mobileFilters": {
     "open": "فتح عوامل التصفية",

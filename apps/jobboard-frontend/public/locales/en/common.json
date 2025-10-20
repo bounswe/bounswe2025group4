@@ -112,8 +112,12 @@
     "salary": "Salary Range",
     "salaryRangeValue": "${{min}}k - ${{max}}k",
     "jobType": "Job Type",
-    "location": "Location",
-    "locationPlaceholder": "City, State, or Remote",
+    "workArrangement": "Work Arrangement",
+    "remoteOnly": "Remote Only",
+    "inclusivity": "Inclusivity",
+    "disabilityInclusive": "Disability-Inclusive Opportunities",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Search by company name",
     "jobTypeOptions": {
       "fullTime": "Full-time",
       "partTime": "Part-time",
@@ -164,7 +168,8 @@
     }
   },
   "jobCard": {
-    "remote": "Remote"
+    "remote": "Remote",
+    "inclusiveOpportunity": "Inclusive Opportunity"
   },
   "mobileFilters": {
     "open": "Open filters",
@@ -224,6 +229,35 @@
       "active": "Active",
       "paused": "Paused"
     }
+  },
+  "employerJobPostDetails": {
+    "error": {
+      "load": "Failed to load job details. Please try again later.",
+      "title": "Error Loading Job",
+      "notFound": "Job not found",
+      "description": "The job you're looking for doesn't exist or has been removed."
+    },
+    "applied": {
+      "today": "Applied today",
+      "yesterday": "Applied 1 day ago",
+      "daysAgo": "Applied {{count}} days ago"
+    },
+    "backToDashboard": "Back to Dashboard",
+    "breadcrumb": {
+      "jobs": "Jobs"
+    },
+    "editJobPost": "Edit Job Post",
+    "jobDescription": "Job Description",
+    "salaryRange": "Salary Range",
+    "location": "Location",
+    "remote": "Remote",
+    "contact": "Contact Information",
+    "ethicalPolicies": "Ethical Policies",
+    "inclusiveOpportunity": "Inclusive Opportunity",
+    "inclusiveOpportunityDescription": "This position is designated as an inclusive opportunity, welcoming candidates from diverse backgrounds.",
+    "applicationsReceived": "Applications Received ({{count}})",
+    "noApplications": "No applications received yet.",
+    "viewApplication": "View Application"
   },
   "auth": {
     "login": {
@@ -655,6 +689,41 @@
       "viewApplication": "View Application",
       "backToJobs": "Back to Jobs"
     }
+  },
+  "jobApplicationReview": {
+    "noCv": "No CV found for this application",
+    "error": {
+      "load": "Failed to load application details. Please try again later.",
+      "approve": "Failed to approve application. Please try again.",
+      "reject": "Failed to reject application. Please try again.",
+      "title": "Error Loading Application"
+    },
+    "applied": {
+      "today": "today",
+      "yesterday": "1 day ago",
+      "daysAgo": "{{count}} days ago"
+    },
+    "backToJob": "Back to Job",
+    "title": "Application for {{jobTitle}}",
+    "atCompany": "at {{company}}",
+    "applicantInfo": "Applicant Information",
+    "status": "Status",
+    "applied": "Applied",
+    "coverLetter": "Cover Letter",
+    "specialNeeds": "Special Needs or Accommodations",
+    "cv": "CV / Resume",
+    "loadingCv": "Loading CV...",
+    "resumeOf": "{{name}}'s Resume",
+    "downloadToView": "Click download to view the CV",
+    "download": "Download",
+    "noCvAttached": "No CV attached to this application",
+    "existingFeedback": "Existing Feedback",
+    "decision": "Decision",
+    "feedback": "Feedback (optional)",
+    "feedbackPlaceholder": "Provide feedback for the applicant",
+    "processing": "Processing...",
+    "reject": "Reject",
+    "approve": "Approve"
   },
   "myApplications": {
     "title": "My Applications",

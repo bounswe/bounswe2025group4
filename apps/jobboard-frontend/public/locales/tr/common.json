@@ -112,8 +112,12 @@
     "salary": "Maaş Aralığı",
     "salaryRangeValue": "${{min}}k - ${{max}}k",
     "jobType": "İş Türü",
-    "location": "Konum",
-    "locationPlaceholder": "Şehir, Ülke veya Uzaktan",
+    "workArrangement": "Çalışma Düzeni",
+    "remoteOnly": "Sadece Uzaktan",
+    "inclusivity": "Kapsayıcılık",
+    "disabilityInclusive": "Engelli Dostu Fırsatlar",
+    "companyName": "Şirket Adı",
+    "companyNamePlaceholder": "Şirket adına göre ara",
     "jobTypeOptions": {
       "fullTime": "Tam zamanlı",
       "partTime": "Yarı zamanlı",
@@ -164,7 +168,8 @@
     }
   },
   "jobCard": {
-    "remote": "Uzaktan"
+    "remote": "Uzaktan",
+    "inclusiveOpportunity": "Kapsayıcı Fırsat"
   },
   "mobileFilters": {
     "open": "Filtreleri aç",

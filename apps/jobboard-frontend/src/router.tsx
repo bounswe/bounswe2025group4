@@ -19,6 +19,7 @@ import JobApplicationReviewPage from './pages/JobApplicationReviewPage';
 import EmployerDashboardPage from './pages/EmployerDashboardPage';
 import CreateJobPostPage from './pages/CreateJobPostPage';
 import EmployerJobPostDetailsPage from './pages/EmployerJobPostDetailsPage';
+import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const router = createBrowserRouter([
@@ -79,6 +80,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <EmployerJobPostDetailsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/jobs/:jobId/edit',
+        element: (
+          <ProtectedRoute>
+            <EmployerEditJobPostPage />
           </ProtectedRoute>
         ),
       },
