@@ -11,7 +11,6 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyOtpPage from './pages/VerifyOtpPage';
 import ProfilePage from './pages/ProfilePage';
-//import ProtectedRoute from './components/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -81,9 +80,7 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: (
-          //<ProtectedRoute>
             <ProfilePage />
-          //</ProtectedRoute>
         ),
       },
     ],

@@ -1,4 +1,4 @@
-import { useState, /*useEffect*/ } from 'react';
+import { useState, useEffect } from 'react';
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
 import { AboutSection } from '@/components/profile/AboutSection';
 import { ExperienceSection } from '@/components/profile/ExperienceSection';
@@ -13,133 +13,128 @@ import {
   EducationModal,
   SkillModal,
   InterestModal,
+  CreateProfileModal,
+  ImageUploadModal,
 } from '@/components/profile/ProfileEditModals';
 import type { Profile, Activity, Post } from '@/types/profile.types';
-//import { profileService } from '@/services/profile.service';
-//import { useAuth } from '@/contexts/AuthContext';
-//import CenteredLoader from '@/components/CenteredLoader';
-
-const mockProfile: Profile = {
-  id: 1,
-  userId: 1,
-  firstName: 'Sophia',
-  lastName: 'Carter',
-  bio: 'Experienced product designer with a passion for creating user-centered digital experiences. Skilled in user research, wireframing, prototyping, and visual design. Committed to continuous learning and growth in the field.',
-  imageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-  educations: [
-    {
-      id: 1,
-      school: 'State University',
-      degree: 'Bachelor of Science',
-      field: 'Design',
-      startDate: '2016-09-01',
-      endDate: '2020-06-01',
-      description: '',
-    },
-  ],
-  experiences: [
-    {
-      id: 1,
-      company: 'Tech Innovators Inc.',
-      position: 'Product Designer',
-      description:
-        'Led design for a major product redesign, resulting in a 20% increase in user engagement.',
-      startDate: '2020-01-01',
-      endDate: '',
-    },
-    {
-      id: 2,
-      company: 'Design Solutions Co.',
-      position: 'Design Intern',
-      description:
-        'Contributed to the design of a new mobile app, focusing on user research and interaction design.',
-      startDate: '2019-06-01',
-      endDate: '2020-12-01',
-    },
-  ],
-  skills: [
-    { id: 1, name: 'User Research', level: 'ADVANCED' },
-    { id: 2, name: 'Wireframing', level: 'ADVANCED' },
-    { id: 3, name: 'Prototyping', level: 'INTERMEDIATE' },
-    { id: 4, name: 'Visual Design', level: 'ADVANCED' },
-    { id: 5, name: 'Interaction Design', level: 'ADVANCED' },
-    { id: 6, name: 'Usability Testing', level: 'INTERMEDIATE' },
-  ],
-  interests: [
-    { id: 1, name: 'Sustainable Design' },
-    { id: 2, name: 'Ethical Tech' },
-    { id: 3, name: 'Accessibility' },
-    { id: 4, name: 'User Advocacy' },
-    { id: 5, name: 'Design Systems' },
-    { id: 6, name: 'Inclusive Design' },
-  ],
-  createdAt: '2021-01-15T00:00:00Z',
-  updatedAt: '2024-10-15T00:00:00Z',
-};
-
-const mockActivity: Activity[] = [
-  {
-    id: 1,
-    type: 'application',
-    text: 'Applied to Senior Product Designer at Innovation Labs',
-    date: '2 days ago',
-  },
-  {
-    id: 2,
-    type: 'forum',
-    text: "Posted a thread on forum: 'Best practices for accessibility in design'",
-    date: '5 days ago',
-  },
-  {
-    id: 3,
-    type: 'comment',
-    text: "Made a comment on 'Remote work strategies for designers'",
-    date: '1 week ago',
-  },
-  {
-    id: 4,
-    type: 'like',
-    text: "Liked a comment on 'Design system implementation'",
-    date: '1 week ago',
-  },
-  {
-    id: 5,
-    type: 'application',
-    text: 'Applied to UX Designer at Creative Studio',
-    date: '2 weeks ago',
-  },
-];
-
-const mockPosts: Post[] = [
-  {
-    id: 1,
-    title: 'How to improve user research techniques',
-    replies: 12,
-    likes: 45,
-    date: '3 days ago',
-  },
-  {
-    id: 2,
-    title: 'My journey into product design',
-    replies: 8,
-    likes: 32,
-    date: '1 week ago',
-  },
-  {
-    id: 3,
-    title: 'Tools I use daily as a designer',
-    replies: 24,
-    likes: 67,
-    date: '2 weeks ago',
-  },
-];
+import { profileService } from '@/services/profile.service';
+import CenteredLoader from '@/components/CenteredLoader';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'posts'>('about');
-  const [profile, setProfile] = useState<Profile | null>(mockProfile);
-  //const [loading, setLoading] = useState(false);
-  //const [error, setError] = useState<string | null>(null);
-  //const { user } = useAuth();
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showCreateProfile, setShowCreateProfile] = useState(false);
+  const [showImageUpload, setShowImageUpload] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  // Mock data for activity and posts (since no API endpoints for these yet)
+  const mockActivity: Activity[] = [
+    {
+      id: 1,
+      type: 'application',
+      text: 'Applied to Senior Product Designer at Innovation Labs',
+      date: '2 days ago',
+    },
+    {
+      id: 2,
+      type: 'forum',
+      text: "Posted a thread on forum: 'Best practices for accessibility in design'",
+      date: '5 days ago',
+    },
+    {
+      id: 3,
+      type: 'comment',
+      text: "Made a comment on 'Remote work strategies for designers'",
+      date: '1 week ago',
+    },
+    {
+      id: 4,
+      type: 'like',
+      text: "Liked a comment on 'Design system implementation'",
+      date: '1 week ago',
+    },
+    {
+      id: 5,
+      type: 'application',
+      text: 'Applied to UX Designer at Creative Studio',
+      date: '2 weeks ago',
+    },
+  ];
+
+  const mockPosts: Post[] = [
+    {
+      id: 1,
+      title: 'How to improve user research techniques',
+      replies: 12,
+      likes: 45,
+      date: '3 days ago',
+    },
+    {
+      id: 2,
+      title: 'My journey into product design',
+      replies: 8,
+      likes: 32,
+      date: '1 week ago',
+    },
+    {
+      id: 3,
+      title: 'Tools I use daily as a designer',
+      replies: 24,
+      likes: 67,
+      date: '2 weeks ago',
+    },
+  ];
+
+  // Load profile data on component mount
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Debug: Check auth state
+        console.log('ProfilePage: Loading profile...');
+        const authState = useAuthStore.getState();
+        console.log('ProfilePage: Auth state:', {
+          isAuthenticated: authState.isAuthenticated,
+          hasToken: !!authState.accessToken,
+          user: authState.user
+        });
+        
+        const profileData = await profileService.getMyProfile();
+        setProfile(profileData);
+        console.log('ProfilePage: Profile loaded successfully');
+      } catch (err) {
+        console.error('Failed to load profile:', err);
+        console.error('Error details:', {
+          message: err instanceof Error ? err.message : 'Unknown error',
+          response: (err as any)?.response?.data,
+          status: (err as any)?.response?.status
+        });
+
+        // Check if it's a profile not found error
+        const errorResponse = (err as any)?.response?.data;
+        const isProfileNotFound = 
+          (err as any)?.response?.status === 404 && 
+          errorResponse?.code === 'PROFILE_NOT_FOUND';
+
+        if (isProfileNotFound) {
+          console.log('ProfilePage: Profile not found, showing create modal');
+          setShowCreateProfile(true);
+          setError(null);
+        } else {
+          setError(err instanceof Error ? err.message : 'Failed to load profile');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
 
   // Modal states
   const [modals, setModals] = useState({
@@ -162,146 +157,170 @@ export default function ProfilePage() {
   };
 
   // Handlers for saving data
-  const handleSaveBio = (bio: string) => {
-    console.log('Saving bio:', bio);
-    setProfile((prev) => (prev ? { ...prev, bio } : null));
-    // TODO: Call API to update bio
-  };
-
-  const handleSaveExperience = (data: any) => {
-    console.log('Saving experience:', data);
-    if (data.id) {
-      // Update existing
-      setProfile((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          experiences: prev.experiences.map((exp) =>
-            exp.id === data.id ? { ...exp, ...data } : exp
-          ),
-        };
-      });
-    } else {
-      // Add new
-      setProfile((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          experiences: [
-            ...prev.experiences,
-            { ...data, id: Date.now() }, // Temporary ID
-          ],
-        };
-      });
+  const handleCreateProfile = async (data: { firstName: string; lastName: string; bio?: string }) => {
+    try {
+      setLoading(true);
+      const newProfile = await profileService.createProfile(data);
+      setProfile(newProfile);
+      setShowCreateProfile(false);
+      console.log('ProfilePage: Profile created successfully');
+    } catch (err) {
+      console.error('Failed to create profile:', err);
+      // You might want to show a toast notification here
+      setError(err instanceof Error ? err.message : 'Failed to create profile');
+    } finally {
+      setLoading(false);
     }
-    // TODO: Call API
   };
 
-  const handleSaveEducation = (data: any) => {
-    console.log('Saving education:', data);
-    if (data.id) {
-      // Update existing
-      setProfile((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          educations: prev.educations.map((edu) =>
-            edu.id === data.id ? { ...edu, ...data } : edu
-          ),
-        };
-      });
-    } else {
-      // Add new
-      setProfile((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          educations: [
-            ...prev.educations,
-            { ...data, id: Date.now() },
-          ],
-        };
-      });
+  const handleImageUpload = async (file: File) => {
+    try {
+      setIsUploadingImage(true);
+      const result = await profileService.uploadImage(file);
+      
+      // Update profile with new image URL
+      if (profile) {
+        setProfile({
+          ...profile,
+          imageUrl: result.imageUrl,
+          updatedAt: result.updatedAt,
+        });
+      }
+      
+      setShowImageUpload(false);
+      console.log('ProfilePage: Image uploaded successfully');
+    } catch (err) {
+      console.error('Failed to upload image:', err);
+      // You might want to show a toast notification here
+    } finally {
+      setIsUploadingImage(false);
     }
-    // TODO: Call API
   };
 
-  const handleSaveSkill = (data: any) => {
-    console.log('Saving skill:', data);
-    if (data.id) {
-      // Update existing
-      setProfile((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          skills: prev.skills.map((skill) =>
-            skill.id === data.id ? { ...skill, ...data } : skill
-          ),
-        };
-      });
-    } else {
-      // Add new
-      setProfile((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          skills: [
-            ...prev.skills,
-            { ...data, id: Date.now() },
-          ],
-        };
-      });
+  const handleImageDelete = async () => {
+    try {
+      setIsUploadingImage(true);
+      await profileService.deleteImage();
+      
+      // Update profile to remove image URL
+      if (profile) {
+        setProfile({
+          ...profile,
+          imageUrl: undefined,
+          updatedAt: new Date().toISOString(),
+        });
+      }
+      
+      setShowImageUpload(false);
+      console.log('ProfilePage: Image deleted successfully');
+    } catch (err) {
+      console.error('Failed to delete image:', err);
+      // You might want to show a toast notification here
+    } finally {
+      setIsUploadingImage(false);
     }
-    // TODO: Call API
   };
 
-  const handleSaveInterest = (data: any) => {
-    console.log('Saving interest:', data);
-    if (data.id) {
-      // Update existing
-      setProfile((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          interests: prev.interests.map((interest) =>
-            interest.id === data.id ? { ...interest, ...data } : interest
-          ),
-        };
-      });
-    } else {
-      // Add new
-      setProfile((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          interests: [
-            ...prev.interests,
-            { ...data, id: Date.now() },
-          ],
-        };
-      });
+  const handleSaveBio = async (bio: string) => {
+    try {
+      const updatedProfile = await profileService.updateProfile({ bio });
+      setProfile(updatedProfile);
+    } catch (err) {
+      console.error('Failed to update bio:', err);
+      // You might want to show a toast notification here
     }
-    // TODO: Call API
   };
 
-  /*if (loading) {
+  const handleSaveExperience = async (data: any) => {
+    try {
+      if (data.id) {
+        // Update existing
+        await profileService.updateExperience(data.id, data);
+      } else {
+        // Add new
+        await profileService.addExperience(data);
+      }
+      // Refresh profile data
+      const updatedProfile = await profileService.getMyProfile();
+      setProfile(updatedProfile);
+    } catch (err) {
+      console.error('Failed to save experience:', err);
+      // You might want to show a toast notification here
+    }
+  };
+
+  const handleSaveEducation = async (data: any) => {
+    try {
+      if (data.id) {
+        // Update existing
+        await profileService.updateEducation(data.id, data);
+      } else {
+        // Add new
+        await profileService.addEducation(data);
+      }
+      // Refresh profile data
+      const updatedProfile = await profileService.getMyProfile();
+      setProfile(updatedProfile);
+    } catch (err) {
+      console.error('Failed to save education:', err);
+      // You might want to show a toast notification here
+    }
+  };
+
+  const handleSaveSkill = async (data: any) => {
+    try {
+      if (data.id) {
+        // Update existing
+        await profileService.updateSkill(data.id, data);
+      } else {
+        // Add new
+        await profileService.addSkill(data);
+      }
+      // Refresh profile data
+      const updatedProfile = await profileService.getMyProfile();
+      setProfile(updatedProfile);
+    } catch (err) {
+      console.error('Failed to save skill:', err);
+      // You might want to show a toast notification here
+    }
+  };
+
+  const handleSaveInterest = async (data: any) => {
+    try {
+      if (data.id) {
+        // Update existing
+        await profileService.updateInterest(data.id, data);
+      } else {
+        // Add new
+        await profileService.addInterest(data);
+      }
+      // Refresh profile data
+      const updatedProfile = await profileService.getMyProfile();
+      setProfile(updatedProfile);
+    } catch (err) {
+      console.error('Failed to save interest:', err);
+      // You might want to show a toast notification here
+    }
+  };
+
+  if (loading) {
     return <CenteredLoader />;
   }
 
   if (error) {
     return (
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6 py-16">
         <div className="bg-destructive/10 border border-destructive text-destructive rounded-lg p-6 text-center">
           <p className="font-medium">Failed to load profile</p>
           <p className="text-sm mt-2">{error}</p>
         </div>
       </div>
     );
-  }*/
+  }
 
-  if (!profile) {
+  if (!profile && !showCreateProfile) {
     return (
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-6 py-16">
         <div className="bg-muted rounded-lg p-6 text-center">
           <p className="font-medium">No profile found</p>
           <p className="text-sm text-muted-foreground mt-2">
@@ -312,6 +331,22 @@ export default function ProfilePage() {
     );
   }
 
+  // Show create profile modal if profile doesn't exist
+  if (showCreateProfile) {
+    return (
+      <div className="max-w-5xl mx-auto space-y-6 py-16">
+        <CreateProfileModal
+          isOpen={showCreateProfile}
+          onClose={() => setShowCreateProfile(false)}
+          onSave={handleCreateProfile}
+        />
+      </div>
+    );
+  }
+
+  // Profile must exist at this point
+  if (!profile) return null;
+
   return (
     <div className="max-w-5xl mx-auto space-y-6 py-16">
       <div className="bg-card rounded-lg border shadow-sm p-6">
@@ -321,7 +356,7 @@ export default function ProfilePage() {
           imageUrl={profile.imageUrl}
           createdAt={profile.createdAt}
           experiences={profile.experiences}
-          onEditImage={() => console.log('Edit image')}
+          onEditImage={() => setShowImageUpload(true)}
         />
 
         {/* Tabs */}
@@ -449,6 +484,15 @@ export default function ProfilePage() {
         onClose={() => closeModal('interest')}
         interest={editingItem}
         onSave={handleSaveInterest}
+      />
+
+      <ImageUploadModal
+        isOpen={showImageUpload}
+        onClose={() => setShowImageUpload(false)}
+        currentImageUrl={profile?.imageUrl}
+        onUpload={handleImageUpload}
+        onDelete={profile?.imageUrl ? handleImageDelete : undefined}
+        isUploading={isUploadingImage}
       />
     </div>
   );

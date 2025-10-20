@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import axios from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuthActions } from '@/stores/authStore';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
   ? import.meta.env.VITE_API_URL 
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const { login } = useAuthActions();
 
   const {
     register,
@@ -72,10 +74,7 @@ export default function LoginPage() {
           });
         } else if (response.data.token) {
           // No 2FA - direct login
-          localStorage.setItem('token', response.data.token);
-          
-          // Dispatch custom event to update header
-          window.dispatchEvent(new Event('auth-change'));
+          login(response.data);
           
           // Redirect to home
           navigate('/');

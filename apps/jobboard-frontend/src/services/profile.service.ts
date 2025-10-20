@@ -18,38 +18,38 @@ export const profileService = {
     lastName: string;
     bio?: string;
   }): Promise<Profile> => {
-    const response = await apiClient.post('/api/profile', data);
+    const response = await apiClient.post('/profile', data);
     return response.data;
   },
 
   /**
    * Get current user's profile
-   * GET /api/profile
+   * GET /profile
    */
   getMyProfile: async (): Promise<Profile> => {
-    const response = await apiClient.get('/api/profile');
+    const response = await apiClient.get('/profile');
     return response.data;
   },
 
   /**
    * Update profile
-   * PUT /api/profile
+   * PUT /profile
    */
   updateProfile: async (data: {
     firstName?: string;
     lastName?: string;
     bio?: string;
   }): Promise<Profile> => {
-    const response = await apiClient.put('/api/profile', data);
+    const response = await apiClient.put('/profile', data);
     return response.data;
   },
 
   /**
    * Get public profile by user ID
-   * GET /api/profile/{userId}
+   * GET /profile/{userId}
    */
   getPublicProfile: async (userId: number): Promise<Profile> => {
-    const response = await apiClient.get(`/api/profile/${userId}`);
+    const response = await apiClient.get(`/profile/${userId}`);
     return response.data;
   },
 
@@ -57,13 +57,13 @@ export const profileService = {
 
   /**
    * Upload profile image
-   * POST /api/profile/image
+   * POST /profile/image
    */
   uploadImage: async (file: File): Promise<{ imageUrl: string; updatedAt: string }> => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await apiClient.post('/api/profile/image', formData, {
+    const response = await apiClient.post('/profile/image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -73,17 +73,17 @@ export const profileService = {
 
   /**
    * Delete profile image
-   * DELETE /api/profile/image
+   * DELETE /profile/image
    */
   deleteImage: async (): Promise<void> => {
-    await apiClient.delete('/api/profile/image');
+    await apiClient.delete('/profile/image');
   },
 
   // ==================== EDUCATION ====================
 
   /**
    * Add education
-   * POST /api/profile/education
+   * POST /profile/education
    */
   addEducation: async (data: {
     school: string;
@@ -93,13 +93,13 @@ export const profileService = {
     endDate?: string;
     description?: string;
   }) => {
-    const response = await apiClient.post('/api/profile/education', data);
+    const response = await apiClient.post('/profile/education', data);
     return response.data;
   },
 
   /**
    * Update education
-   * PUT /api/profile/education/{educationId}
+   * PUT /profile/education/{educationId}
    */
   updateEducation: async (
     educationId: number,
@@ -112,23 +112,23 @@ export const profileService = {
       description?: string;
     }
   ) => {
-    const response = await apiClient.put(`/api/profile/education/${educationId}`, data);
+    const response = await apiClient.put(`/profile/education/${educationId}`, data);
     return response.data;
   },
 
   /**
    * Delete education
-   * DELETE /api/profile/education/{educationId}
+   * DELETE /profile/education/{educationId}
    */
   deleteEducation: async (educationId: number): Promise<void> => {
-    await apiClient.delete(`/api/profile/education/${educationId}`);
+    await apiClient.delete(`/profile/education/${educationId}`);
   },
 
   // ==================== EXPERIENCE ====================
 
   /**
    * Add experience
-   * POST /api/profile/experience
+   * POST /profile/experience
    */
   addExperience: async (data: {
     company: string;
@@ -137,13 +137,13 @@ export const profileService = {
     startDate: string;
     endDate?: string;
   }) => {
-    const response = await apiClient.post('/api/profile/experience', data);
+    const response = await apiClient.post('/profile/experience', data);
     return response.data;
   },
 
   /**
    * Update experience
-   * PUT /api/profile/experience/{experienceId}
+   * PUT /profile/experience/{experienceId}
    */
   updateExperience: async (
     experienceId: number,
@@ -155,74 +155,74 @@ export const profileService = {
       endDate?: string;
     }
   ) => {
-    const response = await apiClient.put(`/api/profile/experience/${experienceId}`, data);
+    const response = await apiClient.put(`/profile/experience/${experienceId}`, data);
     return response.data;
   },
 
   /**
    * Delete experience
-   * DELETE /api/profile/experience/{experienceId}
+   * DELETE /profile/experience/{experienceId}
    */
   deleteExperience: async (experienceId: number): Promise<void> => {
-    await apiClient.delete(`/api/profile/experience/${experienceId}`);
+    await apiClient.delete(`/profile/experience/${experienceId}`);
   },
 
   // ==================== SKILL ====================
 
   /**
    * Add skill
-   * POST /api/profile/skill
+   * POST /profile/skill
    */
   addSkill: async (data: { name: string; level?: string }) => {
-    const response = await apiClient.post('/api/profile/skill', data);
+    const response = await apiClient.post('/profile/skill', data);
     return response.data;
   },
 
   /**
    * Update skill
-   * PUT /api/profile/skill/{skillId}
+   * PUT /profile/skill/{skillId}
    */
   updateSkill: async (
     skillId: number,
     data: { name?: string; level?: string }
   ) => {
-    const response = await apiClient.put(`/api/profile/skill/${skillId}`, data);
+    const response = await apiClient.put(`/profile/skill/${skillId}`, data);
     return response.data;
   },
 
   /**
    * Delete skill
-   * DELETE /api/profile/skill/{skillId}
+   * DELETE /profile/skill/{skillId}
    */
   deleteSkill: async (skillId: number): Promise<void> => {
-    await apiClient.delete(`/api/profile/skill/${skillId}`);
+    await apiClient.delete(`/profile/skill/${skillId}`);
   },
 
   // ==================== INTEREST ====================
 
   /**
    * Add interest
-   * POST /api/profile/interest
+   * POST /profile/interest
    */
   addInterest: async (data: { name: string }) => {
-    const response = await apiClient.post('/api/profile/interest', data);
+    const response = await apiClient.post('/profile/interest', data);
     return response.data;
   },
 
   /**
    * Update interest
-   * PUT /api/profile/interest/{interestId}
+   * PUT /profile/interest/{interestId}
    */
   updateInterest: async (interestId: number, data: { name: string }) => {
-    const response = await apiClient.put(`/api/profile/interest/${interestId}`, data);
+    const response = await apiClient.put(`/profile/interest/${interestId}`, data);
     return response.data;
   },
 
   /**
    * Delete interest
-   * DELETE /api/profile/interest/{interestId}
+   * DELETE /profile/interest/{interestId}
    */
   deleteInterest: async (interestId: number): Promise<void> => {
-    await apiClient.delete(`/api/profile/interest/${interestId}`);
+    await apiClient.delete(`/profile/interest/${interestId}`);
   },
 };

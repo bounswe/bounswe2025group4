@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthActions } from '@/stores/authStore';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
   ? import.meta.env.VITE_API_URL 
@@ -18,6 +19,7 @@ export default function VerifyOtpPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuthActions();
   const [errorMessage, setErrorMessage] = useState('');
 
   const temporaryToken = location.state?.temporaryToken;
@@ -52,11 +54,8 @@ export default function VerifyOtpPage() {
       console.log('Verify OTP response data:', response.data);
 
       if (response.status === 200 && response.data.token) {
-        // Store token
-        localStorage.setItem('token', response.data.token);
-        
-        // Dispatch custom event to update header
-        window.dispatchEvent(new Event('auth-change'));
+        // Store token in auth store
+        login(response.data);
         
         // Redirect to home
         navigate('/');

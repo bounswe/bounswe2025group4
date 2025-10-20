@@ -1,6 +1,7 @@
-import { useState, useEffect, type JSX } from 'react';
-import { X, Briefcase, GraduationCap, Award, Heart } from 'lucide-react';
+import { useState, useEffect, useRef, type JSX } from 'react';
+import { X, Briefcase, GraduationCap, Award, Heart, Upload, Trash2, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 // Types
 interface ModalProps {
@@ -72,6 +73,21 @@ interface InterestModalProps {
   onClose: () => void;
   interest?: Interest | null;
   onSave: (interest: Interest) => void;
+}
+
+interface CreateProfileModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: { firstName: string; lastName: string; bio?: string }) => void;
+}
+
+interface ImageUploadModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  currentImageUrl?: string;
+  onUpload: (file: File) => void;
+  onDelete?: () => void;
+  isUploading?: boolean;
 }
 
 // Modal Base Component
@@ -533,6 +549,255 @@ export function InterestModal({ isOpen, onClose, interest, onSave }: InterestMod
           <Button onClick={handleSave} disabled={!name}>
             {interest ? 'Save Changes' : 'Add Interest'}
           </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+// Create Profile Modal
+export function CreateProfileModal({ isOpen, onClose, onSave }: CreateProfileModalProps): JSX.Element {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [bio, setBio] = useState('');
+
+  const handleSave = () => {
+    if (firstName.trim() && lastName.trim()) {
+      onSave({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        bio: bio.trim() || undefined,
+      });
+      onClose();
+    }
+  };
+
+  const handleClose = () => {
+    setFirstName('');
+    setLastName('');
+    setBio('');
+    onClose();
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={handleClose} title="Create Your Profile">
+      <div className="space-y-6">
+        <div className="text-center">
+          <p className="text-muted-foreground">
+            Welcome! Let's create your professional profile to get started.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">First Name *</label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Enter your first name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">Last Name *</label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="Enter your last name"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Bio (Optional)</label>
+          <textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="Tell us about yourself..."
+            rows={4}
+          />
+          <p className="text-xs text-muted-foreground mt-2">
+            Share a brief description about yourself and your professional background
+          </p>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button variant="outline" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} disabled={!firstName.trim() || !lastName.trim()}>
+            Create Profile
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+// Image Upload Modal
+export function ImageUploadModal({ 
+  isOpen, 
+  onClose, 
+  currentImageUrl, 
+  onUpload, 
+  onDelete, 
+  isUploading = false 
+}: ImageUploadModalProps): JSX.Element {
+  const [dragActive, setDragActive] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setPreviewUrl(null);
+    }
+  }, [isOpen]);
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    const files = e.dataTransfer.files;
+    if (files?.[0]) {
+      handleFileSelect(files[0]);
+    }
+  };
+
+  const handleFileSelect = (file: File) => {
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreviewUrl(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  const handleUpload = () => {
+    if (fileInputRef.current?.files?.[0]) {
+      onUpload(fileInputRef.current.files[0]);
+    }
+  };
+
+  const handleClose = () => {
+    setPreviewUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    onClose();
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={handleClose} title="Profile Picture">
+      <div className="space-y-6">
+        {/* Current Image */}
+        {currentImageUrl && !previewUrl && (
+          <div className="text-center">
+            <Avatar className="h-32 w-32 mx-auto mb-4">
+              <AvatarImage src={currentImageUrl} alt="Current profile" />
+              <AvatarFallback>
+                <Camera className="h-8 w-8" />
+              </AvatarFallback>
+            </Avatar>
+            <p className="text-sm text-muted-foreground">Current profile picture</p>
+          </div>
+        )}
+
+        {/* Preview */}
+        {previewUrl && (
+          <div className="text-center">
+            <Avatar className="h-32 w-32 mx-auto mb-4">
+              <AvatarImage src={previewUrl} alt="Preview" />
+              <AvatarFallback>
+                <Camera className="h-8 w-8" />
+              </AvatarFallback>
+            </Avatar>
+            <p className="text-sm text-muted-foreground">Preview</p>
+          </div>
+        )}
+
+        {/* Upload Area */}
+        <div
+          className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+            dragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'
+          }`}
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+        >
+          <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+          <p className="text-lg font-medium mb-2">Upload a photo</p>
+          <p className="text-sm text-muted-foreground mb-4">
+            Drag and drop or click to browse
+          </p>
+          <Button 
+            variant="outline" 
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+          >
+            Choose File
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileInput}
+            className="hidden"
+          />
+          <p className="text-xs text-muted-foreground mt-2">
+            PNG, JPG up to 10MB
+          </p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-between pt-4 border-t">
+          <div>
+            {currentImageUrl && onDelete && (
+              <Button 
+                variant="outline" 
+                onClick={onDelete}
+                disabled={isUploading}
+                className="text-destructive hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Remove Photo
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={handleClose} disabled={isUploading}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleUpload} 
+              disabled={!previewUrl || isUploading}
+            >
+              {isUploading ? 'Uploading...' : 'Upload Photo'}
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>
