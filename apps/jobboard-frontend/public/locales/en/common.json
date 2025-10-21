@@ -786,5 +786,34 @@
       "loadFailed": "Failed to load applications. Please try again.",
       "deleteFailed": "Failed to delete application. Please try again."
     }
+  },
+  "createJob": {
+    "title": "Create Job Posting",
+    "subtitle": "Post a new job opportunity and find the perfect candidate",
+    "jobTitle": "Job Title",
+    "jobTitlePlaceholder": "e.g., Senior Software Engineer",
+    "jobDescription": "Job Description",
+    "jobDescriptionPlaceholder": "Describe the role, responsibilities, and requirements...",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Your company name",
+    "location": "Location",
+    "locationPlaceholder": "e.g., New York, NY or Remote",
+    "remoteWork": "Remote Work Available",
+    "remoteWorkDescription": "Check if this position offers remote work options",
+    "salaryRange": "Salary Range",
+    "minimum": "Minimum",
+    "maximum": "Maximum",
+    "minSalaryPlaceholder": "e.g., 80000",
+    "maxSalaryPlaceholder": "e.g., 120000",
+    "contactEmail": "Contact Email",
+    "contactEmailPlaceholder": "hiring@company.com",
+    "ethicalTags": "Ethical Tags",
+    "ethicalTagsDescription": "Select tags that represent your company's values and practices",
+    "ethicalTagsPlaceholder": "Select ethical tags",
+    "inclusiveOpportunity": "Inclusive Opportunity for People with Disabilities",
+    "inclusiveOpportunityDescription": "Mark this position as an inclusive opportunity, welcoming candidates from diverse backgrounds and abilities",
+    "submit": "Publish Job Posting",
+    "submitting": "Publishing...",
+    "submitError": "Failed to create job posting. Please try again."
   }
 }

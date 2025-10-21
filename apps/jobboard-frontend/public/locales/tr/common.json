@@ -722,5 +722,34 @@
       "loadFailed": "Başvurular yüklenemedi. Lütfen tekrar deneyin.",
       "deleteFailed": "Başvuru silinemedi. Lütfen tekrar deneyin."
     }
+  },
+  "createJob": {
+    "title": "İş İlanı Oluştur",
+    "subtitle": "Yeni bir iş fırsatı yayınlayın ve ideal adayı bulun",
+    "jobTitle": "İş Başlığı",
+    "jobTitlePlaceholder": "örn. Kıdemli Yazılım Mühendisi",
+    "jobDescription": "İş Açıklaması",
+    "jobDescriptionPlaceholder": "Rolü, sorumlulukları ve gereksinimleri açıklayın...",
+    "companyName": "Şirket Adı",
+    "companyNamePlaceholder": "Şirketinizin adı",
+    "location": "Konum",
+    "locationPlaceholder": "örn. İstanbul, Türkiye veya Uzaktan",
+    "remoteWork": "Uzaktan Çalışma Mevcut",
+    "remoteWorkDescription": "Bu pozisyon uzaktan çalışma seçeneği sunuyorsa işaretleyin",
+    "salaryRange": "Maaş Aralığı",
+    "minimum": "Minimum",
+    "maximum": "Maksimum",
+    "minSalaryPlaceholder": "örn. 80000",
+    "maxSalaryPlaceholder": "örn. 120000",
+    "contactEmail": "İletişim E-postası",
+    "contactEmailPlaceholder": "ise-alim@sirket.com",
+    "ethicalTags": "Etik Etiketler",
+    "ethicalTagsDescription": "Şirketinizin değerlerini ve uygulamalarını temsil eden etiketleri seçin",
+    "ethicalTagsPlaceholder": "Etik etiketleri seçin",
+    "inclusiveOpportunity": "Engelliler için Kapsayıcı Fırsat",
+    "inclusiveOpportunityDescription": "Bu pozisyonu, farklı geçmişlere ve yeteneklere sahip adayları memnuniyetle karşılayan kapsayıcı bir fırsat olarak işaretleyin",
+    "submit": "İlanı Yayınla",
+    "submitting": "Yayınlanıyor...",
+    "submitError": "İş ilanı oluşturulamadı. Lütfen tekrar deneyin."
   }
 }

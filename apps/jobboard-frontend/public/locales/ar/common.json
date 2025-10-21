@@ -722,5 +722,34 @@
       "loadFailed": "فشل تحميل الطلبات. يرجى المحاولة مرة أخرى.",
       "deleteFailed": "فشل حذف الطلب. يرجى المحاولة مرة أخرى."
     }
+  },
+  "createJob": {
+    "title": "إنشاء إعلان وظيفة",
+    "subtitle": "انشر فرصة عمل جديدة وابحث عن المرشح المثالي",
+    "jobTitle": "المسمى الوظيفي",
+    "jobTitlePlaceholder": "مثال: مهندس برمجيات أول",
+    "jobDescription": "وصف الوظيفة",
+    "jobDescriptionPlaceholder": "صف الدور والمسؤوليات والمتطلبات...",
+    "companyName": "اسم الشركة",
+    "companyNamePlaceholder": "اسم شركتك",
+    "location": "الموقع",
+    "locationPlaceholder": "مثال: الرياض، السعودية أو عن بُعد",
+    "remoteWork": "العمل عن بُعد متاح",
+    "remoteWorkDescription": "حدد هذا الخيار إذا كانت هذه الوظيفة توفر خيارات العمل عن بُعد",
+    "salaryRange": "نطاق الراتب",
+    "minimum": "الحد الأدنى",
+    "maximum": "الحد الأقصى",
+    "minSalaryPlaceholder": "مثال: 80000",
+    "maxSalaryPlaceholder": "مثال: 120000",
+    "contactEmail": "البريد الإلكتروني للتواصل",
+    "contactEmailPlaceholder": "hiring@company.com",
+    "ethicalTags": "العلامات الأخلاقية",
+    "ethicalTagsDescription": "اختر العلامات التي تمثل قيم وممارسات شركتك",
+    "ethicalTagsPlaceholder": "اختر العلامات الأخلاقية",
+    "inclusiveOpportunity": "فرصة شاملة للأشخاص ذوي الإعاقة",
+    "inclusiveOpportunityDescription": "حدد هذه الوظيفة كفرصة شاملة، ترحب بالمرشحين من خلفيات وقدرات متنوعة",
+    "submit": "نشر الإعلان الوظيفي",
+    "submitting": "جارٍ النشر...",
+    "submitError": "فشل إنشاء إعلان الوظيفة. يرجى المحاولة مرة أخرى."
   }
 }
