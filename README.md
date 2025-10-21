@@ -1,7 +1,7 @@
 # EthicaJobs — Web · Backend · Android
 
 > This README matches our **monorepo** layout and our **Cloud Run** production deploy flow.
-> A new-but-fluent programmer can build and ship **web + backend + Android (.apk)** by following these steps.
+> A programmer can build and ship **web + backend + Android (.apk)** by following these steps.
 
 ---
 
@@ -325,3 +325,4 @@ gcloud run deploy jobboard-backend \
 * Branch: `dev -> feat/<issue-id>-short-desc`
 * Run format/lint/tests locally
 * Open PR with screenshots for UI and sample requests for API changes
+
