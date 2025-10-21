@@ -58,7 +58,7 @@ jobs:
             --set-env-vars "APP_ENV=prod" \
             --set-env-vars "SPRING_DATASOURCE_URL=jdbc:postgresql://ep-rough-tooth-ag6x82ho-pooler.c-2.eu-central-1.aws.neon.tech:5432/jobboard?sslmode=require" \
             --set-env-vars "SPRING_DATASOURCE_USERNAME=jobboard_owner" \
-            --set-env-vars "APP_VERIFY_EMAIL_URL=https://bounswe-jobboard.pages.dev" \
+            --set-env-vars "APP_VERIFY_EMAIL_URL=https://bounswe-jobboard.pages.dev/verify-email" \
             --set-env-vars "APP_RESET_PASSWORD_URL=https://bounswe-jobboard.pages.dev/reset-password" \
             --set-env-vars "APP_CORS_ALLOWED_ORIGINS=https://bounswe-jobboard.pages.dev" \
             --set-env-vars "MAIL_USERNAME=apikey" \
