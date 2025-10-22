@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Star, Clock, DollarSign, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { Mentor } from "@/types/mentor";
 
 interface MentorCardProps {
@@ -11,6 +11,7 @@ interface MentorCardProps {
 }
 
 const MentorCard = ({ mentor }: MentorCardProps) => {
+  const navigate = useNavigate();
   const isAvailable = mentor.mentees < mentor.capacity;
 
   return (
@@ -85,7 +86,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
             View Profile
           </Link>
         </Button>
-        <Button disabled={!isAvailable} variant="outline" size="sm">
+        <Button disabled={!isAvailable} variant="outline" size="sm" onClick={() => navigate(`/mentorship/${mentor.id}/request`)}>
           {isAvailable ? "Request" : "Full"}
         </Button>
       </CardFooter>

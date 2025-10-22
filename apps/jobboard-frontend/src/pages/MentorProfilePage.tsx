@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -67,6 +67,7 @@ const mockReviews: MentorshipReview[] = [
 
 const MentorProfilePage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   
   // Mock - Backend gelince API'den çekilecek
   const mentor = mockMentor;
@@ -153,6 +154,7 @@ const MentorProfilePage = () => {
               size="lg" 
               disabled={!isAvailable}
               className="w-full md:w-auto"
+              onClick={() => navigate(`/mentorship/${id}/request`)}
             >
               {isAvailable ? "Request Mentorship" : "Currently Unavailable"}
             </Button>

@@ -24,6 +24,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ForumPage from './pages/ForumPage';
 import MentorshipPage from './pages/MentorshipPage';
 import MentorProfilePage from './pages/MentorProfilePage';
+import MentorshipRequestPage from './pages/MentorshipRequestPage';
 
 const router = createBrowserRouter([
   {
@@ -109,6 +110,10 @@ const router = createBrowserRouter([
       {
         path: 'mentorship/:id',
         element: <MentorProfilePage />,
+      },
+      {
+        path: 'mentorship/:id/request',
+        element: <MentorshipRequestPage />,
       },
       {
         path: 'forum',
