@@ -43,3 +43,24 @@ export interface MentorshipRequest {
   goals: string[];
   expectedDuration: string;
 }
+
+export interface Mentorship {
+  id: string;
+  mentorId: string;
+  mentorName: string;
+  mentorTitle: string;
+  mentorAvatar?: string;
+  menteeId: string;
+  menteeName: string;
+  status: 'pending' | 'accepted' | 'rejected' | 'active' | 'completed';
+  createdAt: string;
+  acceptedAt?: string;
+  completedAt?: string;
+  goals: string[];
+  expectedDuration: string;
+  message: string;
+  resumeUrl?: string;
+  preferredTime?: string;
+}
+
+export type MentorshipStatus = 'pending' | 'accepted' | 'rejected' | 'active' | 'completed';
