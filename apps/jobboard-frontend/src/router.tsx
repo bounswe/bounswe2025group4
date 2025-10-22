@@ -23,6 +23,9 @@ import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForumPage from './pages/ForumPage';
 import MentorshipPage from './pages/MentorshipPage';
+import MentorProfilePage from './pages/MentorProfilePage';
+import MentorshipRequestPage from './pages/MentorshipRequestPage';
+import MyMentorshipsPage from './pages/MyMentorshipsPage';
 
 const router = createBrowserRouter([
   {
@@ -104,6 +107,18 @@ const router = createBrowserRouter([
       {
         path: 'mentorship',
         element: <MentorshipPage />,
+      },
+      {
+        path: 'mentorship/:id',
+        element: <MentorProfilePage />,
+      },
+      {
+        path: 'mentorship/:id/request',
+        element: <MentorshipRequestPage />,
+      },
+      {
+        path: 'my-mentorships',
+        element: <MyMentorshipsPage />,
       },
       {
         path: 'forum',

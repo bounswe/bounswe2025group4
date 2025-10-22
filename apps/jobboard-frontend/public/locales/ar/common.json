@@ -12,6 +12,7 @@
       "home": "الرئيسية",
       "jobs": "الوظائف",
       "myApplications": "طلباتي",
+      "myMentorships": "إرشاداتي",
       "mentorship": "الإرشاد",
       "forum": "المنتدى",
       "employerDashboard": "لوحة صاحب العمل"
@@ -660,6 +661,38 @@
       "viewApplication": "عرض الطلب",
       "backToJobs": "العودة إلى الوظائف"
     }
+  },
+  "myMentorships": {
+    "title": "إرشاداتي",
+    "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة الخاصة بك",
+    "active": "نشط",
+    "pending": "قيد الانتظار",
+    "completed": "مكتمل",
+    "rejected": "مرفوض",
+    "status": {
+      "active": "نشط",
+      "pending": "قيد الانتظار",
+      "completed": "مكتمل",
+      "rejected": "مرفوض"
+    },
+    "noActive": "لا توجد إرشادات نشطة",
+    "noActiveDesc": "ليس لديك إرشادات نشطة بعد. ابحث عن مرشد للبدء!",
+    "noPending": "لا توجد طلبات قيد الانتظار",
+    "noPendingDesc": "ليس لديك طلبات إرشاد قيد الانتظار.",
+    "noCompleted": "لا توجد إرشادات مكتملة",
+    "noCompletedDesc": "لم تكمل أي إرشادات بعد.",
+    "noRejected": "لا توجد طلبات مرفوضة",
+    "noRejectedDesc": "ليس لديك طلبات إرشاد مرفوضة.",
+    "findMentors": "البحث عن مرشدين",
+    "started": "بدأ",
+    "accepted": "مقبول",
+    "completed": "مكتمل",
+    "duration": "المدة",
+    "learningGoals": "أهداف التعلم",
+    "openChat": "فتح المحادثة",
+    "writeReview": "كتابة تقييم",
+    "waitingForResponse": "في انتظار الرد",
+    "viewDetails": "عرض التفاصيل"
   },
   "myApplications": {
     "title": "طلباتي",
