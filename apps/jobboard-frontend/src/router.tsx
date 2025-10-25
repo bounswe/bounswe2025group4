@@ -23,6 +23,7 @@ import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForumPage from './pages/ForumPage';
 import MentorshipPage from './pages/MentorshipPage';
+import CompanyProfilePage from './pages/CompanyProfilePage';
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: 'jobs/:id',
         element: <JobDetailPage />,
+      },
+      {
+        path: 'company/:slug',
+        element: <CompanyProfilePage />,
       },
       {
         path: 'jobs/:id/apply',
