@@ -987,6 +987,70 @@
       "rejected": "Reddedildi"
     }
   },
+  "reviews": {
+    "workplaceReviews": "İşyeri Değerlendirmeleri",
+    "writeReview": "Değerlendirme Yaz",
+    "writeReviewFor": "{{company}} için Değerlendirme Yaz",
+    "shareExperience": "Bu şirketteki deneyiminizi paylaşın",
+    "rateYourExperience": "Deneyiminizi Değerlendirin",
+    "yourReview": "Değerlendirmeniz",
+    "reviewPlaceholder": "Bu şirketteki deneyiminizi paylaşın. Neleri beğendiniz? Neler geliştirilebilir?",
+    "characters": "karakter",
+    "anonymous": "Anonim",
+    "postAnonymously": "Anonim olarak yayınla",
+    "submitReview": "Değerlendirmeyi Gönder",
+    "submitting": "Gönderiliyor...",
+    "cancel": "İptal",
+    "categories": {
+      "culture": "Kültür",
+      "benefits": "Yan Haklar",
+      "workLifeBalance": "İş-Yaşam Dengesi",
+      "management": "Yönetim",
+      "careerGrowth": "Kariyer Gelişimi"
+    },
+    "categoryRatings": "Kategori Puanları",
+    "basedOn": "{{count}} değerlendirmeye göre",
+    "basedOn_plural": "{{count}} değerlendirmeye göre",
+    "recentComments": "Son Yorumlar",
+    "recentReviews": "Son Değerlendirmeler",
+    "noReviews": "Henüz değerlendirme yok. Deneyiminizi paylaşan ilk kişi siz olun!",
+    "loadMore": "Daha Fazla Yükle",
+    "loading": "Yükleniyor...",
+    "helpful": "Yararlı",
+    "report": "Bildir",
+    "today": "bugün",
+    "yesterday": "dün",
+    "daysAgo": "{{count}} gün önce",
+    "daysAgo_plural": "{{count}} gün önce",
+    "weeksAgo": "{{count}} hafta önce",
+    "weeksAgo_plural": "{{count}} hafta önce",
+    "monthsAgo": "{{count}} ay önce",
+    "monthsAgo_plural": "{{count}} ay önce",
+    "yearsAgo": "{{count}} yıl önce",
+    "yearsAgo_plural": "{{count}} yıl önce",
+    "aboutCompany": "{{company}} Hakkında",
+    "seeWhatEmployeesSay": "Çalışanların ne dediğini görün",
+    "viewAllReviews": "Tüm Değerlendirmeleri Gör",
+    "seeAllReviews": "Tüm Değerlendirmeleri Gör",
+    "errors": {
+      "allRatingsRequired": "Lütfen tüm kategorileri değerlendirin",
+      "commentTooShort": "Değerlendirme en az 10 karakter olmalıdır",
+      "commentTooLong": "Değerlendirme en fazla 2000 karakter olmalıdır",
+      "submissionFailed": "Değerlendirme gönderilemedi. Lütfen tekrar deneyin."
+    }
+  },
+  "company": {
+    "aboutUs": "Hakkımızda",
+    "ethicalPolicyCommitments": "Etik Politika Taahhütleri",
+    "currentJobOpenings": "Güncel İş İlanları",
+    "viewJob": "İlanı Görüntüle",
+    "notFound": "Şirket Bulunamadı",
+    "notFoundDescription": "Aradığınız şirket mevcut değil veya kaldırılmış."
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "goHome": "Ana Sayfaya Git"
+  },
   "chat": {
     "conversations": "Sohbetler",
     "noConversations": "Henüz sohbet yok",

@@ -956,6 +956,70 @@
       "rejected": "مرفوض"
     }
   },
+  "reviews": {
+    "workplaceReviews": "تقييمات مكان العمل",
+    "writeReview": "اكتب تقييماً",
+    "writeReviewFor": "اكتب تقييماً لـ {{company}}",
+    "shareExperience": "شارك تجربتك في العمل في هذه الشركة",
+    "rateYourExperience": "قيّم تجربتك",
+    "yourReview": "تقييمك",
+    "reviewPlaceholder": "شارك تجربتك في العمل في هذه الشركة. ماذا أعجبك؟ ما الذي يمكن تحسينه؟",
+    "characters": "حرف",
+    "anonymous": "مجهول",
+    "postAnonymously": "انشر بشكل مجهول",
+    "submitReview": "إرسال التقييم",
+    "submitting": "جارٍ الإرسال...",
+    "cancel": "إلغاء",
+    "categories": {
+      "culture": "الثقافة",
+      "benefits": "المزايا",
+      "workLifeBalance": "التوازن بين العمل والحياة",
+      "management": "الإدارة",
+      "careerGrowth": "النمو الوظيفي"
+    },
+    "categoryRatings": "تقييمات الفئات",
+    "basedOn": "بناءً على {{count}} تقييم",
+    "basedOn_plural": "بناءً على {{count}} تقييمات",
+    "recentComments": "التعليقات الأخيرة",
+    "recentReviews": "التقييمات الأخيرة",
+    "noReviews": "لا توجد تقييمات حتى الآن. كن أول من يشارك تجربته!",
+    "loadMore": "تحميل المزيد",
+    "loading": "جارٍ التحميل...",
+    "helpful": "مفيد",
+    "report": "إبلاغ",
+    "today": "اليوم",
+    "yesterday": "أمس",
+    "daysAgo": "منذ {{count}} يوم",
+    "daysAgo_plural": "منذ {{count}} أيام",
+    "weeksAgo": "منذ {{count}} أسبوع",
+    "weeksAgo_plural": "منذ {{count}} أسابيع",
+    "monthsAgo": "منذ {{count}} شهر",
+    "monthsAgo_plural": "منذ {{count}} أشهر",
+    "yearsAgo": "منذ {{count}} سنة",
+    "yearsAgo_plural": "منذ {{count}} سنوات",
+    "aboutCompany": "عن {{company}}",
+    "seeWhatEmployeesSay": "انظر ما يقوله الموظفون",
+    "viewAllReviews": "عرض جميع التقييمات",
+    "seeAllReviews": "عرض جميع التقييمات",
+    "errors": {
+      "allRatingsRequired": "يرجى تقييم جميع الفئات",
+      "commentTooShort": "يجب أن يكون التقييم 10 أحرف على الأقل",
+      "commentTooLong": "يجب ألا يتجاوز التقييم 2000 حرف",
+      "submissionFailed": "فشل إرسال التقييم. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "company": {
+    "aboutUs": "معلومات عنا",
+    "ethicalPolicyCommitments": "التزامات السياسة الأخلاقية",
+    "currentJobOpenings": "الوظائف الشاغرة الحالية",
+    "viewJob": "عرض الوظيفة",
+    "notFound": "الشركة غير موجودة",
+    "notFoundDescription": "الشركة التي تبحث عنها غير موجودة أو تم إزالتها."
+  },
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "goHome": "الذهاب إلى الصفحة الرئيسية"
+  },
   "chat": {
     "conversations": "المحادثات",
     "noConversations": "لا توجد محادثات بعد",

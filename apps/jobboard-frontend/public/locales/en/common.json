@@ -984,6 +984,70 @@
       "rejected": "Rejected"
     }
   },
+  "reviews": {
+    "workplaceReviews": "Workplace Reviews",
+    "writeReview": "Write a Review",
+    "writeReviewFor": "Write a Review for {{company}}",
+    "shareExperience": "Share your experience working at this company",
+    "rateYourExperience": "Rate Your Experience",
+    "yourReview": "Your Review",
+    "reviewPlaceholder": "Share your experience working at this company. What did you like? What could be improved?",
+    "characters": "characters",
+    "anonymous": "Anonymous",
+    "postAnonymously": "Post anonymously",
+    "submitReview": "Submit Review",
+    "submitting": "Submitting...",
+    "cancel": "Cancel",
+    "categories": {
+      "culture": "Culture",
+      "benefits": "Benefits",
+      "workLifeBalance": "Work-Life Balance",
+      "management": "Management",
+      "careerGrowth": "Career Growth"
+    },
+    "categoryRatings": "Category Ratings",
+    "basedOn": "Based on {{count}} review",
+    "basedOn_plural": "Based on {{count}} reviews",
+    "recentComments": "Recent Comments",
+    "recentReviews": "Recent Reviews",
+    "noReviews": "No reviews yet. Be the first to share your experience!",
+    "loadMore": "Load More Reviews",
+    "loading": "Loading...",
+    "helpful": "Helpful",
+    "report": "Report",
+    "today": "today",
+    "yesterday": "yesterday",
+    "daysAgo": "{{count}} day ago",
+    "daysAgo_plural": "{{count}} days ago",
+    "weeksAgo": "{{count}} week ago",
+    "weeksAgo_plural": "{{count}} weeks ago",
+    "monthsAgo": "{{count}} month ago",
+    "monthsAgo_plural": "{{count}} months ago",
+    "yearsAgo": "{{count}} year ago",
+    "yearsAgo_plural": "{{count}} years ago",
+    "aboutCompany": "About {{company}}",
+    "seeWhatEmployeesSay": "See what employees say",
+    "viewAllReviews": "View All Reviews",
+    "seeAllReviews": "See All Reviews",
+    "errors": {
+      "allRatingsRequired": "Please rate all categories",
+      "commentTooShort": "Review must be at least 10 characters",
+      "commentTooLong": "Review must be at most 2000 characters",
+      "submissionFailed": "Failed to submit review. Please try again."
+    }
+  },
+  "company": {
+    "aboutUs": "About Us",
+    "ethicalPolicyCommitments": "Ethical Policy Commitments",
+    "currentJobOpenings": "Current Job Openings",
+    "viewJob": "View Job",
+    "notFound": "Company Not Found",
+    "notFoundDescription": "The company you're looking for doesn't exist or has been removed."
+  },
+  "common": {
+    "loading": "Loading...",
+    "goHome": "Go to Homepage"
+  },
   "chat": {
     "conversations": "Conversations",
     "noConversations": "No conversations yet",
