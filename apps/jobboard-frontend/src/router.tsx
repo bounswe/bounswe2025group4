@@ -23,6 +23,7 @@ import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForumPage from './pages/ForumPage';
 import MentorshipPage from './pages/MentorshipPage';
+import CompanyProfilePage from './pages/CompanyProfilePage';
 import MentorProfilePage from './pages/MentorProfilePage';
 import MentorshipRequestPage from './pages/MentorshipRequestPage';
 import MyMentorshipsPage from './pages/MyMentorshipsPage';
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: 'jobs/:id',
         element: <JobDetailPage />,
+      },
+      {
+        path: 'company/:slug',
+        element: <CompanyProfilePage />,
       },
       {
         path: 'jobs/:id/apply',
