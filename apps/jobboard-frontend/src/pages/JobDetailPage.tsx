@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, MapPin, DollarSign, Accessibility } from 'lucide-react';
+import { ChevronRight, MapPin, DollarSign, Accessibility, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { StarRating } from '@/components/ui/star-rating';
 import CenteredLoader from '@/components/CenteredLoader';
 import type { JobPostResponse } from '@/types/api.types';
+import type { Review, ReviewStats } from '@/types/review.types';
 import { getJobById } from '@/services/jobs.service';
+import { getCompanyReviews, getCompanyReviewStats } from '@/services/reviews.service';
 import { cn } from '@/lib/utils';
 
 export default function JobDetailPage() {
@@ -15,6 +19,8 @@ export default function JobDetailPage() {
   const [job, setJob] = useState<JobPostResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reviewStats, setReviewStats] = useState<ReviewStats | null>(null);
+  const [recentReviews, setRecentReviews] = useState<Review[]>([]);
   const { t, i18n } = useTranslation('common');
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
@@ -28,6 +34,14 @@ export default function JobDetailPage() {
         setError(null);
         const jobData = await getJobById(parseInt(id, 10));
         setJob(jobData);
+
+        // Fetch company reviews (using mock company id 1 for demo)
+        const [stats, reviews] = await Promise.all([
+          getCompanyReviewStats(1),
+          getCompanyReviews(1, 1, 3),
+        ]);
+        setReviewStats(stats);
+        setRecentReviews(reviews);
       } catch (err) {
         console.error('Error fetching job:', err);
         setError('fetch_error');
@@ -174,6 +188,105 @@ export default function JobDetailPage() {
                 </a>
               </div>
             </section>
+
+            {/* Company Reviews Section */}
+            {reviewStats && reviewStats.totalReviews > 0 && (
+              <>
+                <Separator className="my-8" />
+                <section className="mt-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
+                        {t('reviews.aboutCompany', { company: job.company })}
+                      </h2>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {t('reviews.seeWhatEmployeesSay')}
+                      </p>
+                    </div>
+                    <Link to="/company/ecotech-solutions">
+                      <Button variant="outline">
+                        {t('reviews.viewAllReviews')}
+                      </Button>
+                    </Link>
+                  </div>
+
+                  {/* Average Rating Card */}
+                  <div className="bg-primary/5 rounded-lg p-6 mb-6">
+                    <div className="flex items-center gap-6">
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-foreground mb-2">
+                          {reviewStats.averageRating.toFixed(1)}
+                        </div>
+                        <StarRating value={reviewStats.averageRating} readonly size="md" />
+                        <p className="text-sm text-muted-foreground mt-2">
+                          {t('reviews.basedOn', { count: reviewStats.totalReviews })}
+                        </p>
+                      </div>
+                      <Separator orientation="vertical" className="h-20" />
+                      <div className="flex-1 grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {t('reviews.categories.culture')}
+                          </p>
+                          <StarRating value={reviewStats.categoryAverages.culture} readonly size="sm" showValue />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {t('reviews.categories.benefits')}
+                          </p>
+                          <StarRating value={reviewStats.categoryAverages.benefits} readonly size="sm" showValue />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {t('reviews.categories.workLifeBalance')}
+                          </p>
+                          <StarRating value={reviewStats.categoryAverages.workLifeBalance} readonly size="sm" showValue />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {t('reviews.categories.management')}
+                          </p>
+                          <StarRating value={reviewStats.categoryAverages.management} readonly size="sm" showValue />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Recent Reviews Preview */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold">{t('reviews.recentReviews')}</h3>
+                    {recentReviews.map((review) => (
+                      <Card key={review.id} className="p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <p className="font-medium">
+                              {review.username === 'Anonymous'
+                                ? t('reviews.anonymous')
+                                : review.username}
+                            </p>
+                            <StarRating value={review.overallRating} readonly size="sm" />
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(review.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <p className="text-sm text-muted-foreground line-clamp-3">
+                          {review.comment}
+                        </p>
+                      </Card>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 text-center">
+                    <Link to="/company/ecotech-solutions">
+                      <Button variant="outline" className="w-full sm:w-auto">
+                        {t('reviews.seeAllReviews')} ({reviewStats.totalReviews})
+                      </Button>
+                    </Link>
+                  </div>
+                </section>
+              </>
+            )}
           </div>
         </Card>
       </div>
