@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,7 @@ const mockMentor: Mentor = {
 };
 
 const MentorshipRequestPage = () => {
+  const { t } = useTranslation('common');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
@@ -46,8 +48,7 @@ const MentorshipRequestPage = () => {
     message: '',
     goals: '',
     expectedDuration: '',
-    preferredTime: '',
-    resumeUrl: ''
+    preferredTime: ''
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,8 +69,9 @@ const MentorshipRequestPage = () => {
       // Success - Redirect to my mentorships page
       navigate('/my-mentorships', { 
         state: { 
-          message: 'Mentorship request sent successfully!',
-          mentorName: mentor.name 
+          // Mock - Show success banner
+          showSuccess: true,
+          mentorName: mentor.name
         }
       });
     } catch (error) {
@@ -96,12 +98,12 @@ const MentorshipRequestPage = () => {
           className="mb-4"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Mentor Profile
+          {t('mentorship.request.backToProfile')}
         </Button>
         
-        <h1 className="text-3xl font-bold">Request Mentorship</h1>
+        <h1 className="text-3xl font-bold">{t('mentorship.request.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Send a mentorship request to {mentor.name}
+          {t('mentorship.request.subtitle', { mentorName: mentor.name })}
         </p>
       </div>
 
@@ -127,12 +129,12 @@ const MentorshipRequestPage = () => {
               <div className="flex items-center gap-2">
                 <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
                 <span className="font-semibold">{mentor.rating}</span>
-                <span className="text-sm text-muted-foreground">({mentor.reviews} reviews)</span>
+                <span className="text-sm text-muted-foreground">({mentor.reviews} {t('mentorship.request.reviews')})</span>
               </div>
               
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Users className="h-4 w-4" />
-                <span>Mentoring: {mentor.mentees}/{mentor.capacity}</span>
+                <span>{t('mentorship.request.mentoring')}: {mentor.mentees}/{mentor.capacity}</span>
               </div>
               
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -141,7 +143,7 @@ const MentorshipRequestPage = () => {
               </div>
               
               <div>
-                <h4 className="font-semibold mb-2">Specialties:</h4>
+                <h4 className="font-semibold mb-2">{t('mentorship.request.specialties')}:</h4>
                 <div className="flex flex-wrap gap-1">
                   {mentor.specialties.map((specialty) => (
                     <Badge key={specialty} variant="secondary" className="text-xs">
@@ -154,7 +156,7 @@ const MentorshipRequestPage = () => {
               {!isAvailable && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-sm text-red-700 font-medium">
-                    This mentor is currently at full capacity
+                    {t('mentorship.request.fullCapacity')}
                   </p>
                 </div>
               )}
@@ -166,19 +168,19 @@ const MentorshipRequestPage = () => {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Mentorship Request</CardTitle>
+              <CardTitle>{t('mentorship.request.formTitle')}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Tell the mentor about your goals and what you hope to achieve through mentorship.
+                {t('mentorship.request.formDescription')}
               </p>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Message */}
                 <div className="space-y-2">
-                  <Label htmlFor="message">Message to Mentor *</Label>
+                  <Label htmlFor="message">{t('mentorship.request.messageLabel')} *</Label>
                   <Textarea
                     id="message"
-                    placeholder="Hi Alice, I'm interested in learning React and TypeScript. I have some experience with JavaScript but would love to get better at building scalable applications..."
+                    placeholder={t('mentorship.request.messagePlaceholder')}
                     value={formData.message}
                     onChange={(e) => handleInputChange('message', e.target.value)}
                     rows={6}
@@ -186,16 +188,16 @@ const MentorshipRequestPage = () => {
                     disabled={!isAvailable}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Introduce yourself and explain why you're interested in mentorship with this mentor.
+                    {t('mentorship.request.messageHint')}
                   </p>
                 </div>
 
                 {/* Goals */}
                 <div className="space-y-2">
-                  <Label htmlFor="goals">Learning Goals *</Label>
+                  <Label htmlFor="goals">{t('mentorship.request.goalsLabel')} *</Label>
                   <Textarea
                     id="goals"
-                    placeholder="1. Master React hooks and state management&#10;2. Learn TypeScript best practices&#10;3. Improve system design skills&#10;4. Prepare for senior developer interviews"
+                    placeholder={t('mentorship.request.goalsPlaceholder')}
                     value={formData.goals}
                     onChange={(e) => handleInputChange('goals', e.target.value)}
                     rows={4}
@@ -203,16 +205,16 @@ const MentorshipRequestPage = () => {
                     disabled={!isAvailable}
                   />
                   <p className="text-xs text-muted-foreground">
-                    List your specific learning objectives and what you want to achieve.
+                    {t('mentorship.request.goalsHint')}
                   </p>
                 </div>
 
                 {/* Expected Duration */}
                 <div className="space-y-2">
-                  <Label htmlFor="expectedDuration">Expected Mentorship Duration *</Label>
+                  <Label htmlFor="expectedDuration">{t('mentorship.request.durationLabel')} *</Label>
                   <Input
                     id="expectedDuration"
-                    placeholder="e.g., 3 months, 6 months, 1 year"
+                    placeholder={t('mentorship.request.durationPlaceholder')}
                     value={formData.expectedDuration}
                     onChange={(e) => handleInputChange('expectedDuration', e.target.value)}
                     required
@@ -222,30 +224,14 @@ const MentorshipRequestPage = () => {
 
                 {/* Preferred Time */}
                 <div className="space-y-2">
-                  <Label htmlFor="preferredTime">Preferred Meeting Time</Label>
+                  <Label htmlFor="preferredTime">{t('mentorship.request.timeLabel')}</Label>
                   <Input
                     id="preferredTime"
-                    placeholder="e.g., Weekends, Weekday evenings, Flexible"
+                    placeholder={t('mentorship.request.timePlaceholder')}
                     value={formData.preferredTime}
                     onChange={(e) => handleInputChange('preferredTime', e.target.value)}
                     disabled={!isAvailable}
                   />
-                </div>
-
-                {/* Resume URL */}
-                <div className="space-y-2">
-                  <Label htmlFor="resumeUrl">Resume/CV URL (Optional)</Label>
-                  <Input
-                    id="resumeUrl"
-                    type="url"
-                    placeholder="https://your-resume.com or Google Drive link"
-                    value={formData.resumeUrl}
-                    onChange={(e) => handleInputChange('resumeUrl', e.target.value)}
-                    disabled={!isAvailable}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Share your resume to help the mentor understand your background better.
-                  </p>
                 </div>
 
                 {/* Submit Button */}
@@ -258,12 +244,12 @@ const MentorshipRequestPage = () => {
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Sending Request...
+                        {t('mentorship.request.sendingRequest')}
                       </>
                     ) : (
                       <>
                         <Send className="h-4 w-4 mr-2" />
-                        Send Mentorship Request
+                        {t('mentorship.request.sendRequest')}
                       </>
                     )}
                   </Button>
@@ -273,7 +259,7 @@ const MentorshipRequestPage = () => {
                     variant="outline"
                     onClick={() => navigate(`/mentorship/${id}`)}
                   >
-                    Cancel
+                    {t('mentorship.request.cancel')}
                   </Button>
                 </div>
 

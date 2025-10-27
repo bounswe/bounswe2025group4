@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Clock, DollarSign, Users } from "lucide-react";
@@ -11,6 +12,7 @@ interface MentorCardProps {
 }
 
 const MentorCard = ({ mentor }: MentorCardProps) => {
+  const { t } = useTranslation('common');
   const navigate = useNavigate();
   const isAvailable = mentor.mentees < mentor.capacity;
 
@@ -44,19 +46,19 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
             ))}
           </div>
           <span className="ml-2 text-sm font-semibold">{mentor.rating}</span>
-          <span className="ml-1 text-sm text-muted-foreground">({mentor.reviews} reviews)</span>
+          <span className="ml-1 text-sm text-muted-foreground">({mentor.reviews} {t('mentorship.card.reviews')})</span>
         </div>
         
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-sm text-muted-foreground">
             <Users className="h-4 w-4 mr-2" />
-            <span>Mentoring: {mentor.mentees}/{mentor.capacity}</span>
+            <span>{t('mentorship.card.mentoring')}: {mentor.mentees}/{mentor.capacity}</span>
           </div>
           
           {mentor.hourlyRate && (
             <div className="flex items-center text-sm text-muted-foreground">
               <DollarSign className="h-4 w-4 mr-2" />
-              <span>${mentor.hourlyRate}/hour</span>
+              <span>${mentor.hourlyRate}/{t('mentorship.card.hour')}</span>
             </div>
           )}
           
@@ -74,7 +76,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
           ))}
           {mentor.specialties.length > 3 && (
             <Badge variant="outline" className="text-xs">
-              +{mentor.specialties.length - 3} more
+              +{mentor.specialties.length - 3} {t('mentorship.card.more')}
             </Badge>
           )}
         </div>
@@ -83,11 +85,11 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
       <CardFooter className="flex gap-2">
         <Button asChild className="flex-1">
           <Link to={`/mentorship/${mentor.id}`}>
-            View Profile
+            {t('mentorship.card.viewProfile')}
           </Link>
         </Button>
         <Button disabled={!isAvailable} variant="outline" size="sm" onClick={() => navigate(`/mentorship/${mentor.id}/request`)}>
-          {isAvailable ? "Request" : "Full"}
+          {isAvailable ? t('mentorship.card.request') : t('mentorship.card.full')}
         </Button>
       </CardFooter>
     </Card>

@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -66,6 +67,7 @@ const mockReviews: MentorshipReview[] = [
 ];
 
 const MentorProfilePage = () => {
+  const { t } = useTranslation('common');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
@@ -100,12 +102,12 @@ const MentorProfilePage = () => {
                   />
                 ))}
                 <span className="ml-2 font-semibold">{mentor.rating}</span>
-                <span className="ml-1 text-muted-foreground">({mentor.reviews} reviews)</span>
+                <span className="ml-1 text-muted-foreground">({mentor.reviews} {t('mentorship.profile.reviews')})</span>
               </div>
               
               <div className="flex items-center text-muted-foreground">
                 <MapPin className="h-4 w-4 mr-1" />
-                <span>Remote</span>
+                <span>{t('mentorship.profile.remote')}</span>
               </div>
             </div>
 
@@ -118,7 +120,7 @@ const MentorProfilePage = () => {
               {mentor.hourlyRate && (
                 <div className="flex items-center text-muted-foreground">
                   <DollarSign className="h-4 w-4 mr-1" />
-                  <span>${mentor.hourlyRate}/hour</span>
+                  <span>${mentor.hourlyRate}/{t('mentorship.profile.hour')}</span>
                 </div>
               )}
             </div>
@@ -144,7 +146,7 @@ const MentorProfilePage = () => {
                 <Button variant="outline" size="sm" asChild>
                   <a href={mentor.websiteUrl} target="_blank" rel="noopener noreferrer">
                     <Globe className="h-4 w-4 mr-2" />
-                    Website
+                    {t('mentorship.profile.website')}
                   </a>
                 </Button>
               )}
@@ -156,7 +158,7 @@ const MentorProfilePage = () => {
               className="w-full md:w-auto"
               onClick={() => navigate(`/mentorship/${id}/request`)}
             >
-              {isAvailable ? "Request Mentorship" : "Currently Unavailable"}
+              {isAvailable ? t('mentorship.profile.requestMentorship') : t('mentorship.profile.unavailable')}
             </Button>
           </div>
         </div>
@@ -168,7 +170,7 @@ const MentorProfilePage = () => {
           {/* About Section */}
           <Card>
             <CardHeader>
-              <CardTitle>About</CardTitle>
+              <CardTitle>{t('mentorship.profile.about')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">{mentor.bio}</p>
@@ -181,13 +183,13 @@ const MentorProfilePage = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Briefcase className="h-5 w-5 mr-2" />
-                  Experience
+                  {t('mentorship.profile.experience')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">{mentor.experience}</p>
                 <div className="mt-4">
-                  <h4 className="font-semibold mb-2">Key Achievements:</h4>
+                  <h4 className="font-semibold mb-2">{t('mentorship.profile.keyAchievements')}:</h4>
                   <ul className="space-y-1">
                     {mentor.achievements.map((achievement, index) => (
                       <li key={index} className="text-sm text-muted-foreground flex items-start">
@@ -204,7 +206,7 @@ const MentorProfilePage = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <GraduationCap className="h-5 w-5 mr-2" />
-                  Education
+                  {t('mentorship.profile.education')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -217,7 +219,7 @@ const MentorProfilePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Specialties</CardTitle>
+                <CardTitle>{t('mentorship.profile.specialties')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
@@ -232,7 +234,7 @@ const MentorProfilePage = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Languages</CardTitle>
+                <CardTitle>{t('mentorship.profile.languages')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
@@ -249,7 +251,7 @@ const MentorProfilePage = () => {
           {/* Reviews Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Reviews ({reviews.length})</CardTitle>
+              <CardTitle>{t('mentorship.profile.reviewsTitle', { count: reviews.length })}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
@@ -297,19 +299,19 @@ const MentorProfilePage = () => {
           {/* Mentorship Stats */}
           <Card>
             <CardHeader>
-              <CardTitle>Mentorship Stats</CardTitle>
+              <CardTitle>{t('mentorship.profile.mentorshipStats')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Current Mentees:</span>
+                <span className="text-muted-foreground">{t('mentorship.profile.currentMentees')}:</span>
                 <span className="font-semibold">{mentor.mentees}/{mentor.capacity}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Total Reviews:</span>
+                <span className="text-muted-foreground">{t('mentorship.profile.totalReviews')}:</span>
                 <span className="font-semibold">{mentor.reviews}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Average Rating:</span>
+                <span className="text-muted-foreground">{t('mentorship.profile.averageRating')}:</span>
                 <span className="font-semibold">{mentor.rating}/5</span>
               </div>
             </CardContent>
@@ -318,7 +320,7 @@ const MentorProfilePage = () => {
           {/* Skills */}
           <Card>
             <CardHeader>
-              <CardTitle>Skills & Technologies</CardTitle>
+              <CardTitle>{t('mentorship.profile.skillsTechnologies')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">

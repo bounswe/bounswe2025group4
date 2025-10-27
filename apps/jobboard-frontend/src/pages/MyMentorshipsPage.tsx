@@ -106,12 +106,12 @@ const getStatusColor = (status: MentorshipStatus) => {
 };
 
 const MyMentorshipsPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const location = useLocation();
   const [mentorships] = useState<Mentorship[]>(mockMentorships);
   
   // Success message from request page
-  const successMessage = location.state?.message;
+  const showSuccess = location.state?.showSuccess;
   const mentorName = location.state?.mentorName;
 
   const activeMentorships = mentorships.filter(m => m.status === 'active');
@@ -223,10 +223,10 @@ const MyMentorshipsPage = () => {
           {t('myMentorships.subtitle')}
         </p>
         
-        {successMessage && (
+        {showSuccess && (
           <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
             <p className="text-green-700">
-              <strong>Success!</strong> {successMessage} {mentorName && `to ${mentorName}`}
+              {t('myMentorships.successMessage', { mentorName })}
             </p>
           </div>
         )}

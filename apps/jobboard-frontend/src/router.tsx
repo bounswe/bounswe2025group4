@@ -114,11 +114,19 @@ const router = createBrowserRouter([
       },
       {
         path: 'mentorship/:id/request',
-        element: <MentorshipRequestPage />,
+        element: (
+          <ProtectedRoute>
+            <MentorshipRequestPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'my-mentorships',
-        element: <MyMentorshipsPage />,
+        element: (
+          <ProtectedRoute>
+            <MyMentorshipsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'forum',

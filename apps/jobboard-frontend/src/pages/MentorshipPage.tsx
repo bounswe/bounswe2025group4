@@ -1,5 +1,12 @@
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import MentorCard from "@/components/mentorship/MentorCard";
 import { type Mentor } from "@/types/mentor";
+import { useAuth } from '@/contexts/AuthContext';
+import { cn } from '@/lib/utils';
 
 const mockMentors: Mentor[] = [
   {
@@ -130,14 +137,61 @@ const mockMentors: Mentor[] = [
 ];
 
 const MentorshipPage = () => {
+  const { t } = useTranslation('common');
+  const { isAuthenticated } = useAuth();
+  
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Find a Mentor</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockMentors.map((mentor) => (
+      <h1 className="text-3xl font-bold mb-6">{t('mentorship.title')}</h1>
+      
+      {/* Auth Required Banner (if not authenticated) */}
+      {!isAuthenticated && (
+        <Card className="gap-4 py-4 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950 mb-6">
+          <CardContent className="px-4 space-y-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div className="space-y-2 flex-1">
+                <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
+                  {t('mentorship.authRequired.title')}
+                </h3>
+                <p className="text-sm text-amber-800 dark:text-amber-200">
+                  {t('mentorship.authRequired.description')}
+                </p>
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  {t('mentorship.authRequired.invitation')}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button asChild className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600">
+                <Link to="/register">{t('mentorship.authRequired.signUp')}</Link>
+              </Button>
+              <Button asChild variant="outline" className="border-amber-300 dark:border-amber-700">
+                <Link to="/login">{t('mentorship.authRequired.login')}</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {/* Mentor Grid (blurred if not authenticated) */}
+      <div className={cn(
+        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+        !isAuthenticated && "opacity-60 pointer-events-none blur-sm select-none"
+      )}>
+        {mockMentors.slice(0, 6).map((mentor) => (
           <MentorCard key={mentor.id} mentor={mentor} />
         ))}
       </div>
+      
+      {/* Login Prompt Overlay (if not authenticated) */}
+      {!isAuthenticated && (
+        <div className="text-center mt-6">
+          <p className="text-muted-foreground mb-4">
+            {t('mentorship.authRequired.viewMore')}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
