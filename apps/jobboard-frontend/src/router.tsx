@@ -110,7 +110,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'mentorship/:id',
-        element: <MentorProfilePage />,
+        element: (
+          <ProtectedRoute>
+            <MentorProfilePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'mentorship/:id/request',
