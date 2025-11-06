@@ -46,8 +46,9 @@ public class OtpService {
         otp.setExpiresAt(expiresAt);
         otp.setTemporaryToken(temporaryToken);
         otpRepository.save(otp);
-
-        emailService.sendOtpEmail(user.getEmail(), otpCode);
+        if (appEnv.equals("prod")) {
+            emailService.sendOtpEmail(user.getEmail(), otpCode);
+        }
     }
 
 
