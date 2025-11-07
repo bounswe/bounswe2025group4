@@ -23,7 +23,11 @@ import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForumPage from './pages/ForumPage';
 import MentorshipPage from './pages/MentorshipPage';
-import CompanyProfilePage from './pages/CompanyProfilePage';
+import WorkplaceProfilePage from './pages/WorkplaceProfilePage';
+import EmployerWorkplacesPage from './pages/EmployerWorkplacesPage';
+import CreateWorkplacePage from './pages/CreateWorkplacePage';
+import JoinWorkplaceRequestPage from './pages/JoinWorkplaceRequestPage';
+import ManageEmployerRequestsPage from './pages/ManageEmployerRequestsPage';
 import MentorProfilePage from './pages/MentorProfilePage';
 import MentorshipRequestPage from './pages/MentorshipRequestPage';
 import MyMentorshipsPage from './pages/MyMentorshipsPage';
@@ -51,8 +55,8 @@ const router = createBrowserRouter([
         element: <JobDetailPage />,
       },
       {
-        path: 'company/:slug',
-        element: <CompanyProfilePage />,
+        path: 'workplace/:id',
+        element: <WorkplaceProfilePage />,
       },
       {
         path: 'jobs/:id/apply',
@@ -75,6 +79,38 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <EmployerDashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplaces',
+        element: (
+          <ProtectedRoute>
+            <EmployerWorkplacesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/create',
+        element: (
+          <ProtectedRoute>
+            <CreateWorkplacePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/join',
+        element: (
+          <ProtectedRoute>
+            <JoinWorkplaceRequestPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/:workplaceId/requests',
+        element: (
+          <ProtectedRoute>
+            <ManageEmployerRequestsPage />
           </ProtectedRoute>
         ),
       },

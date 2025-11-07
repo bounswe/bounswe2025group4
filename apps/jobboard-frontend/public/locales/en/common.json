@@ -16,7 +16,8 @@
       "myMentorships": "My Mentorships",
       "chat": "Chat",
       "forum": "Forum",
-      "employerDashboard": "Employer Dashboard"
+      "employerDashboard": "Employer Dashboard",
+      "workplaces": "My Workplaces"
     },
     "auth": {
       "login": "Login",
