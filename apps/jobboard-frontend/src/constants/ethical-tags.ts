@@ -41,3 +41,8 @@ export const CATEGORY_TO_KEY_MAP: Record<EthicalTagCategory, string> = {
   'Career Development': 'careerDevelopment',
   'Environmental & Social Impact': 'environmentalAndSocialImpact',
 };
+
+/**
+ * Flat array of all ethical tags for easier iteration
+ */
+export const ETHICAL_TAGS: EthicalTag[] = Object.keys(TAG_TO_KEY_MAP) as EthicalTag[];

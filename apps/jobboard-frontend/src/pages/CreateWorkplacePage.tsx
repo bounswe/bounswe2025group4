@@ -17,6 +17,7 @@ import { MultiSelectDropdown } from '@/components/ui/multi-select-dropdown';
 import { createWorkplace } from '@/services/workplace.service';
 import { createWorkplaceSchema, type CreateWorkplaceFormData } from '@/schemas/create-workplace.schema';
 import { type EthicalTag } from '@/types/job';
+import { getErrorMessage } from '@/utils/error-handler';
 
 export default function CreateWorkplacePage() {
   const { t } = useTranslation('common');
@@ -47,9 +48,9 @@ export default function CreateWorkplacePage() {
         ethicalTags: selectedTags.length > 0 ? selectedTags : undefined,
       });
       navigate(`/workplace/${workplace.id}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to create workplace:', err);
-      setError(err.response?.data?.message || 'Failed to create workplace. Please try again.');
+      setError(getErrorMessage(err, 'Failed to create workplace. Please try again.'));
     } finally {
       setIsSubmitting(false);
     }

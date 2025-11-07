@@ -10,23 +10,25 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { StarRating } from '@/components/ui/star-rating';
 import { useTranslation } from 'react-i18next';
 import { createReview } from '@/services/reviews.service';
-import type { CreateReviewRequest } from '@/types/review.types';
+import type { ReviewCreateRequest } from '@/types/workplace.types';
+import { getErrorMessage } from '@/utils/error-handler';
 
 interface ReviewFormDialogProps {
-  companyId: number;
-  companyName: string;
+  workplaceId: number;
+  workplaceName: string;
   onReviewSubmitted?: () => void;
   trigger?: React.ReactNode;
 }
 
 export function ReviewFormDialog({
-  companyId,
-  companyName,
+  workplaceId,
+  workplaceName,
   onReviewSubmitted,
   trigger,
 }: ReviewFormDialogProps) {
@@ -35,71 +37,61 @@ export function ReviewFormDialog({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Default ethical policies - can be customized
+  const defaultPolicies = [
+    'diversity',
+    'sustainability',
+    'workLifeBalance',
+    'fairCompensation',
+    'transparency',
+  ];
+
   const [formData, setFormData] = useState({
-    culture: 0,
-    benefits: 0,
-    workLifeBalance: 0,
-    management: 0,
-    careerGrowth: 0,
-    comment: '',
-    isAnonymous: false,
+    title: '',
+    content: '',
+    policyRatings: Object.fromEntries(defaultPolicies.map(p => [p, 0])),
+    anonymous: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    // Validation
-    if (
-      formData.culture === 0 ||
-      formData.benefits === 0 ||
-      formData.workLifeBalance === 0 ||
-      formData.management === 0 ||
-      formData.careerGrowth === 0
-    ) {
-      setError(t('reviews.errors.allRatingsRequired'));
+    // Validation - at least one rating required
+    const hasRating = Object.values(formData.policyRatings).some(r => r > 0);
+    if (!hasRating) {
+      setError(t('reviews.errors.atLeastOneRating'));
       return;
     }
 
-    if (formData.comment.length < 10) {
-      setError(t('reviews.errors.commentTooShort'));
-      return;
-    }
-
-    if (formData.comment.length > 2000) {
-      setError(t('reviews.errors.commentTooLong'));
-      return;
+    // Content is optional but if provided must meet length requirements
+    if (formData.content && formData.content.length > 0) {
+      if (formData.content.length < 10) {
+        setError(t('reviews.errors.commentTooShort'));
+        return;
+      }
+      if (formData.content.length > 4000) {
+        setError(t('reviews.errors.commentTooLong'));
+        return;
+      }
     }
 
     setLoading(true);
 
     try {
-      const request: CreateReviewRequest = {
-        companyId,
-        isAnonymous: formData.isAnonymous,
-        ratings: {
-          culture: formData.culture,
-          benefits: formData.benefits,
-          workLifeBalance: formData.workLifeBalance,
-          management: formData.management,
-          careerGrowth: formData.careerGrowth,
-        },
-        comment: formData.comment,
+      const request: ReviewCreateRequest = {
+        title: formData.title || undefined,
+        content: formData.content || undefined,
+        ethicalPolicyRatings: formData.policyRatings,
+        anonymous: formData.anonymous,
       };
 
-      const response = await createReview(request);
-
-      if (response.success) {
-        setOpen(false);
-        resetForm();
-        if (onReviewSubmitted) {
-          onReviewSubmitted();
-        }
-      } else {
-        setError(t('reviews.errors.submissionFailed'));
-      }
-    } catch (err) {
-      setError(t('reviews.errors.submissionFailed'));
+      await createReview(workplaceId, request);
+      setOpen(false);
+      resetForm();
+      onReviewSubmitted?.();
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, t('reviews.errors.submissionFailed')));
       console.error('Failed to submit review:', err);
     } finally {
       setLoading(false);
@@ -108,15 +100,26 @@ export function ReviewFormDialog({
 
   const resetForm = () => {
     setFormData({
-      culture: 0,
-      benefits: 0,
-      workLifeBalance: 0,
-      management: 0,
-      careerGrowth: 0,
-      comment: '',
-      isAnonymous: false,
+      title: '',
+      content: '',
+      policyRatings: Object.fromEntries(defaultPolicies.map(p => [p, 0])),
+      anonymous: false,
     });
     setError(null);
+  };
+
+  const handlePolicyRatingChange = (policy: string, value: number) => {
+    setFormData({
+      ...formData,
+      policyRatings: {
+        ...formData.policyRatings,
+        [policy]: value,
+      },
+    });
+  };
+
+  const formatPolicyName = (policy: string) => {
+    return policy.replace(/([A-Z])/g, ' $1').trim();
   };
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -133,83 +136,59 @@ export function ReviewFormDialog({
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{t('reviews.writeReviewFor', { company: companyName })}</DialogTitle>
+          <DialogTitle>{t('reviews.writeReviewFor', { company: workplaceName })}</DialogTitle>
           <DialogDescription>{t('reviews.shareExperience')}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Rating Categories */}
+          {/* Title */}
+          <div className="space-y-2">
+            <Label htmlFor="title">{t('reviews.reviewTitle')} ({t('common.optional')})</Label>
+            <Input
+              id="title"
+              placeholder={t('reviews.titlePlaceholder')}
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              maxLength={255}
+            />
+          </div>
+
+          {/* Ethical Policy Ratings */}
           <div className="space-y-4">
-            <h4 className="font-semibold">{t('reviews.rateYourExperience')}</h4>
+            <h4 className="font-semibold">{t('reviews.rateEthicalPolicies')}</h4>
+            <p className="text-sm text-muted-foreground">{t('reviews.rateAtLeastOne')}</p>
 
             <div className="grid gap-4">
-              {/* Culture */}
-              <div className="flex items-center justify-between">
-                <Label htmlFor="culture">{t('reviews.categories.culture')}</Label>
-                <StarRating
-                  value={formData.culture}
-                  onChange={(value) => setFormData({ ...formData, culture: value })}
-                  size="md"
-                />
-              </div>
-
-              {/* Benefits */}
-              <div className="flex items-center justify-between">
-                <Label htmlFor="benefits">{t('reviews.categories.benefits')}</Label>
-                <StarRating
-                  value={formData.benefits}
-                  onChange={(value) => setFormData({ ...formData, benefits: value })}
-                  size="md"
-                />
-              </div>
-
-              {/* Work-Life Balance */}
-              <div className="flex items-center justify-between">
-                <Label htmlFor="workLifeBalance">
-                  {t('reviews.categories.workLifeBalance')}
-                </Label>
-                <StarRating
-                  value={formData.workLifeBalance}
-                  onChange={(value) => setFormData({ ...formData, workLifeBalance: value })}
-                  size="md"
-                />
-              </div>
-
-              {/* Management */}
-              <div className="flex items-center justify-between">
-                <Label htmlFor="management">{t('reviews.categories.management')}</Label>
-                <StarRating
-                  value={formData.management}
-                  onChange={(value) => setFormData({ ...formData, management: value })}
-                  size="md"
-                />
-              </div>
-
-              {/* Career Growth */}
-              <div className="flex items-center justify-between">
-                <Label htmlFor="careerGrowth">{t('reviews.categories.careerGrowth')}</Label>
-                <StarRating
-                  value={formData.careerGrowth}
-                  onChange={(value) => setFormData({ ...formData, careerGrowth: value })}
-                  size="md"
-                />
-              </div>
+              {defaultPolicies.map((policy) => (
+                <div key={policy} className="flex items-center justify-between">
+                  <Label htmlFor={policy} className="capitalize">
+                    {formatPolicyName(policy)}
+                  </Label>
+                  <StarRating
+                    value={formData.policyRatings[policy]}
+                    onChange={(value) => handlePolicyRatingChange(policy, value)}
+                    size="md"
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Comment */}
+          {/* Content */}
           <div className="space-y-2">
-            <Label htmlFor="comment">{t('reviews.yourReview')}</Label>
+            <Label htmlFor="content">
+              {t('reviews.yourReview')} ({t('common.optional')})
+            </Label>
             <Textarea
-              id="comment"
+              id="content"
               placeholder={t('reviews.reviewPlaceholder')}
-              value={formData.comment}
-              onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
+              value={formData.content}
+              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
               rows={6}
               className="resize-none"
             />
             <p className="text-sm text-muted-foreground">
-              {formData.comment.length} / 2000 {t('reviews.characters')}
+              {formData.content.length} / 4000 {t('reviews.characters')}
             </p>
           </div>
 
@@ -217,9 +196,9 @@ export function ReviewFormDialog({
           <div className="flex items-center space-x-2">
             <Checkbox
               id="anonymous"
-              checked={formData.isAnonymous}
+              checked={formData.anonymous}
               onCheckedChange={(checked) =>
-                setFormData({ ...formData, isAnonymous: checked as boolean })
+                setFormData({ ...formData, anonymous: checked as boolean })
               }
             />
             <Label
@@ -244,10 +223,10 @@ export function ReviewFormDialog({
               onClick={() => setOpen(false)}
               disabled={loading}
             >
-              {t('reviews.cancel')}
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? t('reviews.submitting') : t('reviews.submitReview')}
+              {loading ? t('common.submitting') : t('reviews.submitReview')}
             </Button>
           </DialogFooter>
         </form>

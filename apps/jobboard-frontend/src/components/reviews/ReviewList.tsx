@@ -8,44 +8,45 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import type { Review } from '@/types/review.types';
+import type { ReviewResponse, ReviewListParams } from '@/types/workplace.types';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
-import { getCompanyReviews, markReviewHelpful, markReviewNotHelpful } from '@/services/reviews.service';
+import { getWorkplaceReviews } from '@/services/reviews.service';
 
 interface ReviewListProps {
-  companyId: number;
-  initialReviews?: Review[];
+  workplaceId: number;
+  canReply?: boolean;
+  filters?: Omit<ReviewListParams, 'page' | 'size'>;
   reviewsPerPage?: number;
 }
 
-export function ReviewList({ companyId, initialReviews = [], reviewsPerPage = 5 }: ReviewListProps) {
+export function ReviewList({ workplaceId, canReply, filters, reviewsPerPage = 10 }: ReviewListProps) {
   const { t } = useTranslation('common');
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalReviews, setTotalReviews] = useState(0);
+  const [reviews, setReviews] = useState<ReviewResponse[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadReviews(1);
-  }, [companyId]);
+    loadReviews(0);
+  }, [workplaceId, filters]);
 
   const loadReviews = async (pageNumber: number) => {
     setLoading(true);
     try {
-      const newReviews = await getCompanyReviews(companyId, pageNumber, reviewsPerPage);
-      setReviews(newReviews);
-      setCurrentPage(pageNumber);
-
-      // For mock data, we'll estimate total reviews
-      // In a real app, the API should return total count
-      if (newReviews.length === reviewsPerPage) {
-        setTotalReviews(pageNumber * reviewsPerPage + 1); // Assume there's more
-      } else {
-        setTotalReviews((pageNumber - 1) * reviewsPerPage + newReviews.length);
-      }
+      const response = await getWorkplaceReviews(workplaceId, {
+        page: pageNumber,
+        size: reviewsPerPage,
+        ...filters,
+      });
+      setReviews(response.content);
+      setCurrentPage(response.page);
+      setTotalPages(response.totalPages);
+      setTotalElements(response.totalElements);
     } catch (error) {
       console.error('Failed to load reviews:', error);
+      setReviews([]);
     } finally {
       setLoading(false);
     }
@@ -57,57 +58,34 @@ export function ReviewList({ companyId, initialReviews = [], reviewsPerPage = 5 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleHelpful = async (reviewId: number) => {
-    try {
-      await markReviewHelpful(reviewId);
-      setReviews((prev) =>
-        prev.map((review) =>
-          review.id === reviewId ? { ...review, helpful: review.helpful + 1 } : review
-        )
-      );
-    } catch (error) {
-      console.error('Failed to mark review as helpful:', error);
-    }
+  const handleReviewUpdate = () => {
+    // Reload current page to reflect changes
+    loadReviews(currentPage);
   };
 
-  const handleNotHelpful = async (reviewId: number) => {
-    try {
-      await markReviewNotHelpful(reviewId);
-      setReviews((prev) =>
-        prev.map((review) =>
-          review.id === reviewId ? { ...review, notHelpful: review.notHelpful + 1 } : review
-        )
-      );
-    } catch (error) {
-      console.error('Failed to mark review as not helpful:', error);
-    }
-  };
-
-  const totalPages = Math.ceil(totalReviews / reviewsPerPage);
-
-  // Generate page numbers for pagination
+  // Generate page numbers for pagination (0-indexed to 1-indexed for display)
   const getPageNumbers = () => {
     const pages: (number | 'ellipsis')[] = [];
     const maxPagesToShow = 5;
 
     if (totalPages <= maxPagesToShow) {
-      for (let i = 1; i <= totalPages; i++) {
+      for (let i = 0; i < totalPages; i++) {
         pages.push(i);
       }
     } else {
-      pages.push(1);
+      pages.push(0);
 
-      let start = Math.max(2, currentPage - 1);
-      let end = Math.min(totalPages - 1, currentPage + 1);
+      let start = Math.max(1, currentPage - 1);
+      let end = Math.min(totalPages - 2, currentPage + 1);
 
-      if (currentPage <= 2) {
-        end = 3;
+      if (currentPage <= 1) {
+        end = 2;
       }
-      if (currentPage >= totalPages - 1) {
-        start = totalPages - 2;
+      if (currentPage >= totalPages - 2) {
+        start = totalPages - 3;
       }
 
-      if (start > 2) {
+      if (start > 1) {
         pages.push('ellipsis');
       }
 
@@ -115,11 +93,11 @@ export function ReviewList({ companyId, initialReviews = [], reviewsPerPage = 5 
         pages.push(i);
       }
 
-      if (end < totalPages - 1) {
+      if (end < totalPages - 2) {
         pages.push('ellipsis');
       }
 
-      pages.push(totalPages);
+      pages.push(totalPages - 1);
     }
 
     return pages;
@@ -135,7 +113,12 @@ export function ReviewList({ companyId, initialReviews = [], reviewsPerPage = 5 
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold">{t('reviews.recentComments')}</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">{t('reviews.recentComments')}</h3>
+        <p className="text-sm text-muted-foreground">
+          {t('reviews.totalReviews', { count: totalElements })}
+        </p>
+      </div>
 
       {loading ? (
         <div className="text-center py-12">
@@ -147,9 +130,10 @@ export function ReviewList({ companyId, initialReviews = [], reviewsPerPage = 5 
             {reviews.map((review) => (
               <ReviewCard
                 key={review.id}
+                workplaceId={workplaceId}
                 review={review}
-                onHelpful={handleHelpful}
-                onNotHelpful={handleNotHelpful}
+                canReply={canReply}
+                onUpdate={handleReviewUpdate}
               />
             ))}
           </div>
@@ -159,9 +143,9 @@ export function ReviewList({ companyId, initialReviews = [], reviewsPerPage = 5 
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                    onClick={() => currentPage > 0 && handlePageChange(currentPage - 1)}
                     className={
-                      currentPage === 1
+                      currentPage === 0
                         ? 'pointer-events-none opacity-50'
                         : 'cursor-pointer'
                     }
@@ -174,11 +158,11 @@ export function ReviewList({ companyId, initialReviews = [], reviewsPerPage = 5 
                       <PaginationEllipsis />
                     ) : (
                       <PaginationLink
-                        onClick={() => handlePageChange(page)}
+                        onClick={() => handlePageChange(page as number)}
                         isActive={currentPage === page}
                         className="cursor-pointer"
                       >
-                        {page}
+                        {(page as number) + 1}
                       </PaginationLink>
                     )}
                   </PaginationItem>
@@ -187,10 +171,10 @@ export function ReviewList({ companyId, initialReviews = [], reviewsPerPage = 5 
                 <PaginationItem>
                   <PaginationNext
                     onClick={() =>
-                      currentPage < totalPages && handlePageChange(currentPage + 1)
+                      currentPage < totalPages - 1 && handlePageChange(currentPage + 1)
                     }
                     className={
-                      currentPage === totalPages
+                      currentPage === totalPages - 1
                         ? 'pointer-events-none opacity-50'
                         : 'cursor-pointer'
                     }

@@ -1,27 +1,22 @@
 import { StarRating } from '@/components/ui/star-rating';
 import { Card } from '@/components/ui/card';
-import type { ReviewStats as ReviewStatsType } from '@/types/review.types';
 import { useTranslation } from 'react-i18next';
 
 interface ReviewStatsProps {
-  stats: ReviewStatsType;
+  overallAvg: number;
+  ethicalAverages: Record<string, number>;
+  totalReviews?: number;
 }
 
-export function ReviewStats({ stats }: ReviewStatsProps) {
+export function ReviewStats({ overallAvg, ethicalAverages, totalReviews = 0 }: ReviewStatsProps) {
   const { t } = useTranslation('common');
 
-  const getRatingPercentage = (count: number) => {
-    if (stats.totalReviews === 0) return 0;
-    return Math.round((count / stats.totalReviews) * 100);
+  // Convert policy names to readable format
+  const formatPolicyName = (policy: string) => {
+    return policy.replace(/([A-Z])/g, ' $1').trim();
   };
 
-  const categoryLabels = {
-    culture: t('reviews.categories.culture'),
-    benefits: t('reviews.categories.benefits'),
-    workLifeBalance: t('reviews.categories.workLifeBalance'),
-    management: t('reviews.categories.management'),
-    careerGrowth: t('reviews.categories.careerGrowth'),
-  };
+  const policyEntries = Object.entries(ethicalAverages);
 
   return (
     <Card className="p-6">
@@ -32,67 +27,56 @@ export function ReviewStats({ stats }: ReviewStatsProps) {
         <div>
           <div className="text-center mb-6">
             <div className="text-5xl font-bold text-foreground mb-2">
-              {stats.averageRating.toFixed(1)}
+              {overallAvg.toFixed(1)}
             </div>
             <div className="flex justify-center mb-2">
-              <StarRating value={stats.averageRating} readonly size="md" />
+              <StarRating value={overallAvg} readonly size="md" />
             </div>
-            <p className="text-sm text-muted-foreground">
-              {t('reviews.basedOn', { count: stats.totalReviews })}
-            </p>
+            {totalReviews > 0 && (
+              <p className="text-sm text-muted-foreground">
+                {t('reviews.basedOn', { count: totalReviews })}
+              </p>
+            )}
           </div>
 
-          {/* Rating Distribution */}
-          <div className="space-y-2">
-            {[5, 4, 3, 2, 1].map((rating) => (
-              <div key={rating} className="flex items-center gap-3">
-                <span className="text-sm font-medium w-6">{rating}</span>
-                <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-yellow-500 transition-all"
-                    style={{
-                      width: `${getRatingPercentage(
-                        stats.ratingDistribution[rating as keyof typeof stats.ratingDistribution]
-                      )}%`,
-                    }}
-                  />
-                </div>
-                <span className="text-sm text-muted-foreground w-12 text-right">
-                  {getRatingPercentage(
-                    stats.ratingDistribution[rating as keyof typeof stats.ratingDistribution]
-                  )}
-                  %
-                </span>
-              </div>
-            ))}
-          </div>
+          {overallAvg === 0 && (
+            <div className="text-center text-muted-foreground">
+              <p className="text-sm">{t('reviews.noReviewsYet')}</p>
+            </div>
+          )}
         </div>
 
-        {/* Category Averages */}
-        <div>
-          <h4 className="font-semibold mb-4">{t('reviews.categoryRatings')}</h4>
-          <div className="space-y-3">
-            {(Object.keys(stats.categoryAverages) as Array<keyof typeof stats.categoryAverages>).map(
-              (category) => (
-                <div key={category} className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    {categoryLabels[category]}
+        {/* Ethical Policy Averages */}
+        {policyEntries.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-4">{t('reviews.ethicalPolicyRatings')}</h4>
+            <div className="space-y-3">
+              {policyEntries.map(([policy, average]) => (
+                <div key={policy} className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground capitalize">
+                    {formatPolicyName(policy)}
                   </span>
                   <div className="flex items-center gap-2">
                     <StarRating
-                      value={stats.categoryAverages[category]}
+                      value={average}
                       readonly
                       size="sm"
                     />
                     <span className="text-sm font-medium w-8 text-right">
-                      {stats.categoryAverages[category].toFixed(1)}
+                      {average.toFixed(1)}
                     </span>
                   </div>
                 </div>
-              )
-            )}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {policyEntries.length === 0 && overallAvg > 0 && (
+          <div className="flex items-center justify-center text-muted-foreground">
+            <p className="text-sm">{t('reviews.noPolicyRatings')}</p>
+          </div>
+        )}
       </div>
     </Card>
   );
