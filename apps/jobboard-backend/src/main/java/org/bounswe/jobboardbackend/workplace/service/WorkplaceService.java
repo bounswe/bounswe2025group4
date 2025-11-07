@@ -167,7 +167,7 @@ public class WorkplaceService {
                 .detailedDescription(req.getDetailedDescription())
                 .website(req.getWebsite())
                 //.photoUrl(req.getPhotoUrl())
-                .ethicalTags(req.getEthicalTags() == null ? new HashSet<>() : req.getEthicalTags().stream().map(EthicalPolicy::valueOf).collect(Collectors.toSet()))
+                .ethicalTags(req.getEthicalTags() == null ? new HashSet<>() : req.getEthicalTags().stream().map(EthicalPolicy::fromLabel).collect(Collectors.toSet()))
                 .deleted(false)
                 .build();
 
@@ -235,7 +235,7 @@ public class WorkplaceService {
         if (req.getShortDescription() != null) wp.setShortDescription(req.getShortDescription());
         if (req.getDetailedDescription() != null) wp.setDetailedDescription(req.getDetailedDescription());
         if (req.getWebsite() != null) wp.setWebsite(req.getWebsite());
-        if (req.getEthicalTags() != null) {wp.setEthicalTags(req.getEthicalTags().stream().map(EthicalPolicy::valueOf).collect(Collectors.toSet()));}
+        if (req.getEthicalTags() != null) { wp.setEthicalTags(req.getEthicalTags().stream().map(EthicalPolicy::fromLabel).collect(Collectors.toSet())); }
         //if (req.getPhotoUrl() != null) wp.setImageUrl(req.getPhotoUrl());
 
         workplaceRepository.save(wp);
@@ -251,13 +251,14 @@ public class WorkplaceService {
         Map<String, Double> policyAvg = reviewPolicyRatingRepository.averageByPolicyForWorkplace(wp.getId())
                 .stream()
                 .collect(Collectors.toMap(
-                        row -> String.valueOf(row[0]),
+                        row -> ((EthicalPolicy) row[0]).getLabel(),
                         row -> oneDecimal(row[1] == null ? null : ((Number) row[1]).doubleValue())
                 ));
         return WorkplaceRatingResponse.builder()
                 .workplaceId(wp.getId())
                 .overallAvg(avg)
                 .ethicalAverages(policyAvg)
+                .reviewCount(wp.getReviewCount())
                 .build();
     }
 
@@ -290,7 +291,7 @@ public class WorkplaceService {
         Map<String, Double> policyAvg = reviewPolicyRatingRepository.averageByPolicyForWorkplace(wp.getId())
                 .stream()
                 .collect(Collectors.toMap(
-                        row -> String.valueOf(row[0]),
+                        row -> ((EthicalPolicy) row[0]).getLabel(),
                         row -> oneDecimal(row[1] == null ? null : ((Number) row[1]).doubleValue())
                 ));
         return WorkplaceBriefResponse.builder()
@@ -300,9 +301,10 @@ public class WorkplaceService {
                 .sector(wp.getSector())
                 .location(wp.getLocation())
                 .shortDescription(wp.getShortDescription())
-                .ethicalTags(wp.getEthicalTags() == null ? List.of() : wp.getEthicalTags().stream().map(Enum::name).collect(Collectors.toList()))
+                .ethicalTags(wp.getEthicalTags() == null ? List.of() : wp.getEthicalTags().stream().map(EthicalPolicy::getLabel).collect(Collectors.toList()))
                 .ethicalAverages(policyAvg)
                 .overallAvg(avg)
+                .reviewCount(wp.getReviewCount())
                 .build();
     }
 
@@ -311,7 +313,7 @@ public class WorkplaceService {
         Map<String, Double> policyAvg = reviewPolicyRatingRepository.averageByPolicyForWorkplace(wp.getId())
                 .stream()
                 .collect(Collectors.toMap(
-                        row -> String.valueOf(row[0]),
+                        row -> ((EthicalPolicy) row[0]).getLabel(),
                         row -> oneDecimal(row[1] == null ? null : ((Number) row[1]).doubleValue())
                 ));
 
@@ -355,11 +357,12 @@ public class WorkplaceService {
                 .shortDescription(wp.getShortDescription())
                 .detailedDescription(wp.getDetailedDescription())
                 .website(wp.getWebsite())
-                .ethicalTags(wp.getEthicalTags() == null ? List.of() : wp.getEthicalTags().stream().map(Enum::name).collect(Collectors.toList()))
+                .ethicalTags(wp.getEthicalTags() == null ? List.of() : wp.getEthicalTags().stream().map(EthicalPolicy::getLabel).collect(Collectors.toList()))
                 .overallAvg(avg)
                 .ethicalAverages(policyAvg)
                 .recentReviews(reviews)
                 .employers(employers)
+                .reviewCount(wp.getReviewCount())
                 .createdAt(wp.getCreatedAt())
                 .updatedAt(wp.getUpdatedAt())
                 .build();

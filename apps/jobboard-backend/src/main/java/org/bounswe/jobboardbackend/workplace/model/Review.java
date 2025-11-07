@@ -29,10 +29,10 @@ public class Review {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(length = 255)
+    @Column(nullable = false, length = 255)
     private String title;
 
-    @Column(length = 4000)
+    @Column(nullable = false, length = 4000)
     private String content;
 
     @Column(name = "rating")

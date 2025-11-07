@@ -18,7 +18,7 @@ public class WorkplaceCreateRequest {
     private String sector;
     @NotBlank
     private String location;
-    @Size(max = 300)
+    @Size(max = 500)
     private String shortDescription;
     @Size(max = 4000)
     private String detailedDescription;

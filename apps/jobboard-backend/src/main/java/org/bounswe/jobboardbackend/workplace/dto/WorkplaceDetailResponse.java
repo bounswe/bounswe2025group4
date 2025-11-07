@@ -25,6 +25,7 @@ public class WorkplaceDetailResponse {
     private Map<String, Double> ethicalAverages; // policy -> avg
     private List<ReviewResponse> recentReviews;  // includeReviews=true ise dolabilir
     private List<EmployerListItem> employers;
+    private Long reviewCount;
     private Instant createdAt;
     private Instant updatedAt;
 }
