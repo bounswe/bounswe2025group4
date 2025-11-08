@@ -22,26 +22,20 @@ public class Workplace {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 255, unique = true)
     private String companyName;
 
-    @Column(length = 255)
+    @Column(nullable = false, length = 255)
     private String sector;
 
-    @Column(length = 255)
+    @Column(nullable = false, length = 255)
     private String location;
 
-    @Column(length = 500)
+    @Column(nullable = false, length = 500)
     private String shortDescription;
 
-    @Column(length = 4000)
+    @Column(nullable = false, length = 4000)
     private String detailedDescription;
-
-    @Column(length = 255)
-    private String website;
-
-    @Column(length = 500)
-    private String imageUrl;
 
     @ElementCollection(targetClass = EthicalPolicy.class, fetch = FetchType.LAZY)
     @CollectionTable(
@@ -53,6 +47,16 @@ public class Workplace {
     @Column(name = "policy", length = 64, nullable = false)
     @Builder.Default
     private Set<EthicalPolicy> ethicalTags = new HashSet<>();
+
+    @Column(length = 255)
+    private String website;
+
+    @Column(length = 500)
+    private String imageUrl;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private long reviewCount = 0L;
 
     @Builder.Default
     private boolean deleted = false;
