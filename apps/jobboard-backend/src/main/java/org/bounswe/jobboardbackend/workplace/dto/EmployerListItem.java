@@ -12,6 +12,7 @@ import java.time.Instant;
 public class EmployerListItem {
     private Long userId;
     private String username;
+    private String nameSurname;
     private String email;
     private String role;
     private Instant joinedAt;

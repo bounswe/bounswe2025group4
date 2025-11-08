@@ -9,6 +9,7 @@ import org.bounswe.jobboardbackend.workplace.repository.*;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.model.Role;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
 import org.springframework.data.domain.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class EmployerService {
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final EmployerRequestRepository employerRequestRepository;
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
     private final WorkplaceService workplaceService;
 
     // === HELPERS ===
@@ -68,6 +70,9 @@ public class EmployerService {
                 .map(ew -> EmployerListItem.builder()
                         .userId(ew.getUser().getId())
                         .username(ew.getUser().getUsername())
+                        .nameSurname(profileRepository.findByUserId(ew.getUser().getId())
+                                .map(p -> p.getFirstName() + " " + p.getLastName())
+                                .orElse(""))
                         .email(ew.getUser().getEmail())
                         .role(ew.getRole() != null ? ew.getRole().name() : null)
                         .joinedAt(ew.getCreatedAt())
@@ -234,10 +239,15 @@ public class EmployerService {
 
     // === MAPPERS ===
     private EmployerRequestResponse toDto(EmployerRequest er) {
+        String nameSurname = profileRepository.findByUserId(er.getCreatedBy().getId())
+                .map(p -> p.getFirstName() + " " + p.getLastName())
+                .orElse("");
         return EmployerRequestResponse.builder()
                 .id(er.getId())
                 .workplaceId(er.getWorkplace().getId())
                 .createdByUserId(er.getCreatedBy() != null ? er.getCreatedBy().getId() : null)
+                .username(er.getCreatedBy() != null ? er.getCreatedBy().getUsername() : null)
+                .nameSurname(nameSurname)
                 .note(er.getNote())
                 .status(er.getStatus() != null ? er.getStatus().name() : null)
                 .createdAt(er.getCreatedAt())
