@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
 interface StarRatingProps {
-  value: number;
+  value: number | null | undefined;
   onChange?: (value: number) => void;
   max?: number;
   size?: 'sm' | 'md' | 'lg';
@@ -47,7 +47,9 @@ export function StarRating({
     }
   };
 
-  const displayValue = hoverValue ?? value;
+  // Handle null/undefined values by defaulting to 0
+  const safeValue = value ?? 0;
+  const displayValue = hoverValue ?? safeValue;
   const isInteractive = !readonly && onChange;
 
   return (
@@ -103,7 +105,7 @@ export function StarRating({
       </div>
       {showValue && (
         <span className="text-sm font-medium text-muted-foreground ml-1">
-          {value.toFixed(1)}
+          {safeValue.toFixed(1)}
         </span>
       )}
     </div>
