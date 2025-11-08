@@ -14,6 +14,7 @@
       "myApplications": "Başvurularım",
       "mentorship": "Mentorluk",
       "myMentorships": "Mentorluklarım",
+      "chat": "Sohbet",
       "forum": "Forum",
       "employerDashboard": "İşveren Paneli"
     },
@@ -913,5 +914,32 @@
       "completed": "Tamamlandı",
       "rejected": "Reddedildi"
     }
+  },
+  "chat": {
+    "conversations": "Sohbetler",
+    "noConversations": "Henüz sohbet yok",
+    "openConversationWith": "{{name}} ile sohbeti aç",
+    "back": "Sohbetlere dön",
+    "online": "Çevrimiçi",
+    "offline": "Çevrimdışı",
+    "justNow": "Şimdi",
+    "minutesAgo": "{{count}}d önce",
+    "hoursAgo": "{{count}}s önce",
+    "daysAgo": "{{count}}g önce",
+    "noMessages": "Mesaj yok",
+    "unreadMessages": "{{count}} okunmamış mesaj",
+    "noMessagesYet": "Henüz mesaj yok",
+    "startConversation": "Mesaj göndererek sohbet başlatın",
+    "typeMessage": "Mesaj yazın...",
+    "messageInput": "Mesaj girişi",
+    "sendMessage": "Mesaj gönder",
+    "attachFile": "Dosya ekle",
+    "moreOptions": "Daha fazla seçenek",
+    "featureComingSoon": "Yakında",
+    "you": "Sen",
+    "roleMentor": "Mentor",
+    "roleMentee": "Menti",
+    "selectConversation": "Bir sohbet seçin",
+    "selectConversationDesc": "Sohbet başlatmak için listeden bir konuşma seçin"
   }
 }
