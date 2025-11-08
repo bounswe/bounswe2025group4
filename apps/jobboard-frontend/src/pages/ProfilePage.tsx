@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
@@ -31,6 +32,7 @@ type SkillFormData = Omit<Skill, 'id'> & { id?: number };
 type InterestFormData = Omit<Interest, 'id'> & { id?: number };
 
 export default function ProfilePage() {
+  const { userId: userIdParam } = useParams<{ userId?: string }>();
   const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'posts'>('about');
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,14 +76,20 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const loadProfile = async () => {
+      if (!targetUserId) {
+        setLoading(false);
+        setError('User ID is required');
+        return;
+      }
+
       try {
         setLoading(true);
         const profileData = await profileService.getMyProfile();
         setProfile(profileData);
       } catch (err) {
         const errorResponse = (err as unknown as { response?: { data?: unknown } })?.response?.data;
-        const isProfileNotFound =
-          (err as unknown as { response?: { status?: number } })?.response?.status === 404 && (errorResponse as { code?: string })?.code === 'PROFILE_NOT_FOUND';
+        const status = (err as unknown as { response?: { status?: number } })?.response?.status;
+        const isProfileNotFound = status === 404 && (errorResponse as { code?: string })?.code === 'PROFILE_NOT_FOUND';
 
         if (isProfileNotFound) {
           setShowCreateProfile(true);
@@ -350,7 +358,7 @@ export default function ProfilePage() {
           imageUrl={profile.imageUrl}
           createdAt={profile.createdAt}
           experiences={profile.experiences}
-          onEditImage={() => setShowImageUpload(true)}
+          onEditImage={isViewingOwnProfile ? () => setShowImageUpload(true) : undefined}
         />
 
         <div className="border-b mb-6">
@@ -391,7 +399,7 @@ export default function ProfilePage() {
         {activeTab === 'about' && (
           <div className="grid md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-6">
-              <AboutSection bio={profile.bio} onEdit={() => openModal('bio')} />
+              <AboutSection bio={profile.bio} onEdit={isViewingOwnProfile ? () => openModal('bio') : undefined} />
 
               <ExperienceSection
                 experiences={profile.experiences.sort((a, b) => {
@@ -404,22 +412,22 @@ export default function ProfilePage() {
                   const endDateB = b.endDate ? new Date(b.endDate) : new Date();
                   return endDateB.getTime() - endDateA.getTime();
                 })}
-                onAdd={() => openModal('experience')}
-                onEdit={(id) => {
+                onAdd={isViewingOwnProfile ? () => openModal('experience') : undefined}
+                onEdit={isViewingOwnProfile ? (id) => {
                   const exp = profile.experiences.find((e) => e.id === id);
                   openModal('experience', exp);
-                }}
-                onDelete={handleDeleteExperience}
+                } : undefined}
+                onDelete={isViewingOwnProfile ? handleDeleteExperience : undefined}
               />
 
               <EducationSection
                 educations={profile.educations}
-                onAdd={() => openModal('education')}
-                onEdit={(id) => {
+                onAdd={isViewingOwnProfile ? () => openModal('education') : undefined}
+                onEdit={isViewingOwnProfile ? (id) => {
                   const edu = profile.educations.find((e) => e.id === id);
                   openModal('education', edu);
-                }}
-                onDelete={handleDeleteEducation}
+                } : undefined}
+                onDelete={isViewingOwnProfile ? handleDeleteEducation : undefined}
               />
 
               <div className="border border-destructive/20 rounded-lg p-4 bg-destructive/5">
@@ -441,20 +449,20 @@ export default function ProfilePage() {
             <div className="space-y-6">
               <SkillsSection
                 skills={profile.skills}
-                onAdd={() => openModal('skill')}
-                onEdit={(id) => {
+                onAdd={isViewingOwnProfile ? () => openModal('skill') : undefined}
+                onEdit={isViewingOwnProfile ? (id) => {
                   const skill = profile.skills.find((s) => s.id === id);
                   openModal('skill', skill);
-                }}
+                } : undefined}
               />
 
               <InterestsSection
                 interests={profile.interests}
-                onAdd={() => openModal('interest')}
-                onEdit={(id) => {
+                onAdd={isViewingOwnProfile ? () => openModal('interest') : undefined}
+                onEdit={isViewingOwnProfile ? (id) => {
                   const interest = profile.interests.find((i) => i.id === id);
                   openModal('interest', interest);
-                }}
+                } : undefined}
               />
             </div>
           </div>

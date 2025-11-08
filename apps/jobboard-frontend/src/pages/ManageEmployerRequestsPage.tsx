@@ -5,13 +5,12 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Check, X, Users, AlertCircle, Trash2 } from 'lucide-react';
+import { Check, X, Users, Trash2 } from 'lucide-react';
 import {
   getEmployerRequests,
   resolveEmployerRequest,
@@ -26,10 +25,11 @@ import type {
 } from '@/types/workplace.types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getErrorMessage } from '@/utils/error-handler';
+import CenteredLoader from '@/components/CenteredLoader';
+import CenteredError from '@/components/CenteredError';
 
 export default function ManageEmployerRequestsPage() {
   const { workplaceId } = useParams<{ workplaceId: string }>();
-  const { t } = useTranslation('common');
   const { user } = useAuth();
   const [workplace, setWorkplace] = useState<WorkplaceDetailResponse | null>(null);
   const [requests, setRequests] = useState<EmployerRequestResponse[]>([]);
@@ -40,6 +40,7 @@ export default function ManageEmployerRequestsPage() {
 
   useEffect(() => {
     loadData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workplaceId]);
 
   const loadData = async () => {
@@ -96,39 +97,27 @@ export default function ManageEmployerRequestsPage() {
 
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">{t('common.loading')}</p>
-      </div>
-    );
+    return <CenteredLoader />
   }
 
   if (error || !workplace) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="p-6 max-w-md">
-          <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-center mb-2">Error</h2>
-          <p className="text-center text-muted-foreground mb-4">
-            {error || 'Workplace not found'}
-          </p>
-          <Link to="/employer/workplaces">
-            <Button className="w-full">Back to My Workplaces</Button>
-          </Link>
-        </Card>
-      </div>
+      <CenteredError
+        message={error || 'Workplace not found'}
+        onRetry={loadData}
+      />
     );
   }
 
   const pendingRequests = requests.filter((r) => r.status === 'PENDING');
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="bg-background">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <Link to={`/workplace/${workplace.id}`}>
-            <Button variant="ghost" size="sm" className="mb-4">
+            <Button variant="ghost" size="sm" className="mb-2">
               ← Back to Workplace
             </Button>
           </Link>
@@ -202,30 +191,36 @@ export default function ManageEmployerRequestsPage() {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {employers.map((employer) => (
-              <Card key={employer.userId} className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1">
-                    <p className="font-medium">{employer.username}</p>
-                    <p className="text-sm text-muted-foreground">{employer.email}</p>
+              <Link key={employer.userId} to={`/profile/${employer.userId}`}>
+                <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <p className="font-medium">{employer.username}</p>
+                      <p className="text-sm text-muted-foreground">{employer.email}</p>
+                    </div>
+                    {employer.userId !== user?.id && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleRemoveEmployer(employer.userId);
+                        }}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
-                  {employer.userId !== user?.id && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleRemoveEmployer(employer.userId)}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  <Badge variant="outline">{employer.role}</Badge>
-                  <p className="text-xs text-muted-foreground">
-                    Joined {format(new Date(employer.joinedAt), 'MMM d, yyyy')}
-                  </p>
-                </div>
-              </Card>
+                  <div className="flex items-center justify-between mt-3">
+                    <Badge variant="outline">{employer.role}</Badge>
+                    <p className="text-xs text-muted-foreground">
+                      Joined {format(new Date(employer.joinedAt), 'MMM d, yyyy')}
+                    </p>
+                  </div>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

@@ -4,20 +4,22 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Plus, Building2 } from 'lucide-react';
-import { WorkplaceCard } from '@/components/workplace/WorkplaceCard';
-import { getMyWorkplaces } from '@/services/employer.service';
+import { getMyWorkplaces, getEmployerRequests } from '@/services/employer.service';
 import type { EmployerWorkplaceBrief } from '@/types/workplace.types';
+import CenteredLoader from '@/components/CenteredLoader';
+import CenteredError from '@/components/CenteredError';
+import { NewWorkplaceModal } from '@/components/workplace/NewWorkplaceModal';
+import { EmployerWorkplaceCard } from '@/components/workplace/EmployerWorkplaceCard';
 
 export default function EmployerWorkplacesPage() {
-  const { t } = useTranslation('common');
   const [workplaces, setWorkplaces] = useState<EmployerWorkplaceBrief[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [workplacesWithRequests, setWorkplacesWithRequests] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     loadWorkplaces();
@@ -25,9 +27,31 @@ export default function EmployerWorkplacesPage() {
 
   const loadWorkplaces = async () => {
     try {
+      setError(null);
       setLoading(true);
       const data = await getMyWorkplaces();
       setWorkplaces(data);
+
+      // Fetch employer requests for each workplace
+      const workplacesWithPendingRequests = new Set<number>();
+      await Promise.all(
+        data.map(async ({ workplace }) => {
+          try {
+            const requests = await getEmployerRequests(workplace.id, { size: 10 });
+            // Check if there are any pending requests
+            const hasPendingRequests = requests.content.some(
+              (req) => req.status === 'PENDING' || req.status.toUpperCase() === 'PENDING'
+            );
+            if (hasPendingRequests) {
+              workplacesWithPendingRequests.add(workplace.id);
+            }
+          } catch (err) {
+            // Silently fail - user might not have permission to view requests
+            console.warn(`Failed to fetch requests for workplace ${workplace.id}:`, err);
+          }
+        })
+      );
+      setWorkplacesWithRequests(workplacesWithPendingRequests);
     } catch (err) {
       console.error('Failed to load workplaces:', err);
       setError('Failed to load your workplaces');
@@ -37,84 +61,84 @@ export default function EmployerWorkplacesPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">{t('common.loading')}</p>
-      </div>
-    );
+    return <CenteredLoader />; 
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="bg-background">
+      <div className="container mx-auto px-4 py-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
             <h1 className="text-3xl font-bold mb-2">My Workplaces</h1>
             <p className="text-muted-foreground">
               Manage your workplaces and respond to reviews
             </p>
           </div>
-          <Button asChild>
-            <Link to="/employer/workplace/create">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Workplace
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setIsModalOpen(true)}>
+              <Plus className="h-4 w-4" />
+              New Workplace
+            </Button>
+          </div>
         </div>
 
-        {/* Error State */}
         {error && (
-          <Card className="p-6 mb-6 border-destructive">
-            <p className="text-destructive">{error}</p>
-            <Button onClick={loadWorkplaces} variant="outline" className="mt-4">
-              Try Again
-            </Button>
-          </Card>
+          <CenteredError
+            message="Failed to load your workplaces. Please try again."
+            onRetry={loadWorkplaces}
+          />
         )}
 
         {/* Empty State */}
         {!error && workplaces.length === 0 && (
-          <Card className="p-12 text-center">
-            <Building2 className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-xl font-semibold mb-2">No Workplaces Yet</h2>
-            <p className="text-muted-foreground mb-6">
+          <Card className="p-8 text-center gap-2">
+            <Building2 className="h-12 w-12 mx-auto text-muted-foreground" />
+            <h2 className="text-xl font-semibold">No Workplaces Yet</h2>
+            <p className="text-muted-foreground mb-2">
               Create your first workplace or request to join an existing one
             </p>
-            <div className="flex gap-4 justify-center">
-              <Button asChild>
-                <Link to="/employer/workplace/create">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Workplace
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link to="/employer/workplace/join">Join Workplace</Link>
+            <div className="flex justify-center">
+              <Button onClick={() => setIsModalOpen(true)}>
+                <Plus className="h-4 w-4" />
+                New Workplace
               </Button>
             </div>
           </Card>
         )}
 
-        {/* Workplaces Grid */}
+        {/* Workplaces List */}
         {!error && workplaces.length > 0 && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-4">
             {workplaces.map(({ workplace, role }) => (
-              <div key={workplace.id} className="relative">
-                <WorkplaceCard workplace={workplace} />
-                <div className="mt-2 flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">
-                    Role: {role}
-                  </span>
-                  <Link to={`/workplace/${workplace.id}`}>
-                    <Button variant="ghost" size="sm">
-                      View Details
-                    </Button>
-                  </Link>
-                </div>
-              </div>
+              <EmployerWorkplaceCard
+                key={workplace.id}
+                workplace={workplace}
+                role={role}
+                hasPendingRequests={workplacesWithRequests.has(workplace.id)}
+              />
             ))}
+
+            {/* Shadow Card for New Workplace */}
+            <Card
+              className="p-12 border-dashed border-2 hover:border-primary/50 hover:shadow-lg transition-all cursor-pointer bg-muted/30"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <div className="flex flex-col items-center justify-center text-center py-6">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                  <Plus className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold mb-1">Add New Workplace</h3>
+                <p className="text-muted-foreground text-sm">
+                  Create a new workplace or join an existing one
+                </p>
+              </div>
+            </Card>
           </div>
         )}
+
+        {/* New Workplace Modal */}
+        <NewWorkplaceModal open={isModalOpen} onOpenChange={setIsModalOpen} />
       </div>
     </div>
   );

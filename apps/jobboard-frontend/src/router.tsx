@@ -28,6 +28,7 @@ import EmployerWorkplacesPage from './pages/EmployerWorkplacesPage';
 import CreateWorkplacePage from './pages/CreateWorkplacePage';
 import JoinWorkplaceRequestPage from './pages/JoinWorkplaceRequestPage';
 import ManageEmployerRequestsPage from './pages/ManageEmployerRequestsPage';
+import WorkplaceSettingsPage from './pages/WorkplaceSettingsPage';
 import MentorProfilePage from './pages/MentorProfilePage';
 import MentorshipRequestPage from './pages/MentorshipRequestPage';
 import MyMentorshipsPage from './pages/MyMentorshipsPage';
@@ -111,6 +112,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ManageEmployerRequestsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/:workplaceId/settings',
+        element: (
+          <ProtectedRoute>
+            <WorkplaceSettingsPage />
           </ProtectedRoute>
         ),
       },
@@ -216,6 +225,12 @@ const router = createBrowserRouter([
       },
       {
         path: 'profile',
+        element: (
+            <ProfilePage />
+        ),
+      },
+      {
+        path: 'profile/:userId',
         element: (
             <ProfilePage />
         ),
