@@ -458,6 +458,56 @@ class WorkplaceProvider with ChangeNotifier {
     }
   }
 
+  /// Reports a workplace
+  Future<bool> reportWorkplace({
+    required int workplaceId,
+    required String reasonType,
+    required String description,
+  }) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      await _apiService.reportWorkplace(
+        workplaceId: workplaceId,
+        reasonType: reasonType,
+        description: description,
+      );
+      return true;
+    } catch (e) {
+      _setError(e.toString());
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Reports a workplace review
+  Future<bool> reportWorkplaceReview({
+    required int workplaceId,
+    required int reviewId,
+    required String reasonType,
+    required String description,
+  }) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      await _apiService.reportWorkplaceReview(
+        workplaceId: workplaceId,
+        reviewId: reviewId,
+        reasonType: reasonType,
+        description: description,
+      );
+      return true;
+    } catch (e) {
+      _setError(e.toString());
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   /// Marks a review as helpful
   Future<bool> markReviewHelpful(int reviewId) async {
     _setError(null);
@@ -495,8 +545,31 @@ class WorkplaceProvider with ChangeNotifier {
     }
   }
 
+  /// Gets a reply to a review
+  Future<WorkplaceReply?> getReply({
+    required int workplaceId,
+    required int reviewId,
+  }) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final reply = await _apiService.getWorkplaceReviewReply(
+        workplaceId: workplaceId,
+        reviewId: reviewId,
+      );
+      return reply;
+    } catch (e) {
+      _setError(e.toString());
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   /// Replies to a review
   Future<WorkplaceReply?> replyToReview({
+    required int workplaceId,
     required int reviewId,
     required String content,
   }) async {
@@ -505,6 +578,7 @@ class WorkplaceProvider with ChangeNotifier {
 
     try {
       final reply = await _apiService.replyToWorkplaceReview(
+        workplaceId: workplaceId,
         reviewId: reviewId,
         content: content,
       );
@@ -541,7 +615,8 @@ class WorkplaceProvider with ChangeNotifier {
 
   /// Updates a reply
   Future<bool> updateReply({
-    required int replyId,
+    required int workplaceId,
+    required int reviewId,
     required String content,
   }) async {
     _setLoading(true);
@@ -549,31 +624,30 @@ class WorkplaceProvider with ChangeNotifier {
 
     try {
       final updatedReply = await _apiService.updateWorkplaceReply(
-        replyId: replyId,
+        workplaceId: workplaceId,
+        reviewId: reviewId,
         content: content,
       );
 
       // Update the reply in the corresponding review
-      for (var i = 0; i < _currentReviews.length; i++) {
-        if (_currentReviews[i].reply?.id == replyId) {
-          final review = _currentReviews[i];
-          _currentReviews[i] = WorkplaceReview(
-            id: review.id,
-            workplaceId: review.workplaceId,
-            userId: review.userId,
-            title: review.title,
-            content: review.content,
-            anonymous: review.anonymous,
-            helpfulCount: review.helpfulCount,
-            overallRating: review.overallRating,
-            ethicalPolicyRatings: review.ethicalPolicyRatings,
-            reply: updatedReply,
-            createdAt: review.createdAt,
-            updatedAt: review.updatedAt,
-          );
-          notifyListeners();
-          break;
-        }
+      final index = _currentReviews.indexWhere((r) => r.id == reviewId);
+      if (index != -1) {
+        final review = _currentReviews[index];
+        _currentReviews[index] = WorkplaceReview(
+          id: review.id,
+          workplaceId: review.workplaceId,
+          userId: review.userId,
+          title: review.title,
+          content: review.content,
+          anonymous: review.anonymous,
+          helpfulCount: review.helpfulCount,
+          overallRating: review.overallRating,
+          ethicalPolicyRatings: review.ethicalPolicyRatings,
+          reply: updatedReply,
+          createdAt: review.createdAt,
+          updatedAt: review.updatedAt,
+        );
+        notifyListeners();
       }
 
       return true;
@@ -586,34 +660,38 @@ class WorkplaceProvider with ChangeNotifier {
   }
 
   /// Deletes a reply
-  Future<bool> deleteReply(int replyId) async {
+  Future<bool> deleteReply({
+    required int workplaceId,
+    required int reviewId,
+  }) async {
     _setLoading(true);
     _setError(null);
 
     try {
-      await _apiService.deleteWorkplaceReply(replyId);
+      await _apiService.deleteWorkplaceReply(
+        workplaceId: workplaceId,
+        reviewId: reviewId,
+      );
 
       // Remove the reply from the corresponding review
-      for (var i = 0; i < _currentReviews.length; i++) {
-        if (_currentReviews[i].reply?.id == replyId) {
-          final review = _currentReviews[i];
-          _currentReviews[i] = WorkplaceReview(
-            id: review.id,
-            workplaceId: review.workplaceId,
-            userId: review.userId,
-            title: review.title,
-            content: review.content,
-            anonymous: review.anonymous,
-            helpfulCount: review.helpfulCount,
-            overallRating: review.overallRating,
-            ethicalPolicyRatings: review.ethicalPolicyRatings,
-            reply: null,
-            createdAt: review.createdAt,
-            updatedAt: review.updatedAt,
-          );
-          notifyListeners();
-          break;
-        }
+      final index = _currentReviews.indexWhere((r) => r.id == reviewId);
+      if (index != -1) {
+        final review = _currentReviews[index];
+        _currentReviews[index] = WorkplaceReview(
+          id: review.id,
+          workplaceId: review.workplaceId,
+          userId: review.userId,
+          title: review.title,
+          content: review.content,
+          anonymous: review.anonymous,
+          helpfulCount: review.helpfulCount,
+          overallRating: review.overallRating,
+          ethicalPolicyRatings: review.ethicalPolicyRatings,
+          reply: null,
+          createdAt: review.createdAt,
+          updatedAt: review.updatedAt,
+        );
+        notifyListeners();
       }
 
       return true;

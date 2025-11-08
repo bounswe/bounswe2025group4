@@ -58,6 +58,12 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
       appBar: AppBar(
         title: const Text('Workplace Details'),
         actions: [
+          if (workplace != null)
+            IconButton(
+              icon: const Icon(Icons.flag),
+              onPressed: () => _showReportWorkplaceDialog(workplace),
+              tooltip: 'Report Workplace',
+            ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadWorkplace,
@@ -629,6 +635,135 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
           content: Text('Failed to remove manager: $e'),
           backgroundColor: Colors.red,
         ),
+      );
+    }
+  }
+
+  Future<void> _showReportWorkplaceDialog(Workplace workplace) async {
+    final descriptionController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    String? selectedReason;
+    final reasons = ['Offensive', 'Fake', 'Spam', 'Other'];
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Report Workplace'),
+            content: StatefulBuilder(
+              builder:
+                  (context, setState) => Form(
+                    key: formKey,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Please select a reason and provide details:',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          const SizedBox(height: 16),
+                          DropdownButtonFormField<String>(
+                            value: selectedReason,
+                            decoration: const InputDecoration(
+                              labelText: 'Reason',
+                              border: OutlineInputBorder(),
+                            ),
+                            items:
+                                reasons.map((reason) {
+                                  return DropdownMenuItem(
+                                    value: reason,
+                                    child: Text(reason),
+                                  );
+                                }).toList(),
+                            onChanged: (value) {
+                              setState(() => selectedReason = value);
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a reason';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: descriptionController,
+                            maxLines: 4,
+                            maxLength: 500,
+                            decoration: const InputDecoration(
+                              labelText: 'Description',
+                              hintText: 'Please provide more details...',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please provide a description';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    Navigator.pop(context, true);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Report'),
+              ),
+            ],
+          ),
+    );
+
+    if (result != true) return;
+    if (selectedReason == null) return;
+
+    try {
+      final success = await _workplaceProvider.reportWorkplace(
+        workplaceId: workplace.id,
+        reasonType: selectedReason!, // Safe to use ! after null check
+        description: descriptionController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Report submitted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _workplaceProvider.error ?? 'Failed to submit report',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
       );
     }
   }

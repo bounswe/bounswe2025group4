@@ -1920,13 +1920,31 @@ class ApiService {
     }
   }
 
-  /// POST /api/workplace/review/{reviewId}/reply
+  /// GET /api/workplace/{workplaceId}/review/{reviewId}/reply
+  /// Gets a reply to a review
+  Future<WorkplaceReply> getWorkplaceReviewReply({
+    required int workplaceId,
+    required int reviewId,
+  }) async {
+    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId/reply');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return WorkplaceReply.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to get reply. $e');
+    }
+  }
+
+  /// POST /api/workplace/{workplaceId}/review/{reviewId}/reply
   /// Creates a reply to a review (employer only)
   Future<WorkplaceReply> replyToWorkplaceReview({
+    required int workplaceId,
     required int reviewId,
     required String content,
   }) async {
-    final uri = _buildUri('/workplace/review/$reviewId/reply');
+    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId/reply');
 
     final body = jsonEncode({'content': content});
 
@@ -1943,13 +1961,14 @@ class ApiService {
     }
   }
 
-  /// PUT /api/workplace/reply/{replyId}
+  /// PUT /api/workplace/{workplaceId}/review/{reviewId}/reply
   /// Updates a reply to a review (employer only)
   Future<WorkplaceReply> updateWorkplaceReply({
-    required int replyId,
+    required int workplaceId,
+    required int reviewId,
     required String content,
   }) async {
-    final uri = _buildUri('/workplace/reply/$replyId');
+    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId/reply');
 
     final body = jsonEncode({'content': content});
 
@@ -1966,16 +1985,72 @@ class ApiService {
     }
   }
 
-  /// DELETE /api/workplace/reply/{replyId}
+  /// DELETE /api/workplace/{workplaceId}/review/{reviewId}/reply
   /// Deletes a reply to a review (employer only)
-  Future<void> deleteWorkplaceReply(int replyId) async {
-    final uri = _buildUri('/workplace/reply/$replyId');
+  Future<void> deleteWorkplaceReply({
+    required int workplaceId,
+    required int reviewId,
+  }) async {
+    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId/reply');
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());
       await _handleResponse(response);
     } catch (e) {
       throw Exception('Failed to delete reply. $e');
+    }
+  }
+
+  /// POST /api/workplace/{id}/report
+  /// Reports a workplace
+  Future<void> reportWorkplace({
+    required int workplaceId,
+    required String reasonType,
+    required String description,
+  }) async {
+    final uri = _buildUri('/workplace/$workplaceId/report');
+
+    final body = jsonEncode({
+      'reasonType': reasonType,
+      'description': description,
+    });
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to report workplace. $e');
+    }
+  }
+
+  /// POST /api/workplace/{id}/review/{reviewId}/report
+  /// Reports a workplace review
+  Future<void> reportWorkplaceReview({
+    required int workplaceId,
+    required int reviewId,
+    required String reasonType,
+    required String description,
+  }) async {
+    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId/report');
+
+    final body = jsonEncode({
+      'reasonType': reasonType,
+      'description': description,
+    });
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to report review. $e');
     }
   }
 
