@@ -48,8 +48,8 @@ public class JobPostService {
     }
 
     @Transactional(readOnly = true)
-    public List<JobPostResponse> getFiltered(String title, String companyName, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, Boolean inclusiveOpportunity) {
-        List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, minSalary, maxSalary, isRemote, inclusiveOpportunity);
+    public List<JobPostResponse> getFiltered(String title, String companyName, String location, String sector, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, Boolean inclusiveOpportunity) {
+        List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, location, sector, minSalary, maxSalary, isRemote, inclusiveOpportunity);
         return jobs.stream()
                 .filter(j -> {
                     // Filter by workplace ethical tags if specified

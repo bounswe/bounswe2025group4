@@ -27,13 +27,15 @@ public class JobPostController {
     public ResponseEntity<List<JobPostResponse>> getFiltered(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String companyName,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String sector,
             @RequestParam(required = false) List<String> ethicalTags,
             @RequestParam(required = false) Integer minSalary,
             @RequestParam(required = false) Integer maxSalary,
             @RequestParam(required = false) Boolean isRemote,
             @RequestParam(required = false) Boolean inclusiveOpportunity
     ) {
-        return ResponseEntity.ok(service.getFiltered(title, companyName, ethicalTags, minSalary, maxSalary, isRemote, inclusiveOpportunity));
+        return ResponseEntity.ok(service.getFiltered(title, companyName, location, sector, ethicalTags, minSalary, maxSalary, isRemote, inclusiveOpportunity));
     }
 
     @PreAuthorize("isAuthenticated()")
