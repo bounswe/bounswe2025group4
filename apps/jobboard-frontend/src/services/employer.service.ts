@@ -15,12 +15,14 @@ import type {
   ApiMessage,
 } from '@/types/workplace.types';
 
+const BASE_PATH = '/workplace';
+
 /**
  * Get all workplaces where the current user is an employer
  */
 export async function getMyWorkplaces(): Promise<EmployerWorkplaceBrief[]> {
   const response = await api.get<EmployerWorkplaceBrief[]>(
-    '/api/workplace/employers/me'
+    `${BASE_PATH}/employers/me`
   );
   return response.data;
 }
@@ -32,7 +34,7 @@ export async function getWorkplaceEmployers(
   workplaceId: number
 ): Promise<EmployerListItem[]> {
   const response = await api.get<EmployerListItem[]>(
-    `/api/workplace/${workplaceId}/employers`
+    `${BASE_PATH}/${workplaceId}/employers`
   );
   return response.data;
 }
@@ -47,7 +49,7 @@ export async function removeEmployer(
   employerId: number
 ): Promise<ApiMessage> {
   const response = await api.delete<ApiMessage>(
-    `/api/workplace/${workplaceId}/employers/${employerId}`
+    `${BASE_PATH}/${workplaceId}/employers/${employerId}`
   );
   return response.data;
 }
@@ -62,7 +64,7 @@ export async function createEmployerRequest(
   request: EmployerRequestCreate
 ): Promise<ApiMessage> {
   const response = await api.post<ApiMessage>(
-    `/api/workplace/${workplaceId}/employers/request`,
+    `${BASE_PATH}/${workplaceId}/employers/request`,
     request
   );
   return response.data;
@@ -78,7 +80,7 @@ export async function getEmployerRequests(
   params: EmployerRequestListParams = {}
 ): Promise<PaginatedEmployerRequestResponse> {
   const response = await api.get<PaginatedEmployerRequestResponse>(
-    `/api/workplace/${workplaceId}/employers/request`,
+    `${BASE_PATH}/${workplaceId}/employers/request`,
     {
       params: {
         page: params.page ?? 0,
@@ -99,7 +101,7 @@ export async function getEmployerRequest(
   requestId: number
 ): Promise<EmployerRequestResponse> {
   const response = await api.get<EmployerRequestResponse>(
-    `/api/workplace/${workplaceId}/employers/request/${requestId}`
+    `${BASE_PATH}/${workplaceId}/employers/request/${requestId}`
   );
   return response.data;
 }
@@ -117,7 +119,7 @@ export async function resolveEmployerRequest(
 ): Promise<ApiMessage> {
   const request: EmployerRequestResolve = { action };
   const response = await api.post<ApiMessage>(
-    `/api/workplace/${workplaceId}/employers/request/${requestId}`,
+      `${BASE_PATH}/${workplaceId}/employers/request/${requestId}`,
     request
   );
   return response.data;

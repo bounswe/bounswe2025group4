@@ -8,7 +8,6 @@ import type {
   WorkplaceCreateRequest,
   WorkplaceUpdateRequest,
   WorkplaceDetailResponse,
-  WorkplaceBriefResponse,
   WorkplaceRatingResponse,
   WorkplaceImageResponseDto,
   PaginatedWorkplaceResponse,
@@ -16,20 +15,53 @@ import type {
   ApiMessage,
 } from '@/types/workplace.types';
 
-const BASE_PATH = '/api/workplace';
+const BASE_PATH = '/workplace';
 
 /**
  * Get paginated list of workplaces with optional filters
+ * 
+ * @param params - Query parameters for filtering and pagination
+ * @param params.page - Page number (default: 0)
+ * @param params.size - Number of items per page (default: 12)
+ * @param params.search - Search query to filter workplaces by company name
+ * @param params.sector - Filter by sector
+ * @param params.location - Filter by location
+ * @param params.ethicalTag - Filter by ethical tag
+ * @param params.minRating - Minimum rating filter (number)
+ * @param params.sortBy - Sort field (e.g., 'rating', 'name', etc.)
+ * @returns Paginated list of workplaces
  */
 export async function getWorkplaces(
   params: WorkplaceListParams = {}
 ): Promise<PaginatedWorkplaceResponse> {
+  // Build query parameters, filtering out undefined values
+  const queryParams: Record<string, string | number> = {
+    page: params.page ?? 0,
+    size: params.size ?? 12,
+  };
+
+  // Add optional parameters only if they are defined
+  if (params.search !== undefined && params.search !== null && params.search !== '') {
+    queryParams.search = params.search;
+  }
+  if (params.sector !== undefined && params.sector !== null && params.sector !== '') {
+    queryParams.sector = params.sector;
+  }
+  if (params.location !== undefined && params.location !== null && params.location !== '') {
+    queryParams.location = params.location;
+  }
+  if (params.ethicalTag !== undefined && params.ethicalTag !== null && params.ethicalTag !== '') {
+    queryParams.ethicalTag = params.ethicalTag;
+  }
+  if (params.minRating !== undefined && params.minRating !== null) {
+    queryParams.minRating = params.minRating;
+  }
+  if (params.sortBy !== undefined && params.sortBy !== null && params.sortBy !== '') {
+    queryParams.sortBy = params.sortBy;
+  }
+
   const response = await api.get<PaginatedWorkplaceResponse>(BASE_PATH, {
-    params: {
-      page: params.page ?? 0,
-      size: params.size ?? 12,
-      ...params,
-    },
+    params: queryParams,
   });
   return response.data;
 }

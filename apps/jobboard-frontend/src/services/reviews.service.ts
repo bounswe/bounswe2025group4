@@ -17,6 +17,8 @@ import type {
   ApiMessage,
 } from '@/types/workplace.types';
 
+const BASE_PATH = '/workplace';
+
 /**
  * Get paginated list of reviews for a workplace
  * @param workplaceId Workplace ID
@@ -27,7 +29,7 @@ export async function getWorkplaceReviews(
   params: ReviewListParams = {}
 ): Promise<PaginatedReviewResponse> {
   const response = await api.get<PaginatedReviewResponse>(
-    `/api/workplace/${workplaceId}/review`,
+    `${BASE_PATH}/${workplaceId}/review`,
     {
       params: {
         page: params.page ?? 0,
@@ -49,7 +51,7 @@ export async function getReview(
   reviewId: number
 ): Promise<ReviewResponse> {
   const response = await api.get<ReviewResponse>(
-    `/api/workplace/${workplaceId}/review/${reviewId}`
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}`
   );
   return response.data;
 }
@@ -64,7 +66,7 @@ export async function createReview(
   request: ReviewCreateRequest
 ): Promise<ReviewResponse> {
   const response = await api.post<ReviewResponse>(
-    `/api/workplace/${workplaceId}/review`,
+    `${BASE_PATH}/${workplaceId}/review`,
     request
   );
   return response.data;
@@ -82,7 +84,7 @@ export async function updateReview(
   request: ReviewUpdateRequest
 ): Promise<ReviewResponse> {
   const response = await api.put<ReviewResponse>(
-    `/api/workplace/${workplaceId}/review/${reviewId}`,
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}`,
     request
   );
   return response.data;
@@ -98,7 +100,7 @@ export async function deleteReview(
   reviewId: number
 ): Promise<ApiMessage> {
   const response = await api.delete<ApiMessage>(
-    `/api/workplace/${workplaceId}/review/${reviewId}`
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}`
   );
   return response.data;
 }
@@ -115,7 +117,7 @@ export async function reportReview(
   request: ReviewReportCreate
 ): Promise<ApiMessage> {
   const response = await api.post<ApiMessage>(
-    `/api/workplace/${workplaceId}/review/${reviewId}/report`,
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}/report`,
     request
   );
   return response.data;
@@ -135,7 +137,7 @@ export async function getReply(
   reviewId: number
 ): Promise<ReplyResponse> {
   const response = await api.get<ReplyResponse>(
-    `/api/workplace/${workplaceId}/review/${reviewId}/reply`
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`
   );
   return response.data;
 }
@@ -152,7 +154,7 @@ export async function createReply(
   request: ReplyCreateRequest
 ): Promise<ReplyResponse> {
   const response = await api.post<ReplyResponse>(
-    `/api/workplace/${workplaceId}/review/${reviewId}/reply`,
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`,
     request
   );
   return response.data;
@@ -170,7 +172,7 @@ export async function updateReply(
   request: ReplyUpdateRequest
 ): Promise<ReplyResponse> {
   const response = await api.put<ReplyResponse>(
-    `/api/workplace/${workplaceId}/review/${reviewId}/reply`,
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`,
     request
   );
   return response.data;
@@ -186,7 +188,7 @@ export async function deleteReply(
   reviewId: number
 ): Promise<ApiMessage> {
   const response = await api.delete<ApiMessage>(
-    `/api/workplace/${workplaceId}/review/${reviewId}/reply`
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`
   );
   return response.data;
 }
