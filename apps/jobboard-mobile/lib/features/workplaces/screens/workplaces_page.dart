@@ -7,6 +7,7 @@ import '../../../core/services/api_service.dart';
 import '../../../core/models/user_type.dart';
 import 'workplace_detail_page.dart';
 import 'create_workplace_page.dart';
+import 'my_employer_workplaces_page.dart';
 
 class WorkplacesPage extends StatefulWidget {
   const WorkplacesPage({super.key});
@@ -16,40 +17,38 @@ class WorkplacesPage extends StatefulWidget {
 }
 
 class _WorkplacesPageState extends State<WorkplacesPage> {
-  late WorkplaceProvider _workplaceProvider;
+  WorkplaceProvider? _workplaceProvider;
   final TextEditingController _searchController = TextEditingController();
   String? _selectedSector;
   String? _selectedLocation;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadWorkplaces();
-    });
-  }
+  bool _isInitialized = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final apiService = ApiService(authProvider: authProvider);
-    _workplaceProvider = WorkplaceProvider(apiService: apiService);
+    if (!_isInitialized) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final apiService = ApiService(authProvider: authProvider);
+      _workplaceProvider = WorkplaceProvider(apiService: apiService);
+      _isInitialized = true;
+      _loadWorkplaces();
+    }
   }
 
   Future<void> _loadWorkplaces() async {
+    if (_workplaceProvider == null) return;
     try {
       print('Loading workplaces...');
-      await _workplaceProvider.fetchWorkplaces(
+      await _workplaceProvider!.fetchWorkplaces(
         search: _searchController.text.isEmpty ? null : _searchController.text,
         sector: _selectedSector,
         location: _selectedLocation,
         page: 0,
         size: 20,
       );
-      print('Workplaces loaded: ${_workplaceProvider.workplaces.length}');
-      if (_workplaceProvider.error != null) {
-        print('Error loading workplaces: ${_workplaceProvider.error}');
+      print('Workplaces loaded: ${_workplaceProvider!.workplaces.length}');
+      if (_workplaceProvider!.error != null) {
+        print('Error loading workplaces: ${_workplaceProvider!.error}');
       }
     } catch (e) {
       print('Exception loading workplaces: $e');
@@ -73,7 +72,19 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
         title: Text(AppLocalizations.of(context).workplaces_title),
         automaticallyImplyLeading: false,
         actions: [
-          if (isEmployer)
+          if (isEmployer) ...[
+            IconButton(
+              icon: const Icon(Icons.business_center),
+              tooltip: 'My Workplaces',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyEmployerWorkplacesPage(),
+                  ),
+                );
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.add),
               tooltip: 'Create Workplace',
@@ -89,6 +100,7 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
                 }
               },
             ),
+          ],
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadWorkplaces,
@@ -126,9 +138,9 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
           // Workplaces list
           Expanded(
             child:
-                _workplaceProvider.isLoading
+                _workplaceProvider == null || _workplaceProvider!.isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : _workplaceProvider.error != null
+                    : _workplaceProvider!.error != null
                     ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -140,7 +152,7 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            _workplaceProvider.error!,
+                            _workplaceProvider!.error!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(color: Colors.red),
                           ),
@@ -152,7 +164,7 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
                         ],
                       ),
                     )
-                    : _workplaceProvider.workplaces.isEmpty
+                    : _workplaceProvider!.workplaces.isEmpty
                     ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -180,10 +192,10 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
                           horizontal: 16,
                           vertical: 8,
                         ),
-                        itemCount: _workplaceProvider.workplaces.length,
+                        itemCount: _workplaceProvider!.workplaces.length,
                         itemBuilder: (context, index) {
                           final workplace =
-                              _workplaceProvider.workplaces[index];
+                              _workplaceProvider!.workplaces[index];
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 8),
                             elevation: 2,

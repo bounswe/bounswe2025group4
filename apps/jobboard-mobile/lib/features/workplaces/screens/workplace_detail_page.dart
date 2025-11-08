@@ -4,6 +4,8 @@ import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/workplace_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/models/workplace.dart';
+import '../../../core/models/user.dart';
+import 'send_employer_request_page.dart';
 
 class WorkplaceDetailPage extends StatefulWidget {
   final int workplaceId;
@@ -47,6 +49,8 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
   @override
   Widget build(BuildContext context) {
     final workplace = _workplaceProvider.currentWorkplace;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final currentUser = authProvider.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -98,6 +102,13 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
                       // Company header
                       _buildHeader(workplace),
                       const SizedBox(height: 24),
+
+                      // Request Manager Role button (if not already an employer or owner)
+                      if (currentUser != null &&
+                          !_isUserEmployer(workplace, currentUser)) ...[
+                        _buildRequestButton(workplace, currentUser),
+                        const SizedBox(height: 24),
+                      ],
 
                       // Short description
                       _buildSection('About', workplace.shortDescription),
@@ -228,15 +239,42 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
                         ),
                         const SizedBox(height: 12),
                         ...workplace.employers.map((employer) {
+                          final isCurrentUserOwner =
+                              currentUser != null &&
+                              _isUserOwnerOfWorkplace(workplace, currentUser);
+                          final canDelete =
+                              isCurrentUserOwner &&
+                              employer.role.toUpperCase() != 'OWNER';
+
                           return ListTile(
                             leading: CircleAvatar(
                               child: Text(employer.username[0].toUpperCase()),
                             ),
                             title: Text(employer.username),
                             subtitle: Text(employer.role),
-                            trailing: Text(
-                              'Joined ${_formatDate(employer.joinedAt)}',
-                              style: const TextStyle(fontSize: 12),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Joined ${_formatDate(employer.joinedAt)}',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                if (canDelete) ...[
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.red,
+                                    ),
+                                    onPressed:
+                                        () => _deleteEmployer(
+                                          workplace,
+                                          employer,
+                                        ),
+                                    tooltip: 'Remove Manager',
+                                  ),
+                                ],
+                              ],
                             ),
                           );
                         }),
@@ -464,5 +502,156 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
     } else {
       return '${(difference.inDays / 365).floor()}y ago';
     }
+  }
+
+  bool _isUserEmployer(Workplace workplace, User user) {
+    // Check if the current user is already an employer (OWNER or MANAGER) at this workplace
+    // If they are, they shouldn't see the "Request Manager Role" button
+    final userId = int.tryParse(user.id);
+    if (userId == null) return false;
+    return workplace.employers.any((employer) => employer.userId == userId);
+  }
+
+  bool _isUserOwnerOfWorkplace(Workplace workplace, User user) {
+    // Check if the current user is the OWNER of this workplace
+    final userId = int.tryParse(user.id);
+    if (userId == null) return false;
+
+    try {
+      final userEmployer = workplace.employers.firstWhere(
+        (employer) => employer.userId == userId,
+      );
+      return userEmployer.role.toUpperCase() == 'OWNER';
+    } catch (e) {
+      // User not found in employers list
+      return false;
+    }
+  }
+
+  Future<void> _deleteEmployer(Workplace workplace, employer) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Remove Manager'),
+            content: Text(
+              'Are you sure you want to remove ${employer.username} from this workplace?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Remove'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await _workplaceProvider.removeEmployerFromWorkplace(
+        workplace.id,
+        employer.userId,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Manager removed successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      // Reload workplace data
+      _loadWorkplace();
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to remove manager: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Widget _buildRequestButton(Workplace workplace, User user) {
+    return Card(
+      elevation: 2,
+      color: Colors.blue.shade50,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.work_outline, color: Colors.blue.shade700),
+                const SizedBox(width: 8),
+                Text(
+                  'Interested in managing this workplace?',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue.shade700,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Request to become a MANAGER and help manage this workplace\'s information and reviews.',
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => SendEmployerRequestPage(
+                            workplaceId: workplace.id,
+                            workplaceName: workplace.companyName,
+                          ),
+                    ),
+                  );
+
+                  if (result == true && mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Request sent! The workplace owner will review it.',
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                },
+                icon: const Icon(Icons.send),
+                label: const Text('Request Manager Role'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -27,6 +27,10 @@ import '../models/paginated_workplace_response.dart';
 import '../models/delete_response.dart';
 import '../models/workplace_image_response.dart';
 import '../models/workplace_rating.dart';
+import '../models/employer_workplace_item.dart';
+import '../models/employer_request.dart';
+import '../models/paginated_employer_request_response.dart';
+import '../models/employer_request_action_response.dart';
 
 const List<String> _availableEthicalPolicies = [
   'salary_transparency',
@@ -2029,6 +2033,148 @@ class ApiService {
       return data.map((json) => Workplace.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to load my workplaces. $e');
+    }
+  }
+
+  /// GET /api/workplace/employers/me
+  /// Lists workplaces where current user is OWNER or MANAGER
+  Future<List<EmployerWorkplaceItem>> getMyEmployerWorkplaces() async {
+    final uri = _buildUri('/workplace/employers/me');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => EmployerWorkplaceItem.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to load employer workplaces. $e');
+    }
+  }
+
+  /// GET /api/workplace/{workplaceId}/employers
+  /// Lists all employers of a workplace
+  Future<List<WorkplaceEmployer>> getWorkplaceEmployers(int workplaceId) async {
+    final uri = _buildUri('/workplace/$workplaceId/employers');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => WorkplaceEmployer.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to load workplace employers. $e');
+    }
+  }
+
+  /// GET /api/workplace/{id}/employers/request
+  /// Gets employer requests for a workplace (paginated)
+  Future<PaginatedEmployerRequestResponse> getEmployerRequests(
+    int workplaceId, {
+    int page = 0,
+    int size = 10,
+  }) async {
+    final queryParams = <String, dynamic>{'page': page, 'size': size};
+
+    final uri = _buildUri(
+      '/workplace/$workplaceId/employers/request',
+      queryParams,
+    );
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return PaginatedEmployerRequestResponse.fromJson(
+        data as Map<String, dynamic>,
+      );
+    } catch (e) {
+      throw Exception('Failed to load employer requests. $e');
+    }
+  }
+
+  /// POST /api/workplace/{id}/employers/request
+  /// Creates an employer request for a workplace
+  Future<EmployerRequest> createEmployerRequest(
+    int workplaceId, {
+    String? note,
+  }) async {
+    final uri = _buildUri('/workplace/$workplaceId/employers/request');
+
+    final body = jsonEncode({
+      if (note != null && note.isNotEmpty) 'note': note,
+    });
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return EmployerRequest.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to create employer request. $e');
+    }
+  }
+
+  /// GET /api/workplace/{id}/employers/request/{requestId}
+  /// Gets a specific employer request
+  Future<EmployerRequest> getEmployerRequest(
+    int workplaceId,
+    int requestId,
+  ) async {
+    final uri = _buildUri(
+      '/workplace/$workplaceId/employers/request/$requestId',
+    );
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return EmployerRequest.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to load employer request. $e');
+    }
+  }
+
+  /// POST /api/workplace/{id}/employers/request/{requestId}
+  /// Approves or rejects an employer request (owner only)
+  Future<EmployerRequestActionResponse> handleEmployerRequest(
+    int workplaceId,
+    int requestId, {
+    required String action, // "approve" or "reject"
+  }) async {
+    final uri = _buildUri(
+      '/workplace/$workplaceId/employers/request/$requestId',
+    );
+
+    final body = jsonEncode({'action': action});
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return EmployerRequestActionResponse.fromJson(
+        data as Map<String, dynamic>,
+      );
+    } catch (e) {
+      throw Exception('Failed to handle employer request. $e');
+    }
+  }
+
+  /// DELETE /api/workplace/{id}/employers/{employerId}
+  /// Removes an employer from a workplace (owner only)
+  Future<DeleteResponse> removeEmployerFromWorkplace(
+    int workplaceId,
+    int employerId,
+  ) async {
+    final uri = _buildUri('/workplace/$workplaceId/employers/$employerId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return DeleteResponse.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to remove employer. $e');
     }
   }
 

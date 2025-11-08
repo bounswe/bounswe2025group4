@@ -9,6 +9,10 @@ import '../models/paginated_workplace_response.dart';
 import '../models/delete_response.dart';
 import '../models/workplace_image_response.dart';
 import '../models/workplace_rating.dart';
+import '../models/employer_workplace_item.dart';
+import '../models/employer_request.dart';
+import '../models/paginated_employer_request_response.dart';
+import '../models/employer_request_action_response.dart';
 import '../services/api_service.dart';
 
 /// Provider for managing workplace-related state and operations
@@ -729,5 +733,155 @@ class WorkplaceProvider with ChangeNotifier {
     _currentWorkplace = null;
     _currentReviews = [];
     notifyListeners();
+  }
+
+  // ─────────────────────────────────────────────────
+  // New Employer Management Endpoints
+  // ─────────────────────────────────────────────────
+
+  /// Gets workplaces where current user is OWNER or MANAGER
+  Future<List<EmployerWorkplaceItem>> getMyEmployerWorkplaces() async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final workplaces = await _apiService.getMyEmployerWorkplaces();
+      return workplaces;
+    } catch (e) {
+      _setError(e.toString());
+      return [];
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Gets all employers of a workplace
+  Future<List<WorkplaceEmployer>> getWorkplaceEmployers(int workplaceId) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final employers = await _apiService.getWorkplaceEmployers(workplaceId);
+      return employers;
+    } catch (e) {
+      _setError(e.toString());
+      return [];
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Gets employer requests for a workplace (paginated)
+  Future<PaginatedEmployerRequestResponse?> getEmployerRequests(
+    int workplaceId, {
+    int page = 0,
+    int size = 10,
+  }) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final response = await _apiService.getEmployerRequests(
+        workplaceId,
+        page: page,
+        size: size,
+      );
+      return response;
+    } catch (e) {
+      _setError(e.toString());
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Creates an employer request for a workplace
+  Future<EmployerRequest?> createEmployerRequest(
+    int workplaceId, {
+    String? note,
+  }) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final request = await _apiService.createEmployerRequest(
+        workplaceId,
+        note: note,
+      );
+      return request;
+    } catch (e) {
+      _setError(e.toString());
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Gets a specific employer request
+  Future<EmployerRequest?> getEmployerRequest(
+    int workplaceId,
+    int requestId,
+  ) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final request = await _apiService.getEmployerRequest(
+        workplaceId,
+        requestId,
+      );
+      return request;
+    } catch (e) {
+      _setError(e.toString());
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Handles an employer request (approve or reject)
+  Future<EmployerRequestActionResponse?> handleEmployerRequest(
+    int workplaceId,
+    int requestId, {
+    required String action,
+  }) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final response = await _apiService.handleEmployerRequest(
+        workplaceId,
+        requestId,
+        action: action,
+      );
+      return response;
+    } catch (e) {
+      _setError(e.toString());
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Removes an employer from a workplace
+  Future<DeleteResponse?> removeEmployerFromWorkplace(
+    int workplaceId,
+    int employerId,
+  ) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final response = await _apiService.removeEmployerFromWorkplace(
+        workplaceId,
+        employerId,
+      );
+      return response;
+    } catch (e) {
+      _setError(e.toString());
+      return null;
+    } finally {
+      _setLoading(false);
+    }
   }
 }
