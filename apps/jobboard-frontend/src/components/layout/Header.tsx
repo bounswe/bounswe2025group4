@@ -44,13 +44,17 @@ export default function Header() {
               {isEmployer ? (
                 <>
                   <Button variant="ghost" asChild>
-                    <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
-                  </Button>
-                  {isAuthenticated && (
-                    <Button variant="ghost" asChild>
-                      <Link to="/chat">{t('header.nav.chat')}</Link>
+                      <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
                     </Button>
-                  )}
+                  <Button variant="ghost" asChild>
+                    <Link to="/employer/workplaces">{t('header.nav.workplaces')}</Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/forum">{t('header.nav.forum')}</Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/chat">{t('header.nav.chat')}</Link>
+                  </Button>
                 </>
               ) : (
                 <>
@@ -129,17 +133,25 @@ export default function Header() {
                 {isEmployer ? (
                   <>
                     <Button variant="ghost" asChild className="justify-start">
-                      <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.employerDashboard')}
-                      </Link>
-                    </Button>
-                    {isAuthenticated && (
-                      <Button variant="ghost" asChild className="justify-start">
-                        <Link to="/chat" onClick={() => setIsMobileMenuOpen(false)}>
-                          {t('header.nav.chat')}
+                        <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                          {t('header.nav.employerDashboard')}
                         </Link>
                       </Button>
-                    )}
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/employer/workplaces" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.workplaces')}
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.forum')}
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/chat" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.chat')}
+                      </Link>
+                    </Button>
                   </>
                 ) : (
                   <>
