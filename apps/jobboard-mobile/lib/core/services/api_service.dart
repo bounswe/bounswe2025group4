@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 import '../models/job_post.dart';
@@ -20,6 +19,14 @@ import '../models/badge.dart';
 import '../providers/auth_provider.dart'; // Import AuthProvider
 import '../constants/app_constants.dart'; // Imp// ort AppConstants
 import '../models/mentorship_status.dart';
+import '../models/workplace.dart';
+import '../models/workplace_review.dart';
+import '../models/workplace_reply.dart';
+import '../models/workplace_employer.dart';
+import '../models/paginated_workplace_response.dart';
+import '../models/delete_response.dart';
+import '../models/workplace_image_response.dart';
+import '../models/workplace_rating.dart';
 
 const List<String> _availableEthicalPolicies = [
   'salary_transparency',
@@ -798,13 +805,17 @@ class ApiService {
     }
   }
 
-  /// GET /api/users/{id}
+  /// GET /api/profile/{id}
+  /// Fetches user details by user ID (uses profile endpoint)
   Future<User> fetchUser(String userId) async {
-    final uri = _buildUri('/users/$userId');
+    final uri = _buildUri('/profile/$userId');
     try {
       final response = await _client.get(uri, headers: _getHeaders());
       final data = await _handleResponse(response);
-      return User.fromJson(data);
+      // The profile endpoint returns a profile object, we need to extract user data
+      // If the response has a 'profile' field, use that, otherwise use the data directly
+      final userData = data['profile'] ?? data;
+      return User.fromJson(userData);
     } on SocketException {
       rethrow;
     } catch (e) {
@@ -812,8 +823,11 @@ class ApiService {
     }
   }
 
+  /// PUT /api/profile (updates current user's profile)
+  /// Note: This method is kept for compatibility but uses the profile endpoint
   Future<void> updateUser(String userId, Map<String, dynamic> userData) async {
-    final uri = _buildUri('/users/$userId');
+    // Use the profile update endpoint instead
+    final uri = _buildUri('/profile');
 
     try {
       final response = await _client.put(
@@ -1462,6 +1476,559 @@ class ApiService {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to update mentorship status');
+    }
+  }
+
+  // ─────────────────────────────────────────────────
+  // Workplace Endpoints
+  // ─────────────────────────────────────────────────
+
+  /// POST /api/workplace
+  /// Creates a new workplace (employer only)
+  Future<Workplace> createWorkplace({
+    required String companyName,
+    required String sector,
+    required String location,
+    required String shortDescription,
+    required String detailedDescription,
+    required List<String> ethicalTags,
+    String? website,
+  }) async {
+    final uri = _buildUri('/workplace');
+
+    final body = jsonEncode({
+      'companyName': companyName,
+      'sector': sector,
+      'location': location,
+      'shortDescription': shortDescription,
+      'detailedDescription': detailedDescription,
+      'ethicalTags': ethicalTags,
+      if (website != null && website.isNotEmpty) 'website': website,
+    });
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return Workplace.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to create workplace. $e');
+    }
+  }
+
+  /// GET /api/workplace
+  /// Fetches all workplaces with optional filters and pagination
+  Future<PaginatedWorkplaceResponse> fetchWorkplaces({
+    String? search,
+    String? sector,
+    String? location,
+    String? ethicalTag,
+    double? minRating,
+    String? sort,
+    int? page,
+    int? size,
+  }) async {
+    final queryParams = <String, dynamic>{};
+
+    if (search != null && search.isNotEmpty) {
+      queryParams['search'] = search;
+    }
+    if (sector != null && sector.isNotEmpty) {
+      queryParams['sector'] = sector;
+    }
+    if (location != null && location.isNotEmpty) {
+      queryParams['location'] = location;
+    }
+    if (ethicalTag != null && ethicalTag.isNotEmpty) {
+      queryParams['ethicalTag'] = ethicalTag;
+    }
+    if (minRating != null) {
+      queryParams['minRating'] = minRating;
+    }
+    if (sort != null && sort.isNotEmpty) {
+      queryParams['sort'] = sort;
+    }
+    if (page != null) {
+      queryParams['page'] = page;
+    }
+    if (size != null) {
+      queryParams['size'] = size;
+    }
+
+    final uri = _buildUri('/workplace', queryParams);
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return PaginatedWorkplaceResponse.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to load workplaces. $e');
+    }
+  }
+
+  /// GET /api/workplace/{id}
+  /// Fetches a specific workplace by ID
+  Future<Workplace> getWorkplaceById(
+    int workplaceId, {
+    bool includeReviews = false,
+    int? reviewsLimit,
+  }) async {
+    final queryParams = <String, dynamic>{};
+
+    if (includeReviews) {
+      queryParams['includeReviews'] = includeReviews;
+    }
+    if (reviewsLimit != null) {
+      queryParams['reviewsLimit'] = reviewsLimit;
+    }
+
+    final uri = _buildUri('/workplace/$workplaceId', queryParams);
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return Workplace.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to load workplace details. $e');
+    }
+  }
+
+  /// PUT /api/workplace/{id}
+  /// Updates a workplace (owner/manager only)
+  Future<Workplace> updateWorkplace({
+    required int workplaceId,
+    required String companyName,
+    required String sector,
+    required String location,
+    required String shortDescription,
+    required String detailedDescription,
+    required List<String> ethicalTags,
+    String? website,
+  }) async {
+    final uri = _buildUri('/workplace/$workplaceId');
+
+    final body = jsonEncode({
+      'companyName': companyName,
+      'sector': sector,
+      'location': location,
+      'shortDescription': shortDescription,
+      'detailedDescription': detailedDescription,
+      'ethicalTags': ethicalTags,
+      if (website != null && website.isNotEmpty) 'website': website,
+    });
+
+    try {
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return Workplace.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to update workplace. $e');
+    }
+  }
+
+  /// DELETE /api/workplace/{id}
+  /// Deletes a workplace (owner only)
+  Future<DeleteResponse> deleteWorkplace(int workplaceId) async {
+    final uri = _buildUri('/workplace/$workplaceId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return DeleteResponse.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to delete workplace. $e');
+    }
+  }
+
+  /// POST /api/workplace/{id}/image
+  /// Uploads a workplace image (owner/manager only)
+  Future<WorkplaceImageResponse> uploadWorkplaceImage(
+    int workplaceId,
+    File imageFile,
+  ) async {
+    try {
+      final uri = _buildUri('/workplace/$workplaceId/image');
+
+      final request = http.MultipartRequest('POST', uri);
+
+      // Add only auth header for multipart, remove Content-Type
+      final token = _authProvider.token;
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      final fileStream = http.ByteStream(imageFile.openRead());
+      final fileLength = await imageFile.length();
+
+      // Determine file extension and content type
+      final fileName = imageFile.path.split('/').last;
+      final extension = fileName.split('.').last.toLowerCase();
+
+      String contentTypeString;
+      switch (extension) {
+        case 'jpg':
+        case 'jpeg':
+          contentTypeString = 'image/jpeg';
+          break;
+        case 'png':
+          contentTypeString = 'image/png';
+          break;
+        case 'gif':
+          contentTypeString = 'image/gif';
+          break;
+        case 'webp':
+          contentTypeString = 'image/webp';
+          break;
+        default:
+          contentTypeString = 'image/jpeg';
+      }
+
+      final multipartFile = http.MultipartFile(
+        'file',
+        fileStream,
+        fileLength,
+        filename: fileName,
+        contentType: MediaType.parse(contentTypeString),
+      );
+
+      request.files.add(multipartFile);
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final data = await _handleResponse(response);
+        return WorkplaceImageResponse.fromJson(data as Map<String, dynamic>);
+      } else {
+        throw Exception('Failed to upload: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Failed to upload workplace image: $e');
+    }
+  }
+
+  /// DELETE /api/workplace/{id}/image
+  /// Deletes a workplace image (owner/manager only)
+  Future<DeleteResponse> deleteWorkplaceImage(int workplaceId) async {
+    final uri = _buildUri('/workplace/$workplaceId/image');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return DeleteResponse.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to delete workplace image. $e');
+    }
+  }
+
+  /// GET /api/workplace/{id}/rating
+  /// Gets the rating information for a workplace
+  Future<WorkplaceRating> getWorkplaceRating(int workplaceId) async {
+    final uri = _buildUri('/workplace/$workplaceId/rating');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return WorkplaceRating.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to load workplace rating. $e');
+    }
+  }
+
+  // ─────────────────────────────────────────────────
+  // Workplace Review Endpoints
+  // ─────────────────────────────────────────────────
+
+  /// POST /api/workplace/{workplaceId}/review
+  /// Creates a review for a workplace (job seeker only)
+  Future<WorkplaceReview> createWorkplaceReview({
+    required int workplaceId,
+    required String title,
+    required String content,
+    required bool anonymous,
+    required double overallRating,
+    required Map<String, int> ethicalPolicyRatings,
+  }) async {
+    final uri = _buildUri('/workplace/$workplaceId/review');
+
+    final body = jsonEncode({
+      'title': title,
+      'content': content,
+      'anonymous': anonymous,
+      'overallRating': overallRating,
+      'ethicalPolicyRatings': ethicalPolicyRatings,
+    });
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return WorkplaceReview.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to create review. $e');
+    }
+  }
+
+  /// GET /api/workplace/{workplaceId}/reviews
+  /// Fetches all reviews for a specific workplace
+  Future<List<WorkplaceReview>> getWorkplaceReviews(int workplaceId) async {
+    final uri = _buildUri('/workplace/$workplaceId/reviews');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => WorkplaceReview.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to load reviews. $e');
+    }
+  }
+
+  /// PUT /api/workplace/review/{reviewId}
+  /// Updates a review (author only)
+  Future<WorkplaceReview> updateWorkplaceReview({
+    required int reviewId,
+    String? title,
+    String? content,
+    bool? anonymous,
+    double? overallRating,
+    Map<String, int>? ethicalPolicyRatings,
+  }) async {
+    final uri = _buildUri('/workplace/review/$reviewId');
+
+    final body = jsonEncode({
+      if (title != null) 'title': title,
+      if (content != null) 'content': content,
+      if (anonymous != null) 'anonymous': anonymous,
+      if (overallRating != null) 'overallRating': overallRating,
+      if (ethicalPolicyRatings != null)
+        'ethicalPolicyRatings': ethicalPolicyRatings,
+    });
+
+    try {
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return WorkplaceReview.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to update review. $e');
+    }
+  }
+
+  /// DELETE /api/workplace/review/{reviewId}
+  /// Deletes a review (author only)
+  Future<void> deleteWorkplaceReview(int reviewId) async {
+    final uri = _buildUri('/workplace/review/$reviewId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to delete review. $e');
+    }
+  }
+
+  /// POST /api/workplace/review/{reviewId}/helpful
+  /// Marks a review as helpful
+  Future<void> markReviewHelpful(int reviewId) async {
+    final uri = _buildUri('/workplace/review/$reviewId/helpful');
+
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to mark review as helpful. $e');
+    }
+  }
+
+  /// POST /api/workplace/review/{reviewId}/reply
+  /// Creates a reply to a review (employer only)
+  Future<WorkplaceReply> replyToWorkplaceReview({
+    required int reviewId,
+    required String content,
+  }) async {
+    final uri = _buildUri('/workplace/review/$reviewId/reply');
+
+    final body = jsonEncode({'content': content});
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return WorkplaceReply.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to reply to review. $e');
+    }
+  }
+
+  /// PUT /api/workplace/reply/{replyId}
+  /// Updates a reply to a review (employer only)
+  Future<WorkplaceReply> updateWorkplaceReply({
+    required int replyId,
+    required String content,
+  }) async {
+    final uri = _buildUri('/workplace/reply/$replyId');
+
+    final body = jsonEncode({'content': content});
+
+    try {
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return WorkplaceReply.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to update reply. $e');
+    }
+  }
+
+  /// DELETE /api/workplace/reply/{replyId}
+  /// Deletes a reply to a review (employer only)
+  Future<void> deleteWorkplaceReply(int replyId) async {
+    final uri = _buildUri('/workplace/reply/$replyId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to delete reply. $e');
+    }
+  }
+
+  // ─────────────────────────────────────────────────
+  // Workplace Employer Management Endpoints
+  // ─────────────────────────────────────────────────
+
+  /// POST /api/workplace/{workplaceId}/manager
+  /// Adds a manager to a workplace (owner only)
+  Future<WorkplaceEmployer> addWorkplaceManager({
+    required int workplaceId,
+    required int userId,
+  }) async {
+    final uri = _buildUri('/workplace/$workplaceId/manager');
+
+    final body = jsonEncode({'userId': userId});
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: body,
+      );
+      final dynamic data = await _handleResponse(response);
+      return WorkplaceEmployer.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to add manager. $e');
+    }
+  }
+
+  /// DELETE /api/workplace/{workplaceId}/employer/{userId}
+  /// Removes an employer from a workplace (owner only)
+  Future<void> removeWorkplaceEmployer({
+    required int workplaceId,
+    required int userId,
+  }) async {
+    final uri = _buildUri('/workplace/$workplaceId/employer/$userId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to remove employer. $e');
+    }
+  }
+
+  /// POST /api/workplace/{workplaceId}/request-manager
+  /// Sends a request to become a manager (job seeker/employer)
+  Future<void> requestManagerRole(int workplaceId) async {
+    final uri = _buildUri('/workplace/$workplaceId/request-manager');
+
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to send manager request. $e');
+    }
+  }
+
+  /// GET /api/workplace/{workplaceId}/manager-requests
+  /// Gets all pending manager requests for a workplace (owner only)
+  Future<List<Map<String, dynamic>>> getManagerRequests(int workplaceId) async {
+    final uri = _buildUri('/workplace/$workplaceId/manager-requests');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((e) => e as Map<String, dynamic>).toList();
+    } catch (e) {
+      throw Exception('Failed to load manager requests. $e');
+    }
+  }
+
+  /// POST /api/workplace/{workplaceId}/manager-request/{requestId}/approve
+  /// Approves a manager request (owner only)
+  Future<void> approveManagerRequest({
+    required int workplaceId,
+    required int requestId,
+  }) async {
+    final uri = _buildUri(
+      '/workplace/$workplaceId/manager-request/$requestId/approve',
+    );
+
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to approve manager request. $e');
+    }
+  }
+
+  /// POST /api/workplace/{workplaceId}/manager-request/{requestId}/reject
+  /// Rejects a manager request (owner only)
+  Future<void> rejectManagerRequest({
+    required int workplaceId,
+    required int requestId,
+  }) async {
+    final uri = _buildUri(
+      '/workplace/$workplaceId/manager-request/$requestId/reject',
+    );
+
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to reject manager request. $e');
+    }
+  }
+
+  /// GET /api/workplace/my-workplaces
+  /// Gets all workplaces where the current user is an employer
+  Future<List<Workplace>> getMyWorkplaces() async {
+    final uri = _buildUri('/workplace/my-workplaces');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => Workplace.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to load my workplaces. $e');
     }
   }
 
