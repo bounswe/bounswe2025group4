@@ -277,6 +277,10 @@
         "serviceUnavailable": "Service temporarily unavailable. Please try again later or contact support.",
         "invalidCredentials": "Invalid username or password. Please try again.",
         "generic": "Login failed. Please try again."
+      },
+      "notifications": {
+        "loginSuccess": "Login successful! Redirecting...",
+        "2faRequired": "Two-factor authentication required. Please check your email."
       }
     },
     "register": {
@@ -362,7 +366,8 @@
       "errors": {
         "invalid": "Invalid or expired OTP code. Please try again.",
         "generic": "OTP verification failed. Please try again."
-      }
+      },
+      "success": "OTP verification successful! You are now logged in."
     }
   },
   "mentorship": {
@@ -430,7 +435,8 @@
       "sendRequest": "Send Mentorship Request",
       "sendingRequest": "Sending Request...",
       "cancel": "Cancel",
-      "successMessage": "Mentorship request sent successfully!"
+      "successMessage": "Mentorship request sent successfully!",
+      "errorMessage": "Failed to send mentorship request. Please try again."
     },
     "myMentorships": {
       "title": "My Mentorships",
@@ -673,6 +679,33 @@
       "confirmationLabel": "Confirmation",
       "confirmationPlaceholder": "Type {{keyword}} to confirm"
     },
+    "notifications": {
+      "createSuccess": "Profile created successfully!",
+      "createError": "Failed to create profile. Please try again.",
+      "imageUploadSuccess": "Profile image uploaded successfully.",
+      "imageUploadError": "Failed to upload profile image.",
+      "imageDeleteSuccess": "Profile image deleted successfully.",
+      "imageDeleteError": "Failed to delete profile image.",
+      "deleteExperienceSuccess": "Experience deleted successfully.",
+      "deleteExperienceError": "Failed to delete experience.",
+      "deleteEducationSuccess": "Education deleted successfully.",
+      "deleteEducationError": "Failed to delete education.",
+      "deleteSkillSuccess": "Skill deleted successfully.",
+      "deleteSkillError": "Failed to delete skill.",
+      "deleteInterestSuccess": "Interest deleted successfully.",
+      "deleteInterestError": "Failed to delete interest.",
+      "saveBioSuccess": "Bio updated successfully.",
+      "saveBioError": "Failed to update bio.",
+      "saveExperienceSuccess": "Experience saved successfully.",
+      "saveExperienceError": "Failed to save experience.",
+      "saveEducationSuccess": "Education saved successfully.",
+      "saveEducationError": "Failed to save education.",
+      "saveSkillSuccess": "Skill saved successfully.",
+      "saveSkillError": "Failed to save skill.",
+      "saveInterestSuccess": "Interest saved successfully.",
+      "saveInterestError": "Failed to save interest.",
+      "deleteAccountSuccess": "All profile data has been deleted."
+    },
     "activity": {
       "items": [
         {
@@ -794,6 +827,10 @@
       "reject": "Failed to reject application. Please try again.",
       "title": "Error Loading Application"
     },
+    "success": {
+      "approve": "Application approved successfully.",
+      "reject": "Application rejected successfully."
+    },
     "applied": {
       "today": "today",
       "yesterday": "1 day ago",
@@ -910,7 +947,8 @@
     "inclusiveOpportunityDescription": "Mark this position as an inclusive opportunity, welcoming candidates from diverse backgrounds and abilities",
     "submit": "Publish Job Posting",
     "submitting": "Publishing...",
-    "submitError": "Failed to create job posting. Please try again."
+    "submitError": "Failed to create job posting. Please try again.",
+    "submitSuccess": "Job post created successfully!"
   },
   "myMentorships": {
     "title": "My Mentorships",
