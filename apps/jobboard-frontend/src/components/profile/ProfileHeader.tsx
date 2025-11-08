@@ -2,6 +2,7 @@ import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useTranslation } from 'react-i18next';
+import { getYear } from 'date-fns';
 
 interface Experience {
   id: number;
@@ -33,7 +34,7 @@ export function ProfileHeader({
   badgesCount = 5,
   onEditImage,
 }: ProfileHeaderProps) {
-  const joinYear = new Date(createdAt).getFullYear();
+  const joinYear = getYear(new Date(createdAt));
   const currentJob = experiences.find((exp) => !exp.endDate);
   const { t } = useTranslation('common');
   const currentRoleLabel = currentJob

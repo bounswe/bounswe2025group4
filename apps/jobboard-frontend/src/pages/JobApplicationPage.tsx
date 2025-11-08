@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
 import { ChevronRight, Upload, X, FileText, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -165,14 +166,6 @@ export default function JobApplicationPage() {
     return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
   };
 
-  const formatDate = (isoDate: string) => {
-    const date = new Date(isoDate);
-    return date.toLocaleDateString(resolvedLanguage, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
 
   if (isLoading) {
     return <CenteredLoader />;
@@ -284,7 +277,7 @@ export default function JobApplicationPage() {
                 <span className="ml-2 font-medium">{formatSalary(job.minSalary, job.maxSalary)}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('jobApplication.jobDetails.postedOn', { date: formatDate(job.postedDate) })}</span>
+                <span className="text-muted-foreground">{t('jobApplication.jobDetails.postedOn', { date: format(new Date(job.postedDate), 'MMMM d, yyyy') })}</span>
               </div>
             </div>
           </div>

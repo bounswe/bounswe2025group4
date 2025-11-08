@@ -42,9 +42,17 @@ export default function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-2">
               {isEmployer ? (
-                <Button variant="ghost" asChild>
-                  <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
-                </Button>
+                <>
+                  <Button variant="ghost" asChild>
+                    <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/employer/workplaces">{t('header.nav.workplaces')}</Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/forum">{t('header.nav.forum')}</Link>
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button variant="ghost" asChild>
@@ -110,11 +118,23 @@ export default function Header() {
 
               <nav className="flex flex-col gap-2">
                 {isEmployer ? (
-                  <Button variant="ghost" asChild className="justify-start">
-                    <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                      {t('header.nav.employerDashboard')}
-                    </Link>
-                  </Button>
+                  <>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.employerDashboard')}
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/employer/workplaces" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.workplaces')}
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.forum')}
+                      </Link>
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Button variant="ghost" asChild className="justify-start">

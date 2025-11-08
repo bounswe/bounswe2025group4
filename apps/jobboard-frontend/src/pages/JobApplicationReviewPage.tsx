@@ -10,6 +10,7 @@ import type { JobApplicationResponse } from '@/types/api.types';
 import CenteredLoader from '@/components/CenteredLoader';
 
 import { useTranslation } from 'react-i18next';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function JobApplicationReviewPage() {
   const { t } = useTranslation('common');
@@ -87,17 +88,6 @@ export default function JobApplicationReviewPage() {
   };
 
 
-  // Format date
-  const formatDate = (isoDate: string) => {
-    const date = new Date(isoDate);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return t('jobApplicationReview.applied.today');
-    if (diffDays === 1) return t('jobApplicationReview.applied.yesterday');
-    return t('jobApplicationReview.applied.daysAgo', { count: diffDays });
-  };
 
   if (isLoading) {
     return <CenteredLoader />;
@@ -155,7 +145,7 @@ export default function JobApplicationReviewPage() {
                   </div>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {t('jobApplicationReview.applied')} {formatDate(application.appliedDate)}
+                  {t('jobApplicationReview.applied')} {formatDistanceToNow(new Date(application.appliedDate), { addSuffix: true })}
                 </div>
               </div>
             </div>

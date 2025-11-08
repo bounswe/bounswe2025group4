@@ -1,6 +1,7 @@
 import { Facebook, Instagram, Linkedin, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { getYear } from 'date-fns';
 
 export default function Footer() {
   const { t } = useTranslation('common');
@@ -29,7 +30,7 @@ export default function Footer() {
               {t('footer.brandSuffix')}
             </Link>
             {' - '}
-            {new Date().getFullYear()}
+            {getYear(new Date())}
           </p>
 
           <div className="flex gap-4 justify-end">
@@ -53,7 +54,7 @@ export default function Footer() {
               {t('footer.brandSuffix')} 
             </Link>
             {' - '}
-            {new Date().getFullYear()}
+            {getYear(new Date())}
           </p>
         </div>
       </div>

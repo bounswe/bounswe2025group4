@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
 import { Briefcase, MapPin, Download, ExternalLink, Trash2, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -108,14 +109,6 @@ export default function MyApplicationsPage() {
     }
   };
 
-  const formatDate = (isoDate: string) => {
-    const date = new Date(isoDate);
-    return date.toLocaleDateString(resolvedLanguage, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
 
   const getStatusBadgeVariant = (status: JobApplicationStatus) => {
     switch (status) {
@@ -224,7 +217,7 @@ export default function MyApplicationsPage() {
                       <span className="flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
                         {t('myApplications.applicationCard.appliedOn', {
-                          date: formatDate(application.appliedDate),
+                          date: format(new Date(application.appliedDate), 'MMM d, yyyy'),
                         })}
                       </span>
                       <Badge
@@ -305,7 +298,7 @@ export default function MyApplicationsPage() {
                 </div>
                 <div>
                   <span className="text-muted-foreground">{t('myApplications.details.appliedDate')}:</span>
-                  <span className="ml-2">{formatDate(selectedApplication.appliedDate)}</span>
+                  <span className="ml-2">{format(new Date(selectedApplication.appliedDate), 'MMM d, yyyy')}</span>
                 </div>
               </div>
 
