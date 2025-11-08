@@ -53,6 +53,7 @@ public class ReplyService {
         return ReplyResponse.builder()
                 .id(rr.getId())
                 .reviewId(rr.getReview().getId())
+                .workplaceName(rr.getReview().getWorkplace().getCompanyName())
                 .employerUserId(rr.getEmployerUser() != null ? rr.getEmployerUser().getId() : null)
                 .content(rr.getContent())
                 .createdAt(rr.getCreatedAt())

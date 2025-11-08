@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.access.AccessDeniedException;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class WorkplaceService {
     private final ReviewRepository reviewRepository;
     private final ReviewPolicyRatingRepository reviewPolicyRatingRepository;
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -322,6 +324,9 @@ public class WorkplaceService {
                 .map(ew -> EmployerListItem.builder()
                         .userId(ew.getUser().getId())
                         .username(ew.getUser().getUsername())
+                        .nameSurname(profileRepository.findByUserId(ew.getUser().getId())
+                                .map(p -> p.getFirstName() + " " + p.getLastName())
+                                .orElse(""))
                         .email(ew.getUser().getEmail())
                         .role(ew.getRole() != null ? ew.getRole().name() : null)
                         .joinedAt(ew.getCreatedAt())
