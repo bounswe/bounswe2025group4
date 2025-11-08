@@ -1,6 +1,7 @@
 package org.bounswe.jobboardbackend.jobpost.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -18,15 +19,10 @@ public class CreateJobPostRequest {
     @Size(max = 1000)
     private String description;
 
-    @NotBlank(message = "Company name is required")
-    private String company;
-
-    @NotBlank(message = "Location is required")
-    private String location;
+    @NotNull(message = "Workplace ID is required")
+    private Long workplaceId;
 
     private boolean remote;
-
-    private String ethicalTags; // comma-separated, optional
 
     private boolean inclusiveOpportunity; // targeted toward candidates with disabilities
 

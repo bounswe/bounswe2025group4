@@ -10,11 +10,14 @@ import java.util.List;
 public interface JobPostRepository extends JpaRepository<JobPost, Long> {
 
     List<JobPost> findByEmployerId(Long employerId);
+    
+    List<JobPost> findByWorkplaceId(Long workplaceId);
 
     @Query(value = """
-    SELECT * FROM job_posts j
+    SELECT j.* FROM job_posts j
+    LEFT JOIN workplace w ON j.workplace_id = w.id
     WHERE (:title IS NULL OR LOWER(CAST(j.title AS varchar)) LIKE LOWER(CONCAT(CAST(:title AS varchar), '%')))
-    AND (:company IS NULL OR LOWER(CAST(j.company AS varchar)) LIKE LOWER(CONCAT(CAST(:company AS varchar), '%')))
+    AND (:companyName IS NULL OR LOWER(CAST(w.company_name AS varchar)) LIKE LOWER(CONCAT(CAST(:companyName AS varchar), '%')))
     AND (:minSalary IS NULL OR CAST(j.min_salary AS integer) >= CAST(:minSalary AS integer))
     AND (:maxSalary IS NULL OR CAST(j.max_salary AS integer) <= CAST(:maxSalary AS integer))
     AND (:isRemote IS NULL OR CAST(j.remote AS boolean) = CAST(:isRemote AS boolean))
@@ -22,7 +25,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long> {
     """, nativeQuery = true)
     List<JobPost> findFiltered(
             @Param("title") String title,
-            @Param("company") String company,
+            @Param("companyName") String companyName,
             @Param("minSalary") Integer minSalary,
             @Param("maxSalary") Integer maxSalary,
             @Param("isRemote") Boolean isRemote,

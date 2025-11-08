@@ -2,6 +2,7 @@ package org.bounswe.jobboardbackend.jobpost.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.bounswe.jobboardbackend.workplace.dto.WorkplaceBriefResponse;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,10 +15,11 @@ public class JobPostResponse {
     private Long employerId;
     private String title;
     private String description;
-    private String company;
-    private String location;
+    
+    // Workplace information
+    private WorkplaceBriefResponse workplace;
+    
     private boolean remote;
-    private String ethicalTags;
     private boolean inclusiveOpportunity;
     private Integer minSalary;
     private Integer maxSalary;

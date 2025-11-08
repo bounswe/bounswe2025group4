@@ -173,7 +173,7 @@ public class JobApplicationService {
                 .applicantName(jobSeeker.getUsername())
                 .jobPostId(jobPost.getId())
                 .title(jobPost.getTitle())
-                .company(jobPost.getCompany())
+                .company(jobPost.getWorkplace().getCompanyName())
                 .status(application.getStatus())
                 .specialNeeds(application.getSpecialNeeds())
                 .feedback(application.getFeedback())

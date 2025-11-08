@@ -9,6 +9,11 @@ import org.bounswe.jobboardbackend.jobpost.dto.UpdateJobPostRequest;
 import org.bounswe.jobboardbackend.jobpost.dto.JobPostResponse;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.workplace.model.Workplace;
+import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
+import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
+import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,10 +31,20 @@ public class JobPostService {
 
     private final JobPostRepository jobPostRepository;
     private final UserRepository userRepository;
+    private final WorkplaceRepository workplaceRepository;
+    private final EmployerWorkplaceRepository employerWorkplaceRepository;
+    private final WorkplaceService workplaceService;
 
-    public JobPostService(JobPostRepository jobPostRepository, UserRepository userRepository) {
+    public JobPostService(JobPostRepository jobPostRepository, 
+                          UserRepository userRepository,
+                          WorkplaceRepository workplaceRepository,
+                          EmployerWorkplaceRepository employerWorkplaceRepository,
+                          WorkplaceService workplaceService) {
         this.jobPostRepository = jobPostRepository;
         this.userRepository = userRepository;
+        this.workplaceRepository = workplaceRepository;
+        this.employerWorkplaceRepository = employerWorkplaceRepository;
+        this.workplaceService = workplaceService;
     }
 
     @Transactional(readOnly = true)
@@ -37,9 +52,16 @@ public class JobPostService {
         List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, minSalary, maxSalary, isRemote, inclusiveOpportunity);
         return jobs.stream()
                 .filter(j -> {
+                    // Filter by workplace ethical tags if specified
                     if (ethicalTags == null || ethicalTags.isEmpty()) return true;
-                    for (String tag : ethicalTags) {
-                        if (j.getEthicalTags() != null && j.getEthicalTags().toLowerCase().contains(tag.toLowerCase())) return true;
+                    if (j.getWorkplace() == null || j.getWorkplace().getEthicalTags() == null) return false;
+                    
+                    // Check if any of the requested tags match workplace's tags
+                    for (String requestedTag : ethicalTags) {
+                        if (j.getWorkplace().getEthicalTags().stream()
+                                .anyMatch(policy -> policy.getLabel().equalsIgnoreCase(requestedTag))) {
+                            return true;
+                        }
                     }
                     return false;
                 })
@@ -49,6 +71,11 @@ public class JobPostService {
     @Transactional(readOnly = true)
     public List<JobPostResponse> getByEmployerId(Long employerId) {
         return jobPostRepository.findByEmployerId(employerId).stream().map(this::toResponseDto).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<JobPostResponse> getByWorkplaceId(Long workplaceId) {
+        return jobPostRepository.findByWorkplaceId(workplaceId).stream().map(this::toResponseDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -63,14 +90,19 @@ public class JobPostService {
     public JobPostResponse create(CreateJobPostRequest dto) {
         User employer = getCurrentUser();
 
+        // Validate workplace exists
+        Workplace workplace = workplaceRepository.findById(dto.getWorkplaceId())
+                .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, 
+                        "Workplace with ID " + dto.getWorkplaceId() + " not found"));
+
+        // Check authorization: user must be employer of this workplace
+        assertEmployerOfWorkplace(dto.getWorkplaceId(), employer.getId());
 
         JobPost job = JobPost.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
-                .company(dto.getCompany())
-                .location(dto.getLocation())
+                .workplace(workplace)
                 .remote(dto.isRemote())
-                .ethicalTags(dto.getEthicalTags())
                 .inclusiveOpportunity(dto.isInclusiveOpportunity())
                 .employer(employer)
                 .minSalary(dto.getMinSalary())
@@ -99,10 +131,8 @@ public class JobPostService {
                 .employerId(job.getEmployer().getId())
                 .title(job.getTitle())
                 .description(job.getDescription())
-                .company(job.getCompany())
-                .location(job.getLocation())
+                .workplace(workplaceService.toBriefResponse(job.getWorkplace()))
                 .remote(job.isRemote())
-                .ethicalTags(job.getEthicalTags())
                 .inclusiveOpportunity(job.isInclusiveOpportunity())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
@@ -119,13 +149,23 @@ public class JobPostService {
         User currentUser = getCurrentUser();
         validateJobOwnership(job, currentUser);
 
+        // Handle workplace change
+        if (dto.getWorkplaceId() != null) {
+            // Validate new workplace exists
+            Workplace newWorkplace = workplaceRepository.findById(dto.getWorkplaceId())
+                    .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, 
+                            "Workplace with ID " + dto.getWorkplaceId() + " not found"));
+            
+            // Check authorization for new workplace
+            assertEmployerOfWorkplace(dto.getWorkplaceId(), currentUser.getId());
+            
+            job.setWorkplace(newWorkplace);
+        }
+
         // Partial update: only update non-null fields
         if (dto.getTitle() != null) job.setTitle(dto.getTitle());
         if (dto.getDescription() != null) job.setDescription(dto.getDescription());
-        if (dto.getCompany() != null) job.setCompany(dto.getCompany());
-        if (dto.getLocation() != null) job.setLocation(dto.getLocation());
         if (dto.getRemote() != null) job.setRemote(dto.getRemote());
-        if (dto.getEthicalTags() != null) job.setEthicalTags(dto.getEthicalTags());
         if (dto.getInclusiveOpportunity() != null) job.setInclusiveOpportunity(dto.getInclusiveOpportunity());
         if (dto.getMinSalary() != null) job.setMinSalary(dto.getMinSalary());
         if (dto.getMaxSalary() != null) job.setMaxSalary(dto.getMaxSalary());
@@ -159,6 +199,13 @@ public class JobPostService {
         }
         if (!job.getEmployer().getId().equals(user.getId())) {
             throw new HandleException(ErrorCode.JOB_POST_FORBIDDEN, "Only the employer who posted the job can perform this action");
+        }
+    }
+
+    private void assertEmployerOfWorkplace(Long workplaceId, Long userId) {
+        boolean isEmployer = employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId);
+        if (!isEmployer) {
+            throw new AccessDeniedException("You are not an employer of this workplace. Only employers of the workplace can post jobs for it.");
         }
     }
 

@@ -43,6 +43,12 @@ public class JobPostController {
     }
 
     @PreAuthorize("isAuthenticated()")
+    @GetMapping("/workplace/{workplaceId}")
+    public ResponseEntity<List<JobPostResponse>> getByWorkplaceId(@PathVariable Long workplaceId) {
+        return ResponseEntity.ok(service.getByWorkplaceId(workplaceId));
+    }
+
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<JobPostResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
