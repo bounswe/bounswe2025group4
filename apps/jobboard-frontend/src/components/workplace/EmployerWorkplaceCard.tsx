@@ -108,13 +108,13 @@ export function EmployerWorkplaceCard({
             <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
               <Button variant="outline" asChild>
                 <Link to={`/employer/workplace/${workplace.id}/settings`}>
-                  <Settings className="h-4 w-4 mr-2" />
+                  <Settings className="h-4 w-4" />
                   Settings
                 </Link>
               </Button>
               <Button variant="outline" asChild className="relative">
                 <Link to={`/employer/workplace/${workplace.id}/requests`}>
-                  <Users className="h-4 w-4 mr-2" />
+                  <Users className="h-4 w-4" />
                   Manage Requests
                   {hasPendingRequests && (
                     <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-background" />

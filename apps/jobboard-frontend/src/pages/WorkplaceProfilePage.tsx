@@ -17,6 +17,7 @@ import { ReviewFormDialog } from '@/components/reviews/ReviewFormDialog';
 import { MapPin, Building2, ExternalLink, Users, Settings, CheckCircle2 } from 'lucide-react';
 import { getWorkplaceById } from '@/services/workplace.service';
 import { getJobsByEmployer } from '@/services/jobs.service';
+import { getEmployerRequests } from '@/services/employer.service';
 import type { WorkplaceDetailResponse } from '@/types/workplace.types';
 import type { JobPostResponse } from '@/types/api.types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,6 +31,7 @@ export default function WorkplaceProfilePage() {
   const [loading, setLoading] = useState(true);
   const [jobsLoading, setJobsLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [hasPendingRequests, setHasPendingRequests] = useState(false);
 
   useEffect(() => {
     loadWorkplaceData();
@@ -43,10 +45,26 @@ export default function WorkplaceProfilePage() {
     try {
       const data = await getWorkplaceById(parseInt(id, 10), true, 5);
       setWorkplace(data);
-      
+
       // Load jobs for all employers in the workplace
       if (data.employers && data.employers.length > 0) {
-        loadWorkplaceJobs(data.employers.map(emp => emp.userId));
+        loadWorkplaceJobs(data.employers.map((emp) => emp.userId));
+      }
+
+      // Check for pending employer requests if user is an employer
+      const isEmployer = data.employers?.some((emp) => emp.userId === user?.id);
+      if (isEmployer) {
+        try {
+          const requests = await getEmployerRequests(parseInt(id, 10), { size: 10 });
+          const hasPending = requests.content.some(
+            (req) => req.status === 'PENDING' || req.status.toUpperCase() === 'PENDING'
+          );
+          setHasPendingRequests(hasPending);
+        } catch (err) {
+          // Silently fail - user might not have permission to view requests
+          console.warn('Failed to fetch employer requests:', err);
+          setHasPendingRequests(false);
+        }
       }
     } catch (error) {
       console.error('Failed to load workplace data:', error);
@@ -59,21 +77,25 @@ export default function WorkplaceProfilePage() {
     setJobsLoading(true);
     try {
       // Fetch jobs for all employers and combine them
-      const allJobsPromises = employerIds.map(employerId => 
-        getJobsByEmployer(employerId).catch(err => {
+      const allJobsPromises = employerIds.map((employerId) =>
+        getJobsByEmployer(employerId).catch((err) => {
           console.error(`Failed to load jobs for employer ${employerId}:`, err);
           return [];
-        })
+        }),
       );
-      
+
       const allJobsArrays = await Promise.all(allJobsPromises);
       const combinedJobs = allJobsArrays.flat();
-      
+
       // Remove duplicates based on job ID
-      const uniqueJobs = combinedJobs.filter((job, index, self) =>
-        index === self.findIndex(j => (j.id || j.jobId || j.jobPostId) === (job.id || job.jobId || job.jobPostId))
+      const uniqueJobs = combinedJobs.filter(
+        (job, index, self) =>
+          index ===
+          self.findIndex(
+            (j) => (j.id || j.jobId || j.jobPostId) === (job.id || job.jobId || job.jobPostId),
+          ),
       );
-      
+
       setJobs(uniqueJobs);
     } catch (error) {
       console.error('Failed to load workplace jobs:', error);
@@ -132,15 +154,13 @@ export default function WorkplaceProfilePage() {
                 <div>
                   <h1 className="text-3xl font-bold mb-2">{workplace.companyName}</h1>
                   {workplace.shortDescription && (
-                    <p className="text-lg text-muted-foreground">
-                      {workplace.shortDescription}
-                    </p>
+                    <p className="text-lg text-muted-foreground">{workplace.shortDescription}</p>
                   )}
                 </div>
                 {isEmployer && (
                   <Link to={`/employer/workplace/${workplace.id}/settings`}>
                     <Button variant="outline" size="sm">
-                      <Settings className="h-4 w-4 mr-2" />
+                      <Settings className="h-4 w-4" />
                       Settings
                     </Button>
                   </Link>
@@ -217,11 +237,15 @@ export default function WorkplaceProfilePage() {
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold">Employers</h2>
-                  <Link to={`/employer/workplace/${workplace.id}/requests`}>
-                    <Button variant="outline" size="sm">
+                  <Button variant="outline" asChild className="relative">
+                    <Link to={`/employer/workplace/${workplace.id}/requests`}>
+                      <Users className="h-4 w-4"/>
                       Manage Requests
-                    </Button>
-                  </Link>
+                      {hasPendingRequests && (
+                        <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-background" />
+                      )}
+                    </Link>
+                  </Button>
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {workplace.employers.map((employer) => (
@@ -289,11 +313,7 @@ export default function WorkplaceProfilePage() {
                   {jobs.slice(0, 5).map((job) => {
                     const jobId = job.id || job.jobId || job.jobPostId;
                     return (
-                      <Link
-                        key={jobId}
-                        to={`/jobs/${jobId}`}
-                        className="block group"
-                      >
+                      <Link key={jobId} to={`/jobs/${jobId}`} className="block group">
                         <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                           <div className="p-4">
                             <Badge className="mb-2 bg-green-100 text-green-800 hover:bg-green-100">
@@ -314,7 +334,8 @@ export default function WorkplaceProfilePage() {
                             </div>
                             {job.minSalary && job.maxSalary && (
                               <p className="text-sm text-muted-foreground mb-2">
-                                ${job.minSalary.toLocaleString()} - ${job.maxSalary.toLocaleString()}
+                                ${job.minSalary.toLocaleString()} - $
+                                {job.maxSalary.toLocaleString()}
                               </p>
                             )}
                             <Button className="w-full mt-3" size="sm" variant="outline">
