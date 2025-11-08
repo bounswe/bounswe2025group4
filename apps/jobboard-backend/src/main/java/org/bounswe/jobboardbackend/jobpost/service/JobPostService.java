@@ -70,11 +70,21 @@ public class JobPostService {
 
     @Transactional(readOnly = true)
     public List<JobPostResponse> getByEmployerId(Long employerId) {
+
+        // Verify employer exists
+        userRepository.findById(employerId)
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "Employer with ID " + employerId + " not found"));
+        
         return jobPostRepository.findByEmployerId(employerId).stream().map(this::toResponseDto).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<JobPostResponse> getByWorkplaceId(Long workplaceId) {
+
+        // Verify workplace exists
+        workplaceRepository.findById(workplaceId)
+                .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace with ID " + workplaceId + " not found"));
+        
         return jobPostRepository.findByWorkplaceId(workplaceId).stream().map(this::toResponseDto).collect(Collectors.toList());
     }
 
