@@ -248,6 +248,10 @@
         "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.",
         "invalidCredentials": "Kullanıcı adı veya şifre hatalı. Lütfen tekrar deneyin.",
         "generic": "Giriş işlemi başarısız oldu. Lütfen tekrar deneyin."
+      },
+      "notifications": {
+        "loginSuccess": "Giriş başarılı! Yönlendiriliyorsunuz...",
+        "2faRequired": "İki faktörlü kimlik doğrulama gerekli. Lütfen e-postanızı kontrol edin."
       }
     },
     "register": {
@@ -333,7 +337,8 @@
       "errors": {
         "invalid": "Geçersiz veya süresi dolmuş OTP kodu. Lütfen tekrar deneyin.",
         "generic": "OTP doğrulaması başarısız oldu. Lütfen tekrar deneyin."
-      }
+      },
+      "success": "OTP doğrulaması başarılı! Giriş yaptınız."
     }
   },
   "mentorship": {
@@ -401,7 +406,8 @@
       "sendRequest": "Mentorluk Talebi Gönder",
       "sendingRequest": "Talep Gönderiliyor...",
       "cancel": "İptal",
-      "successMessage": "Mentorluk talebi başarıyla gönderildi!"
+      "successMessage": "Mentorluk talebi başarıyla gönderildi!",
+      "errorMessage": "Mentorluk talebi gönderilemedi. Lütfen tekrar deneyin."
     },
     "myMentorships": {
       "title": "Mentorluklarım",
@@ -644,6 +650,33 @@
       "confirmationLabel": "Onay",
       "confirmationPlaceholder": "Onaylamak için {{keyword}} yazın"
     },
+    "notifications": {
+      "createSuccess": "Profil başarıyla oluşturuldu!",
+      "createError": "Profil oluşturulamadı. Lütfen tekrar deneyin.",
+      "imageUploadSuccess": "Profil resmi başarıyla yüklendi.",
+      "imageUploadError": "Profil resmi yüklenemedi.",
+      "imageDeleteSuccess": "Profil resmi başarıyla silindi.",
+      "imageDeleteError": "Profil resmi silinemedi.",
+      "deleteExperienceSuccess": "Deneyim başarıyla silindi.",
+      "deleteExperienceError": "Deneyim silinemedi.",
+      "deleteEducationSuccess": "Eğitim bilgisi başarıyla silindi.",
+      "deleteEducationError": "Eğitim bilgisi silinemedi.",
+      "deleteSkillSuccess": "Yetenek başarıyla silindi.",
+      "deleteSkillError": "Yetenek silinemedi.",
+      "deleteInterestSuccess": "İlgi alanı başarıyla silindi.",
+      "deleteInterestError": "İlgi alanı silinemedi.",
+      "saveBioSuccess": "Biyografi başarıyla güncellendi.",
+      "saveBioError": "Biyografi güncellenemedi.",
+      "saveExperienceSuccess": "Deneyim başarıyla kaydedildi.",
+      "saveExperienceError": "Deneyim kaydedilemedi.",
+      "saveEducationSuccess": "Eğitim bilgisi başarıyla kaydedildi.",
+      "saveEducationError": "Eğitim bilgisi kaydedilemedi.",
+      "saveSkillSuccess": "Yetenek başarıyla kaydedildi.",
+      "saveSkillError": "Yetenek kaydedilemedi.",
+      "saveInterestSuccess": "İlgi alanı başarıyla kaydedildi.",
+      "saveInterestError": "İlgi alanı kaydedilemedi.",
+      "deleteAccountSuccess": "Tüm profil verileri silindi."
+    },
     "activity": {
       "items": [
         {
@@ -852,6 +885,44 @@
       "deleteFailed": "Başvuru silinemedi. Lütfen tekrar deneyin."
     }
   },
+  "jobApplicationReview": {
+    "noCv": "Bu başvuru için CV bulunamadı",
+    "error": {
+      "load": "Başvuru detayları yüklenemedi. Lütfen tekrar deneyin.",
+      "approve": "Başvuru onaylanamadı. Lütfen tekrar deneyin.",
+      "reject": "Başvuru reddedilemedi. Lütfen tekrar deneyin.",
+      "title": "Başvuru Yüklenemedi"
+    },
+    "success": {
+      "approve": "Başvuru başarıyla onaylandı.",
+      "reject": "Başvuru başarıyla reddedildi."
+    },
+    "applied": {
+      "today": "bugün",
+      "yesterday": "1 gün önce",
+      "daysAgo": "{{count}} gün önce"
+    },
+    "backToJob": "İlana Dön",
+    "title": "{{jobTitle}} için Başvuru",
+    "atCompany": "{{company}} şirketinde",
+    "applicantInfo": "Başvuran Bilgileri",
+    "status": "Durum",
+    "coverLetter": "Ön Yazı",
+    "specialNeeds": "Özel İhtiyaçlar veya Konaklama",
+    "cv": "CV / Özgeçmiş",
+    "loadingCv": "CV Yükleniyor...",
+    "resumeOf": "{{name}}'nin Özgeçmişi",
+    "downloadToView": "CV'yi görüntülemek için indir'e tıklayın",
+    "download": "İndir",
+    "noCvAttached": "Bu başvuruya eklenmiş CV yok",
+    "existingFeedback": "Mevcut Geri Bildirim",
+    "decision": "Karar",
+    "feedback": "Geri Bildirim (isteğe bağlı)",
+    "feedbackPlaceholder": "Başvuran için geri bildirim sağlayın",
+    "processing": "İşleniyor...",
+    "reject": "Reddet",
+    "approve": "Onayla"
+  },
   "createJob": {
     "title": "İş İlanı Oluştur",
     "subtitle": "Yeni bir iş fırsatı yayınlayın ve ideal adayı bulun",
@@ -879,7 +950,8 @@
     "inclusiveOpportunityDescription": "Bu pozisyonu, farklı geçmişlere ve yeteneklere sahip adayları memnuniyetle karşılayan kapsayıcı bir fırsat olarak işaretleyin",
     "submit": "İlanı Yayınla",
     "submitting": "Yayınlanıyor...",
-    "submitError": "İş ilanı oluşturulamadı. Lütfen tekrar deneyin."
+    "submitError": "İş ilanı oluşturulamadı. Lütfen tekrar deneyin.",
+    "submitSuccess": "İş ilanı başarıyla oluşturuldu!"
   },
   "myMentorships": {
     "title": "Mentorluk İlişkilerim",

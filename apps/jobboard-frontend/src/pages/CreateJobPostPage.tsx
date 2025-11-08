@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,7 +30,6 @@ export default function CreateJobPostPage() {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<JobPostFormData>({
     title: '',
     description: '',
@@ -46,7 +46,6 @@ export default function CreateJobPostPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError(null);
 
     try {
       const requestData: CreateJobPostRequest = {
@@ -63,10 +62,11 @@ export default function CreateJobPostPage() {
       };
 
       await createJob(requestData);
+      toast.success(t('createJob.submitSuccess'));
       navigate('/employer/dashboard');
     } catch (err) {
       console.error('Error creating job:', err);
-      setError(t('createJob.submitError'));
+      toast.error(t('createJob.submitError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -257,13 +257,6 @@ export default function CreateJobPostPage() {
                 </div>
               </div>
             </div>
-
-            {/* Error Display */}
-            {error && (
-              <div className="mb-4 p-4 rounded-md bg-destructive/10 border border-destructive">
-                <p className="text-sm text-destructive">{t('createJob.submitError')}</p>
-              </div>
-            )}
 
             {/* Submit Button */}
             <div className="flex justify-end">

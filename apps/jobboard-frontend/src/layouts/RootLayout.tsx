@@ -1,8 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import { Suspense } from 'react';
+import { ToastContainer } from 'react-toastify';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import CenteredLoader from '../components/CenteredLoader';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function RootLayout() {
   return (
@@ -14,6 +16,7 @@ export default function RootLayout() {
         </Suspense>
       </main>
       <Footer />
+      <ToastContainer position="bottom-right" />
     </div>
   );
 }

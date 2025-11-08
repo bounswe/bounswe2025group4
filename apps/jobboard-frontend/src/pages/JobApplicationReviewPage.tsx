@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Download, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -21,7 +22,6 @@ export default function JobApplicationReviewPage() {
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -29,7 +29,6 @@ export default function JobApplicationReviewPage() {
 
       try {
         setIsLoading(true);
-        setError(null);
         const appData = await getApplicationById(parseInt(applicationId, 10));
         setApplication(appData);
 
@@ -47,7 +46,7 @@ export default function JobApplicationReviewPage() {
         }
       } catch (err) {
         console.error('Error fetching application:', err);
-        setError(t('jobApplicationReview.error.load'));
+        toast.error(t('jobApplicationReview.error.load'));
       } finally {
         setIsLoading(false);
       }
@@ -61,12 +60,13 @@ export default function JobApplicationReviewPage() {
 
     try {
       setIsSubmitting(true);
-      setError(null);
       await approveApplication(parseInt(applicationId, 10), feedback || undefined);
+      toast.success(t('jobApplicationReview.success.approve'));
       navigate(`/employer/jobs/${jobId}`);
     } catch (err) {
       console.error('Error approving application:', err);
-      setError(t('jobApplicationReview.error.approve'));
+      toast.error(t('jobApplicationReview.error.approve'));
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -76,12 +76,13 @@ export default function JobApplicationReviewPage() {
 
     try {
       setIsSubmitting(true);
-      setError(null);
       await rejectApplication(parseInt(applicationId, 10), feedback || undefined);
+      toast.success(t('jobApplicationReview.success.reject'));
       navigate(`/employer/jobs/${jobId}`);
     } catch (err) {
       console.error('Error rejecting application:', err);
-      setError(t('jobApplicationReview.error.reject'));
+      toast.error(t('jobApplicationReview.error.reject'));
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -103,20 +104,15 @@ export default function JobApplicationReviewPage() {
     return <CenteredLoader />;
   }
 
-  if (error && !application) {
+  if (!application) {
     return (
       <div className="container mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-semibold">{t('jobApplicationReview.error.title')}</h1>
-        <p className="mt-2 text-muted-foreground">{error}</p>
         <Button asChild className="mt-6">
           <Link to={`/employer/jobs/${jobId}`}>{t('jobApplicationReview.backToJob')}</Link>
         </Button>
       </div>
     );
-  }
-
-  if (!application) {
-    return null;
   }
 
   return (
@@ -248,11 +244,6 @@ export default function JobApplicationReviewPage() {
           <Card className="border border-border bg-card shadow-sm">
             <div className="p-6">
               <h2 className="mb-4 text-xl font-semibold">{t('jobApplicationReview.decision')}</h2>
-              {error && (
-                <div className="mb-4 p-3 rounded-md bg-destructive/10 border border-destructive">
-                  <p className="text-sm text-destructive">{error}</p>
-                </div>
-              )}
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="feedback" className="text-sm font-medium">
