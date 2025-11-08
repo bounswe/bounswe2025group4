@@ -71,7 +71,7 @@ public class ReviewService {
             }
             EthicalPolicy policy;
             try {
-                policy = EthicalPolicy.valueOf(key.trim().toUpperCase());
+                policy = EthicalPolicy.fromLabel(key);
             } catch (IllegalArgumentException ex) {
                 throw new IllegalArgumentException("Unknown ethical policy: " + key);
             }
@@ -107,6 +107,9 @@ public class ReviewService {
         double overall = Math.round(Math.max(1.0, Math.min(5.0, avg)) * 10.0) / 10.0;
         review.setOverallRating(overall);
         reviewRepository.save(review);
+
+        wp.setReviewCount(wp.getReviewCount() + 1);
+        workplaceRepository.save(wp);
 
         return toResponse(review, true);
     }
@@ -204,7 +207,7 @@ public class ReviewService {
 
                 EthicalPolicy policy;
                 try {
-                    policy = EthicalPolicy.valueOf(key.trim().toUpperCase());
+                    policy = EthicalPolicy.fromLabel(key);
                 } catch (IllegalArgumentException ex) {
                     throw new IllegalArgumentException("Unknown ethical policy: " + key);
                 }
@@ -258,6 +261,11 @@ public class ReviewService {
         reviewReplyRepository.findByReview_Id(reviewId).ifPresent(reviewReplyRepository::delete);
         reviewPolicyRatingRepository.deleteAll(reviewPolicyRatingRepository.findByReview_Id(reviewId));
         reviewRepository.delete(r);
+
+        Workplace wp = workplaceRepository.findById(workplaceId)
+                .orElseThrow(() -> new NoSuchElementException("Workplace not found"));
+        wp.setReviewCount(wp.getReviewCount() + 1);
+        workplaceRepository.save(wp);
     }
 
     // === HELPERS ===
@@ -275,7 +283,7 @@ public class ReviewService {
         ReplyResponse replyDto = null;
         if (withExtras) {
             policies = reviewPolicyRatingRepository.findByReview_Id(r.getId()).stream()
-                    .collect(Collectors.toMap(rpr -> rpr.getPolicy().name(), ReviewPolicyRating::getScore));
+                    .collect(Collectors.toMap(rpr -> rpr.getPolicy().getLabel(), ReviewPolicyRating::getScore));
             replyDto = reviewReplyRepository.findByReview_Id(r.getId())
                     .map(this::toReplyResponse)
                     .orElse(null);

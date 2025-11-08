@@ -13,4 +13,5 @@ public class WorkplaceRatingResponse {
     private Long workplaceId;
     private Double overallAvg;
     private Map<String, Double> ethicalAverages; // policy -> avg
+    private Long reviewCount;
 }

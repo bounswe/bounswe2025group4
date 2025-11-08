@@ -58,6 +58,11 @@ export default function Header() {
                   <Button variant="ghost" asChild>
                     <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
                   </Button>
+                  {isAuthenticated && isJobSeeker && (
+                    <Button variant="ghost" asChild>
+                      <Link to="/my-mentorships">{t('header.nav.myMentorships')}</Link>
+                    </Button>
+                  )}
                   <Button variant="ghost" asChild>
                     <Link to="/forum">{t('header.nav.forum')}</Link>
                   </Button>
@@ -134,6 +139,13 @@ export default function Header() {
                         {t('header.nav.mentorship')}
                       </Link>
                     </Button>
+                    {isAuthenticated && isJobSeeker && (
+                      <Button variant="ghost" asChild className="justify-start">
+                        <Link to="/my-mentorships" onClick={() => setIsMobileMenuOpen(false)}>
+                          {t('header.nav.myMentorships')}
+                        </Link>
+                      </Button>
+                    )}
                     <Button variant="ghost" asChild className="justify-start">
                       <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>
                         {t('header.nav.forum')}

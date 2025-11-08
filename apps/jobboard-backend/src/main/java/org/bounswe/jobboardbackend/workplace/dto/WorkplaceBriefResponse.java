@@ -20,4 +20,5 @@ public class WorkplaceBriefResponse {
     private Double overallAvg;            // nullable
     private List<String> ethicalTags;    // names
     private Map<String, Double> ethicalAverages; // policy -> avg
+    private Long reviewCount;
 }
