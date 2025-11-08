@@ -70,7 +70,7 @@ public class JobPostService {
 
     @Transactional(readOnly = true)
     public List<JobPostResponse> getByEmployerId(Long employerId) {
-
+        
         // Verify employer exists
         userRepository.findById(employerId)
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "Employer with ID " + employerId + " not found"));
@@ -80,7 +80,7 @@ public class JobPostService {
 
     @Transactional(readOnly = true)
     public List<JobPostResponse> getByWorkplaceId(Long workplaceId) {
-
+        
         // Verify workplace exists
         workplaceRepository.findById(workplaceId)
                 .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace with ID " + workplaceId + " not found"));
@@ -130,7 +130,8 @@ public class JobPostService {
                 .orElseThrow(() -> new HandleException(ErrorCode.JOB_POST_NOT_FOUND, "JobPost with ID " + id + " not found"));
         
         User currentUser = getCurrentUser();
-        validateJobOwnership(job, currentUser);
+        // Any employer of the workplace can delete the job
+        assertEmployerOfWorkplace(job.getWorkplace().getId(), currentUser.getId());
         
         jobPostRepository.delete(job);
     }
@@ -157,7 +158,8 @@ public class JobPostService {
                 .orElseThrow(() -> new HandleException(ErrorCode.JOB_POST_NOT_FOUND, "JobPost with ID " + id + " not found"));
         
         User currentUser = getCurrentUser();
-        validateJobOwnership(job, currentUser);
+        // Any employer of the workplace can update the job
+        assertEmployerOfWorkplace(job.getWorkplace().getId(), currentUser.getId());
 
         // Handle workplace change
         if (dto.getWorkplaceId() != null) {
@@ -201,15 +203,6 @@ public class JobPostService {
             return userDetails.getUsername();
         }
         throw new HandleException(ErrorCode.INVALID_CREDENTIALS, "Invalid authentication context");
-    }
-
-    private void validateJobOwnership(JobPost job, User user) {
-        if (job.getEmployer() == null) {
-            throw new HandleException(ErrorCode.JOB_POST_CORRUPT, "Job post has no employer assigned");
-        }
-        if (!job.getEmployer().getId().equals(user.getId())) {
-            throw new HandleException(ErrorCode.JOB_POST_FORBIDDEN, "Only the employer who posted the job can perform this action");
-        }
     }
 
     private void assertEmployerOfWorkplace(Long workplaceId, Long userId) {
