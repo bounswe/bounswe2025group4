@@ -31,6 +31,7 @@ import '../models/employer_workplace_item.dart';
 import '../models/employer_request.dart';
 import '../models/paginated_employer_request_response.dart';
 import '../models/employer_request_action_response.dart';
+import '../models/paginated_workplace_review_response.dart';
 
 const List<String> _availableEthicalPolicies = [
   'salary_transparency',
@@ -81,6 +82,33 @@ class ApiService {
   List<String> get availableJobTypes => _availableJobTypes;
 
   // --- Helper Methods ---
+
+  // Format ethical tag from snake_case to proper Title Case
+  // Handles special cases like LGBTQ+, B-Corporation, etc.
+  String _formatEthicalTag(String tag) {
+    // Special case mappings
+    final specialCases = {
+      'lgbtq_friendly_workplace': 'LGBTQ+ Friendly Workplace',
+      'certified_b_corporation': 'Certified B-Corporation',
+      'no_after_hours_work_culture': 'No After-Hours Work Culture',
+      'remote_friendly': 'Remote-Friendly',
+      'performance_based_bonus': 'Performance-Based Bonus',
+      'learning_development_budget': 'Learning & Development Budget',
+      'sustainability_focused': 'Sustainability-Focused',
+      'disability_inclusive_workplace': 'Disability-Inclusive Workplace',
+    };
+
+    // Check if it's a special case
+    if (specialCases.containsKey(tag)) {
+      return specialCases[tag]!;
+    }
+
+    // Default: Convert snake_case to Title Case
+    return tag
+        .split('_')
+        .map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
+  }
 
   // Get headers dynamically, including auth token if available
   Map<String, String> _getHeaders() {
@@ -1506,7 +1534,7 @@ class ApiService {
       'location': location,
       'shortDescription': shortDescription,
       'detailedDescription': detailedDescription,
-      'ethicalTags': ethicalTags,
+      'ethicalTags': ethicalTags.map((tag) => _formatEthicalTag(tag)).toList(),
       if (website != null && website.isNotEmpty) 'website': website,
     });
 
@@ -1620,7 +1648,7 @@ class ApiService {
       'location': location,
       'shortDescription': shortDescription,
       'detailedDescription': detailedDescription,
-      'ethicalTags': ethicalTags,
+      'ethicalTags': ethicalTags.map((tag) => _formatEthicalTag(tag)).toList(),
       if (website != null && website.isNotEmpty) 'website': website,
     });
 
@@ -1750,24 +1778,74 @@ class ApiService {
   // Workplace Review Endpoints
   // ─────────────────────────────────────────────────
 
+  /// GET /api/workplace/{workplaceId}/review
+  /// Fetches reviews for a workplace with filters and pagination
+  Future<PaginatedWorkplaceReviewResponse> getWorkplaceReviews(
+    int workplaceId, {
+    double? rating,
+    bool? hasComment,
+    String? policy,
+    int? policyMin,
+    String? sort,
+    int? page,
+    int? size,
+  }) async {
+    final queryParams = <String, dynamic>{};
+
+    if (rating != null) queryParams['rating'] = rating;
+    if (hasComment != null) queryParams['hasComment'] = hasComment;
+    if (policy != null && policy.isNotEmpty) queryParams['policy'] = policy;
+    if (policyMin != null) queryParams['policyMin'] = policyMin;
+    if (sort != null && sort.isNotEmpty) queryParams['sort'] = sort;
+    if (page != null) queryParams['page'] = page;
+    if (size != null) queryParams['size'] = size;
+
+    final uri = _buildUri('/workplace/$workplaceId/review', queryParams);
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return PaginatedWorkplaceReviewResponse.fromJson(
+        data as Map<String, dynamic>,
+      );
+    } catch (e) {
+      throw Exception('Failed to load reviews. $e');
+    }
+  }
+
+  /// GET /api/workplace/{workplaceId}/review/{reviewId}
+  /// Fetches a single review
+  Future<WorkplaceReview> getWorkplaceReviewById(
+    int workplaceId,
+    int reviewId,
+  ) async {
+    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return WorkplaceReview.fromJson(data as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception('Failed to load review. $e');
+    }
+  }
+
   /// POST /api/workplace/{workplaceId}/review
-  /// Creates a review for a workplace (job seeker only)
+  /// Creates a review for a workplace
   Future<WorkplaceReview> createWorkplaceReview({
     required int workplaceId,
     required String title,
     required String content,
-    required bool anonymous,
-    required double overallRating,
     required Map<String, int> ethicalPolicyRatings,
+    required bool anonymous,
   }) async {
     final uri = _buildUri('/workplace/$workplaceId/review');
 
     final body = jsonEncode({
       'title': title,
       'content': content,
-      'anonymous': anonymous,
-      'overallRating': overallRating,
       'ethicalPolicyRatings': ethicalPolicyRatings,
+      'anonymous': anonymous,
     });
 
     try {
@@ -1783,37 +1861,22 @@ class ApiService {
     }
   }
 
-  /// GET /api/workplace/{workplaceId}/reviews
-  /// Fetches all reviews for a specific workplace
-  Future<List<WorkplaceReview>> getWorkplaceReviews(int workplaceId) async {
-    final uri = _buildUri('/workplace/$workplaceId/reviews');
-
-    try {
-      final response = await _client.get(uri, headers: _getHeaders());
-      final List<dynamic> data = await _handleResponse(response);
-      return data.map((json) => WorkplaceReview.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Failed to load reviews. $e');
-    }
-  }
-
-  /// PUT /api/workplace/review/{reviewId}
+  /// PUT /api/workplace/{workplaceId}/review/{reviewId}
   /// Updates a review (author only)
   Future<WorkplaceReview> updateWorkplaceReview({
+    required int workplaceId,
     required int reviewId,
     String? title,
     String? content,
     bool? anonymous,
-    double? overallRating,
     Map<String, int>? ethicalPolicyRatings,
   }) async {
-    final uri = _buildUri('/workplace/review/$reviewId');
+    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId');
 
     final body = jsonEncode({
       if (title != null) 'title': title,
       if (content != null) 'content': content,
       if (anonymous != null) 'anonymous': anonymous,
-      if (overallRating != null) 'overallRating': overallRating,
       if (ethicalPolicyRatings != null)
         'ethicalPolicyRatings': ethicalPolicyRatings,
     });
@@ -1831,10 +1894,10 @@ class ApiService {
     }
   }
 
-  /// DELETE /api/workplace/review/{reviewId}
+  /// DELETE /api/workplace/{workplaceId}/review/{reviewId}
   /// Deletes a review (author only)
-  Future<void> deleteWorkplaceReview(int reviewId) async {
-    final uri = _buildUri('/workplace/review/$reviewId');
+  Future<void> deleteWorkplaceReview(int workplaceId, int reviewId) async {
+    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId');
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());

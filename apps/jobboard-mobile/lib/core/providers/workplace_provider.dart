@@ -310,16 +310,57 @@ class WorkplaceProvider with ChangeNotifier {
   // Review Management
   // ─────────────────────────────────────────────────
 
-  /// Fetches reviews for a workplace
-  Future<void> fetchWorkplaceReviews(int workplaceId) async {
+  /// Fetches reviews for a workplace with pagination and filters
+  Future<void> fetchWorkplaceReviews(
+    int workplaceId, {
+    double? rating,
+    bool? hasComment,
+    String? policy,
+    int? policyMin,
+    String? sort,
+    int? page,
+    int? size,
+  }) async {
     _setLoading(true);
     _setError(null);
 
     try {
-      _currentReviews = await _apiService.getWorkplaceReviews(workplaceId);
+      final response = await _apiService.getWorkplaceReviews(
+        workplaceId,
+        rating: rating,
+        hasComment: hasComment,
+        policy: policy,
+        policyMin: policyMin,
+        sort: sort,
+        page: page,
+        size: size,
+      );
+      _currentReviews = response.content;
       notifyListeners();
     } catch (e) {
       _setError(e.toString());
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Fetches a single review
+  Future<WorkplaceReview?> fetchWorkplaceReviewById(
+    int workplaceId,
+    int reviewId,
+  ) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final review = await _apiService.getWorkplaceReviewById(
+        workplaceId,
+        reviewId,
+      );
+      return review;
+    } catch (e) {
+      _setError(e.toString());
+      return null;
     } finally {
       _setLoading(false);
     }
@@ -330,9 +371,8 @@ class WorkplaceProvider with ChangeNotifier {
     required int workplaceId,
     required String title,
     required String content,
-    required bool anonymous,
-    required double overallRating,
     required Map<String, int> ethicalPolicyRatings,
+    required bool anonymous,
   }) async {
     _setLoading(true);
     _setError(null);
@@ -342,9 +382,8 @@ class WorkplaceProvider with ChangeNotifier {
         workplaceId: workplaceId,
         title: title,
         content: content,
-        anonymous: anonymous,
-        overallRating: overallRating,
         ethicalPolicyRatings: ethicalPolicyRatings,
+        anonymous: anonymous,
       );
 
       // Add to current reviews
@@ -362,11 +401,11 @@ class WorkplaceProvider with ChangeNotifier {
 
   /// Updates a review
   Future<bool> updateReview({
+    required int workplaceId,
     required int reviewId,
     String? title,
     String? content,
     bool? anonymous,
-    double? overallRating,
     Map<String, int>? ethicalPolicyRatings,
   }) async {
     _setLoading(true);
@@ -374,11 +413,11 @@ class WorkplaceProvider with ChangeNotifier {
 
     try {
       final updatedReview = await _apiService.updateWorkplaceReview(
+        workplaceId: workplaceId,
         reviewId: reviewId,
         title: title,
         content: content,
         anonymous: anonymous,
-        overallRating: overallRating,
         ethicalPolicyRatings: ethicalPolicyRatings,
       );
 
@@ -399,12 +438,12 @@ class WorkplaceProvider with ChangeNotifier {
   }
 
   /// Deletes a review
-  Future<bool> deleteReview(int reviewId) async {
+  Future<bool> deleteReview(int workplaceId, int reviewId) async {
     _setLoading(true);
     _setError(null);
 
     try {
-      await _apiService.deleteWorkplaceReview(reviewId);
+      await _apiService.deleteWorkplaceReview(workplaceId, reviewId);
 
       // Remove from current reviews
       _currentReviews.removeWhere((r) => r.id == reviewId);

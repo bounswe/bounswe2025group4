@@ -40,9 +40,12 @@ class WorkplaceReview {
       anonymous: json['anonymous'] as bool,
       helpfulCount: json['helpfulCount'] as int,
       overallRating: (json['overallRating'] as num).toDouble(),
-      ethicalPolicyRatings: Map<String, int>.from(
-        json['ethicalPolicyRatings'] as Map<String, dynamic>,
-      ),
+      ethicalPolicyRatings:
+          json['ethicalPolicyRatings'] != null
+              ? Map<String, int>.from(
+                json['ethicalPolicyRatings'] as Map<String, dynamic>,
+              )
+              : {},
       reply:
           json['reply'] != null
               ? WorkplaceReply.fromJson(json['reply'] as Map<String, dynamic>)

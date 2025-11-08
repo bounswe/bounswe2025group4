@@ -6,6 +6,8 @@ import '../../../core/services/api_service.dart';
 import '../../../core/models/workplace.dart';
 import '../../../core/models/user.dart';
 import 'send_employer_request_page.dart';
+import 'workplace_reviews_page.dart';
+import 'add_review_page.dart';
 
 class WorkplaceDetailPage extends StatefulWidget {
   final int workplaceId;
@@ -134,16 +136,62 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
                       _buildRatings(workplace),
                       const SizedBox(height: 24),
 
-                      // Reviews
-                      if (workplace.recentReviews.isNotEmpty) ...[
-                        const Text(
-                          'Recent Reviews',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                      // Reviews Section with Actions
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Reviews',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              OutlinedButton.icon(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => AddReviewPage(
+                                            workplaceId: workplace.id,
+                                            workplaceName:
+                                                workplace.companyName,
+                                          ),
+                                    ),
+                                  ).then((_) => _loadWorkplace());
+                                },
+                                icon: const Icon(Icons.add, size: 18),
+                                label: const Text('Add'),
+                              ),
+                              const SizedBox(width: 8),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => WorkplaceReviewsPage(
+                                            workplaceId: workplace.id,
+                                            workplaceName:
+                                                workplace.companyName,
+                                          ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.list, size: 18),
+                                label: const Text('View All'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Recent Reviews Preview
+                      if (workplace.recentReviews.isNotEmpty) ...[
                         ...workplace.recentReviews.map((review) {
                           return Card(
                             margin: const EdgeInsets.only(bottom: 12),
