@@ -4,21 +4,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '../schemas/forgot-password.schema';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
-  ? import.meta.env.VITE_API_URL 
+const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
+  ? import.meta.env.VITE_API_URL
   : (import.meta.env.VITE_API_URL || '') + '/api';
-
-console.log('ForgotPasswordPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('ForgotPasswordPage - API_BASE_URL:', API_BASE_URL);
 
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const { t } = useTranslation('common');
 
   const {
@@ -31,8 +27,6 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setIsLoading(true);
-    setErrorMessage('');
-    setSuccessMessage('');
 
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/password-reset`, {
@@ -41,11 +35,11 @@ export default function ForgotPasswordPage() {
 
       // Check if response contains error even with 200 status
       if (response.data?.message && response.data.message.toLowerCase().includes('error')) {
-        setErrorMessage(response.data.message);
+        toast.error(response.data.message);
       } else if (response.data?.error) {
-        setErrorMessage(response.data.error);
+        toast.error(response.data.error);
       } else {
-        setSuccessMessage(t('auth.forgot.success'));
+        toast.success(t('auth.forgot.success'));
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -53,38 +47,38 @@ export default function ForgotPasswordPage() {
 
         if (error.response?.status === 401) {
           // Backend authentication issue - likely endpoint protection problem
-          setErrorMessage(t('auth.forgot.errors.serviceUnavailable'));
+          toast.error(t('auth.forgot.errors.serviceUnavailable'));
           return;
         }
 
         const backendMsg = responseData?.message;
         if (backendMsg) {
           if (backendMsg.includes('Full authentication')) {
-            setErrorMessage(t('auth.forgot.errors.serviceUnavailable'));
+            toast.error(t('auth.forgot.errors.serviceUnavailable'));
           } else {
-            setErrorMessage(backendMsg);
+            toast.error(backendMsg);
           }
           return;
         }
 
         if (responseData?.error) {
-          setErrorMessage(responseData.error);
+          toast.error(responseData.error);
           return;
         }
 
         if (error.message) {
-          setErrorMessage(error.message);
+          toast.error(error.message);
           return;
         }
 
-        setErrorMessage(t('auth.forgot.errors.generic'));
+        toast.error(t('auth.forgot.errors.generic'));
         return;
       }
 
       if (error instanceof Error) {
-        setErrorMessage(error.message);
+        toast.error(error.message);
       } else {
-        setErrorMessage(t('auth.forgot.errors.generic'));
+        toast.error(t('auth.forgot.errors.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -126,20 +120,6 @@ export default function ForgotPasswordPage() {
             )}
           </div>
 
-          {/* Success Message */}
-          {successMessage && (
-            <div className="rounded-md bg-green-50 p-3 text-sm text-green-800" role="status">
-              {successMessage}
-            </div>
-          )}
-
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive" role="alert">
-              {errorMessage}
-            </div>
-          )}
-
           {/* Submit Button */}
           <Button
             type="submit"
@@ -164,4 +144,3 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
-

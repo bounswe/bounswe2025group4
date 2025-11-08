@@ -4,13 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { verifyOtpSchema, type VerifyOtpFormData } from '../schemas/verify-otp.schema';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { useAuthActions } from '@/stores/authStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
-  ? import.meta.env.VITE_API_URL 
+const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
+  ? import.meta.env.VITE_API_URL
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
 export default function VerifyOtpPage() {
@@ -18,7 +19,6 @@ export default function VerifyOtpPage() {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuthActions();
-  const [errorMessage, setErrorMessage] = useState('');
   const { t } = useTranslation();
 
   const temporaryToken = location.state?.temporaryToken;
@@ -40,7 +40,6 @@ export default function VerifyOtpPage() {
 
   const onSubmit = async (data: VerifyOtpFormData) => {
     setIsLoading(true);
-    setErrorMessage('');
 
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/login/verify`, {
@@ -52,7 +51,7 @@ export default function VerifyOtpPage() {
       if (response.status === 200 && response.data.token) {
         // Store token in auth store
         login(response.data);
-        
+        toast.success(t('auth.otp.success'));
         // Redirect to home
         navigate('/');
       }
@@ -61,33 +60,33 @@ export default function VerifyOtpPage() {
         const responseData = error.response?.data as { message?: string; error?: string } | undefined;
 
         if (error.response?.status === 401) {
-          setErrorMessage(t('auth.otp.errors.invalid'));
+          toast.error(t('auth.otp.errors.invalid'));
           return;
         }
 
         if (responseData?.message) {
-          setErrorMessage(responseData.message);
+          toast.error(responseData.message);
           return;
         }
 
         if (responseData?.error) {
-          setErrorMessage(responseData.error);
+          toast.error(responseData.error);
           return;
         }
 
         if (error.message) {
-          setErrorMessage(error.message);
+          toast.error(error.message);
           return;
         }
 
-        setErrorMessage(t('auth.otp.errors.generic'));
+        toast.error(t('auth.otp.errors.generic'));
         return;
       }
 
       if (error instanceof Error) {
-        setErrorMessage(error.message);
+        toast.error(error.message);
       } else {
-        setErrorMessage(t('auth.otp.errors.generic'));
+        toast.error(t('auth.otp.errors.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -126,13 +125,6 @@ export default function VerifyOtpPage() {
                 </p>
               )}
             </div>
-
-            {/* Error Message */}
-            {errorMessage && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive" role="alert">
-                {errorMessage}
-              </div>
-            )}
 
             {/* Submit Button */}
             <Button
