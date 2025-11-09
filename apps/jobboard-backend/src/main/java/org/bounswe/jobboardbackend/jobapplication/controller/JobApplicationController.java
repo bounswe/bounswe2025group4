@@ -27,7 +27,7 @@ public class JobApplicationController {
     }
 
     // Legacy endpoint with query parameters (kept for backward compatibility)
-    // This endpoint is split into three separate endpoints.
+    // This endpoint is split into two separate endpoints.
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<JobApplicationResponse>> getFiltered(
