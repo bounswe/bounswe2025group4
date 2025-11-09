@@ -118,6 +118,36 @@ const testTranslations = {
     },
     experience: {
       title: 'Experience',
+      modal: {
+        addTitle: 'Add Experience',
+        editTitle: 'Edit Experience',
+        fields: {
+          company: {
+            label: 'Company',
+            placeholder: 'Company name',
+          },
+          position: {
+            label: 'Position',
+            placeholder: 'Job title',
+          },
+          description: {
+            label: 'Description',
+            placeholder: 'Describe your role and achievements...',
+          },
+          startDate: {
+            label: 'Start Date',
+          },
+          endDate: {
+            label: 'End Date',
+          },
+          current: {
+            label: 'I currently work here',
+          },
+        },
+        submitAdd: 'Add Experience',
+        submitEdit: 'Save Changes',
+        cancel: 'Cancel',
+      },
     },
     education: {
       title: 'Education',
@@ -129,6 +159,13 @@ const testTranslations = {
       title: 'Interests',
     },
     actions: {
+      add: 'Add',
+      cancel: 'Cancel',
+    },
+    common: {
+      save: 'Save',
+      edit: 'Edit',
+      delete: 'Delete',
       add: 'Add',
       cancel: 'Cancel',
     },

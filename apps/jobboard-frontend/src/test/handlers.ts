@@ -203,4 +203,46 @@ export const profileHandlers = [
   http.delete(`${API_BASE_URL}/profile/image`, async () => {
     return HttpResponse.json({}, { status: 204 });
   }),
+
+  // Experience CRUD endpoints
+  http.post(`${API_BASE_URL}/profile/experience`, async ({ request }) => {
+    const body = await request.json() as {
+      company: string;
+      position: string;
+      description?: string;
+      startDate: string;
+      endDate?: string;
+    };
+    
+    return HttpResponse.json(
+      {
+        id: Date.now(), // Generate a unique ID
+        ...body,
+      },
+      { status: 201 }
+    );
+  }),
+
+  http.put(`${API_BASE_URL}/profile/experience/:id`, async ({ request, params }) => {
+    const body = await request.json() as {
+      company: string;
+      position: string;
+      description?: string;
+      startDate: string;
+      endDate?: string;
+    };
+    const { id } = params;
+    
+    return HttpResponse.json(
+      {
+        id: Number(id),
+        ...body,
+      },
+      { status: 200 }
+    );
+  }),
+
+  http.delete(`${API_BASE_URL}/profile/experience/:id`, async () => {
+    return HttpResponse.json({}, { status: 204 });
+  }),
 ];
