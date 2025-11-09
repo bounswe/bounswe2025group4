@@ -176,4 +176,31 @@ export const profileHandlers = [
       { status: 200 }
     );
   }),
+
+  // Upload profile image
+  http.post(`${API_BASE_URL}/profile/image`, async ({ request }) => {
+    const formData = await request.formData();
+    const file = formData.get('file') as File;
+    
+    if (!file) {
+      return HttpResponse.json(
+        { message: 'No file provided' },
+        { status: 400 }
+      );
+    }
+
+    // Mock successful image upload response
+    return HttpResponse.json(
+      {
+        imageUrl: 'https://example.com/uploaded-profile-image.jpg',
+        updatedAt: new Date().toISOString(),
+      },
+      { status: 200 }
+    );
+  }),
+
+  // Delete profile image
+  http.delete(`${API_BASE_URL}/profile/image`, async () => {
+    return HttpResponse.json({}, { status: 204 });
+  }),
 ];

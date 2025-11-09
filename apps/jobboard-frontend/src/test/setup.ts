@@ -99,6 +99,17 @@ const testTranslations = {
         editImage: 'Edit profile image',
       },
     },
+    imageUpload: {
+      title: 'Upload Profile Image',
+      chooseFile: 'Choose file',
+      upload: 'Upload',
+      save: 'Save',
+      delete: 'Delete',
+      remove: 'Remove Image',
+      cancel: 'Cancel',
+      maxSize: 'Maximum file size: 5MB',
+      supportedFormats: 'Supported formats: JPG, PNG, GIF',
+    },
     about: {
       title: 'About',
       modal: {
