@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { authHandlers, API_BASE_URL } from './handlers';
+import { authHandlers, profileHandlers, API_BASE_URL } from './handlers';
 
 const testTranslations = {
   auth: {
@@ -82,6 +82,97 @@ const testTranslations = {
       },
     },
   },
+  profile: {
+    tabs: {
+      about: 'About',
+      activity: 'Activity',
+      posts: 'Posts',
+    },
+    header: {
+      currentRole: 'Software Developer',
+      joined: 'Joined January 2024',
+      stats: {
+        posts: 'Posts',
+        badges: 'Badges',
+      },
+      actions: {
+        editImage: 'Edit profile image',
+      },
+    },
+    about: {
+      title: 'About',
+      modal: {
+        title: 'Edit Bio',
+      },
+    },
+    experience: {
+      title: 'Experience',
+    },
+    education: {
+      title: 'Education',
+    },
+    skills: {
+      title: 'Skills',
+    },
+    interests: {
+      title: 'Interests',
+    },
+    actions: {
+      add: 'Add',
+      cancel: 'Cancel',
+    },
+    create: {
+      title: 'Create Profile',
+      description: 'Create your professional profile to get started',
+      fields: {
+        firstName: {
+          label: 'First Name',
+          placeholder: 'Enter first name',
+        },
+        lastName: {
+          label: 'Last Name',
+          placeholder: 'Enter last name',
+        },
+        bio: {
+          label: 'Bio',
+          placeholder: 'Tell us about yourself...',
+        },
+      },
+      submit: 'Create Profile',
+      helper: 'You can always edit this later',
+    },
+    page: {
+      loadErrorTitle: 'Failed to load profile',
+      dangerZone: {
+        title: 'Danger Zone',
+        button: 'Delete Account',
+      },
+    },
+    notifications: {
+      createSuccess: 'Profile created successfully',
+      createError: 'Failed to create profile',
+      imageUploadSuccess: 'Profile image uploaded successfully',
+      imageUploadError: 'Failed to upload profile image',
+      imageDeleteSuccess: 'Profile image deleted successfully',
+      imageDeleteError: 'Failed to delete profile image',
+      deleteExperienceSuccess: 'Experience deleted successfully',
+      deleteExperienceError: 'Failed to delete experience',
+    },
+    activity: {
+      items: [
+        { type: 'application', text: 'Applied to Software Engineer position at Tech Corp', date: '2024-01-15' },
+        { type: 'forum', text: 'Posted a question in React forum', date: '2024-01-14' },
+        { type: 'comment', text: 'Commented on JavaScript best practices', date: '2024-01-13' },
+      ],
+    },
+    posts: {
+      items: [
+        { title: 'How to optimize React performance?', date: '2024-01-10' },
+        { title: 'Best practices for TypeScript', date: '2024-01-08' },
+        { title: 'Getting started with Node.js', date: '2024-01-05' },
+      ],
+    },
+  },
 } as const;
 
 vi.mock('@/lib/i18n', async () => {
@@ -100,7 +191,7 @@ vi.mock('@/lib/i18n', async () => {
   return { default: i18n };
 });
 
-export const server = setupServer(...authHandlers);
+export const server = setupServer(...authHandlers, ...profileHandlers);
 
 vi.stubEnv('VITE_API_URL', API_BASE_URL);
 

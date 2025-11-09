@@ -26,6 +26,48 @@ const mockUser = {
   role: 'ROLE_JOBSEEKER',
 };
 
+const mockProfile = {
+  id: 1,
+  userId: 1,
+  firstName: 'John',
+  lastName: 'Doe',
+  bio: 'Software Engineer with 5 years of experience',
+  imageUrl: 'https://example.com/profile.jpg',
+  educations: [
+    {
+      id: 1,
+      school: 'University of Example',
+      degree: 'Bachelor of Science',
+      field: 'Computer Science',
+      startDate: '2018-09-01',
+      endDate: '2022-06-15',
+      description: 'Studied software engineering and computer science fundamentals'
+    }
+  ],
+  experiences: [
+    {
+      id: 1,
+      company: 'Tech Corp',
+      position: 'Software Engineer',
+      description: 'Developed web applications using React and Node.js',
+      startDate: '2022-07-01',
+      endDate: null
+    }
+  ],
+  skills: [
+    { id: 1, name: 'JavaScript', level: 'Advanced' },
+    { id: 2, name: 'React', level: 'Advanced' },
+    { id: 3, name: 'TypeScript', level: 'Intermediate' }
+  ],
+  interests: [
+    { id: 1, name: 'Web Development' },
+    { id: 2, name: 'Machine Learning' }
+  ],
+  badges: [],
+  createdAt: '2024-01-01T00:00:00Z',
+  updatedAt: '2024-01-15T10:30:00Z'
+};
+
 /**
  * Creates a valid mock JWT token for testing
  * @param username - Username to include in the token
@@ -95,6 +137,43 @@ export const authHandlers = [
         message: `Password updated for ${body.token}`,
       },
       { status: 200 },
+    );
+  }),
+];
+
+export const profileHandlers = [
+  // Get current user's profile
+  http.get(`${API_BASE_URL}/profile`, async () => {
+    return HttpResponse.json(mockProfile, { status: 200 });
+  }),
+  
+  // Create profile 
+  http.post(`${API_BASE_URL}/profile`, async ({ request }) => {
+    const body = (await request.json()) as { firstName: string; lastName: string; bio?: string };
+    
+    return HttpResponse.json(
+      {
+        ...mockProfile,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        bio: body.bio || mockProfile.bio,
+      },
+      { status: 201 }
+    );
+  }),
+  
+  // Update profile
+  http.put(`${API_BASE_URL}/profile`, async ({ request }) => {
+    const body = (await request.json()) as { firstName?: string; lastName?: string; bio?: string };
+    
+    return HttpResponse.json(
+      {
+        ...mockProfile,
+        firstName: body.firstName || mockProfile.firstName,
+        lastName: body.lastName || mockProfile.lastName,
+        bio: body.bio || mockProfile.bio,
+      },
+      { status: 200 }
     );
   }),
 ];
