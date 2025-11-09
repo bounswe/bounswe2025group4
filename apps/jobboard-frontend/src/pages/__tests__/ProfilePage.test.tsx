@@ -237,11 +237,6 @@ describe('ProfilePage', () => {
     // Check that avatar fallback with initials is displayed
     // The avatar should show initials as fallback when no image exists
     // Use data attribute to identify the specific avatar fallback element
-    const avatarFallback = screen.getByTestId ? 
-      screen.queryByTestId('avatar-fallback') : 
-      screen.getByRole('img', { hidden: true });
-    
-    // If we can't find by test id, just verify the avatar structure exists
     const avatarElement = document.querySelector('[data-slot="avatar-fallback"]');
     expect(avatarElement).toBeInTheDocument();
     
