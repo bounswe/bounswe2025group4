@@ -26,6 +26,24 @@ public class JobApplicationController {
         this.service = service;
     }
 
+    // Legacy endpoint with query parameters (kept for backward compatibility)
+    // This endpoint is split into three separate endpoints.
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping
+    public ResponseEntity<List<JobApplicationResponse>> getFiltered(
+            @RequestParam(required = false) Long jobSeekerId,
+            @RequestParam(required = false) Long jobPostId
+    ) {
+        if (jobSeekerId != null) {
+            return ResponseEntity.ok(service.getByJobSeekerId(jobSeekerId));
+        } else if (jobPostId != null) {
+            return ResponseEntity.ok(service.getByJobPostId(jobPostId));
+        } else {
+            throw new HandleException(ErrorCode.MISSING_FILTER_PARAMETER, "Missing filter parameter, at least one of jobSeekerId or jobPostId must be provided");
+        }
+    }
+
+    
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/job-seeker/{jobSeekerId}")
     public ResponseEntity<List<JobApplicationResponse>> getByJobSeeker(@PathVariable Long jobSeekerId) {
