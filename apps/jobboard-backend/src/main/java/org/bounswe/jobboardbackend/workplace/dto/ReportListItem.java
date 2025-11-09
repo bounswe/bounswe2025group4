@@ -16,6 +16,7 @@ public class ReportListItem {
     private String reasonType; // enum name
     private String status;     // ReportStatus
     private Long createdByUserId;
+    private String username;
     private String adminNote;
     private Instant createdAt;
 }

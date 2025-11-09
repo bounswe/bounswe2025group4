@@ -12,6 +12,7 @@ import java.time.Instant;
 public class ReplyResponse {
     private Long id;
     private Long reviewId;
+    private String workplaceName;
     private Long employerUserId;
     private String content;
     private Instant createdAt;
