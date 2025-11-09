@@ -208,7 +208,7 @@ public class JobPostService {
     private void assertEmployerOfWorkplace(Long workplaceId, Long userId) {
         boolean isEmployer = employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId);
         if (!isEmployer) {
-            throw new AccessDeniedException("You are not an employer of this workplace. Only employers of the workplace can post jobs for it.");
+            throw new HandleException(ErrorCode.WORKPLACE_UNAUTHORIZED, "You are not an employer of this workplace");
         }
     }
 

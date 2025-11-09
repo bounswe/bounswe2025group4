@@ -391,7 +391,7 @@ public class JobApplicationService {
     private void assertEmployerOfWorkplace(Long workplaceId, Long userId) {
         boolean isEmployer = employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId);
         if (!isEmployer) {
-            throw new AccessDeniedException("You are not an employer of this workplace. Only employers of the workplace can approve/reject applications.");
+            throw new HandleException(ErrorCode.WORKPLACE_UNAUTHORIZED, "You are not an employer of this workplace");
         }
     }
 }
