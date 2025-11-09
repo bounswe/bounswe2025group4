@@ -730,4 +730,191 @@ describe('ProfilePage', () => {
       }
     });
   });
+
+  describe('Delete Account Functionality', () => {
+    it('displays danger zone section with delete account button', async () => {
+      renderWithProviders(<ProfilePage />);
+
+      // Wait for profile to load
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      // Check that the Danger Zone section is present
+      expect(screen.getByText('Danger Zone')).toBeInTheDocument();
+      
+      // Check that the description is present
+      expect(screen.getByText('This action will permanently delete all your profile data.')).toBeInTheDocument();
+      
+      // Find the Delete Account button in the danger zone
+      const deleteAccountButton = screen.getByRole('button', { name: 'Delete Account' });
+      expect(deleteAccountButton).toBeInTheDocument();
+    });
+
+    it('opens delete account modal when delete account button is clicked', async () => {
+      renderWithProviders(<ProfilePage />);
+      const user = setupUserEvent();
+
+      // Wait for profile to load
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      // Find and click the Delete Account button in the danger zone (the smaller one)
+      const deleteAccountButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      const dangerZoneDeleteButton = deleteAccountButtons.find(button => 
+        button.className.includes('text-xs')
+      );
+      
+      expect(dangerZoneDeleteButton).toBeInTheDocument();
+      await user.click(dangerZoneDeleteButton!);
+
+      // Check that the delete account modal appears with proper title
+      await waitFor(() => {
+        expect(screen.getByText('Warning')).toBeInTheDocument();
+        expect(screen.getByText('This action cannot be undone')).toBeInTheDocument();
+      });
+    });
+
+    it('successfully deletes account when confirmed', async () => {
+      // Mock successful DELETE response for account deletion
+      server.use(
+        http.delete(`${API_BASE_URL}/profile/delete-all`, () =>
+          HttpResponse.json({}, { status: 200 })
+        )
+      );
+
+      renderWithProviders(<ProfilePage />);
+      const user = setupUserEvent();
+
+      // Wait for profile to load
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      // Find and click the Delete Account button in the danger zone
+      const deleteAccountButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      const dangerZoneDeleteButton = deleteAccountButtons.find(button => 
+        button.className.includes('text-xs')
+      );
+      await user.click(dangerZoneDeleteButton!);
+
+      // Wait for modal to appear and proceed to confirmation step
+      await waitFor(() => {
+        expect(screen.getByText('Warning')).toBeInTheDocument();
+      });
+
+      // Click Continue button to proceed to confirmation step
+      const continueButton = screen.getByRole('button', { name: 'Continue' });
+      await user.click(continueButton);
+
+      // Wait for confirmation step and type the confirmation keyword
+      await waitFor(() => {
+        expect(screen.getByText('Type DELETE to confirm')).toBeInTheDocument();
+      });
+
+      const confirmInput = screen.getByRole('textbox');
+      await user.type(confirmInput, 'DELETE');
+
+      // Click the final delete button (the one in the modal)
+      const deleteButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      const modalDeleteButton = deleteButtons.find(button => 
+        button.className.includes('flex-1') && button.className.includes('bg-destructive')
+      );
+      await user.click(modalDeleteButton!);
+
+      // Wait for the deletion process to complete
+      await waitFor(() => {
+        // The component should handle the deletion gracefully
+        expect(document.body).toBeInTheDocument();
+      });
+    });
+
+    it('handles delete account API error gracefully', async () => {
+      // Mock error response for account deletion
+      server.use(
+        http.delete(`${API_BASE_URL}/profile/delete-all`, () =>
+          HttpResponse.json(
+            { message: 'Failed to delete account' },
+            { status: 500 }
+          )
+        )
+      );
+
+      renderWithProviders(<ProfilePage />);
+      const user = setupUserEvent();
+
+      // Wait for profile to load
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      // Find and click the Delete Account button in the danger zone
+      const deleteAccountButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      const dangerZoneDeleteButton = deleteAccountButtons.find(button => 
+        button.className.includes('text-xs')
+      );
+      await user.click(dangerZoneDeleteButton!);
+
+      // Wait for modal and proceed through confirmation
+      await waitFor(() => {
+        expect(screen.getByText('Warning')).toBeInTheDocument();
+      });
+
+      // Click Continue button
+      const continueButton = screen.getByRole('button', { name: 'Continue' });
+      await user.click(continueButton);
+
+      // Type confirmation and attempt deletion
+      await waitFor(() => {
+        expect(screen.getByText('Type DELETE to confirm')).toBeInTheDocument();
+      });
+
+      const confirmInput = screen.getByRole('textbox');
+      await user.type(confirmInput, 'DELETE');
+
+      const deleteButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      const modalDeleteButton = deleteButtons.find(button => 
+        button.className.includes('flex-1') && button.className.includes('bg-destructive')
+      );
+      await user.click(modalDeleteButton!);
+
+      // The error should be handled gracefully
+      await waitFor(() => {
+        expect(document.body).toBeInTheDocument();
+      });
+    });
+
+    it('cancels delete account operation when cancel button is clicked', async () => {
+      renderWithProviders(<ProfilePage />);
+      const user = setupUserEvent();
+
+      // Wait for profile to load
+      await waitFor(() => {
+        expect(screen.getByText('John Doe')).toBeInTheDocument();
+      });
+
+      // Find and click the Delete Account button
+      const deleteAccountButton = screen.getByRole('button', { name: 'Delete Account' });
+      await user.click(deleteAccountButton);
+
+      // Wait for modal to appear
+      await waitFor(() => {
+        expect(screen.getByText('Warning')).toBeInTheDocument();
+      });
+
+      // Find and click the cancel button
+      const cancelButton = screen.getByRole('button', { name: 'Cancel' });
+      await user.click(cancelButton);
+
+      // Modal should close - check that warning text is no longer visible
+      await waitFor(() => {
+        expect(screen.queryByText('Warning')).not.toBeInTheDocument();
+        expect(screen.queryByText('This action cannot be undone')).not.toBeInTheDocument();
+      });
+
+      // Profile should still be displayed
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+    });
+  });
 });

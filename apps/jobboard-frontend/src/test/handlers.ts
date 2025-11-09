@@ -245,4 +245,130 @@ export const profileHandlers = [
   http.delete(`${API_BASE_URL}/profile/experience/:id`, async () => {
     return HttpResponse.json({}, { status: 204 });
   }),
+
+  // Education CRUD endpoints
+  http.post(`${API_BASE_URL}/profile/education`, async ({ request }) => {
+    const education = await request.json() as any;
+    return HttpResponse.json({
+      id: 2,
+      school: education.school || 'Test University',
+      degree: education.degree || 'Test Degree',
+      field: education.field || 'Test Field',
+      startDate: education.startDate || '2020-01-01',
+      endDate: education.endDate || null,
+      description: education.description || 'Test description',
+    }, { status: 201 });
+  }),
+
+  http.put(`${API_BASE_URL}/profile/education/:id`, async ({ request, params }) => {
+    const education = await request.json() as any;
+    return HttpResponse.json({
+      id: Number(params.id),
+      school: education.school || 'Updated University',
+      degree: education.degree || 'Updated Degree',
+      field: education.field || 'Updated Field',
+      startDate: education.startDate || '2020-01-01',
+      endDate: education.endDate || null,
+      description: education.description || 'Updated description',
+    }, { status: 200 });
+  }),
+
+  http.delete(`${API_BASE_URL}/profile/education/:id`, async () => {
+    return HttpResponse.json({}, { status: 204 });
+  }),
+
+  // Skills CRUD endpoints
+  http.post(`${API_BASE_URL}/profile/skill`, async ({ request }) => {
+    const skill = await request.json() as any;
+    return HttpResponse.json({
+      id: 4,
+      name: skill.name || 'Test Skill',
+      level: skill.level || 'Beginner',
+    }, { status: 201 });
+  }),
+
+  http.put(`${API_BASE_URL}/profile/skill/:id`, async ({ request, params }) => {
+    const skill = await request.json() as any;
+    return HttpResponse.json({
+      id: Number(params.id),
+      name: skill.name || 'Updated Skill',
+      level: skill.level || 'Advanced',
+    }, { status: 200 });
+  }),
+
+  http.delete(`${API_BASE_URL}/profile/skill/:id`, async () => {
+    return HttpResponse.json({}, { status: 204 });
+  }),
+
+  // Interests CRUD endpoints
+  http.post(`${API_BASE_URL}/profile/interest`, async ({ request }) => {
+    const interest = await request.json() as any;
+    return HttpResponse.json({
+      id: 3,
+      name: interest.name || 'Test Interest',
+    }, { status: 201 });
+  }),
+
+  http.put(`${API_BASE_URL}/profile/interest/:id`, async ({ request, params }) => {
+    const interest = await request.json() as any;
+    return HttpResponse.json({
+      id: Number(params.id),
+      name: interest.name || 'Updated Interest',
+    }, { status: 200 });
+  }),
+
+  http.delete(`${API_BASE_URL}/profile/interest/:id`, async () => {
+    return HttpResponse.json({}, { status: 204 });
+  }),
+
+  // Bio update endpoint
+  http.put(`${API_BASE_URL}/profile`, async ({ request }) => {
+    const profileUpdate = await request.json() as any;
+    return HttpResponse.json({
+      id: 1,
+      userId: 1,
+      firstName: 'John',
+      lastName: 'Doe',
+      bio: profileUpdate.bio || 'Updated bio',
+      imageUrl: 'https://example.com/profile.jpg',
+      educations: [
+        {
+          id: 1,
+          school: 'University of Example',
+          degree: 'Bachelor of Science',
+          field: 'Computer Science',
+          startDate: '2018-09-01',
+          endDate: '2022-06-15',
+          description: 'Studied software engineering and computer science fundamentals'
+        }
+      ],
+      experiences: [
+        {
+          id: 1,
+          company: 'Tech Corp',
+          position: 'Software Engineer',
+          description: 'Developed web applications using React and Node.js',
+          startDate: '2022-07-01',
+          endDate: null
+        }
+      ],
+      skills: [
+        { id: 1, name: 'JavaScript', level: 'Advanced' },
+        { id: 2, name: 'React', level: 'Advanced' },
+        { id: 3, name: 'TypeScript', level: 'Intermediate' }
+      ],
+      interests: [
+        { id: 1, name: 'Web Development' },
+        { id: 2, name: 'Machine Learning' }
+      ],
+      badges: [],
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: new Date().toISOString(),
+    }, { status: 200 });
+  }),
+
+  // Delete all profile data (delete account)
+  http.delete(`${API_BASE_URL}/profile/delete-all`, async () => {
+    return HttpResponse.json({}, { status: 200 });
+  }),
 ];
