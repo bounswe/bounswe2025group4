@@ -12,7 +12,11 @@ import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
+import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
+import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,6 +40,9 @@ public class JobApplicationService {
     private final JobApplicationRepository applicationRepository;
     private final UserRepository userRepository;
     private final JobPostRepository jobPostRepository;
+    private final WorkplaceService workplaceService;
+    private final EmployerWorkplaceRepository employerWorkplaceRepository;
+    private final WorkplaceRepository workplaceRepository;
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -55,14 +62,24 @@ public class JobApplicationService {
 
     public JobApplicationService(JobApplicationRepository applicationRepository,
                                  UserRepository userRepository,
-                                 JobPostRepository jobPostRepository) {
+                                 JobPostRepository jobPostRepository,
+                                 WorkplaceService workplaceService,
+                                 EmployerWorkplaceRepository employerWorkplaceRepository,
+                                 WorkplaceRepository workplaceRepository) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
         this.jobPostRepository = jobPostRepository;
+        this.workplaceService = workplaceService;
+        this.employerWorkplaceRepository = employerWorkplaceRepository;
+        this.workplaceRepository = workplaceRepository;
     }
 
     @Transactional(readOnly = true)
     public List<JobApplicationResponse> getByJobSeekerId(Long jobSeekerId) {
+        // Verify job seeker exists
+        userRepository.findById(jobSeekerId)
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "Job seeker with ID " + jobSeekerId + " not found"));
+        
         return applicationRepository.findByJobSeekerId(jobSeekerId).stream()
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
@@ -70,7 +87,22 @@ public class JobApplicationService {
 
     @Transactional(readOnly = true)
     public List<JobApplicationResponse> getByJobPostId(Long jobPostId) {
+        // Verify job post exists
+        jobPostRepository.findById(jobPostId)
+                .orElseThrow(() -> new HandleException(ErrorCode.JOB_POST_NOT_FOUND, "Job post with ID " + jobPostId + " not found"));
+        
         return applicationRepository.findByJobPostId(jobPostId).stream()
+                .map(this::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<JobApplicationResponse> getByWorkplaceId(Long workplaceId) {
+        // Verify workplace exists
+        workplaceRepository.findById(workplaceId)
+                .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace with ID " + workplaceId + " not found"));
+        
+        return applicationRepository.findByJobPost_Workplace_Id(workplaceId).stream()
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
@@ -87,11 +119,14 @@ public class JobApplicationService {
     public JobApplicationResponse create(CreateJobApplicationRequest dto) {
         User jobSeeker = getCurrentUser();
 
-
-
         // Get job post
         JobPost jobPost = jobPostRepository.findById(dto.getJobPostId())
                 .orElseThrow(() -> new HandleException(ErrorCode.JOB_POST_NOT_FOUND, "Job post with ID " + dto.getJobPostId() + " not found"));
+
+        // Check if jobseeker already applied to this job post
+        if (applicationRepository.existsByJobSeekerIdAndJobPostId(jobSeeker.getId(), dto.getJobPostId())) {
+            throw new HandleException(ErrorCode.APPLICATION_ALREADY_EXISTS, "You have already applied to this job post");
+        }
 
         // Create application
         JobApplication application = JobApplication.builder()
@@ -107,16 +142,15 @@ public class JobApplicationService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ROLE_EMPLOYER')")
     public JobApplicationResponse approve(Long id, String feedback) {
         JobApplication application = applicationRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.JOB_APPLICATION_NOT_FOUND, "Application with ID " + id + " not found"));
 
-        // Check authorization: only the employer who posted the job can approve
+        // Check authorization: any employer of the workplace can approve
         User employer = getCurrentUser();
-
-        if (!application.getJobPost().getEmployer().getId().equals(employer.getId())) {
-            throw new HandleException(ErrorCode.USER_UNAUTHORIZED, "Only the employer who posted the job can approve applications");
-        }
+        Long workplaceId = application.getJobPost().getWorkplace().getId();
+        assertEmployerOfWorkplace(workplaceId, employer.getId());
 
         // Update status
         application.setStatus(JobApplicationStatus.APPROVED);
@@ -128,16 +162,15 @@ public class JobApplicationService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ROLE_EMPLOYER')")
     public JobApplicationResponse reject(Long id, String feedback) {
         JobApplication application = applicationRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.JOB_APPLICATION_NOT_FOUND, "Application with ID " + id + " not found"));
 
-        // Check authorization: only the employer who posted the job can reject
+        // Check authorization: any employer of the workplace can reject
         User employer = getCurrentUser();
-
-        if (!application.getJobPost().getEmployer().getId().equals(employer.getId())) {
-            throw new HandleException(ErrorCode.USER_UNAUTHORIZED, "Only the employer who posted the job can reject applications");
-        }
+        Long workplaceId = application.getJobPost().getWorkplace().getId();
+        assertEmployerOfWorkplace(workplaceId, employer.getId());
 
         // Update status
         application.setStatus(JobApplicationStatus.REJECTED);
@@ -173,7 +206,7 @@ public class JobApplicationService {
                 .applicantName(jobSeeker.getUsername())
                 .jobPostId(jobPost.getId())
                 .title(jobPost.getTitle())
-                .company(jobPost.getWorkplace().getCompanyName())
+                .workplace(workplaceService.toBriefResponse(jobPost.getWorkplace()))
                 .status(application.getStatus())
                 .specialNeeds(application.getSpecialNeeds())
                 .feedback(application.getFeedback())
@@ -352,6 +385,13 @@ public class JobApplicationService {
             }
             application.setCvUrl(null);
             applicationRepository.save(application);
+        }
+    }
+
+    private void assertEmployerOfWorkplace(Long workplaceId, Long userId) {
+        boolean isEmployer = employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId);
+        if (!isEmployer) {
+            throw new AccessDeniedException("You are not an employer of this workplace. Only employers of the workplace can approve/reject applications.");
         }
     }
 }

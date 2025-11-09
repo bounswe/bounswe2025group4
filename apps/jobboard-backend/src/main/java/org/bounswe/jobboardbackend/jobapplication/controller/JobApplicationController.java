@@ -27,18 +27,21 @@ public class JobApplicationController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping
-    public ResponseEntity<List<JobApplicationResponse>> getFiltered(
-            @RequestParam(required = false) Long jobSeekerId,
-            @RequestParam(required = false) Long jobPostId
-    ) {
-        if (jobSeekerId != null) {
-            return ResponseEntity.ok(service.getByJobSeekerId(jobSeekerId));
-        } else if (jobPostId != null) {
-            return ResponseEntity.ok(service.getByJobPostId(jobPostId));
-        } else {
-            throw new HandleException(ErrorCode.MISSING_FILTER_PARAMETER, "Missing filter parameter, at least one of jobSeekerId or jobPostId must be provided");
-        }
+    @GetMapping("/job-seeker/{jobSeekerId}")
+    public ResponseEntity<List<JobApplicationResponse>> getByJobSeeker(@PathVariable Long jobSeekerId) {
+        return ResponseEntity.ok(service.getByJobSeekerId(jobSeekerId));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/job-post/{jobPostId}")
+    public ResponseEntity<List<JobApplicationResponse>> getByJobPost(@PathVariable Long jobPostId) {
+        return ResponseEntity.ok(service.getByJobPostId(jobPostId));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/workplace/{workplaceId}")
+    public ResponseEntity<List<JobApplicationResponse>> getByWorkplace(@PathVariable Long workplaceId) {
+        return ResponseEntity.ok(service.getByWorkplaceId(workplaceId));
     }
 
     @PreAuthorize("isAuthenticated()")
