@@ -15,13 +15,9 @@ public class UpdateJobPostRequest {
     @Size(max = 1000)
     private String description;
 
-    private String company;
-
-    private String location;
+    private Long workplaceId;
 
     private Boolean remote;
-
-    private String ethicalTags;
 
     private Boolean inclusiveOpportunity;
 
