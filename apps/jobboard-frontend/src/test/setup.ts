@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { authHandlers, API_BASE_URL } from './handlers';
+import { authHandlers, profileHandlers, API_BASE_URL } from './handlers';
 
 const testTranslations = {
   auth: {
@@ -82,6 +82,262 @@ const testTranslations = {
       },
     },
   },
+  profile: {
+    tabs: {
+      about: 'About',
+      activity: 'Activity',
+      posts: 'Posts',
+    },
+    header: {
+      currentRole: 'Software Developer',
+      joined: 'Joined January 2024',
+      stats: {
+        posts: 'Posts',
+        badges: 'Badges',
+      },
+      actions: {
+        editImage: 'Edit profile image',
+      },
+    },
+    imageUpload: {
+      title: 'Upload Profile Image',
+      chooseFile: 'Choose file',
+      upload: 'Upload',
+      save: 'Save',
+      delete: 'Delete',
+      remove: 'Remove Image',
+      cancel: 'Cancel',
+      maxSize: 'Maximum file size: 5MB',
+      supportedFormats: 'Supported formats: JPG, PNG, GIF',
+    },
+    about: {
+      title: 'About',
+      modal: {
+        title: 'Edit Bio',
+      },
+    },
+    experience: {
+      title: 'Experience',
+      modal: {
+        addTitle: 'Add Experience',
+        editTitle: 'Edit Experience',
+        fields: {
+          company: {
+            label: 'Company',
+            placeholder: 'Company name',
+          },
+          position: {
+            label: 'Position',
+            placeholder: 'Job title',
+          },
+          description: {
+            label: 'Description',
+            placeholder: 'Describe your role and achievements...',
+          },
+          startDate: {
+            label: 'Start Date',
+          },
+          endDate: {
+            label: 'End Date',
+          },
+          current: {
+            label: 'I currently work here',
+          },
+        },
+        submitAdd: 'Add Experience',
+        submitEdit: 'Save Changes',
+        cancel: 'Cancel',
+      },
+    },
+    education: {
+      title: 'Education',
+      modal: {
+        addTitle: 'Add Education',
+        editTitle: 'Edit Education',
+        fields: {
+          school: {
+            label: 'School',
+            placeholder: 'University or school name',
+          },
+          degree: {
+            label: 'Degree',
+            placeholder: 'Bachelor of Science',
+          },
+          field: {
+            label: 'Field of Study',
+            placeholder: 'Computer Science',
+          },
+          description: {
+            label: 'Description',
+            placeholder: 'Describe your studies...',
+          },
+          startDate: {
+            label: 'Start Date',
+          },
+          endDate: {
+            label: 'End Date',
+          },
+          current: {
+            label: 'I currently study here',
+          },
+        },
+        submitAdd: 'Add Education',
+        submitEdit: 'Save Changes',
+        cancel: 'Cancel',
+      },
+    },
+    skills: {
+      title: 'Skills',
+      modal: {
+        addTitle: 'Add Skill',
+        editTitle: 'Edit Skill',
+        fields: {
+          name: {
+            label: 'Skill Name',
+            placeholder: 'JavaScript',
+          },
+          level: {
+            label: 'Proficiency Level',
+            options: {
+              beginner: 'Beginner',
+              intermediate: 'Intermediate',
+              advanced: 'Advanced',
+              expert: 'Expert',
+            },
+          },
+        },
+        submitAdd: 'Add Skill',
+        submitEdit: 'Save Changes',
+        cancel: 'Cancel',
+      },
+    },
+    interests: {
+      title: 'Interests',
+      modal: {
+        addTitle: 'Add Interest',
+        editTitle: 'Edit Interest',
+        fields: {
+          name: {
+            label: 'Interest Name',
+            placeholder: 'Web Development',
+          },
+        },
+        submitAdd: 'Add Interest',
+        submitEdit: 'Save Changes',
+        cancel: 'Cancel',
+      },
+    },
+    actions: {
+      add: 'Add',
+      cancel: 'Cancel',
+    },
+    common: {
+      save: 'Save',
+      edit: 'Edit',
+      delete: 'Delete',
+      add: 'Add',
+      cancel: 'Cancel',
+    },
+    create: {
+      title: 'Create Profile',
+      description: 'Create your professional profile to get started',
+      fields: {
+        firstName: {
+          label: 'First Name',
+          placeholder: 'Enter first name',
+        },
+        lastName: {
+          label: 'Last Name',
+          placeholder: 'Enter last name',
+        },
+        bio: {
+          label: 'Bio',
+          placeholder: 'Tell us about yourself...',
+        },
+      },
+      submit: 'Create Profile',
+      helper: 'You can always edit this later',
+    },
+    page: {
+      loadErrorTitle: 'Failed to load profile',
+      emptyTitle: 'Profile not found',
+      emptyDescription: 'Create your profile to get started',
+      dangerZone: {
+        title: 'Danger Zone',
+        description: 'This action will permanently delete all your profile data.',
+        button: 'Delete Account',
+      },
+      alerts: {
+        deleteFailed: 'Failed to delete account',
+      },
+    },
+    notifications: {
+      createSuccess: 'Profile created successfully',
+      createError: 'Failed to create profile',
+      imageUploadSuccess: 'Profile image uploaded successfully',
+      imageUploadError: 'Failed to upload profile image',
+      imageDeleteSuccess: 'Profile image deleted successfully',
+      imageDeleteError: 'Failed to delete profile image',
+      deleteExperienceSuccess: 'Experience deleted successfully',
+      deleteExperienceError: 'Failed to delete experience',
+      deleteEducationSuccess: 'Education deleted successfully',
+      deleteEducationError: 'Failed to delete education',
+      deleteSkillSuccess: 'Skill deleted successfully',
+      deleteSkillError: 'Failed to delete skill',
+      deleteInterestSuccess: 'Interest deleted successfully',
+      deleteInterestError: 'Failed to delete interest',
+      saveBioSuccess: 'Bio updated successfully',
+      saveBioError: 'Failed to update bio',
+      saveExperienceSuccess: 'Experience saved successfully',
+      saveExperienceError: 'Failed to save experience',
+      saveEducationSuccess: 'Education saved successfully',
+      saveEducationError: 'Failed to save education',
+      saveSkillSuccess: 'Skill saved successfully',
+      saveSkillError: 'Failed to save skill',
+      saveInterestSuccess: 'Interest saved successfully',
+      saveInterestError: 'Failed to save interest',
+      deleteAccountSuccess: 'Account deleted successfully',
+    },
+    activity: {
+      items: [
+        { type: 'application', text: 'Applied to Software Engineer position at Tech Corp', date: '2024-01-15' },
+        { type: 'forum', text: 'Posted a question in React forum', date: '2024-01-14' },
+        { type: 'comment', text: 'Commented on JavaScript best practices', date: '2024-01-13' },
+      ],
+    },
+    posts: {
+      items: [
+        { title: 'How to optimize React performance?', date: '2024-01-10' },
+        { title: 'Best practices for TypeScript', date: '2024-01-08' },
+        { title: 'Getting started with Node.js', date: '2024-01-05' },
+      ],
+    },
+    deleteModal: {
+      title: 'Delete Account',
+      confirmKeyword: 'DELETE',
+      warningTitle: 'Warning',
+      warningDescription: 'This action cannot be undone',
+      summaryTitle: 'The following data will be permanently deleted:',
+      compliance: 'This action complies with GDPR data deletion requirements',
+      confirmPrompt: 'Type <code>{{keyword}}</code> to confirm deletion',
+      confirmationLabel: 'Type DELETE to confirm',
+      confirmationPlaceholder: 'Type {{keyword}} here',
+      items: {
+        profilePicture: 'Profile picture',
+        bio: 'Bio and personal information', 
+        experiences: 'Work experience',
+        education: 'Education history',
+        skills: 'Skills and endorsements',
+      },
+      buttons: {
+        cancel: 'Cancel',
+        continue: 'Continue',
+        back: 'Back',
+        delete: 'Delete Account',
+        deleting: 'Deleting...',
+      },
+    },
+  },
 } as const;
 
 vi.mock('@/lib/i18n', async () => {
@@ -100,7 +356,7 @@ vi.mock('@/lib/i18n', async () => {
   return { default: i18n };
 });
 
-export const server = setupServer(...authHandlers);
+export const server = setupServer(...authHandlers, ...profileHandlers);
 
 vi.stubEnv('VITE_API_URL', API_BASE_URL);
 
