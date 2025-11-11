@@ -2,6 +2,7 @@ package org.bounswe.jobboardbackend.jobapplication.dto;
 
 import lombok.*;
 import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
+import org.bounswe.jobboardbackend.workplace.dto.WorkplaceBriefResponse;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +14,7 @@ public class JobApplicationResponse {
 
     private Long id;
     private String title;
-    private String company;
+    private WorkplaceBriefResponse workplace;
     private String applicantName;
     private Long jobSeekerId;
     private Long jobPostId;

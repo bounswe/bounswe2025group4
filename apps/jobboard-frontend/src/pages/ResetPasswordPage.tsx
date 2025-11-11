@@ -4,16 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { resetPasswordSchema, type ResetPasswordFormData } from '../schemas/reset-password.schema';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
-  ? import.meta.env.VITE_API_URL 
+const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
+  ? import.meta.env.VITE_API_URL
   : (import.meta.env.VITE_API_URL || '') + '/api';
-
-console.log('ResetPasswordPage - VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('ResetPasswordPage - API_BASE_URL:', API_BASE_URL);
 
 export default function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -21,7 +19,6 @@ export default function ResetPasswordPage() {
   const token = searchParams.get('token');
 
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const { t } = useTranslation('common');
 
   const {
@@ -37,12 +34,11 @@ export default function ResetPasswordPage() {
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!token) {
-      setErrorMessage(t('auth.reset.errors.missingToken'));
+      toast.error(t('auth.reset.errors.missingToken'));
       return;
     }
 
     setIsLoading(true);
-    setErrorMessage('');
 
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/password-reset/confirm`, {
@@ -54,17 +50,17 @@ export default function ResetPasswordPage() {
       if (response.data?.message && response.data.message.toLowerCase().includes('error')) {
         const backendMsg = response.data.message;
         if (backendMsg.includes('same as the old password')) {
-          setErrorMessage(t('auth.reset.errors.sameAsOld'));
+          toast.error(t('auth.reset.errors.sameAsOld'));
         } else {
-          setErrorMessage(backendMsg);
+          toast.error(backendMsg);
         }
       } else if (response.data?.error) {
-        setErrorMessage(response.data.error);
+        toast.error(response.data.error);
       } else {
         // Success: redirect to login with success message
         navigate('/login', {
           replace: true,
-          state: { message: t('auth.reset.success') }
+          state: { message: t('auth.reset.success') },
         });
       }
     } catch (error: unknown) {
@@ -74,31 +70,31 @@ export default function ResetPasswordPage() {
 
         if (backendMsg) {
           if (backendMsg.includes('same as the old password')) {
-            setErrorMessage(t('auth.reset.errors.sameAsOld'));
+            toast.error(t('auth.reset.errors.sameAsOld'));
           } else {
-            setErrorMessage(backendMsg);
+            toast.error(backendMsg);
           }
           return;
         }
 
         if (responseData?.error) {
-          setErrorMessage(responseData.error);
+          toast.error(responseData.error);
           return;
         }
 
         if (error.message) {
-          setErrorMessage(error.message);
+          toast.error(error.message);
           return;
         }
 
-        setErrorMessage(t('auth.reset.errors.generic'));
+        toast.error(t('auth.reset.errors.generic'));
         return;
       }
 
       if (error instanceof Error) {
-        setErrorMessage(error.message);
+        toast.error(error.message);
       } else {
-        setErrorMessage(t('auth.reset.errors.generic'));
+        toast.error(t('auth.reset.errors.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -213,13 +209,6 @@ export default function ResetPasswordPage() {
               </p>
             )}
           </div>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive" role="alert">
-              {errorMessage}
-            </div>
-          )}
 
           {/* Submit Button */}
           <Button
