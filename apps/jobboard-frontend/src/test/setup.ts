@@ -151,12 +151,81 @@ const testTranslations = {
     },
     education: {
       title: 'Education',
+      modal: {
+        addTitle: 'Add Education',
+        editTitle: 'Edit Education',
+        fields: {
+          school: {
+            label: 'School',
+            placeholder: 'University or school name',
+          },
+          degree: {
+            label: 'Degree',
+            placeholder: 'Bachelor of Science',
+          },
+          field: {
+            label: 'Field of Study',
+            placeholder: 'Computer Science',
+          },
+          description: {
+            label: 'Description',
+            placeholder: 'Describe your studies...',
+          },
+          startDate: {
+            label: 'Start Date',
+          },
+          endDate: {
+            label: 'End Date',
+          },
+          current: {
+            label: 'I currently study here',
+          },
+        },
+        submitAdd: 'Add Education',
+        submitEdit: 'Save Changes',
+        cancel: 'Cancel',
+      },
     },
     skills: {
       title: 'Skills',
+      modal: {
+        addTitle: 'Add Skill',
+        editTitle: 'Edit Skill',
+        fields: {
+          name: {
+            label: 'Skill Name',
+            placeholder: 'JavaScript',
+          },
+          level: {
+            label: 'Proficiency Level',
+            options: {
+              beginner: 'Beginner',
+              intermediate: 'Intermediate',
+              advanced: 'Advanced',
+              expert: 'Expert',
+            },
+          },
+        },
+        submitAdd: 'Add Skill',
+        submitEdit: 'Save Changes',
+        cancel: 'Cancel',
+      },
     },
     interests: {
       title: 'Interests',
+      modal: {
+        addTitle: 'Add Interest',
+        editTitle: 'Edit Interest',
+        fields: {
+          name: {
+            label: 'Interest Name',
+            placeholder: 'Web Development',
+          },
+        },
+        submitAdd: 'Add Interest',
+        submitEdit: 'Save Changes',
+        cancel: 'Cancel',
+      },
     },
     actions: {
       add: 'Add',
