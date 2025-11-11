@@ -372,3 +372,293 @@ export const profileHandlers = [
     return HttpResponse.json({}, { status: 200 });
   }),
 ];
+
+// ============================================================================
+// MOCK DATA FACTORIES
+// ============================================================================
+
+/**
+ * Creates a mock job post for testing
+ */
+export function createMockJob(overrides: Partial<any> = {}): any {
+  return {
+    id: 1,
+    employerId: 1,
+    title: 'Senior Software Engineer',
+    description: 'Join our team to build innovative solutions.',
+    company: 'Tech Corp',
+    location: 'San Francisco, CA',
+    remote: true,
+    ethicalTags: 'Salary Transparency, Remote-Friendly',
+    inclusiveOpportunity: true,
+    minSalary: 120000,
+    maxSalary: 180000,
+    contact: 'hiring@techcorp.com',
+    postedDate: '2025-01-01T00:00:00Z',
+    ...overrides,
+  };
+}
+
+/**
+ * Creates a mock job application for testing
+ */
+export function createMockApplication(overrides: Partial<any> = {}): any {
+  return {
+    id: 1,
+    title: 'Senior Software Engineer',
+    company: 'Tech Corp',
+    applicantName: 'John Doe',
+    jobSeekerId: 2,
+    jobPostId: 1,
+    status: 'PENDING',
+    specialNeeds: 'Requires wheelchair accessibility',
+    feedback: '',
+    cvUrl: 'https://example.com/cv.pdf',
+    coverLetter: 'I am excited to apply for this position.',
+    appliedDate: '2025-01-15T10:00:00Z',
+    ...overrides,
+  };
+}
+
+// ============================================================================
+// JOB HANDLERS
+// ============================================================================
+
+let mockJobs: any[] = [
+  createMockJob({ id: 1, title: 'Senior Software Engineer', status: 'OPEN' }),
+  createMockJob({ id: 2, title: 'Frontend Developer', company: 'WebDev Inc', status: 'ACTIVE' }),
+  createMockJob({ id: 3, title: 'Backend Engineer', company: 'DataSoft', status: 'PAUSED' }),
+];
+
+let mockApplications: any[] = [
+  createMockApplication({ id: 1, jobPostId: 1 }),
+  createMockApplication({ id: 2, jobPostId: 1, status: 'APPROVED' }),
+  createMockApplication({ id: 3, jobPostId: 2, applicantName: 'Jane Smith' }),
+];
+
+export const jobHandlers = [
+  // Get all jobs with optional filters
+  http.get(`${API_BASE_URL}/jobs`, async ({ request }) => {
+    const url = new URL(request.url);
+    const title = url.searchParams.get('title');
+    const companyName = url.searchParams.get('companyName');
+    const isRemote = url.searchParams.get('isRemote');
+
+    let filteredJobs = [...mockJobs];
+
+    if (title) {
+      filteredJobs = filteredJobs.filter(job =>
+        job.title.toLowerCase().includes(title.toLowerCase())
+      );
+    }
+
+    if (companyName) {
+      filteredJobs = filteredJobs.filter(job =>
+        job.company.toLowerCase().includes(companyName.toLowerCase())
+      );
+    }
+
+    if (isRemote !== null) {
+      filteredJobs = filteredJobs.filter(job => job.remote === (isRemote === 'true'));
+    }
+
+    return HttpResponse.json(filteredJobs, { status: 200 });
+  }),
+
+  // Get single job by ID
+  http.get(`${API_BASE_URL}/jobs/:id`, async ({ params }) => {
+    const { id } = params;
+    const job = mockJobs.find(j => j.id === Number(id));
+
+    if (!job) {
+      return HttpResponse.json(
+        { message: 'Job not found' },
+        { status: 404 }
+      );
+    }
+
+    return HttpResponse.json(job, { status: 200 });
+  }),
+
+  // Get jobs by employer ID
+  http.get(`${API_BASE_URL}/jobs/employer/:employerId`, async ({ params }) => {
+    const { employerId } = params;
+    const employerJobs = mockJobs.filter(j => j.employerId === Number(employerId));
+
+    return HttpResponse.json(employerJobs, { status: 200 });
+  }),
+
+  // Create new job
+  http.post(`${API_BASE_URL}/jobs`, async ({ request }) => {
+    const body = await request.json() as any;
+
+    const newJob = createMockJob({
+      id: mockJobs.length + 1,
+      ...body,
+      postedDate: new Date().toISOString(),
+    });
+
+    mockJobs.push(newJob);
+
+    return HttpResponse.json(newJob, { status: 201 });
+  }),
+
+  // Update job
+  http.put(`${API_BASE_URL}/jobs/:id`, async ({ params, request }) => {
+    const { id } = params;
+    const body = await request.json() as any;
+    const jobIndex = mockJobs.findIndex(j => j.id === Number(id));
+
+    if (jobIndex === -1) {
+      return HttpResponse.json(
+        { message: 'Job not found' },
+        { status: 404 }
+      );
+    }
+
+    mockJobs[jobIndex] = {
+      ...mockJobs[jobIndex],
+      ...body,
+    };
+
+    return HttpResponse.json(mockJobs[jobIndex], { status: 200 });
+  }),
+
+  // Delete job
+  http.delete(`${API_BASE_URL}/jobs/:id`, async ({ params }) => {
+    const { id } = params;
+    const jobIndex = mockJobs.findIndex(j => j.id === Number(id));
+
+    if (jobIndex === -1) {
+      return HttpResponse.json(
+        { message: 'Job not found' },
+        { status: 404 }
+      );
+    }
+
+    mockJobs.splice(jobIndex, 1);
+
+    return HttpResponse.json({}, { status: 204 });
+  }),
+];
+
+// ============================================================================
+// APPLICATION HANDLERS
+// ============================================================================
+
+export const applicationHandlers = [
+  // Get applications with optional filters
+  http.get(`${API_BASE_URL}/applications`, async ({ request }) => {
+    const url = new URL(request.url);
+    const jobPostId = url.searchParams.get('jobPostId');
+    const jobSeekerId = url.searchParams.get('jobSeekerId');
+
+    let filteredApplications = [...mockApplications];
+
+    if (jobPostId) {
+      filteredApplications = filteredApplications.filter(app =>
+        app.jobPostId === Number(jobPostId)
+      );
+    }
+
+    if (jobSeekerId) {
+      filteredApplications = filteredApplications.filter(app =>
+        app.jobSeekerId === Number(jobSeekerId)
+      );
+    }
+
+    return HttpResponse.json(filteredApplications, { status: 200 });
+  }),
+
+  // Get single application by ID
+  http.get(`${API_BASE_URL}/applications/:id`, async ({ params }) => {
+    const { id } = params;
+    const application = mockApplications.find(app => app.id === Number(id));
+
+    if (!application) {
+      return HttpResponse.json(
+        { message: 'Application not found' },
+        { status: 404 }
+      );
+    }
+
+    return HttpResponse.json(application, { status: 200 });
+  }),
+
+  // Create new application
+  http.post(`${API_BASE_URL}/applications`, async ({ request }) => {
+    const body = await request.json() as any;
+
+    const newApplication = createMockApplication({
+      id: mockApplications.length + 1,
+      ...body,
+      appliedDate: new Date().toISOString(),
+      status: 'PENDING',
+    });
+
+    mockApplications.push(newApplication);
+
+    return HttpResponse.json(newApplication, { status: 201 });
+  }),
+
+  // Approve application
+  http.put(`${API_BASE_URL}/applications/:id/approve`, async ({ params, request }) => {
+    const { id } = params;
+    const body = await request.json() as any;
+    const appIndex = mockApplications.findIndex(app => app.id === Number(id));
+
+    if (appIndex === -1) {
+      return HttpResponse.json(
+        { message: 'Application not found' },
+        { status: 404 }
+      );
+    }
+
+    mockApplications[appIndex] = {
+      ...mockApplications[appIndex],
+      status: 'APPROVED',
+      feedback: body.feedback || '',
+    };
+
+    return HttpResponse.json(mockApplications[appIndex], { status: 200 });
+  }),
+
+  // Reject application
+  http.put(`${API_BASE_URL}/applications/:id/reject`, async ({ params, request }) => {
+    const { id } = params;
+    const body = await request.json() as any;
+    const appIndex = mockApplications.findIndex(app => app.id === Number(id));
+
+    if (appIndex === -1) {
+      return HttpResponse.json(
+        { message: 'Application not found' },
+        { status: 404 }
+      );
+    }
+
+    mockApplications[appIndex] = {
+      ...mockApplications[appIndex],
+      status: 'REJECTED',
+      feedback: body.feedback || '',
+    };
+
+    return HttpResponse.json(mockApplications[appIndex], { status: 200 });
+  }),
+
+  // Delete application
+  http.delete(`${API_BASE_URL}/applications/:id`, async ({ params }) => {
+    const { id } = params;
+    const appIndex = mockApplications.findIndex(app => app.id === Number(id));
+
+    if (appIndex === -1) {
+      return HttpResponse.json(
+        { message: 'Application not found' },
+        { status: 404 }
+      );
+    }
+
+    mockApplications.splice(appIndex, 1);
+
+    return HttpResponse.json({}, { status: 204 });
+  }),
+];
