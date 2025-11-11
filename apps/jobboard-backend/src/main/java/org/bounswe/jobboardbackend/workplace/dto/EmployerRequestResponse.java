@@ -13,6 +13,8 @@ public class EmployerRequestResponse {
     private Long id;
     private Long workplaceId;
     private Long createdByUserId;
+    private String username;
+    private String nameSurname;
     private String status; // EmployerRequestStatus
     private String note;
     private Instant createdAt;

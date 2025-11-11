@@ -1,6 +1,7 @@
 package org.bounswe.jobboardbackend.workplace.service;
 
 import lombok.RequiredArgsConstructor;
+import org.bounswe.jobboardbackend.profile.model.Profile;
 import org.bounswe.jobboardbackend.workplace.dto.*;
 import org.bounswe.jobboardbackend.workplace.model.*;
 import org.bounswe.jobboardbackend.workplace.model.enums.EmployerRole;
@@ -8,6 +9,7 @@ import org.bounswe.jobboardbackend.workplace.model.enums.EthicalPolicy;
 import org.bounswe.jobboardbackend.workplace.repository.*;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,8 @@ public class ReviewService {
     private final ReviewReplyRepository reviewReplyRepository;
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
+
 
     // === CREATE REVIEW ===
     @Transactional
@@ -288,10 +292,17 @@ public class ReviewService {
                     .map(this::toReplyResponse)
                     .orElse(null);
         }
+
+        String nameSurname = profileRepository.findByUserId(r.getUser().getId())
+                .map(p -> p.getFirstName() + " " + p.getLastName())
+                .orElse("");
+
         return ReviewResponse.builder()
                 .id(r.getId())
                 .workplaceId(r.getWorkplace().getId())
-                .userId(r.getUser().getId())
+                .userId(r.isAnonymous() ? null : r.getUser().getId())
+                .username(r.isAnonymous() ? "" : r.getUser().getUsername())
+                .nameSurname(r.isAnonymous() ? "anonymousUser" : nameSurname)
                 .title(r.getTitle())
                 .content(r.getContent())
                 .overallRating(r.getOverallRating())
@@ -309,6 +320,7 @@ public class ReviewService {
                 .id(reply.getId())
                 .reviewId(reply.getReview().getId())
                 .employerUserId(reply.getEmployerUser() != null ? reply.getEmployerUser().getId() : null)
+                .workplaceName(reply.getReview().getWorkplace().getCompanyName())
                 .content(reply.getContent())
                 .createdAt(reply.getCreatedAt())
                 .updatedAt(reply.getUpdatedAt())

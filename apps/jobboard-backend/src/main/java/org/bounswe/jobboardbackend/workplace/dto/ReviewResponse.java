@@ -13,7 +13,9 @@ import java.util.Map;
 public class ReviewResponse {
     private Long id;
     private Long workplaceId;
-    private Long userId; // TODO: anon dönerken frontend göstermeyebilir
+    private Long userId; // TODO: anon dönerken null dönebiliriz
+    private String username; // TODO: anon dönerken anonymousUser dönebiliriz
+    private String nameSurname; // TODO: anon dönerken null dönebiliriz
     private String title;
     private String content;
     private boolean anonymous;
