@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
 import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import type { InitialEntry } from 'react-router';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import type { InitialEntry } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { ToastContainer } from 'react-toastify';
 import { I18nProvider } from '@/providers/I18nProvider';
@@ -21,7 +21,9 @@ const Providers = ({ children, initialEntries = ['/'] }: { children: ReactNode; 
   <I18nProvider>
     <AuthProvider>
       <MemoryRouter initialEntries={initialEntries}>
-        {children}
+        <Routes>
+          <Route path="*" element={children} />
+        </Routes>
         <ToastContainer />
       </MemoryRouter>
     </AuthProvider>

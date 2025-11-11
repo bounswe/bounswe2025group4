@@ -1,4 +1,5 @@
 import { http, HttpResponse } from 'msw';
+import type { JobPostResponse } from '@/types/api.types';
 
 export const API_BASE_URL = 'https://api.example.com/api';
 
@@ -104,6 +105,39 @@ export function createMockJWT(username: string, email: string, userId: number = 
   // Return properly formatted JWT: header.payload.signature
   return `${encodedHeader}.${encodedPayload}.${signature}`;
 }
+
+const mockJobs: JobPostResponse[] = [
+  {
+    id: 1,
+    employerId: 100,
+    title: 'Frontend Developer',
+    description: 'Build accessible UIs.',
+    company: 'TechFlow',
+    location: 'Berlin, Germany',
+    remote: false,
+    ethicalTags: 'REMOTE,INCLUSION',
+    inclusiveOpportunity: true,
+    minSalary: 70000,
+    maxSalary: 90000,
+    contact: 'talent@techflow.com',
+    postedDate: '2024-02-01T00:00:00Z',
+  },
+  {
+    id: 2,
+    employerId: 101,
+    title: 'Backend Engineer',
+    description: 'Scale APIs with Node.js.',
+    company: 'DataForge',
+    location: 'Remote',
+    remote: true,
+    ethicalTags: 'REMOTE',
+    inclusiveOpportunity: false,
+    minSalary: 80000,
+    maxSalary: 110000,
+    contact: 'jobs@dataforge.io',
+    postedDate: '2024-02-05T00:00:00Z',
+  },
+];
 
 export const authHandlers = [
   http.post(`${API_BASE_URL}/auth/login`, async ({ request }) => {
@@ -372,3 +406,16 @@ export const profileHandlers = [
     return HttpResponse.json({}, { status: 200 });
   }),
 ];
+
+export const jobsHandlers = [
+  http.get(`${API_BASE_URL}/jobs`, () => {
+    return HttpResponse.json(mockJobs, { status: 200 });
+  }),
+];
+
+export function createMockJob(overrides: Partial<JobPostResponse> = {}) {
+  return {
+    ...mockJobs[0],
+    ...overrides,
+  };
+}

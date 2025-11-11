@@ -30,7 +30,7 @@ const ITEMS_PER_PAGE = 10;
 /**
  * Convert API JobPostResponse to Job type for JobCard component
  */
-function convertJobPostToJob(jobPost: JobPostResponse): Job {
+export function convertJobPostToJob(jobPost: JobPostResponse): Job {
   // Parse ethical tags (comma-separated string) into EthicalTag array
   const ethicalTags = jobPost.ethicalTags
     ? (jobPost.ethicalTags.split(',').map((tag) => tag.trim()) as EthicalTag[])

@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { authHandlers, profileHandlers, API_BASE_URL } from './handlers';
+import { authHandlers, profileHandlers, jobsHandlers, API_BASE_URL } from './handlers';
 
 const testTranslations = {
   auth: {
@@ -80,6 +80,26 @@ const testTranslations = {
         missingToken: 'Invalid or missing reset token.',
         generic: 'Failed to reset password. Please try again.',
       },
+    },
+  },
+  jobs: {
+    filtersHeading: 'Filters',
+    resetFilters: 'Reset filters',
+    searchPlaceholder: 'Search jobs',
+    searchAria: 'Search jobs',
+    clearSearch: 'Clear search',
+    results: '{{count}} job found',
+    results_plural: '{{count}} jobs found',
+    resultsDescription: '{{count}} opportunities match your current filters.',
+    noResults: 'No jobs found matching your criteria.',
+    error: 'Failed to load jobs.',
+    retry: 'Try again',
+    authRequired: {
+      title: 'Account required',
+      description: 'You need an account to view job details.',
+      invitation: 'Create an account or log in to access opportunities.',
+      signUp: 'Sign up',
+      login: 'Log in',
     },
   },
   profile: {
@@ -356,7 +376,7 @@ vi.mock('@/lib/i18n', async () => {
   return { default: i18n };
 });
 
-export const server = setupServer(...authHandlers, ...profileHandlers);
+export const server = setupServer(...authHandlers, ...profileHandlers, ...jobsHandlers);
 
 vi.stubEnv('VITE_API_URL', API_BASE_URL);
 
