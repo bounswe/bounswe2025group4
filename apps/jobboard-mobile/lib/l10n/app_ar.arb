@@ -361,6 +361,7 @@
   "jobFilter_maxSalary": "الحد الأقصى للراتب",
   "jobFilter_maxSalaryHint": "مثل: 100000",
   "jobFilter_remoteOnly": "الوظائف عن بُعد فقط",
+  "jobFilter_inclusiveOpportunity": "وظائف شاملة للأشخاص ذوي الإعاقة فقط",
   "jobFilter_jobType": "نوع الوظيفة",
   "jobFilter_clearAll": "مسح الكل",
   "jobFilter_applyFilters": "تطبيق المرشحات",

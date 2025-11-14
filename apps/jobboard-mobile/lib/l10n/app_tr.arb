@@ -361,6 +361,7 @@
   "jobFilter_maxSalary": "Max Maaş",
   "jobFilter_maxSalaryHint": "örn. 100000",
   "jobFilter_remoteOnly": "Sadece Uzaktan İşler",
+  "jobFilter_inclusiveOpportunity": "Sadece Engelli Dostu",
   "jobFilter_jobType": "İş Türü",
   "jobFilter_clearAll": "Tümünü Temizle",
   "jobFilter_applyFilters": "Filtreleri Uygula",

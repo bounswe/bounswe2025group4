@@ -25,6 +25,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
   final TextEditingController _minSalaryController = TextEditingController();
   final TextEditingController _maxSalaryController = TextEditingController();
   bool _isRemote = false;
+  bool _isInclusiveOpportunity = false;
   bool _isPoliciesExpanded = false;
 
   @override
@@ -40,6 +41,7 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
       'minSalary': widget.initialFilters['minSalary'],
       'maxSalary': widget.initialFilters['maxSalary'],
       'isRemote': widget.initialFilters['isRemote'],
+      'inclusiveOpportunity': widget.initialFilters['inclusiveOpportunity'],
       'jobTypes': List<String>.from(widget.initialFilters['jobTypes'] ?? []),
     };
 
@@ -49,6 +51,8 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
     _minSalaryController.text = _selectedFilters['minSalary']?.toString() ?? '';
     _maxSalaryController.text = _selectedFilters['maxSalary']?.toString() ?? '';
     _isRemote = _selectedFilters['isRemote'] ?? false;
+    _isInclusiveOpportunity =
+        _selectedFilters['inclusiveOpportunity'] ?? false;
   }
 
   @override
@@ -161,6 +165,23 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
               },
               contentPadding: EdgeInsets.zero,
             ),
+            const SizedBox(height: 8),
+
+            // Inclusive Opportunity option
+            SwitchListTile(
+              title: Text(
+                AppLocalizations.of(context)!.jobFilter_inclusiveOpportunity,
+              ),
+              value: _isInclusiveOpportunity,
+              onChanged: (value) {
+                HapticFeedback.lightImpact();
+                setState(() {
+                  _isInclusiveOpportunity = value;
+                  _selectedFilters['inclusiveOpportunity'] = value;
+                });
+              },
+              contentPadding: EdgeInsets.zero,
+            ),
             const Divider(),
 
             // Job types
@@ -191,12 +212,14 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
               _minSalaryController.clear();
               _maxSalaryController.clear();
               _isRemote = false;
+              _isInclusiveOpportunity = false;
               _selectedFilters['title'] = null;
               _selectedFilters['companyName'] = null;
               (_selectedFilters['ethicalTags'] as List<String>).clear();
               _selectedFilters['minSalary'] = null;
               _selectedFilters['maxSalary'] = null;
               _selectedFilters['isRemote'] = null;
+              _selectedFilters['inclusiveOpportunity'] = null;
               (_selectedFilters['jobTypes'] as List<String>).clear();
             });
           },
