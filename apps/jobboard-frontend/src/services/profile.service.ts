@@ -295,7 +295,7 @@ export const profileService = {
         console.warn('Failed to clear bio:', err);
       }
 
-      console.log('All profile data deleted successfully');
+      //console.log('All profile data deleted successfully');
     } catch (err) {
       console.error('Failed to delete profile data:', err);
       throw new Error('Failed to delete profile data. Please try again.');

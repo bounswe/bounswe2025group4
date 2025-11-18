@@ -1,0 +1,42 @@
+name: Jobboard Frontend Tests
+
+on:
+  push:
+    paths:
+      - "apps/jobboard-frontend/**"
+      - ".github/workflows/frontend-tests.yml"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "apps/jobboard-frontend/**"
+      - ".github/workflows/frontend-tests.yml"
+
+jobs:
+  test:
+    name: Run Vitest Suite
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/jobboard-frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/jobboard-frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run unit tests
+        run: pnpm test
