@@ -6,6 +6,7 @@ import '../../../core/services/api_service.dart';
 import '../../../core/models/employer_workplace_item.dart';
 import 'workplace_detail_page.dart';
 import 'employer_requests_page.dart';
+import 'edit_workplace_page.dart';
 
 class MyEmployerWorkplacesPage extends StatefulWidget {
   const MyEmployerWorkplacesPage({super.key});
@@ -292,10 +293,35 @@ class _MyEmployerWorkplacesPageState extends State<MyEmployerWorkplacesPage> {
                                           size: 18,
                                         ),
                                         label: const Text(
-                                          'Manage Requests',
+                                          'Requests',
                                           style: TextStyle(fontSize: 12),
                                         ),
                                       ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: OutlinedButton.icon(
+                                        onPressed: () {
+                                          _editWorkplace(workplace.id);
+                                        },
+                                        icon: const Icon(
+                                          Icons.edit,
+                                          size: 18,
+                                        ),
+                                        label: const Text(
+                                          'Edit',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    IconButton(
+                                      onPressed: () => _deleteWorkplace(workplace),
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.red,
+                                      ),
+                                      tooltip: 'Delete Workplace',
                                     ),
                                   ],
                                 ),
@@ -328,5 +354,112 @@ class _MyEmployerWorkplacesPageState extends State<MyEmployerWorkplacesPage> {
         Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
       ],
     );
+  }
+
+  Future<void> _editWorkplace(int workplaceId) async {
+    // First, fetch the full workplace details
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final apiService = ApiService(authProvider: authProvider);
+    final provider = WorkplaceProvider(apiService: apiService);
+    
+    // Show loading indicator
+    if (!mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+    
+    await provider.fetchWorkplaceById(workplaceId);
+    
+    if (!mounted) return;
+    Navigator.pop(context); // Close loading dialog
+    
+    if (provider.currentWorkplace != null) {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              EditWorkplacePage(workplace: provider.currentWorkplace!),
+        ),
+      );
+
+      if (result == true) {
+        _loadWorkplaces();
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(provider.error ?? 'Failed to load workplace'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteWorkplace(workplace) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Delete Workplace'),
+            content: Text(
+              'Are you sure you want to delete "${workplace.companyName}"? '
+              'This action cannot be undone and will remove all reviews and data.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      final response = await _workplaceProvider.deleteWorkplace(workplace.id);
+
+      if (!mounted) return;
+
+      if (response != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Reload workplaces list
+        _loadWorkplaces();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _workplaceProvider.error ?? 'Failed to delete workplace',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error deleting workplace: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

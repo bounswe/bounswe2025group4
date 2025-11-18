@@ -5,6 +5,8 @@ class WorkplaceReview {
   final int id;
   final int workplaceId;
   final int userId;
+  final String username;
+  final String nameSurname;
   final String title;
   final String content;
   final bool anonymous;
@@ -19,6 +21,8 @@ class WorkplaceReview {
     required this.id,
     required this.workplaceId,
     required this.userId,
+    required this.username,
+    required this.nameSurname,
     required this.title,
     required this.content,
     required this.anonymous,
@@ -32,14 +36,16 @@ class WorkplaceReview {
 
   factory WorkplaceReview.fromJson(Map<String, dynamic> json) {
     return WorkplaceReview(
-      id: json['id'] as int,
-      workplaceId: json['workplaceId'] as int,
-      userId: json['userId'] as int,
-      title: json['title'] as String,
-      content: json['content'] as String,
-      anonymous: json['anonymous'] as bool,
-      helpfulCount: json['helpfulCount'] as int,
-      overallRating: (json['overallRating'] as num).toDouble(),
+      id: json['id'] as int? ?? 0,
+      workplaceId: json['workplaceId'] as int? ?? 0,
+      userId: json['userId'] as int? ?? 0,
+      username: json['username'] as String? ?? '',
+      nameSurname: json['nameSurname'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      content: json['content'] as String? ?? '',
+      anonymous: json['anonymous'] as bool? ?? false,
+      helpfulCount: json['helpfulCount'] as int? ?? 0,
+      overallRating: (json['overallRating'] as num?)?.toDouble() ?? 0.0,
       ethicalPolicyRatings:
           json['ethicalPolicyRatings'] != null
               ? Map<String, int>.from(
@@ -50,8 +56,12 @@ class WorkplaceReview {
           json['reply'] != null
               ? WorkplaceReply.fromJson(json['reply'] as Map<String, dynamic>)
               : null,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      createdAt: DateTime.parse(
+        json['createdAt'] as String? ?? DateTime.now().toIso8601String(),
+      ),
+      updatedAt: DateTime.parse(
+        json['updatedAt'] as String? ?? DateTime.now().toIso8601String(),
+      ),
     );
   }
 
@@ -60,6 +70,8 @@ class WorkplaceReview {
       'id': id,
       'workplaceId': workplaceId,
       'userId': userId,
+      'username': username,
+      'nameSurname': nameSurname,
       'title': title,
       'content': content,
       'anonymous': anonymous,

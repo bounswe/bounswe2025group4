@@ -3,24 +3,27 @@ import 'package:provider/provider.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/workplace_provider.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/models/workplace.dart';
 
-class CreateWorkplacePage extends StatefulWidget {
-  const CreateWorkplacePage({super.key});
+class EditWorkplacePage extends StatefulWidget {
+  final Workplace workplace;
+
+  const EditWorkplacePage({super.key, required this.workplace});
 
   @override
-  State<CreateWorkplacePage> createState() => _CreateWorkplacePageState();
+  State<EditWorkplacePage> createState() => _EditWorkplacePageState();
 }
 
-class _CreateWorkplacePageState extends State<CreateWorkplacePage> {
+class _EditWorkplacePageState extends State<EditWorkplacePage> {
   final _formKey = GlobalKey<FormState>();
-  final _companyNameController = TextEditingController();
-  final _sectorController = TextEditingController();
-  final _locationController = TextEditingController();
-  final _shortDescriptionController = TextEditingController();
-  final _detailedDescriptionController = TextEditingController();
-  final _websiteController = TextEditingController();
+  late TextEditingController _companyNameController;
+  late TextEditingController _sectorController;
+  late TextEditingController _locationController;
+  late TextEditingController _shortDescriptionController;
+  late TextEditingController _detailedDescriptionController;
+  late TextEditingController _websiteController;
 
-  final List<String> _selectedEthicalTags = [];
+  late List<String> _selectedEthicalTags;
   final List<String> _availableEthicalTags = [
     'salary_transparency',
     'equal_pay_policy',
@@ -51,6 +54,61 @@ class _CreateWorkplacePageState extends State<CreateWorkplacePage> {
 
   bool _isLoading = false;
   late WorkplaceProvider _workplaceProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _companyNameController = TextEditingController(
+      text: widget.workplace.companyName,
+    );
+    _sectorController = TextEditingController(text: widget.workplace.sector);
+    _locationController = TextEditingController(
+      text: widget.workplace.location,
+    );
+    _shortDescriptionController = TextEditingController(
+      text: widget.workplace.shortDescription,
+    );
+    _detailedDescriptionController = TextEditingController(
+      text: widget.workplace.detailedDescription,
+    );
+    _websiteController = TextEditingController(
+      text: widget.workplace.website ?? '',
+    );
+
+    // Convert tags from API format (Title Case with spaces) to snake_case format
+    _selectedEthicalTags =
+        widget.workplace.ethicalTags.map((tag) {
+          return _convertToSnakeCase(tag);
+        }).toList();
+  }
+
+  // Convert formatted tag back to snake_case
+  // Must match the reverse of ApiService._formatEthicalTag
+  String _convertToSnakeCase(String formattedTag) {
+    // Reverse mapping for special cases
+    final reverseSpecialCases = {
+      'LGBTQ+ Friendly Workplace': 'lgbtq_friendly_workplace',
+      'Certified B-Corporation': 'certified_b_corporation',
+      'No After-Hours Work Culture': 'no_after_hours_work_culture',
+      'Remote-Friendly': 'remote_friendly',
+      'Performance-Based Bonus': 'performance_based_bonus',
+      'Learning & Development Budget': 'learning_development_budget',
+      'Sustainability-Focused': 'sustainability_focused',
+      'Disability-Inclusive Workplace': 'disability_inclusive_workplace',
+    };
+
+    // Check if it's a special case
+    if (reverseSpecialCases.containsKey(formattedTag)) {
+      return reverseSpecialCases[formattedTag]!;
+    }
+
+    // Default: Convert Title Case to snake_case
+    return formattedTag
+        .toLowerCase()
+        .replaceAll(' ', '_')
+        .replaceAll('&', 'and')
+        .replaceAll('-', '_');
+  }
 
   @override
   void didChangeDependencies() {
@@ -88,7 +146,8 @@ class _CreateWorkplacePageState extends State<CreateWorkplacePage> {
 
     setState(() => _isLoading = true);
 
-    final workplace = await _workplaceProvider.createWorkplace(
+    final success = await _workplaceProvider.updateWorkplace(
+      workplaceId: widget.workplace.id,
       companyName: _companyNameController.text.trim(),
       sector: _sectorController.text.trim(),
       location: _locationController.text.trim(),
@@ -105,10 +164,10 @@ class _CreateWorkplacePageState extends State<CreateWorkplacePage> {
 
     if (!mounted) return;
 
-    if (workplace != null) {
+    if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Workplace created successfully!'),
+          content: Text('Workplace updated successfully!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -117,7 +176,7 @@ class _CreateWorkplacePageState extends State<CreateWorkplacePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _workplaceProvider.error ?? 'Failed to create workplace',
+            _workplaceProvider.error ?? 'Failed to update workplace',
           ),
           backgroundColor: Colors.red,
         ),
@@ -128,7 +187,7 @@ class _CreateWorkplacePageState extends State<CreateWorkplacePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Workplace')),
+      appBar: AppBar(title: const Text('Edit Workplace')),
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -253,32 +312,38 @@ class _CreateWorkplacePageState extends State<CreateWorkplacePage> {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: _availableEthicalTags.map((tag) {
-                        final isSelected = _selectedEthicalTags.contains(tag);
-                        return FilterChip(
-                          label: Text(
-                            tag.replaceAll('_', ' '),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isSelected ? Colors.white : Colors.black87,
-                            ),
-                          ),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            setState(() {
-                              if (selected) {
-                                if (!_selectedEthicalTags.contains(tag)) {
-                                  _selectedEthicalTags.add(tag);
-                                }
-                              } else {
-                                _selectedEthicalTags.remove(tag);
-                              }
-                            });
-                          },
-                          selectedColor: Colors.green,
-                          checkmarkColor: Colors.white,
-                        );
-                      }).toList(),
+                      children:
+                          _availableEthicalTags.map((tag) {
+                            final isSelected = _selectedEthicalTags.contains(
+                              tag,
+                            );
+                            return FilterChip(
+                              label: Text(
+                                tag.replaceAll('_', ' '),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color:
+                                      isSelected
+                                          ? Colors.white
+                                          : Colors.black87,
+                                ),
+                              ),
+                              selected: isSelected,
+                              onSelected: (selected) {
+                                setState(() {
+                                  if (selected) {
+                                    if (!_selectedEthicalTags.contains(tag)) {
+                                      _selectedEthicalTags.add(tag);
+                                    }
+                                  } else {
+                                    _selectedEthicalTags.remove(tag);
+                                  }
+                                });
+                              },
+                              selectedColor: Colors.green,
+                              checkmarkColor: Colors.white,
+                            );
+                          }).toList(),
                     ),
 
                     const SizedBox(height: 32),
@@ -292,7 +357,7 @@ class _CreateWorkplacePageState extends State<CreateWorkplacePage> {
                         ),
                       ),
                       child: const Text(
-                        'Create Workplace',
+                        'Update Workplace',
                         style: TextStyle(fontSize: 16),
                       ),
                     ),

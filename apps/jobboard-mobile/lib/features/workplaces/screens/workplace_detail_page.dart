@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/workplace_provider.dart';
 import '../../../core/services/api_service.dart';
@@ -8,6 +10,8 @@ import '../../../core/models/user.dart';
 import 'send_employer_request_page.dart';
 import 'workplace_reviews_page.dart';
 import 'add_review_page.dart';
+import 'edit_workplace_page.dart';
+import 'review_detail_page.dart';
 
 class WorkplaceDetailPage extends StatefulWidget {
   final int workplaceId;
@@ -58,12 +62,27 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
       appBar: AppBar(
         title: const Text('Workplace Details'),
         actions: [
-          if (workplace != null)
+          if (workplace != null) ...[
+            // Show Edit and Delete for owners
+            if (currentUser != null &&
+                _isUserOwnerOfWorkplace(workplace, currentUser)) ...[
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () => _editWorkplace(workplace),
+                tooltip: 'Edit Workplace',
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () => _deleteWorkplace(workplace),
+                tooltip: 'Delete Workplace',
+              ),
+            ],
             IconButton(
               icon: const Icon(Icons.flag),
               onPressed: () => _showReportWorkplaceDialog(workplace),
               tooltip: 'Report Workplace',
             ),
+          ],
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadWorkplace,
@@ -201,80 +220,140 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
                         ...workplace.recentReviews.map((review) {
                           return Card(
                             margin: const EdgeInsets.only(bottom: 12),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                        size: 20,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        review.overallRating.toStringAsFixed(1),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => ReviewDetailPage(
+                                          workplaceId: workplace.id,
+                                          reviewId: review.id,
+                                          workplaceName: workplace.companyName,
                                         ),
-                                      ),
-                                      const Spacer(),
-                                      if (review.anonymous)
-                                        const Chip(
-                                          label: Text(
-                                            'Anonymous',
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                          ),
+                                  ),
+                                ).then((_) => _loadWorkplace());
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // User info header
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 18,
+                                          backgroundColor: Colors.blue.shade100,
+                                          child:
+                                              review.anonymous
+                                                  ? const Icon(
+                                                    Icons.person,
+                                                    size: 18,
+                                                  )
+                                                  : Text(
+                                                    review.username.isNotEmpty
+                                                        ? review.username[0]
+                                                            .toUpperCase()
+                                                        : '?',
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
                                         ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    review.title,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(review.content),
-                                  if (review.reply != null) ...[
-                                    const SizedBox(height: 12),
-                                    Container(
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue.shade50,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Row(
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Icon(Icons.business, size: 16),
-                                              SizedBox(width: 4),
                                               Text(
-                                                'Company Response',
-                                                style: TextStyle(
+                                                review.anonymous
+                                                    ? 'Anonymous'
+                                                    : review
+                                                        .nameSurname
+                                                        .isNotEmpty
+                                                    ? review.nameSurname
+                                                    : review.username,
+                                                style: const TextStyle(
+                                                  fontSize: 13,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                    size: 14,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    review.overallRating
+                                                        .toStringAsFixed(1),
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ],
                                           ),
-                                          const SizedBox(height: 8),
-                                          Text(review.reply!.content),
-                                        ],
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      review.title,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      review.content,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    if (review.reply != null) ...[
+                                      const SizedBox(height: 12),
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.shade50,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const Row(
+                                              children: [
+                                                Icon(Icons.business, size: 16),
+                                                SizedBox(width: 4),
+                                                Text(
+                                                  'Company Response',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(review.reply!.content),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ],
-                                ],
+                                ),
                               ),
                             ),
                           );
@@ -341,30 +420,66 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
   }
 
   Widget _buildHeader(Workplace workplace) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final currentUser = authProvider.currentUser;
+    final isOwner =
+        currentUser != null && _isUserOwnerOfWorkplace(workplace, currentUser);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Company logo
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child:
-              workplace.imageUrl != null
-                  ? ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      workplace.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.business, size: 40);
-                      },
+        // Company logo with edit option for owners
+        Stack(
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child:
+                  workplace.imageUrl != null
+                      ? ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          workplace.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(Icons.business, size: 40);
+                          },
+                        ),
+                      )
+                      : const Icon(Icons.business, size: 40),
+            ),
+            if (isOwner)
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: GestureDetector(
+                  onTap: () => _showImageOptions(workplace),
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                  )
-                  : const Icon(Icons.business, size: 40),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
         const SizedBox(width: 16),
 
@@ -836,5 +951,274 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _editWorkplace(Workplace workplace) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditWorkplacePage(workplace: workplace),
+      ),
+    );
+
+    if (result == true && mounted) {
+      // Reload workplace data
+      _loadWorkplace();
+    }
+  }
+
+  Future<void> _deleteWorkplace(Workplace workplace) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Delete Workplace'),
+            content: Text(
+              'Are you sure you want to delete "${workplace.companyName}"? '
+              'This action cannot be undone and will remove all reviews and data.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      final response = await _workplaceProvider.deleteWorkplace(workplace.id);
+
+      if (!mounted) return;
+
+      if (response != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Navigate back to the previous screen
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _workplaceProvider.error ?? 'Failed to delete workplace',
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error deleting workplace: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _showImageOptions(Workplace workplace) async {
+    final hasImage = workplace.imageUrl != null;
+
+    await showModalBottomSheet(
+      context: context,
+      builder:
+          (context) => SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Choose from gallery'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickAndUploadImage(workplace, ImageSource.gallery);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.camera_alt),
+                  title: const Text('Take a photo'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickAndUploadImage(workplace, ImageSource.camera);
+                  },
+                ),
+                if (hasImage)
+                  ListTile(
+                    leading: const Icon(Icons.delete, color: Colors.red),
+                    title: const Text(
+                      'Remove image',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _deleteWorkplaceImage(workplace);
+                    },
+                  ),
+              ],
+            ),
+          ),
+    );
+  }
+
+  Future<void> _pickAndUploadImage(
+    Workplace workplace,
+    ImageSource source,
+  ) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (pickedFile == null) return;
+
+      if (!mounted) return;
+
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final imageFile = File(pickedFile.path);
+      final response = await _workplaceProvider.uploadWorkplaceImage(
+        workplace.id,
+        imageFile,
+      );
+
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading dialog
+
+      if (response != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Image uploaded successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // Reload workplace data to show new image
+        _loadWorkplace();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_workplaceProvider.error ?? 'Failed to upload image'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      // Close loading dialog if open
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error uploading image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteWorkplaceImage(Workplace workplace) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Remove Image'),
+            content: const Text(
+              'Are you sure you want to remove the workplace image?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Remove'),
+              ),
+            ],
+          ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      // Show loading dialog
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final response = await _workplaceProvider.deleteWorkplaceImage(
+        workplace.id,
+      );
+
+      if (!mounted) return;
+      Navigator.pop(context); // Close loading dialog
+
+      if (response != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // Reload workplace data to show updated state
+        _loadWorkplace();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_workplaceProvider.error ?? 'Failed to delete image'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      // Close loading dialog if open
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error deleting image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

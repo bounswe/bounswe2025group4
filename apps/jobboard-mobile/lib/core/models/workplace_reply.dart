@@ -18,12 +18,12 @@ class WorkplaceReply {
 
   factory WorkplaceReply.fromJson(Map<String, dynamic> json) {
     return WorkplaceReply(
-      id: json['id'] as int,
-      reviewId: json['reviewId'] as int,
-      employerUserId: json['employerUserId'] as int,
-      content: json['content'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      id: json['id'] as int? ?? 0,
+      reviewId: json['reviewId'] as int? ?? 0,
+      employerUserId: json['employerUserId'] as int? ?? 0,
+      content: json['content'] as String? ?? '',
+      createdAt: DateTime.parse(json['createdAt'] as String? ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(json['updatedAt'] as String? ?? DateTime.now().toIso8601String()),
     );
   }
 
