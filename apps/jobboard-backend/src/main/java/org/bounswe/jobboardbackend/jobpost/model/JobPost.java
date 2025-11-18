@@ -40,6 +40,8 @@ public class JobPost {
 
     private boolean inclusiveOpportunity; // targeted toward candidates with disabilities
 
+    private boolean nonProfit; // indicates if this is a non-profit/volunteer position
+
     private Integer minSalary;
     private Integer maxSalary;
 

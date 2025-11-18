@@ -21,6 +21,8 @@ public class UpdateJobPostRequest {
 
     private Boolean inclusiveOpportunity;
 
+    private Boolean nonProfit;
+
     private Integer minSalary;
     private Integer maxSalary;
 

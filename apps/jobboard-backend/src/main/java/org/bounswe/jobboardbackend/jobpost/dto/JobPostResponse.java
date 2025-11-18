@@ -21,6 +21,7 @@ public class JobPostResponse {
     
     private boolean remote;
     private boolean inclusiveOpportunity;
+    private boolean nonProfit;
     private Integer minSalary;
     private Integer maxSalary;
     private String contact;

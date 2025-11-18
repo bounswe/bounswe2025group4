@@ -48,8 +48,8 @@ public class JobPostService {
     }
 
     @Transactional(readOnly = true)
-    public List<JobPostResponse> getFiltered(String title, String companyName, String location, String sector, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, Boolean inclusiveOpportunity) {
-        List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, location, sector, minSalary, maxSalary, isRemote, inclusiveOpportunity);
+    public List<JobPostResponse> getFiltered(String title, String companyName, String location, String sector, List<String> ethicalTags, Integer minSalary, Integer maxSalary, Boolean isRemote, Boolean inclusiveOpportunity, Boolean nonProfit) {
+        List<JobPost> jobs = jobPostRepository.findFiltered(title, companyName, location, sector, minSalary, maxSalary, isRemote, inclusiveOpportunity, nonProfit);
         return jobs.stream()
                 .filter(j -> {
                     // Filter by workplace ethical tags if specified
@@ -108,15 +108,20 @@ public class JobPostService {
         // Check authorization: user must be employer of this workplace
         assertEmployerOfWorkplace(dto.getWorkplaceId(), employer.getId());
 
+        // For non-profit jobs, salary should not be set
+        Integer minSalary = dto.isNonProfit() ? null : dto.getMinSalary();
+        Integer maxSalary = dto.isNonProfit() ? null : dto.getMaxSalary();
+
         JobPost job = JobPost.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .workplace(workplace)
                 .remote(dto.isRemote())
                 .inclusiveOpportunity(dto.isInclusiveOpportunity())
+                .nonProfit(dto.isNonProfit())
                 .employer(employer)
-                .minSalary(dto.getMinSalary())
-                .maxSalary(dto.getMaxSalary())
+                .minSalary(minSalary)
+                .maxSalary(maxSalary)
                 .contact(dto.getContact())
                 .postedDate(LocalDateTime.now())
                 .build();
@@ -145,6 +150,7 @@ public class JobPostService {
                 .workplace(workplaceService.toBriefResponse(job.getWorkplace()))
                 .remote(job.isRemote())
                 .inclusiveOpportunity(job.isInclusiveOpportunity())
+                .nonProfit(job.isNonProfit())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
                 .contact(job.getContact())
@@ -179,8 +185,23 @@ public class JobPostService {
         if (dto.getDescription() != null) job.setDescription(dto.getDescription());
         if (dto.getRemote() != null) job.setRemote(dto.getRemote());
         if (dto.getInclusiveOpportunity() != null) job.setInclusiveOpportunity(dto.getInclusiveOpportunity());
-        if (dto.getMinSalary() != null) job.setMinSalary(dto.getMinSalary());
-        if (dto.getMaxSalary() != null) job.setMaxSalary(dto.getMaxSalary());
+        
+        // Update nonProfit status and handle salary accordingly
+        if (dto.getNonProfit() != null) {
+            job.setNonProfit(dto.getNonProfit());
+            // If changing to non-profit, clear salary fields
+            if (dto.getNonProfit()) {
+                job.setMinSalary(null);
+                job.setMaxSalary(null);
+            }
+        }
+        
+        // Only update salary if not a non-profit job
+        if (!job.isNonProfit()) {
+            if (dto.getMinSalary() != null) job.setMinSalary(dto.getMinSalary());
+            if (dto.getMaxSalary() != null) job.setMaxSalary(dto.getMaxSalary());
+        }
+        
         if (dto.getContact() != null) job.setContact(dto.getContact());
 
         return toResponseDto(jobPostRepository.save(job));
