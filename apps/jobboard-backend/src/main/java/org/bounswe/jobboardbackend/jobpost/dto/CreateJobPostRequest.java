@@ -16,7 +16,7 @@ public class CreateJobPostRequest {
     private String title;
 
     @NotBlank(message = "Description cannot be empty")
-    @Size(max = 1000)
+    @Size(max = 5000)
     private String description;
 
     @NotNull(message = "Workplace ID is required")
