@@ -56,14 +56,15 @@ public class JobPostService {
                     if (ethicalTags == null || ethicalTags.isEmpty()) return true;
                     if (j.getWorkplace() == null || j.getWorkplace().getEthicalTags() == null) return false;
                     
-                    // Check if any of the requested tags match workplace's tags
+                    // Check if ALL requested tags match workplace's tags (AND logic)
                     for (String requestedTag : ethicalTags) {
-                        if (j.getWorkplace().getEthicalTags().stream()
-                                .anyMatch(policy -> policy.getLabel().equalsIgnoreCase(requestedTag))) {
-                            return true;
+                        boolean tagFound = j.getWorkplace().getEthicalTags().stream()
+                                .anyMatch(policy -> policy.getLabel().equalsIgnoreCase(requestedTag));
+                        if (!tagFound) {
+                            return false;  // If any tag is missing, exclude this job
                         }
                     }
-                    return false;
+                    return true;  // All tags found
                 })
                 .map(this::toResponseDto).collect(Collectors.toList());
     }
