@@ -175,7 +175,6 @@ public class WorkplaceService {
 
         wp = workplaceRepository.save(wp);
 
-        // Oluşturan employerı OWNER olarak ekliyoruz bazen farklı yetkiler vermek için
         EmployerWorkplace ew = EmployerWorkplace.builder()
                 .workplace(wp)
                 .user(currentUser)
@@ -211,6 +210,9 @@ public class WorkplaceService {
                 .filter(wb -> minRating == null || (wb.getOverallAvg() != null && wb.getOverallAvg() >= minRating))
                 .collect(Collectors.toList());
 
+        if ("rating".equals(sortBy)) {
+            items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsLast(Comparator.reverseOrder())));
+        }
         return PaginatedResponse.of(items, pageRes.getNumber(), pageRes.getSize(), pageRes.getTotalElements());
     }
 
@@ -229,7 +231,7 @@ public class WorkplaceService {
                 .orElseThrow(() -> new NoSuchElementException("Workplace not found"));
 
         assertEmployer(id, currentUser.getId());
-        // TODO: bu şirkette employer olan herkes yapabiliyor bu işi, eğer sadece iş yerini oluşturan kişi yapabilsen dersek değiştiririz
+        // TODO: bu şirkette employer olan herkes yapabiliyor bu işi, eğer sadece iş yerini oluşturan kişi yapabilsin dersek değiştiririz
 
         if (req.getCompanyName() != null) wp.setCompanyName(req.getCompanyName());
         if (req.getSector() != null) wp.setSector(req.getSector());
@@ -275,16 +277,17 @@ public class WorkplaceService {
     }
 
     // === Helpers ===
+
     private Pageable buildSort(int page, int size, String sortBy) {
         if (sortBy == null || sortBy.isBlank()) {
-            return PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "companyName"));
+            return PageRequest.of(page, size, Sort.by(Sort.Order.asc("companyName").with(Sort.NullHandling.NULLS_LAST)));
         }
+
         return switch (sortBy) {
-            case "nameDesc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "companyName"));
-            case "reviewCount" ->
-                    PageRequest.of(page, size); // reviewCount’ı repo seviyesinde sıralamak istersen JPQL yazılır
-            case "rating" -> PageRequest.of(page, size);      // avg rating sıralaması için custom query gerekir
-            default -> PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "companyName"));
+            case "nameDesc" -> PageRequest.of(page, size, Sort.by(Sort.Order.desc("companyName").with(Sort.NullHandling.NULLS_LAST)));
+            case "reviewCount" -> PageRequest.of(page, size, Sort.by(Sort.Order.desc("reviewCount").with(Sort.NullHandling.NULLS_LAST), Sort.Order.asc("companyName").with(Sort.NullHandling.NULLS_LAST)));
+            case "rating" -> PageRequest.of(page, size);
+            default -> PageRequest.of(page, size, Sort.by(Sort.Order.asc("companyName").with(Sort.NullHandling.NULLS_LAST)));
         };
     }
 
@@ -349,7 +352,6 @@ public class WorkplaceService {
                     .helpfulCount(r.getHelpfulCount())
                     .createdAt(r.getCreatedAt())
                     .updatedAt(r.getUpdatedAt())
-                    // ethicalPolicyRatings ve reply doldurması service’inde ileride yapılacak
                     .build()).toList();
         }
 

@@ -45,27 +45,27 @@ public class ReviewService {
         Workplace wp = workplaceRepository.findById(workplaceId)
                 .orElseThrow(() -> new NoSuchElementException("Workplace not found"));
 
-        // Employer kendi workplace'ine review yazamaz
         boolean isEmployer = employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, currentUser.getId());
         if (isEmployer) throw new AccessDeniedException("Employers cannot review their own workplace");
 
-        // currentUser'ı managed entity'ye çevir
+        boolean alreadyReviewed = reviewRepository.existsByWorkplace_IdAndUser_Id(workplaceId, currentUser.getId());
+        if (alreadyReviewed) {
+            throw new IllegalStateException("You have already submitted a review for this workplace.");
+        }
+
         currentUser = userRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 
-        // Workplace’in ilan ettiği etik tag’ler
         Set<EthicalPolicy> allowed = wp.getEthicalTags();
         if (allowed == null || allowed.isEmpty()) {
             throw new IllegalArgumentException("This workplace has no declared ethical tags to rate.");
         }
 
-        // DTO’daki policy->score map’i
         Map<String, Integer> policyMap = req.getEthicalPolicyRatings();
         if (policyMap == null || policyMap.isEmpty()) {
             throw new IllegalArgumentException("ethicalPolicyRatings must contain at least one policy rating (1..5)");
         }
 
-        // Map'i dönüştür + doğrula (sadece allowed policy’ler, 1..5)
         List<Map.Entry<EthicalPolicy, Integer>> validated = new ArrayList<>();
         for (Map.Entry<String, Integer> e : policyMap.entrySet()) {
             String key = e.getKey();
@@ -85,7 +85,6 @@ public class ReviewService {
             validated.add(Map.entry(policy, score));
         }
 
-        // Review’u oluştur (policyRatings alanı YOK — ekleme!)
         Review review = Review.builder()
                 .workplace(wp)
                 .user(currentUser)
@@ -96,7 +95,6 @@ public class ReviewService {
                 .build();
         review = reviewRepository.save(review);
 
-        // Policy rating kayıtlarını oluştur
         for (Map.Entry<EthicalPolicy, Integer> e : validated) {
             ReviewPolicyRating rpr = ReviewPolicyRating.builder()
                     .review(review)
@@ -106,7 +104,6 @@ public class ReviewService {
             reviewPolicyRatingRepository.save(rpr);
         }
 
-        // Overall = policy skorlarının ortalaması (1 basamaklı, 1.0..5.0 aralığına clamp)
         double avg = validated.stream().mapToInt(Map.Entry::getValue).average().orElse(0.0);
         double overall = Math.round(Math.max(1.0, Math.min(5.0, avg)) * 10.0) / 10.0;
         review.setOverallRating(overall);
@@ -128,17 +125,15 @@ public class ReviewService {
 
         Pageable pageable = makeSort(page, size, sortBy);
 
-        // Basit filtreler: rating / hasComment
         Page<Review> pg;
         if (ratingFilter != null && !ratingFilter.isBlank()) {
-            // ratingFilter: "1" ya da "1,2,3"  -> Double'a çevir, 1 basamaklı normalize et (1.0..5.0)
             Set<Double> set = Arrays.stream(ratingFilter.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .map(s -> {
                         double d = Double.parseDouble(s);
-                        d = Math.max(1.0, Math.min(5.0, d));                // 1..5 clamp
-                        d = Math.round(d * 10.0) / 10.0;                     // 1 basamak
+                        d = Math.max(1.0, Math.min(5.0, d));
+                        d = Math.round(d * 10.0) / 10.0;
                         return d;
                     })
                     .collect(Collectors.toCollection(java.util.LinkedHashSet::new));
@@ -181,26 +176,21 @@ public class ReviewService {
             throw new AccessDeniedException("Only owner can edit the review");
         }
 
-        // Primitive fields
         if (req.getTitle() != null) r.setTitle(req.getTitle());
         if (req.getContent() != null) r.setContent(req.getContent());
         if (req.getIsAnonymous() != null) r.setAnonymous(req.getIsAnonymous());
         reviewRepository.save(r);
 
-        // Policy rating updates (upsert; gönderilmeyenler SILINMEZ)
         if (req.getEthicalPolicyRatings() != null) {
-            // Workplace’in ilan ettiği etik tag’ler
             Set<EthicalPolicy> allowed = r.getWorkplace().getEthicalTags();
             if (allowed == null || allowed.isEmpty()) {
                 throw new IllegalArgumentException("This workplace has no declared ethical tags to rate.");
             }
 
-            // Mevcut policy rating’leri çek ve policy->entity map’le
             List<ReviewPolicyRating> existing = reviewPolicyRatingRepository.findByReview_Id(r.getId());
             Map<EthicalPolicy, ReviewPolicyRating> byPolicy = existing.stream()
                     .collect(Collectors.toMap(ReviewPolicyRating::getPolicy, x -> x));
 
-            // Gelen map’i doğrula ve upsert et
             for (Map.Entry<String, Integer> e : req.getEthicalPolicyRatings().entrySet()) {
                 String key = e.getKey();
                 Integer score = e.getValue();
@@ -236,7 +226,6 @@ public class ReviewService {
                 }
             }
 
-            // Güncel policy rating’lerden overall’ı yeniden hesapla (1 ondalık, 1.0..5.0)
             List<ReviewPolicyRating> current = reviewPolicyRatingRepository.findByReview_Id(r.getId());
             if (!current.isEmpty()) {
                 double avg = current.stream().mapToInt(ReviewPolicyRating::getScore).average().orElse(0.0);
@@ -261,7 +250,6 @@ public class ReviewService {
         if (!(reviewOwner || isAdmin)) {
             throw new AccessDeniedException("Only review owner or admin can delete the review");
         }
-        // Reply varsa önce sil
         reviewReplyRepository.findByReview_Id(reviewId).ifPresent(reviewReplyRepository::delete);
         reviewPolicyRatingRepository.deleteAll(reviewPolicyRatingRepository.findByReview_Id(reviewId));
         reviewRepository.delete(r);

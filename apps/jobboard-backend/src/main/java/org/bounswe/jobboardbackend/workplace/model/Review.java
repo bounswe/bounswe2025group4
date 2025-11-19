@@ -15,7 +15,11 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"workplace_id", "user_id"})
+        }
+)
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
