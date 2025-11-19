@@ -16,4 +16,7 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     List<JobApplication> findByJobPost_Workplace_Id(Long workplaceId);
     
     boolean existsByJobSeekerIdAndJobPostId(Long jobSeekerId, Long jobPostId);
+
+    // needed for stats
+    long countByStatus(org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus status);
 }
