@@ -42,7 +42,6 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
       'maxSalary': widget.initialFilters['maxSalary'],
       'isRemote': widget.initialFilters['isRemote'],
       'inclusiveOpportunity': widget.initialFilters['inclusiveOpportunity'],
-      'jobTypes': List<String>.from(widget.initialFilters['jobTypes'] ?? []),
     };
 
     // Initialize controllers with existing values
@@ -67,7 +66,6 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
   @override
   Widget build(BuildContext context) {
     final availablePolicies = widget.apiService.availableEthicalPolicies;
-    final availableJobTypes = widget.apiService.availableJobTypes;
 
     return AlertDialog(
       title: Text(AppLocalizations.of(context)!.jobFilter_title),
@@ -182,15 +180,6 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
               },
               contentPadding: EdgeInsets.zero,
             ),
-            const Divider(),
-
-            // Job types
-            _buildFilterSection(
-              title: AppLocalizations.of(context)!.jobFilter_jobType,
-              availableItems: availableJobTypes,
-              selectedItems: _selectedFilters['jobTypes'] as List<String>,
-              filterKey: 'jobTypes',
-            ),
           ],
         ),
       ),
@@ -220,7 +209,6 @@ class _JobFilterDialogState extends State<JobFilterDialog> {
               _selectedFilters['maxSalary'] = null;
               _selectedFilters['isRemote'] = null;
               _selectedFilters['inclusiveOpportunity'] = null;
-              (_selectedFilters['jobTypes'] as List<String>).clear();
             });
           },
           child: Text(AppLocalizations.of(context)!.jobFilter_clearAll),
