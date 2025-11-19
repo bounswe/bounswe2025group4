@@ -210,8 +210,10 @@ public class WorkplaceService {
                 .filter(wb -> minRating == null || (wb.getOverallAvg() != null && wb.getOverallAvg() >= minRating))
                 .collect(Collectors.toList());
 
-        if ("rating".equals(sortBy)) {
+        if ("ratingDesc".equals(sortBy)) {
             items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsLast(Comparator.reverseOrder())));
+        } else if ("ratingAsc".equals(sortBy)) {
+            items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsLast(Comparator.naturalOrder())));
         }
         return PaginatedResponse.of(items, pageRes.getNumber(), pageRes.getSize(), pageRes.getTotalElements());
     }
@@ -286,9 +288,13 @@ public class WorkplaceService {
         return switch (sortBy) {
             case "nameDesc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "companyName"));
 
-            case "reviewCount" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reviewCount").and(Sort.by("companyName")));
+            case "nameAsc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "companyName"));
 
-            case "rating" -> PageRequest.of(page, size);
+            case "reviewCountDesc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reviewCount").and(Sort.by("companyName")));
+
+            case "reviewCountAsc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "reviewCount").and(Sort.by("companyName")));
+
+            case "ratingDesc", "ratingAsc" -> PageRequest.of(page, size);
 
             default -> PageRequest.of(page, size, Sort.by("companyName"));
         };
