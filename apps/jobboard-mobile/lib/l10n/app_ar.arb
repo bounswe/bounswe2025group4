@@ -156,6 +156,8 @@
   "jobPage_remote": "عن بُعد",
   "jobPage_yourPostedJobs": "الوظائف التي نشرتها",
   "jobPage_noPostedJobs": "لم تنشر أي وظائف بعد.",
+  "jobPage_tabJobs": "الوظائف",
+  "jobPage_tabNonProfit": "غير ربحي",
 
   "jobDetails_title": "تفاصيل الوظيفة",
   "jobDetails_apply": "قدم الآن",
@@ -503,6 +505,8 @@
   "createJob_remoteLabel": "وظيفة عن بُعد",
   "createJob_inclusiveLabel": "فرصة شاملة",
   "createJob_inclusiveSubtitle": "هذا المنصب مفتوح للمجموعات الممثلة تمثيلاً ناقصاً",
+  "createJob_nonProfitLabel": "منصب غير ربحي / تطوعي",
+  "createJob_nonProfitSubtitle": "هذا منصب غير ربحي أو تطوعي (سيتم تعطيل حقول الراتب)",
   "createJob_descriptionLabel": "وصف الوظيفة",
   "createJob_descriptionRequiredError": "الرجاء إدخال وصف الوظيفة",
   "createJob_contactLabel": "معلومات الاتصال (البريد الإلكتروني/الهاتف/الرابط)",

@@ -156,6 +156,8 @@
   "jobPage_remote": "Uzaktan",
   "jobPage_yourPostedJobs": "Yayınladığınız İşler",
   "jobPage_noPostedJobs": "Henüz iş ilanı yayınlamadınız.",
+  "jobPage_tabJobs": "İşler",
+  "jobPage_tabNonProfit": "Kar Amacı Gütmeyen",
 
   "jobDetails_title": "İş Detayları",
   "jobDetails_apply": "Şimdi Başvur",
@@ -503,6 +505,8 @@
   "createJob_remoteLabel": "Uzaktan İş",
   "createJob_inclusiveLabel": "Kapsayıcı Fırsat",
   "createJob_inclusiveSubtitle": "Bu pozisyon yetersiz temsil edilen gruplara açıktır",
+  "createJob_nonProfitLabel": "Kar Amacı Gütmeyen / Gönüllü Pozisyon",
+  "createJob_nonProfitSubtitle": "Bu bir kar amacı gütmeyen veya gönüllü pozisyondur (maaş alanları devre dışı bırakılacaktır)",
   "createJob_descriptionLabel": "İş Açıklaması",
   "createJob_descriptionRequiredError": "Lütfen bir iş açıklaması girin",
   "createJob_contactLabel": "İletişim Bilgileri (E-posta/Telefon/Bağlantı)",

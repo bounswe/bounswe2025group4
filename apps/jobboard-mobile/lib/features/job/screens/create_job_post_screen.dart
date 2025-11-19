@@ -27,6 +27,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
   List<String> _selectedPolicies = [];
   bool _isRemote = false;
   bool _isInclusiveOpportunity = false;
+  bool _isNonProfit = false;
   bool _isPoliciesExpanded = false;
 
   bool _isLoading = false;
@@ -87,9 +88,9 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         return;
       }
 
-      // Parse salaries
+      // Parse salaries (only if not non-profit)
       int? minSalary;
-      if (_minSalaryController.text.isNotEmpty) {
+      if (!_isNonProfit && _minSalaryController.text.isNotEmpty) {
         minSalary = int.tryParse(
           _minSalaryController.text.replaceAll(RegExp(r'[^0-9]'), ''),
         );
@@ -107,7 +108,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
       }
 
       int? maxSalary;
-      if (_maxSalaryController.text.isNotEmpty) {
+      if (!_isNonProfit && _maxSalaryController.text.isNotEmpty) {
         maxSalary = int.tryParse(
           _maxSalaryController.text.replaceAll(RegExp(r'[^0-9]'), ''),
         );
@@ -124,7 +125,10 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
         }
       }
 
-      if (minSalary != null && maxSalary != null && minSalary > maxSalary) {
+      if (!_isNonProfit &&
+          minSalary != null &&
+          maxSalary != null &&
+          minSalary > maxSalary) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -152,6 +156,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
           remote: _isRemote,
           ethicalTags: _selectedPolicies.join(','),
           inclusiveOpportunity: _isInclusiveOpportunity,
+          nonProfit: _isNonProfit,
           contactInformation:
               _contactInfoController.text.isNotEmpty
                   ? _contactInfoController.text
@@ -318,6 +323,31 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
               controlAffinity: ListTileControlAffinity.leading,
               contentPadding: EdgeInsets.zero,
             ),
+            const SizedBox(height: 8.0),
+
+            // --- Non-Profit Checkbox ---
+            CheckboxListTile(
+              title: Text(
+                AppLocalizations.of(context)!.createJob_nonProfitLabel,
+              ),
+              subtitle: Text(
+                AppLocalizations.of(context)!.createJob_nonProfitSubtitle,
+              ),
+              value: _isNonProfit,
+              onChanged: (bool? value) {
+                HapticFeedback.lightImpact();
+                setState(() {
+                  _isNonProfit = value ?? false;
+                  // Clear salary fields when non-profit is selected
+                  if (_isNonProfit) {
+                    _minSalaryController.clear();
+                    _maxSalaryController.clear();
+                  }
+                });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.zero,
+            ),
             const SizedBox(height: 16.0),
 
             // --- Description ---
@@ -360,9 +390,10 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             ),
             const SizedBox(height: 16.0),
 
-            // --- Min Salary (Optional) ---
+            // --- Min Salary (Optional, disabled for non-profit) ---
             TextFormField(
               controller: _minSalaryController,
+              enabled: !_isNonProfit,
               decoration: InputDecoration(
                 labelText:
                     AppLocalizations.of(context)!.createJob_minSalaryLabel,
@@ -372,12 +403,15 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                     )!.createJob_minSalaryPlaceholder,
                 border: OutlineInputBorder(),
                 prefixText: '\$', // Optional: Add a currency symbol
+                helperText: _isNonProfit
+                    ? AppLocalizations.of(context)!.createJob_nonProfitSubtitle
+                    : null,
               ),
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: false,
               ),
               validator: (value) {
-                if (value != null && value.isNotEmpty) {
+                if (!_isNonProfit && value != null && value.isNotEmpty) {
                   // Allow only whole numbers
                   final sanitizedValue = value.replaceAll(
                     RegExp(r'[^0-9]'),
@@ -394,9 +428,10 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
             ),
             const SizedBox(height: 16.0),
 
-            // --- Max Salary (Optional) ---
+            // --- Max Salary (Optional, disabled for non-profit) ---
             TextFormField(
               controller: _maxSalaryController,
+              enabled: !_isNonProfit,
               decoration: InputDecoration(
                 labelText:
                     AppLocalizations.of(context)!.createJob_maxSalaryLabel,
@@ -406,12 +441,15 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                     )!.createJob_maxSalaryPlaceholder,
                 border: OutlineInputBorder(),
                 prefixText: '\$', // Optional: Add a currency symbol
+                helperText: _isNonProfit
+                    ? AppLocalizations.of(context)!.createJob_nonProfitSubtitle
+                    : null,
               ),
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: false,
               ),
               validator: (value) {
-                if (value != null && value.isNotEmpty) {
+                if (!_isNonProfit && value != null && value.isNotEmpty) {
                   final sanitizedValue = value.replaceAll(
                     RegExp(r'[^0-9]'),
                     '',

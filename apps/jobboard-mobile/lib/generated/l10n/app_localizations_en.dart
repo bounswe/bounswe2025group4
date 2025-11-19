@@ -482,6 +482,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobPage_noPostedJobs => 'You have not posted any jobs yet.';
 
   @override
+  String get jobPage_tabJobs => 'Jobs';
+
+  @override
+  String get jobPage_tabNonProfit => 'Non-Profit';
+
+  @override
   String get jobDetails_title => 'Job Details';
 
   @override
@@ -1139,6 +1145,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get createJob_inclusiveSubtitle =>
       'This position is open to underrepresented groups';
+
+  @override
+  String get createJob_nonProfitLabel => 'Non-Profit / Volunteer Position';
+
+  @override
+  String get createJob_nonProfitSubtitle =>
+      'This is a non-profit or volunteer position (salary fields will be disabled)';
 
   @override
   String get createJob_descriptionLabel => 'Job Description';

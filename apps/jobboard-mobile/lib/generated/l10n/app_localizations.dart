@@ -952,6 +952,18 @@ abstract class AppLocalizations {
   /// **'You have not posted any jobs yet.'**
   String get jobPage_noPostedJobs;
 
+  /// Jobs tab title
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get jobPage_tabJobs;
+
+  /// Non-Profit tab title
+  ///
+  /// In en, this message translates to:
+  /// **'Non-Profit'**
+  String get jobPage_tabNonProfit;
+
   /// Job details screen title
   ///
   /// In en, this message translates to:
@@ -2103,6 +2115,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This position is open to underrepresented groups'**
   String get createJob_inclusiveSubtitle;
+
+  /// Non-profit checkbox label
+  ///
+  /// In en, this message translates to:
+  /// **'Non-Profit / Volunteer Position'**
+  String get createJob_nonProfitLabel;
+
+  /// Non-profit checkbox subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'This is a non-profit or volunteer position (salary fields will be disabled)'**
+  String get createJob_nonProfitSubtitle;
 
   /// Description field label
   ///

@@ -483,6 +483,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get jobPage_noPostedJobs => 'Henüz iş ilanı yayınlamadınız.';
 
   @override
+  String get jobPage_tabJobs => 'İşler';
+
+  @override
+  String get jobPage_tabNonProfit => 'Kar Amacı Gütmeyen';
+
+  @override
   String get jobDetails_title => 'İş Detayları';
 
   @override
@@ -1143,6 +1149,14 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get createJob_inclusiveSubtitle =>
       'Bu pozisyon yetersiz temsil edilen gruplara açıktır';
+
+  @override
+  String get createJob_nonProfitLabel =>
+      'Kar Amacı Gütmeyen / Gönüllü Pozisyon';
+
+  @override
+  String get createJob_nonProfitSubtitle =>
+      'Bu bir kar amacı gütmeyen veya gönüllü pozisyondur (maaş alanları devre dışı bırakılacaktır)';
 
   @override
   String get createJob_descriptionLabel => 'İş Açıklaması';

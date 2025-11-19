@@ -467,6 +467,14 @@
   "@jobPage_noPostedJobs": {
     "description": "No posted jobs message for employers"
   },
+  "jobPage_tabJobs": "Jobs",
+  "@jobPage_tabJobs": {
+    "description": "Jobs tab title"
+  },
+  "jobPage_tabNonProfit": "Non-Profit",
+  "@jobPage_tabNonProfit": {
+    "description": "Non-Profit tab title"
+  },
 
   "@@_JOB_DETAILS": {},
   "jobDetails_title": "Job Details",
@@ -1381,6 +1389,14 @@
   "createJob_inclusiveSubtitle": "This position is open to underrepresented groups",
   "@createJob_inclusiveSubtitle": {
     "description": "Inclusive opportunity subtitle"
+  },
+  "createJob_nonProfitLabel": "Non-Profit / Volunteer Position",
+  "@createJob_nonProfitLabel": {
+    "description": "Non-profit checkbox label"
+  },
+  "createJob_nonProfitSubtitle": "This is a non-profit or volunteer position (salary fields will be disabled)",
+  "@createJob_nonProfitSubtitle": {
+    "description": "Non-profit checkbox subtitle"
   },
   "createJob_descriptionLabel": "Job Description",
   "@createJob_descriptionLabel": {

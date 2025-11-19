@@ -477,6 +477,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jobPage_noPostedJobs => 'لم تنشر أي وظائف بعد.';
 
   @override
+  String get jobPage_tabJobs => 'الوظائف';
+
+  @override
+  String get jobPage_tabNonProfit => 'غير ربحي';
+
+  @override
   String get jobDetails_title => 'تفاصيل الوظيفة';
 
   @override
@@ -1132,6 +1138,13 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get createJob_inclusiveSubtitle =>
       'هذا المنصب مفتوح للمجموعات الممثلة تمثيلاً ناقصاً';
+
+  @override
+  String get createJob_nonProfitLabel => 'منصب غير ربحي / تطوعي';
+
+  @override
+  String get createJob_nonProfitSubtitle =>
+      'هذا منصب غير ربحي أو تطوعي (سيتم تعطيل حقول الراتب)';
 
   @override
   String get createJob_descriptionLabel => 'وصف الوظيفة';

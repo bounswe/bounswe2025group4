@@ -144,6 +144,7 @@ class ApiService {
     int? minSalary,
     int? maxSalary,
     bool? inclusiveOpportunity,
+    bool? nonProfit,
   }) async {
     final queryParams = <String, dynamic>{};
 
@@ -164,6 +165,9 @@ class ApiService {
     if (maxSalary != null) queryParams['maxSalary'] = maxSalary;
     if (inclusiveOpportunity != null) {
       queryParams['inclusiveOpportunity'] = inclusiveOpportunity;
+    }
+    if (nonProfit != null) {
+      queryParams['nonProfit'] = nonProfit;
     }
 
 
@@ -221,6 +225,7 @@ class ApiService {
     required bool remote,
     required String ethicalTags,
     required bool inclusiveOpportunity,
+    required bool nonProfit,
 
     // Optional fields
     String? contactInformation,
@@ -238,6 +243,7 @@ class ApiService {
       'remote': remote,
       'ethicalTags': ethicalTags,
       'inclusiveOpportunity': inclusiveOpportunity,
+      'nonProfit': nonProfit,
       // Optional fields, only include if not null
       if (contactInformation != null) 'contact': contactInformation,
       if (minSalary != null) 'minSalary': minSalary,

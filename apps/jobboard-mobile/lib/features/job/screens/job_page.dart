@@ -21,13 +21,17 @@ class JobPage extends StatefulWidget {
   State<JobPage> createState() => _JobPageState(); // Create State
 }
 
-class _JobPageState extends State<JobPage> {
+class _JobPageState extends State<JobPage> with SingleTickerProviderStateMixin {
   // State class
   // State variables
   List<JobPost> _jobPostings = [];
+  List<JobPost> _nonProfitJobPostings = [];
   bool _isLoading = false;
+  bool _isLoadingNonProfit = false;
   String? _errorMessage;
+  String? _errorMessageNonProfit;
   final TextEditingController _searchController = TextEditingController();
+  late TabController _tabController;
   // Store selected filters as a map with dynamic values
   Map<String, dynamic> _selectedFilters = {
     'title': null,
@@ -49,6 +53,9 @@ class _JobPageState extends State<JobPage> {
   @override
   void initState() {
     super.initState();
+    // Initialize TabController with 2 tabs (only for job seekers)
+    _tabController = TabController(length: 2, vsync: this);
+    
     // Get AuthProvider first
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     // Initialize ApiService with AuthProvider
@@ -57,11 +64,15 @@ class _JobPageState extends State<JobPage> {
     // Get the role once and store it
     _userRole = authProvider.currentUser?.role;
     print("JobPage initState. Role: $_userRole"); // Debug print
-    _loadData(); // Initial data load
+    _loadData(); // Initial data load for standard jobs
+    if (_userRole == UserType.ROLE_JOBSEEKER) {
+      _loadNonProfitData(); // Initial data load for non-profit jobs
+    }
   }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _searchController.dispose();
     _debounce?.cancel(); // Cancel debounce timer on dispose
     super.dispose();
@@ -88,6 +99,7 @@ class _JobPageState extends State<JobPage> {
         ); // Using placeholder
       } else {
         // Pass the search query and filter map to the API service
+        // Send nonProfit: false for standard jobs tab (only profit jobs)
         postings = await _apiService.fetchJobPostings(
           query: searchQuery,
           title: _selectedFilters['title'],
@@ -104,6 +116,7 @@ class _JobPageState extends State<JobPage> {
           isRemote: _selectedFilters['isRemote'] == true ? true : null,
           inclusiveOpportunity:
               _selectedFilters['inclusiveOpportunity'] == true ? true : null,
+          nonProfit: false, // Standard jobs tab - only profit jobs
         );
       }
       if (mounted) {
@@ -122,6 +135,56 @@ class _JobPageState extends State<JobPage> {
       if (mounted) {
         setState(() {
           _isLoading = false;
+        });
+      }
+    }
+  }
+
+  // --- Non-Profit Data Loading ---
+  Future<void> _loadNonProfitData({String? searchQuery}) async {
+    if (!mounted || _userRole != UserType.ROLE_JOBSEEKER) return;
+    setState(() {
+      _isLoadingNonProfit = true;
+      _errorMessageNonProfit = null;
+    });
+
+    try {
+      // Pass the search query and filter map to the API service
+      // nonProfit is true for non-profit jobs tab
+      final postings = await _apiService.fetchJobPostings(
+        query: searchQuery,
+        title: _selectedFilters['title'],
+        company: _selectedFilters['companyName'],
+        ethicalTags: (_selectedFilters['ethicalTags'] as List<String>).isNotEmpty
+            ? (_selectedFilters['ethicalTags'] as List<String>)
+            : null,
+        minSalary: _selectedFilters['minSalary'] != null
+            ? (_selectedFilters['minSalary'] as num).toInt()
+            : null,
+        maxSalary: _selectedFilters['maxSalary'] != null
+            ? (_selectedFilters['maxSalary'] as num).toInt()
+            : null,
+        isRemote: _selectedFilters['isRemote'] == true ? true : null,
+        inclusiveOpportunity:
+            _selectedFilters['inclusiveOpportunity'] == true ? true : null,
+        nonProfit: true, // Non-profit jobs tab
+      );
+      if (mounted) {
+        setState(() {
+          _nonProfitJobPostings = postings;
+        });
+      }
+    } catch (e) {
+      print("Error loading non-profit data: $e"); // Debug print
+      if (mounted) {
+        setState(() {
+          _errorMessageNonProfit = AppLocalizations.of(context)!.jobPage_loadError;
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoadingNonProfit = false;
         });
       }
     }
@@ -146,6 +209,9 @@ class _JobPageState extends State<JobPage> {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       print('Searching for: $query');
       _loadData(searchQuery: query.isEmpty ? null : query);
+      if (_userRole == UserType.ROLE_JOBSEEKER) {
+        _loadNonProfitData(searchQuery: query.isEmpty ? null : query);
+      }
     });
   }
 
@@ -155,6 +221,9 @@ class _JobPageState extends State<JobPage> {
 
     print('Search submitted: $query');
     _loadData(searchQuery: query.isEmpty ? null : query);
+    if (_userRole == UserType.ROLE_JOBSEEKER) {
+      _loadNonProfitData(searchQuery: query.isEmpty ? null : query);
+    }
   }
 
   void _openFilterDialog() async {
@@ -216,6 +285,12 @@ class _JobPageState extends State<JobPage> {
           searchQuery:
               _searchController.text.isNotEmpty ? _searchController.text : null,
         );
+        if (_userRole == UserType.ROLE_JOBSEEKER) {
+          _loadNonProfitData(
+            searchQuery:
+                _searchController.text.isNotEmpty ? _searchController.text : null,
+          );
+        }
       } else {
         print("Filters were not changed.");
       }
@@ -385,8 +460,26 @@ class _JobPageState extends State<JobPage> {
             ],
           ),
         ),
-        // Loading Indicator or Error Message or Job List
-        Expanded(child: _buildJobList()),
+        // TabBar
+        TabBar(
+          controller: _tabController,
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.jobPage_tabJobs),
+            Tab(text: AppLocalizations.of(context)!.jobPage_tabNonProfit),
+          ],
+        ),
+        // TabBarView with swipe support
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              // Standard Jobs Tab
+              _buildJobList(),
+              // Non-Profit Jobs Tab
+              _buildNonProfitJobList(),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -462,104 +555,165 @@ class _JobPageState extends State<JobPage> {
         itemCount: _jobPostings.length,
         itemBuilder: (context, index) {
           final job = _jobPostings[index];
-          // Get current locale from context
-          final locale = Localizations.localeOf(context).toString();
-          final dateFormat = DateFormat.yMMMd(locale);
+          return _buildJobCard(job);
+        },
+      ),
+    );
+  }
 
-          return Card(
-            elevation: 2.0,
-            margin: const EdgeInsets.symmetric(vertical: 6.0),
-            child: InkWell(
-              onTap: () {
-                if (_userRole == UserType.ROLE_EMPLOYER) {
-                  _navigateToJobApplications(job);
-                } else {
-                  _navigateToJobDetails(job);
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            job.title,
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      job.company,
-                      style: Theme.of(context).textTheme.titleSmall,
+  // Helper widget to build non-profit job list
+  Widget _buildNonProfitJobList() {
+    if (_isLoadingNonProfit) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_errorMessageNonProfit != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_errorMessageNonProfit!, style: const TextStyle(color: Colors.red)),
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed:
+                  () => _loadNonProfitData(
+                    searchQuery:
+                        _searchController.text.isNotEmpty
+                            ? _searchController.text
+                            : null,
+                  ),
+              child: Text(AppLocalizations.of(context)!.common_retry),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_nonProfitJobPostings.isEmpty) {
+      return Center(
+        child: Text(
+          AppLocalizations.of(context)!.jobPage_noJobs,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      );
+    }
+
+    // Display the list of Non-Profit Job Postings using Cards
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _loadNonProfitData(
+          searchQuery:
+              _searchController.text.isNotEmpty ? _searchController.text : null,
+        );
+      },
+      child: ListView.builder(
+        padding: const EdgeInsets.all(8.0),
+        itemCount: _nonProfitJobPostings.length,
+        itemBuilder: (context, index) {
+          final job = _nonProfitJobPostings[index];
+          return _buildJobCard(job);
+        },
+      ),
+    );
+  }
+
+  // Helper widget to build a job card (reused by both lists)
+  Widget _buildJobCard(JobPost job) {
+    // Get current locale from context
+    final locale = Localizations.localeOf(context).toString();
+    final dateFormat = DateFormat.yMMMd(locale);
+
+    return Card(
+      elevation: 2.0,
+      margin: const EdgeInsets.symmetric(vertical: 6.0),
+      child: InkWell(
+        onTap: () {
+          if (_userRole == UserType.ROLE_EMPLOYER) {
+            _navigateToJobApplications(job);
+          } else {
+            _navigateToJobDetails(job);
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      job.title,
+                      style: Theme.of(context).textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8.0),
-                    // Split the ethicalTags string and display as chips
-                    if (job.ethicalTags.isNotEmpty)
-                      Wrap(
-                        spacing: 6.0,
-                        runSpacing: 4.0,
-                        children:
-                            // Split string by comma, trim whitespace, remove empty strings
-                            job.ethicalTags
-                                .split(',')
-                                .map((e) => e.trim())
-                                .where((e) => e.isNotEmpty)
-                                .map(
-                                  (tag) => Chip(
-                                    label: Text(
-                                      tag.formatLocalizedEthicalPolicy(context),
-                                    ),
-                                    padding: EdgeInsets.zero,
-                                    labelPadding: const EdgeInsets.symmetric(
-                                      horizontal: 6.0,
-                                    ),
-                                    labelStyle: Theme.of(
-                                      context,
-                                    ).textTheme.labelSmall?.copyWith(
-                                      color:
-                                          Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.teal.shade200
-                                              : Colors.teal.shade900,
-                                    ),
-                                    visualDensity: VisualDensity.compact,
-                                    backgroundColor:
-                                        Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.teal.shade900.withOpacity(
-                                              0.3,
-                                            )
-                                            : Colors.teal.shade50,
-                                    side: BorderSide.none,
-                                  ),
-                                )
-                                .toList(),
-                      ),
-                    const SizedBox(height: 8.0),
-                    if (job.postedDate != null)
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          '${AppLocalizations.of(context)!.jobPage_posted}: ${dateFormat.format(job.postedDate!)}',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: Colors.grey.shade600),
-                        ),
-                      ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          );
-        },
+              const SizedBox(height: 4.0),
+              Text(
+                job.company,
+                style: Theme.of(context).textTheme.titleSmall,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8.0),
+              // Split the ethicalTags string and display as chips
+              if (job.ethicalTags.isNotEmpty)
+                Wrap(
+                  spacing: 6.0,
+                  runSpacing: 4.0,
+                  children:
+                      // Split string by comma, trim whitespace, remove empty strings
+                      job.ethicalTags
+                          .split(',')
+                          .map((e) => e.trim())
+                          .where((e) => e.isNotEmpty)
+                          .map(
+                            (tag) => Chip(
+                              label: Text(
+                                tag.formatLocalizedEthicalPolicy(context),
+                              ),
+                              padding: EdgeInsets.zero,
+                              labelPadding: const EdgeInsets.symmetric(
+                                horizontal: 6.0,
+                              ),
+                              labelStyle: Theme.of(
+                                context,
+                              ).textTheme.labelSmall?.copyWith(
+                                color:
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.teal.shade200
+                                        : Colors.teal.shade900,
+                              ),
+                              visualDensity: VisualDensity.compact,
+                              backgroundColor:
+                                  Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.teal.shade900.withOpacity(
+                                        0.3,
+                                      )
+                                      : Colors.teal.shade50,
+                              side: BorderSide.none,
+                            ),
+                          )
+                          .toList(),
+                ),
+              const SizedBox(height: 8.0),
+              if (job.postedDate != null)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    '${AppLocalizations.of(context)!.jobPage_posted}: ${dateFormat.format(job.postedDate!)}',
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: Colors.grey.shade600),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
