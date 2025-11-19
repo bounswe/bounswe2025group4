@@ -4,21 +4,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { loginSchema, type LoginFormData } from '../schemas/login.schema';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { useAuthActions } from '@/stores/authStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
-  ? import.meta.env.VITE_API_URL 
+const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
+  ? import.meta.env.VITE_API_URL
   : (import.meta.env.VITE_API_URL || '') + '/api';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const { login } = useAuthActions();
   const { t } = useTranslation('common');
 
@@ -36,12 +35,12 @@ export default function LoginPage() {
   // Check for verification messages from navigation state
   useEffect(() => {
     if (location.state?.message) {
-      setSuccessMessage(location.state.message);
+      toast.success(location.state.message);
       // Clear the state
       window.history.replaceState({}, document.title);
     }
     if (location.state?.error) {
-      setErrorMessage(location.state.error);
+      toast.error(location.state.error);
       // Clear the state
       window.history.replaceState({}, document.title);
     }
@@ -49,7 +48,6 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-    setErrorMessage('');
 
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/login`, {
@@ -61,6 +59,7 @@ export default function LoginPage() {
         // Check if 2FA is required
         if (response.data.temporaryToken) {
           // 2FA required - redirect to OTP verification
+          toast.success(t('auth.login.notifications.2faRequired'));
           navigate('/verify-otp', {
             state: {
               temporaryToken: response.data.temporaryToken,
@@ -70,7 +69,7 @@ export default function LoginPage() {
         } else if (response.data.token) {
           // No 2FA - direct login
           login(response.data);
-          
+          toast.success(t('auth.login.notifications.loginSuccess'));
           // Redirect to home
           navigate('/');
         }
@@ -82,36 +81,36 @@ export default function LoginPage() {
         if (error.response?.status === 401) {
           // Could be wrong credentials or backend config issue
           if (responseData?.message?.includes('Full authentication')) {
-            setErrorMessage(t('auth.login.errors.serviceUnavailable'));
+            toast.error(t('auth.login.errors.serviceUnavailable'));
           } else {
-            setErrorMessage(t('auth.login.errors.invalidCredentials'));
+            toast.error(t('auth.login.errors.invalidCredentials'));
           }
           return;
         }
 
         if (responseData?.message) {
-          setErrorMessage(responseData.message);
+          toast.error(responseData.message);
           return;
         }
 
         if (responseData?.error) {
-          setErrorMessage(responseData.error);
+          toast.error(responseData.error);
           return;
         }
 
         if (error.message) {
-          setErrorMessage(error.message);
+          toast.error(error.message);
           return;
         }
 
-        setErrorMessage(t('auth.login.errors.generic'));
+        toast.error(t('auth.login.errors.generic'));
         return;
       }
 
       if (error instanceof Error) {
-        setErrorMessage(error.message);
+        toast.error(error.message);
       } else {
-        setErrorMessage(t('auth.login.errors.generic'));
+        toast.error(t('auth.login.errors.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -198,20 +197,6 @@ export default function LoginPage() {
             </label>
           </div>
 
-          {/* Success Message */}
-          {successMessage && (
-            <div className="rounded-md bg-green-50 p-3 text-sm text-green-800" role="status">
-              {successMessage}
-            </div>
-          )}
-
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive" role="alert">
-              {errorMessage}
-            </div>
-          )}
-
           {/* Submit Button */}
           <Button
             type="submit"
@@ -236,4 +221,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

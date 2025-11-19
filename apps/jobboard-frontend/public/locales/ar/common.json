@@ -12,6 +12,7 @@
       "home": "الرئيسية",
       "jobs": "الوظائف",
       "myApplications": "طلباتي",
+      "myMentorships": "إرشاداتي",
       "mentorship": "الإرشاد",
       "forum": "المنتدى",
       "employerDashboard": "لوحة صاحب العمل"
@@ -247,6 +248,10 @@
         "serviceUnavailable": "الخدمة غير متاحة مؤقتًا. يرجى المحاولة لاحقًا أو التواصل مع الدعم.",
         "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة. حاول مرة أخرى.",
         "generic": "فشلت عملية تسجيل الدخول. يرجى المحاولة لاحقًا."
+      },
+      "notifications": {
+        "loginSuccess": "تم تسجيل الدخول بنجاح! جارٍ إعادة التوجيه...",
+        "2faRequired": "المصادقة الثنائية مطلوبة. يرجى التحقق من بريدك الإلكتروني."
       }
     },
     "register": {
@@ -332,7 +337,8 @@
       "errors": {
         "invalid": "رمز OTP غير صالح أو منتهي الصلاحية. حاول مرة أخرى.",
         "generic": "فشل التحقق من OTP. يرجى المحاولة لاحقًا."
-      }
+      },
+      "success": "تم التحقق من OTP بنجاح! لقد سجلت الدخول الآن."
     }
   },
   "profile": {
@@ -548,6 +554,33 @@
       "confirmationLabel": "التأكيد",
       "confirmationPlaceholder": "اكتب {{keyword}} للتأكيد"
     },
+    "notifications": {
+      "createSuccess": "تم إنشاء الملف الشخصي بنجاح!",
+      "createError": "فشل إنشاء الملف الشخصي. يرجى المحاولة مرة أخرى.",
+      "imageUploadSuccess": "تم تحميل صورة الملف الشخصي بنجاح.",
+      "imageUploadError": "فشل تحميل صورة الملف الشخصي.",
+      "imageDeleteSuccess": "تم حذف صورة الملف الشخصي بنجاح.",
+      "imageDeleteError": "فشل حذف صورة الملف الشخصي.",
+      "deleteExperienceSuccess": "تم حذف الخبرة بنجاح.",
+      "deleteExperienceError": "فشل حذف الخبرة.",
+      "deleteEducationSuccess": "تم حذف التعليم بنجاح.",
+      "deleteEducationError": "فشل حذف التعليم.",
+      "deleteSkillSuccess": "تم حذف المهارة بنجاح.",
+      "deleteSkillError": "فشل حذف المهارة.",
+      "deleteInterestSuccess": "تم حذف الاهتمام بنجاح.",
+      "deleteInterestError": "فشل حذف الاهتمام.",
+      "saveBioSuccess": "تم تحديث السيرة الذاتية بنجاح.",
+      "saveBioError": "فشل تحديث السيرة الذاتية.",
+      "saveExperienceSuccess": "تم حفظ الخبرة بنجاح.",
+      "saveExperienceError": "فشل حفظ الخبرة.",
+      "saveEducationSuccess": "تم حفظ التعليم بنجاح.",
+      "saveEducationError": "فشل حفظ التعليم.",
+      "saveSkillSuccess": "تم حفظ المهارة بنجاح.",
+      "saveSkillError": "فشل حفظ المهارة.",
+      "saveInterestSuccess": "تم حفظ الاهتمام بنجاح.",
+      "saveInterestError": "فشل حفظ الاهتمام.",
+      "deleteAccountSuccess": "تم حذف جميع بيانات الملف الشخصي."
+    },
     "activity": {
       "items": [
         {
@@ -661,6 +694,38 @@
       "backToJobs": "العودة إلى الوظائف"
     }
   },
+  "myMentorships": {
+    "title": "إرشاداتي",
+    "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة الخاصة بك",
+    "active": "نشط",
+    "pending": "قيد الانتظار",
+    "completed": "مكتمل",
+    "rejected": "مرفوض",
+    "status": {
+      "active": "نشط",
+      "pending": "قيد الانتظار",
+      "completed": "مكتمل",
+      "rejected": "مرفوض"
+    },
+    "noActive": "لا توجد إرشادات نشطة",
+    "noActiveDesc": "ليس لديك إرشادات نشطة بعد. ابحث عن مرشد للبدء!",
+    "noPending": "لا توجد طلبات قيد الانتظار",
+    "noPendingDesc": "ليس لديك طلبات إرشاد قيد الانتظار.",
+    "noCompleted": "لا توجد إرشادات مكتملة",
+    "noCompletedDesc": "لم تكمل أي إرشادات بعد.",
+    "noRejected": "لا توجد طلبات مرفوضة",
+    "noRejectedDesc": "ليس لديك طلبات إرشاد مرفوضة.",
+    "findMentors": "البحث عن مرشدين",
+    "started": "بدأ",
+    "accepted": "مقبول",
+    "completed": "مكتمل",
+    "duration": "المدة",
+    "learningGoals": "أهداف التعلم",
+    "openChat": "فتح المحادثة",
+    "writeReview": "كتابة تقييم",
+    "waitingForResponse": "في انتظار الرد",
+    "viewDetails": "عرض التفاصيل"
+  },
   "myApplications": {
     "title": "طلباتي",
     "subtitle": "تتبع وإدارة طلبات الوظائف الخاصة بك",
@@ -679,7 +744,7 @@
     "applicationCard": {
       "appliedOn": "تم التقديم في {{date}}",
       "status": {
-        "PENDING": "قيد الانتظار",
+        "PENDING": "قيد الانتظar",
         "APPROVED": "مقبول",
         "REJECTED": "مرفوض"
       },
@@ -723,6 +788,44 @@
       "deleteFailed": "فشل حذف الطلب. يرجى المحاولة مرة أخرى."
     }
   },
+  "jobApplicationReview": {
+    "noCv": "لم يتم العثور على سيرة ذاتية لهذا الطلب",
+    "error": {
+      "load": "فشل تحميل تفاصيل الطلب. يرجى المحاولة مرة أخرى.",
+      "approve": "فشل قبول الطلب. يرجى المحاولة مرة أخرى.",
+      "reject": "فشل رفض الطلب. يرجى المحاولة مرة أخرى.",
+      "title": "خطأ في تحميل الطلب"
+    },
+    "success": {
+      "approve": "تم قبول الطلب بنجاح.",
+      "reject": "تم رفض الطلب بنجاح."
+    },
+    "applied": {
+      "today": "اليوم",
+      "yesterday": "قبل يوم واحد",
+      "daysAgo": "قبل {{count}} أيام"
+    },
+    "backToJob": "العودة إلى الوظيفة",
+    "title": "طلب لوظيفة {{jobTitle}}",
+    "atCompany": "في {{company}}",
+    "applicantInfo": "معلومات مقدم الطلب",
+    "status": "الحالة",
+    "coverLetter": "خطاب التقديم",
+    "specialNeeds": "الاحتياجات الخاصة أو التسهيلات",
+    "cv": "السيرة الذاتية",
+    "loadingCv": "جارٍ تحميل السيرة الذاتية...",
+    "resumeOf": "سيرة {{name}} الذاتية",
+    "downloadToView": "انقر فوق تنزيل لعرض السيرة الذاتية",
+    "download": "تنزيل",
+    "noCvAttached": "لا توجد سيرة ذاتية مرفقة بهذا الطلب",
+    "existingFeedback": "الملاحظات الحالية",
+    "decision": "القرار",
+    "feedback": "ملاحظات (اختياري)",
+    "feedbackPlaceholder": "قدم ملاحظات لمقدم الطلب",
+    "processing": "جارٍ المعالجة...",
+    "reject": "رفض",
+    "approve": "قبول"
+  },
   "createJob": {
     "title": "إنشاء إعلان وظيفة",
     "subtitle": "انشر فرصة عمل جديدة وابحث عن المرشح المثالي",
@@ -750,6 +853,106 @@
     "inclusiveOpportunityDescription": "حدد هذه الوظيفة كفرصة شاملة، ترحب بالمرشحين من خلفيات وقدرات متنوعة",
     "submit": "نشر الإعلان الوظيفي",
     "submitting": "جارٍ النشر...",
-    "submitError": "فشل إنشاء إعلان الوظيفة. يرجى المحاولة مرة أخرى."
+    "submitError": "فشل إنشاء إعلان الوظيفة. يرجى المحاولة مرة أخرى.",
+    "submitSuccess": "تم إنشاء إعلان الوظيفة بنجاح!"
+  },
+  "mentorship": {
+    "title": "ابحث عن مرشد",
+    "authRequired": {
+      "title": "يتطلب حساب",
+      "description": "تحتاج إلى إنشاء حساب لعرض المرشدين وطلب الإرشاد. انضم إلى Ethica Jobs اليوم وتواصل مع المحترفين ذوي الخبرة!",
+      "invitation": "أنشئ حسابك المجاني الآن وابدأ رحلة الإرشاد الخاصة بك.",
+      "viewMore": "سجل لعرض جميع المرشدين المتاحين",
+      "signUp": "إنشاء حساب",
+      "login": "هل لديك حساب بالفعل؟ تسجيل الدخول"
+    },
+    "card": {
+      "reviews": "تقييمات",
+      "mentoring": "إرشاد",
+      "hour": "ساعة",
+      "more": "المزيد",
+      "viewProfile": "عرض الملف الشخصي",
+      "request": "طلب",
+      "full": "ممتلئ"
+    },
+    "profile": {
+      "reviews": "تقييمات",
+      "remote": "عن بُعد",
+      "hour": "ساعة",
+      "website": "الموقع الإلكتروني",
+      "requestMentorship": "طلب الإرشاد",
+      "unavailable": "غير متاح حالياً",
+      "about": "نبذة عني",
+      "experience": "الخبرة",
+      "keyAchievements": "الإنجازات الرئيسية",
+      "education": "التعليم",
+      "specialties": "التخصصات",
+      "languages": "اللغات",
+      "reviewsTitle": "التقييمات ({{count}})",
+      "mentorshipStats": "إحصائيات الإرشاد",
+      "currentMentees": "المتدربون الحاليون",
+      "totalReviews": "إجمالي التقييمات",
+      "averageRating": "متوسط التقييم",
+      "skillsTechnologies": "المهارات والتقنيات"
+    },
+    "request": {
+      "backToProfile": "العودة إلى ملف المرشد",
+      "title": "طلب الإرشاد",
+      "subtitle": "أرسل طلب إرشاد إلى {{mentorName}}",
+      "reviews": "تقييمات",
+      "mentoring": "إرشاد",
+      "specialties": "التخصصات",
+      "fullCapacity": "هذا المرشد في الطاقة القصوى حالياً",
+      "formTitle": "طلب الإرشاد",
+      "formDescription": "أخبر المرشد عن أهدافك وما تأمل تحقيقه من خلال الإرشاد.",
+      "messageLabel": "رسالة إلى المرشد",
+      "messagePlaceholder": "مرحباً، أنا مهتم بتعلم React و TypeScript. لدي بعض الخبرة في JavaScript ولكني أرغب في تحسين مهاراتي في بناء التطبيقات القابلة للتطوير...",
+      "messageHint": "قدم نفسك واشرح سبب اهتمامك بالإرشاد مع هذا المرشد.",
+      "goalsLabel": "أهداف التعلم",
+      "goalsPlaceholder": "1. إتقان React hooks وإدارة الحالة\n2. تعلم أفضل ممارسات TypeScript\n3. تحسين مهارات تصميم الأنظمة\n4. التحضير لمقابلات المطورين الكبار",
+      "goalsHint": "اذكر أهدافك التعليمية المحددة وما تريد تحقيقه.",
+      "durationLabel": "مدة الإرشاد المتوقعة",
+      "durationPlaceholder": "مثلاً: 3 أشهر، 6 أشهر، سنة واحدة",
+      "timeLabel": "وقت الاجتماع المفضل",
+      "timePlaceholder": "مثلاً: عطلات نهاية الأسبوع، أمسيات أيام الأسبوع، مرن",
+      "sendRequest": "إرسال طلب الإرشاد",
+      "sendingRequest": "جارٍ الإرسال...",
+      "cancel": "إلغاء",
+      "successMessage": "تم إرسال طلب الإرشاد بنجاح!",
+      "errorMessage": "فشل إرسال طلب الإرشاد. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "myMentorships": {
+    "title": "إرشاداتي",
+    "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة",
+    "successMessage": "تم إرسال طلب الإرشاد بنجاح إلى {{mentorName}}!",
+    "active": "نشط",
+    "pending": "قيد الانتظار",
+    "completed": "مكتمل",
+    "rejected": "مرفوض",
+    "noActive": "لا توجد إرشادات نشطة",
+    "noActiveDesc": "ليس لديك أي إرشادات نشطة حتى الآن. ابحث عن مرشد للبدء!",
+    "noPending": "لا توجد طلبات قيد الانتظار",
+    "noPendingDesc": "ليس لديك أي طلبات إرشاد قيد الانتظار.",
+    "noCompleted": "لا توجد إرشادات مكتملة",
+    "noCompletedDesc": "لم تكمل أي إرشادات بعد.",
+    "noRejected": "لا توجد طلبات مرفوضة",
+    "noRejectedDesc": "ليس لديك أي طلبات إرشاد مرفوضة.",
+    "findMentors": "ابحث عن مرشدين",
+    "started": "بدأ",
+    "accepted": "مقبول",
+    "completedDate": "مكتمل",
+    "duration": "المدة",
+    "learningGoals": "أهداف التعلم",
+    "openChat": "فتح المحادثة",
+    "writeReview": "كتابة تقييم",
+    "waitingForResponse": "في انتظار الرد",
+    "viewDetails": "عرض التفاصيل",
+    "status": {
+      "active": "نشط",
+      "pending": "قيد الانتظار",
+      "completed": "مكتمل",
+      "rejected": "مرفوض"
+    }
   }
 }
