@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.bounswe.jobboardbackend.exception.HandleException;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,7 +52,7 @@ public class ReviewService {
 
         boolean alreadyReviewed = reviewRepository.existsByWorkplace_IdAndUser_Id(workplaceId, currentUser.getId());
         if (alreadyReviewed) {
-            throw new IllegalStateException("You have already submitted a review for this workplace.");
+            throw new HandleException(ErrorCode.REVIEW_ALREADY_EXISTS, "You have already submitted a review for this workplace.");
         }
 
         currentUser = userRepository.findById(currentUser.getId())

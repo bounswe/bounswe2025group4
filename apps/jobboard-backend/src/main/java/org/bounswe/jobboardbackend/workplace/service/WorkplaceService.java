@@ -280,14 +280,17 @@ public class WorkplaceService {
 
     private Pageable buildSort(int page, int size, String sortBy) {
         if (sortBy == null || sortBy.isBlank()) {
-            return PageRequest.of(page, size, Sort.by(Sort.Order.asc("companyName").with(Sort.NullHandling.NULLS_LAST)));
+            return PageRequest.of(page, size, Sort.by("companyName"));
         }
 
         return switch (sortBy) {
-            case "nameDesc" -> PageRequest.of(page, size, Sort.by(Sort.Order.desc("companyName").with(Sort.NullHandling.NULLS_LAST)));
-            case "reviewCount" -> PageRequest.of(page, size, Sort.by(Sort.Order.desc("reviewCount").with(Sort.NullHandling.NULLS_LAST), Sort.Order.asc("companyName").with(Sort.NullHandling.NULLS_LAST)));
+            case "nameDesc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "companyName"));
+
+            case "reviewCount" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reviewCount").and(Sort.by("companyName")));
+
             case "rating" -> PageRequest.of(page, size);
-            default -> PageRequest.of(page, size, Sort.by(Sort.Order.asc("companyName").with(Sort.NullHandling.NULLS_LAST)));
+
+            default -> PageRequest.of(page, size, Sort.by("companyName"));
         };
     }
 
