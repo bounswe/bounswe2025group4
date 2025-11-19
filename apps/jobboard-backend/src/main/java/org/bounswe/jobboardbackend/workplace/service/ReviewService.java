@@ -266,7 +266,8 @@ public class ReviewService {
     private Pageable makeSort(int page, int size, String sortBy) {
         if (sortBy == null) return PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return switch (sortBy) {
-            case "rating" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "overallRating"));
+            case "ratingAsc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "overallRating"));
+            case "ratingDesc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "overallRating"));
             case "helpfulness" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "helpfulCount"));
             default -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         };
