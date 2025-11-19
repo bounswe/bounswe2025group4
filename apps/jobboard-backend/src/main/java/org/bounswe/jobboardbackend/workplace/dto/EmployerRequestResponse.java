@@ -12,6 +12,7 @@ import java.time.Instant;
 public class EmployerRequestResponse {
     private Long id;
     private Long workplaceId;
+    private String workplaceCompanyName;
     private Long createdByUserId;
     private String username;
     private String nameSurname;

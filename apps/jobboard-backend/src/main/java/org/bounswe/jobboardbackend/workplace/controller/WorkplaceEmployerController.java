@@ -108,4 +108,15 @@ public class WorkplaceEmployerController {
         employerService.removeEmployer(workplaceId, employerId, user.getId(), isAdmin());
         return ResponseEntity.ok(ApiMessage.builder().message("Employer removed").code("EMPLOYER_REMOVED").build());
     }
+
+    // === LIST MY EMPLOYER REQUESTS  ===
+    @GetMapping("/employers/requests/me")
+    public ResponseEntity<PaginatedResponse<EmployerRequestResponse>> myRequests(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        var user = currentUser();
+        var res = employerService.listMyRequests(user.getId(), page, size);
+        return ResponseEntity.ok(res);
+    }
 }

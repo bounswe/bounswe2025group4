@@ -122,18 +122,15 @@ public class EmployerService {
     @Transactional
     public void createRequest(Long workplaceId, EmployerRequestCreate req, Long applicantUserId) {
         Workplace wp = requireWorkplace(workplaceId);
-        // Başvuran kişinin user role'ü ROLE_EMPLOYER olmalı jobseeker olamaz mesela
         User applicantUser = managedUser(applicantUserId);
         if (!Role.ROLE_EMPLOYER.equals(applicantUser.getRole())) {
             throw new AccessDeniedException("Only users with EMPLOYER role can apply to be employers");
         }
 
-        // Eğer zaten employer’sa başvuru yapamasın
         if (isEmployer(workplaceId, applicantUserId)) {
             throw new AccessDeniedException("You are already an employer of this workplace");
         }
 
-        // Daha önce pending başvuru var mı?
         boolean dup = employerRequestRepository.existsByWorkplace_IdAndCreatedBy_IdAndStatus(
                 workplaceId,
                 applicantUserId,
@@ -147,7 +144,7 @@ public class EmployerService {
 
         EmployerRequest er = EmployerRequest.builder()
                 .workplace(wp)
-                .createdBy(applicant)   // başvuru yapan kişi
+                .createdBy(applicant)
                 .status(EmployerRequestStatus.PENDING)
                 .note(req.getNote())
                 .build();
@@ -169,32 +166,26 @@ public class EmployerService {
     public void resolveRequest(Long workplaceId, Long requestId, EmployerRequestResolve req, Long resolverUserId, boolean isAdmin) {
         assertOwnerOrAdmin(isAdmin, workplaceId, resolverUserId);
 
-        // İlgili isteği getir
         EmployerRequest er = employerRequestRepository.findByIdAndWorkplace_Id(requestId, workplaceId)
                 .orElseThrow(() -> new NoSuchElementException("Request not found"));
 
-        // Sadece PENDING iken işlem yapılabilir
         if (!EmployerRequestStatus.PENDING.equals(er.getStatus())) {
             throw new IllegalStateException("Request already resolved");
         }
 
-        // Başvuran (MANAGER olmak isteyen) kişi — request'i oluşturan kullanıcı
         Long applicantId = Optional.ofNullable(er.getCreatedBy())
                 .map(User::getId)
                 .orElseThrow(() -> new IllegalArgumentException("Request has no applicant"));
 
-        // Aksiyon ayrımı
         String action = req.getAction() != null ? req.getAction().trim().toUpperCase() : "";
         switch (action) {
             case "APPROVE": {
-                // Zaten employer ise sadece isteği APPROVED olarak işaretle
                 if (isEmployer(workplaceId, applicantId)) {
                     er.setStatus(EmployerRequestStatus.APPROVED);
                     employerRequestRepository.save(er);
                     return;
                 }
 
-                // Değilse MANAGER olarak ekle
                 Workplace wp = requireWorkplace(workplaceId);
                 User applicant = managedUser(applicantId);
 
@@ -222,7 +213,6 @@ public class EmployerService {
     // === REMOVE EMPLOYER ===
     @Transactional
     public void removeEmployer(Long workplaceId, Long employerUserId, Long actingUserId, boolean isAdmin) {
-        // sadece owner veya admin kaldırabilir; owner kendisini kaldıramasın (en az 1 owner kalsın)
         assertOwnerOrAdmin(isAdmin, workplaceId, actingUserId);
         List<EmployerWorkplace> links = employerWorkplaceRepository.findByWorkplace_Id(workplaceId);
         Optional<EmployerWorkplace> target = links.stream().filter(l -> Objects.equals(l.getUser().getId(), employerUserId)).findFirst();
@@ -237,6 +227,27 @@ public class EmployerService {
         employerWorkplaceRepository.delete(toRemove);
     }
 
+    // === LIST MY REQUESTS (applicant side) ===
+    @Transactional(readOnly = true)
+    public PaginatedResponse<EmployerRequestResponse> listMyRequests(Long applicantUserId,
+                                                                     int page,
+                                                                     int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<EmployerRequest> pg = employerRequestRepository.findByCreatedBy_Id(applicantUserId, pageable);
+
+        List<EmployerRequestResponse> content = pg.getContent()
+                .stream()
+                .map(this::toDto)
+                .toList();
+
+        return PaginatedResponse.of(
+                content,
+                pg.getNumber(),
+                pg.getSize(),
+                pg.getTotalElements()
+        );
+    }
+
     // === MAPPERS ===
     private EmployerRequestResponse toDto(EmployerRequest er) {
         String nameSurname = profileRepository.findByUserId(er.getCreatedBy().getId())
@@ -245,6 +256,7 @@ public class EmployerService {
         return EmployerRequestResponse.builder()
                 .id(er.getId())
                 .workplaceId(er.getWorkplace().getId())
+                .workplaceCompanyName(er.getWorkplace().getCompanyName())
                 .createdByUserId(er.getCreatedBy() != null ? er.getCreatedBy().getId() : null)
                 .username(er.getCreatedBy() != null ? er.getCreatedBy().getUsername() : null)
                 .nameSurname(nameSurname)
