@@ -12,7 +12,7 @@ public class UpdateJobPostRequest {
     @Size(max = 100)
     private String title;
 
-    @Size(max = 1000)
+    @Size(max = 5000)
     private String description;
 
     private Long workplaceId;
@@ -20,6 +20,8 @@ public class UpdateJobPostRequest {
     private Boolean remote;
 
     private Boolean inclusiveOpportunity;
+
+    private Boolean nonProfit;
 
     private Integer minSalary;
     private Integer maxSalary;
