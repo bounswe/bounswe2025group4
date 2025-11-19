@@ -37,7 +37,6 @@ class _JobPageState extends State<JobPage> {
     'maxSalary': null,
     'isRemote': null,
     'inclusiveOpportunity': null,
-    'jobTypes': <String>[],
   };
   UserType? _userRole; // Changed type to UserType?
 
@@ -105,10 +104,6 @@ class _JobPageState extends State<JobPage> {
           isRemote: _selectedFilters['isRemote'] == true ? true : null,
           inclusiveOpportunity:
               _selectedFilters['inclusiveOpportunity'] == true ? true : null,
-          additionalFilters:
-              (_selectedFilters['jobTypes'] as List<String>).isNotEmpty
-                  ? {'jobTypes': _selectedFilters['jobTypes']}
-                  : null,
         );
       }
       if (mounted) {
@@ -140,8 +135,7 @@ class _JobPageState extends State<JobPage> {
         _selectedFilters['minSalary'] != null ||
         _selectedFilters['maxSalary'] != null ||
         _selectedFilters['isRemote'] == true ||
-        _selectedFilters['inclusiveOpportunity'] == true ||
-        (_selectedFilters['jobTypes'] as List<String>).isNotEmpty;
+        _selectedFilters['inclusiveOpportunity'] == true;
   }
 
   // --- Event Handlers ---
@@ -209,16 +203,6 @@ class _JobPageState extends State<JobPage> {
       );
       if (currentEthicalTags.length != newEthicalTags.length ||
           !currentEthicalTags.containsAll(newEthicalTags)) {
-        filtersChanged = true;
-      }
-
-      // Compare lists (jobTypes)
-      final currentJobTypes = Set<String>.from(
-        _selectedFilters['jobTypes'] as List<String>,
-      );
-      final newJobTypes = Set<String>.from(result['jobTypes'] as List<String>);
-      if (currentJobTypes.length != newJobTypes.length ||
-          !currentJobTypes.containsAll(newJobTypes)) {
         filtersChanged = true;
       }
 
