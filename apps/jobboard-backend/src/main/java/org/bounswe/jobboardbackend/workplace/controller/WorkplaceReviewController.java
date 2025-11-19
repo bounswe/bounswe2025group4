@@ -48,12 +48,12 @@ public class WorkplaceReviewController {
     public ResponseEntity<PaginatedResponse<ReviewResponse>> list(@PathVariable Long workplaceId,
                                                                   @RequestParam(defaultValue = "0") int page,
                                                                   @RequestParam(defaultValue = "10") int size,
-                                                                  @RequestParam(required = false) String rating,
+                                                                  @RequestParam(required = false) String ratingFilter,
                                                                   @RequestParam(required = false) String sortBy,
                                                                   @RequestParam(required = false) Boolean hasComment,
                                                                   @RequestParam(required = false) String policy,
                                                                   @RequestParam(required = false) Integer policyMin) {
-        var res = reviewService.listReviews(workplaceId, page, size, rating, sortBy, hasComment, policy, policyMin);
+        var res = reviewService.listReviews(workplaceId, page, size, ratingFilter, sortBy, hasComment, policy, policyMin);
         return ResponseEntity.ok(res);
     }
 
