@@ -282,6 +282,11 @@ class _WorkplaceReviewsPageState extends State<WorkplaceReviewsPage> {
     return _workplace!.employers.any((emp) => emp.userId == userIdInt);
   }
 
+  bool _hasUserReviewed(List<WorkplaceReview> reviews, String userId) {
+    // Check if the user has already submitted a review
+    return reviews.any((review) => review.userId.toString() == userId);
+  }
+
   Future<void> _showFilterDialog() async {
     String? tempSortBy = _sortBy;
     double? tempMinRating = _minRating;
@@ -689,25 +694,28 @@ class _WorkplaceReviewsPageState extends State<WorkplaceReviewsPage> {
                 ),
             ],
           ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => AddReviewPage(
-                        workplaceId: widget.workplaceId,
-                        workplaceName: widget.workplaceName,
-                      ),
-                ),
-              );
-              if (result == true) {
-                _loadReviews();
-              }
-            },
-            tooltip: 'Add Review',
-          ),
+          // Only show "Add" button if user hasn't reviewed yet
+          if (currentUserId != null &&
+              !_hasUserReviewed(_reviews, currentUserId))
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => AddReviewPage(
+                          workplaceId: widget.workplaceId,
+                          workplaceName: widget.workplaceName,
+                        ),
+                  ),
+                );
+                if (result == true) {
+                  _loadReviews();
+                }
+              },
+              tooltip: 'Add Review',
+            ),
         ],
       ),
       body: Column(

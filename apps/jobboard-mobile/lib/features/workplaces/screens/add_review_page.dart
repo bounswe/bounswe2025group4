@@ -161,9 +161,46 @@ class _AddReviewPageState extends State<AddReviewPage> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-      );
+      // Check if the error is about already having a review
+      final errorMessage = e.toString().toLowerCase();
+      if (errorMessage.contains('already') && errorMessage.contains('review')) {
+        // Show a friendly dialog for duplicate review
+        showDialog(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.blue),
+                    SizedBox(width: 12),
+                    Text('Review Already Exists'),
+                  ],
+                ),
+                content: const Text(
+                  'You have already submitted a review for this workplace. '
+                  'You can view and edit your existing review from the reviews page.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('OK'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close dialog
+                      Navigator.pop(context, false); // Close review page
+                    },
+                    child: const Text('Go Back'),
+                  ),
+                ],
+              ),
+        );
+      } else {
+        // Show error message for other errors
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);

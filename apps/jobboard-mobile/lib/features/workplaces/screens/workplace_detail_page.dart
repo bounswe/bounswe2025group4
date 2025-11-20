@@ -202,24 +202,35 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
                           ),
                           Row(
                             children: [
-                              OutlinedButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => AddReviewPage(
-                                            workplaceId: workplace.id,
-                                            workplaceName:
-                                                workplace.companyName,
-                                          ),
-                                    ),
-                                  ).then((_) => _loadWorkplace());
-                                },
-                                icon: const Icon(Icons.add, size: 18),
-                                label: const Text('Add'),
-                              ),
-                              const SizedBox(width: 8),
+                              // Only show "Add" button if user hasn't reviewed yet
+                              if (currentUser != null &&
+                                  !_hasUserReviewed(
+                                    workplace.recentReviews,
+                                    currentUser.id.toString(),
+                                  ))
+                                OutlinedButton.icon(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => AddReviewPage(
+                                              workplaceId: workplace.id,
+                                              workplaceName:
+                                                  workplace.companyName,
+                                            ),
+                                      ),
+                                    ).then((_) => _loadWorkplace());
+                                  },
+                                  icon: const Icon(Icons.add, size: 18),
+                                  label: const Text('Add'),
+                                ),
+                              if (currentUser != null &&
+                                  !_hasUserReviewed(
+                                    workplace.recentReviews,
+                                    currentUser.id.toString(),
+                                  ))
+                                const SizedBox(width: 8),
                               ElevatedButton.icon(
                                 onPressed: () {
                                   Navigator.push(
@@ -725,6 +736,11 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
       // User not found in employers list
       return false;
     }
+  }
+
+  bool _hasUserReviewed(List<dynamic> reviews, String userId) {
+    // Check if the user has already submitted a review
+    return reviews.any((review) => review.userId.toString() == userId);
   }
 
   Future<void> _deleteEmployer(Workplace workplace, employer) async {
