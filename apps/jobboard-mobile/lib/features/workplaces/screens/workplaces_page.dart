@@ -8,6 +8,7 @@ import '../../../core/models/user_type.dart';
 import 'workplace_detail_page.dart';
 import 'create_workplace_page.dart';
 import 'my_employer_workplaces_page.dart';
+import 'my_employer_requests_page.dart';
 
 class WorkplacesPage extends StatefulWidget {
   const WorkplacesPage({super.key});
@@ -135,6 +136,18 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => const MyEmployerWorkplacesPage(),
+                  ),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.request_page),
+              tooltip: 'My Requests',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyEmployerRequestsPage(),
                   ),
                 );
               },

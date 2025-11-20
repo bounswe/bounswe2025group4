@@ -28,6 +28,7 @@ class WorkplaceProvider with ChangeNotifier {
   Workplace? _currentWorkplace;
   List<WorkplaceReview> _currentReviews = [];
   List<Workplace> _myWorkplaces = [];
+  PaginatedEmployerRequestResponse? _myEmployerRequests;
   bool _isLoading = false;
   String? _error;
 
@@ -37,6 +38,8 @@ class WorkplaceProvider with ChangeNotifier {
   Workplace? get currentWorkplace => _currentWorkplace;
   List<WorkplaceReview> get currentReviews => _currentReviews;
   List<Workplace> get myWorkplaces => _myWorkplaces;
+  PaginatedEmployerRequestResponse? get myEmployerRequests =>
+      _myEmployerRequests;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -311,33 +314,52 @@ class WorkplaceProvider with ChangeNotifier {
   // ─────────────────────────────────────────────────
 
   /// Fetches reviews for a workplace with pagination and filters
+  /// sortBy can be: 'ratingAsc' or 'ratingDesc'
+  /// ratingFilter format: '<min>,<max>' (e.g., '1,3' for ratings 1-3)
   Future<void> fetchWorkplaceReviews(
     int workplaceId, {
-    double? rating,
+    String? ratingFilter,
     bool? hasComment,
     String? policy,
     int? policyMin,
-    String? sort,
+    String? sortBy,
     int? page,
     int? size,
   }) async {
     _setLoading(true);
     _setError(null);
 
+    // Debug: Log provider call
+    print('[WorkplaceProvider] fetchWorkplaceReviews called:');
+    print('[WorkplaceProvider]   workplaceId: $workplaceId');
+    print('[WorkplaceProvider]   ratingFilter: $ratingFilter');
+    print('[WorkplaceProvider]   sortBy: $sortBy');
+    print('[WorkplaceProvider]   hasComment: $hasComment');
+    print('[WorkplaceProvider]   policy: $policy');
+    print('[WorkplaceProvider]   policyMin: $policyMin');
+    print('[WorkplaceProvider]   page: $page');
+    print('[WorkplaceProvider]   size: $size');
+
     try {
       final response = await _apiService.getWorkplaceReviews(
         workplaceId,
-        rating: rating,
+        ratingFilter: ratingFilter,
         hasComment: hasComment,
         policy: policy,
         policyMin: policyMin,
-        sort: sort,
+        sortBy: sortBy,
         page: page,
         size: size,
       );
       _currentReviews = response.content;
+
+      // Debug: Log result
+      print('[WorkplaceProvider] Reviews fetched successfully:');
+      print('[WorkplaceProvider]   Count: ${_currentReviews.length}');
+
       notifyListeners();
     } catch (e) {
+      print('[WorkplaceProvider] ERROR fetching reviews: $e');
       _setError(e.toString());
     } finally {
       _setLoading(false);
@@ -1005,6 +1027,24 @@ class WorkplaceProvider with ChangeNotifier {
     } catch (e) {
       _setError(e.toString());
       return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// Gets the current user's employer requests (paginated)
+  Future<void> fetchMyEmployerRequests({int page = 0, int size = 10}) async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      _myEmployerRequests = await _apiService.getMyEmployerRequests(
+        page: page,
+        size: size,
+      );
+      notifyListeners();
+    } catch (e) {
+      _setError(e.toString());
     } finally {
       _setLoading(false);
     }

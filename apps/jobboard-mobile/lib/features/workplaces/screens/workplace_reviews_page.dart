@@ -29,6 +29,11 @@ class _WorkplaceReviewsPageState extends State<WorkplaceReviewsPage> {
   bool _isLoading = true;
   Workplace? _workplace;
 
+  // Filter state
+  String? _sortBy;
+  double? _minRating;
+  double? _maxRating;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -45,10 +50,33 @@ class _WorkplaceReviewsPageState extends State<WorkplaceReviewsPage> {
     if (_workplaceProvider == null) return;
     setState(() => _isLoading = true);
 
+    // Build ratingFilter string
+    // If both are set: "min,max"
+    // If only one is set, use 1 as default min or 5 as default max
+    String? ratingFilter;
+    if (_minRating != null || _maxRating != null) {
+      final min = _minRating?.toInt() ?? 1;
+      final max = _maxRating?.toInt() ?? 5;
+      ratingFilter = '$min,$max';
+    }
+
+    // Debug: Log what we're sending
+    print('[WorkplaceReviewsPage] Loading reviews with filters:');
+    print('[WorkplaceReviewsPage]   workplaceId: ${widget.workplaceId}');
+    print('[WorkplaceReviewsPage]   sortBy: $_sortBy');
+    print('[WorkplaceReviewsPage]   ratingFilter: $ratingFilter');
+    print(
+      '[WorkplaceReviewsPage]   _minRating: $_minRating, _maxRating: $_maxRating',
+    );
+
     // Load both workplace data and reviews
     await Future.wait([
       _workplaceProvider!.fetchWorkplaceById(widget.workplaceId),
-      _workplaceProvider!.fetchWorkplaceReviews(widget.workplaceId),
+      _workplaceProvider!.fetchWorkplaceReviews(
+        widget.workplaceId,
+        sortBy: _sortBy,
+        ratingFilter: ratingFilter,
+      ),
     ]);
 
     setState(() {
@@ -56,6 +84,14 @@ class _WorkplaceReviewsPageState extends State<WorkplaceReviewsPage> {
       _reviews = _workplaceProvider!.currentReviews;
       _isLoading = false;
     });
+
+    // Debug: Log what we received
+    print('[WorkplaceReviewsPage] Received ${_reviews.length} reviews:');
+    for (var review in _reviews) {
+      print(
+        '[WorkplaceReviewsPage]   Review #${review.id}: Rating ${review.overallRating}',
+      );
+    }
   }
 
   Future<void> _deleteReview(WorkplaceReview review) async {
@@ -246,6 +282,212 @@ class _WorkplaceReviewsPageState extends State<WorkplaceReviewsPage> {
     return _workplace!.employers.any((emp) => emp.userId == userIdInt);
   }
 
+  Future<void> _showFilterDialog() async {
+    String? tempSortBy = _sortBy;
+    double? tempMinRating = _minRating;
+    double? tempMaxRating = _maxRating;
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder:
+          (context) => StatefulBuilder(
+            builder:
+                (context, setDialogState) => AlertDialog(
+                  title: const Text('Filter & Sort Reviews'),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Sort options
+                        const Text(
+                          'Sort By',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            ChoiceChip(
+                              label: const Text('Rating: Low to High'),
+                              selected: tempSortBy == 'ratingAsc',
+                              onSelected: (selected) {
+                                setDialogState(() {
+                                  tempSortBy = selected ? 'ratingAsc' : null;
+                                });
+                              },
+                            ),
+                            ChoiceChip(
+                              label: const Text('Rating: High to Low'),
+                              selected: tempSortBy == 'ratingDesc',
+                              onSelected: (selected) {
+                                setDialogState(() {
+                                  tempSortBy = selected ? 'ratingDesc' : null;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Rating filter
+                        const Text(
+                          'Filter by Rating',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<double>(
+                                value: tempMinRating,
+                                decoration: const InputDecoration(
+                                  labelText: 'Min Rating',
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                ),
+                                items:
+                                    [1.0, 2.0, 3.0, 4.0, 5.0].map((rating) {
+                                      return DropdownMenuItem(
+                                        value: rating,
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.star,
+                                              color: Colors.amber,
+                                              size: 16,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(rating.toStringAsFixed(0)),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                onChanged: (value) {
+                                  setDialogState(() {
+                                    tempMinRating = value;
+                                    if (tempMaxRating != null &&
+                                        value != null &&
+                                        value > tempMaxRating!) {
+                                      tempMaxRating = value;
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: Text('to'),
+                            ),
+                            Expanded(
+                              child: DropdownButtonFormField<double>(
+                                value: tempMaxRating,
+                                decoration: const InputDecoration(
+                                  labelText: 'Max Rating',
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                ),
+                                items:
+                                    [1.0, 2.0, 3.0, 4.0, 5.0].map((rating) {
+                                      return DropdownMenuItem(
+                                        value: rating,
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.star,
+                                              color: Colors.amber,
+                                              size: 16,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(rating.toStringAsFixed(0)),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                onChanged: (value) {
+                                  setDialogState(() {
+                                    tempMaxRating = value;
+                                    if (tempMinRating != null &&
+                                        value != null &&
+                                        value < tempMinRating!) {
+                                      tempMinRating = value;
+                                    }
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        if (tempMinRating != null || tempMaxRating != null)
+                          TextButton.icon(
+                            onPressed: () {
+                              setDialogState(() {
+                                tempMinRating = null;
+                                tempMaxRating = null;
+                              });
+                            },
+                            icon: const Icon(Icons.clear),
+                            label: const Text('Clear Rating Filter'),
+                          ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _sortBy = tempSortBy;
+                          _minRating = tempMinRating;
+                          _maxRating = tempMaxRating;
+                        });
+                        Navigator.pop(context, true);
+                      },
+                      child: const Text('Apply'),
+                    ),
+                    if (_sortBy != null ||
+                        _minRating != null ||
+                        _maxRating != null)
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _sortBy = null;
+                            _minRating = null;
+                            _maxRating = null;
+                          });
+                          Navigator.pop(context, true);
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.red,
+                        ),
+                        child: const Text('Clear All'),
+                      ),
+                  ],
+                ),
+          ),
+    );
+
+    if (result == true) {
+      _loadReviews();
+    }
+  }
+
   Future<void> _showReplyDialog({
     required WorkplaceReview review,
     String? existingReply,
@@ -423,6 +665,30 @@ class _WorkplaceReviewsPageState extends State<WorkplaceReviewsPage> {
           ],
         ),
         actions: [
+          // Filter button with badge indicator
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.filter_list),
+                onPressed: _showFilterDialog,
+                tooltip: 'Filter & Sort',
+              ),
+              if (_sortBy != null || _minRating != null || _maxRating != null)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
@@ -444,289 +710,391 @@ class _WorkplaceReviewsPageState extends State<WorkplaceReviewsPage> {
           ),
         ],
       ),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _workplaceProvider?.error != null
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      size: 48,
-                      color: Colors.red,
+      body: Column(
+        children: [
+          // Active filters display
+          if (_sortBy != null || _minRating != null || _maxRating != null)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: Colors.blue.shade50,
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Text(
+                    'Active filters:',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  if (_sortBy != null)
+                    Chip(
+                      label: Text(
+                        _sortBy == 'ratingAsc' ? 'Rating ↑' : 'Rating ↓',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      deleteIcon: const Icon(Icons.close, size: 16),
+                      onDeleted: () {
+                        setState(() => _sortBy = null);
+                        _loadReviews();
+                      },
+                      visualDensity: VisualDensity.compact,
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      _workplaceProvider!.error!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.red),
+                  if (_minRating != null || _maxRating != null)
+                    Chip(
+                      label: Text(
+                        'Rating: ${_minRating?.toInt() ?? 1}-${_maxRating?.toInt() ?? 5}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      deleteIcon: const Icon(Icons.close, size: 16),
+                      onDeleted: () {
+                        setState(() {
+                          _minRating = null;
+                          _maxRating = null;
+                        });
+                        _loadReviews();
+                      },
+                      visualDensity: VisualDensity.compact,
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _loadReviews,
-                      child: const Text('Retry'),
+                  TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _sortBy = null;
+                        _minRating = null;
+                        _maxRating = null;
+                      });
+                      _loadReviews();
+                    },
+                    icon: const Icon(Icons.clear_all, size: 16),
+                    label: const Text(
+                      'Clear all',
+                      style: TextStyle(fontSize: 12),
                     ),
-                  ],
-                ),
-              )
-              : _reviews.isEmpty
-              ? const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.rate_review_outlined, size: 64),
-                    SizedBox(height: 16),
-                    Text('No reviews yet', style: TextStyle(fontSize: 18)),
-                    SizedBox(height: 8),
-                    Text(
-                      'Be the first to review this workplace!',
-                      style: TextStyle(color: Colors.grey),
+                    style: TextButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
                     ),
-                  ],
-                ),
-              )
-              : RefreshIndicator(
-                onRefresh: _loadReviews,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _reviews.length,
-                  itemBuilder: (context, index) {
-                    final review = _reviews[index];
-                    final isOwnReview =
-                        currentUserId != null &&
-                        review.userId.toString() == currentUserId;
+                  ),
+                ],
+              ),
+            ),
+          // Main content
+          Expanded(
+            child:
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _workplaceProvider?.error != null
+                    ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _workplaceProvider!.error!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadReviews,
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                    : _reviews.isEmpty
+                    ? const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.rate_review_outlined, size: 64),
+                          SizedBox(height: 16),
+                          Text(
+                            'No reviews yet',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Be the first to review this workplace!',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    )
+                    : RefreshIndicator(
+                      onRefresh: _loadReviews,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _reviews.length,
+                        itemBuilder: (context, index) {
+                          final review = _reviews[index];
+                          final isOwnReview =
+                              currentUserId != null &&
+                              review.userId.toString() == currentUserId;
 
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: InkWell(
-                        onTap: () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => ReviewDetailPage(
-                                    workplaceId: widget.workplaceId,
-                                    reviewId: review.id,
-                                    workplaceName: widget.workplaceName,
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            child: InkWell(
+                              onTap: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => ReviewDetailPage(
+                                          workplaceId: widget.workplaceId,
+                                          reviewId: review.id,
+                                          workplaceName: widget.workplaceName,
+                                        ),
                                   ),
-                            ),
-                          );
-                          if (result == true) {
-                            _loadReviews();
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Header with user info
-                              Row(
-                                children: [
-                                  // User Avatar
-                                  CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: Colors.blue.shade100,
-                                    child:
-                                        review.anonymous
-                                            ? const Icon(Icons.person, size: 20)
-                                            : Text(
-                                              review.username.isNotEmpty
-                                                  ? review.username[0]
-                                                      .toUpperCase()
-                                                  : '?',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  // User Name and Rating
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                );
+                                if (result == true) {
+                                  _loadReviews();
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Header with user info
+                                    Row(
                                       children: [
-                                        Text(
-                                          review.anonymous
-                                              ? 'Anonymous'
-                                              : review.nameSurname.isNotEmpty
-                                              ? review.nameSurname
-                                              : review.username,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
+                                        // User Avatar
+                                        CircleAvatar(
+                                          radius: 20,
+                                          backgroundColor: Colors.blue.shade100,
+                                          child:
+                                              review.anonymous
+                                                  ? const Icon(
+                                                    Icons.person,
+                                                    size: 20,
+                                                  )
+                                                  : Text(
+                                                    review.username.isNotEmpty
+                                                        ? review.username[0]
+                                                            .toUpperCase()
+                                                        : '?',
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        // User Name and Rating
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                review.anonymous
+                                                    ? 'Anonymous'
+                                                    : review
+                                                        .nameSurname
+                                                        .isNotEmpty
+                                                    ? review.nameSurname
+                                                    : review.username,
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                    size: 16,
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    review.overallRating
+                                                        .toStringAsFixed(1),
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.star,
-                                              color: Colors.amber,
-                                              size: 16,
+                                        // Action buttons
+                                        if (isOwnReview) ...[
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.edit,
+                                              size: 20,
                                             ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              review.overallRating
-                                                  .toStringAsFixed(1),
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
+                                            onPressed: () async {
+                                              final result = await Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (
+                                                        context,
+                                                      ) => AddReviewPage(
+                                                        workplaceId:
+                                                            widget.workplaceId,
+                                                        workplaceName:
+                                                            widget
+                                                                .workplaceName,
+                                                        existingReview: review,
+                                                      ),
+                                                ),
+                                              );
+                                              if (result == true) {
+                                                _loadReviews();
+                                              }
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.red,
+                                              size: 20,
                                             ),
-                                          ],
-                                        ),
+                                            onPressed:
+                                                () => _deleteReview(review),
+                                          ),
+                                        ],
+                                        if (!isOwnReview)
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.flag_outlined,
+                                              size: 20,
+                                            ),
+                                            onPressed:
+                                                () => _showReportReviewDialog(
+                                                  review,
+                                                ),
+                                            tooltip: 'Report',
+                                          ),
                                       ],
                                     ),
-                                  ),
-                                  // Action buttons
-                                  if (isOwnReview) ...[
-                                    IconButton(
-                                      icon: const Icon(Icons.edit, size: 20),
-                                      onPressed: () async {
-                                        final result = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) => AddReviewPage(
-                                                  workplaceId:
-                                                      widget.workplaceId,
-                                                  workplaceName:
-                                                      widget.workplaceName,
-                                                  existingReview: review,
+                                    const SizedBox(height: 12),
+
+                                    // Title
+                                    Text(
+                                      review.title,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+
+                                    // Content
+                                    Text(review.content),
+                                    const SizedBox(height: 12),
+
+                                    // Reply section
+                                    if (review.reply != null) ...[
+                                      const SizedBox(height: 12),
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.shade50,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.business,
+                                                  size: 16,
                                                 ),
-                                          ),
-                                        );
-                                        if (result == true) {
-                                          _loadReviews();
-                                        }
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                        size: 20,
-                                      ),
-                                      onPressed: () => _deleteReview(review),
-                                    ),
-                                  ],
-                                  if (!isOwnReview)
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.flag_outlined,
-                                        size: 20,
-                                      ),
-                                      onPressed:
-                                          () => _showReportReviewDialog(review),
-                                      tooltip: 'Report',
-                                    ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-
-                              // Title
-                              Text(
-                                review.title,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-
-                              // Content
-                              Text(review.content),
-                              const SizedBox(height: 12),
-
-                              // Reply section
-                              if (review.reply != null) ...[
-                                const SizedBox(height: 12),
-                                Container(
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.shade50,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Icon(Icons.business, size: 16),
-                                          const SizedBox(width: 4),
-                                          const Text(
-                                            'Company Response',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          if (isEmployer) ...[
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.edit,
-                                                size: 18,
-                                              ),
-                                              onPressed:
-                                                  () => _showReplyDialog(
-                                                    review: review,
-                                                    existingReply:
-                                                        review.reply!.content,
+                                                const SizedBox(width: 4),
+                                                const Text(
+                                                  'Company Response',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
                                                   ),
-                                              tooltip: 'Edit Reply',
-                                              padding: EdgeInsets.zero,
-                                              constraints:
-                                                  const BoxConstraints(),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.delete,
-                                                size: 18,
-                                                color: Colors.red,
-                                              ),
-                                              onPressed:
-                                                  () => _deleteReplyConfirm(
-                                                    review,
+                                                ),
+                                                const Spacer(),
+                                                if (isEmployer) ...[
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.edit,
+                                                      size: 18,
+                                                    ),
+                                                    onPressed:
+                                                        () => _showReplyDialog(
+                                                          review: review,
+                                                          existingReply:
+                                                              review
+                                                                  .reply!
+                                                                  .content,
+                                                        ),
+                                                    tooltip: 'Edit Reply',
+                                                    padding: EdgeInsets.zero,
+                                                    constraints:
+                                                        const BoxConstraints(),
                                                   ),
-                                              tooltip: 'Delete Reply',
-                                              padding: EdgeInsets.zero,
-                                              constraints:
-                                                  const BoxConstraints(),
+                                                  const SizedBox(width: 8),
+                                                  IconButton(
+                                                    icon: const Icon(
+                                                      Icons.delete,
+                                                      size: 18,
+                                                      color: Colors.red,
+                                                    ),
+                                                    onPressed:
+                                                        () =>
+                                                            _deleteReplyConfirm(
+                                                              review,
+                                                            ),
+                                                    tooltip: 'Delete Reply',
+                                                    padding: EdgeInsets.zero,
+                                                    constraints:
+                                                        const BoxConstraints(),
+                                                  ),
+                                                ],
+                                              ],
                                             ),
+                                            const SizedBox(height: 8),
+                                            Text(review.reply!.content),
                                           ],
-                                        ],
+                                        ),
                                       ),
-                                      const SizedBox(height: 8),
-                                      Text(review.reply!.content),
+                                    ] else if (isEmployer) ...[
+                                      // Show reply button for employers if no reply exists
+                                      const SizedBox(height: 12),
+                                      OutlinedButton.icon(
+                                        onPressed:
+                                            () => _showReplyDialog(
+                                              review: review,
+                                            ),
+                                        icon: const Icon(Icons.reply),
+                                        label: const Text('Reply to Review'),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: Colors.blue,
+                                        ),
+                                      ),
                                     ],
-                                  ),
+                                  ],
                                 ),
-                              ] else if (isEmployer) ...[
-                                // Show reply button for employers if no reply exists
-                                const SizedBox(height: 12),
-                                OutlinedButton.icon(
-                                  onPressed:
-                                      () => _showReplyDialog(review: review),
-                                  icon: const Icon(Icons.reply),
-                                  label: const Text('Reply to Review'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.blue,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
+                    ),
+          ),
+        ],
+      ),
     );
   }
 }

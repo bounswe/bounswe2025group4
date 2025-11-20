@@ -1813,33 +1813,59 @@ class ApiService {
   /// Fetches reviews for a workplace with filters and pagination
   Future<PaginatedWorkplaceReviewResponse> getWorkplaceReviews(
     int workplaceId, {
-    double? rating,
+    String? ratingFilter,
     bool? hasComment,
     String? policy,
     int? policyMin,
-    String? sort,
+    String? sortBy,
     int? page,
     int? size,
   }) async {
     final queryParams = <String, dynamic>{};
 
-    if (rating != null) queryParams['rating'] = rating;
+    if (ratingFilter != null && ratingFilter.isNotEmpty) {
+      queryParams['ratingFilter'] = ratingFilter;
+    }
     if (hasComment != null) queryParams['hasComment'] = hasComment;
     if (policy != null && policy.isNotEmpty) queryParams['policy'] = policy;
     if (policyMin != null) queryParams['policyMin'] = policyMin;
-    if (sort != null && sort.isNotEmpty) queryParams['sort'] = sort;
+    if (sortBy != null && sortBy.isNotEmpty) queryParams['sortBy'] = sortBy;
     if (page != null) queryParams['page'] = page;
     if (size != null) queryParams['size'] = size;
 
     final uri = _buildUri('/workplace/$workplaceId/review', queryParams);
 
+    // Debug: Log request details
+    print('[API] GET Workplace Reviews Request:');
+    print('[API]   URI: $uri');
+    print('[API]   Query Params: $queryParams');
+
     try {
       final response = await _client.get(uri, headers: _getHeaders());
+
+      // Debug: Log response details
+      print('[API] GET Workplace Reviews Response:');
+      print('[API]   Status Code: ${response.statusCode}');
+      print('[API]   Response Body Length: ${response.body.length} characters');
+
       final dynamic data = await _handleResponse(response);
-      return PaginatedWorkplaceReviewResponse.fromJson(
+      final result = PaginatedWorkplaceReviewResponse.fromJson(
         data as Map<String, dynamic>,
       );
+
+      // Debug: Log parsed results
+      print('[API]   Total Reviews: ${result.totalElements}');
+      print('[API]   Returned Reviews: ${result.content.length}');
+      print('[API]   Reviews in response:');
+      for (var review in result.content) {
+        print(
+          '[API]     - Review #${review.id}: Rating ${review.overallRating}, Title: "${review.title}"',
+        );
+      }
+
+      return result;
     } catch (e) {
+      print('[API] ERROR loading reviews: $e');
       throw Exception('Failed to load reviews. $e');
     }
   }
@@ -2344,6 +2370,27 @@ class ApiService {
       return DeleteResponse.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to remove employer. $e');
+    }
+  }
+
+  /// GET /api/workplace/employers/requests/me
+  /// Gets the current user's employer requests (paginated)
+  Future<PaginatedEmployerRequestResponse> getMyEmployerRequests({
+    int page = 0,
+    int size = 10,
+  }) async {
+    final queryParams = <String, dynamic>{'page': page, 'size': size};
+
+    final uri = _buildUri('/workplace/employers/requests/me', queryParams);
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return PaginatedEmployerRequestResponse.fromJson(
+        data as Map<String, dynamic>,
+      );
+    } catch (e) {
+      throw Exception('Failed to load my employer requests. $e');
     }
   }
 
