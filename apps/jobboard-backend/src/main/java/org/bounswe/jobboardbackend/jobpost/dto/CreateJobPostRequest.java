@@ -16,7 +16,7 @@ public class CreateJobPostRequest {
     private String title;
 
     @NotBlank(message = "Description cannot be empty")
-    @Size(max = 1000)
+    @Size(max = 5000)
     private String description;
 
     @NotNull(message = "Workplace ID is required")
@@ -25,6 +25,8 @@ public class CreateJobPostRequest {
     private boolean remote;
 
     private boolean inclusiveOpportunity; // targeted toward candidates with disabilities
+
+    private boolean nonProfit; // indicates if this is a non-profit/volunteer position
 
     private Integer minSalary;
     private Integer maxSalary;

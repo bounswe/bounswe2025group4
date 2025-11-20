@@ -33,12 +33,14 @@ public class JobPost {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false, length = 5000)
     private String description;
 
     private boolean remote;
 
     private boolean inclusiveOpportunity; // targeted toward candidates with disabilities
+
+    private boolean nonProfit; // indicates if this is a non-profit/volunteer position
 
     private Integer minSalary;
     private Integer maxSalary;
