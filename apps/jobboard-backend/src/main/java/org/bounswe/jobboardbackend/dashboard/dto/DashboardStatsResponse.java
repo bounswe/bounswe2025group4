@@ -14,7 +14,6 @@ public class DashboardStatsResponse {
     private long totalJobSeekers;
 
     private long totalForumPosts;      // mock for now
-    private long currentMentorships;   // mock for now
 
     // job post  related stats
     private long totalJobPosts;
@@ -27,4 +26,15 @@ public class DashboardStatsResponse {
     private long totalPendingApplications;
     private long totalAcceptedApplications;
     private long totalRejectedApplications;
+
+    // mentorship related stats
+    private long totalMentors;
+    private long totalMentorshipRequests;
+    private long acceptedMentorships;              // ACCEPTED status
+    private long pendingMentorshipRequests;        // PENDING status
+    private long completedMentorships;             // COMPLETED status
+    private long declinedMentorshipRequests;       // DECLINED status
+    private long closedMentorshipRequests;         // CLOSED status
+    private long totalMentorReviews;
+    private long totalResumeReviews;
 }

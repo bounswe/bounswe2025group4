@@ -3,6 +3,7 @@ package org.bounswe.jobboardbackend.mentorship.repository;
 
 import org.bounswe.jobboardbackend.mentorship.dto.MentorshipDetailsDTO;
 import org.bounswe.jobboardbackend.mentorship.model.MentorshipRequest;
+import org.bounswe.jobboardbackend.mentorship.model.RequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +28,7 @@ public interface MentorshipRequestRepository extends JpaRepository<MentorshipReq
             "WHERE mr.requester.id = :menteeId AND mr.status = 'ACCEPTED' " +
             "ORDER BY mr.createdAt DESC")
     List<MentorshipDetailsDTO> findAllMentorshipDetailsByMenteeId(@Param("menteeId") Long menteeId);
+
+    // Dashboard stats methods
+    long countByStatus(RequestStatus status);
 }

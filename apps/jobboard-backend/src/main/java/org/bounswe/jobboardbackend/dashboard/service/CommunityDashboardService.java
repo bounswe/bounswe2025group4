@@ -8,6 +8,11 @@ import org.bounswe.jobboardbackend.dashboard.dto.DashboardStatsResponse;
 import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.mentorship.model.RequestStatus;
+import org.bounswe.jobboardbackend.mentorship.repository.MentorProfileRepository;
+import org.bounswe.jobboardbackend.mentorship.repository.MentorReviewRepository;
+import org.bounswe.jobboardbackend.mentorship.repository.MentorshipRequestRepository;
+import org.bounswe.jobboardbackend.mentorship.repository.ResumeReviewRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +25,10 @@ public class CommunityDashboardService {
     private final UserRepository userRepository;
     private final JobPostRepository jobPostRepository;
     private final JobApplicationRepository jobApplicationRepository;
+    private final MentorProfileRepository mentorProfileRepository;
+    private final MentorshipRequestRepository mentorshipRequestRepository;
+    private final MentorReviewRepository mentorReviewRepository;
+    private final ResumeReviewRepository resumeReviewRepository;
 
     private DashboardStatsResponse cachedStats = new DashboardStatsResponse();
 
@@ -47,9 +56,19 @@ public class CommunityDashboardService {
         long acceptedApps = jobApplicationRepository.countByStatus(JobApplicationStatus.APPROVED);
         long rejectedApps = jobApplicationRepository.countByStatus(JobApplicationStatus.REJECTED);
 
+        // 4. Mentorship Stats
+        long totalMentors = mentorProfileRepository.count();
+        long totalMentorshipRequests = mentorshipRequestRepository.count();
+        long acceptedMentorships = mentorshipRequestRepository.countByStatus(RequestStatus.ACCEPTED);
+        long pendingRequests = mentorshipRequestRepository.countByStatus(RequestStatus.PENDING);
+        long completedMentorships = mentorshipRequestRepository.countByStatus(RequestStatus.COMPLETED);
+        long declinedRequests = mentorshipRequestRepository.countByStatus(RequestStatus.DECLINED);
+        long closedRequests = mentorshipRequestRepository.countByStatus(RequestStatus.CLOSED);
+        long totalMentorReviews = mentorReviewRepository.count();
+        long totalResumeReviews = resumeReviewRepository.count();
+
         // mock for now
         long forumPosts = 0;
-        long mentorships = 0;
 
 
         // update the cached stats
@@ -59,7 +78,6 @@ public class CommunityDashboardService {
                 .totalJobSeekers(totalJobSeekers)
                 .totalJobPosts(totalJobPosts)
                 .totalForumPosts(forumPosts)
-                .currentMentorships(mentorships)
                 .remoteJobsCount(remoteJobs)
                 .inclusiveJobsCount(inclusiveJobs)
                 .newJobsThisWeekCount(newJobs)
@@ -67,6 +85,15 @@ public class CommunityDashboardService {
                 .totalPendingApplications(pendingApps)
                 .totalAcceptedApplications(acceptedApps)
                 .totalRejectedApplications(rejectedApps)
+                .totalMentors(totalMentors)
+                .totalMentorshipRequests(totalMentorshipRequests)
+                .acceptedMentorships(acceptedMentorships)
+                .pendingMentorshipRequests(pendingRequests)
+                .completedMentorships(completedMentorships)
+                .declinedMentorshipRequests(declinedRequests)
+                .closedMentorshipRequests(closedRequests)
+                .totalMentorReviews(totalMentorReviews)
+                .totalResumeReviews(totalResumeReviews)
                 .build();
     }
 
