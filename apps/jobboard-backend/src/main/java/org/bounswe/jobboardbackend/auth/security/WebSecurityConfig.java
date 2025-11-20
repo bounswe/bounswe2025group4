@@ -74,7 +74,7 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/login/verify","/api/auth/login", "/api/auth/register", "/api/auth/verify-email", "/api/auth/password-reset/**", "/v3/api-docs/**", "/swagger-ui/**", "/error").permitAll()
+                        .requestMatchers("/api/auth/login/verify","/api/auth/login", "/api/auth/register", "/api/auth/verify-email", "/api/auth/password-reset/**", "/v3/api-docs/**", "/swagger-ui/**", "/error","/ws-chat/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .anyRequest().permitAll()
                 )
