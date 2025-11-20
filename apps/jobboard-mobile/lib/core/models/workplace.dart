@@ -12,7 +12,7 @@ class Workplace {
   final String detailedDescription;
   final String? website;
   final List<String> ethicalTags;
-  final double overallAvg;
+  final double? overallAvg;
   final Map<String, double> ethicalAverages;
   final List<WorkplaceReview> recentReviews;
   final List<WorkplaceEmployer> employers;
@@ -48,7 +48,7 @@ class Workplace {
       detailedDescription: json['detailedDescription'] as String,
       website: json['website'] as String?,
       ethicalTags: List<String>.from(json['ethicalTags'] as List? ?? []),
-      overallAvg: (json['overallAvg'] as num?)?.toDouble() ?? 0.0,
+      overallAvg: (json['overallAvg'] as num?)?.toDouble(),
       ethicalAverages:
           json['ethicalAverages'] != null
               ? Map<String, double>.from(

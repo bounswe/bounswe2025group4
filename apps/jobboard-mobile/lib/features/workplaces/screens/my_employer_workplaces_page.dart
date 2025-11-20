@@ -243,9 +243,9 @@ class _MyEmployerWorkplacesPageState extends State<MyEmployerWorkplacesPage> {
                                   _buildStat(
                                     icon: Icons.star,
                                     label: 'Rating',
-                                    value: workplace.overallAvg.toStringAsFixed(
-                                      1,
-                                    ),
+                                    value: workplace.overallAvg != null
+                                        ? workplace.overallAvg!.toStringAsFixed(1)
+                                        : 'N/A',
                                     color: Colors.amber,
                                   ),
                                   _buildStat(

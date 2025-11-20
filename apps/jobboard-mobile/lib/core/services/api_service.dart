@@ -1576,12 +1576,13 @@ class ApiService {
     }
     if (ethicalTag != null && ethicalTag.isNotEmpty) {
       queryParams['ethicalTag'] = ethicalTag;
+      print('[API] Adding ethicalTag to query: $ethicalTag');
     }
     if (minRating != null) {
       queryParams['minRating'] = minRating;
     }
     if (sort != null && sort.isNotEmpty) {
-      queryParams['sort'] = sort;
+      queryParams['sortBy'] = sort;
     }
     if (page != null) {
       queryParams['page'] = page;
@@ -1591,12 +1592,21 @@ class ApiService {
     }
 
     final uri = _buildUri('/workplace', queryParams);
+    print('[API] Request URI: $uri');
+    print('[API] Query params: $queryParams');
 
     try {
       final response = await _client.get(uri, headers: _getHeaders());
+      print('[API] Response body: ${response.body}');
+      print('[API] Response status: ${response.statusCode}');
       final dynamic data = await _handleResponse(response);
-      return PaginatedWorkplaceResponse.fromJson(data as Map<String, dynamic>);
+      final result = PaginatedWorkplaceResponse.fromJson(
+        data as Map<String, dynamic>,
+      );
+      print('[API] Returned ${result.content.length} workplaces');
+      return result;
     } catch (e) {
+      print('[API] Error fetching workplaces: $e');
       throw Exception('Failed to load workplaces. $e');
     }
   }
@@ -1625,6 +1635,27 @@ class ApiService {
       return Workplace.fromJson(data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to load workplace details. $e');
+    }
+  }
+
+  /// GET /api/jobs/workplace/{workplaceId}
+  /// Fetches all job postings for a specific workplace
+  Future<List<JobPost>> getJobsByWorkplaceId(int workplaceId) async {
+    final uri = _buildUri('/jobs/workplace/$workplaceId');
+
+    print('[API] Fetching jobs for workplace: $workplaceId');
+    print('[API] Request URI: $uri');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      print('[API] Response status: ${response.statusCode}');
+      final List<dynamic> data = await _handleResponse(response);
+      final jobs = data.map((json) => JobPost.fromJson(json)).toList();
+      print('[API] Returned ${jobs.length} jobs for workplace $workplaceId');
+      return jobs;
+    } catch (e) {
+      print('[API] Error fetching workplace jobs: $e');
+      throw Exception('Failed to load workplace jobs. $e');
     }
   }
 

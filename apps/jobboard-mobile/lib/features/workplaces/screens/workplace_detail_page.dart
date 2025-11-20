@@ -12,6 +12,7 @@ import 'workplace_reviews_page.dart';
 import 'add_review_page.dart';
 import 'edit_workplace_page.dart';
 import 'review_detail_page.dart';
+import 'workplace_jobs_page.dart';
 
 class WorkplaceDetailPage extends StatefulWidget {
   final int workplaceId;
@@ -159,6 +160,33 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
 
                       // Ratings
                       _buildRatings(workplace),
+                      const SizedBox(height: 24),
+
+                      // View Jobs Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => WorkplaceJobsPage(
+                                      workplaceId: workplace.id,
+                                      workplaceName: workplace.companyName,
+                                    ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.work),
+                          label: const Text('View Job Openings'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 24),
 
                       // Reviews Section with Actions
@@ -506,7 +534,9 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
                   const Icon(Icons.star, color: Colors.amber, size: 24),
                   const SizedBox(width: 4),
                   Text(
-                    workplace.overallAvg.toStringAsFixed(1),
+                    workplace.overallAvg != null
+                        ? workplace.overallAvg!.toStringAsFixed(1)
+                        : 'Not rated yet',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

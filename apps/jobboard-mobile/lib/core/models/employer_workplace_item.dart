@@ -31,7 +31,7 @@ class EmployerWorkplace {
   final String sector;
   final String location;
   final String shortDescription;
-  final double overallAvg;
+  final double? overallAvg;
   final List<String> ethicalTags;
   final Map<String, double> ethicalAverages;
   final int reviewCount;
@@ -57,7 +57,7 @@ class EmployerWorkplace {
       sector: json['sector'] as String,
       location: json['location'] as String,
       shortDescription: json['shortDescription'] as String,
-      overallAvg: (json['overallAvg'] as num?)?.toDouble() ?? 0.0,
+      overallAvg: (json['overallAvg'] as num?)?.toDouble(),
       ethicalTags: List<String>.from(json['ethicalTags'] as List? ?? []),
       ethicalAverages: json['ethicalAverages'] != null
           ? Map<String, double>.from(
