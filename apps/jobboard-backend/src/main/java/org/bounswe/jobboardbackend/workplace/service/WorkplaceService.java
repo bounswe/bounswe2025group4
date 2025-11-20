@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.access.AccessDeniedException;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
 import org.springframework.web.multipart.MultipartFile;
@@ -159,8 +158,8 @@ public class WorkplaceService {
     // === CREATE ===
     @Transactional
     public WorkplaceDetailResponse create(WorkplaceCreateRequest req, User currentUser) {
-        currentUser = userRepository.findById(currentUser.getId()).orElseThrow(() -> new NoSuchElementException("User not found"));
-        if (!isEmployer(currentUser)) throw new AccessDeniedException("Employer role required");
+        currentUser = userRepository.findById(currentUser.getId()).orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
+        if (!isEmployer(currentUser)) throw new HandleException(ErrorCode.ACCESS_DENIED, "Employer role required");
         Workplace wp = Workplace.builder()
                 .companyName(req.getCompanyName())
                 .sector(req.getSector())
@@ -209,11 +208,16 @@ public class WorkplaceService {
                 .filter(wb -> ethicalTag == null || (wb.getEthicalTags() != null && wb.getEthicalTags().contains(ethicalTag)))
                 .filter(wb -> minRating == null || (wb.getOverallAvg() != null && wb.getOverallAvg() >= minRating))
                 .collect(Collectors.toList());
-
         if ("ratingDesc".equals(sortBy)) {
             items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsLast(Comparator.reverseOrder())));
         } else if ("ratingAsc".equals(sortBy)) {
-            items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsLast(Comparator.naturalOrder())));
+            items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsFirst(Comparator.naturalOrder())));
+        } else if ("reviewCountDesc".equals(sortBy)) {
+            items.sort(Comparator.comparing(WorkplaceBriefResponse::getReviewCount, Comparator.nullsLast(Comparator.reverseOrder()))
+                    .thenComparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsLast(Comparator.reverseOrder())));
+        } else if ("reviewCountAsc".equals(sortBy)) {
+            items.sort(Comparator.comparing(WorkplaceBriefResponse::getReviewCount, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsFirst(Comparator.naturalOrder())));
         }
         return PaginatedResponse.of(items, pageRes.getNumber(), pageRes.getSize(), pageRes.getTotalElements());
     }
@@ -222,7 +226,7 @@ public class WorkplaceService {
     @Transactional(readOnly = true)
     public WorkplaceDetailResponse getDetail(Long id, boolean includeReviews, int reviewsLimit) {
         Workplace wp = workplaceRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Workplace not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
         return toDetailResponse(wp, includeReviews, reviewsLimit);
     }
 
@@ -230,7 +234,7 @@ public class WorkplaceService {
     @Transactional
     public WorkplaceDetailResponse update(Long id, WorkplaceUpdateRequest req, User currentUser) {
         Workplace wp = workplaceRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Workplace not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
 
         assertEmployer(id, currentUser.getId());
         // TODO: bu şirkette employer olan herkes yapabiliyor bu işi, eğer sadece iş yerini oluşturan kişi yapabilsin dersek değiştiririz
@@ -252,14 +256,9 @@ public class WorkplaceService {
     @Transactional
     public WorkplaceRatingResponse getRating(Long workplaceId) {
         Workplace wp = workplaceRepository.findById(workplaceId)
-                .orElseThrow(() -> new NoSuchElementException("Workplace not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
         Double avg = oneDecimal(calcAvgRating(wp.getId()));
-        Map<String, Double> policyAvg = reviewPolicyRatingRepository.averageByPolicyForWorkplace(wp.getId())
-                .stream()
-                .collect(Collectors.toMap(
-                        row -> ((EthicalPolicy) row[0]).getLabel(),
-                        row -> oneDecimal(row[1] == null ? null : ((Number) row[1]).doubleValue())
-                ));
+        Map<String, Double> policyAvg = computePolicyAverages(wp.getId());
         return WorkplaceRatingResponse.builder()
                 .workplaceId(wp.getId())
                 .overallAvg(avg)
@@ -272,7 +271,7 @@ public class WorkplaceService {
     @Transactional
     public void softDelete(Long id, User currentUser) {
         Workplace wp = workplaceRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Workplace not found"));
+                .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
         assertOwner(id, currentUser.getId());
         wp.setDeleted(true);
         workplaceRepository.save(wp);
@@ -290,9 +289,9 @@ public class WorkplaceService {
 
             case "nameAsc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "companyName"));
 
-            case "reviewCountDesc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reviewCount").and(Sort.by("companyName")));
+            case "reviewCountDesc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "reviewCount"));
 
-            case "reviewCountAsc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "reviewCount").and(Sort.by("companyName")));
+            case "reviewCountAsc" -> PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "reviewCount"));
 
             case "ratingDesc", "ratingAsc" -> PageRequest.of(page, size);
 
@@ -300,14 +299,19 @@ public class WorkplaceService {
         };
     }
 
-    public WorkplaceBriefResponse toBriefResponse(Workplace wp) {
-        Double avg = oneDecimal(calcAvgRating(wp.getId()));
-        Map<String, Double> policyAvg = reviewPolicyRatingRepository.averageByPolicyForWorkplace(wp.getId())
+    private Map<String, Double> computePolicyAverages(Long workplaceId) {
+        return reviewPolicyRatingRepository.averageByPolicyForWorkplace(workplaceId)
                 .stream()
+                .filter(row -> row[1] != null)
                 .collect(Collectors.toMap(
                         row -> ((EthicalPolicy) row[0]).getLabel(),
-                        row -> oneDecimal(row[1] == null ? null : ((Number) row[1]).doubleValue())
+                        row -> oneDecimal(((Number) row[1]).doubleValue())
                 ));
+    }
+
+    public WorkplaceBriefResponse toBriefResponse(Workplace wp) {
+        Double avg = oneDecimal(calcAvgRating(wp.getId()));
+        Map<String, Double> policyAvg = computePolicyAverages(wp.getId());
         return WorkplaceBriefResponse.builder()
                 .id(wp.getId())
                 .companyName(wp.getCompanyName())
@@ -324,12 +328,7 @@ public class WorkplaceService {
 
     private WorkplaceDetailResponse toDetailResponse(Workplace wp, boolean includeReviews, int reviewsLimit) {
         Double avg = oneDecimal(calcAvgRating(wp.getId()));
-        Map<String, Double> policyAvg = reviewPolicyRatingRepository.averageByPolicyForWorkplace(wp.getId())
-                .stream()
-                .collect(Collectors.toMap(
-                        row -> ((EthicalPolicy) row[0]).getLabel(),
-                        row -> oneDecimal(row[1] == null ? null : ((Number) row[1]).doubleValue())
-                ));
+        Map<String, Double> policyAvg = computePolicyAverages(wp.getId());
 
         List<EmployerListItem> employers = employerWorkplaceRepository.findByWorkplace_Id(wp.getId())
                 .stream()
@@ -395,12 +394,12 @@ public class WorkplaceService {
 
     private void assertEmployer(Long workplaceId, Long userId) {
         boolean ok = employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId);
-        if (!ok) throw new AccessDeniedException("Not an employer of this workplace");
+        if (!ok) throw new HandleException(ErrorCode.ACCESS_DENIED, "Not an employer of this workplace");
     }
     private void assertOwner(Long workplaceId, Long userId) {
         boolean ok = employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
                 workplaceId, userId, EmployerRole.OWNER);
-        if (!ok) throw new AccessDeniedException("Not the owner of this workplace");
+        if (!ok) throw new HandleException(ErrorCode.ACCESS_DENIED, "Not the owner of this workplace");
     }
 
     private boolean isEmployer(User u) {
