@@ -19,6 +19,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     long countByWorkplace_Id(Long workplaceId);
 
+    Page<Review> findByWorkplace_IdAndOverallRatingBetween(Long workplaceId, Double min, Double max, Pageable pageable);
+
     @Query("select avg(rpr.score) from ReviewPolicyRating rpr where rpr.review.workplace.id = :workplaceId")
     Double averageOverallByWorkplaceUsingPolicies(@Param("workplaceId") Long workplaceId);
 

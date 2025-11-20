@@ -17,8 +17,8 @@ import org.bounswe.jobboardbackend.workplace.repository.WorkplaceReportRepositor
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,11 @@ public class ReportService {
     @Transactional
     public void reportWorkplace(Long workplaceId, WorkplaceReportCreate req, User reporter) {
         Workplace wp = workplaceRepository.findById(workplaceId)
-                .orElseThrow(() -> new NoSuchElementException("Workplace not found"));
+                .orElseThrow(() -> new HandleException(
+                        ErrorCode.WORKPLACE_NOT_FOUND,
+                        "Workplace not found"
+                ));
+
         WorkplaceReport report = WorkplaceReport.builder()
                 .workplace(wp)
                 .createdBy(reporter)
@@ -46,9 +50,17 @@ public class ReportService {
     @Transactional
     public void reportReview(Long workplaceId, Long reviewId, ReviewReportCreate req, User reporter) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NoSuchElementException("Review not found"));
-        if (!review.getWorkplace().getId().equals(workplaceId))
-            throw new NoSuchElementException("Review does not belong to workplace");
+                .orElseThrow(() -> new HandleException(
+                        ErrorCode.REVIEW_NOT_FOUND,
+                        "Review not found"
+                ));
+
+        if (!review.getWorkplace().getId().equals(workplaceId)) {
+            throw new HandleException(
+                    ErrorCode.REVIEW_NOT_FOUND,
+                    "Review does not belong to the given workplace"
+            );
+        }
         ReviewReport report = ReviewReport.builder()
                 .review(review)
                 .createdBy(reporter)

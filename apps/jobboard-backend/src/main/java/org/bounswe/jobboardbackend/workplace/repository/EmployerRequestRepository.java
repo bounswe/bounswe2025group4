@@ -19,4 +19,5 @@ public interface EmployerRequestRepository extends JpaRepository<EmployerRequest
     Optional<EmployerRequest> findByIdAndWorkplace_Id(Long id, Long workplaceId);
 
     Page<EmployerRequest> findByWorkplace_Id(Long workplaceId, Pageable pageable);
+    Page<EmployerRequest> findByCreatedBy_Id(Long userId, Pageable pageable);
 }

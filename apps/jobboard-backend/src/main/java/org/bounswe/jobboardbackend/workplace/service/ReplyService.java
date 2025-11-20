@@ -13,11 +13,11 @@ import org.bounswe.jobboardbackend.workplace.repository.ReviewRepository;
 import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.model.User;
-import org.springframework.security.access.AccessDeniedException;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -31,14 +31,23 @@ public class ReplyService {
 
     private Workplace requireWorkplace(Long id) {
         return workplaceRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Workplace not found"));
+                .orElseThrow(() -> new HandleException(
+                        ErrorCode.WORKPLACE_NOT_FOUND,
+                        "Workplace not found"
+                ));
     }
 
     private Review requireReview(Long workplaceId, Long reviewId) {
         Review r = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new NoSuchElementException("Review not found"));
+                .orElseThrow(() -> new HandleException(
+                        ErrorCode.REVIEW_NOT_FOUND,
+                        "Review not found"
+                ));
         if (!r.getWorkplace().getId().equals(workplaceId)) {
-            throw new NoSuchElementException("Review does not belong to workplace");
+            throw new HandleException(
+                    ErrorCode.REVIEW_NOT_FOUND,
+                    "Review does not belong to workplace"
+            );
         }
         return r;
     }
@@ -46,7 +55,12 @@ public class ReplyService {
     private void assertEmployerOrAdmin(Long workplaceId, Long userId, boolean isAdmin) {
         if (isAdmin) return;
         boolean isEmployer = employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId);
-        if (!isEmployer) throw new AccessDeniedException("Only employer or admin can perform this action");
+        if (!isEmployer) {
+            throw new HandleException(
+                    ErrorCode.WORKPLACE_UNAUTHORIZED,
+                    "Only employer or admin can perform this action"
+            );
+        }
     }
 
     private ReplyResponse toDto(ReviewReply rr) {
@@ -76,11 +90,17 @@ public class ReplyService {
         Review review = requireReview(workplaceId, reviewId);
         assertEmployerOrAdmin(workplaceId, employerUserId, isAdmin);
         if (reviewReplyRepository.findByReview_Id(reviewId).isPresent()) {
-            throw new IllegalStateException("Reply already exists for this review");
+            throw new HandleException(
+                    ErrorCode.REPLY_ALREADY_EXISTS,
+                    "Reply already exists for this review"
+            );
         }
 
         User employer = userRepository.findById(employerUserId)
-                .orElseThrow(() -> new NoSuchElementException("Employer user not found"));
+                .orElseThrow(() -> new HandleException(
+                        ErrorCode.USER_NOT_FOUND,
+                        "Employer user not found"
+                ));
         ReviewReply rr = ReviewReply.builder()
                 .review(review)
                 .employerUser(employer)
@@ -96,7 +116,10 @@ public class ReplyService {
         requireReview(workplaceId, reviewId);
         assertEmployerOrAdmin(workplaceId, employerUserId, isAdmin);
         ReviewReply rr = reviewReplyRepository.findByReview_Id(reviewId)
-                .orElseThrow(() -> new NoSuchElementException("Reply not found"));
+                .orElseThrow(() -> new HandleException(
+                        ErrorCode.REPLY_NOT_FOUND,
+                        "Reply not found"
+                ));
         rr.setContent(req.getContent());
         rr = reviewReplyRepository.save(rr);
         return toDto(rr);
@@ -108,7 +131,10 @@ public class ReplyService {
         requireReview(workplaceId, reviewId);
         assertEmployerOrAdmin(workplaceId, actingUserId, isAdmin);
         ReviewReply rr = reviewReplyRepository.findByReview_Id(reviewId)
-                .orElseThrow(() -> new NoSuchElementException("Reply not found"));
+                .orElseThrow(() -> new HandleException(
+                        ErrorCode.REPLY_NOT_FOUND,
+                        "Reply not found"
+                ));
         reviewReplyRepository.delete(rr);
     }
 }

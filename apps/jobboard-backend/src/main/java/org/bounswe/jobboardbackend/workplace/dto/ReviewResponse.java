@@ -13,16 +13,16 @@ import java.util.Map;
 public class ReviewResponse {
     private Long id;
     private Long workplaceId;
-    private Long userId; // TODO: anon dönerken null dönebiliriz
-    private String username; // TODO: anon dönerken anonymousUser dönebiliriz
-    private String nameSurname; // TODO: anon dönerken null dönebiliriz
+    private Long userId;
+    private String username;
+    private String nameSurname;
     private String title;
     private String content;
     private boolean anonymous;
     private int helpfulCount;
     private Double overallRating;
     private Map<String, Integer> ethicalPolicyRatings;
-    private ReplyResponse reply; // varsa
+    private ReplyResponse reply;
     private Instant createdAt;
     private Instant updatedAt;
 }
