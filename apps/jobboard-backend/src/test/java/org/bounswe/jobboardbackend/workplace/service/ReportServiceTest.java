@@ -1,6 +1,8 @@
 package org.bounswe.jobboardbackend.workplace.service;
 
 import org.bounswe.jobboardbackend.auth.model.User;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.workplace.dto.ReviewReportCreate;
 import org.bounswe.jobboardbackend.workplace.dto.WorkplaceReportCreate;
 import org.bounswe.jobboardbackend.workplace.model.Review;
@@ -21,7 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,10 +30,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/**
- * Tests for {@link ReportService}.
- * Covers all public methods and main branches.
- */
 @ExtendWith(MockitoExtension.class)
 class ReportServiceTest {
 
@@ -103,7 +100,29 @@ class ReportServiceTest {
     }
 
     @Test
-    void reportWorkplace_whenWorkplaceNotFound_throwsNoSuchElement() {
+    void reportWorkplace_reasonTypeIsCaseInsensitive() {
+        Long workplaceId = 1L;
+        Workplace wp = sampleWorkplace(workplaceId);
+        User reporter = sampleUser(10L);
+
+        WorkplaceReportCreate req = new WorkplaceReportCreate();
+        req.setReasonType("spam"); // lower case
+        req.setDescription("This is spam");
+
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.of(wp));
+
+        reportService.reportWorkplace(workplaceId, req, reporter);
+
+        ArgumentCaptor<WorkplaceReport> captor = ArgumentCaptor.forClass(WorkplaceReport.class);
+        verify(workplaceReportRepository).save(captor.capture());
+
+        WorkplaceReport saved = captor.getValue();
+        assertThat(saved.getReasonType()).isEqualTo(WorkplaceReportReason.SPAM);
+    }
+
+    @Test
+    void reportWorkplace_whenWorkplaceNotFound_throwsHandleException() {
         Long workplaceId = 1L;
         WorkplaceReportCreate req = new WorkplaceReportCreate();
         req.setReasonType(WorkplaceReportReason.SPAM.name());
@@ -113,8 +132,9 @@ class ReportServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> reportService.reportWorkplace(workplaceId, req, sampleUser(11L)))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("Workplace not found");
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
 
         verify(workplaceReportRepository, never()).save(any());
     }
@@ -149,7 +169,32 @@ class ReportServiceTest {
     }
 
     @Test
-    void reportReview_whenReviewNotFound_throwsNoSuchElement() {
+    void reportReview_reasonTypeIsCaseInsensitive() {
+        Long workplaceId = 1L;
+        Long reviewId = 100L;
+
+        Workplace wp = sampleWorkplace(workplaceId);
+        Review review = sampleReview(reviewId, wp);
+        User reporter = sampleUser(10L);
+
+        ReviewReportCreate req = new ReviewReportCreate();
+        req.setReasonType("offensive");
+        req.setDescription("Offensive content");
+
+        when(reviewRepository.findById(reviewId))
+                .thenReturn(Optional.of(review));
+
+        reportService.reportReview(workplaceId, reviewId, req, reporter);
+
+        ArgumentCaptor<ReviewReport> captor = ArgumentCaptor.forClass(ReviewReport.class);
+        verify(reviewReportRepository, atLeastOnce()).save(captor.capture());
+
+        ReviewReport saved = captor.getValue();
+        assertThat(saved.getReasonType()).isEqualTo(ReviewReportReason.OFFENSIVE);
+    }
+
+    @Test
+    void reportReview_whenReviewNotFound_throwsHandleException() {
         Long workplaceId = 1L;
         Long reviewId = 100L;
 
@@ -161,14 +206,15 @@ class ReportServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> reportService.reportReview(workplaceId, reviewId, req, sampleUser(10L)))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("Review not found");
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
 
         verify(reviewReportRepository, never()).save(any());
     }
 
     @Test
-    void reportReview_whenReviewBelongsToAnotherWorkplace_throwsNoSuchElement() {
+    void reportReview_whenReviewBelongsToAnotherWorkplace_throwsHandleException() {
         Long workplaceId = 1L;
         Long otherWorkplaceId = 2L;
         Long reviewId = 100L;
@@ -184,8 +230,9 @@ class ReportServiceTest {
                 .thenReturn(Optional.of(review));
 
         assertThatThrownBy(() -> reportService.reportReview(workplaceId, reviewId, req, sampleUser(10L)))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("Review does not belong to workplace");
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
 
         verify(reviewReportRepository, never()).save(any());
     }

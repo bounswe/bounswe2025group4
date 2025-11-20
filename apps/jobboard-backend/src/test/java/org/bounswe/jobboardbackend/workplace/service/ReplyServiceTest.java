@@ -2,6 +2,8 @@ package org.bounswe.jobboardbackend.workplace.service;
 
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.workplace.dto.ReplyCreateRequest;
 import org.bounswe.jobboardbackend.workplace.dto.ReplyResponse;
 import org.bounswe.jobboardbackend.workplace.dto.ReplyUpdateRequest;
@@ -18,10 +20,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Optional;
-import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -91,11 +91,24 @@ class ReplyServiceTest {
     }
 
     @Test
-    void getReply_whenWorkplaceNotFound_throws() {
+    void getReply_whenWorkplaceNotFound_throwsHandleException() {
         when(workplaceRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> replyService.getReply(1L, 10L))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
+    }
+
+    @Test
+    void getReply_whenReviewNotFound_throwsHandleException() {
+        when(workplaceRepository.findById(1L)).thenReturn(Optional.of(workplace));
+        when(reviewRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> replyService.getReply(1L, 10L))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
     }
 
     @Test
@@ -108,8 +121,9 @@ class ReplyServiceTest {
         when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
 
         assertThatThrownBy(() -> replyService.getReply(1L, 10L))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("Review does not belong");
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
     }
 
     // ------------------------------------------------------------------------
@@ -147,7 +161,9 @@ class ReplyServiceTest {
         when(replyRepository.findByReview_Id(10L)).thenReturn(Optional.of(reply));
 
         assertThatThrownBy(() -> replyService.createReply(1L, 10L, req, 55L, false))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REPLY_ALREADY_EXISTS);
     }
 
     @Test
@@ -161,7 +177,23 @@ class ReplyServiceTest {
                 .thenReturn(false);
 
         assertThatThrownBy(() -> replyService.createReply(1L, 10L, req, 55L, false))
-                .isInstanceOf(AccessDeniedException.class);
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_UNAUTHORIZED);
+    }
+
+    @Test
+    void createReply_whenReviewNotFound_throwsHandleException() {
+        ReplyCreateRequest req = new ReplyCreateRequest();
+        req.setContent("New reply");
+
+        when(workplaceRepository.findById(1L)).thenReturn(Optional.of(workplace));
+        when(reviewRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> replyService.createReply(1L, 10L, req, 55L, false))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
     }
 
     @Test
@@ -178,6 +210,24 @@ class ReplyServiceTest {
         ReplyResponse res = replyService.createReply(1L, 10L, req, 55L, true);
 
         assertThat(res).isNotNull();
+    }
+
+    @Test
+    void createReply_whenEmployerUserNotFound_throwsHandleException() {
+        ReplyCreateRequest req = new ReplyCreateRequest();
+        req.setContent("New reply");
+
+        when(workplaceRepository.findById(1L)).thenReturn(Optional.of(workplace));
+        when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
+        when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(1L, 55L))
+                .thenReturn(true);
+        when(replyRepository.findByReview_Id(10L)).thenReturn(Optional.empty());
+        when(userRepository.findById(55L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> replyService.createReply(1L, 10L, req, 55L, false))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.USER_NOT_FOUND);
     }
 
     // ------------------------------------------------------------------------
@@ -213,7 +263,39 @@ class ReplyServiceTest {
         when(replyRepository.findByReview_Id(10L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> replyService.updateReply(1L, 10L, req, 55L, false))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REPLY_NOT_FOUND);
+    }
+
+    @Test
+    void updateReply_whenUnauthorizedUser_throwsHandleException() {
+        ReplyUpdateRequest req = new ReplyUpdateRequest();
+        req.setContent("Updated");
+
+        when(workplaceRepository.findById(1L)).thenReturn(Optional.of(workplace));
+        when(reviewRepository.findById(10L)).thenReturn(Optional.of(review));
+        when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(1L, 55L))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> replyService.updateReply(1L, 10L, req, 55L, false))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_UNAUTHORIZED);
+    }
+
+    @Test
+    void updateReply_whenReviewNotFound_throwsHandleException() {
+        ReplyUpdateRequest req = new ReplyUpdateRequest();
+        req.setContent("Updated");
+
+        when(workplaceRepository.findById(1L)).thenReturn(Optional.of(workplace));
+        when(reviewRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> replyService.updateReply(1L, 10L, req, 55L, false))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
     }
 
     // ------------------------------------------------------------------------
@@ -243,7 +325,30 @@ class ReplyServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> replyService.deleteReply(1L, 10L, 55L, false))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REPLY_NOT_FOUND);
+    }
+
+    @Test
+    void deleteReply_whenReviewNotFound_throwsHandleException() {
+        when(workplaceRepository.findById(1L)).thenReturn(Optional.of(workplace));
+        when(reviewRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> replyService.deleteReply(1L, 10L, 55L, false))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
+    }
+
+    @Test
+    void deleteReply_whenWorkplaceNotFound_throwsHandleException() {
+        when(workplaceRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> replyService.deleteReply(1L, 10L, 55L, false))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
     }
 
     @Test
@@ -254,6 +359,8 @@ class ReplyServiceTest {
                 .thenReturn(false);
 
         assertThatThrownBy(() -> replyService.deleteReply(1L, 10L, 55L, false))
-                .isInstanceOf(AccessDeniedException.class);
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_UNAUTHORIZED);
     }
 }

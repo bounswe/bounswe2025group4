@@ -17,7 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-import org.springframework.security.access.AccessDeniedException;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
 
 import java.time.Instant;
 import java.util.*;
@@ -160,12 +161,14 @@ class EmployerServiceTest {
     }
 
     @Test
-    void listEmployers_whenWorkplaceNotFound_throwsNoSuchElement() {
+    void listEmployers_whenWorkplaceNotFound_throwsHandleException() {
         Long workplaceId = 1L;
         when(workplaceRepository.findById(workplaceId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> employerService.listEmployers(workplaceId))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
     }
 
     // =======================
@@ -173,23 +176,27 @@ class EmployerServiceTest {
     // =======================
 
     @Test
-    void listWorkplacesOfEmployer_whenUserNotEmployer_throwsAccessDenied() {
+    void listWorkplacesOfEmployer_whenUserNotEmployer_throwsHandleException() {
         Long userId = 5L;
         User user = sampleUser(userId, "js", "js@example.com", Role.ROLE_JOBSEEKER);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         assertThatThrownBy(() -> employerService.listWorkplacesOfEmployer(userId))
-                .isInstanceOf(AccessDeniedException.class);
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_UNAUTHORIZED);
     }
 
     @Test
-    void listWorkplacesOfEmployer_whenUserNotFound_throwsNoSuchElement() {
+    void listWorkplacesOfEmployer_whenUserNotFound_throwsHandleException() {
         Long userId = 5L;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> employerService.listWorkplacesOfEmployer(userId))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.USER_NOT_FOUND);
     }
 
     @Test
@@ -233,13 +240,19 @@ class EmployerServiceTest {
     // =======================
 
     @Test
-    void listRequests_whenViewerNotOwnerOrAdmin_throwsAccessDenied() {
+    void listRequests_whenViewerNotOwnerOrAdmin_throwsHandleException() {
         Long workplaceId = 1L;
         Long viewerUserId = 10L;
+        when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
+                workplaceId, viewerUserId, EmployerRole.OWNER
+        )).thenReturn(false);
 
         assertThatThrownBy(() ->
                 employerService.listRequests(workplaceId, 0, 10, viewerUserId, false)
-        ).isInstanceOf(AccessDeniedException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_UNAUTHORIZED);
     }
 
     @Test
@@ -275,7 +288,6 @@ class EmployerServiceTest {
         Long workplaceId = 1L;
         Long viewerUserId = 50L;
 
-        // owner check
         when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
                 workplaceId, viewerUserId, EmployerRole.OWNER
         )).thenReturn(true);
@@ -302,7 +314,7 @@ class EmployerServiceTest {
     // =======================
 
     @Test
-    void createRequest_whenUserNotEmployer_throwsAccessDenied() {
+    void createRequest_whenUserNotEmployer_throwsHandleException() {
         Long workplaceId = 1L;
         Long applicantId = 10L;
 
@@ -317,11 +329,14 @@ class EmployerServiceTest {
 
         assertThatThrownBy(() ->
                 employerService.createRequest(workplaceId, req, applicantId)
-        ).isInstanceOf(AccessDeniedException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.ROLE_INVALID);
     }
 
     @Test
-    void createRequest_whenAlreadyEmployer_throwsAccessDenied() {
+    void createRequest_whenAlreadyEmployer_throwsHandleException() {
         Long workplaceId = 1L;
         Long applicantId = 10L;
 
@@ -338,11 +353,14 @@ class EmployerServiceTest {
 
         assertThatThrownBy(() ->
                 employerService.createRequest(workplaceId, req, applicantId)
-        ).isInstanceOf(AccessDeniedException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.EMPLOYER_ALREADY_ASSIGNED);
     }
 
     @Test
-    void createRequest_whenDuplicatePending_throwsIllegalState() {
+    void createRequest_whenDuplicatePending_throwsHandleException() {
         Long workplaceId = 1L;
         Long applicantId = 10L;
 
@@ -362,11 +380,14 @@ class EmployerServiceTest {
 
         assertThatThrownBy(() ->
                 employerService.createRequest(workplaceId, req, applicantId)
-        ).isInstanceOf(IllegalStateException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.EMPLOYER_REQUEST_ALREADY_EXISTS);
     }
 
     @Test
-    void createRequest_whenWorkplaceNotFound_throwsNoSuchElement() {
+    void createRequest_whenWorkplaceNotFound_throwsHandleException() {
         Long workplaceId = 1L;
         Long applicantId = 10L;
 
@@ -377,7 +398,30 @@ class EmployerServiceTest {
 
         assertThatThrownBy(() ->
                 employerService.createRequest(workplaceId, req, applicantId)
-        ).isInstanceOf(NoSuchElementException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
+    }
+
+    @Test
+    void createRequest_whenUserNotFound_throwsHandleException() {
+        Long workplaceId = 1L;
+        Long applicantId = 10L;
+
+        Workplace wp = sampleWorkplace(workplaceId, "Acme", false);
+        when(workplaceRepository.findById(workplaceId)).thenReturn(Optional.of(wp));
+        when(userRepository.findById(applicantId)).thenReturn(Optional.empty());
+
+        EmployerRequestCreate req = new EmployerRequestCreate();
+        req.setNote("I want to join");
+
+        assertThatThrownBy(() ->
+                employerService.createRequest(workplaceId, req, applicantId)
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.USER_NOT_FOUND);
     }
 
     @Test
@@ -441,7 +485,7 @@ class EmployerServiceTest {
     }
 
     @Test
-    void getRequest_whenNotFound_throwsNoSuchElement() {
+    void getRequest_whenNotFound_throwsHandleException() {
         Long workplaceId = 1L;
         Long requestId = 100L;
         Long viewerId = 50L;
@@ -455,7 +499,28 @@ class EmployerServiceTest {
 
         assertThatThrownBy(() ->
                 employerService.getRequest(workplaceId, requestId, viewerId, false)
-        ).isInstanceOf(NoSuchElementException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.EMPLOYER_REQUEST_NOT_FOUND);
+    }
+
+    @Test
+    void getRequest_whenViewerNotOwnerOrAdmin_throwsHandleException() {
+        Long workplaceId = 1L;
+        Long requestId = 100L;
+        Long viewerId = 50L;
+
+        when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
+                workplaceId, viewerId, EmployerRole.OWNER
+        )).thenReturn(false);
+
+        assertThatThrownBy(() ->
+                employerService.getRequest(workplaceId, requestId, viewerId, false)
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_UNAUTHORIZED);
     }
 
     // =======================
@@ -557,7 +622,7 @@ class EmployerServiceTest {
     }
 
     @Test
-    void resolveRequest_whenAlreadyResolved_throwsIllegalState() {
+    void resolveRequest_whenAlreadyResolved_throwsHandleException() {
         Long workplaceId = 1L;
         Long requestId = 100L;
         Long resolverId = 50L;
@@ -578,11 +643,14 @@ class EmployerServiceTest {
 
         assertThatThrownBy(() ->
                 employerService.resolveRequest(workplaceId, requestId, req, resolverId, false)
-        ).isInstanceOf(IllegalStateException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.EMPLOYER_REQUEST_ALREADY_RESOLVED);
     }
 
     @Test
-    void resolveRequest_whenNoApplicant_throwsIllegalArgument() {
+    void resolveRequest_whenNoApplicant_throwsHandleException() {
         Long workplaceId = 1L;
         Long requestId = 100L;
         Long resolverId = 50L;
@@ -602,11 +670,14 @@ class EmployerServiceTest {
 
         assertThatThrownBy(() ->
                 employerService.resolveRequest(workplaceId, requestId, req, resolverId, false)
-        ).isInstanceOf(IllegalArgumentException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.EMPLOYER_REQUEST_NO_APPLICANT);
     }
 
     @Test
-    void resolveRequest_invalidAction_throwsIllegalArgument() {
+    void resolveRequest_invalidAction_throwsHandleException() {
         Long workplaceId = 1L;
         Long requestId = 100L;
         Long resolverId = 50L;
@@ -627,7 +698,55 @@ class EmployerServiceTest {
 
         assertThatThrownBy(() ->
                 employerService.resolveRequest(workplaceId, requestId, req, resolverId, false)
-        ).isInstanceOf(IllegalArgumentException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.EMPLOYER_REQUEST_INVALID_ACTION);
+    }
+
+    @Test
+    void resolveRequest_whenResolverNotOwnerOrAdmin_throwsHandleException() {
+        Long workplaceId = 1L;
+        Long requestId = 100L;
+        Long resolverId = 50L;
+
+        when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
+                workplaceId, resolverId, EmployerRole.OWNER
+        )).thenReturn(false);
+
+        EmployerRequestResolve req = new EmployerRequestResolve();
+        req.setAction("APPROVE");
+
+        assertThatThrownBy(() ->
+                employerService.resolveRequest(workplaceId, requestId, req, resolverId, false)
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_UNAUTHORIZED);
+    }
+
+    @Test
+    void resolveRequest_whenRequestNotFound_throwsHandleException() {
+        Long workplaceId = 1L;
+        Long requestId = 100L;
+        Long resolverId = 50L;
+
+        when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
+                workplaceId, resolverId, EmployerRole.OWNER
+        )).thenReturn(true);
+
+        when(employerRequestRepository.findByIdAndWorkplace_Id(requestId, workplaceId))
+                .thenReturn(Optional.empty());
+
+        EmployerRequestResolve req = new EmployerRequestResolve();
+        req.setAction("APPROVE");
+
+        assertThatThrownBy(() ->
+                employerService.resolveRequest(workplaceId, requestId, req, resolverId, false)
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.EMPLOYER_REQUEST_NOT_FOUND);
     }
 
     // =======================
@@ -659,7 +778,7 @@ class EmployerServiceTest {
     }
 
     @Test
-    void removeEmployer_whenLastOwner_throwsIllegalState() {
+    void removeEmployer_whenLastOwner_throwsHandleException() {
         Long workplaceId = 1L;
         Long employerUserId = 10L;
         Long actingUserId = 50L;
@@ -679,13 +798,16 @@ class EmployerServiceTest {
 
         assertThatThrownBy(() ->
                 employerService.removeEmployer(workplaceId, employerUserId, actingUserId, false)
-        ).isInstanceOf(IllegalStateException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_OWNER_MINIMUM_REQUIRED);
 
         verify(employerWorkplaceRepository, never()).delete(any());
     }
 
     @Test
-    void removeEmployer_whenLinkNotFound_throwsNoSuchElement() {
+    void removeEmployer_whenLinkNotFound_throwsHandleException() {
         Long workplaceId = 1L;
         Long employerUserId = 10L;
         Long actingUserId = 50L;
@@ -694,13 +816,34 @@ class EmployerServiceTest {
                 workplaceId, actingUserId, EmployerRole.OWNER
         )).thenReturn(true);
         when(employerWorkplaceRepository.findByWorkplace_Id(workplaceId))
-                .thenReturn(List.of()); // no links
+                .thenReturn(List.of());
 
         assertThatThrownBy(() ->
                 employerService.removeEmployer(workplaceId, employerUserId, actingUserId, false)
-        ).isInstanceOf(NoSuchElementException.class);
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.EMPLOYER_LINK_NOT_FOUND);
 
         verify(employerWorkplaceRepository, never()).delete(any());
+    }
+
+    @Test
+    void removeEmployer_whenActingUserNotOwnerOrAdmin_throwsHandleException() {
+        Long workplaceId = 1L;
+        Long employerUserId = 10L;
+        Long actingUserId = 50L;
+
+        when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
+                workplaceId, actingUserId, EmployerRole.OWNER
+        )).thenReturn(false);
+
+        assertThatThrownBy(() ->
+                employerService.removeEmployer(workplaceId, employerUserId, actingUserId, false)
+        )
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_UNAUTHORIZED);
     }
 
     // =======================

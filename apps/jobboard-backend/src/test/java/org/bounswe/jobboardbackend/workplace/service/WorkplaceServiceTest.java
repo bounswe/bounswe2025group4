@@ -4,6 +4,7 @@ import org.bounswe.jobboardbackend.auth.model.Role;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.exception.HandleException;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
 import org.bounswe.jobboardbackend.workplace.dto.*;
 import org.bounswe.jobboardbackend.workplace.model.EmployerWorkplace;
@@ -23,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Instant;
@@ -55,7 +55,7 @@ class WorkplaceServiceTest {
                 .id(100L)
                 .email("creator@test.com")
                 .username("creator")
-                .role(Role.ROLE_EMPLOYER) // MUST be employer for create(), update(), delete
+                .role(Role.ROLE_EMPLOYER)
                 .build();
 
         wp = Workplace.builder()
@@ -86,7 +86,8 @@ class WorkplaceServiceTest {
     void uploadImage_whenFileIsNull_throwsHandleException() {
         assertThatThrownBy(() -> workplaceService.uploadImage(1L, null, 10L))
                 .isInstanceOf(HandleException.class)
-                .hasMessageContaining("Image file is required");
+                .extracting("code")
+                .isEqualTo(ErrorCode.IMAGE_FILE_REQUIRED);
     }
 
     @Test
@@ -97,7 +98,46 @@ class WorkplaceServiceTest {
 
         assertThatThrownBy(() -> workplaceService.uploadImage(1L, file, 10L))
                 .isInstanceOf(HandleException.class)
-                .hasMessageContaining("Only image files are allowed");
+                .extracting("code")
+                .isEqualTo(ErrorCode.IMAGE_CONTENT_TYPE_INVALID);
+    }
+
+    @Test
+    void uploadImage_whenWorkplaceNotFound_throwsHandleException() throws Exception {
+        Long workplaceId = 999L;
+        Long userId = 100L;
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.isEmpty()).thenReturn(false);
+        when(file.getContentType()).thenReturn("image/png");
+
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> workplaceService.uploadImage(workplaceId, file, userId))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
+    }
+
+    @Test
+    void uploadImage_whenNotEmployer_throwsHandleException() throws Exception {
+        Long workplaceId = 42L;
+        Long userId = 100L;
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.isEmpty()).thenReturn(false);
+        when(file.getContentType()).thenReturn("image/png");
+
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.of(wp));
+        when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> workplaceService.uploadImage(workplaceId, file, userId))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.ACCESS_DENIED);
     }
 
     @Test
@@ -117,14 +157,13 @@ class WorkplaceServiceTest {
 
         workplaceService.deleteImage(workplaceId, userId);
 
-        // no exception, basic verifications
         verify(workplaceRepository).findById(workplaceId);
         verify(employerWorkplaceRepository)
                 .existsByWorkplace_IdAndUser_Id(workplaceId, userId);
     }
 
     @Test
-    void deleteImage_whenNotEmployer_throwsAccessDenied() {
+    void deleteImage_whenNotEmployer_throwsHandleException() {
         Long workplaceId = 42L;
         Long userId = 100L;
 
@@ -134,8 +173,43 @@ class WorkplaceServiceTest {
                 .thenReturn(false);
 
         assertThatThrownBy(() -> workplaceService.deleteImage(workplaceId, userId))
-                .isInstanceOf(AccessDeniedException.class)
-                .hasMessageContaining("Not an employer of this workplace");
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.ACCESS_DENIED);
+    }
+
+    @Test
+    void deleteImage_whenWorkplaceNotFound_throwsHandleException() {
+        Long workplaceId = 999L;
+        Long userId = 100L;
+
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> workplaceService.deleteImage(workplaceId, userId))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
+    }
+
+    @Test
+    void deleteImage_whenEmployerAndHasImageUrl_clearsImageUrl() {
+        Long workplaceId = 42L;
+        Long userId = 100L;
+        Workplace w = Workplace.builder()
+                .id(workplaceId)
+                .companyName("Image Corp")
+                .imageUrl("https://storage.googleapis.com/bounswe-jobboard/workplaces/42.jpg")
+                .build();
+
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.of(w));
+        when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId))
+                .thenReturn(true);
+
+        workplaceService.deleteImage(workplaceId, userId);
+
+        assertThat(w.getImageUrl()).isNull();
     }
 
     // =========
@@ -144,7 +218,6 @@ class WorkplaceServiceTest {
 
     @Test
     void create_whenValidEmployerRequest_returnsDetailResponse() {
-        // given
         WorkplaceCreateRequest req = WorkplaceCreateRequest.builder()
                 .companyName("Ethica Corp")
                 .sector("Tech")
@@ -168,11 +241,10 @@ class WorkplaceServiceTest {
                     return saved;
                 });
 
-        // employer link creation
+
         when(employerWorkplaceRepository.save(any(EmployerWorkplace.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
-        // averages
         when(reviewRepository.averageOverallByWorkplaceUsingPolicies(anyLong()))
                 .thenReturn(null);
         when(reviewPolicyRatingRepository.averageByPolicyForWorkplace(anyLong()))
@@ -180,14 +252,12 @@ class WorkplaceServiceTest {
         when(employerWorkplaceRepository.findByWorkplace_Id(anyLong()))
                 .thenReturn(Collections.emptyList());
 
-        // when
         WorkplaceDetailResponse res = workplaceService.create(req, creator);
 
-        // then
         assertThat(res).isNotNull();
         assertThat(res.getId()).isEqualTo(42L);
         assertThat(res.getCompanyName()).isEqualTo("Ethica Corp");
-        // labels are returned, not enum names
+
         assertThat(res.getEthicalTags())
                 .containsExactlyInAnyOrder(
                         EthicalPolicy.SALARY_TRANSPARENCY.getLabel(),
@@ -199,8 +269,7 @@ class WorkplaceServiceTest {
     }
 
     @Test
-    void create_whenUserIsNotEmployer_throwsAccessDenied() {
-        // given
+    void create_whenUserIsNotEmployer_throwsHandleException() {
         User nonEmployer = User.builder()
                 .id(200L)
                 .email("jobseeker@test.com")
@@ -215,10 +284,25 @@ class WorkplaceServiceTest {
         when(userRepository.findById(nonEmployer.getId()))
                 .thenReturn(Optional.of(nonEmployer));
 
-        // when / then
         assertThatThrownBy(() -> workplaceService.create(req, nonEmployer))
-                .isInstanceOf(AccessDeniedException.class)
-                .hasMessageContaining("Employer role required");
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.ACCESS_DENIED);
+    }
+
+    @Test
+    void create_whenUserNotFound_throwsHandleException() {
+        WorkplaceCreateRequest req = WorkplaceCreateRequest.builder()
+                .companyName("Missing User Corp")
+                .build();
+
+        when(userRepository.findById(creator.getId()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> workplaceService.create(req, creator))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.USER_NOT_FOUND);
     }
 
     // =========
@@ -246,7 +330,6 @@ class WorkplaceServiceTest {
         when(workplaceRepository.findByDeletedFalse(any(Pageable.class)))
                 .thenReturn(page);
 
-        // same overall for both, but rating filter will exclude low ones
         when(reviewRepository.averageOverallByWorkplaceUsingPolicies(1L))
                 .thenReturn(4.0);
         when(reviewRepository.averageOverallByWorkplaceUsingPolicies(2L))
@@ -275,7 +358,6 @@ class WorkplaceServiceTest {
                 .contains(EthicalPolicy.SALARY_TRANSPARENCY.getLabel());
     }
 
-    // rating sort branch (sortBy = "rating") – en yüksek rating başta, null’lar sonda
     @Test
     void listBrief_whenSortByRating_sortsByOverallAvgDescAndNullsLast() {
         Workplace w1 = Workplace.builder()
@@ -301,7 +383,6 @@ class WorkplaceServiceTest {
         when(workplaceRepository.findByDeletedFalse(any(Pageable.class)))
                 .thenReturn(page);
 
-        // avg ratings
         when(reviewRepository.averageOverallByWorkplaceUsingPolicies(1L))
                 .thenReturn(3.5);   // middle
         when(reviewRepository.averageOverallByWorkplaceUsingPolicies(2L))
@@ -318,7 +399,7 @@ class WorkplaceServiceTest {
                 null,
                 null,
                 null,
-                "rating", // trigger rating sort branch
+                "ratingDesc",
                 null
         );
 
@@ -327,17 +408,192 @@ class WorkplaceServiceTest {
 
         List<WorkplaceBriefResponse> items = res.getContent();
 
-        // Highest rating (4.7) -> id=3
+
         assertThat(items.getFirst().getId()).isEqualTo(3L);
-        // Next (3.5) -> id=1
         assertThat(items.get(1).getId()).isEqualTo(1L);
-        // Null rating -> id=2 en sonda
         assertThat(items.get(2).getId()).isEqualTo(2L);
 
         assertThat(items.get(0).getOverallAvg()).isEqualTo(4.7);
         assertThat(items.get(1).getOverallAvg()).isEqualTo(3.5);
         assertThat(items.get(2).getOverallAvg()).isNull();
     }
+    @Test
+    void listBrief_whenSortByReviewCountDesc_sortsByReviewCountThenRating() {
+        Workplace w1 = Workplace.builder()
+                .id(1L)
+                .companyName("A Corp")
+                .reviewCount(5L)
+                .build();
+        Workplace w2 = Workplace.builder()
+                .id(2L)
+                .companyName("B Corp")
+                .reviewCount(10L)
+                .build();
+
+        Page<Workplace> page = new PageImpl<>(List.of(w1, w2), PageRequest.of(0, 10), 2);
+
+        when(workplaceRepository.findByDeletedFalse(any(Pageable.class)))
+                .thenReturn(page);
+        when(reviewRepository.averageOverallByWorkplaceUsingPolicies(1L)).thenReturn(3.0);
+        when(reviewRepository.averageOverallByWorkplaceUsingPolicies(2L)).thenReturn(4.0);
+        when(reviewPolicyRatingRepository.averageByPolicyForWorkplace(anyLong()))
+                .thenReturn(Collections.emptyList());
+
+        PaginatedResponse<WorkplaceBriefResponse> res = workplaceService.listBrief(
+                0, 10,
+                null,
+                null,
+                null,
+                null,
+                "reviewCountDesc",
+                null
+        );
+
+        assertThat(res.getContent()).hasSize(2);
+        assertThat(res.getContent().getFirst().getId()).isEqualTo(2L);
+    }
+
+    @Test
+    void listBrief_whenSortByReviewCountAsc_sortsByReviewCountThenRating() {
+        Workplace w1 = Workplace.builder()
+                .id(1L)
+                .companyName("A Corp")
+                .reviewCount(5L)
+                .build();
+        Workplace w2 = Workplace.builder()
+                .id(2L)
+                .companyName("B Corp")
+                .reviewCount(10L)
+                .build();
+
+        Page<Workplace> page = new PageImpl<>(List.of(w1, w2), PageRequest.of(0, 10), 2);
+
+        when(workplaceRepository.findByDeletedFalse(any(Pageable.class)))
+                .thenReturn(page);
+        when(reviewRepository.averageOverallByWorkplaceUsingPolicies(1L)).thenReturn(3.0);
+        when(reviewRepository.averageOverallByWorkplaceUsingPolicies(2L)).thenReturn(4.0);
+        when(reviewPolicyRatingRepository.averageByPolicyForWorkplace(anyLong()))
+                .thenReturn(Collections.emptyList());
+
+        PaginatedResponse<WorkplaceBriefResponse> res = workplaceService.listBrief(
+                0, 10,
+                null,
+                null,
+                null,
+                null,
+                "reviewCountAsc",
+                null
+        );
+
+        assertThat(res.getContent()).hasSize(2);
+        assertThat(res.getContent().getFirst().getId()).isEqualTo(1L);
+    }
+    @Test
+    void listBrief_whenSearchProvided_usesSearchRepositoryMethod() {
+        Page<Workplace> page = new PageImpl<>(List.of(wp), PageRequest.of(0, 10), 1);
+
+        when(workplaceRepository.findByDeletedFalseAndCompanyNameContainingIgnoreCase(eq("Ethica"), any(Pageable.class)))
+                .thenReturn(page);
+        when(reviewRepository.averageOverallByWorkplaceUsingPolicies(anyLong()))
+                .thenReturn(null);
+        when(reviewPolicyRatingRepository.averageByPolicyForWorkplace(anyLong()))
+                .thenReturn(Collections.emptyList());
+
+        PaginatedResponse<WorkplaceBriefResponse> res = workplaceService.listBrief(
+                0, 10,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "Ethica"
+        );
+
+        assertThat(res.getContent()).hasSize(1);
+        verify(workplaceRepository).findByDeletedFalseAndCompanyNameContainingIgnoreCase(eq("Ethica"), any(Pageable.class));
+    }
+
+    @Test
+    void listBrief_whenSectorProvided_usesSectorRepositoryMethod() {
+        Page<Workplace> page = new PageImpl<>(List.of(wp), PageRequest.of(0, 10), 1);
+
+        when(workplaceRepository.findByDeletedFalseAndSectorIgnoreCase(eq("Tech"), any(Pageable.class)))
+                .thenReturn(page);
+        when(reviewRepository.averageOverallByWorkplaceUsingPolicies(anyLong()))
+                .thenReturn(null);
+        when(reviewPolicyRatingRepository.averageByPolicyForWorkplace(anyLong()))
+                .thenReturn(Collections.emptyList());
+
+        PaginatedResponse<WorkplaceBriefResponse> res = workplaceService.listBrief(
+                0, 10,
+                "Tech",
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertThat(res.getContent()).hasSize(1);
+        verify(workplaceRepository).findByDeletedFalseAndSectorIgnoreCase(eq("Tech"), any(Pageable.class));
+    }
+
+    @Test
+    void listBrief_whenLocationProvided_usesLocationRepositoryMethod() {
+        Page<Workplace> page = new PageImpl<>(List.of(wp), PageRequest.of(0, 10), 1);
+
+        when(workplaceRepository.findByDeletedFalseAndLocationIgnoreCase(eq("Istanbul"), any(Pageable.class)))
+                .thenReturn(page);
+        when(reviewRepository.averageOverallByWorkplaceUsingPolicies(anyLong()))
+                .thenReturn(null);
+        when(reviewPolicyRatingRepository.averageByPolicyForWorkplace(anyLong()))
+                .thenReturn(Collections.emptyList());
+
+        PaginatedResponse<WorkplaceBriefResponse> res = workplaceService.listBrief(
+                0, 10,
+                null,
+                "Istanbul",
+                null,
+                null,
+                null,
+                null
+        );
+
+        assertThat(res.getContent()).hasSize(1);
+        verify(workplaceRepository).findByDeletedFalseAndLocationIgnoreCase(eq("Istanbul"), any(Pageable.class));
+    }
+    @Test
+    void getDetail_whenWorkplaceNotFound_throwsHandleException() {
+        Long workplaceId = 999L;
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> workplaceService.getDetail(workplaceId, true, 5))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
+    }
+
+    @Test
+    void getDetail_withoutReviews_doesNotLoadRecentReviews() {
+        Long workplaceId = wp.getId();
+
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.of(wp));
+        when(reviewRepository.averageOverallByWorkplaceUsingPolicies(workplaceId))
+                .thenReturn(4.0);
+        when(reviewPolicyRatingRepository.averageByPolicyForWorkplace(workplaceId))
+                .thenReturn(Collections.emptyList());
+        when(employerWorkplaceRepository.findByWorkplace_Id(workplaceId))
+                .thenReturn(Collections.emptyList());
+
+        WorkplaceDetailResponse res = workplaceService.getDetail(workplaceId, false, 0);
+
+        assertThat(res).isNotNull();
+        assertThat(res.getRecentReviews()).isEmpty();
+        verify(reviewRepository, never()).findByWorkplace_Id(eq(workplaceId), any(PageRequest.class));
+    }
+
 
     // =========
     // DETAIL
@@ -386,7 +642,6 @@ class WorkplaceServiceTest {
                                 .build()
                 ));
 
-        // no profile for employer -> nameSurname = ""
         when(profileRepository.findByUserId(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -458,7 +713,7 @@ class WorkplaceServiceTest {
     }
 
     @Test
-    void update_whenNotEmployer_throwsAccessDenied() {
+    void update_whenNotEmployer_throwsHandleException() {
         Long workplaceId = wp.getId();
         when(workplaceRepository.findById(workplaceId))
                 .thenReturn(Optional.of(wp));
@@ -470,8 +725,37 @@ class WorkplaceServiceTest {
                 .build();
 
         assertThatThrownBy(() -> workplaceService.update(workplaceId, req, creator))
-                .isInstanceOf(AccessDeniedException.class)
-                .hasMessageContaining("Not an employer of this workplace");
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.ACCESS_DENIED);
+    }
+
+    @Test
+    void update_whenWorkplaceNotFound_throwsHandleException() {
+        Long workplaceId = 999L;
+        WorkplaceUpdateRequest req = WorkplaceUpdateRequest.builder()
+                .companyName("Updated Corp")
+                .build();
+
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> workplaceService.update(workplaceId, req, creator))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
+    }
+    @Test
+    void getRating_whenWorkplaceNotFound_throwsHandleException() {
+        Long workplaceId = 999L;
+
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> workplaceService.getRating(workplaceId))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
     }
 
     // =========
@@ -485,11 +769,9 @@ class WorkplaceServiceTest {
         when(workplaceRepository.findById(workplaceId))
                 .thenReturn(Optional.of(wp));
 
-        // overall average
         when(reviewRepository.averageOverallByWorkplaceUsingPolicies(workplaceId))
                 .thenReturn(4.0);
 
-        // per-policy averages: note row[0] is EthicalPolicy, not String
         when(reviewPolicyRatingRepository.averageByPolicyForWorkplace(workplaceId))
                 .thenReturn(List.of(
                         new Object[]{ EthicalPolicy.SALARY_TRANSPARENCY, 4.2d },
@@ -501,7 +783,6 @@ class WorkplaceServiceTest {
         assertThat(res).isNotNull();
         assertThat(res.getWorkplaceId()).isEqualTo(workplaceId);
 
-        // keys are labels
         assertThat(res.getEthicalAverages())
                 .containsEntry(EthicalPolicy.SALARY_TRANSPARENCY.getLabel(), 4.2d)
                 .containsEntry(EthicalPolicy.EQUAL_PAY_POLICY.getLabel(), 3.6d);
@@ -539,9 +820,9 @@ class WorkplaceServiceTest {
     }
 
     @Test
-    void softDelete_whenNotOwner_throwsAccessDenied() {
+    void softDelete_whenNotOwner_throwsHandleException() {
         Long workplaceId = wp.getId();
-        Long userId = creator.getId(); // but not owner in repo
+        Long userId = creator.getId();
 
         when(workplaceRepository.findById(workplaceId))
                 .thenReturn(Optional.of(wp));
@@ -550,9 +831,23 @@ class WorkplaceServiceTest {
         )).thenReturn(false);
 
         assertThatThrownBy(() -> workplaceService.softDelete(workplaceId, creator))
-                .isInstanceOf(AccessDeniedException.class)
-                .hasMessageContaining("Not the owner of this workplace");
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.ACCESS_DENIED);
 
         verify(workplaceRepository, never()).save(any());
+    }
+
+    @Test
+    void softDelete_whenWorkplaceNotFound_throwsHandleException() {
+        Long workplaceId = 999L;
+
+        when(workplaceRepository.findById(workplaceId))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> workplaceService.softDelete(workplaceId, creator))
+                .isInstanceOf(HandleException.class)
+                .extracting("code")
+                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
     }
 }
