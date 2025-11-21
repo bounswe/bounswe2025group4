@@ -26,6 +26,7 @@ import MentorshipPage from './pages/MentorshipPage';
 import MentorProfilePage from './pages/MentorProfilePage';
 import MentorshipRequestPage from './pages/MentorshipRequestPage';
 import MyMentorshipsPage from './pages/MyMentorshipsPage';
+import ChatPage from './pages/ChatPage';
 
 const router = createBrowserRouter([
   {
@@ -129,6 +130,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <MyMentorshipsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'chat',
+        element: (
+          <ProtectedRoute>
+            <ChatPage />
           </ProtectedRoute>
         ),
       },

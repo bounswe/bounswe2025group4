@@ -14,6 +14,7 @@
       "myApplications": "My Applications",
       "mentorship": "Mentorship",
       "myMentorships": "My Mentorships",
+      "chat": "Chat",
       "forum": "Forum",
       "employerDashboard": "Employer Dashboard"
     },
@@ -982,5 +983,32 @@
       "completed": "Completed",
       "rejected": "Rejected"
     }
+  },
+  "chat": {
+    "conversations": "Conversations",
+    "noConversations": "No conversations yet",
+    "openConversationWith": "Open conversation with {{name}}",
+    "back": "Back to conversations",
+    "online": "Online",
+    "offline": "Offline",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "noMessages": "No messages",
+    "unreadMessages": "{{count}} unread messages",
+    "noMessagesYet": "No messages yet",
+    "startConversation": "Start a conversation by sending a message",
+    "typeMessage": "Type a message...",
+    "messageInput": "Message input",
+    "sendMessage": "Send message",
+    "attachFile": "Attach file",
+    "moreOptions": "More options",
+    "featureComingSoon": "Coming soon",
+    "you": "You",
+    "roleMentor": "Mentor",
+    "roleMentee": "Mentee",
+    "selectConversation": "Select a conversation",
+    "selectConversationDesc": "Choose a conversation from the list to start chatting"
   }
 }
