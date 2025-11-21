@@ -106,7 +106,7 @@ class ReportServiceTest {
         User reporter = sampleUser(10L);
 
         WorkplaceReportCreate req = new WorkplaceReportCreate();
-        req.setReasonType("spam"); // lower case
+        req.setReasonType("spam");
         req.setDescription("This is spam");
 
         when(workplaceRepository.findById(workplaceId))
