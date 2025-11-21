@@ -9,6 +9,7 @@ class JobPost {
   final bool remote;
   final String ethicalTags;
   final bool inclusiveOpportunity;
+  final bool nonProfit;
   final String? salaryRange;
   final String? contactInformation;
   final String? jobType;
@@ -26,6 +27,7 @@ class JobPost {
     required this.remote,
     required this.ethicalTags,
     required this.inclusiveOpportunity,
+    required this.nonProfit,
     this.salaryRange,
     this.contactInformation,
     this.jobType,
@@ -71,6 +73,7 @@ class JobPost {
       // Assuming ethicalTags is returned as a single string
       ethicalTags: json['ethicalTags'] ?? '', // Default to empty string if null
       inclusiveOpportunity: json['inclusiveOpportunity'] ?? false,
+      nonProfit: json['nonProfit'] ?? false,
       // Optional fields from GET potentially not in DTO
       salaryRange: json['salaryRange'],
       contactInformation: json['contact'],
@@ -95,6 +98,7 @@ class JobPost {
       'remote': remote,
       'ethicalTags': ethicalTags,
       'inclusiveOpportunity': inclusiveOpportunity,
+      'nonProfit': nonProfit,
       if (contactInformation != null) 'contact': contactInformation,
       if (minSalary != null) 'minSalary': minSalary,
       if (maxSalary != null) 'maxSalary': maxSalary,
@@ -112,6 +116,7 @@ class JobPost {
       'remote': remote,
       'ethicalTags': ethicalTags,
       'inclusiveOpportunity': inclusiveOpportunity,
+      'nonProfit': nonProfit,
       if (contactInformation != null) 'contact': contactInformation,
       if (minSalary != null) 'minSalary': minSalary,
       if (maxSalary != null) 'maxSalary': maxSalary,

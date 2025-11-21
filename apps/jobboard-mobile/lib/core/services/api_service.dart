@@ -260,6 +260,7 @@ class ApiService {
     required bool remote,
     required String ethicalTags,
     required bool inclusiveOpportunity,
+    required bool nonProfit,
 
     // Optional fields
     String? contactInformation,
@@ -277,6 +278,7 @@ class ApiService {
       'remote': remote,
       'ethicalTags': ethicalTags,
       'inclusiveOpportunity': inclusiveOpportunity,
+      'nonProfit': nonProfit,
       // Optional fields, only include if not null
       if (contactInformation != null) 'contact': contactInformation,
       if (minSalary != null) 'minSalary': minSalary,
