@@ -771,6 +771,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mentorScreen_requestAccepted => 'Request accepted';
 
   @override
+  String get mentorProfile_ratingNotAvailable => 'Rating not available';
+
+  @override
+  String get mentorProfile_expertise => 'Expertise';
+
+  @override
   String get mentorScreen_requestRejected => 'Request rejected';
 
   @override

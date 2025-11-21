@@ -39,12 +39,13 @@ class MentorProvider with ChangeNotifier {
     _isLoadingMentors = true;
     _error = null;
     notifyListeners();
-
+    print("Fetching available mentors...");
     try {
       _availableMentors = await _apiService.getAllMentors();
       // Filter only available mentors based on derived getter
-      _availableMentors =
-          _availableMentors.where((mentor) => mentor.isAvailable).toList();
+      //_availableMentors =
+      //    _availableMentors.where((mentor) => mentor.isAvailable).toList();
+      print("There are {${_availableMentors.length}} available mentors");
     } catch (e) {
       _error = e.toString();
       debugPrint('Error fetching mentors: $_error');

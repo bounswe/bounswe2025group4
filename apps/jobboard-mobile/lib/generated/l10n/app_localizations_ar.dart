@@ -764,6 +764,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mentorScreen_requestAccepted => 'تم قبول الطلب';
 
   @override
+  String get mentorProfile_ratingNotAvailable =>
+      'لا تتوفر تقييمات لهذا المرشد.';
+
+  @override
+  String get mentorProfile_expertise => 'الخبرة';
+
+  @override
   String get mentorScreen_requestRejected => 'تم رفض الطلب';
 
   @override

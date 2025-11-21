@@ -17,10 +17,13 @@ class MentorshipRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final menteeLabel =
-    request.requesterId.isNotEmpty ? request.requesterId : 'Mentee';
-    final initial =
-    menteeLabel.isNotEmpty ? menteeLabel[0].toUpperCase() : '?';
+    final menteeLabel = (request.requesterId ?? '').isNotEmpty
+        ? request.requesterId!
+        : 'Mentee';
+    final safeLabel = menteeLabel ?? 'User';
+    final initial = safeLabel.isNotEmpty
+        ? safeLabel[0].toUpperCase()
+        : '?';
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -32,13 +35,13 @@ class MentorshipRequestCard extends StatelessWidget {
             Row(
               children: [
                 A11y(
-                  label: 'Mentee avatar for $menteeLabel',
+                  label: 'Mentee avatar for ${menteeLabel ?? 'Unknown'}',
                   child: CircleAvatar(child: Text(initial)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    menteeLabel,
+                    menteeLabel ?? 'Unknown',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),

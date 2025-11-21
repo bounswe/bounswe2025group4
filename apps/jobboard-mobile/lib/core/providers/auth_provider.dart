@@ -11,9 +11,6 @@ import '../models/register_outcome.dart'; // Import the enum
 import '../models/auth_errors.dart'; // Import the custom exception
 import 'package:mobile/core/models/login_result.dart';
 import 'package:mobile/core/models/pass_reset_req_result.dart';
-// Remove MentorshipPreference if not used in registration API, or keep if needed for UI flow
-// enum MentorshipPreference { mentor, mentee, none }
-
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
   User? _currentUser;
@@ -122,12 +119,11 @@ class AuthProvider with ChangeNotifier {
         _currentUser = User(
           id: storedId,
           username: storedUsername,
-          email: storedEmail ?? '', // Use stored email or empty
+          email: storedEmail ?? '',
           role: userType,
           company: storedCompanyName,
           bio: storedBio,
-          employerId:
-              storedEmployerId, // May be null if not employer or not fetched
+          employerId: storedEmployerId,
           mentorshipStatus: mentorshipStatus,
           maxMenteeCount: storedMaxMenteeCount,
         );
@@ -239,6 +235,7 @@ class AuthProvider with ChangeNotifier {
             'AuthProvider: Received user details after OTP: ${details.email}, ${details.username}',
           );
           await _updateAndPersistUserDetails(details);
+
         } catch (e) {
           print('Error fetching user details after OTP: $e');
         }
@@ -322,16 +319,23 @@ class AuthProvider with ChangeNotifier {
 
             if (userDetails.mentorshipStatus == MentorshipStatus.MENTOR) {
               try {
+                // Use provided maxMenteeCount if available, otherwise 1
+                final int maxMenteesValue =
+                    maxMenteeCount ?? userDetails.maxMenteeCount ?? 1;
+
+                // For now, start with an empty expertise list; user can edit later
                 await apiService.createMentorProfile(
-                  capacity: maxMenteeCount ?? 1,
-                  isAvailable: true,
+                  expertise: const <String>[],
+                  maxMentees: maxMenteesValue,
                 );
               } catch (e) {
-                // Mentor profile creation failed, but basic profile is created
+                // Mentor profile creation failed; user can configure later in mentorship UI
+                print('Error creating mentor profile after registration: $e');
               }
             }
           } catch (e) {
             // Profile creation failed, user can create manually later
+            print('Error creating initial profile after registration: $e');
           }
         } catch (e) {
           print("Error during registration process: $e");

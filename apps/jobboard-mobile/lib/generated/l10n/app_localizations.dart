@@ -1474,6 +1474,18 @@ abstract class AppLocalizations {
   /// **'Request accepted'**
   String get mentorScreen_requestAccepted;
 
+  /// Rating not available message
+  ///
+  /// In en, this message translates to:
+  /// **'Rating not available'**
+  String get mentorProfile_ratingNotAvailable;
+
+  /// Expertise label
+  ///
+  /// In en, this message translates to:
+  /// **'Expertise'**
+  String get mentorProfile_expertise;
+
   /// Request rejected message
   ///
   /// In en, this message translates to:
