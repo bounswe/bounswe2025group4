@@ -18,6 +18,10 @@ const compat = new FlatCompat();
 
 // Export an array of configuration objects - ESLint will merge them in order
 export default [
+  // Ignore patterns for build outputs and dependencies
+  {
+    ignores: ['dist/**', 'dist-ssr/**', 'node_modules/**', 'coverage/**', 'build/**'],
+  },
   // Include recommended JavaScript rules
   js.configs.recommended,
   // Spread TypeScript recommended configs

@@ -45,7 +45,6 @@ export function CreateWorkplaceModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [createdWorkplaceId, setCreatedWorkplaceId] = useState<number | null>(null);
   const [selectedTags, setSelectedTags] = useState<EthicalTag[]>([]);
 
   const {
@@ -66,7 +65,6 @@ export function CreateWorkplaceModal({
     if (open) {
       setSuccess(false);
       setError(null);
-      setCreatedWorkplaceId(null);
       setSelectedTags([]);
       reset();
     }
@@ -86,7 +84,6 @@ export function CreateWorkplaceModal({
         ...data,
         ethicalTags: selectedTags.length > 0 ? selectedTags : undefined,
       });
-      setCreatedWorkplaceId(workplace.id);
       setSuccess(true);
       onSuccess?.();
       // Navigate to the new workplace after a short delay
