@@ -9,11 +9,16 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
-// Load .env.e2e file
+// Load .env.e2e file from tests/e2e/selenium directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const envPath = path.resolve(__dirname, '../../../../.env.e2e');
-dotenv.config({ path: envPath });
+const envPath = path.resolve(__dirname, '../.env.e2e');
+const result = dotenv.config({ path: envPath });
+
+if (result.error) {
+  console.warn(`⚠️  Warning: Could not load .env.e2e from ${envPath}`);
+  console.warn('Using default configuration values.');
+}
 
 export interface TestConfig {
   baseUrl: string;

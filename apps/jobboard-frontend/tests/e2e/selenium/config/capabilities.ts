@@ -14,9 +14,29 @@ import { config } from './test.config.ts';
 export function getChromeCapabilities(): Capabilities {
   const options = new chrome.Options();
 
+  // Try to set Chrome binary path explicitly (common locations on Windows)
+  const chromePaths = [
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    process.env.CHROME_BIN, // Allow override via environment variable
+  ].filter(Boolean);
+
+  // Set the first valid path if found
+  for (const path of chromePaths) {
+    if (path) {
+      try {
+        options.setChromeBinaryPath(path);
+        break;
+      } catch (e) {
+        // Continue to next path if this one doesn't work
+      }
+    }
+  }
+
   // Headless mode
   if (config.headless) {
     options.addArguments('--headless=new');
+    options.addArguments('--disable-software-rasterizer');
   }
 
   // Window size
@@ -29,6 +49,10 @@ export function getChromeCapabilities(): Capabilities {
   options.addArguments('--disable-extensions');
   options.addArguments('--disable-notifications');
   options.addArguments('--disable-popup-blocking');
+
+  // Additional arguments for Windows compatibility
+  options.addArguments('--disable-blink-features=AutomationControlled');
+  options.addArguments('--disable-features=VizDisplayCompositor');
 
   // Enable logging for debugging
   options.setLoggingPrefs({

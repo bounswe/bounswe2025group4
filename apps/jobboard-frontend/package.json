@@ -12,10 +12,10 @@
     "format:check": "prettier . --check",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui --coverage",
     "test:coverage": "vitest run --coverage",
-    "build:e2e": "tsc -b && vite build",
-    "preview:e2e": "vite preview --port 4173",
+    "preview:e2e": "vite preview --port 5173",
     "test:e2e": "node tests/e2e/selenium/run-tests.js",
     "test:e2e:headed": "cross-env E2E_HEADLESS=false node tests/e2e/selenium/run-tests.js"
   },
