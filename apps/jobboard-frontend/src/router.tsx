@@ -23,6 +23,11 @@ import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForumPage from './pages/ForumPage';
 import MentorshipPage from './pages/MentorshipPage';
+import WorkplaceProfilePage from './pages/WorkplaceProfilePage';
+import EmployerWorkplacesPage from './pages/EmployerWorkplacesPage';
+import ManageEmployerRequestsPage from './pages/ManageEmployerRequestsPage';
+import WorkplaceSettingsPage from './pages/WorkplaceSettingsPage';
+import WorkplacesPage from './pages/WorkplacesPage';
 import MentorProfilePage from './pages/MentorProfilePage';
 import MentorshipRequestPage from './pages/MentorshipRequestPage';
 import MyMentorshipsPage from './pages/MyMentorshipsPage';
@@ -50,6 +55,14 @@ const router = createBrowserRouter([
         element: <JobDetailPage />,
       },
       {
+        path: 'workplace/:id',
+        element: <WorkplaceProfilePage />,
+      },
+      {
+        path: 'workplaces',
+        element: <WorkplacesPage />,
+      },
+      {
         path: 'jobs/:id/apply',
         element: (
           <ProtectedRoute>
@@ -70,6 +83,30 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <EmployerDashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplaces',
+        element: (
+          <ProtectedRoute>
+            <EmployerWorkplacesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/:workplaceId/requests',
+        element: (
+          <ProtectedRoute>
+            <ManageEmployerRequestsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/:workplaceId/settings',
+        element: (
+          <ProtectedRoute>
+            <WorkplaceSettingsPage />
           </ProtectedRoute>
         ),
       },
@@ -175,6 +212,12 @@ const router = createBrowserRouter([
       },
       {
         path: 'profile',
+        element: (
+            <ProfilePage />
+        ),
+      },
+      {
+        path: 'profile/:userId',
         element: (
             <ProfilePage />
         ),

@@ -16,7 +16,10 @@
       "myMentorships": "Mentorluklarım",
       "chat": "Sohbet",
       "forum": "Forum",
-      "employerDashboard": "İşveren Paneli"
+      "employerDashboard": "İşveren Paneli",
+      "workplaces": "İş Yerleri",
+      "myWorkplaces": "İş Yerlerim",
+      "browseWorkplaces": "İş Yerlerini Keşfet"
     },
     "auth": {
       "login": "Giriş Yap",
@@ -231,6 +234,125 @@
       "active": "Aktif",
       "paused": "Durduruldu"
     }
+  },
+  "employerJobPostDetails": {
+    "error": {
+      "load": "İş detayları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+      "title": "İlan Yüklenemedi",
+      "notFound": "İlan bulunamadı",
+      "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir."
+    },
+    "applied": {
+      "today": "Bugün baÅŸvuruldu",
+      "yesterday": "1 gÃ¼n Ã¶nce baÅŸvuruldu",
+      "daysAgo": "{{count}} gÃ¼n Ã¶nce baÅŸvuruldu"
+    },
+    "backToDashboard": "Panele Geri DÃ¶n",
+    "breadcrumb": {
+      "jobs": "Ä°lanlar"
+    },
+    "editJobPost": "Ä°lanÄ± DÃ¼zenle",
+    "jobDescription": "Ä°ÅŸ TanÄ±mÄ±",
+    "salaryRange": "MaaÅŸ AralÄ±ÄŸÄ±",
+    "location": "Konum",
+    "remote": "Uzaktan",
+    "contact": "Ä°letiÅŸim Bilgileri",
+    "ethicalPolicies": "Etik Politikalar",
+    "inclusiveOpportunity": "KapsayÄ±cÄ± FÄ±rsat",
+    "inclusiveOpportunityDescription": "Bu pozisyon, farklÄ± geÃ§miÅŸlerden gelen adaylarÄ± memnuniyetle karÅŸÄ±layan kapsayÄ±cÄ± bir fÄ±rsat olarak belirlenmiÅŸtir.",
+    "applicationsReceived": "AlÄ±nan BaÅŸvurular ({{count}})",
+    "noApplications": "HenÃ¼z baÅŸvuru alÄ±nmadÄ±.",
+    "viewApplication": "BaÅŸvuruyu GÃ¶rÃ¼ntÃ¼le"
+  },
+  "employerWorkplaces": {
+    "title": "Ä°ÅŸ Yerlerim",
+    "description": "Ä°ÅŸ yerlerinizi yÃ¶netin ve deÄŸerlendirmelere yanÄ±t verin",
+    "viewApplications": "BaÅŸvurularÄ± GÃ¶rÃ¼ntÃ¼le",
+    "newWorkplace": "Yeni Ä°ÅŸ Yeri",
+    "loadError": "Ä°ÅŸ yerleriniz yÃ¼klenemedi. LÃ¼tfen tekrar deneyin.",
+    "empty": {
+      "title": "HenÃ¼z Ä°ÅŸ Yeri Yok",
+      "description": "Ä°lk iÅŸ yerinizi oluÅŸturun veya mevcut birine katÄ±lma isteÄŸi gÃ¶nderin"
+    },
+    "addNew": {
+      "title": "Yeni Ä°ÅŸ Yeri Ekle",
+      "description": "Yeni bir iÅŸ yeri oluÅŸturun veya mevcut birine katÄ±lÄ±n"
+    },
+    "applicationsModal": {
+      "title": "Ä°ÅŸ Yeri BaÅŸvurularÄ±m",
+      "description": "Ä°ÅŸ yerlerini yÃ¶netme taleplerinizin durumunu gÃ¶rÃ¼ntÃ¼leyin.",
+      "loadError": "BaÅŸvurularÄ±nÄ±z yÃ¼klenemedi.",
+      "noApplications": "HenÃ¼z hiÃ§bir iÅŸ yerine baÅŸvurmadÄ±nÄ±z.",
+      "appliedOn": "{{date}} tarihinde baÅŸvuruldu",
+      "note": "Not: {{note}}",
+      "updatedOn": "{{date}} tarihinde gÃ¼ncellendi"
+    },
+    "workplaceLabel": "Ä°ÅŸ Yeri",
+    "page": {
+      "loadError": "Ä°ÅŸ yerleriniz yÃ¼klenemedi"
+    }
+  },
+  "status": {
+    "pending": "Beklemede",
+    "accepted": "Kabul Edildi",
+    "rejected": "Reddedildi",
+    "unknown": "Bilinmiyor"
+  },
+  "workplaces": {
+    "title": "Ä°ÅŸ Yerleri",
+    "description": "Åžirketleri kÃ¼ltÃ¼rleri ve deÄŸerlendirmeleri hakkÄ±nda daha fazla bilgi edinmek iÃ§in keÅŸfedin ve inceleyin",
+    "searchTitle": "Ä°ÅŸ Yeri Ara",
+    "searchPlaceholder": "Åžirket adÄ± girin...",
+    "searching": "AranÄ±yor...",
+    "search": "Ara",
+    "loadError": "Ä°ÅŸ yerleri yÃ¼klenemedi. LÃ¼tfen tekrar deneyin.",
+    "loading": "YÃ¼kleniyor...",
+    "workplacesFound": "{{count}} iÅŸ yeri bulundu",
+    "workplacesFound_plural": "{{count}} iÅŸ yeri bulundu",
+    "empty": {
+      "title": "Ä°ÅŸ Yeri BulunamadÄ±",
+      "adjustFilters": "Filtrelerinizi veya arama sorgunuzu ayarlamayÄ± deneyin",
+      "noWorkplaces": "Åžu anda mevcut iÅŸ yeri yok"
+    },
+    "filters": {
+      "title": "Filtreler",
+      "clear": "Temizle",
+      "clearFilters": "Filtreleri Temizle",
+      "sector": "SektÃ¶r",
+      "allSectors": "TÃ¼m SektÃ¶rler",
+      "location": "Konum",
+      "locationPlaceholder": "Konum girin...",
+      "sortBy": "SÄ±rala",
+      "sortOptions": {
+        "default": "VarsayÄ±lan",
+        "nameDesc": "Isme gore (Z'den A'ya)",
+        "nameAsc": "Isme gore (A'dan Z'ye)",
+        "reviewCountDesc": "Yorum sayisi (Coktan aza)",
+        "reviewCountAsc": "Yorum sayisi (Azdan coka)",
+        "ratingDesc": "Puana gore (Yuksekten dusuge)",
+        "ratingAsc": "Puana gore (Dusukten yuksege)"
+      },
+      "minRating": "Minimum Puan",
+      "anyRating": "Herhangi",
+      "ratingWithValue": "{{rating}}â˜…"
+    }
+  },
+  "sectors": {
+    "technology": "Teknoloji",
+    "healthcare": "SaÄŸlÄ±k",
+    "education": "EÄŸitim",
+    "finance": "Finans",
+    "creativearts": "YaratÄ±cÄ± Sanatlar",
+    "manufacturing": "Ãœretim",
+    "retail": "Perakende",
+    "consulting": "DanÄ±ÅŸmanlÄ±k",
+    "nonprofit": "Kar AmacÄ± GÃ¼tmeyen",
+    "other": "DiÄŸer"
+  },
+  "pagination": {
+    "previous": "Ã–nceki",
+    "next": "Sonraki",
+    "pageInfo": "Sayfa {{page}} / {{total}}"
   },
   "auth": {
     "login": {
@@ -986,6 +1108,87 @@
       "completed": "Tamamlandı",
       "rejected": "Reddedildi"
     }
+  },
+  "reviews": {
+    "workplaceReviews": "İşyeri Değerlendirmeleri",
+    "writeReview": "Değerlendirme Yaz",
+    "writeReviewFor": "{{company}} için Değerlendirme Yaz",
+    "shareExperience": "Bu şirketteki deneyiminizi paylaşın",
+    "rateYourExperience": "Deneyiminizi Değerlendirin",
+    "yourReview": "Değerlendirmeniz",
+    "reviewPlaceholder": "Bu şirketteki deneyiminizi paylaşın. Neleri beğendiniz? Neler geliştirilebilir?",
+    "characters": "karakter",
+    "anonymous": "Anonim",
+    "postAnonymously": "Anonim olarak yayınla",
+    "submitReview": "Değerlendirmeyi Gönder",
+    "submitting": "Gönderiliyor...",
+    "cancel": "İptal",
+    "categories": {
+      "culture": "Kültür",
+      "benefits": "Yan Haklar",
+      "workLifeBalance": "İş-Yaşam Dengesi",
+      "management": "Yönetim",
+      "careerGrowth": "Kariyer Gelişimi"
+    },
+    "categoryRatings": "Kategori Puanları",
+    "basedOn": "{{count}} değerlendirmeye göre",
+    "basedOn_plural": "{{count}} değerlendirmeye göre",
+    "recentComments": "Son Yorumlar",
+    "recentReviews": "Son Değerlendirmeler",
+    "sortBy": "Yorumlari sirala",
+    "sortOptions": {
+      "ratingDesc": "Puan (Yuksekten dusuge)",
+      "ratingAsc": "Puan (Dusukten yuksege)"
+    },
+    "ratingFilter": "Puan araligi",
+    "minRating": "Min",
+    "maxRating": "Max",
+    "clearFilters": "Filtreleri sifirla",
+    "totalReviews": "{{count}} değerlendirme",
+    "totalReviews_plural": "{{count}} değerlendirme",
+    "noReviews": "Henüz değerlendirme yok. Deneyiminizi paylaşan ilk kişi siz olun!",
+    "loadMore": "Daha Fazla Yükle",
+    "loading": "Yükleniyor...",
+    "helpful": "Yararlı",
+    "report": "Bildir",
+    "today": "bugün",
+    "yesterday": "dün",
+    "daysAgo": "{{count}} gün önce",
+    "daysAgo_plural": "{{count}} gün önce",
+    "weeksAgo": "{{count}} hafta önce",
+    "weeksAgo_plural": "{{count}} hafta önce",
+    "monthsAgo": "{{count}} ay önce",
+    "monthsAgo_plural": "{{count}} ay önce",
+    "yearsAgo": "{{count}} yıl önce",
+    "yearsAgo_plural": "{{count}} yıl önce",
+    "aboutCompany": "{{company}} Hakkında",
+    "seeWhatEmployeesSay": "Çalışanların ne dediğini görün",
+    "viewAllReviews": "Tüm Değerlendirmeleri Gör",
+    "seeAllReviews": "Tüm Değerlendirmeleri Gör",
+    "reply": {
+      "employerResponse": "İşveren Yanıtı",
+      "confirmDelete": "Bu yanıtı silmek istediğinizden emin misiniz?",
+      "deleteError": "Yanıt silinemedi. Lütfen tekrar deneyin."
+    },
+    "errors": {
+      "allRatingsRequired": "Lütfen tüm kategorileri değerlendirin",
+      "commentTooShort": "Değerlendirme en az 10 karakter olmalıdır",
+      "commentTooLong": "Değerlendirme en fazla 2000 karakter olmalıdır",
+      "submissionFailed": "Değerlendirme gönderilemedi. Lütfen tekrar deneyin."
+    }
+  },
+  "company": {
+    "aboutUs": "Hakkımızda",
+    "ethicalPolicyCommitments": "Etik Politika Taahhütleri",
+    "currentJobOpenings": "Güncel İş İlanları",
+    "viewJob": "İlanı Görüntüle",
+    "notFound": "Şirket Bulunamadı",
+    "notFoundDescription": "Aradığınız şirket mevcut değil veya kaldırılmış."
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "goHome": "Ana Sayfaya Git",
+    "edited": "Düzenlendi"
   },
   "chat": {
     "conversations": "Sohbetler",
