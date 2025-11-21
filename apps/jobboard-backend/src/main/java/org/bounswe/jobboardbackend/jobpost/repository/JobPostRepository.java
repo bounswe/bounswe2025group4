@@ -38,4 +38,11 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long> {
             @Param("nonProfit") Boolean nonProfit
     );
 
+    // needed for stats
+    long countByRemoteTrue();
+
+    long countByInclusiveOpportunityTrue();
+
+    long countByPostedDateAfter(java.time.LocalDateTime date);
+
 }
