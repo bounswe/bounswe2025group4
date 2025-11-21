@@ -293,7 +293,6 @@ export default function EmployerEditJobPostPage() {
                       defaultValue: 'e.g., 80000',
                     })}
                     className="mt-1"
-                    required
                   />
                 </div>
                 <div>
@@ -309,7 +308,6 @@ export default function EmployerEditJobPostPage() {
                       defaultValue: 'e.g., 120000',
                     })}
                     className="mt-1"
-                    required
                   />
                 </div>
               </div>
