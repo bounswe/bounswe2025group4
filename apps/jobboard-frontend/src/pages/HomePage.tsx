@@ -19,7 +19,6 @@ import {
   Globe,
   MessageCircle,
   UserCheck,
-  RefreshCw,
 } from "lucide-react";
 import { type FormEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,6 +43,27 @@ export default function HomePage() {
     }
     return "0";
   };
+
+  const renderStatsSkeleton = () => (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4" aria-hidden="true">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <Card key={`stats-skeleton-${index}`} className="overflow-hidden">
+          <CardHeader className="pb-2">
+            <div className="w-12 h-12 bg-primary/10 rounded-lg mb-4 animate-pulse" />
+            <div className="h-5 w-32 bg-muted rounded animate-pulse" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="h-9 w-24 bg-muted rounded animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-4 w-full bg-muted rounded animate-pulse" />
+              <div className="h-4 w-5/6 bg-muted rounded animate-pulse" />
+              <div className="h-4 w-2/3 bg-muted rounded animate-pulse" />
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
 
   const handleHeroSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -171,15 +191,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {loading && (
-            <div className="flex justify-center items-center py-12">
-              <RefreshCw className="animate-spin size-8 text-primary" />
-              <span className="ml-3 text-muted-foreground">
-                {t("home.stats.loading")}
-              </span>
-            </div>
-          )}
-
           {error && (
             <div className="text-center py-12">
               <p className="text-muted-foreground mb-4">
@@ -190,6 +201,8 @@ export default function HomePage() {
               </Button>
             </div>
           )}
+
+          {loading && !error && renderStatsSkeleton()}
 
           {stats && !loading && !error && (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
