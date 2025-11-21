@@ -39,7 +39,8 @@
       "searchLabel": "ابحث عن وظائف",
       "searchPlaceholderDesktop": "ابحث عن وظائف، مثل «مهندس برمجيات»",
       "searchPlaceholderMobile": "ابحث عن وظائف",
-      "searchButton": "بحث"
+      "searchButton": "بحث",
+      "discoverNonProfit": "اكتشف فرص المنظمات غير الربحية"
     },
     "quote": {
       "title": "اقتباس اليوم الملهم",

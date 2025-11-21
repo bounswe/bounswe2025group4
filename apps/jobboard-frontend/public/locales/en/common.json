@@ -39,53 +39,69 @@
       "searchLabel": "Search for jobs",
       "searchPlaceholderDesktop": "Search for jobs, e.g. 'Software Engineer'",
       "searchPlaceholderMobile": "Search for jobs",
-      "searchButton": "Search"
+      "searchButton": "Search",
+      "discoverNonProfit": "Discover Non-Profit Opportunities"
     },
-    "quote": {
-      "title": "Daily Inspirational Quote",
-      "text": "The future belongs to those who believe in the beauty of their dreams.",
-      "author": "Eleanor Roosevelt"
-    },
-    "jobSeekers": {
-      "title": "For Job Seekers",
-      "description": "Empowering Your Career Journey. We provide the tools and resources you need to find a fulfilling career that aligns with your values.",
-      "cards": {
-        "ethical": {
-          "title": "Ethical Job Listings",
-          "description": "Browse a curated list of job openings from companies committed to ethical practices and social responsibility."
-        },
-        "resources": {
-          "title": "Career Development Resources",
-          "description": "Access resources to enhance your skills, including resume workshops, interview tips, and career coaching."
-        },
-        "community": {
-          "title": "Community Forum",
-          "description": "Engage with a community of like-minded professionals, share insights, and network with ethical leaders."
-        }
+    "stats": {
+      "title": "Our Community Impact",
+      "subtitle": "Real numbers that showcase our growing community of ethical professionals and employers",
+      "loading": "Loading statistics...",
+      "error": "Unable to load statistics",
+      "retry": "Try Again",
+      "users": {
+        "title": "Community Members",
+        "total": "Total Members",
+        "employers": "Employers",
+        "jobSeekers": "Job Seekers"
+      },
+      "jobs": {
+        "title": "Job Opportunities",
+        "total": "Total Jobs",
+        "remote": "Remote Positions",
+        "inclusive": "Inclusive Opportunities",
+        "newThisWeek": "New This Week"
+      },
+      "applications": {
+        "title": "Applications",
+        "total": "Total Applications",
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "rejected": "Rejected"
+      },
+      "mentorship": {
+        "title": "Mentorship Program",
+        "mentors": "Active Mentors",
+        "accepted": "Active Mentorships",
+        "pending": "Pending Requests",
+        "completed": "Completed",
+        "reviews": "Reviews Given"
       }
     },
-    "employers": {
-      "title": "For Employers",
-      "description": "Building a Better Workforce. Connect with talented individuals who are passionate about making a difference.",
-      "cards": {
-        "talent": {
-          "title": "Attract Top Talent",
-          "description": "Connect with purpose-driven professionals who are passionate about making a difference."
-        },
-        "values": {
-          "title": "Showcase Your Values",
-          "description": "Highlight your company's commitment to ethics, sustainability, and social impact."
-        },
-        "brand": {
-          "title": "Build a Stronger Brand",
-          "description": "Enhance your reputation and attract customers who value ethical business practices."
-        }
+    "features": {
+      "title": "Why Choose Ethica Jobs?",
+      "subtitle": "We connect ethical employers with purpose-driven professionals",
+      "ethical": {
+        "title": "Ethical First",
+        "description": "Every employer on our platform is committed to ethical practices and social responsibility."
+      },
+      "inclusive": {
+        "title": "Inclusive Opportunities",
+        "description": "We highlight positions that welcome candidates from all backgrounds and abilities."
+      },
+      "mentorship": {
+        "title": "Mentorship Network",
+        "description": "Connect with experienced professionals who can guide your career journey."
+      },
+      "community": {
+        "title": "Supportive Community",
+        "description": "Join forums, share insights, and network with like-minded professionals."
       }
     },
     "cta": {
-      "title": "Join the Ethical Careers Community",
-      "description": "Sign up today to start your journey towards a more meaningful and impactful career.",
-      "button": "Get Started"
+      "title": "Ready to Join Our Community?",
+      "description": "Create your free account today and discover purpose-driven career opportunities.",
+      "signUp": "Sign Up Now",
+      "login": "Already have an account? Log In"
     }
   },
   "jobs": {
