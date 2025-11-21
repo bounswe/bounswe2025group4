@@ -876,14 +876,15 @@ class ApiService {
 
   // --- Mentor Profile Endpoints ---
 
-  /// POST /api/mentor/profile
+  /// POST /api/mentorship/mentor
   /// Creates a mentor profile for the current user.
   Future<MentorProfile> createMentorProfile({
     required List<String> expertise,
     required int maxMentees,
   }) async {
     final uri = _buildUri('/mentorship/mentor');
-    final body = {
+
+    final mentorData = {
       'expertise': expertise,
       'maxMentees': maxMentees,
     };
@@ -892,7 +893,7 @@ class ApiService {
       final response = await _client.post(
         uri,
         headers: _getHeaders(),
-        body: jsonEncode(body),
+        body: jsonEncode(mentorData),
       );
       final dynamic data = await _handleResponse(response);
       return MentorProfile.fromJson(data);
@@ -901,31 +902,7 @@ class ApiService {
     }
   }
 
-  Future<MentorProfile> updateMentorProfile({
-    required String userId, // Assuming userId is passed, though often inferred from token
-    required List<String> expertise,
-    required int maxMentees,
-  }) async {
-    final uri = _buildUri('/mentorship/mentor/$userId');
-    final body = {
-      'expertise': expertise,
-      'maxMentees': maxMentees,
-    };
-
-    try {
-      final response = await _client.put(
-        uri,
-        headers: _getHeaders(),
-        body: jsonEncode(body),
-      );
-      final dynamic data = await _handleResponse(response);
-      return MentorProfile.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to update mentor profile. $e');
-    }
-  }
-
-  /// GET /api/mentor/profile/{userId}
+  /// GET /api/mentorship/mentor/{userId}
   /// Gets a mentor profile by user ID.
   Future<MentorProfile> getMentorProfile(String userId) async {
     final uri = _buildUri('/mentorship/mentor/$userId');
@@ -939,9 +916,9 @@ class ApiService {
     }
   }
 
-  /// GET /api/mentor/profiles
+  /// GET /api/mentorship
   /// Gets all mentor profiles.
-  Future<List<MentorProfile>> getAllMentorProfiles() async {
+  Future<List<MentorProfile>> getAllMentors() async {
     final uri = _buildUri('/mentorship');
 
     try {
@@ -953,53 +930,63 @@ class ApiService {
     }
   }
 
-  /// PATCH /api/mentor/profile/capacity
-  /// Updates mentor capacity.
-  Future<MentorProfile> updateMentorCapacity(int capacity) async {
-    final uri = _buildUri('/mentor/profile/capacity', {'capacity': capacity});
+  /// PUT /api/mentorship/mentor/{userId}
+  /// Updates mentor profile (expertise + max mentees).
+  Future<MentorProfile> updateMentorProfile({
+    required String userId,
+    required List<String> expertise,
+    required int maxMentees,
+  }) async {
+    final uri = _buildUri('/mentorship/mentor/$userId');
+
+    final payload = {
+      'expertise': expertise,
+      'maxMentees': maxMentees,
+    };
 
     try {
-      final response = await _client.patch(uri, headers: _getHeaders());
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: jsonEncode(payload),
+      );
       final dynamic data = await _handleResponse(response);
       return MentorProfile.fromJson(data);
     } catch (e) {
-      throw Exception('Failed to update mentor capacity. $e');
+      throw Exception('Failed to update mentor profile. $e');
     }
   }
 
-  /// PATCH /api/mentor/profile/availability
-  /// Updates mentor availability.
-  Future<MentorProfile> updateMentorAvailability(bool isAvailable) async {
-    final uri = _buildUri('/mentor/profile/availability', {
-      'isAvailable': isAvailable,
-    });
+  /// DELETE /api/mentorship/mentor/{userId}
+  /// Deletes mentor profile for given user.
+  Future<MentorProfile> deleteMentorProfile(String userId) async {
+    final uri = _buildUri('/mentorship/mentor/$userId');
 
     try {
-      final response = await _client.patch(uri, headers: _getHeaders());
+      final response = await _client.delete(uri, headers: _getHeaders());
       final dynamic data = await _handleResponse(response);
       return MentorProfile.fromJson(data);
     } catch (e) {
-      throw Exception('Failed to update mentor availability. $e');
+      throw Exception('Failed to delete mentor profile. $e');
     }
   }
 
-  // --- Mentorship Request Endpoints ---
-
-  /// POST /api/mentor/request
+  /// POST /api/mentorship/requests
   /// Creates a mentorship request.
   Future<MentorshipRequest> createMentorshipRequest({
-    required String mentorId,
+    required int mentorId,
   }) async {
     final uri = _buildUri('/mentorship/requests');
 
-    // API expects integer, but we handle string/int conversion safely
-    final body = {'mentorId': int.tryParse(mentorId) ?? mentorId};
+    final requestData = {
+      'mentorId': mentorId,
+    };
 
     try {
       final response = await _client.post(
         uri,
         headers: _getHeaders(),
-        body: jsonEncode(body),
+        body: jsonEncode(requestData),
       );
       final dynamic data = await _handleResponse(response);
       return MentorshipRequest.fromJson(data);
@@ -1008,37 +995,11 @@ class ApiService {
     }
   }
 
-  /// GET /api/mentor/requests/mentor
-  /// Gets all mentorship requests where the current user is the mentor.
-  Future<List<MentorshipRequest>> getMentorshipRequestsAsMentor() async {
-    final uri = _buildUri('/mentor/requests/mentor');
-
-    try {
-      final response = await _client.get(uri, headers: _getHeaders());
-      final List<dynamic> data = await _handleResponse(response);
-      return data.map((json) => MentorshipRequest.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Failed to get mentorship requests. $e');
-    }
-  }
-
-  /// GET /api/mentor/requests/mentee
-  /// Gets all mentorship requests where the current user is the mentee.
-  Future<List<MentorshipRequest>> getMentorshipRequestsAsMentee() async {
-    final uri = _buildUri('/mentor/requests/mentee');
-
-    try {
-      final response = await _client.get(uri, headers: _getHeaders());
-      final List<dynamic> data = await _handleResponse(response);
-      return data.map((json) => MentorshipRequest.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Failed to get mentorship requests. $e');
-    }
-  }
-
   /// GET /api/mentorship/mentor/{mentorId}/requests
-  /// Gets requests received by the mentor.
-  Future<List<MentorshipRequest>> getRequestsForMentor(String mentorId) async {
+  /// Gets all mentorship requests where the given user is the mentor.
+  Future<List<MentorshipRequest>> getMentorshipRequestsAsMentor(
+      String mentorId,
+      ) async {
     final uri = _buildUri('/mentorship/mentor/$mentorId/requests');
 
     try {
@@ -1046,98 +1007,113 @@ class ApiService {
       final List<dynamic> data = await _handleResponse(response);
       return data.map((json) => MentorshipRequest.fromJson(json)).toList();
     } catch (e) {
-      throw Exception('Failed to get mentor requests. $e');
+      throw Exception('Failed to get mentorship requests as mentor. $e');
     }
   }
 
   /// GET /api/mentorship/mentee/{menteeId}/requests
-  /// Gets requests sent by the mentee.
-  /// Note: Returns a composite object (Mentee View).
-  Future<List<MentorshipRequest>> getRequestsByMentee(String menteeId) async {
+  /// Gets all mentorship requests where the given user is the mentee.
+  Future<List<MentorshipRequest>> getMentorshipRequestsAsMentee(
+      String menteeId,
+      ) async {
     final uri = _buildUri('/mentorship/mentee/$menteeId/requests');
 
     try {
       final response = await _client.get(uri, headers: _getHeaders());
       final List<dynamic> data = await _handleResponse(response);
-      return data.map((json) => MentorshipRequest.fromMenteeViewJson(json)).toList();
+      return data.map((json) => MentorshipRequest.fromJson(json)).toList();
     } catch (e) {
-      throw Exception('Failed to get mentee requests. $e');
+      throw Exception('Failed to get mentorship requests as mentee. $e');
+    }
+  }
+
+  /// GET /api/mentorship/requests/{requestId}
+  /// Gets a specific mentorship request.
+  Future<MentorshipRequest> getMentorshipRequest(String requestId) async {
+    final uri = _buildUri('/mentorship/requests/$requestId');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return MentorshipRequest.fromJson(data);
+    } catch (e) {
+      throw Exception('Failed to get mentorship request. $e');
     }
   }
 
   /// PATCH /api/mentorship/requests/{requestId}/respond
-  /// Respond to a request (Accept/Reject).
-  Future<MentorshipRequest> respondToMentorshipRequest(
-      String requestId, {
-        required bool accept,
-      }) async {
+  /// Respond to a mentorship request (accept or reject).
+  Future<MentorshipRequest> respondToMentorshipRequest({
+    required String requestId,
+    required bool accept,
+  }) async {
     final uri = _buildUri('/mentorship/requests/$requestId/respond');
-    final body = {'accept': accept};
+
+    final payload = {
+      'accept': accept,
+    };
 
     try {
       final response = await _client.patch(
         uri,
         headers: _getHeaders(),
-        body: jsonEncode(body),
+        body: jsonEncode(payload),
       );
       final dynamic data = await _handleResponse(response);
       return MentorshipRequest.fromJson(data);
     } catch (e) {
-      throw Exception('Failed to respond to request. $e');
+      throw Exception('Failed to respond to mentorship request. $e');
     }
   }
-
-  /// PATCH /api/mentor/request/{requestId}/status
-  /// Updates mentorship request status.
-  Future<MentorshipRequest> updateMentorshipRequestStatus(
-    int requestId,
-    MentorshipRequestStatus status,
-  ) async {
-    final uri = _buildUri('/mentor/request/$requestId/status');
-
-    final statusData = {'status': status.toString().split('.').last};
-
-    try {
-      final response = await _client.patch(
-        uri,
-        headers: _getHeaders(),
-        body: jsonEncode(statusData),
-      );
-      final dynamic data = await _handleResponse(response);
-      return MentorshipRequest.fromJson(data);
-    } catch (e) {
-      throw Exception('Failed to update mentorship request status. $e');
-    }
-  }
-
-
 
   // --- Mentor Review Endpoints ---
 
   /// POST /api/mentorship/ratings
-  /// Creates a review.
-  /// Note: API requires resumeReviewId.
-  Future<void> createMentorshipRating({
+  /// Rates a resume review / mentorship session.
+  Future<void> createMentorRating({
     required int resumeReviewId,
     required int rating,
     String? comment,
   }) async {
     final uri = _buildUri('/mentorship/ratings');
-    final body = {
+
+    final reviewData = {
       'resumeReviewId': resumeReviewId,
       'rating': rating,
-      'comment': comment ?? '',
+      if (comment != null && comment.isNotEmpty) 'comment': comment,
     };
 
     try {
       final response = await _client.post(
         uri,
         headers: _getHeaders(),
-        body: jsonEncode(body),
+        body: jsonEncode(reviewData),
       );
       await _handleResponse(response);
     } catch (e) {
-      throw Exception('Failed to create rating. $e');
+      throw Exception('Failed to create mentor rating. $e');
+    }
+  }
+
+  /// (Optional for later) PATCH /api/mentorship/review/{resumeReviewId}/complete
+  Future<void> completeResumeReview(int resumeReviewId) async {
+    final uri = _buildUri('/mentorship/review/$resumeReviewId/complete');
+    try {
+      final response = await _client.patch(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to complete resume review. $e');
+    }
+  }
+
+  /// (Optional for later) PATCH /api/mentorship/review/{resumeReviewId}/close
+  Future<void> closeResumeReview(int resumeReviewId) async {
+    final uri = _buildUri('/mentorship/review/$resumeReviewId/close');
+    try {
+      final response = await _client.patch(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to close resume review. $e');
     }
   }
 
@@ -1158,7 +1134,7 @@ class ApiService {
   /// GET /api/mentor/review/{reviewId}
   /// Gets a specific mentor review.
   Future<MentorReview> getMentorReview(int reviewId) async {
-    final uri = _buildUri('/mentorship/mentor/review/$reviewId');
+    final uri = _buildUri('/mentorship/mentor/reviews/$reviewId');
 
     try {
       final response = await _client.get(uri, headers: _getHeaders());

@@ -3,7 +3,7 @@ import 'user.dart';
 import 'mentor_review.dart';
 
 class MentorProfile {
-  final String id; // Using String to be safe with int64/string discrepancies
+  final String id;
   final String username;
   final List<String> expertise;
   final int currentMentees;
@@ -11,6 +11,10 @@ class MentorProfile {
   final double averageRating;
   final int reviewCount;
   final List<MentorReview> reviews;
+
+  /// Derived availability: backend no longer has `isAvailable`,
+  /// so we infer it as "has capacity left".
+  bool get isAvailable => currentMentees < maxMentees;
 
   MentorProfile({
     required this.id,
@@ -23,31 +27,22 @@ class MentorProfile {
     this.reviews = const [],
   });
 
-  // Helper to determine availability locally since API removed the boolean flag
-  bool get isAvailable => currentMentees < maxMentees;
-
   factory MentorProfile.fromJson(Map<String, dynamic> json) {
-    var expertiseList = <String>[];
-    if (json['expertise'] != null) {
-      expertiseList = List<String>.from(json['expertise']);
-    }
-
-    var reviewsList = <MentorReview>[];
-    if (json['reviews'] != null) {
-      reviewsList = (json['reviews'] as List)
-          .map((i) => MentorReview.fromJson(i))
-          .toList();
-    }
-
     return MentorProfile(
       id: json['id']?.toString() ?? '',
       username: json['username'] ?? '',
-      expertise: expertiseList,
+      expertise: (json['expertise'] as List<dynamic>?)
+          ?.map((e) => e.toString())
+          .toList() ??
+          const [],
       currentMentees: json['currentMentees'] ?? 0,
       maxMentees: json['maxMentees'] ?? 0,
-      averageRating: (json['averageRating'] as num?)?.toDouble() ?? 0.0,
+      averageRating: (json['averageRating'] ?? 0.0).toDouble(),
       reviewCount: json['reviewCount'] ?? 0,
-      reviews: reviewsList,
+      reviews: (json['reviews'] as List<dynamic>?)
+          ?.map((e) => MentorReview.fromJson(e))
+          .toList() ??
+          const [],
     );
   }
 
