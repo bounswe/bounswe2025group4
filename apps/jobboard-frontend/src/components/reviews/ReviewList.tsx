@@ -12,15 +12,25 @@ import type { ReviewResponse, ReviewListParams } from '@/types/workplace.types';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { getWorkplaceReviews } from '@/services/reviews.service';
+import type { ReactNode } from 'react';
 
 interface ReviewListProps {
   workplaceId: number;
   canReply?: boolean;
   filters?: Omit<ReviewListParams, 'page' | 'size'>;
   reviewsPerPage?: number;
+  actions?: ReactNode;
+  onTotalsChange?: (total: number) => void;
 }
 
-export function ReviewList({ workplaceId, canReply, filters, reviewsPerPage = 10 }: ReviewListProps) {
+export function ReviewList({
+  workplaceId,
+  canReply,
+  filters,
+  reviewsPerPage = 10,
+  actions,
+  onTotalsChange,
+}: ReviewListProps) {
   const { t } = useTranslation('common');
   const [reviews, setReviews] = useState<ReviewResponse[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -44,6 +54,7 @@ export function ReviewList({ workplaceId, canReply, filters, reviewsPerPage = 10
       setCurrentPage(response.page);
       setTotalPages(response.totalPages);
       setTotalElements(response.totalElements);
+      onTotalsChange?.(response.totalElements);
     } catch (error) {
       console.error('Failed to load reviews:', error);
       setReviews([]);
@@ -103,26 +114,25 @@ export function ReviewList({ workplaceId, canReply, filters, reviewsPerPage = 10
     return pages;
   };
 
-  if (reviews.length === 0 && !loading) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-muted-foreground">{t('reviews.noReviews')}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h3 className="text-lg font-semibold">{t('reviews.recentComments')}</h3>
-        <p className="text-sm text-muted-foreground">
-          {t('reviews.totalReviews', { count: totalElements })}
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+          <p className="text-sm text-muted-foreground">
+            {t('reviews.totalReviews', { count: totalElements })}
+          </p>
+        </div>
       </div>
 
       {loading ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground">{t('reviews.loading')}</p>
+        </div>
+      ) : reviews.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">{t('reviews.noReviews')}</p>
         </div>
       ) : (
         <>

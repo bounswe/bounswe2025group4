@@ -3,22 +3,23 @@
  * Displays workplace details with reviews and allows employers to manage
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ReviewStats } from '@/components/reviews/ReviewStats';
 import { ReviewList } from '@/components/reviews/ReviewList';
 import { ReviewFormDialog } from '@/components/reviews/ReviewFormDialog';
-import { MapPin, Building2, ExternalLink, Users, Settings, CheckCircle2 } from 'lucide-react';
+import { MapPin, Building2, ExternalLink, Users, Settings, CheckCircle2, ArrowDown, ArrowUp } from 'lucide-react';
 import { getWorkplaceById } from '@/services/workplace.service';
 import { getJobsByEmployer } from '@/services/jobs.service';
 import { getEmployerRequests } from '@/services/employer.service';
-import type { WorkplaceDetailResponse } from '@/types/workplace.types';
+import type { ReviewListParams, WorkplaceDetailResponse } from '@/types/workplace.types';
 import type { JobPostResponse } from '@/types/api.types';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -32,6 +33,27 @@ export default function WorkplaceProfilePage() {
   const [jobsLoading, setJobsLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [hasPendingRequests, setHasPendingRequests] = useState(false);
+  const [reviewSortBy, setReviewSortBy] = useState('ratingDesc');
+  const [ratingRange, setRatingRange] = useState<{ min?: number; max?: number }>({});
+  const [reviewsTotal, setReviewsTotal] = useState<number>(0);
+
+  const reviewFilters = useMemo(() => {
+    const filterParams: Omit<ReviewListParams, 'page' | 'size'> = {};
+
+    if (reviewSortBy) {
+      filterParams.sortBy = reviewSortBy;
+    }
+
+    const hasMin = ratingRange.min !== undefined;
+    const hasMax = ratingRange.max !== undefined;
+    if (hasMin || hasMax) {
+      const minPart = hasMin ? ratingRange.min ?? 0 : 0;
+      const maxPart = hasMax ? ratingRange.max ?? 5 : 5;
+      filterParams.ratingFilter = `${minPart},${maxPart}`;
+    }
+
+    return filterParams;
+  }, [ratingRange, reviewSortBy]);
 
   useEffect(() => {
     loadWorkplaceData();
@@ -45,6 +67,7 @@ export default function WorkplaceProfilePage() {
     try {
       const data = await getWorkplaceById(parseInt(id, 10), true, 5);
       setWorkplace(data);
+      setReviewsTotal(data.reviewCount ?? data.recentReviews?.length ?? 0);
 
       // Load jobs for all employers in the workplace
       if (data.employers && data.employers.length > 0) {
@@ -109,11 +132,35 @@ export default function WorkplaceProfilePage() {
     setRefreshKey((prev) => prev + 1);
   };
 
+  const toggleSortDirection = () => {
+    setReviewSortBy((prev) => (prev === 'ratingDesc' ? 'ratingAsc' : 'ratingDesc'));
+  };
+
   const isEmployer = workplace?.employers?.some((emp) => emp.userId === user?.id);
   const employerRole = workplace?.employers?.find((emp) => emp.userId === user?.id)?.role;
   const isOwner = employerRole === 'OWNER';
   // Employers can write reviews for workplaces they don't manage
   const canWriteReview = isAuthenticated && (user?.role === 'ROLE_JOBSEEKER' || (user?.role === 'ROLE_EMPLOYER' && !isEmployer));
+  const hasRatingFilter = ratingRange.min !== undefined || ratingRange.max !== undefined;
+
+  const handleRatingRangeChange = (bound: 'min' | 'max', value: string) => {
+    const parsedValue = value === '' ? undefined : Number.parseFloat(value);
+
+    setRatingRange((prev) => {
+      const next = { ...prev };
+
+      if (parsedValue === undefined || Number.isNaN(parsedValue)) {
+        delete next[bound];
+        return next;
+      }
+
+      const clampedValue = Math.min(Math.max(parsedValue, 0), 5);
+      next[bound] = clampedValue;
+      return next;
+    });
+  };
+
+  const clearRatingRange = () => setRatingRange({});
 
   if (loading) {
     return (
@@ -301,7 +348,7 @@ export default function WorkplaceProfilePage() {
                 overallAvg={workplace.overallAvg}
                 ethicalAverages={workplace.ethicalAverages}
                 ethicalTags={workplace.ethicalTags}
-                totalReviews={workplace.reviewCount ?? 0}
+                totalReviews={reviewsTotal || workplace.reviewCount || workplace.recentReviews?.length || 0}
                 recentReviews={workplace.recentReviews ?? []}
               />
 
@@ -310,7 +357,61 @@ export default function WorkplaceProfilePage() {
               <ReviewList
                 workplaceId={workplace.id}
                 canReply={isEmployer}
+                filters={reviewFilters}
+                actions={
+                  <>
+                    <Button
+                      id="review-sort"
+                      variant="outline"
+                      size="sm"
+                      onClick={toggleSortDirection}
+                      aria-label={t('reviews.sortBy')}
+                    >
+                      {reviewSortBy === 'ratingDesc' ? (
+                        <ArrowDown className="h-4 w-4" />
+                      ) : (
+                        <ArrowUp className="h-4 w-4" />
+                      )}
+                      {t('reviews.sortByRating')}
+                    </Button>
+                    <Input
+                      id="rating-min"
+                      type="number"
+                      inputMode="decimal"
+                      min={0}
+                      max={5}
+                      step={0.1}
+                      value={ratingRange.min ?? ''}
+                      onChange={(e) => handleRatingRangeChange('min', e.target.value)}
+                      placeholder={t('reviews.minRating')}
+                      className="w-20 h-8 text-sm"
+                    />
+                    <span className="text-sm text-muted-foreground">-</span>
+                    <Input
+                      id="rating-max"
+                      type="number"
+                      inputMode="decimal"
+                      min={0}
+                      max={5}
+                      step={0.1}
+                      value={ratingRange.max ?? ''}
+                      onChange={(e) => handleRatingRangeChange('max', e.target.value)}
+                      placeholder={t('reviews.maxRating')}
+                      className="w-20 h-8 text-sm"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearRatingRange}
+                      disabled={!hasRatingFilter}
+                      className="h-8 px-2"
+                    >
+                      {t('reviews.clearFilters')}
+                    </Button>
+                  </>
+                }
                 reviewsPerPage={10}
+                onTotalsChange={setReviewsTotal}
                 key={refreshKey}
               />
             </div>

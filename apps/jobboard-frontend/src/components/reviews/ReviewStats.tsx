@@ -32,7 +32,7 @@ export function ReviewStats({
   const safeOverallAvg = overallAvg != null && !isNaN(overallAvg) ? overallAvg : 0;
   const roundedOverall = Math.min(5, Math.max(1, Math.round(safeOverallAvg || 0)));
 
-  // Build distribution from props (preferred), recentReviews, or as a fallback from overallAvg
+  // Build distribution from props (preferred)
   const seedDistribution: Record<number, number> = [1, 2, 3, 4, 5].reduce(
     (acc, rating) => {
       const raw = ratingDistribution?.[rating as keyof typeof ratingDistribution] ?? 0;
@@ -43,6 +43,23 @@ export function ReviewStats({
   );
 
   const countFromDistribution = Object.values(seedDistribution).reduce(
+    (sum, count) => sum + count,
+    0
+  );
+
+  // Build distribution from subcategory ratings
+  const distributionFromPolicies: Record<number, number> = recentReviews.reduce(
+    (acc, review) => {
+      Object.values(review.ethicalPolicyRatings || {}).forEach((value) => {
+        const bucket = Math.min(5, Math.max(1, Math.round(Number(value) || 0)));
+        acc[bucket] = (acc[bucket] || 0) + 1;
+      });
+      return acc;
+    },
+    { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } as Record<number, number>
+  );
+
+  const countFromPolicies = Object.values(distributionFromPolicies).reduce(
     (sum, count) => sum + count,
     0
   );
@@ -65,6 +82,8 @@ export function ReviewStats({
   const normalizedDistribution =
     countFromDistribution > 0
       ? seedDistribution
+      : countFromPolicies > 0
+      ? distributionFromPolicies
       : countFromRecent > 0
       ? distributionFromReviews
       : (() => {
@@ -102,10 +121,8 @@ export function ReviewStats({
   });
 
   // Calculate total reviews from distribution (only if it looks like counts)
-  const totalFromDistribution =
-    distributionDenominator > 1 ? Math.round(distributionDenominator) : 0;
   const effectiveTotalReviews =
-    totalReviews && totalReviews > 0 ? totalReviews : totalFromDistribution;
+    totalReviews && totalReviews > 0 ? totalReviews : recentReviews.length;
 
   // Calculate percentages for distribution
   const getPercentage = (count: number) => {

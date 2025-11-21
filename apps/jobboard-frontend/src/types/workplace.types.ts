@@ -223,6 +223,7 @@ export interface ReviewListParams {
   page?: number;
   size?: number;
   rating?: string;
+  ratingFilter?: string;
   sortBy?: string;
   hasComment?: boolean;
   policy?: string;

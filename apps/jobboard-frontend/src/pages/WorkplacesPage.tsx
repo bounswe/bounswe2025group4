@@ -33,11 +33,13 @@ const SECTORS = [
 
 // Sort options
 const SORT_OPTIONS = [
-  { value: '', label: 'Default' },
-  { value: 'rating', label: 'Rating (High to Low)' },
-  { value: 'rating,asc', label: 'Rating (Low to High)' },
-  { value: 'companyName', label: 'Name (A to Z)' },
-  { value: 'companyName,desc', label: 'Name (Z to A)' },
+  { value: '', labelKey: 'default' },
+  { value: 'nameDesc', labelKey: 'nameDesc' },
+  { value: 'nameAsc', labelKey: 'nameAsc' },
+  { value: 'reviewCountDesc', labelKey: 'reviewCountDesc' },
+  { value: 'reviewCountAsc', labelKey: 'reviewCountAsc' },
+  { value: 'ratingDesc', labelKey: 'ratingDesc' },
+  { value: 'ratingAsc', labelKey: 'ratingAsc' },
 ];
 
 interface Filters {
@@ -246,7 +248,7 @@ export default function WorkplacesPage() {
                   >
                     {SORT_OPTIONS.map((option) => (
                       <option key={option.value} value={option.value}>
-                        {t(`workplaces.filters.sortOptions.${option.label.toLowerCase().replace(/ |\(|\)|-/g, '')}`)}
+                        {t(`workplaces.filters.sortOptions.${option.labelKey}`)}
                       </option>
                     ))}
                   </select>
@@ -310,7 +312,7 @@ export default function WorkplacesPage() {
         )}
 
         {/* Workplaces Grid */}
-        {!error && workplaces.length > 0 && (
+        {!error && !loading && workplaces.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
             {workplaces.map((workplace) => (
               <WorkplaceCard key={workplace.id} workplace={workplace} />
