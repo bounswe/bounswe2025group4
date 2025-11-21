@@ -15,6 +15,7 @@ import { getWorkplaces } from '@/services/workplace.service';
 import type { WorkplaceBriefResponse } from '@/types/workplace.types';
 import CenteredLoader from '@/components/CenteredLoader';
 import CenteredError from '@/components/CenteredError';
+import { useTranslation } from 'react-i18next';
 
 // Common sectors
 const SECTORS = [
@@ -56,6 +57,7 @@ const initialFilters: Filters = {
 };
 
 export default function WorkplacesPage() {
+  const { t } = useTranslation('common');
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [workplaces, setWorkplaces] = useState<WorkplaceBriefResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,7 +99,7 @@ export default function WorkplacesPage() {
       setPage(pageNum);
     } catch (err) {
       console.error('Failed to load workplaces:', err);
-      setError('Failed to load workplaces');
+      setError(t('workplaces.loadError'));
     } finally {
       setLoading(false);
     }
@@ -132,9 +134,9 @@ export default function WorkplacesPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Workplaces</h1>
+            <h1 className="text-3xl font-bold mb-2">{t('workplaces.title')}</h1>
             <p className="text-muted-foreground">
-              Explore and discover companies to learn more about their culture and ratings
+              {t('workplaces.description')}
             </p>
           </div>
         </div>
@@ -143,7 +145,7 @@ export default function WorkplacesPage() {
         <Card className="p-4 mb-6">
           <div className="flex items-center justify-between">
             <Label htmlFor="search" className="text-base font-semibold">
-              Search Workplaces
+              {t('workplaces.searchTitle')}
             </Label>
             <div className="flex gap-2">
               <Button
@@ -153,7 +155,7 @@ export default function WorkplacesPage() {
                 className="gap-2"
               >
                 <Filter className="h-4 w-4" />
-                Filters
+                {t('workplaces.filters.title')}
                 {hasActiveFilters && (
                   <span className="ml-1 rounded-full bg-primary text-primary-foreground px-1.5 py-0.5 text-xs">
                     {[
@@ -174,7 +176,7 @@ export default function WorkplacesPage() {
                   className="gap-2"
                 >
                   <X className="h-4 w-4" />
-                  Clear
+                  {t('workplaces.filters.clear')}
                 </Button>
               )}
             </div>
@@ -186,12 +188,12 @@ export default function WorkplacesPage() {
               value={filters.searchQuery}
               onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="Enter company name..."
+              placeholder={t('workplaces.searchPlaceholder')}
               className="flex-1"
             />
             <Button onClick={handleSearch} disabled={loading}>
               <Search className="h-4 w-4 mr-2" />
-              {loading ? 'Searching...' : 'Search'}
+              {loading ? t('workplaces.searching') : t('workplaces.search')}
             </Button>
           </div>
 
@@ -201,17 +203,17 @@ export default function WorkplacesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Sector Filter */}
                 <div className="space-y-2">
-                  <Label htmlFor="sector">Sector</Label>
+                  <Label htmlFor="sector">{t('workplaces.filters.sector')}</Label>
                   <select
                     id="sector"
                     value={filters.sector}
                     onChange={(e) => setFilters({ ...filters, sector: e.target.value })}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <option value="">All Sectors</option>
+                    <option value="">{t('workplaces.filters.allSectors')}</option>
                     {SECTORS.map((s) => (
                       <option key={s} value={s}>
-                        {s}
+                        {t(`sectors.${s.toLowerCase().replace(/ /g, '')}`)}
                       </option>
                     ))}
                   </select>
@@ -219,12 +221,12 @@ export default function WorkplacesPage() {
 
                 {/* Location Filter */}
                 <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
+                  <Label htmlFor="location">{t('workplaces.filters.location')}</Label>
                   <Input
                     id="location"
                     value={filters.location}
                     onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-                    placeholder="Enter location..."
+                    placeholder={t('workplaces.filters.locationPlaceholder')}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         handleSearch();
@@ -235,7 +237,7 @@ export default function WorkplacesPage() {
 
                 {/* Sort By Filter */}
                 <div className="space-y-2">
-                  <Label htmlFor="sortBy">Sort By</Label>
+                  <Label htmlFor="sortBy">{t('workplaces.filters.sortBy')}</Label>
                   <select
                     id="sortBy"
                     value={filters.sortBy}
@@ -244,7 +246,7 @@ export default function WorkplacesPage() {
                   >
                     {SORT_OPTIONS.map((option) => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {t(`workplaces.filters.sortOptions.${option.label.toLowerCase().replace(/ |\(|\)|-/g, '')}`)}
                       </option>
                     ))}
                   </select>
@@ -253,9 +255,9 @@ export default function WorkplacesPage() {
                 {/* Minimum Rating Filter */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="minRating">Minimum Rating</Label>
+                    <Label htmlFor="minRating">{t('workplaces.filters.minRating')}</Label>
                     <span className="text-sm text-muted-foreground">
-                      {filters.minRating > 0 ? `${filters.minRating.toFixed(1)}★` : 'Any'}
+                      {filters.minRating > 0 ? t('workplaces.filters.ratingWithValue', { rating: filters.minRating.toFixed(1) }) : t('workplaces.filters.anyRating')}
                     </span>
                   </div>
                   <Slider
@@ -265,7 +267,7 @@ export default function WorkplacesPage() {
                     max={5}
                     step={0.5}
                     className="w-full"
-                    aria-label="Minimum rating"
+                    aria-label={t('workplaces.filters.minRating')}
                   />
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>0★</span>
@@ -279,7 +281,7 @@ export default function WorkplacesPage() {
 
         {error && (
           <CenteredError
-            message="Failed to load workplaces. Please try again."
+            message={t('workplaces.loadError')}
             onRetry={() => performSearch(page)}
           />
         )}
@@ -287,7 +289,7 @@ export default function WorkplacesPage() {
         {/* Results count */}
         {!error && (
           <p className="text-sm text-muted-foreground mb-4">
-            {loading ? 'Loading...' : `${totalElements} workplace${totalElements !== 1 ? 's' : ''} found`}
+            {loading ? t('workplaces.loading') : t('workplaces.workplacesFound', { count: totalElements })}
           </p>
         )}
 
@@ -295,15 +297,13 @@ export default function WorkplacesPage() {
         {!error && !loading && workplaces.length === 0 && (
           <Card className="p-8 text-center">
             <Building2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold mb-2">No Workplaces Found</h2>
+            <h2 className="text-xl font-semibold mb-2">{t('workplaces.empty.title')}</h2>
             <p className="text-muted-foreground mb-4">
-              {hasActiveFilters
-                ? 'Try adjusting your filters or search query'
-                : 'There are no workplaces available at the moment'}
+              {t(hasActiveFilters ? 'workplaces.empty.adjustFilters' : 'workplaces.empty.noWorkplaces')}
             </p>
             {hasActiveFilters && (
               <Button variant="outline" onClick={handleClearFilters}>
-                Clear Filters
+                {t('workplaces.filters.clearFilters')}
               </Button>
             )}
           </Card>
@@ -328,10 +328,10 @@ export default function WorkplacesPage() {
               disabled={page === 0 || loading}
             >
               <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
+              {t('pagination.previous')}
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {page + 1} of {totalPages}
+              {t('pagination.pageInfo', { page: page + 1, total: totalPages })}
             </span>
             <Button
               variant="outline"
@@ -339,7 +339,7 @@ export default function WorkplacesPage() {
               onClick={() => performSearch(page + 1)}
               disabled={page >= totalPages - 1 || loading}
             >
-              Next
+              {t('pagination.next')}
               <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>

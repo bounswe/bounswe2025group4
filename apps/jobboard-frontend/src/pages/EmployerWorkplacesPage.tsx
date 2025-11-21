@@ -79,7 +79,7 @@ export default function EmployerWorkplacesPage() {
       setWorkplacesWithRequests(workplacesWithPendingRequests);
     } catch (err) {
       console.error('Failed to load workplaces:', err);
-      setError('Failed to load your workplaces');
+      setError(t('employerWorkplaces.loadError'));
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ export default function EmployerWorkplacesPage() {
       setMyRequests(response.content);
     } catch (err) {
       console.error('Failed to load employer requests:', err);
-      setRequestsError('Could not load your applications.');
+      setRequestsError(t('employerWorkplaces.applicationsModal.loadError'));
     } finally {
       setRequestsLoading(false);
     }
@@ -101,10 +101,11 @@ export default function EmployerWorkplacesPage() {
 
   const getStatusLabel = (status: string) => {
     const normalized = status?.toUpperCase();
-    if (normalized === 'PENDING') return 'Pending';
-    if (normalized === 'APPROVED' || normalized === 'ACCEPTED') return 'Accepted';
-    if (normalized === 'REJECTED') return 'Rejected';
-    return status || 'Unknown';
+    if (normalized === 'PENDING') return t('employerWorkplaces.status.pending');
+    if (normalized === 'APPROVED' || normalized === 'ACCEPTED')
+      return t('employerWorkplaces.status.accepted');
+    if (normalized === 'REJECTED') return t('employerWorkplaces.status.rejected');
+    return status || t('employerWorkplaces.status.unknown');
   };
 
   const getStatusClasses = (status: string) => {
@@ -202,9 +203,9 @@ export default function EmployerWorkplacesPage() {
         <Dialog open={isApplicationsModalOpen} onOpenChange={setIsApplicationsModalOpen}>
           <DialogContent className="max-w-3xl">
             <DialogHeader>
-              <DialogTitle>My Workplace Applications</DialogTitle>
+              <DialogTitle>{t('employerWorkplaces.applicationsModal.title')}</DialogTitle>
               <DialogDescription>
-                View the status of your requests to manage workplaces.
+                {t('employerWorkplaces.applicationsModal.description')}
               </DialogDescription>
             </DialogHeader>
 
@@ -220,7 +221,7 @@ export default function EmployerWorkplacesPage() {
               </div>
             ) : myRequests.length === 0 ? (
               <Card className="p-6 text-center">
-                <p className="text-muted-foreground">You have not applied to any workplaces yet.</p>
+                <p className="text-muted-foreground">{t('employerWorkplaces.applicationsModal.noApplications')}</p>
               </Card>
             ) : (
               <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
@@ -229,13 +230,18 @@ export default function EmployerWorkplacesPage() {
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                       <div className="space-y-1">
                         <p className="font-semibold">
-                          {request.workplaceCompanyName || `Workplace #${request.workplaceId}`}
+                          {request.workplaceCompanyName ||
+                            `${t('employerWorkplaces.workplaceLabel')} #${request.workplaceId}`}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          Applied on {format(new Date(request.createdAt), 'MMM d, yyyy')}
+                          {t('employerWorkplaces.applicationsModal.appliedOn', {
+                            date: format(new Date(request.createdAt), 'MMM d, yyyy'),
+                          })}
                         </p>
                         {request.note && (
-                          <p className="text-sm text-muted-foreground">Note: {request.note}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {t('employerWorkplaces.applicationsModal.note', { note: request.note })}
+                          </p>
                         )}
                       </div>
                       <div className="flex flex-col items-start sm:items-end gap-2">
@@ -243,7 +249,9 @@ export default function EmployerWorkplacesPage() {
                           {getStatusLabel(request.status)}
                         </Badge>
                         <p className="text-xs text-muted-foreground">
-                          Updated {format(new Date(request.updatedAt), 'MMM d, yyyy')}
+                          {t('employerWorkplaces.applicationsModal.updatedOn', {
+                            date: format(new Date(request.updatedAt), 'MMM d, yyyy'),
+                          })}
                         </p>
                       </div>
                     </div>

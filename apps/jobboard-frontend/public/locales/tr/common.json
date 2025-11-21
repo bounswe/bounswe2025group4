@@ -235,6 +235,123 @@
       "paused": "Durduruldu"
     }
   },
+  "employerJobPostDetails": {
+    "error": {
+      "load": "İş detayları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+      "title": "İlan Yüklenemedi",
+      "notFound": "İlan bulunamadı",
+      "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir."
+    },
+    "applied": {
+      "today": "Bugün baÅŸvuruldu",
+      "yesterday": "1 gÃ¼n Ã¶nce baÅŸvuruldu",
+      "daysAgo": "{{count}} gÃ¼n Ã¶nce baÅŸvuruldu"
+    },
+    "backToDashboard": "Panele Geri DÃ¶n",
+    "breadcrumb": {
+      "jobs": "Ä°lanlar"
+    },
+    "editJobPost": "Ä°lanÄ± DÃ¼zenle",
+    "jobDescription": "Ä°ÅŸ TanÄ±mÄ±",
+    "salaryRange": "MaaÅŸ AralÄ±ÄŸÄ±",
+    "location": "Konum",
+    "remote": "Uzaktan",
+    "contact": "Ä°letiÅŸim Bilgileri",
+    "ethicalPolicies": "Etik Politikalar",
+    "inclusiveOpportunity": "KapsayÄ±cÄ± FÄ±rsat",
+    "inclusiveOpportunityDescription": "Bu pozisyon, farklÄ± geÃ§miÅŸlerden gelen adaylarÄ± memnuniyetle karÅŸÄ±layan kapsayÄ±cÄ± bir fÄ±rsat olarak belirlenmiÅŸtir.",
+    "applicationsReceived": "AlÄ±nan BaÅŸvurular ({{count}})",
+    "noApplications": "HenÃ¼z baÅŸvuru alÄ±nmadÄ±.",
+    "viewApplication": "BaÅŸvuruyu GÃ¶rÃ¼ntÃ¼le"
+  },
+  "employerWorkplaces": {
+    "title": "Ä°ÅŸ Yerlerim",
+    "description": "Ä°ÅŸ yerlerinizi yÃ¶netin ve deÄŸerlendirmelere yanÄ±t verin",
+    "viewApplications": "BaÅŸvurularÄ± GÃ¶rÃ¼ntÃ¼le",
+    "newWorkplace": "Yeni Ä°ÅŸ Yeri",
+    "loadError": "Ä°ÅŸ yerleriniz yÃ¼klenemedi. LÃ¼tfen tekrar deneyin.",
+    "empty": {
+      "title": "HenÃ¼z Ä°ÅŸ Yeri Yok",
+      "description": "Ä°lk iÅŸ yerinizi oluÅŸturun veya mevcut birine katÄ±lma isteÄŸi gÃ¶nderin"
+    },
+    "addNew": {
+      "title": "Yeni Ä°ÅŸ Yeri Ekle",
+      "description": "Yeni bir iÅŸ yeri oluÅŸturun veya mevcut birine katÄ±lÄ±n"
+    },
+    "applicationsModal": {
+      "title": "Ä°ÅŸ Yeri BaÅŸvurularÄ±m",
+      "description": "Ä°ÅŸ yerlerini yÃ¶netme taleplerinizin durumunu gÃ¶rÃ¼ntÃ¼leyin.",
+      "loadError": "BaÅŸvurularÄ±nÄ±z yÃ¼klenemedi.",
+      "noApplications": "HenÃ¼z hiÃ§bir iÅŸ yerine baÅŸvurmadÄ±nÄ±z.",
+      "appliedOn": "{{date}} tarihinde baÅŸvuruldu",
+      "note": "Not: {{note}}",
+      "updatedOn": "{{date}} tarihinde gÃ¼ncellendi"
+    },
+    "workplaceLabel": "Ä°ÅŸ Yeri",
+    "page": {
+      "loadError": "Ä°ÅŸ yerleriniz yÃ¼klenemedi"
+    }
+  },
+  "status": {
+    "pending": "Beklemede",
+    "accepted": "Kabul Edildi",
+    "rejected": "Reddedildi",
+    "unknown": "Bilinmiyor"
+  },
+  "workplaces": {
+    "title": "Ä°ÅŸ Yerleri",
+    "description": "Åžirketleri kÃ¼ltÃ¼rleri ve deÄŸerlendirmeleri hakkÄ±nda daha fazla bilgi edinmek iÃ§in keÅŸfedin ve inceleyin",
+    "searchTitle": "Ä°ÅŸ Yeri Ara",
+    "searchPlaceholder": "Åžirket adÄ± girin...",
+    "searching": "AranÄ±yor...",
+    "search": "Ara",
+    "loadError": "Ä°ÅŸ yerleri yÃ¼klenemedi. LÃ¼tfen tekrar deneyin.",
+    "loading": "YÃ¼kleniyor...",
+    "workplacesFound": "{{count}} iÅŸ yeri bulundu",
+    "workplacesFound_plural": "{{count}} iÅŸ yeri bulundu",
+    "empty": {
+      "title": "Ä°ÅŸ Yeri BulunamadÄ±",
+      "adjustFilters": "Filtrelerinizi veya arama sorgunuzu ayarlamayÄ± deneyin",
+      "noWorkplaces": "Åžu anda mevcut iÅŸ yeri yok"
+    },
+    "filters": {
+      "title": "Filtreler",
+      "clear": "Temizle",
+      "clearFilters": "Filtreleri Temizle",
+      "sector": "SektÃ¶r",
+      "allSectors": "TÃ¼m SektÃ¶rler",
+      "location": "Konum",
+      "locationPlaceholder": "Konum girin...",
+      "sortBy": "SÄ±rala",
+      "sortOptions": {
+        "default": "VarsayÄ±lan",
+        "ratinghightolow": "Puana GÃ¶re (YÃ¼ksekten DÃ¼ÅŸÃ¼ÄŸe)",
+        "ratinglowtohigh": "Puana GÃ¶re (DÃ¼ÅŸÃ¼kten YÃ¼kseÄŸe)",
+        "nameatoz": "Ada GÃ¶re (A'dan Z'ye)",
+        "nameztoa": "Ada GÃ¶re (Z'den A'ya)"
+      },
+      "minRating": "Minimum Puan",
+      "anyRating": "Herhangi",
+      "ratingWithValue": "{{rating}}â˜…"
+    }
+  },
+  "sectors": {
+    "technology": "Teknoloji",
+    "healthcare": "SaÄŸlÄ±k",
+    "education": "EÄŸitim",
+    "finance": "Finans",
+    "creativearts": "YaratÄ±cÄ± Sanatlar",
+    "manufacturing": "Ãœretim",
+    "retail": "Perakende",
+    "consulting": "DanÄ±ÅŸmanlÄ±k",
+    "nonprofit": "Kar AmacÄ± GÃ¼tmeyen",
+    "other": "DiÄŸer"
+  },
+  "pagination": {
+    "previous": "Ã–nceki",
+    "next": "Sonraki",
+    "pageInfo": "Sayfa {{page}} / {{total}}"
+  },
   "auth": {
     "login": {
       "title": "Tekrar Hoş Geldiniz",
