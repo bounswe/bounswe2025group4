@@ -25,6 +25,7 @@ import { NewWorkplaceModal } from '@/components/workplace/NewWorkplaceModal';
 import { JoinWorkplaceModal } from '@/components/workplace/JoinWorkplaceModal';
 import { CreateWorkplaceModal } from '@/components/workplace/CreateWorkplaceModal';
 import { EmployerWorkplaceCard } from '@/components/workplace/EmployerWorkplaceCard';
+import { getErrorMessage } from '@/utils/error-handler';
 
 export default function EmployerWorkplacesPage() {
   const { t } = useTranslation('common');
@@ -79,7 +80,7 @@ export default function EmployerWorkplacesPage() {
       setWorkplacesWithRequests(workplacesWithPendingRequests);
     } catch (err) {
       console.error('Failed to load workplaces:', err);
-      setError(t('employerWorkplaces.loadError'));
+      setError(getErrorMessage(err, t('employerWorkplaces.loadError')));
     } finally {
       setLoading(false);
     }
@@ -93,7 +94,9 @@ export default function EmployerWorkplacesPage() {
       setMyRequests(response.content);
     } catch (err) {
       console.error('Failed to load employer requests:', err);
-      setRequestsError(t('employerWorkplaces.applicationsModal.loadError'));
+      setRequestsError(
+        getErrorMessage(err, t('employerWorkplaces.applicationsModal.loadError'))
+      );
     } finally {
       setRequestsLoading(false);
     }
@@ -147,7 +150,7 @@ export default function EmployerWorkplacesPage() {
 
         {error && (
           <CenteredError
-            message={t('employerWorkplaces.loadError')}
+            message={error ?? t('employerWorkplaces.loadError')}
             onRetry={loadWorkplaces}
           />
         )}
