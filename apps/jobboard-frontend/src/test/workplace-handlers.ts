@@ -225,8 +225,7 @@ export const workplaceHandlers = [
     }),
 
     // Get Employer Requests for a Workplace
-    http.get(`${API_BASE_URL}/workplace/:id/employers/request`, async ({ params, request }) => {
-        const { id } = params;
+    http.get(`${API_BASE_URL}/workplace/:id/employers/request`, async ({ request }) => {
         const url = new URL(request.url);
         const page = Number(url.searchParams.get('page') || 0);
         const size = Number(url.searchParams.get('size') || 10);
@@ -267,7 +266,6 @@ export const workplaceHandlers = [
         const url = new URL(request.url);
         const page = Number(url.searchParams.get('page') || 0);
         const size = Number(url.searchParams.get('size') || 10);
-        const sortBy = url.searchParams.get('sortBy') || 'ratingDesc';
 
         const mockReviews = [
             {

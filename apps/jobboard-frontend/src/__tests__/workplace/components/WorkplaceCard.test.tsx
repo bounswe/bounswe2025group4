@@ -69,7 +69,6 @@ describe('WorkplaceCard', () => {
     const handleClick = vi.fn();
     renderComponent({ onClick: handleClick });
 
-    const card = screen.getByText('Test Company').closest('div[class*="card"]');
     // The card content is wrapped in a div that has the click handler when onClick is passed
     // However, looking at the component code:
     // <Card ... onClick={onClick}>

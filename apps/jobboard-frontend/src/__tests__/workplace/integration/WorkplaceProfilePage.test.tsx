@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import WorkplaceProfilePage from '@/pages/WorkplaceProfilePage';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { server } from '@/test/setup';
 import { http, HttpResponse } from 'msw';

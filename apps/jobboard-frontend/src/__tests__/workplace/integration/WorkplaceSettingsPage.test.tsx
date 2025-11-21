@@ -42,6 +42,7 @@ describe('WorkplaceSettingsPage Integration', () => {
       username: 'testuser',
       email: 'test@example.com',
       role: 'ROLE_EMPLOYER',
+      type: 'Bearer',
       token: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZXhwIjoxOTAwMDAwMDAwfQ.signature'
     });
     // Mock user as employer of workplace 1
@@ -158,7 +159,7 @@ describe('WorkplaceSettingsPage Integration', () => {
     }
 
     // Find the upload trigger by text (rendered via label + button span)
-    const uploadButton = screen.getByText(/Upload Image/i);
+    screen.getByText(/Upload Image/i);
     
     // Simulate file selection
     const file = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' });

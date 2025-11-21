@@ -41,8 +41,8 @@ if (!window.matchMedia) {
 }
 
 // Mock ResizeObserver for components relying on it
-global.ResizeObserver = class ResizeObserver {
+globalThis.ResizeObserver = class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
-} as any;
+} as typeof ResizeObserver;

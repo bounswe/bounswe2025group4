@@ -2,9 +2,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import EmployerWorkplacesPage from '@/pages/EmployerWorkplacesPage';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
-import { server } from '@/test/setup';
-import { http, HttpResponse } from 'msw';
-import { API_BASE_URL } from '@/test/handlers';
 import * as workplaceService from '@/services/workplace.service';
 import userEvent from '@testing-library/user-event';
 

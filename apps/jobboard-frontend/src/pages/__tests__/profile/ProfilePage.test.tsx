@@ -56,10 +56,6 @@ describe('ProfilePage', () => {
   const deleteModalCopy = profileCopy.deleteModal;
   const createProfileTitle = profileCopy.create?.title;
   const editProfileImageLabel = profileCopy.header.actions.editImage;
-  const confirmPromptText = deleteModalCopy.confirmPrompt.replace(
-    '<code>{{keyword}}</code>',
-    deleteModalCopy.confirmKeyword,
-  );
 
   beforeEach(() => {
     // Set up authenticated user state for tests
