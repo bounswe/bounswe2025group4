@@ -16,7 +16,7 @@
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { readdir, stat } from 'fs/promises';
-import { config } from './config/test.config.js';
+import { config } from './config/test.config.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

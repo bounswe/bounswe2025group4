@@ -6,7 +6,7 @@
 
 import { Capabilities } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome.js';
-import { config } from './test.config.js';
+import { config } from './test.config.ts';
 
 /**
  * Get Chrome browser capabilities

@@ -5,9 +5,9 @@
  */
 
 import { WebDriver } from 'selenium-webdriver';
-import { LoginPage } from '../pages/LoginPage.js';
-import type { TestAccount } from '../fixtures/test-accounts.js';
-import { sleep } from './wait.js';
+import { LoginPage } from '../pages/LoginPage.ts';
+import type { TestAccount } from '../fixtures/test-accounts.ts';  
+import { sleep } from './wait.ts';
 
 /**
  * Login as a specific user

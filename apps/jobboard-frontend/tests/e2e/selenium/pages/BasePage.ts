@@ -5,15 +5,15 @@
  */
 
 import { WebDriver, By, WebElement } from 'selenium-webdriver';
-import { config } from '../config/test.config.js';
+import { config } from '../config/test.config.ts';
 import {
   waitForElement,
   waitForElementVisible,
   waitForElementClickable,
   waitForUrlContains,
-} from '../utils/wait.js';
-import { takeScreenshot } from '../utils/screenshot.js';
-import { scrollToElement } from '../utils/driver.js';
+} from '../utils/wait.ts';
+import { takeScreenshot } from '../utils/screenshot.ts';
+import { scrollToElement } from '../utils/driver.ts';
 
 export class BasePage {
   protected driver: WebDriver;

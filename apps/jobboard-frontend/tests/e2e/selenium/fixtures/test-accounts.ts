@@ -5,7 +5,7 @@
  * These accounts should exist in your dev/test database.
  */
 
-import { config } from '../config/test.config.js';
+import { config } from '../config/test.config.ts';
 
 export interface TestAccount {
   email: string;
