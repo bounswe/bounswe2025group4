@@ -325,10 +325,12 @@
                   "sortBy": "Sort By",
                   "sortOptions": {
                     "default": "Default",
-                    "ratinghightolow": "Rating (High to Low)",
-                    "ratinglowtohigh": "Rating (Low to High)",
-                    "nameatoz": "Name (A to Z)",
-                    "nameztoa": "Name (Z to A)"
+                    "nameDesc": "Name (Z to A)",
+                    "nameAsc": "Name (A to Z)",
+                    "reviewCountDesc": "Review Count (High to Low)",
+                    "reviewCountAsc": "Review Count (Low to High)",
+                    "ratingDesc": "Rating (High to Low)",
+                    "ratingAsc": "Rating (Low to High)"
                   },
                   "minRating": "Minimum Rating",
                   "anyRating": "Any",
@@ -1100,6 +1102,15 @@
     "basedOn_plural": "Based on {{count}} reviews",
     "recentComments": "Recent Comments",
     "recentReviews": "Recent Reviews",
+    "sortBy": "Sort reviews",
+    "sortOptions": {
+      "ratingDesc": "Rating (High to Low)",
+      "ratingAsc": "Rating (Low to High)"
+    },
+    "ratingFilter": "Rating range",
+    "minRating": "Min",
+    "maxRating": "Max",
+    "clearFilters": "Reset filters",
     "totalReviews": "{{count}} review",
     "totalReviews_plural": "{{count}} reviews",
     "noReviews": "No reviews yet. Be the first to share your experience!",

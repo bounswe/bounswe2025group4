@@ -985,6 +985,15 @@
     "basedOn_plural": "بناءً على {{count}} تقييمات",
     "recentComments": "التعليقات الأخيرة",
     "recentReviews": "التقييمات الأخيرة",
+    "sortBy": "ترتيب التقييمات",
+    "sortOptions": {
+      "ratingDesc": "التقييم (من الأعلى إلى الأدنى)",
+      "ratingAsc": "التقييم (من الأدنى إلى الأعلى)"
+    },
+    "ratingFilter": "نطاق التقييم",
+    "minRating": "الأدنى",
+    "maxRating": "الأعلى",
+    "clearFilters": "إعادة التعيين",
     "totalReviews": "{{count}} تقييم",
     "totalReviews_plural": "{{count}} تقييمات",
     "noReviews": "لا توجد تقييمات حتى الآن. كن أول من يشارك تجربته!",

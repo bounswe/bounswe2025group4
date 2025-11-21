@@ -325,10 +325,12 @@
       "sortBy": "SÄ±rala",
       "sortOptions": {
         "default": "VarsayÄ±lan",
-        "ratinghightolow": "Puana GÃ¶re (YÃ¼ksekten DÃ¼ÅŸÃ¼ÄŸe)",
-        "ratinglowtohigh": "Puana GÃ¶re (DÃ¼ÅŸÃ¼kten YÃ¼kseÄŸe)",
-        "nameatoz": "Ada GÃ¶re (A'dan Z'ye)",
-        "nameztoa": "Ada GÃ¶re (Z'den A'ya)"
+        "nameDesc": "Isme gore (Z'den A'ya)",
+        "nameAsc": "Isme gore (A'dan Z'ye)",
+        "reviewCountDesc": "Yorum sayisi (Coktan aza)",
+        "reviewCountAsc": "Yorum sayisi (Azdan coka)",
+        "ratingDesc": "Puana gore (Yuksekten dusuge)",
+        "ratingAsc": "Puana gore (Dusukten yuksege)"
       },
       "minRating": "Minimum Puan",
       "anyRating": "Herhangi",
@@ -1133,6 +1135,15 @@
     "basedOn_plural": "{{count}} değerlendirmeye göre",
     "recentComments": "Son Yorumlar",
     "recentReviews": "Son Değerlendirmeler",
+    "sortBy": "Yorumlari sirala",
+    "sortOptions": {
+      "ratingDesc": "Puan (Yuksekten dusuge)",
+      "ratingAsc": "Puan (Dusukten yuksege)"
+    },
+    "ratingFilter": "Puan araligi",
+    "minRating": "Min",
+    "maxRating": "Max",
+    "clearFilters": "Filtreleri sifirla",
     "totalReviews": "{{count}} değerlendirme",
     "totalReviews_plural": "{{count}} değerlendirme",
     "noReviews": "Henüz değerlendirme yok. Deneyiminizi paylaşan ilk kişi siz olun!",
