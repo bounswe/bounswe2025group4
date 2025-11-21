@@ -133,7 +133,7 @@ VALUES ('e2e-employee@test.com', 'hashed_password', 'EMPLOYEE');
 First, build the production bundle:
 
 ```bash
-pnpm build:e2e
+pnpm build
 ```
 
 Start the preview server:

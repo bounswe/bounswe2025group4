@@ -6,8 +6,10 @@
 
 import { Builder, WebDriver } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome.js';
-import { config } from '../config/test.config.ts';  
+import { config } from '../config/test.config.ts';
 import { getChromeCapabilities } from '../config/capabilities.ts';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * Initialize a new WebDriver instance with Chrome
@@ -15,25 +17,67 @@ import { getChromeCapabilities } from '../config/capabilities.ts';
 export async function initDriver(): Promise<WebDriver> {
   const chromeOptions = getChromeCapabilities() as chrome.Options;
 
-  const driver = await new Builder()
+  // Get the project root directory (where node_modules is)
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const projectRoot = path.resolve(__dirname, '../../../..');
+  const chromeDriverPath = path.join(projectRoot, 'node_modules', 'chromedriver', 'lib', 'chromedriver', 'chromedriver.exe');
+
+  // Set up the ChromeDriver service
+  const service = new chrome.ServiceBuilder(chromeDriverPath);
+
+  // Add a timeout wrapper to detect hanging driver initialization
+  const driverPromise = new Builder()
     .forBrowser('chrome')
     .setChromeOptions(chromeOptions)
+    .setChromeService(service)
     .build();
 
-  // Set timeouts
-  await driver.manage().setTimeouts({
-    implicit: config.implicitWait,
-    pageLoad: config.pageLoadTimeout,
-    script: config.scriptTimeout,
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    setTimeout(() => {
+      reject(new Error(
+        'WebDriver initialization timed out after 30 seconds.\n' +
+        'Possible causes:\n' +
+        '  - ChromeDriver is not installed or not in PATH\n' +
+        '  - Chrome browser is not installed\n' +
+        '  - ChromeDriver version does not match Chrome version\n' +
+        '  - A previous Chrome instance is blocking the port\n\n' +
+        'Try:\n' +
+        '  1. Run: pnpm install (to ensure chromedriver is installed)\n' +
+        '  2. Check Chrome is installed and up to date\n' +
+        '  3. Kill any hanging Chrome/ChromeDriver processes'
+      ));
+    }, 30000);
   });
 
-  // Maximize window (or set specific size)
-  await driver
-    .manage()
-    .window()
-    .setRect({ width: config.browserWidth, height: config.browserHeight });
+  let driver: WebDriver;
+  try {
+    driver = await Promise.race([driverPromise, timeoutPromise]);
+  } catch (error) {
+    console.error('\n❌ Failed to initialize WebDriver');
+    throw error;
+  }
 
-  return driver;
+  try {
+    // Set timeouts
+    await driver.manage().setTimeouts({
+      implicit: config.implicitWait,
+      pageLoad: config.pageLoadTimeout,
+      script: config.scriptTimeout,
+    });
+
+    // Maximize window (or set specific size)
+    await driver
+      .manage()
+      .window()
+      .setRect({ width: config.browserWidth, height: config.browserHeight });
+
+    return driver;
+  } catch (error) {
+    // Clean up driver if configuration fails
+    await quitDriver(driver);
+    throw error;
+  }
 }
 
 /**

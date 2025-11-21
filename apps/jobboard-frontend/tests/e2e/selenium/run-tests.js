@@ -160,7 +160,7 @@ async function main() {
 
   // Run all tests
   console.log('╔════════════════════════════════════════════════════╗');
-  console.log('║              Running Tests                        ║');
+  console.log('║              Running Tests                         ║');
   console.log('╚════════════════════════════════════════════════════╝\n');
 
   const testResults = [];
