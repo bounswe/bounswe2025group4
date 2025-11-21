@@ -6,8 +6,8 @@
 
 import { Builder, WebDriver } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome.js';
-import { config } from '../config/test.config.js';
-import { getChromeCapabilities } from '../config/capabilities.js';
+import { config } from '../config/test.config.ts';  
+import { getChromeCapabilities } from '../config/capabilities.ts';
 
 /**
  * Initialize a new WebDriver instance with Chrome

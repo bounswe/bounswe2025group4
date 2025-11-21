@@ -7,7 +7,7 @@
 import { WebDriver } from 'selenium-webdriver';
 import * as fs from 'fs';
 import * as path from 'path';
-import { config } from '../config/test.config.js';
+import { config } from '../config/test.config.ts';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
