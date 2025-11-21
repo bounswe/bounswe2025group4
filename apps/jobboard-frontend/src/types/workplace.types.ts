@@ -52,6 +52,7 @@ export interface WorkplaceDetailResponse {
   overallAvg: number;
   ethicalAverages: Record<string, number>;
   recentReviews?: ReviewResponse[];
+  reviewCount?: number;
   employers: EmployerListItem[];
   createdAt: string;
   updatedAt: string;
@@ -90,6 +91,8 @@ export interface ReviewResponse {
   id: number;
   workplaceId: number;
   userId: number;
+  username?: string;
+  nameSurname?: string;
   title?: string;
   content?: string;
   anonymous: boolean;
@@ -117,6 +120,7 @@ export interface ReplyResponse {
   id: number;
   reviewId: number;
   employerUserId: number;
+  workplaceName?: string;
   content: string;
   createdAt: string;
   updatedAt: string;
@@ -129,6 +133,7 @@ export interface ReplyResponse {
 export interface EmployerListItem {
   userId: number;
   username: string;
+  nameSurname?: string;
   email: string;
   role: string;
   joinedAt: string;

@@ -1011,6 +1011,8 @@
     "basedOn_plural": "Based on {{count}} reviews",
     "recentComments": "Recent Comments",
     "recentReviews": "Recent Reviews",
+    "totalReviews": "{{count}} review",
+    "totalReviews_plural": "{{count}} reviews",
     "noReviews": "No reviews yet. Be the first to share your experience!",
     "loadMore": "Load More Reviews",
     "loading": "Loading...",
@@ -1030,6 +1032,11 @@
     "seeWhatEmployeesSay": "See what employees say",
     "viewAllReviews": "View All Reviews",
     "seeAllReviews": "See All Reviews",
+    "reply": {
+      "employerResponse": "Employer Response",
+      "confirmDelete": "Are you sure you want to delete this reply?",
+      "deleteError": "Failed to delete reply. Please try again."
+    },
     "errors": {
       "allRatingsRequired": "Please rate all categories",
       "commentTooShort": "Review must be at least 10 characters",
@@ -1047,7 +1054,8 @@
   },
   "common": {
     "loading": "Loading...",
-    "goHome": "Go to Homepage"
+    "goHome": "Go to Homepage",
+    "edited": "Edited"
   },
   "chat": {
     "conversations": "Conversations",

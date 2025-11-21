@@ -64,8 +64,8 @@ export function ReplyCard({
 
   return (
     <>
-      <Card className="mt-4 border-l-4 border-l-primary/30 bg-muted/30">
-        <CardContent className="pt-4">
+      <Card className="border-l-4 border-l-primary/30 bg-muted/30">
+        <CardContent>
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3 mb-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">

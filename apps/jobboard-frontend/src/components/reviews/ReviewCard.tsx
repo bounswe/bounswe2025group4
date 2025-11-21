@@ -45,14 +45,21 @@ export function ReviewCard({ workplaceId, review, canReply, onUpdate }: ReviewCa
 
   const getInitials = () => {
     if (review.anonymous) return 'A';
-    // For now, use default initials - would need username from API
+    const name = review.nameSurname || review.username;
+    if (name) {
+      return name
+        .split(' ')
+        .map((part) => part[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+    }
     return 'U';
   };
 
   const getDisplayName = () => {
     if (review.anonymous) return t('reviews.anonymous');
-    // Would need username from API
-    return `User ${review.userId}`;
+    return review.nameSurname || review.username || `User ${review.userId}`;
   };
 
   const handleReplySuccess = () => {

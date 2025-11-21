@@ -1013,6 +1013,8 @@
     "basedOn_plural": "{{count}} değerlendirmeye göre",
     "recentComments": "Son Yorumlar",
     "recentReviews": "Son Değerlendirmeler",
+    "totalReviews": "{{count}} değerlendirme",
+    "totalReviews_plural": "{{count}} değerlendirme",
     "noReviews": "Henüz değerlendirme yok. Deneyiminizi paylaşan ilk kişi siz olun!",
     "loadMore": "Daha Fazla Yükle",
     "loading": "Yükleniyor...",
@@ -1032,6 +1034,11 @@
     "seeWhatEmployeesSay": "Çalışanların ne dediğini görün",
     "viewAllReviews": "Tüm Değerlendirmeleri Gör",
     "seeAllReviews": "Tüm Değerlendirmeleri Gör",
+    "reply": {
+      "employerResponse": "İşveren Yanıtı",
+      "confirmDelete": "Bu yanıtı silmek istediğinizden emin misiniz?",
+      "deleteError": "Yanıt silinemedi. Lütfen tekrar deneyin."
+    },
     "errors": {
       "allRatingsRequired": "Lütfen tüm kategorileri değerlendirin",
       "commentTooShort": "Değerlendirme en az 10 karakter olmalıdır",
@@ -1049,7 +1056,8 @@
   },
   "common": {
     "loading": "Yükleniyor...",
-    "goHome": "Ana Sayfaya Git"
+    "goHome": "Ana Sayfaya Git",
+    "edited": "Düzenlendi"
   },
   "chat": {
     "conversations": "Sohbetler",

@@ -982,6 +982,8 @@
     "basedOn_plural": "بناءً على {{count}} تقييمات",
     "recentComments": "التعليقات الأخيرة",
     "recentReviews": "التقييمات الأخيرة",
+    "totalReviews": "{{count}} تقييم",
+    "totalReviews_plural": "{{count}} تقييمات",
     "noReviews": "لا توجد تقييمات حتى الآن. كن أول من يشارك تجربته!",
     "loadMore": "تحميل المزيد",
     "loading": "جارٍ التحميل...",
@@ -1001,6 +1003,11 @@
     "seeWhatEmployeesSay": "انظر ما يقوله الموظفون",
     "viewAllReviews": "عرض جميع التقييمات",
     "seeAllReviews": "عرض جميع التقييمات",
+    "reply": {
+      "employerResponse": "رد صاحب العمل",
+      "confirmDelete": "هل أنت متأكد من أنك تريد حذف هذا الرد؟",
+      "deleteError": "فشل حذف الرد. يرجى المحاولة مرة أخرى."
+    },
     "errors": {
       "allRatingsRequired": "يرجى تقييم جميع الفئات",
       "commentTooShort": "يجب أن يكون التقييم 10 أحرف على الأقل",
@@ -1018,7 +1025,8 @@
   },
   "common": {
     "loading": "جارٍ التحميل...",
-    "goHome": "الذهاب إلى الصفحة الرئيسية"
+    "goHome": "الذهاب إلى الصفحة الرئيسية",
+    "edited": "تم التعديل"
   },
   "chat": {
     "conversations": "المحادثات",
