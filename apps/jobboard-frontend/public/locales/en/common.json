@@ -17,7 +17,9 @@
       "chat": "Chat",
       "forum": "Forum",
       "employerDashboard": "Employer Dashboard",
-      "workplaces": "My Workplaces"
+      "workplaces": "Workplaces",
+      "myWorkplaces": "My Workplaces",
+      "browseWorkplaces": "Browse Workplaces"
     },
     "auth": {
       "login": "Login",

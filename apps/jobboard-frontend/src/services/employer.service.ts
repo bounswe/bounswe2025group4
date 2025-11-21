@@ -92,6 +92,24 @@ export async function getEmployerRequests(
 }
 
 /**
+ * Get current user's employer requests (across workplaces)
+ */
+export async function getMyEmployerRequests(
+  params: EmployerRequestListParams = {}
+): Promise<PaginatedEmployerRequestResponse> {
+  const response = await api.get<PaginatedEmployerRequestResponse>(
+    `${BASE_PATH}/employers/requests/me`,
+    {
+      params: {
+        page: params.page ?? 0,
+        size: params.size ?? 10,
+      },
+    }
+  );
+  return response.data;
+}
+
+/**
  * Get a specific employer join request
  * @param workplaceId Workplace ID
  * @param requestId Request ID

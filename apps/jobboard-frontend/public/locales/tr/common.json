@@ -16,7 +16,10 @@
       "myMentorships": "Mentorluklarım",
       "chat": "Sohbet",
       "forum": "Forum",
-      "employerDashboard": "İşveren Paneli"
+      "employerDashboard": "İşveren Paneli",
+      "workplaces": "İş Yerleri",
+      "myWorkplaces": "İş Yerlerim",
+      "browseWorkplaces": "İş Yerlerini Keşfet"
     },
     "auth": {
       "login": "Giriş Yap",

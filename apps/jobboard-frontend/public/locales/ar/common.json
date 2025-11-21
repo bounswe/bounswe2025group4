@@ -16,7 +16,10 @@
       "mentorship": "الإرشاد",
       "chat": "المحادثة",
       "forum": "المنتدى",
-      "employerDashboard": "لوحة صاحب العمل"
+      "employerDashboard": "لوحة صاحب العمل",
+      "workplaces": "أماكن العمل",
+      "myWorkplaces": "أماكن عملي",
+      "browseWorkplaces": "استعراض أماكن العمل"
     },
     "auth": {
       "login": "تسجيل الدخول",

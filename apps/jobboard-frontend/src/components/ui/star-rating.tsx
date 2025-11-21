@@ -57,9 +57,10 @@ export function StarRating({
       <div className="flex items-center gap-0.5">
         {Array.from({ length: max }, (_, index) => {
           const starValue = index + 1;
-          const isFilled = starValue <= displayValue;
-          const isHalfFilled =
-            !isFilled && starValue - 0.5 <= displayValue && displayValue < starValue;
+          const fillPercentage = Math.max(
+            0,
+            Math.min(100, (displayValue - index) * 100)
+          );
 
           return (
             <button
@@ -76,29 +77,25 @@ export function StarRating({
               )}
               aria-label={`Rate ${starValue} out of ${max}`}
             >
-              {isHalfFilled ? (
-                <div className="relative">
-                  <Star
-                    className={cn(sizeClasses[size], 'text-muted-foreground')}
-                    fill="none"
-                  />
-                  <div className="absolute inset-0 overflow-hidden w-1/2">
-                    <Star
-                      className={cn(sizeClasses[size], 'text-yellow-500')}
-                      fill="currentColor"
-                    />
-                  </div>
-                </div>
-              ) : (
+              <div className="relative">
                 <Star
                   className={cn(
                     sizeClasses[size],
-                    isFilled ? 'text-yellow-500' : 'text-muted-foreground',
+                    'text-muted-foreground',
                     isInteractive && hoverValue && 'transition-colors'
                   )}
-                  fill={isFilled ? 'currentColor' : 'none'}
+                  fill="none"
                 />
-              )}
+                <div
+                  className="absolute inset-0 overflow-hidden"
+                  style={{ width: `${fillPercentage}%` }}
+                >
+                  <Star
+                    className={cn(sizeClasses[size], 'text-yellow-500')}
+                    fill="currentColor"
+                  />
+                </div>
+              </div>
             </button>
           );
         })}

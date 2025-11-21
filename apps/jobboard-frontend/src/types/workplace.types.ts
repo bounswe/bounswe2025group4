@@ -157,6 +157,9 @@ export interface EmployerRequestResponse {
   workplaceId: number;
   createdByUserId: number;
   status: string;
+  workplaceCompanyName?: string;
+  createdByUsername?: string;
+  nameSurname?: string;
   note?: string;
   createdAt: string;
   updatedAt: string;

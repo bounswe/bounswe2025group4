@@ -109,8 +109,11 @@ export default function WorkplaceProfilePage() {
     setRefreshKey((prev) => prev + 1);
   };
 
-  const canWriteReview = isAuthenticated && user?.role === 'ROLE_JOBSEEKER';
   const isEmployer = workplace?.employers?.some((emp) => emp.userId === user?.id);
+  const employerRole = workplace?.employers?.find((emp) => emp.userId === user?.id)?.role;
+  const isOwner = employerRole === 'OWNER';
+  // Employers can write reviews for workplaces they don't manage
+  const canWriteReview = isAuthenticated && (user?.role === 'ROLE_JOBSEEKER' || (user?.role === 'ROLE_EMPLOYER' && !isEmployer));
 
   if (loading) {
     return (
@@ -232,35 +235,51 @@ export default function WorkplaceProfilePage() {
               </Card>
             )}
 
-            {/* Employers Section */}
-            {isEmployer && workplace.employers && workplace.employers.length > 0 && (
+            {/* Employers Section - visible to everyone */}
+            {workplace.employers && workplace.employers.length > 0 && (
               <Card className="p-6">
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold">Employers</h2>
-                  <Button variant="outline" asChild className="relative">
-                    <Link to={`/employer/workplace/${workplace.id}/requests`}>
-                      <Users className="h-4 w-4"/>
-                      Manage Requests
-                      {hasPendingRequests && (
-                        <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-background" />
-                      )}
-                    </Link>
-                  </Button>
+                  {isOwner && (
+                    <Button variant="outline" asChild className="relative">
+                      <Link to={`/employer/workplace/${workplace.id}/requests`}>
+                        <Users className="h-4 w-4"/>
+                        Manage Requests
+                        {hasPendingRequests && (
+                          <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-background" />
+                        )}
+                      </Link>
+                    </Button>
+                  )}
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">
-                  {workplace.employers.map((employer) => (
-                    <Link key={employer.userId} to={`/profile/${employer.userId}`}>
-                      <Card className="p-3 hover:shadow-md transition-shadow cursor-pointer">
-                        <div>
-                          <p className="font-medium text-sm">{employer.username}</p>
-                          <p className="text-xs text-muted-foreground">{employer.email}</p>
-                          <Badge variant="outline" className="mt-1 text-xs">
-                            {employer.role}
-                          </Badge>
-                        </div>
-                      </Card>
-                    </Link>
-                  ))}
+                  {workplace.employers.map((employer) => {
+                    const initials = employer.nameSurname
+                      ? employer.nameSurname.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                      : employer.username.slice(0, 2).toUpperCase();
+                    return (
+                      <Link key={employer.userId} to={`/profile/${employer.userId}`}>
+                        <Card className="p-3 hover:shadow-md transition-shadow cursor-pointer">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-10 w-10">
+                              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                {initials}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm truncate">
+                                {employer.nameSurname || employer.username}
+                              </p>
+                              <p className="text-xs text-muted-foreground truncate">{employer.email}</p>
+                              <Badge variant="outline" className="mt-1 text-xs">
+                                {employer.role}
+                              </Badge>
+                            </div>
+                          </div>
+                        </Card>
+                      </Link>
+                    );
+                  })}
                 </div>
               </Card>
             )}
@@ -282,6 +301,8 @@ export default function WorkplaceProfilePage() {
                 overallAvg={workplace.overallAvg}
                 ethicalAverages={workplace.ethicalAverages}
                 ethicalTags={workplace.ethicalTags}
+                totalReviews={workplace.reviewCount ?? 0}
+                recentReviews={workplace.recentReviews ?? []}
               />
 
               <Separator />

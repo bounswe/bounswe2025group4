@@ -1,6 +1,7 @@
 import { StarRating } from '@/components/ui/star-rating';
 import { Card } from '@/components/ui/card';
 import { useTranslation } from 'react-i18next';
+import type { ReviewResponse } from '@/types/workplace.types';
 
 interface ReviewStatsProps {
   overallAvg: number | null | undefined;
@@ -15,23 +16,72 @@ interface ReviewStatsProps {
     4?: number;
     5?: number;
   };
+  recentReviews?: ReviewResponse[];
 }
 
-export function ReviewStats({ overallAvg, ethicalAverages, ethicalTags = [], totalReviews = 0, ratingDistribution }: ReviewStatsProps) {
+export function ReviewStats({
+  overallAvg,
+  ethicalAverages,
+  ethicalTags = [],
+  totalReviews = 0,
+  ratingDistribution,
+  recentReviews = [],
+}: ReviewStatsProps) {
   const { t } = useTranslation('common');
-  
-  // Default rating distribution with all zeros
-  const defaultDistribution = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-  };
-  
-  // Use provided distribution or default to all zeros
-  const distribution = ratingDistribution || defaultDistribution;
+
+  const safeOverallAvg = overallAvg != null && !isNaN(overallAvg) ? overallAvg : 0;
+  const roundedOverall = Math.min(5, Math.max(1, Math.round(safeOverallAvg || 0)));
+
+  // Build distribution from props (preferred), recentReviews, or as a fallback from overallAvg
+  const seedDistribution: Record<number, number> = [1, 2, 3, 4, 5].reduce(
+    (acc, rating) => {
+      const raw = ratingDistribution?.[rating as keyof typeof ratingDistribution] ?? 0;
+      acc[rating] = Number.isFinite(raw as number) ? Number(raw) : 0;
+      return acc;
+    },
+    {} as Record<number, number>
+  );
+
+  const countFromDistribution = Object.values(seedDistribution).reduce(
+    (sum, count) => sum + count,
+    0
+  );
+
+  const distributionFromReviews: Record<number, number> = recentReviews.reduce(
+    (acc, review) => {
+      const bucket = Math.min(5, Math.max(1, Math.round(review.overallRating)));
+      acc[bucket] = (acc[bucket] || 0) + 1;
+      return acc;
+    },
+    { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } as Record<number, number>
+  );
+
+  const countFromRecent = Object.values(distributionFromReviews).reduce(
+    (sum, count) => sum + count,
+    0
+  );
+
+  // Final distribution preference: provided > derived from reviews > fallback from average
+  const normalizedDistribution =
+    countFromDistribution > 0
+      ? seedDistribution
+      : countFromRecent > 0
+      ? distributionFromReviews
+      : (() => {
+          const fallback: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+          if (totalReviews && totalReviews > 0) {
+            fallback[roundedOverall] = totalReviews;
+          }
+          return fallback;
+        })();
+
+  const distributionTotal = Object.values(normalizedDistribution).reduce(
+    (sum, count) => sum + count,
+    0
+  );
+
+  const distributionDenominator =
+    distributionTotal > 0 && distributionTotal <= 1 ? 1 : distributionTotal;
 
   // Convert policy names to readable format
   const formatPolicyName = (policy: string) => {
@@ -51,16 +101,16 @@ export function ReviewStats({ overallAvg, ethicalAverages, ethicalTags = [], tot
     return [policy, average != null && !isNaN(average) ? average : 0];
   });
 
-  // Handle null/undefined overallAvg
-  const safeOverallAvg = overallAvg != null && !isNaN(overallAvg) ? overallAvg : 0;
-
-  // Calculate total reviews from distribution
-  const totalFromDistribution = Object.values(distribution).reduce((sum, count) => sum + (count || 0), 0);
-  const effectiveTotalReviews = totalReviews || totalFromDistribution;
+  // Calculate total reviews from distribution (only if it looks like counts)
+  const totalFromDistribution =
+    distributionDenominator > 1 ? Math.round(distributionDenominator) : 0;
+  const effectiveTotalReviews =
+    totalReviews && totalReviews > 0 ? totalReviews : totalFromDistribution;
 
   // Calculate percentages for distribution
   const getPercentage = (count: number) => {
-    return effectiveTotalReviews > 0 ? Math.round((count / effectiveTotalReviews) * 100) : 0;
+    if (distributionDenominator <= 0) return 0;
+    return Math.round((count / distributionDenominator) * 100);
   };
 
   return (
@@ -86,7 +136,7 @@ export function ReviewStats({ overallAvg, ethicalAverages, ethicalTags = [], tot
           <div className="mt-6">
             <div className="space-y-2">
               {[5, 4, 3, 2, 1].map((rating) => {
-                const count = distribution[rating as keyof typeof distribution] || 0;
+                const count = normalizedDistribution[rating] || 0;
                 const percentage = getPercentage(count);
                 const hasReviews = count > 0;
                 return (
