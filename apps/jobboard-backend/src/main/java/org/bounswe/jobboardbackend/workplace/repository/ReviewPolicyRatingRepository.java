@@ -12,14 +12,11 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ReviewPolicyRatingRepository extends JpaRepository<ReviewPolicyRating, Long> {
-    // Bir review içindeki tüm policy skorları
     List<ReviewPolicyRating> findByReview_Id(Long reviewId);
     Page<ReviewPolicyRating> findByReview_Id(Long reviewId, Pageable pageable);
 
-    // Seçili policy listesi için filtre
     List<ReviewPolicyRating> findByReview_IdAndPolicyIn(Long reviewId, Collection<EthicalPolicy> policies);
 
-    // Bir workplace için policy bazlı ortalamalar (policy, avgScore)
     @Query("select rpr.policy as policy, avg(rpr.score) as avgScore " +
            "from ReviewPolicyRating rpr " +
            "where rpr.review.workplace.id = :workplaceId " +

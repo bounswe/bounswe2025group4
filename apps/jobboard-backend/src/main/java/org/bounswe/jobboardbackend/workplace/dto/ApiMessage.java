@@ -11,7 +11,7 @@ import java.time.Instant;
 @Builder
 public class ApiMessage {
     private String message;
-    private String code;        // opsiyonel: "WORKPLACE_CREATED", "REVIEW_DELETED" etc
+    private String code;
     @Builder.Default
     private Instant timestamp = Instant.now();
 }

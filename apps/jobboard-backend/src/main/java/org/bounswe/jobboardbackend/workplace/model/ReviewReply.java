@@ -20,7 +20,6 @@ public class ReviewReply {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Her review için tek cevap
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "review_id", unique = true)
     private Review review;

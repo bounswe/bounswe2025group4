@@ -23,7 +23,7 @@ public class WorkplaceDetailResponse {
     private List<String> ethicalTags;
     private Double overallAvg;
     private Map<String, Double> ethicalAverages; // policy -> avg
-    private List<ReviewResponse> recentReviews;  // includeReviews=true ise dolabilir
+    private List<ReviewResponse> recentReviews;
     private List<EmployerListItem> employers;
     private Long reviewCount;
     private Instant createdAt;

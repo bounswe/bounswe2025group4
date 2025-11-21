@@ -48,12 +48,12 @@ public class WorkplaceReviewController {
     public ResponseEntity<PaginatedResponse<ReviewResponse>> list(@PathVariable Long workplaceId,
                                                                   @RequestParam(defaultValue = "0") int page,
                                                                   @RequestParam(defaultValue = "10") int size,
-                                                                  @RequestParam(required = false) String rating,
+                                                                  @RequestParam(required = false) String ratingFilter,
                                                                   @RequestParam(required = false) String sortBy,
                                                                   @RequestParam(required = false) Boolean hasComment,
                                                                   @RequestParam(required = false) String policy,
                                                                   @RequestParam(required = false) Integer policyMin) {
-        var res = reviewService.listReviews(workplaceId, page, size, rating, sortBy, hasComment, policy, policyMin);
+        var res = reviewService.listReviews(workplaceId, page, size, ratingFilter, sortBy, hasComment, policy, policyMin);
         return ResponseEntity.ok(res);
     }
 
@@ -74,8 +74,7 @@ public class WorkplaceReviewController {
     @DeleteMapping("/review/{reviewId}")
     public ResponseEntity<ApiMessage> delete(@PathVariable Long workplaceId,
                                              @PathVariable Long reviewId) {
-        // Admin kontrolünü Security tarafında yapıyorsan, burada "isAdmin" false geçebilirsin veya role bakıp true set edebilirsin
-        boolean isAdmin = false; // gerekirse role check ekle
+        boolean isAdmin = false; // TODO: implement isAdmin check in milestone 3
         reviewService.deleteReview(workplaceId, reviewId, currentUser(), isAdmin);
         return ResponseEntity.ok(ApiMessage.builder().message("Review deleted").code("REVIEW_DELETED").build());
     }
