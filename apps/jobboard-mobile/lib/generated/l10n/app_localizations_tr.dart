@@ -91,7 +91,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get signUpScreen_passwordTooShort =>
-      'Şifre en az 6 karakter olmalıdır';
+      'Şifre en az 8 karakter olmalıdır';
 
   @override
   String get signUpScreen_passwordNoUppercase => 'Şifre büyük harf içermelidir';
@@ -532,6 +532,70 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get jobDetails_applying => 'Başvuruluyor...';
+
+  @override
+  String get jobDetails_alreadyApplied => 'Bu işe zaten başvurdunuz.';
+
+  @override
+  String jobDetails_cvUploadFailed(String error) {
+    return 'Başvuru gönderildi ancak CV yükleme başarısız: $error';
+  }
+
+  @override
+  String jobDetails_applyErrorGeneric(String error) {
+    return 'Başvuru hatası: $error';
+  }
+
+  @override
+  String get jobDetails_applyDialogTitle => 'İşe Başvur';
+
+  @override
+  String jobDetails_applyDialogMessage(String jobTitle) {
+    return 'Başvurduğunuz iş: $jobTitle';
+  }
+
+  @override
+  String get jobDetails_cvLabel => 'CV Yükle *';
+
+  @override
+  String get jobDetails_cvPlaceholder => 'Dosya Seç (PDF, DOC, DOCX)';
+
+  @override
+  String get jobDetails_coverLetterLabel => 'Ön Yazı (İsteğe Bağlı)';
+
+  @override
+  String get jobDetails_coverLetterHint =>
+      'Bu pozisyon için neden uygun olduğunuzu açıklayın...';
+
+  @override
+  String get jobDetails_specialNeedsLabel =>
+      'Özel İhtiyaçlar veya Düzenlemeler (İsteğe Bağlı)';
+
+  @override
+  String get jobDetails_specialNeedsHint =>
+      'örn. Tekerlekli sandalye erişimi, esnek saatler...';
+
+  @override
+  String get jobDetails_specialNeedsMessage =>
+      'Bu bilgi işverenlerin ihtiyaçlarınızı karşılamasına yardımcı olacaktır.';
+
+  @override
+  String get jobDetails_cancelButton => 'İptal';
+
+  @override
+  String get jobDetails_submitButton => 'Başvuruyu Gönder';
+
+  @override
+  String get jobDetails_checkingStatus => 'Kontrol ediliyor...';
+
+  @override
+  String get jobDetails_alreadyAppliedButton => 'Zaten Başvuruldu';
+
+  @override
+  String get jobDetails_remote => 'Uzaktan';
+
+  @override
+  String get jobDetails_inclusiveOpportunity => 'Kapsayıcı Fırsat';
 
   @override
   String get forumPage_title => 'Forum';
@@ -1050,6 +1114,75 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String get createJob_invalidMinSalaryFormat =>
+      'Geçersiz minimum maaş formatı. Lütfen sadece tam sayı girin.';
+
+  @override
+  String get createJob_invalidMaxSalaryFormat =>
+      'Geçersiz maksimum maaş formatı. Lütfen sadece tam sayı girin.';
+
+  @override
+  String get createJob_salaryRangeInvalid =>
+      'Minimum maaş maksimum maaştan büyük olamaz.';
+
+  @override
+  String get createJob_companyNameRequired => 'Lütfen şirket adını girin';
+
+  @override
+  String get createJob_locationLabel => 'Konum (örn. Şehir, Eyalet, Ülke)';
+
+  @override
+  String get createJob_locationRequiredError => 'Lütfen bir konum girin';
+
+  @override
+  String get createJob_remoteLabel => 'Uzaktan İş';
+
+  @override
+  String get createJob_inclusiveLabel => 'Kapsayıcı Fırsat';
+
+  @override
+  String get createJob_inclusiveSubtitle =>
+      'Bu pozisyon yetersiz temsil edilen gruplara açıktır';
+
+  @override
+  String get createJob_descriptionLabel => 'İş Açıklaması';
+
+  @override
+  String get createJob_descriptionRequiredError =>
+      'Lütfen bir iş açıklaması girin';
+
+  @override
+  String get createJob_contactLabel =>
+      'İletişim Bilgileri (E-posta/Telefon/Bağlantı)';
+
+  @override
+  String get createJob_contactRequiredError =>
+      'Lütfen iletişim bilgilerini sağlayın';
+
+  @override
+  String get createJob_minSalaryLabel => 'Minimum Maaş (İsteğe Bağlı)';
+
+  @override
+  String get createJob_minSalaryPlaceholder => 'örn. 50000';
+
+  @override
+  String get createJob_maxSalaryLabel => 'Maksimum Maaş (İsteğe Bağlı)';
+
+  @override
+  String get createJob_maxSalaryPlaceholder => 'örn. 70000';
+
+  @override
+  String get createJob_validNumberError => 'Lütfen geçerli bir tam sayı girin';
+
+  @override
+  String get createJob_ethicalPoliciesLabel => 'Etik Politikalar Uyumu';
+
+  @override
+  String createJob_policiesSelected(int count) {
+    return '$count seçildi';
+  }
+
+  @override
   String get jobApplications_title => 'İş Başvuruları';
 
   @override
@@ -1100,6 +1233,127 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get jobApplications_submit => 'Gönder';
+
+  @override
+  String get jobApplications_approveDialogTitle => 'Başvuruyu Onayla';
+
+  @override
+  String get jobApplications_rejectDialogTitle => 'Başvuruyu Reddet';
+
+  @override
+  String get jobApplications_approveFeedbackPrompt =>
+      'Başvurana geri bildirim sağlayın (isteğe bağlı):';
+
+  @override
+  String get jobApplications_rejectFeedbackPrompt =>
+      'Red nedeni sağlayın (isteğe bağlı):';
+
+  @override
+  String get jobApplications_approveFeedbackHint =>
+      'örn. Harika nitelikler! Yakında sizinle iletişime geçeceğiz.';
+
+  @override
+  String get jobApplications_rejectFeedbackHint =>
+      'örn. Şu anda başka adaylar seçtik.';
+
+  @override
+  String get jobApplications_feedbackMessage =>
+      'Başvuran bu geri bildirimi görecek.';
+
+  @override
+  String get jobApplications_cancelButton => 'İptal';
+
+  @override
+  String get jobApplications_approveButton => 'Onayla';
+
+  @override
+  String get jobApplications_rejectButton => 'Reddet';
+
+  @override
+  String get jobApplications_approvedSuccess => 'Başvuru başarıyla onaylandı';
+
+  @override
+  String get jobApplications_rejectedSuccess => 'Başvuru reddedildi';
+
+  @override
+  String get jobApplications_statusUpdatedSuccess =>
+      'Başvuru durumu güncellendi';
+
+  @override
+  String jobApplications_appliedLabel(String date) {
+    return 'Başvuru: $date';
+  }
+
+  @override
+  String jobApplications_specialNeedsLabel(String needs) {
+    return 'Özel İhtiyaçlar: $needs';
+  }
+
+  @override
+  String get jobApplications_cvLabel => 'CV Ekli (görüntülemek için tıklayın)';
+
+  @override
+  String get jobApplications_coverLetterLabel => 'Ön Yazı';
+
+  @override
+  String jobApplications_feedbackLabel(String feedback) {
+    return 'Geri Bildirim: $feedback';
+  }
+
+  @override
+  String get jobApplications_downloadingCV => 'CV indiriliyor...';
+
+  @override
+  String jobApplications_cvSaved(String path) {
+    return 'CV kaydedildi: $path';
+  }
+
+  @override
+  String jobApplications_cvDownloadFailed(String error) {
+    return 'CV indirme başarısız: $error';
+  }
+
+  @override
+  String get jobApplications_noCVUploaded => 'Bu başvuru için CV yüklenmedi';
+
+  @override
+  String get jobApplications_viewCVBrowser => 'CV\'yi Tarayıcıda Görüntüle';
+
+  @override
+  String get jobApplications_viewCVBrowserSubtitle =>
+      'CV\'yi tarayıcınızda açın';
+
+  @override
+  String get jobApplications_cvOpenFailed =>
+      'CV açılamıyor. PDF dosyalarını işleyecek uygulama yok.';
+
+  @override
+  String jobApplications_cvOpenError(String error) {
+    return 'CV açma hatası: $error';
+  }
+
+  @override
+  String get jobApplications_statusPending => 'Beklemede';
+
+  @override
+  String get jobApplications_statusApproved => 'Onaylandı';
+
+  @override
+  String get jobApplications_statusRejected => 'Reddedildi';
+
+  @override
+  String get jobApplications_downloadCV => 'CV İndir';
+
+  @override
+  String get jobApplications_downloadCVSubtitle => 'CV\'yi cihazınıza kaydedin';
+
+  @override
+  String jobApplications_cvDownloadedSuccess(String path) {
+    return 'CV başarıyla indirildi\n$path';
+  }
+
+  @override
+  String get jobApplications_openButton => 'AÇ';
 
   @override
   String get jobFilter_title => 'İşleri Filtrele';
@@ -1160,6 +1414,11 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String myApplications_applied(String date) {
     return 'Başvuru: $date';
+  }
+
+  @override
+  String myApplications_specialNeeds(String specialNeeds) {
+    return 'Özel İhtiyaçlar: $specialNeeds';
   }
 
   @override
@@ -1529,4 +1788,88 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get common_hidePassword => 'Şifreyi gizle';
+
+  @override
+  String get ethicalPolicy_salary_transparency => 'Maaş Şeffaflığı';
+
+  @override
+  String get ethicalPolicy_equal_pay_policy => 'Eşit Ücret Politikası';
+
+  @override
+  String get ethicalPolicy_living_wage_employer => 'Yaşanabilir Ücret İşveren';
+
+  @override
+  String get ethicalPolicy_comprehensive_health_insurance =>
+      'Kapsamlı Sağlık Sigortası';
+
+  @override
+  String get ethicalPolicy_performance_based_bonus =>
+      'Performansa Dayalı Bonus';
+
+  @override
+  String get ethicalPolicy_retirement_plan_support => 'Emeklilik Planı Desteği';
+
+  @override
+  String get ethicalPolicy_flexible_hours => 'Esnek Çalışma Saatleri';
+
+  @override
+  String get ethicalPolicy_remote_friendly => 'Uzaktan Çalışma Dostu';
+
+  @override
+  String get ethicalPolicy_no_after_hours_work_culture =>
+      'Mesai Sonrası İş Yok Kültürü';
+
+  @override
+  String get ethicalPolicy_mental_health_support => 'Ruh Sağlığı Desteği';
+
+  @override
+  String get ethicalPolicy_generous_paid_time_off => 'Cömert Ücretli İzin';
+
+  @override
+  String get ethicalPolicy_paid_parental_leave => 'Ücretli Ebeveyn İzni';
+
+  @override
+  String get ethicalPolicy_inclusive_hiring_practices =>
+      'Kapsayıcı İşe Alım Uygulamaları';
+
+  @override
+  String get ethicalPolicy_diverse_leadership => 'Çeşitli Liderlik';
+
+  @override
+  String get ethicalPolicy_lgbtq_friendly_workplace => 'LGBTQ+ Dostu İş Yeri';
+
+  @override
+  String get ethicalPolicy_disability_inclusive_workplace =>
+      'Engelli Dostu İş Yeri';
+
+  @override
+  String get ethicalPolicy_supports_women_in_leadership =>
+      'Liderlikte Kadınları Destekler';
+
+  @override
+  String get ethicalPolicy_mentorship_program => 'Mentorluk Programı';
+
+  @override
+  String get ethicalPolicy_learning_development_budget =>
+      'Öğrenme ve Gelişim Bütçesi';
+
+  @override
+  String get ethicalPolicy_transparent_promotion_paths =>
+      'Şeffaf Terfi Yolları';
+
+  @override
+  String get ethicalPolicy_internal_mobility => 'İç Mobilite';
+
+  @override
+  String get ethicalPolicy_sustainability_focused => 'Sürdürülebilirlik Odaklı';
+
+  @override
+  String get ethicalPolicy_ethical_supply_chain => 'Etik Tedarik Zinciri';
+
+  @override
+  String get ethicalPolicy_community_volunteering => 'Toplum Gönüllülüğü';
+
+  @override
+  String get ethicalPolicy_certified_b_corporation =>
+      'Sertifikalı B-Corporation';
 }

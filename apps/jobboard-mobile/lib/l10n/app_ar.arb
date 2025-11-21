@@ -241,6 +241,8 @@
   "mentorScreen_enterNumber": "أدخل رقماً",
   "mentorScreen_cancel": "إلغاء",
   "mentorScreen_update": "تحديث",
+  "mentorProfile_ratingNotAvailable": "لا تتوفر تقييمات لهذا المرشد.",
+  "mentorProfile_expertise": "الخبرة",
 
   "mentorScreen_completeMentorship": "إكمال الترابط المهني",
   "mentorScreen_cancelMentorship": "إلغاء الترابط المهني",

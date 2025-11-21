@@ -17,6 +17,11 @@ class MentorshipRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final menteeLabel =
+    request.requesterId.isNotEmpty ? request.requesterId : 'Mentee';
+    final initial =
+    menteeLabel.isNotEmpty ? menteeLabel[0].toUpperCase() : '?';
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Padding(
@@ -27,34 +32,27 @@ class MentorshipRequestCard extends StatelessWidget {
             Row(
               children: [
                 A11y(
-                  label: 'Mentee avatar for ${request.mentee.username}',
-                  child: CircleAvatar(
-                    child: Text(request.mentee.username[0].toUpperCase()),
-                  ),
+                  label: 'Mentee avatar for $menteeLabel',
+                  child: CircleAvatar(child: Text(initial)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        request.mentee.username,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      if (request.mentee.jobTitle != null)
-                        Text(
-                          request.mentee.jobTitle!,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                    ],
+                  child: Text(
+                    menteeLabel,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
             Text(
-              request.message,
-              style: Theme.of(context).textTheme.bodyMedium,
+              'Requested at: ${request.createdAt.toLocal()}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Status: ${request.status.name}',
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 16),
             Row(

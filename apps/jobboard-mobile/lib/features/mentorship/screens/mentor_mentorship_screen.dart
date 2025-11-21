@@ -41,120 +41,45 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
     super.dispose();
   }
 
-  final mockRequests = [
-    MentorshipRequest(
-      id: 1,
-      mentee: User(
-        id: "156",
-        username: "alice",
-        firstName: "Alice",
-        lastName: "Johnson",
-        role: UserType.ROLE_JOBSEEKER,
-        jobTitle: "Junior Developer",
-        company: "TechCorp",
-        email: "alice@nutritionai.com",
-      ),
-      mentor: User(
-        id: "1234",
-        username: "abcd",
-        firstName: "Jack",
-        lastName: "Deniz",
-        role: UserType.ROLE_JOBSEEKER,
-        jobTitle: "Junior Developer",
-        company: "Meta",
-        email: "jack@meta.com",
-      ),
-
-      status: MentorshipRequestStatus.PENDING,
-      message: "I’d love mentorship on mobile app development!",
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-
-    MentorshipRequest(
-      id: 2,
-      mentee: User(
-        id: "123",
-        username: "mehmet-yilmaz",
-        firstName: "Mehmet",
-        lastName: "Yilmaz",
-        role: UserType.ROLE_JOBSEEKER,
-        jobTitle: "CS Student",
-        company: "TechCorp",
-        email: "alice@techcorp.com",
-      ),
-      mentor: User(
-        id: "1234",
-        username: "abcd",
-        firstName: "Jack",
-        lastName: "Deniz",
-        role: UserType.ROLE_JOBSEEKER,
-        jobTitle: "Junior Developer",
-        company: "Meta",
-        email: "jack@meta.com",
-      ),
-
-      status: MentorshipRequestStatus.ACCEPTED,
-      message: "Hi! I'm a successful student who would love your mentorship on software engineering!",
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-
-    MentorshipRequest(
-      id: 3,
-      mentee: User(
-        id: "123",
-        username: "yann-lecun",
-        firstName: "Yann",
-        lastName: "LeCun",
-        role: UserType.ROLE_EMPLOYER,
-        jobTitle: "Researcher",
-        company: "Meta",
-        email: "yannle@meta.com",
-      ),
-      mentor: User(
-        id: "1234",
-        username: "abcd",
-        firstName: "Jack",
-        lastName: "Deniz",
-        role: UserType.ROLE_JOBSEEKER,
-        jobTitle: "Junior Developer",
-        company: "Meta",
-        email: "jack@meta.com",
-      ),
-
-      status: MentorshipRequestStatus.ACCEPTED,
-      message: "Hi! I'm a senior researcher at Meta, and I love your mentorship!",
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-
-  ];
-
   Future<void> _loadData() async {
     if (!mounted) return;
 
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
-    try {
-      // Load data, the loading states are handled inside the provider methods
-      await mentorProvider.fetchMentorRequests();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userId = authProvider.currentUser!.id;
 
-      if (mentorProvider.currentUserMentorProfile == null) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        await mentorProvider.fetchCurrentUserMentorProfile(
-          int.parse(authProvider.currentUser!.id),
-        );
-      }
-    } catch (e) {
-      // Error is already handled in the provider
+    try {
+      await Future.wait([
+        mentorProvider.fetchMentorRequests(userId),
+        mentorProvider.fetchCurrentUserMentorProfile(userId),
+      ]);
+    } catch (_) {
+      // errors handled in provider
     }
   }
 
-  Future<void> _updateCapacity() async {
+  Future<void> _updateMaxMentees() async {
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
-    final newCapacity = int.tryParse(_capacityController.text);
-    if (newCapacity != null && newCapacity > 0) {
-      final success = await mentorProvider.updateMentorCapacity(newCapacity);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final userId = authProvider.currentUser!.id;
+
+    final profile = mentorProvider.currentUserMentorProfile;
+    if (profile == null) return;
+
+    final newMax = int.tryParse(_capacityController.text);
+    if (newMax != null && newMax > 0) {
+      final success = await mentorProvider.updateMentorProfile(
+        userId: userId,
+        expertise: profile.expertise,
+        maxMentees: newMax,
+      );
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.mentorScreen_capacityUpdated)),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.mentorScreen_capacityUpdated,
+            ),
+          ),
         );
       }
     }
@@ -162,100 +87,40 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
 
   void _showCapacityDialog() {
     final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
-    final currentCapacity =
-        mentorProvider.currentUserMentorProfile?.capacity ?? 1;
-    _capacityController.text = currentCapacity.toString();
+    final currentMax =
+        mentorProvider.currentUserMentorProfile?.maxMentees ?? 1;
+    _capacityController.text = currentMax.toString();
 
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text(AppLocalizations.of(context)!.mentorScreen_updateCapacityTitle),
-            content: TextField(
-              controller: _capacityController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: AppLocalizations.of(context)!.mentorScreen_maxMentees,
-                hintText: AppLocalizations.of(context)!.mentorScreen_enterNumber,
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  _updateCapacity();
-                  Navigator.pop(context);
-                },
-                child: Text(AppLocalizations.of(context)!.mentorScreen_update),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                ),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: Text(
+          AppLocalizations.of(context)!.mentorScreen_updateCapacityTitle,
+        ),
+        content: TextField(
+          controller: _capacityController,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context)!.mentorScreen_maxMentees,
+            hintText: AppLocalizations.of(context)!.mentorScreen_enterNumber,
           ),
-    );
-  }
-
-  // Show dialog to confirm complete or cancel action
-  void _showMentorshipActionDialog(
-    int requestId,
-    String menteeName,
-    MentorshipRequestStatus status,
-  ) {
-    final isComplete = status == MentorshipRequestStatus.COMPLETED;
-    final actionColor = isComplete ? Colors.green : Colors.red;
-
-    // Capture the provider before showing dialog
-    final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
-
-    showDialog(
-      context: context,
-      builder:
-          (dialogContext) => AlertDialog(
-            title: Text(isComplete 
-                ? AppLocalizations.of(context)!.mentorScreen_completeMentorship
-                : AppLocalizations.of(context)!.mentorScreen_cancelMentorship),
-            content: Text(isComplete
-                ? AppLocalizations.of(context)!.mentorScreen_confirmComplete(menteeName)
-                : AppLocalizations.of(context)!.mentorScreen_confirmCancel(menteeName)),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  Navigator.pop(dialogContext);
-                  // Use the captured provider instead of trying to get it from the dialog context
-                  final success = await mentorProvider.updateRequestStatus(
-                    requestId: requestId,
-                    status: status,
-                  );
-                  if (success && mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(isComplete
-                            ? AppLocalizations.of(context)!.mentorScreen_mentorshipCompleted
-                            : AppLocalizations.of(context)!.mentorScreen_mentorshipCancelled),
-                        backgroundColor: actionColor.withOpacity(0.8),
-                      ),
-                    );
-                  }
-                },
-                child: Text(AppLocalizations.of(context)!.mentorScreen_confirm, 
-                    style: TextStyle(color: actionColor)),
-              ),
-            ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(foregroundColor: Colors.blue),
+            child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
           ),
+          TextButton(
+            onPressed: () {
+              _updateMaxMentees();
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.blue),
+            child: Text(AppLocalizations.of(context)!.mentorScreen_update),
+          ),
+        ],
+      ),
     );
   }
 
@@ -287,6 +152,14 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
             return const Center(child: CircularProgressIndicator());
           }
 
+          final profile = mentorProvider.currentUserMentorProfile;
+          final acceptedRequests = mentorProvider.mentorRequests
+              .where((r) => r.status == MentorshipRequestStatus.ACCEPTED)
+              .toList();
+          final pendingRequests = mentorProvider.mentorRequests
+              .where((r) => r.status == MentorshipRequestStatus.PENDING)
+              .toList();
+
           return TabBarView(
             controller: _tabController,
             children: [
@@ -295,212 +168,164 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                 onRefresh: refresh,
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.mentorScreen_currentCapacity(
-                              mentorProvider.currentUserMentorProfile?.capacity ?? 10
+                    if (profile != null)
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!
+                                  .mentorScreen_currentCapacity(
+                                profile.maxMentees,
+                              ),
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
-                            style: Theme.of(context).textTheme.titleMedium,
+                            ElevatedButton(
+                              onPressed: _showCapacityDialog,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!
+                                    .mentorScreen_updateCapacity,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    Expanded(
+                      child: acceptedRequests.isEmpty
+                          ? ListView(
+                        children: [
+                          const SizedBox(height: 100),
+                          Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.person_off,
+                                  size: 48,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  AppLocalizations.of(context)!
+                                      .mentorScreen_noCurrentMentees,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          ElevatedButton(
-                            onPressed: _showCapacityDialog,
-                            child: Text(AppLocalizations.of(context)!.mentorScreen_updateCapacity),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
+                        ],
+                      )
+                          : ListView.builder(
+                        itemCount: acceptedRequests.length,
+                        itemBuilder: (context, index) {
+                          final request = acceptedRequests[index];
+                          final menteeLabel =
+                          request.requesterId.isNotEmpty
+                              ? request.requesterId
+                              : 'Mentee ${request.id}';
+                          return MenteeCard(
+                            menteeLabel: menteeLabel,
+                            onChatTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(context)!
+                                        .mentorScreen_openChat(
+                                      menteeLabel,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Requests Tab
+              RefreshIndicator(
+                onRefresh: refresh,
+                child: pendingRequests.isEmpty
+                    ? ListView(
+                  children: [
+                    const SizedBox(height: 100),
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.mail_outline,
+                            size: 48,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            AppLocalizations.of(context)!
+                                .mentorScreen_noPendingRequests,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Expanded(
-                      child:
-                          //mentorProvider.mentorRequests
-                          mockRequests
-                                  .where(
-                                    (r) =>
-                                        r.status ==
-                                        MentorshipRequestStatus.ACCEPTED,
-                                  )
-                                  .isEmpty
-                              ? ListView(
-                                // Use ListView instead of Center to make it scrollable for RefreshIndicator
-                                children: [
-                                  const SizedBox(
-                                    height: 100,
-                                  ), // Add space to center content visually
-                                  Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.person_off,
-                                          size: 48,
-                                          color: Colors.grey[400],
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          AppLocalizations.of(context)!.mentorScreen_noCurrentMentees,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey[600],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )
-                              : ListView.builder(
-                                itemCount:
-                                    //mentorProvider.mentorRequests
-                                    mockRequests
-                                        .where(
-                                          (r) =>
-                                              r.status ==
-                                              MentorshipRequestStatus.ACCEPTED,
-                                        )
-                                        .length,
-                                itemBuilder: (context, index) {
-                                  final request =
-                                      //mentorProvider.mentorRequests
-                                      mockRequests
-                                          .where(
-                                            (r) =>
-                                                r.status ==
-                                                MentorshipRequestStatus
-                                                    .ACCEPTED,
-                                          )
-                                          .toList()[index];
-                                  return MenteeCard(
-                                    mentee: request.mentee,
-                                    onChatTap: () {
-                                      // TODO: Implement chat navigation
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            AppLocalizations.of(context)!.mentorScreen_openChat(request.mentee.username),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    onCompleteTap:
-                                        () => _showMentorshipActionDialog(
-                                          request.id,
-                                          request.mentee.username,
-                                          MentorshipRequestStatus.COMPLETED,
-                                        ),
-                                    onCancelTap:
-                                        () => _showMentorshipActionDialog(
-                                          request.id,
-                                          request.mentee.username,
-                                          MentorshipRequestStatus.CANCELLED,
-                                        ),
-                                  );
-                                },
-                              ),
-                    ),
                   ],
-                ),
-              ),
-              // Requests Tab
-              RefreshIndicator(
-                onRefresh: refresh,
-                child:
-                    //mentorProvider.mentorRequests
-                    mockRequests
-                            .where(
-                              (r) =>
-                                  r.status == MentorshipRequestStatus.PENDING,
-                            )
-                            .isEmpty
-                        ? ListView(
-                          // Use ListView instead of Center to make it scrollable for RefreshIndicator
-                          children: [
-                            const SizedBox(
-                              height: 100,
-                            ), // Add space to center content visually
-                            Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.mail_outline,
-                                    size: 48,
-                                    color: Colors.grey[400],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    AppLocalizations.of(context)!.mentorScreen_noPendingRequests,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
+                )
+                    : ListView.builder(
+                  itemCount: pendingRequests.length,
+                  itemBuilder: (context, index) {
+                    final request = pendingRequests[index];
+                    return MentorshipRequestCard(
+                      request: request,
+                      onAccept: () async {
+                        final success = await mentorProvider
+                            .respondToRequest(
+                          requestId: request.id,
+                          accept: true,
+                        );
+                        if (success && mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(context)!
+                                    .mentorScreen_requestAccepted,
                               ),
                             ),
-                          ],
-                        )
-                        : ListView.builder(
-                          itemCount:
-                              //mentorProvider.mentorRequests
-                              mockRequests
-                                  .where(
-                                    (r) =>
-                                        r.status ==
-                                        MentorshipRequestStatus.PENDING,
-                                  )
-                                  .length,
-                          itemBuilder: (context, index) {
-                            final request =
-                                mockRequests//mentorProvider.mentorRequests
-                                    .where(
-                                      (r) =>
-                                          r.status ==
-                                          MentorshipRequestStatus.PENDING,
-                                    )
-                                    .toList()[index];
-                            return MentorshipRequestCard(
-                              request: request,
-                              onAccept: () async {
-                                final success = await mentorProvider
-                                    .updateRequestStatus(
-                                      requestId: request.id,
-                                      status: MentorshipRequestStatus.ACCEPTED,
-                                    );
-                                if (success && mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(AppLocalizations.of(context)!.mentorScreen_requestAccepted),
-                                    ),
-                                  );
-                                }
-                              },
-                              onReject: () async {
-                                final success = await mentorProvider
-                                    .updateRequestStatus(
-                                      requestId: request.id,
-                                      status: MentorshipRequestStatus.REJECTED,
-                                    );
-                                if (success && mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(AppLocalizations.of(context)!.mentorScreen_requestRejected),
-                                    ),
-                                  );
-                                }
-                              },
-                            );
-                          },
-                        ),
+                          );
+                        }
+                      },
+                      onReject: () async {
+                        final success = await mentorProvider
+                            .respondToRequest(
+                          requestId: request.id,
+                          accept: false,
+                        );
+                        if (success && mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(context)!
+                                    .mentorScreen_requestRejected,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           );

@@ -24,16 +24,13 @@ class _MentorshipPageState extends State<MentorshipPage> {
     _loadData();
   }
 
-  // Method to refresh the data
   Future<void> _loadData() async {
-    // Set loading state
     if (mounted) {
       setState(() {
         _isLoading = true;
       });
     }
 
-    // Delay showing content until the next frame to prevent shaky animation
     await Future.delayed(const Duration(milliseconds: 100));
 
     if (mounted) {
@@ -43,23 +40,27 @@ class _MentorshipPageState extends State<MentorshipPage> {
     }
   }
 
-  // Method to handle refresh for the RefreshIndicator
   Future<void> _handleRefresh(BuildContext context) async {
-    // Refresh the MentorProvider data
-    final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+    final mentorProvider = Provider.of<MentorProvider>(
+      context,
+      listen: false,
+    );
+    final authProvider = Provider.of<AuthProvider>(
+      context,
+      listen: false,
+    );
+    final userId = authProvider.currentUser!.id;
 
-    // Reload basic data that's common to both screens
     try {
       await Future.wait([
-        mentorProvider.fetchMenteeRequests(),
-        mentorProvider.fetchMentorRequests(),
         mentorProvider.fetchAvailableMentors(),
+        mentorProvider.fetchMenteeRequests(userId),
+        mentorProvider.fetchMentorRequests(userId),
+        mentorProvider.fetchCurrentUserMentorProfile(userId),
       ]);
-    } catch (e) {
-      // Errors are handled inside the provider
+    } catch (_) {
+      // provider handles errors
     }
-
-    return;
   }
 
   @override
@@ -67,7 +68,6 @@ class _MentorshipPageState extends State<MentorshipPage> {
     final authProvider = Provider.of<AuthProvider>(context);
     final apiService = Provider.of<ApiService>(context);
 
-    // If the user is not logged in, show a message
     if (!authProvider.isLoggedIn) {
       return Scaffold(
         appBar: AppBar(
@@ -83,7 +83,6 @@ class _MentorshipPageState extends State<MentorshipPage> {
       );
     }
 
-    // Show loading state
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
@@ -94,22 +93,18 @@ class _MentorshipPageState extends State<MentorshipPage> {
       );
     }
 
-    // Determine which screen to show
     final isMentor =
         authProvider.currentUser?.mentorshipStatus == MentorshipStatus.MENTOR;
 
-    // Create a MentorProvider for this screen
     return ChangeNotifierProvider(
       create: (_) => MentorProvider(apiService: apiService),
-      // Use Builder to access the provider in a separate build method
       child: Builder(
         builder: (context) {
           return RefreshIndicator(
             onRefresh: () => _handleRefresh(context),
-            child:
-                isMentor
-                    ? const MentorMentorshipScreen()
-                    : const MenteeMentorshipScreen(),
+            child: isMentor
+                ? const MentorMentorshipScreen()
+                : const MenteeMentorshipScreen(),
           );
         },
       ),
