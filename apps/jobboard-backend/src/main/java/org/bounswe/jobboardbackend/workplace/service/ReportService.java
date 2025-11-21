@@ -1,5 +1,7 @@
 package org.bounswe.jobboardbackend.workplace.service;
 
+import java.util.Locale;
+
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.workplace.dto.ReviewReportCreate;
 import org.bounswe.jobboardbackend.workplace.dto.WorkplaceReportCreate;
@@ -40,7 +42,7 @@ public class ReportService {
         WorkplaceReport report = WorkplaceReport.builder()
                 .workplace(wp)
                 .createdBy(reporter)
-                .reasonType(WorkplaceReportReason.valueOf(req.getReasonType().toUpperCase()))
+                .reasonType(WorkplaceReportReason.valueOf(req.getReasonType().toUpperCase(Locale.ROOT)))
                 .description(req.getDescription())
                 .status(ReportStatus.PENDING)
                 .build();
@@ -64,7 +66,7 @@ public class ReportService {
         ReviewReport report = ReviewReport.builder()
                 .review(review)
                 .createdBy(reporter)
-                .reasonType(ReviewReportReason.valueOf(req.getReasonType().toUpperCase()))
+                .reasonType(ReviewReportReason.valueOf(req.getReasonType().toUpperCase(Locale.ROOT)))
                 .description(req.getDescription())
                 .status(ReportStatus.PENDING)
                 .build();
