@@ -201,6 +201,9 @@
     "inclusiveOpportunity": "Inclusive Opportunity",
     "contact": {
       "title": "Contact Information"
+    },
+    "workplace": {
+      "title": "About the Company"
     }
   },
   "employerDashboard": {
@@ -213,11 +216,25 @@
       "support": "Help and Support"
     },
     "title": "Employer Dashboard",
+    "subtitle": "Manage your job postings and workplaces",
     "currentPostings": "Current Job Postings",
     "createJob": "Create New Job Posting",
     "loadingError": "Failed to load job postings. Please try again later.",
     "emptyState": "You haven't created any job postings yet.",
     "emptyCta": "Create Your First Job Posting",
+    "addWorkplace": "Add Workplace",
+    "joinWorkplace": "Join Workplace",
+    "unassignedJobs": "Unassigned Jobs",
+    "jobCount": "jobs",
+    "jobCount_one": "job",
+    "noJobsInWorkplace": "No job postings in this workplace yet.",
+    "createJobForWorkplace": "Create Job Posting",
+    "noWorkplaces": {
+      "title": "No Workplaces Yet",
+      "description": "Create a workplace or join an existing one to start posting jobs.",
+      "createWorkplace": "Create Workplace",
+      "joinWorkplace": "Join Workplace"
+    },
     "table": {
       "jobTitle": "Job Title",
       "status": "Status",
@@ -1016,6 +1033,15 @@
   "createJob": {
     "title": "Create Job Posting",
     "subtitle": "Post a new job opportunity and find the perfect candidate",
+    "workplace": "Workplace",
+    "workplaceDescription": "Select the workplace this job belongs to",
+    "workplaceRequired": "Please select a workplace for this job posting",
+    "noWorkplaces": {
+      "title": "No Workplaces Available",
+      "description": "You need to be part of a workplace to create job postings. Create a new workplace or request to join an existing one.",
+      "createWorkplace": "Create Workplace",
+      "joinWorkplace": "Join Workplace"
+    },
     "jobTitle": "Job Title",
     "jobTitlePlaceholder": "e.g., Senior Software Engineer",
     "jobDescription": "Job Description",
@@ -1183,5 +1209,12 @@
     "roleMentee": "Mentee",
     "selectConversation": "Select a conversation",
     "selectConversationDesc": "Choose a conversation from the list to start chatting"
+  },
+  "workplace": {
+    "selector": {
+      "placeholder": "Select a workplace",
+      "noWorkplaces": "No workplaces available",
+      "fetchError": "Failed to load workplaces"
+    }
   }
 }
