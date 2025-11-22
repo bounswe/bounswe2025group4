@@ -22,7 +22,6 @@ const DEFAULT_MODAL_CONFIG: OpenReportParams = {
   messageLabel: '',
   messagePlaceholder: '',
   initialMessage: '',
-  // Keep a stable no-op submit handler so we can keep the modal mounted and warm
   onSubmit: async () => {},
 };
 
@@ -30,26 +29,20 @@ export function useReportModal() {
   const [state, setState] = useState<{
     open: boolean;
     config: OpenReportParams;
-    isLoading: boolean;
   }>({
     open: false,
     config: DEFAULT_MODAL_CONFIG,
-    isLoading: false,
   });
 
-  const openReport = useCallback((params: OpenReportParams) => {
-    // Immediately open a lightweight modal shell, then hydrate content after a tick
-    setState({ open: true, config: params, isLoading: true });
-    setTimeout(() => {
-      startTransition(() => {
-        setState({ open: true, config: params, isLoading: false });
-      });
-    }, 40);
+  const openReport = useCallback(async (params: OpenReportParams): Promise<void> => {
+    startTransition(() => {
+      setState({ open: true, config: params });
+    });
   }, []);
 
-  const closeReport = useCallback(() => {
+  const closeReport = useCallback(async (): Promise<void> => {
     startTransition(() => {
-      setState((prev) => ({ ...prev, open: false, isLoading: false }));
+      setState((prev) => ({ ...prev, open: false }));
     });
   }, []);
 
@@ -67,7 +60,6 @@ export function useReportModal() {
         messagePlaceholder={state.config.messagePlaceholder}
         initialMessage={state.config.initialMessage}
         onSubmit={state.config.onSubmit}
-        isLoading={state.isLoading}
       />
     ),
     [closeReport, state],

@@ -1,14 +1,18 @@
 import { apiClient } from '@/lib/api-client';
+import type { ReportReasonType } from '@/components/report/ReportModal';
 
-export async function reportWorkplace(workplaceId: number, message: string) {
-    return apiClient.post(`/workplace/${workplaceId}/report`, { message });
+export async function reportWorkplace(workplaceId: number, message: string, reason: ReportReasonType = 'OTHER') {
+    return apiClient.post(`/workplace/${workplaceId}/report`, {
+        reasonType: reason,
+        description: message,
+    });
 }
 
 export async function reportWorkplaceReview(
     workplaceId: number,
     reviewId: number,
     message: string,
-    reason: string = 'OTHER',
+    reason: ReportReasonType = 'OTHER',
 ) {
     return apiClient.post(
         `/workplace/${workplaceId}/review/${reviewId}/report`,

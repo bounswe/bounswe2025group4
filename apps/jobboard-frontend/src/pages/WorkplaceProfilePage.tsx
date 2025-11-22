@@ -166,6 +166,18 @@ export default function WorkplaceProfilePage() {
 
   const clearRatingRange = () => setRatingRange({});
 
+  const handleWorkplaceReport = () => {
+    if (!workplace) return;
+    openReport({
+      title: 'Report Workplace',
+      subtitle: workplace.companyName,
+      onSubmit: async (message, reason) => {
+        await reportWorkplace(workplace.id, message, reason);
+      },
+    });
+  };
+
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -223,15 +235,7 @@ export default function WorkplaceProfilePage() {
                     variant="ghost" 
                     size="sm" 
                     className="text-muted-foreground hover:text-destructive"
-                    onClick={() => {
-                      openReport({
-                        title: 'Report Workplace',
-                        subtitle: workplace.companyName,
-                        onSubmit: async (message, _reason) => {
-                          await reportWorkplace(workplace.id, message);
-                        },
-                      });
-                    }}
+                    onClick={handleWorkplaceReport}
                   >
                     <Flag className="h-4 w-4 mr-2" />
                     Report
