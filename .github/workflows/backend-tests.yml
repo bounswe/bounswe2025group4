@@ -21,6 +21,19 @@ jobs:
 
       - name: Run tests
         working-directory: ./apps/jobboard-backend
+        env:
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_PASSWORD: password
+          MAIL_USERNAME: test
+          MAIL_PASSWORD: test
+          APP_MAIL_FROM: test@test.com
+          APP_ENV: test
+          APP_JWT_SECRET: test-secret-key-for-testing-purposes-only
+          APP_VERIFY_EMAIL_URL: http://localhost/verify
+          APP_RESET_PASSWORD_URL: http://localhost/reset
+          APP_GCS_BUCKET: test-bucket
+          APP_CORS_ALLOWED_ORIGINS: http://localhost:3000
         run: |
           chmod +x ./mvnw
           ./mvnw -B test
