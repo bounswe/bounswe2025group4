@@ -31,8 +31,8 @@ export function ReviewCard({ workplaceId, review, canReply, onUpdate }: ReviewCa
       contextSnippet: review.content,
       reportType: 'Review',
       reportedName: getDisplayName(),
-      onSubmit: async (message) => {
-        await reportWorkplaceReview(workplaceId, review.id, message);
+      onSubmit: async (message, reason) => {
+        await reportWorkplaceReview(workplaceId, review.id, message, reason);
       },
     });
   };

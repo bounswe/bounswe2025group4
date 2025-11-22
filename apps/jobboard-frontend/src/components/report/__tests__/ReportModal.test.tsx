@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ReportModal } from '../ReportModal';
 import userEvent from '@testing-library/user-event';
@@ -80,7 +80,23 @@ describe('ReportModal', () => {
     
     await userEvent.click(submitButton);
     
-    expect(onSubmit).toHaveBeenCalledWith('This is a report reason');
+    expect(onSubmit).toHaveBeenCalledWith('This is a report reason', 'OTHER');
+  });
+
+  it('calls onSubmit with selected reason', async () => {
+    const onSubmit = vi.fn();
+    render(<ReportModal {...defaultProps} onSubmit={onSubmit} />);
+    
+    const textarea = screen.getByRole('textbox');
+    await userEvent.type(textarea, 'Spam content');
+
+    const select = screen.getByLabelText('Reason');
+    await userEvent.selectOptions(select, 'SPAM');
+    
+    const submitButton = screen.getByRole('button', { name: /submit report/i });
+    await userEvent.click(submitButton);
+    
+    expect(onSubmit).toHaveBeenCalledWith('Spam content', 'SPAM');
   });
 
   it('handles submission error', async () => {

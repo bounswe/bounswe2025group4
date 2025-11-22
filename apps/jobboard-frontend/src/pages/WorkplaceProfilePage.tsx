@@ -227,7 +227,7 @@ export default function WorkplaceProfilePage() {
                       openReport({
                         title: 'Report Workplace',
                         subtitle: workplace.companyName,
-                        onSubmit: async (message) => {
+                        onSubmit: async (message, _reason) => {
                           await reportWorkplace(workplace.id, message);
                         },
                       });

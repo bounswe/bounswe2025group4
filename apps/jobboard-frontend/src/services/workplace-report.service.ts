@@ -1,18 +1,19 @@
 import { apiClient } from '@/lib/api-client';
 
 export async function reportWorkplace(workplaceId: number, message: string) {
-    return apiClient.post(`/api/workplace/${workplaceId}/report`, { message });
+    return apiClient.post(`/workplace/${workplaceId}/report`, { message });
 }
 
 export async function reportWorkplaceReview(
     workplaceId: number,
     reviewId: number,
     message: string,
+    reason: string = 'OTHER',
 ) {
     return apiClient.post(
-        `/api/workplace/${workplaceId}/review/${reviewId}/report`,
+        `/workplace/${workplaceId}/review/${reviewId}/report`,
         {
-            reasonType: 'OTHER',
+            reasonType: reason,
             description: message,
         },
     );
