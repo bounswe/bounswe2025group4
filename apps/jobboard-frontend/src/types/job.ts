@@ -88,6 +88,7 @@ export type Job = {
   maxSalary: number;
   logoUrl?: string;
   inclusiveOpportunity: boolean;
+  nonProfit?: boolean;
 };
 
 // Extended job type for job details from API

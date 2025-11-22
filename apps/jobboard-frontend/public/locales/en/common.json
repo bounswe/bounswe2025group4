@@ -11,6 +11,7 @@
     "nav": {
       "home": "Home",
       "jobs": "Jobs",
+      "nonProfitJobs": "Volunteer",
       "myApplications": "My Applications",
       "mentorship": "Mentorship",
       "myMentorships": "My Mentorships",
@@ -109,6 +110,26 @@
       "invitation": "Join Ethica Jobs today and discover purpose-driven career opportunities that align with your values!",
       "signUp": "Create Account",
       "login": "Already have an account? Login"
+    }
+  },
+  "nonProfitJobs": {
+    "pageTitle": "Opportunities for the Greater Good",
+    "pageDescription": "Not every reward is monetary. These volunteer and purpose-driven roles exist to make a difference — for people, for the planet, and for the future. Whether it's planting trees, helping local communities, or contributing your skills to social causes, every action here counts toward something bigger than ourselves.",
+    "volunteerOpportunity": "Volunteer",
+    "makingADifference": "Making a Difference",
+    "features": {
+      "meaningful": "Meaningful Work",
+      "sustainable": "Sustainable Impact",
+      "community": "Community Focus"
+    },
+    "availableOpportunities": "{{count}} opportunity available",
+    "availableOpportunities_plural": "{{count}} opportunities available",
+    "opportunitiesDescription": "{{count}} ways to make a positive impact in your community and beyond.",
+    "noOpportunities": "No volunteer opportunities available at the moment",
+    "checkBackSoon": "Check back soon for new ways to make a difference in your community.",
+    "browseRegularJobs": "Browse Regular Jobs",
+    "authRequired": {
+      "description": "You need to create an account to view volunteer opportunities and connect with meaningful organizations."
     }
   },
   "jobFilters": {
@@ -262,7 +283,7 @@
     "inclusiveOpportunityDescription": "This position is designated as an inclusive opportunity, welcoming candidates from diverse backgrounds.",
     "applicationsReceived": "Applications Received ({{count}})",
     "noApplications": "No applications received yet.",
-        "viewApplication": "View Application"                                                                 
+    "viewApplication": "View Application"
       },                                                                                                      
       "employerWorkplaces": {
         "title": "My Workplaces",
@@ -353,9 +374,10 @@
                 "previous": "Previous",
                 "next": "Next",
                 "pageInfo": "Page {{page}} of {{total}}"
-              },
-              "auth": {
-                "login": {          "title": "Welcome Back",
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
       "description": "Sign in to your account to continue",
       "username": "Username *",
       "password": "Password *",

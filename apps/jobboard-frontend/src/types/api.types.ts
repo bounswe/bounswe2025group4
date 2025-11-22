@@ -21,6 +21,7 @@ export interface JobPostResponse {
   maxSalary: number;
   contact: string;
   postedDate: string; // ISO 8601 date-time string
+  nonProfit?: boolean;
 }
 
 /**
@@ -66,6 +67,7 @@ export interface JobsFilterParams {
   maxSalary?: number;
   isRemote?: boolean;
   inclusiveOpportunity?: boolean;
+  nonProfit?: boolean;
 }
 
 // ============================================================================

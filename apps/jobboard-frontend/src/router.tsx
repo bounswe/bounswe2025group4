@@ -12,6 +12,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyOtpPage from './pages/VerifyOtpPage';
 import ProfilePage from './pages/ProfilePage';
 import JobsPage from './pages/JobsPage';
+import NonProfitJobsPage from './pages/NonProfitJobsPage';
 import JobDetailPage from './pages/JobDetailPage';
 import JobApplicationPage from './pages/JobApplicationPage';
 import MyApplicationsPage from './pages/MyApplicationsPage';
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: 'jobs',
         element: <JobsPage />,
+      },
+      {
+        path: 'nonprofit-jobs',
+        element: <NonProfitJobsPage />,
       },
       {
         path: 'jobs/:id',

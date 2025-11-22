@@ -10,7 +10,8 @@
     "menu": "Menü",
     "nav": {
       "home": "Ana Sayfa",
-      "jobs": "İlanlar",
+      "jobs": "İş İlanları",
+      "nonProfitJobs": "Gönüllülük",
       "myApplications": "Başvurularım",
       "mentorship": "Mentorluk",
       "myMentorships": "Mentorluklarım",
@@ -109,6 +110,26 @@
       "invitation": "Bugün Ethica Jobs'a katılın ve değerlerinize uygun, amaç odaklı kariyer fırsatlarını keşfedin!",
       "signUp": "Hesap Oluştur",
       "login": "Zaten hesabınız var mı? Giriş Yapın"
+    }
+  },
+  "nonProfitJobs": {
+    "pageTitle": "Toplumsal Fayda İçin Fırsatlar",
+    "pageDescription": "Her ödül parasal değildir. Bu gönüllü ve amaç odaklı roller, insanlar, gezegen ve gelecek için bir fark yaratmak amacıyla var. Ağaç dikmek, yerel topluluklara yardım etmek veya becerilerinizi sosyal amaçlar için kullanmak olsun, buradaki her eylem kendimizden daha büyük bir şeye katkı sağlar.",
+    "volunteerOpportunity": "Gönüllü",
+    "makingADifference": "Fark Yaratıyor",
+    "features": {
+      "meaningful": "Anlamlı İş",
+      "sustainable": "Sürdürülebilir Etki",
+      "community": "Toplum Odaklı"
+    },
+    "availableOpportunities": "{{count}} fırsat mevcut",
+    "availableOpportunities_plural": "{{count}} fırsat mevcut",
+    "opportunitiesDescription": "Topluluğunuzda ve ötesinde olumlu etki yaratmanın {{count}} yolu.",
+    "noOpportunities": "Şu anda gönüllü fırsatları bulunmuyor",
+    "checkBackSoon": "Topluluğunuzda fark yaratmanın yeni yolları için yakında tekrar kontrol edin.",
+    "browseRegularJobs": "Normal İşlere Göz At",
+    "authRequired": {
+      "description": "Gönüllü fırsatlarını görüntülemek ve anlamlı organizasyonlarla bağlantı kurmak için bir hesap oluşturmanız gerekiyor."
     }
   },
   "jobFilters": {
