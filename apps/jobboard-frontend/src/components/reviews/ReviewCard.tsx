@@ -9,7 +9,8 @@ import type { ReviewResponse } from '@/types/workplace.types';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { reportReview } from '@/services/reviews.service';
+import { useReportModal } from '@/hooks/useReportModal';
+import { reportWorkplaceReview } from '@/services/workplace-report.service';
 
 interface ReviewCardProps {
   workplaceId: number;
@@ -21,26 +22,19 @@ interface ReviewCardProps {
 export function ReviewCard({ workplaceId, review, canReply, onUpdate }: ReviewCardProps) {
   const { t } = useTranslation('common');
   const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false);
-  const [isReporting, setIsReporting] = useState(false);
+  const { openReport, ReportModalElement } = useReportModal();
 
-
-  const handleReport = async () => {
-    const reason = prompt(t('reviews.reportPrompt'));
-    if (!reason) return;
-
-    setIsReporting(true);
-    try {
-      await reportReview(workplaceId, review.id, {
-        reasonType: 'OTHER',
-        description: reason,
-      });
-      alert(t('reviews.reportSuccess'));
-    } catch (error) {
-      console.error('Failed to report review:', error);
-      alert(t('reviews.reportError'));
-    } finally {
-      setIsReporting(false);
-    }
+  const handleReport = () => {
+    openReport({
+      title: t('reviews.report'),
+      subtitle: t('reviews.reportSubtitle', { name: getDisplayName() }),
+      contextSnippet: review.content,
+      reportType: 'Review',
+      reportedName: getDisplayName(),
+      onSubmit: async (message) => {
+        await reportWorkplaceReview(workplaceId, review.id, message);
+      },
+    });
   };
 
   const getInitials = () => {
@@ -91,6 +85,14 @@ export function ReviewCard({ workplaceId, review, canReply, onUpdate }: ReviewCa
                 </div>
                 <StarRating value={review.overallRating} readonly size="sm" showValue />
               </div>
+              <button
+                onClick={handleReport}
+                className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                title={t('reviews.report')}
+              >
+                <Flag className="h-4 w-4" />
+                <span className="sr-only">{t('reviews.report')}</span>
+              </button>
             </div>
 
             {/* Title */}
@@ -127,14 +129,6 @@ export function ReviewCard({ workplaceId, review, canReply, onUpdate }: ReviewCa
                   {t('reviews.helpful')} ({review.helpfulCount})
                 </span>
               </div>
-              <button
-                onClick={handleReport}
-                disabled={isReporting}
-                className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive transition-colors disabled:opacity-50"
-              >
-                <Flag className="h-4 w-4" />
-                <span>{t('reviews.report')}</span>
-              </button>
               {canReply && !review.reply && (
                 <Button
                   variant="outline"
@@ -172,6 +166,7 @@ export function ReviewCard({ workplaceId, review, canReply, onUpdate }: ReviewCa
           onSuccess={handleReplySuccess}
         />
       )}
+      {ReportModalElement}
     </>
   );
 }
