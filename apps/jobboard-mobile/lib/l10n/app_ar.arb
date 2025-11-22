@@ -243,6 +243,7 @@
   "mentorScreen_update": "تحديث",
   "mentorProfile_ratingNotAvailable": "لا تتوفر تقييمات لهذا المرشد.",
   "mentorProfile_expertise": "الخبرة",
+  "mentorshipPage_become_a_mentor": "تصبح مرشدا",
 
   "mentorScreen_completeMentorship": "إكمال الترابط المهني",
   "mentorScreen_cancelMentorship": "إلغاء الترابط المهني",

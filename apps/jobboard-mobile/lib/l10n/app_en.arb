@@ -860,6 +860,10 @@
   "@mentorScreen_requestAccepted": {
     "description": "Request accepted message"
   },
+  "mentorshipPage_become_a_mentor": "Become a mentor",
+  "@mentorshipPage_become_a_mentor": {
+    "description": "Become a mentor button"
+  },
   "mentorProfile_ratingNotAvailable": "Rating not available",
   "@mentorProfile_ratingNotAvailable": {
     "description": "Rating not available message"

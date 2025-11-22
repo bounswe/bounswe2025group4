@@ -162,6 +162,7 @@ class MentorProvider with ChangeNotifier {
 
   // CREATE MENTOR PROFILE
   Future<bool> createMentorProfile({
+    required String userId,
     required List<String> expertise,
     required int maxMentees,
   }) async {
@@ -171,6 +172,7 @@ class MentorProvider with ChangeNotifier {
 
     try {
       _currentUserMentorProfile = await _apiService.createMentorProfile(
+        userId: userId,
         expertise: expertise,
         maxMentees: maxMentees,
       );

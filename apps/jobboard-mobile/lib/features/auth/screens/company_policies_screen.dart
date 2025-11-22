@@ -164,12 +164,8 @@ class _CompanyPoliciesScreenState extends State<CompanyPoliciesScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              const MentorshipSelectionScreen(
-                                                isJobSeeker: false,
-                                              ),
-                                    ),
+                                      builder: (context) => const SignUpScreen(),
+                                    )
                                   );
                                 }
                                 : null,

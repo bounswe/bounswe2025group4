@@ -876,31 +876,40 @@ class ApiService {
 
   // --- Mentor Profile Endpoints ---
 
-  /// POST /api/mentorship/mentor
+  /// PUT /api/mentorship/mentor
   /// Creates a mentor profile for the current user.
   Future<MentorProfile> createMentorProfile({
+    required String userId,
     required List<String> expertise,
     required int maxMentees,
   }) async {
+
     final uri = _buildUri('/mentorship/mentor');
 
     final mentorData = {
       'expertise': expertise,
       'maxMentees': maxMentees,
     };
+    print("mentorData: $mentorData");
 
     try {
+
       final response = await _client.post(
         uri,
         headers: _getHeaders(),
         body: jsonEncode(mentorData),
       );
+      print('Response: ${response}');
+      print('Response Body: ${response.body}');
+
       final dynamic data = await _handleResponse(response);
       return MentorProfile.fromJson(data);
+
     } catch (e) {
       throw Exception('Failed to create mentor profile. $e');
     }
   }
+
 
   /// GET /api/mentorship/mentor/{userId}
   /// Gets a mentor profile by user ID.

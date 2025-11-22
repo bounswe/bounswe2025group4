@@ -513,10 +513,179 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final mentorProvider = Provider.of<MentorProvider>(context);
+
+    final bool showBecomeMentorButton =
+        authProvider.currentUser!.mentorshipStatus.toString() == "MentorshipStatus.MENTEE"
+            && mentorProvider.currentUserMentorProfile == null;
+
+    void _showBecomeMentorDialog(BuildContext context) {
+      final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      final TextEditingController maxController = TextEditingController(text: "5");
+
+      final List<String> allExpertises = [
+        "Software",
+        "Tech",
+        "Design",
+        "Business",
+        "Marketing",
+        "HR",
+        "Data Science",
+        "Consulting",
+      ];
+
+      final Set<String> selectedExpertise = {};
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: const Text("Become a Mentor"),
+                content: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Select your expertise:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Expertise checkboxes
+                      ...allExpertises.map(
+                            (exp) => CheckboxListTile(
+                          title: Text(exp),
+                          value: selectedExpertise.contains(exp),
+                          onChanged: (checked) {
+                            setState(() {
+                              if (checked == true) {
+                                selectedExpertise.add(exp);
+                              } else {
+                                selectedExpertise.remove(exp);
+                              }
+                            });
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+                      const Text(
+                        "Max mentees:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 6),
+
+                      TextField(
+                        controller: maxController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          hintText: "Enter a positive number",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Cancel"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final max = int.tryParse(maxController.text);
+
+                      if (max == null || max <= 0) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Max mentees must be > 0"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      final userId = authProvider.currentUser!.id;
+                      final parsedId = int.tryParse(authProvider.currentUser!.id);
+                      if (parsedId == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Invalid user id"),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+
+                      }
+                      final success =
+                      await mentorProvider.createMentorProfile(
+                        userId: parsedId.toString(),
+                        expertise: selectedExpertise.toList(),
+                        maxMentees: max,
+                      );
+
+                      if (!context.mounted) return;
+
+                      if (success) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("You are now a mentor!"),
+                          ),
+                        );
+                        Navigator.pop(context);
+
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Failed to create mentor profile: ${mentorProvider.error}",
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text("Create"),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+    }
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.mentorshipPage_title),
         automaticallyImplyLeading: false,
+        actions: [
+          if (showBecomeMentorButton)
+            TextButton(
+              onPressed: () => _showBecomeMentorDialog(context),
+              style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.mentorshipPage_become_a_mentor,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: [

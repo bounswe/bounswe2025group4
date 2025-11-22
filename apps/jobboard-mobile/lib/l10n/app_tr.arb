@@ -238,6 +238,7 @@
   "mentorScreen_openChat": "{menteeName} ile sohbet aç",
   "mentorProfile_ratingNotAvailable": "Bu mentor için puanlama mevcut değil.",
   "mentorProfile_expertise": "Uzmanlık",
+  "mentorshipPage_become_a_mentor": "Mentor ol",
   "mentorScreen_updateCapacityTitle": "Maksimum Menti Kapasitesini Güncelle",
   "mentorScreen_maxMentees": "Maksimum menti sayısı",
   "mentorScreen_enterNumber": "Bir sayı girin",
