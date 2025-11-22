@@ -6,6 +6,7 @@ import 'package:mobile/core/providers/auth_provider.dart';
 import '../widgets/mentor_card.dart';
 import '../widgets/pending_request_card.dart';
 import '../widgets/active_mentorship_card.dart';
+import 'package:mobile/core/models/mentorship_status.dart';
 import '../providers/mentor_provider.dart';
 import './direct_message_screen.dart';
 import './mentor_profile_screen.dart';
@@ -32,6 +33,14 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadMentors();
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final mentorProvider = Provider.of<MentorProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      mentorProvider.fetchCurrentUserMentorProfile(authProvider.currentUser!.id);
+    });
+
   }
 
   @override
@@ -86,9 +95,9 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
             mentorName,
           ),
         ),
-        content: Text(
-          AppLocalizations.of(context)!.menteeScreen_provideMessage,
-        ),
+        //content: Text(
+        //  AppLocalizations.of(context)!.menteeScreen_provideMessage,
+        //),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -517,7 +526,7 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
     final mentorProvider = Provider.of<MentorProvider>(context);
 
     final bool showBecomeMentorButton =
-        authProvider.currentUser!.mentorshipStatus.toString() == "MentorshipStatus.MENTEE"
+        authProvider.currentUser!.mentorshipStatus == MentorshipStatus.MENTEE
             && mentorProvider.currentUserMentorProfile == null;
 
     void _showBecomeMentorDialog(BuildContext context) {

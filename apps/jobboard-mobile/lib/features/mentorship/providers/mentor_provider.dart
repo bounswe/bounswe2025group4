@@ -6,7 +6,7 @@ import 'package:mobile/core/models/mentorship_request.dart';
 import 'package:mobile/core/services/api_service.dart';
 
 class MentorProvider with ChangeNotifier {
-  final ApiService _apiService;
+  ApiService _apiService;
 
   // Data collections
   List<MentorProfile> _availableMentors = [];
@@ -33,6 +33,10 @@ class MentorProvider with ChangeNotifier {
   bool get isLoadingMenteeRequests => _isLoadingMenteeRequests;
   bool get isLoadingProfile => _isLoadingProfile;
   String? get error => _error;
+
+  void updateApiService(ApiService newApiService) {
+    _apiService = newApiService;
+  }
 
   // FETCH ALL AVAILABLE MENTORS
   Future<void> fetchAvailableMentors() async {

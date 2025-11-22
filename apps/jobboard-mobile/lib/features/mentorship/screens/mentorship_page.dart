@@ -96,18 +96,11 @@ class _MentorshipPageState extends State<MentorshipPage> {
     final isMentor =
         authProvider.currentUser?.mentorshipStatus == MentorshipStatus.MENTOR;
 
-    return ChangeNotifierProvider(
-      create: (_) => MentorProvider(apiService: apiService),
-      child: Builder(
-        builder: (context) {
-          return RefreshIndicator(
-            onRefresh: () => _handleRefresh(context),
-            child: isMentor
-                ? const MentorMentorshipScreen()
-                : const MenteeMentorshipScreen(),
-          );
-        },
-      ),
+    return RefreshIndicator(
+      onRefresh: () => _handleRefresh(context),
+      child: isMentor
+          ? const MentorMentorshipScreen()
+          : const MenteeMentorshipScreen(),
     );
   }
 }
