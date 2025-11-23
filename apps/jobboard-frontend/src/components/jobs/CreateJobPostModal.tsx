@@ -30,6 +30,7 @@ type JobPostFormData = {
   contactEmail: string;
   ethicalTags: EthicalTag[];
   inclusiveOpportunity: boolean;
+  nonProfit: boolean;
 };
 
 const defaultFormState: JobPostFormData = {
@@ -43,6 +44,7 @@ const defaultFormState: JobPostFormData = {
   contactEmail: '',
   ethicalTags: [],
   inclusiveOpportunity: false,
+  nonProfit: false,
 };
 
 interface CreateJobPostModalProps {
@@ -144,11 +146,12 @@ export function CreateJobPostModal({
         workplaceId: formData.workplaceId,
         location: formData.location,
         remote: formData.remote,
-        minSalary: parseInt(formData.minSalary, 10),
-        maxSalary: parseInt(formData.maxSalary, 10),
+        minSalary: formData.nonProfit ? 0 : parseInt(formData.minSalary, 10),
+        maxSalary: formData.nonProfit ? 0 : parseInt(formData.maxSalary, 10),
         contact: formData.contactEmail,
         ethicalTags: formData.ethicalTags.join(', '),
         inclusiveOpportunity: formData.inclusiveOpportunity,
+        nonProfit: formData.nonProfit,
       };
 
       await createJob(requestData);
@@ -290,39 +293,65 @@ export function CreateJobPostModal({
               </div>
             </div>
 
-            <div>
-              <Label className="text-sm font-semibold">{t('createJob.salaryRange')}</Label>
-              <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
-                    {t('createJob.minimum')}
-                  </Label>
-                  <Input
-                    id="minSalary"
-                    type="number"
-                    value={formData.minSalary}
-                    onChange={(e) => setFormData({ ...formData, minSalary: e.target.value })}
-                    placeholder={t('createJob.minSalaryPlaceholder')}
-                    className="mt-1"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="maxSalary" className="text-xs text-muted-foreground">
-                    {t('createJob.maximum')}
-                  </Label>
-                  <Input
-                    id="maxSalary"
-                    type="number"
-                    value={formData.maxSalary}
-                    onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value })}
-                    placeholder={t('createJob.maxSalaryPlaceholder')}
-                    className="mt-1"
-                    required
-                  />
-                </div>
+            <div className="flex items-start gap-3">
+              <Checkbox
+                id="nonProfit"
+                checked={formData.nonProfit}
+                onCheckedChange={() => setFormData({ 
+                  ...formData, 
+                  nonProfit: !formData.nonProfit,
+                  // Clear salary fields when nonprofit is enabled
+                  minSalary: !formData.nonProfit ? '' : formData.minSalary,
+                  maxSalary: !formData.nonProfit ? '' : formData.maxSalary
+                })}
+                className="mt-0.5"
+              />
+              <div className="flex-1">
+                <Label htmlFor="nonProfit" className="text-sm font-medium cursor-pointer">
+                  {t('createJob.nonProfit')}
+                </Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t('createJob.nonProfitDescription')}
+                </p>
               </div>
             </div>
+
+            {/* Salary Range - Hidden for nonprofit positions */}
+            {!formData.nonProfit && (
+              <div>
+                <Label className="text-sm font-semibold">{t('createJob.salaryRange')}</Label>
+                <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
+                      {t('createJob.minimum')}
+                    </Label>
+                    <Input
+                      id="minSalary"
+                      type="number"
+                      value={formData.minSalary}
+                      onChange={(e) => setFormData({ ...formData, minSalary: e.target.value })}
+                      placeholder={t('createJob.minSalaryPlaceholder')}
+                      className="mt-1"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="maxSalary" className="text-xs text-muted-foreground">
+                      {t('createJob.maximum')}
+                    </Label>
+                    <Input
+                      id="maxSalary"
+                      type="number"
+                      value={formData.maxSalary}
+                      onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value })}
+                      placeholder={t('createJob.maxSalaryPlaceholder')}
+                      className="mt-1"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div>
               <Label htmlFor="contactEmail" className="text-sm font-semibold">
