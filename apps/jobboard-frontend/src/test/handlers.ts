@@ -1,4 +1,6 @@
 import { http, HttpResponse } from 'msw';
+import type { Education, Skill, Interest } from '@/types/profile.types';
+import type { JobPostResponse, JobApplicationResponse } from '@/types/api.types';
 
 export const API_BASE_URL = 'https://api.example.com/api';
 
@@ -17,6 +19,46 @@ type RegisterRequest = {
 type ResetPasswordRequest = {
   token: string;
   newPassword: string;
+};
+
+type UpdateProfileRequest = {
+  firstName?: string;
+  lastName?: string;
+  bio?: string;
+};
+
+type CreateJobRequest = {
+  title: string;
+  description: string;
+  location?: string;
+  remote?: boolean;
+  inclusiveOpportunity?: boolean;
+  minSalary?: number;
+  maxSalary?: number;
+  contact?: string;
+  workplaceId?: number;
+};
+
+type UpdateJobRequest = {
+  title?: string;
+  description?: string;
+  location?: string;
+  remote?: boolean;
+  inclusiveOpportunity?: boolean;
+  minSalary?: number;
+  maxSalary?: number;
+  contact?: string;
+};
+
+type CreateApplicationRequest = {
+  jobPostId: number;
+  specialNeeds?: string;
+  cvUrl?: string;
+  coverLetter?: string;
+};
+
+type ApproveRejectApplicationRequest = {
+  feedback?: string;
 };
 
 const mockUser = {
@@ -248,7 +290,7 @@ export const profileHandlers = [
 
   // Education CRUD endpoints
   http.post(`${API_BASE_URL}/profile/education`, async ({ request }) => {
-    const education = await request.json() as any;
+    const education = await request.json() as Omit<Education, 'id'>;
     return HttpResponse.json({
       id: 2,
       school: education.school || 'Test University',
@@ -261,7 +303,7 @@ export const profileHandlers = [
   }),
 
   http.put(`${API_BASE_URL}/profile/education/:id`, async ({ request, params }) => {
-    const education = await request.json() as any;
+    const education = await request.json() as Partial<Omit<Education, 'id'>>;
     return HttpResponse.json({
       id: Number(params.id),
       school: education.school || 'Updated University',
@@ -279,7 +321,7 @@ export const profileHandlers = [
 
   // Skills CRUD endpoints
   http.post(`${API_BASE_URL}/profile/skill`, async ({ request }) => {
-    const skill = await request.json() as any;
+    const skill = await request.json() as Omit<Skill, 'id'>;
     return HttpResponse.json({
       id: 4,
       name: skill.name || 'Test Skill',
@@ -288,7 +330,7 @@ export const profileHandlers = [
   }),
 
   http.put(`${API_BASE_URL}/profile/skill/:id`, async ({ request, params }) => {
-    const skill = await request.json() as any;
+    const skill = await request.json() as Partial<Omit<Skill, 'id'>>;
     return HttpResponse.json({
       id: Number(params.id),
       name: skill.name || 'Updated Skill',
@@ -302,7 +344,7 @@ export const profileHandlers = [
 
   // Interests CRUD endpoints
   http.post(`${API_BASE_URL}/profile/interest`, async ({ request }) => {
-    const interest = await request.json() as any;
+    const interest = await request.json() as Omit<Interest, 'id'>;
     return HttpResponse.json({
       id: 3,
       name: interest.name || 'Test Interest',
@@ -310,7 +352,7 @@ export const profileHandlers = [
   }),
 
   http.put(`${API_BASE_URL}/profile/interest/:id`, async ({ request, params }) => {
-    const interest = await request.json() as any;
+    const interest = await request.json() as Partial<Omit<Interest, 'id'>>;
     return HttpResponse.json({
       id: Number(params.id),
       name: interest.name || 'Updated Interest',
@@ -323,7 +365,7 @@ export const profileHandlers = [
 
   // Bio update endpoint
   http.put(`${API_BASE_URL}/profile`, async ({ request }) => {
-    const profileUpdate = await request.json() as any;
+    const profileUpdate = await request.json() as UpdateProfileRequest;
     return HttpResponse.json({
       id: 1,
       userId: 1,
@@ -380,29 +422,63 @@ export const profileHandlers = [
 /**
  * Creates a mock job post for testing
  */
-export function createMockJob(overrides: Partial<any> = {}): any {
-  return {
+export function createMockJob(overrides: Partial<JobPostResponse> = {}): JobPostResponse {
+  const base = {
     id: 1,
     employerId: 1,
+    workplaceId: 1,
     title: 'Senior Software Engineer',
     description: 'Join our team to build innovative solutions.',
-    company: 'Tech Corp',
     location: 'San Francisco, CA',
     remote: true,
-    ethicalTags: 'Salary Transparency, Remote-Friendly',
     inclusiveOpportunity: true,
     minSalary: 120000,
     maxSalary: 180000,
     contact: 'hiring@techcorp.com',
     postedDate: '2025-01-01T00:00:00Z',
+    workplace: {
+      id: 1,
+      companyName: 'Tech Corp',
+      sector: 'Technology',
+      location: 'San Francisco, CA',
+      shortDescription: 'A leading tech company',
+      overallAvg: 4.5,
+      ethicalTags: ['Salary Transparency', 'Remote-Friendly'],
+      ethicalAverages: {},
+    },
+  };
+
+  // If overrides contains ethicalTags as a string, convert it to array in workplace
+  if ('ethicalTags' in overrides && typeof overrides.ethicalTags === 'string') {
+    const ethicalTagsArray = overrides.ethicalTags.length > 0
+      ? overrides.ethicalTags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0)
+      : [];
+    const { ethicalTags, ...restOverrides } = overrides;
+    return {
+      ...base,
+      ...restOverrides,
+      workplace: {
+        ...base.workplace,
+        ...restOverrides.workplace,
+        ethicalTags: ethicalTagsArray,
+      },
+    };
+  }
+
+  return {
+    ...base,
     ...overrides,
+    workplace: {
+      ...base.workplace,
+      ...overrides.workplace,
+    },
   };
 }
 
 /**
  * Creates a mock job application for testing
  */
-export function createMockApplication(overrides: Partial<any> = {}): any {
+export function createMockApplication(overrides: Partial<JobApplicationResponse> = {}): JobApplicationResponse {
   return {
     id: 1,
     title: 'Senior Software Engineer',
@@ -424,13 +500,15 @@ export function createMockApplication(overrides: Partial<any> = {}): any {
 // JOB HANDLERS
 // ============================================================================
 
-let mockJobs: any[] = [
-  createMockJob({ id: 1, title: 'Senior Software Engineer', status: 'OPEN' }),
-  createMockJob({ id: 2, title: 'Frontend Developer', company: 'WebDev Inc', status: 'ACTIVE' }),
-  createMockJob({ id: 3, title: 'Backend Engineer', company: 'DataSoft', status: 'PAUSED' }),
+// eslint-disable-next-line prefer-const
+let mockJobs: JobPostResponse[] = [
+  createMockJob({ id: 1, title: 'Senior Software Engineer' }),
+  createMockJob({ id: 2, title: 'Frontend Developer' }),
+  createMockJob({ id: 3, title: 'Backend Engineer' }),
 ];
 
-let mockApplications: any[] = [
+// eslint-disable-next-line prefer-const
+let mockApplications: JobApplicationResponse[] = [
   createMockApplication({ id: 1, jobPostId: 1 }),
   createMockApplication({ id: 2, jobPostId: 1, status: 'APPROVED' }),
   createMockApplication({ id: 3, jobPostId: 2, applicantName: 'Jane Smith' }),
@@ -454,7 +532,7 @@ export const jobHandlers = [
 
     if (companyName) {
       filteredJobs = filteredJobs.filter(job =>
-        job.company.toLowerCase().includes(companyName.toLowerCase())
+        job.workplace.companyName.toLowerCase().includes(companyName.toLowerCase())
       );
     }
 
@@ -490,7 +568,7 @@ export const jobHandlers = [
 
   // Create new job
   http.post(`${API_BASE_URL}/jobs`, async ({ request }) => {
-    const body = await request.json() as any;
+    const body = await request.json() as CreateJobRequest;
 
     const newJob = createMockJob({
       id: mockJobs.length + 1,
@@ -506,7 +584,7 @@ export const jobHandlers = [
   // Update job
   http.put(`${API_BASE_URL}/jobs/:id`, async ({ params, request }) => {
     const { id } = params;
-    const body = await request.json() as any;
+    const body = await request.json() as UpdateJobRequest;
     const jobIndex = mockJobs.findIndex(j => j.id === Number(id));
 
     if (jobIndex === -1) {
@@ -587,7 +665,7 @@ export const applicationHandlers = [
 
   // Create new application
   http.post(`${API_BASE_URL}/applications`, async ({ request }) => {
-    const body = await request.json() as any;
+    const body = await request.json() as CreateApplicationRequest;
 
     const newApplication = createMockApplication({
       id: mockApplications.length + 1,
@@ -604,7 +682,7 @@ export const applicationHandlers = [
   // Approve application
   http.put(`${API_BASE_URL}/applications/:id/approve`, async ({ params, request }) => {
     const { id } = params;
-    const body = await request.json() as any;
+    const body = await request.json() as ApproveRejectApplicationRequest;
     const appIndex = mockApplications.findIndex(app => app.id === Number(id));
 
     if (appIndex === -1) {
@@ -626,7 +704,7 @@ export const applicationHandlers = [
   // Reject application
   http.put(`${API_BASE_URL}/applications/:id/reject`, async ({ params, request }) => {
     const { id } = params;
-    const body = await request.json() as any;
+    const body = await request.json() as ApproveRejectApplicationRequest;
     const appIndex = mockApplications.findIndex(app => app.id === Number(id));
 
     if (appIndex === -1) {
