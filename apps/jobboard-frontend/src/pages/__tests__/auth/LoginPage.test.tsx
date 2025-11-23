@@ -25,9 +25,9 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />, { initialEntries: ['/login'] });
     const user = setupUserEvent();
 
-    await user.type(screen.getByLabelText(/username/i), 'tester');
-    await user.type(screen.getByLabelText(/password/i), 'password123!');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText('auth.login.username'), 'tester');
+    await user.type(screen.getByLabelText('auth.login.password'), 'password123!');
+    await user.click(screen.getByRole('button', { name: 'auth.login.submit' }));
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/');
@@ -47,9 +47,9 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />, { initialEntries: ['/login'] });
     const user = setupUserEvent();
 
-    await user.type(screen.getByLabelText(/username/i), 'otp-user');
-    await user.type(screen.getByLabelText(/password/i), 'password123!');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText('auth.login.username'), 'otp-user');
+    await user.type(screen.getByLabelText('auth.login.password'), 'password123!');
+    await user.click(screen.getByRole('button', { name: 'auth.login.submit' }));
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
@@ -77,11 +77,11 @@ describe('LoginPage', () => {
     renderWithProviders(<LoginPage />, { initialEntries: ['/login'] });
     const user = setupUserEvent();
 
-    await user.type(screen.getByLabelText(/username/i), 'wrong');
-    await user.type(screen.getByLabelText(/password/i), 'nope');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText('auth.login.username'), 'wrong');
+    await user.type(screen.getByLabelText('auth.login.password'), 'nope');
+    await user.click(screen.getByRole('button', { name: 'auth.login.submit' }));
 
-    expect(await screen.findByRole('alert')).toHaveTextContent(/invalid username or password/i);
+    expect(await screen.findByRole('alert')).toHaveTextContent('auth.login.errors.invalidCredentials');
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
