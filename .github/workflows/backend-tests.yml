@@ -2,6 +2,9 @@ name: Backend Tests
 
 on:
   push:
+    paths:
+      - "apps/jobboard-backend/**"
+      - ".github/workflows/backend-tests.yml"
 
 jobs:
   test:
@@ -23,7 +26,8 @@ jobs:
         working-directory: ./apps/jobboard-backend
         env:
           SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb
-          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+          SPRING_DATASOURCE_USERNAME: username
           SPRING_DATASOURCE_PASSWORD: password
           MAIL_USERNAME: test
           MAIL_PASSWORD: test
