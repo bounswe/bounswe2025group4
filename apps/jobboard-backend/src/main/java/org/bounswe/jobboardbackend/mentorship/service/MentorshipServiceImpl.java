@@ -1,5 +1,6 @@
 package org.bounswe.jobboardbackend.mentorship.service;
 
+import com.google.cloud.storage.*;
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
@@ -9,13 +10,19 @@ import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.bounswe.jobboardbackend.mentorship.model.*;
 import org.bounswe.jobboardbackend.mentorship.repository.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,7 +38,99 @@ public class MentorshipServiceImpl implements MentorshipService {
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
     private final ConversationRepository conversationRepository;
+    private final Storage storage = StorageOptions.getDefaultInstance().getService();
     // private final NotificationService notificationService; // (Future implementation)
+
+
+    @Value("${app.gcs.bucket}")
+    private String gcsBucket;
+
+    @Value("${app.gcs.public}")
+    private boolean gcsPublic;
+
+    @Value("${app.gcs.publicBaseUrl}")
+    private String gcsPublicBaseUrl;
+
+    @Value("${app.env}")
+    private String appEnv;
+
+
+    @Override
+    @Transactional
+    public ResumeFileResponseDTO uploadResumeFile(Long resumeReviewId, MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new HandleException(ErrorCode.RESUME_FILE_REQUIRED, "Resume file is required");
+        }
+
+        String ct = file.getContentType();
+        if (!"application/pdf".equalsIgnoreCase(ct)) {
+            throw new HandleException(ErrorCode.RESUME_FILE_CONTENT_TYPE_INVALID, "Only PDF files are allowed");
+        }
+
+        ResumeReview review = resumeReviewRepository.findById(resumeReviewId)
+                .orElseThrow(() -> new HandleException(ErrorCode.RESUME_REVIEW_NOT_FOUND, "Resume review not found"));
+
+        if (review.getResumeUrl() != null) {
+            String oldObject = extractObjectNameFromUrl(review.getResumeUrl());
+            if (oldObject != null) {
+                deleteFromGcs(oldObject);
+            }
+        }
+
+        String objectName = buildObjectNameForResume(resumeReviewId, file.getOriginalFilename());
+        String url;
+        try {
+            url = uploadToGcs(file.getBytes(), ct, objectName);
+        } catch (IOException e) {
+            throw new HandleException(ErrorCode.RESUME_FILE_UPLOAD_FAILED, "Upload failed", e);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        review.setResumeUrl(url);
+        //review.setStatus(ReviewStatus.ACTIVE);
+        review.setResumeUploadedAt(now);
+
+        return ResumeFileResponseDTO.builder()
+                .resumeReviewId(review.getId())
+                .fileUrl(review.getResumeUrl())
+                .reviewStatus(review.getStatus())
+                .uploadedAt(review.getResumeUploadedAt())
+                .build();
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResumeFileUrlDTO getResumeFileUrl(Long resumeReviewId) {
+        ResumeReview review = resumeReviewRepository.findById(resumeReviewId)
+                .orElseThrow(() -> new HandleException(ErrorCode.RESUME_REVIEW_NOT_FOUND, "Resume review not found"));
+
+        if (review.getResumeUrl() == null) {
+            throw new HandleException(ErrorCode.RESUME_FILE_NOT_FOUND, "Resume file not uploaded yet");
+        }
+
+        return ResumeFileUrlDTO.builder()
+                .fileUrl(review.getResumeUrl())
+                .build();
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResumeReviewDTO getResumeReview(Long resumeReviewId) {
+        ResumeReview review = resumeReviewRepository.findById(resumeReviewId)
+                .orElseThrow(() -> new HandleException(ErrorCode.RESUME_REVIEW_NOT_FOUND, "Resume review not found"));
+
+        return ResumeReviewDTO.builder()
+                .resumeReviewId(review.getId())
+                .fileUrl(review.getResumeUrl())
+                .reviewStatus(review.getStatus())
+                .feedback(review.getFeedback())
+                .build();
+    }
+
+
+
 
 
     @Override
@@ -404,4 +503,55 @@ public class MentorshipServiceImpl implements MentorshipService {
                 request.getCreatedAt()
         );
     }
+
+    private String buildObjectNameForResume(Long resumeReviewId, String originalFilename) {
+        String ext = ".pdf";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            String candidate = originalFilename.substring(originalFilename.lastIndexOf('.'));
+            if (candidate.equalsIgnoreCase(".pdf")) {
+                ext = candidate;
+            }
+        }
+        return appEnv + "/resumes/" + resumeReviewId + ext;
+    }
+
+    private String publicUrl(String objectName) {
+        return gcsPublicBaseUrl + "/" + gcsBucket + "/" + objectName;
+    }
+
+    private String extractObjectNameFromUrl(String url) {
+        String prefix = gcsPublicBaseUrl + "/" + gcsBucket + "/";
+        if (url != null && url.startsWith(prefix)) {
+            return url.substring(prefix.length());
+        }
+        return null;
+    }
+
+    private String uploadToGcs(byte[] content, String contentType, String objectName) {
+        BlobInfo info = BlobInfo.newBuilder(gcsBucket, objectName)
+                .setContentType(contentType != null ? contentType : "application/pdf")
+                .build();
+        storage.create(info, content);
+
+        if (gcsPublic) {
+            return publicUrl(objectName);
+        } else {
+            URL signed = storage.signUrl(
+                    BlobInfo.newBuilder(gcsBucket, objectName).build(),
+                    15, TimeUnit.MINUTES,
+                    Storage.SignUrlOption.withV4Signature(),
+                    Storage.SignUrlOption.httpMethod(HttpMethod.GET)
+            );
+            return signed.toString();
+        }
+    }
+
+    private void deleteFromGcs(String objectName) {
+        if (objectName == null) return;
+        try {
+            storage.delete(gcsBucket, objectName);
+        } catch (StorageException ignore) {
+        }
+    }
+
 }
