@@ -31,6 +31,7 @@ import MentorProfilePage from './pages/MentorProfilePage';
 import MentorshipRequestPage from './pages/MentorshipRequestPage';
 import MyMentorshipsPage from './pages/MyMentorshipsPage';
 import ChatPage from './pages/ChatPage';
+import PublicProfilePage from './pages/PublicProfilePage';
 
 const router = createBrowserRouter([
   {
@@ -210,7 +211,7 @@ const router = createBrowserRouter([
       {
         path: 'profile/:userId',
         element: (
-            <ProfilePage />
+            <PublicProfilePage />
         ),
       },
     ],

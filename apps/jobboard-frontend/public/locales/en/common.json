@@ -567,7 +567,6 @@
       "findMentors": "Find Mentors",
       "started": "Started",
       "accepted": "Accepted",
-      "completed": "Completed",
       "duration": "Duration",
       "learningGoals": "Learning Goals",
       "openChat": "Open Chat",
@@ -599,6 +598,8 @@
       "openToOpportunities": "Open to opportunities",
       "currentRole": "{{position}} at {{company}}",
       "joined": "Joined in {{year}}",
+      "posts": "posts",
+      "badges": "badges",
       "stats": {
         "posts": "Posts",
         "badges": "Badges"
@@ -620,6 +621,7 @@
     "about": {
       "title": "About",
       "addBio": "Add bio",
+      "noBio": "No bio available",
       "modal": {
         "title": "Edit About",
         "bioLabel": "Bio",
@@ -630,6 +632,7 @@
     "experience": {
       "title": "Experience",
       "empty": "Add experience",
+      "noExperience": "No work experience available",
       "modal": {
         "addTitle": "Add Experience",
         "editTitle": "Edit Experience",
@@ -663,6 +666,7 @@
     "education": {
       "title": "Education",
       "empty": "Add education",
+      "noEducation": "No education information available",
       "modal": {
         "addTitle": "Add Education",
         "editTitle": "Edit Education",
@@ -700,6 +704,7 @@
     "skills": {
       "title": "Skills",
       "empty": "Add skills",
+      "noSkills": "No skills listed",
       "modal": {
         "addTitle": "Add Skill",
         "editTitle": "Edit Skill",
@@ -717,6 +722,7 @@
     "interests": {
       "title": "Interests",
       "empty": "Add interests",
+      "noInterests": "No interests listed",
       "modal": {
         "addTitle": "Add Interest",
         "editTitle": "Edit Interest",
@@ -815,6 +821,9 @@
       "saveInterestSuccess": "Interest saved successfully.",
       "saveInterestError": "Failed to save interest.",
       "deleteAccountSuccess": "All profile data has been deleted."
+    },
+    "public": {
+      "note": "This is a public profile view. Skills and interests are not displayed for privacy."
     },
     "activity": {
       "items": [
@@ -951,7 +960,6 @@
     "atCompany": "at {{company}}",
     "applicantInfo": "Applicant Information",
     "status": "Status",
-    "applied": "Applied",
     "coverLetter": "Cover Letter",
     "specialNeeds": "Special Needs or Accommodations",
     "cv": "CV / Resume",

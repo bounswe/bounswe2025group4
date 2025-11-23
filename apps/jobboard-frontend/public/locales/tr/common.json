@@ -551,7 +551,7 @@
       "findMentors": "Mentor Bul",
       "started": "Başlangıç",
       "accepted": "Kabul Edildi",
-      "completed": "Tamamlandı",
+      "completedDate": "Tamamlandı",
       "duration": "Süre",
       "learningGoals": "Öğrenme Hedefleri",
       "openChat": "Sohbeti Aç",
@@ -583,6 +583,8 @@
       "openToOpportunities": "Fırsatlara açık",
       "currentRole": "{{company}} bünyesinde {{position}}",
       "joined": "{{year}} yılında katıldı",
+      "posts": "gönderi",
+      "badges": "rozet",
       "stats": {
         "posts": "Gönderi",
         "badges": "Rozet"
@@ -604,6 +606,7 @@
     "about": {
       "title": "Hakkında",
       "addBio": "Biyografi ekle",
+      "noBio": "Biyografi mevcut değil",
       "modal": {
         "title": "Hakkında'yı Düzenle",
         "bioLabel": "Biyografi",
@@ -614,6 +617,7 @@
     "experience": {
       "title": "Deneyim",
       "empty": "Deneyim ekle",
+      "noExperience": "İş deneyimi mevcut değil",
       "modal": {
         "addTitle": "Deneyim Ekle",
         "editTitle": "Deneyimi Düzenle",
@@ -647,6 +651,7 @@
     "education": {
       "title": "Eğitim",
       "empty": "Eğitim ekle",
+      "noEducation": "Eğitim bilgisi mevcut değil",
       "modal": {
         "addTitle": "Eğitim Ekle",
         "editTitle": "Eğitimi Düzenle",
@@ -684,6 +689,7 @@
     "skills": {
       "title": "Yetenekler",
       "empty": "Yetenek ekle",
+      "noSkills": "Yetenek listesi mevcut değil",
       "modal": {
         "addTitle": "Yetenek Ekle",
         "editTitle": "Yetenek Düzenle",
@@ -701,6 +707,7 @@
     "interests": {
       "title": "İlgi Alanları",
       "empty": "İlgi alanı ekle",
+      "noInterests": "İlgi alanı listesi mevcut değil",
       "modal": {
         "addTitle": "İlgi Alanı Ekle",
         "editTitle": "İlgi Alanını Düzenle",
@@ -799,6 +806,9 @@
       "saveInterestSuccess": "İlgi alanı başarıyla kaydedildi.",
       "saveInterestError": "İlgi alanı kaydedilemedi.",
       "deleteAccountSuccess": "Tüm profil verileri silindi."
+    },
+    "public": {
+      "note": "Bu halka açık bir profil görünümüdür. Gizlilik nedeniyle yetenekler ve ilgi alanları gösterilmez."
     },
     "activity": {
       "items": [
@@ -938,7 +948,7 @@
     "findMentors": "Mentor Bul",
     "started": "Başlangıç",
     "accepted": "Kabul Edildi",
-    "completed": "Tamamlandı",
+    "completedDate": "Tamamlandı",
     "duration": "Süre",
     "learningGoals": "Öğrenme Hedefleri",
     "openChat": "Sohbeti Aç",
@@ -1075,39 +1085,6 @@
     "submitting": "Yayınlanıyor...",
     "submitError": "İş ilanı oluşturulamadı. Lütfen tekrar deneyin.",
     "submitSuccess": "İş ilanı başarıyla oluşturuldu!"
-  },
-  "myMentorships": {
-    "title": "Mentorluk İlişkilerim",
-    "subtitle": "Mentorluk taleplerinizi ve aktif mentorluk ilişkilerinizi takip edin",
-    "successMessage": "{{mentorName}} için mentorluk talebi başarıyla gönderildi!",
-    "active": "Aktif",
-    "pending": "Beklemede",
-    "completed": "Tamamlandı",
-    "rejected": "Reddedildi",
-    "noActive": "Aktif Mentorluk Yok",
-    "noActiveDesc": "Henüz aktif mentorluk ilişkiniz bulunmuyor. Başlamak için bir mentor bulun!",
-    "noPending": "Bekleyen Talep Yok",
-    "noPendingDesc": "Bekleyen mentorluk talebiniz bulunmuyor.",
-    "noCompleted": "Tamamlanan Mentorluk Yok",
-    "noCompletedDesc": "Henüz tamamlanmış mentorluk ilişkiniz bulunmuyor.",
-    "noRejected": "Reddedilen Talep Yok",
-    "noRejectedDesc": "Reddedilmiş mentorluk talebiniz bulunmuyor.",
-    "findMentors": "Mentor Bul",
-    "started": "Başlangıç",
-    "accepted": "Kabul Edildi",
-    "completedDate": "Tamamlandı",
-    "duration": "Süre",
-    "learningGoals": "Öğrenme Hedefleri",
-    "openChat": "Sohbeti Aç",
-    "writeReview": "Değerlendirme Yaz",
-    "waitingForResponse": "Yanıt Bekleniyor",
-    "viewDetails": "Detayları Görüntüle",
-    "status": {
-      "active": "Aktif",
-      "pending": "Beklemede",
-      "completed": "Tamamlandı",
-      "rejected": "Reddedildi"
-    }
   },
   "reviews": {
     "workplaceReviews": "İşyeri Değerlendirmeleri",
