@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect } from 'vitest';
 
-vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
+vi.mock('react-i18next', async () => await import('@/test/react-i18next'));
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
 
 const baseProps = {
