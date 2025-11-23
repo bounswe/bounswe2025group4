@@ -10,6 +10,7 @@ export interface JobPostResponse {
   jobId?: number;
   jobPostId?: number;
   employerId: number;
+  workplaceId?: number;
   title: string;
   description: string;
   company: string;
@@ -30,7 +31,7 @@ export interface JobPostResponse {
 export interface CreateJobPostRequest {
   title: string; // max 100 chars
   description: string; // max 1000 chars
-  company: string; // required, min 1 char
+  workplaceId: number; // required, links job to workplace
   location: string; // required, min 1 char
   remote: boolean;
   ethicalTags?: string;
@@ -47,7 +48,7 @@ export interface CreateJobPostRequest {
 export interface UpdateJobPostRequest {
   title?: string; // max 100 chars
   description?: string; // max 1000 chars
-  company?: string;
+  workplaceId?: number;
   location?: string;
   remote?: boolean;
   ethicalTags?: string;
@@ -64,6 +65,7 @@ export interface UpdateJobPostRequest {
 export interface JobsFilterParams {
   title?: string;
   companyName?: string;
+  workplaceId?: number;
   ethicalTags?: string[];
   minSalary?: number;
   maxSalary?: number;

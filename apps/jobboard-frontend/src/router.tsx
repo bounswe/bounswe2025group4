@@ -18,7 +18,6 @@ import JobApplicationPage from './pages/JobApplicationPage';
 import MyApplicationsPage from './pages/MyApplicationsPage';
 import JobApplicationReviewPage from './pages/JobApplicationReviewPage';
 import EmployerDashboardPage from './pages/EmployerDashboardPage';
-import CreateJobPostPage from './pages/CreateJobPostPage';
 import EmployerJobPostDetailsPage from './pages/EmployerJobPostDetailsPage';
 import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -112,14 +111,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <WorkplaceSettingsPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'employer/jobs/create',
-        element: (
-          <ProtectedRoute>
-            <CreateJobPostPage />
           </ProtectedRoute>
         ),
       },
