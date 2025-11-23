@@ -23,14 +23,15 @@ import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForumPage from './pages/ForumPage';
 import MentorshipPage from './pages/MentorshipPage';
+import MentorProfilePage from './pages/MentorProfilePage';
+import MyMentorshipsPage from './pages/MyMentorshipsPage';
+import CreateMentorProfilePage from './pages/CreateMentorProfilePage';
+import MentorRequestsPage from './pages/MentorRequestsPage';
 import WorkplaceProfilePage from './pages/WorkplaceProfilePage';
 import EmployerWorkplacesPage from './pages/EmployerWorkplacesPage';
 import ManageEmployerRequestsPage from './pages/ManageEmployerRequestsPage';
 import WorkplaceSettingsPage from './pages/WorkplaceSettingsPage';
 import WorkplacesPage from './pages/WorkplacesPage';
-import MentorProfilePage from './pages/MentorProfilePage';
-import MentorshipRequestPage from './pages/MentorshipRequestPage';
-import MyMentorshipsPage from './pages/MyMentorshipsPage';
 import ChatPage from './pages/ChatPage';
 
 const router = createBrowserRouter([
@@ -147,6 +148,22 @@ const router = createBrowserRouter([
         element: <MentorshipPage />,
       },
       {
+        path: 'mentorship/mentor/create',
+        element: (
+          <ProtectedRoute>
+            <CreateMentorProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'mentorship/mentor/edit',
+        element: (
+          <ProtectedRoute>
+            <CreateMentorProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: 'mentorship/:id',
         element: (
           <ProtectedRoute>
@@ -155,18 +172,18 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'mentorship/:id/request',
-        element: (
-          <ProtectedRoute>
-            <MentorshipRequestPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
         path: 'my-mentorships',
         element: (
           <ProtectedRoute>
             <MyMentorshipsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'mentor/requests',
+        element: (
+          <ProtectedRoute>
+            <MentorRequestsPage />
           </ProtectedRoute>
         ),
       },

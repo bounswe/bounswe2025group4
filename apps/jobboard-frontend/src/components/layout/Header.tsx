@@ -53,6 +53,14 @@ export default function Header() {
                     <Link to="/workplaces">{t('header.nav.browseWorkplaces')}</Link>
                   </Button>
                   <Button variant="ghost" asChild>
+                    <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
+                  </Button>
+                  {isAuthenticated && (
+                    <Button variant="ghost" asChild>
+                      <Link to="/my-mentorships">{t('header.nav.myMentorships')}</Link>
+                    </Button>
+                  )}
+                  <Button variant="ghost" asChild>
                     <Link to="/forum">{t('header.nav.forum')}</Link>
                   </Button>
                   <Button variant="ghost" asChild>
@@ -75,7 +83,7 @@ export default function Header() {
                   <Button variant="ghost" asChild>
                     <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
                   </Button>
-                  {isAuthenticated && isJobSeeker && (
+                  {isAuthenticated && (
                     <Button variant="ghost" asChild>
                       <Link to="/my-mentorships">{t('header.nav.myMentorships')}</Link>
                     </Button>
@@ -154,6 +162,18 @@ export default function Header() {
                       </Link>
                     </Button>
                     <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/mentorship" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.mentorship')}
+                      </Link>
+                    </Button>
+                    {isAuthenticated && (
+                      <Button variant="ghost" asChild className="justify-start">
+                        <Link to="/my-mentorships" onClick={() => setIsMobileMenuOpen(false)}>
+                          {t('header.nav.myMentorships')}
+                        </Link>
+                      </Button>
+                    )}
+                    <Button variant="ghost" asChild className="justify-start">
                       <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>
                         {t('header.nav.forum')}
                       </Link>
@@ -188,7 +208,7 @@ export default function Header() {
                         {t('header.nav.mentorship')}
                       </Link>
                     </Button>
-                    {isAuthenticated && isJobSeeker && (
+                    {isAuthenticated && (
                       <Button variant="ghost" asChild className="justify-start">
                         <Link to="/my-mentorships" onClick={() => setIsMobileMenuOpen(false)}>
                           {t('header.nav.myMentorships')}

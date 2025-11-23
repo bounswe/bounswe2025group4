@@ -5,10 +5,13 @@ import { useAuthStore } from '../stores/authStore';
 /**
  * Base API URL - must be set via VITE_API_URL environment variable
  * Appends /api if not already present
+ * Defaults to http://localhost:8080/api if not set
  */
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
   ? import.meta.env.VITE_API_URL 
-  : (import.meta.env.VITE_API_URL || '') + '/api';
+  : (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api';
+
+console.log('[API Client] Base URL:', API_BASE_URL);
 
 /**
  * Create axios instance with base configuration
@@ -18,7 +21,7 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 seconds
+  timeout: 30000, // 30 seconds (increased for slower connections)
 });
 
 /**

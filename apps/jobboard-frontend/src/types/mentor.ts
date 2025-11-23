@@ -61,6 +61,8 @@ export interface Mentorship {
   message: string;
   resumeUrl?: string;
   preferredTime?: string;
+  resumeReviewId?: number; // For completing mentorship
+  conversationId?: string;
 }
 
 export type MentorshipStatus = 'pending' | 'accepted' | 'rejected' | 'active' | 'completed';

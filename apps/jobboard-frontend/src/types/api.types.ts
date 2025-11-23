@@ -207,3 +207,135 @@ export interface PublicProfileResponseDto {
 export interface MessageResponse {
   message: string;
 }
+
+// ============================================================================
+// MENTORSHIP
+// ============================================================================
+
+/**
+ * Request payload for creating a mentor profile
+ */
+export interface CreateMentorProfileDTO {
+  expertise: string[];
+  maxMentees: number;
+}
+
+/**
+ * Request payload for updating a mentor profile
+ */
+export interface UpdateMentorProfileDTO {
+  expertise?: string[];
+  maxMentees?: number;
+}
+
+/**
+ * Mentor profile response from API
+ */
+export interface MentorProfileDTO {
+  id: string;
+  username: string;
+  expertise: string[];
+  currentMentees: number;
+  maxMentees: number;
+  averageRating: number;
+  reviewCount: number;
+}
+
+/**
+ * Mentor review response from API
+ */
+export interface MentorReviewDTO {
+  id: number;
+  reviewerUsername: string;
+  rating: number;
+  comment: string;
+  createdAt: string; // ISO 8601 date-time string
+}
+
+/**
+ * Detailed mentor profile response from API (includes reviews)
+ */
+export interface MentorProfileDetailDTO {
+  id: string;
+  username: string;
+  expertise: string[];
+  currentMentees: number;
+  maxMentees: number;
+  averageRating: number;
+  reviewCount: number;
+  reviews: MentorReviewDTO[];
+}
+
+/**
+ * Request payload for creating a mentorship request
+ */
+export interface CreateMentorshipRequestDTO {
+  mentorId: number;
+}
+
+/**
+ * Mentorship request response from API
+ */
+export interface MentorshipRequestDTO {
+  id: string;
+  requesterId: string;
+  mentorId: string;
+  status: string; // PENDING, ACCEPTED, REJECTED
+  createdAt: string; // ISO 8601 date-time string
+  message?: string; // Optional: message from mentee
+  goals?: string[]; // Optional: learning goals
+  expectedDuration?: string; // Optional: expected mentorship duration
+  preferredTime?: string; // Optional: preferred meeting time
+}
+
+/**
+ * Request payload for responding to a mentorship request
+ */
+export interface RespondToRequestDTO {
+  accept: boolean;
+}
+
+export interface CreateRatingDTO {
+  resumeReviewId: number;
+  rating: number;
+  comment: string;
+}
+
+/**
+ * Mentorship details response from API (for mentee)
+ */
+export interface MentorshipDetailsDTO {
+  mentorshipRequestId: number;
+  requestStatus: string; // PENDING, ACCEPTED, REJECTED, COMPLETED, CLOSED
+  requestCreatedAt: string; // ISO 8601 date-time string
+  mentorId: number;
+  mentorUsername: string;
+  resumeReviewId: number;
+  reviewStatus: string; // ACTIVE, COMPLETED, CLOSED
+  conversationId: number;
+}
+
+// ============================================================================
+// CHAT
+// ============================================================================
+
+/**
+ * Chat message DTO from backend
+ */
+export interface ChatMessageDTO {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderUsername: string;
+  content: string;
+  timestamp: string; // ISO 8601 date-time string
+  read?: boolean;
+  senderAvatar?: string;
+}
+
+/**
+ * Request payload for creating a chat message
+ */
+export interface CreateMessageDTO {
+  content: string;
+}

@@ -1,148 +1,216 @@
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import MentorCard from "@/components/mentorship/MentorCard";
 import { type Mentor } from "@/types/mentor";
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
-
-const mockMentors: Mentor[] = [
-  {
-    id: "1",
-    name: "Alice Johnson",
-    title: "Senior Software Engineer at Google",
-    bio: "I have 10 years of experience in software development and I'm passionate about helping new developers grow. I specialize in React, TypeScript, and building scalable applications.",
-    rating: 4.9,
-    reviews: 45,
-    mentees: 3,
-    capacity: 5,
-    tags: ["React", "TypeScript", "Career Advice", "Interview Prep"],
-    experience: "10+ years in software development",
-    education: "MS Computer Science, Stanford University",
-    linkedinUrl: "https://linkedin.com/in/alicejohnson",
-    githubUrl: "https://github.com/alicejohnson",
-    websiteUrl: "https://alicejohnson.dev",
-    hourlyRate: 150,
-    availability: "Monday-Friday, 6-9 PM PST",
-    languages: ["English", "Spanish"],
-    specialties: ["Frontend Development", "System Design", "Career Growth"],
-    achievements: [
-      "Led development of Google's main search interface",
-      "Published 15+ technical articles",
-      "Speaker at React Conf 2023"
-    ],
-    profileImage: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: "2",
-    name: "Bob Williams",
-    title: "Product Manager at Microsoft",
-    bio: "I can help you with product sense, interview preparation, and career transition into product management. I've launched multiple successful products and mentored 20+ PMs.",
-    rating: 4.7,
-    reviews: 28,
-    mentees: 5,
-    capacity: 5,
-    tags: ["Product Management", "Interview Prep", "Strategy"],
-    experience: "8+ years in product management",
-    education: "MBA, Harvard Business School",
-    linkedinUrl: "https://linkedin.com/in/bobwilliams",
-    hourlyRate: 120,
-    availability: "Tuesday-Thursday, 7-9 PM EST",
-    languages: ["English"],
-    specialties: ["Product Strategy", "User Research", "Go-to-Market"],
-    achievements: [
-      "Launched 3 successful products at Microsoft",
-      "Mentored 20+ PMs",
-      "Featured in Product Management Weekly"
-    ],
-    profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: "3",
-    name: "Charlie Brown",
-    title: "UX Designer at Apple",
-    bio: "I specialize in user-centered design and can provide feedback on your portfolio and design process. I've designed interfaces for millions of users worldwide.",
-    rating: 4.8,
-    reviews: 62,
-    mentees: 1,
-    capacity: 3,
-    tags: ["UX Design", "Portfolio Review", "User Research"],
-    experience: "6+ years in UX design",
-    education: "BFA Design, Art Center College of Design",
-    linkedinUrl: "https://linkedin.com/in/charliebrown",
-    websiteUrl: "https://charliebrown.design",
-    hourlyRate: 100,
-    availability: "Monday-Wednesday, 5-8 PM PST",
-    languages: ["English", "French"],
-    specialties: ["User Research", "Prototyping", "Design Systems"],
-    achievements: [
-      "Designed Apple's latest iOS interface",
-      "Portfolio featured in Design Annual",
-      "Speaker at UX Design Conference"
-    ],
-    profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: "4",
-    name: "Diana Martinez",
-    title: "Data Scientist at Netflix",
-    bio: "I help aspiring data scientists break into the field and advance their careers. I specialize in machine learning, Python, and data visualization.",
-    rating: 4.6,
-    reviews: 34,
-    mentees: 2,
-    capacity: 4,
-    tags: ["Data Science", "Python", "Machine Learning"],
-    experience: "7+ years in data science",
-    education: "PhD Statistics, MIT",
-    linkedinUrl: "https://linkedin.com/in/dianamartinez",
-    githubUrl: "https://github.com/dianamartinez",
-    hourlyRate: 130,
-    availability: "Weekends, Flexible schedule",
-    languages: ["English", "Spanish"],
-    specialties: ["Machine Learning", "Data Visualization", "Career Transition"],
-    achievements: [
-      "Built recommendation system for Netflix",
-      "Published in top-tier ML journals",
-      "Kaggle Grandmaster"
-    ],
-    profileImage: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: "5",
-    name: "Ethan Chen",
-    title: "DevOps Engineer at Amazon",
-    bio: "I specialize in cloud infrastructure, CI/CD pipelines, and helping developers understand DevOps best practices. I've scaled systems for millions of users.",
-    rating: 4.5,
-    reviews: 19,
-    mentees: 4,
-    capacity: 6,
-    tags: ["DevOps", "AWS", "Docker", "Kubernetes"],
-    experience: "9+ years in DevOps",
-    education: "BS Computer Engineering, UC Berkeley",
-    linkedinUrl: "https://linkedin.com/in/ethanchen",
-    githubUrl: "https://github.com/ethanchen",
-    hourlyRate: 140,
-    availability: "Monday-Friday, 8-10 PM EST",
-    languages: ["English", "Mandarin"],
-    specialties: ["Cloud Infrastructure", "CI/CD", "System Scaling"],
-    achievements: [
-      "Scaled Amazon's infrastructure globally",
-      "Open source contributor",
-      "AWS Solutions Architect"
-    ],
-    profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
-  }
-];
+import { getMentors, getMentorProfile } from '@/services/mentorship.service';
+import { getMenteeMentorships } from '@/services/mentorship.service';
+import { convertMentorProfileToMentor } from '@/utils/mentorship.utils';
+import { profileService } from '@/services/profile.service';
+import CenteredLoader from '@/components/CenteredLoader';
+import CenteredError from '@/components/CenteredError';
 
 const MentorshipPage = () => {
   const { t } = useTranslation('common');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const [searchInput, setSearchInput] = useState('');
+  const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [hasMentorProfile, setHasMentorProfile] = useState(false);
+  const [requestedMentorIds, setRequestedMentorIds] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    const checkMentorProfile = async () => {
+      if (!isAuthenticated || !user?.id) {
+        setHasMentorProfile(false);
+        return;
+      }
+
+      try {
+        await getMentorProfile(user.id);
+        setHasMentorProfile(true);
+      } catch (err: any) {
+        // If 404, user doesn't have a profile (this is expected)
+        if (err?.response?.status === 404) {
+          setHasMentorProfile(false);
+        } else {
+          // Other errors - assume no profile
+          console.error('Error checking mentor profile:', err);
+          setHasMentorProfile(false);
+        }
+      }
+
+      try {
+        const mentorships = await getMenteeMentorships(user.id);
+        const mentorIds = new Set(
+          mentorships
+            .filter(m => 
+              m.requestStatus === 'PENDING' || 
+              m.requestStatus === 'ACCEPTED' ||
+              m.reviewStatus === 'ACTIVE' // Active mentorship means you already have an active relationship
+            )
+            .map(m => m.mentorId)
+        );
+        setRequestedMentorIds(mentorIds);
+      } catch (err) {
+        console.error('Error fetching existing mentorships:', err);
+        // Don't block the page if this fails
+      }
+    };
+
+    checkMentorProfile();
+  }, [isAuthenticated, user?.id]);
+
+  useEffect(() => {
+    const fetchMentors = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const backendMentors = await getMentors();
+        
+        // Fetch mentor profiles to get avatars and normal profile data
+        const mentorProfilesMap: Record<string, { imageUrl?: string; profile?: any }> = {};
+        await Promise.all(
+          backendMentors.map(async (mentor) => {
+            try {
+              const mentorId = parseInt(mentor.id, 10);
+              if (!isNaN(mentorId)) {
+                const profile = await profileService.getPublicProfile(mentorId);
+                mentorProfilesMap[mentor.id] = {
+                  imageUrl: profile.imageUrl,
+                  profile: {
+                    bio: profile.bio,
+                    experiences: profile.experiences,
+                    educations: profile.educations,
+                    skills: profile.skills,
+                    interests: profile.interests
+                  }
+                };
+              }
+            } catch (err) {
+              // Profile might not exist, that's okay
+              mentorProfilesMap[mentor.id] = {};
+            }
+          })
+        );
+        
+        const convertedMentors = backendMentors.map(mentor => 
+          convertMentorProfileToMentor(
+            mentor, 
+            mentorProfilesMap[mentor.id]?.imageUrl,
+            mentorProfilesMap[mentor.id]?.profile
+          )
+        );
+        
+        const filteredMentors = user?.id
+          ? convertedMentors.filter(mentor => mentor.id !== user.id.toString())
+          : convertedMentors;
+        
+        setMentors(filteredMentors);
+      } catch (err) {
+        console.error('Error fetching mentors:', err);
+        // Check if it's a timeout or connection error
+        if (err && typeof err === 'object' && 'code' in err) {
+          const axiosError = err as { code?: string; message?: string };
+          if (axiosError.code === 'ECONNABORTED' || axiosError.message?.includes('timeout')) {
+            setError(t('mentorship.errors.timeout') || 'Connection timeout. Please check if the backend server is running.');
+          } else if (axiosError.code === 'ERR_NETWORK' || axiosError.message?.includes('Network Error')) {
+            setError(t('mentorship.errors.networkError') || 'Cannot connect to server. Please check if the backend is running.');
+          } else {
+            setError(t('mentorship.errors.loadFailed') || 'Failed to load mentors. Please try again later.');
+          }
+        } else {
+          setError(t('mentorship.errors.loadFailed') || 'Failed to load mentors. Please try again later.');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMentors();
+  }, [user?.id]);
+  
+  const filteredMentors = useMemo(() => {
+    if (!searchInput.trim()) {
+      return mentors;
+    }
+    const searchLower = searchInput.toLowerCase();
+    return mentors.filter(mentor =>
+      mentor.name.toLowerCase().includes(searchLower) ||
+      mentor.title.toLowerCase().includes(searchLower) ||
+      mentor.tags.some(tag => tag.toLowerCase().includes(searchLower)) ||
+      mentor.specialties.some(spec => spec.toLowerCase().includes(searchLower))
+    );
+  }, [searchInput, mentors]);
+
+  if (isLoading) {
+    return <CenteredLoader />;
+  }
+
+  if (error) {
+    return <CenteredError message={error} />;
+  }
   
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">{t('mentorship.title')}</h1>
+    <div className="container mx-auto px-4 py-6 lg:py-8">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
+              {t('mentorship.title')}
+            </h1>
+            <p className="mt-2 text-muted-foreground">
+              {t('mentorship.subtitle') || 'Find experienced mentors to guide your career'}
+            </p>
+          </div>
+          {isAuthenticated && (
+            <>
+              {hasMentorProfile ? (
+                <Button asChild variant="outline">
+                  <Link to={`/mentorship/${user?.id}`}>
+                    {t('mentorship.viewMyProfile') || 'View My Profile'}
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild>
+                  <Link to="/mentorship/mentor/create">
+                    {t('mentorship.becomeMentor')}
+                  </Link>
+                </Button>
+              )}
+            </>
+          )}
+        </div>
+        
+        {/* Search Bar */}
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder={t('mentorship.searchPlaceholder') || 'Search mentors by name, expertise, or skills...'}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            className="pl-10 pr-10"
+          />
+          {searchInput && (
+            <button
+              onClick={() => setSearchInput('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+      </div>
       
       {/* Auth Required Banner (if not authenticated) */}
       {!isAuthenticated && (
@@ -175,14 +243,32 @@ const MentorshipPage = () => {
       )}
       
       {/* Mentor Grid (blurred if not authenticated) */}
-      <div className={cn(
-        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
-        !isAuthenticated && "opacity-60 pointer-events-none blur-sm select-none"
-      )}>
-        {mockMentors.slice(0, 6).map((mentor) => (
-          <MentorCard key={mentor.id} mentor={mentor} />
-        ))}
-      </div>
+      {filteredMentors.length > 0 ? (
+        <div className={cn(
+          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+          !isAuthenticated && "opacity-60 pointer-events-none blur-sm select-none"
+        )}>
+          {filteredMentors.map((mentor) => {
+            const mentorIdNum = parseInt(mentor.id, 10);
+            const hasRequested = !isNaN(mentorIdNum) && requestedMentorIds.has(mentorIdNum);
+            return (
+              <MentorCard 
+                key={mentor.id} 
+                mentor={mentor} 
+                hasRequested={hasRequested}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="text-center py-12">
+            <p className="text-muted-foreground">
+              {t('mentorship.noResults') || 'No mentors found. Try adjusting your search.'}
+            </p>
+          </CardContent>
+        </Card>
+      )}
       
       {/* Login Prompt Overlay (if not authenticated) */}
       {!isAuthenticated && (

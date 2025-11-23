@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { Check, CheckCheck } from 'lucide-react';
 import type { ChatMessage } from '@/types/chat';
 
 interface MessageBubbleProps {
@@ -51,10 +52,22 @@ const MessageBubble = ({ message, isOwnMessage }: MessageBubbleProps) => {
           <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
         </div>
 
-        {/* Timestamp */}
-        <span className="text-xs text-muted-foreground mt-1 mx-1">
-          {formatTime(message.timestamp)}
-        </span>
+        {/* Timestamp and read status (only for own messages) */}
+        <div className={cn('flex items-center gap-1 mt-1', isOwnMessage && 'flex-row-reverse')}>
+          <span className="text-xs text-muted-foreground">
+            {formatTime(message.timestamp)}
+          </span>
+          {/* Read status indicators (WhatsApp style) - only for own messages */}
+          {isOwnMessage && (
+            <span className="flex items-center">
+              {message.read ? (
+                <CheckCheck className="h-3.5 w-3.5 text-primary" aria-label="Read" />
+              ) : (
+                <Check className="h-3.5 w-3.5 text-muted-foreground" aria-label="Sent" />
+              )}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
