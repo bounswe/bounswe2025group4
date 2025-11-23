@@ -31,6 +31,7 @@ export default function JobApplicationReviewPage() {
         setIsLoading(true);
         const appData = await getApplicationById(parseInt(applicationId, 10));
         setApplication(appData);
+        setIsLoading(false);
 
         // Fetch CV URL
         setIsCvLoading(true);
@@ -47,8 +48,8 @@ export default function JobApplicationReviewPage() {
       } catch (err) {
         console.error('Error fetching application:', err);
         toast.error(t('jobApplicationReview.error.load'));
-      } finally {
         setIsLoading(false);
+        setIsCvLoading(false);
       }
     };
 
@@ -95,9 +96,9 @@ export default function JobApplicationReviewPage() {
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return t('jobApplicationReview.applied.today');
-    if (diffDays === 1) return t('jobApplicationReview.applied.yesterday');
-    return t('jobApplicationReview.applied.daysAgo', { count: diffDays });
+    if (diffDays === 0) return t('jobApplicationReview.appliedToday');
+    if (diffDays === 1) return t('jobApplicationReview.appliedYesterday');
+    return t('jobApplicationReview.appliedDaysAgo', { count: diffDays });
   };
 
   if (isLoading) {

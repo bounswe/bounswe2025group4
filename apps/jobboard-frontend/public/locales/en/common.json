@@ -97,7 +97,7 @@
     "searchAria": "Search jobs",
     "clearSearch": "Clear search",
     "error": "Failed to load jobs. Please try again later.",
-    "retry": "Try Again",
+    "retry": "Retry",
     "results": "{{count}} job found",
     "results_plural": "{{count}} jobs found",
     "resultsDescription": "{{count}} opportunities match your current filters.",
@@ -218,17 +218,17 @@
     "title": "Employer Dashboard",
     "subtitle": "Manage your job postings and workplaces",
     "currentPostings": "Current Job Postings",
-    "createJob": "Create New Job Posting",
+    "createJob": "Post New Job",
     "loadingError": "Failed to load job postings. Please try again later.",
-    "emptyState": "You haven't created any job postings yet.",
-    "emptyCta": "Create Your First Job Posting",
+    "emptyState": "No job postings yet",
+    "emptyCta": "Post Your First Job",
     "addWorkplace": "Add Workplace",
     "joinWorkplace": "Join Workplace",
     "unassignedJobs": "Unassigned Jobs",
     "jobCount": "jobs",
     "jobCount_one": "job",
-    "noJobsInWorkplace": "No job postings in this workplace yet.",
-    "createJobForWorkplace": "Create Job Posting",
+    "noJobsInWorkplace": "No job postings yet",
+    "createJobForWorkplace": "Post Your First Job",
     "noWorkplaces": {
       "title": "No Workplaces Yet",
       "description": "Create a workplace or join an existing one to start posting jobs.",
@@ -261,7 +261,7 @@
     },
     "applied": {
       "today": "Applied today",
-      "yesterday": "Applied 1 day ago",
+      "yesterday": "Applied yesterday",
       "daysAgo": "Applied {{count}} days ago"
     },
     "backToDashboard": "Back to Dashboard",
@@ -276,103 +276,104 @@
     "contact": "Contact Information",
     "ethicalPolicies": "Ethical Policies",
     "inclusiveOpportunity": "Inclusive Opportunity",
-    "inclusiveOpportunityDescription": "This position is designated as an inclusive opportunity, welcoming candidates from diverse backgrounds.",
+    "inclusiveOpportunityDescription": "This position welcomes candidates from diverse backgrounds.",
     "applicationsReceived": "Applications Received ({{count}})",
-    "noApplications": "No applications received yet.",
-        "viewApplication": "View Application"                                                                 
-      },                                                                                                      
-      "employerWorkplaces": {
-        "title": "My Workplaces",
-        "description": "Manage your workplaces and respond to reviews",
-        "viewApplications": "View Applications",
-        "newWorkplace": "New Workplace",
-        "loadError": "Failed to load your workplaces. Please try again.",
-        "empty": {
-          "title": "No Workplaces Yet",
-          "description": "Create your first workplace or request to join an existing one"
-        },
-        "addNew": {
-          "title": "Add New Workplace",
-          "description": "Create a new workplace or join an existing one"
-        },
-        "applicationsModal": {
-          "title": "My Workplace Applications",
-          "description": "View the status of your requests to manage workplaces.",
-          "loadError": "Could not load your applications.",
-          "noApplications": "You have not applied to any workplaces yet.",
-          "appliedOn": "Applied on {{date}}",
-          "note": "Note: {{note}}",
-          "updatedOn": "Updated {{date}}"
-        },
-        "workplaceLabel": "Workplace",
-            "page": {
-              "loadError": "Failed to load your workplaces"
-            }
-          },
-          "status": {
-            "pending": "Pending",
-            "accepted": "Accepted",
-            "rejected": "Rejected",
-                "unknown": "Unknown"
-              },
-              "workplaces": {
-                "title": "Workplaces",
-                "description": "Explore and discover companies to learn more about their culture and ratings",
-                "searchTitle": "Search Workplaces",
-                "searchPlaceholder": "Enter company name...",
-                "searching": "Searching...",
-                "search": "Search",
-                "loadError": "Failed to load workplaces. Please try again.",
-                "loading": "Loading...",
-                "workplacesFound": "{{count}} workplace found",
-                "workplacesFound_plural": "{{count}} workplaces found",
-                "empty": {
-                  "title": "No Workplaces Found",
-                  "adjustFilters": "Try adjusting your filters or search query",
-                  "noWorkplaces": "There are no workplaces available at the moment"
-                },
-                "filters": {
-                  "title": "Filters",
-                  "clear": "Clear",
-                  "clearFilters": "Clear Filters",
-                  "sector": "Sector",
-                  "allSectors": "All Sectors",
-                  "location": "Location",
-                  "locationPlaceholder": "Enter location...",
-                  "sortBy": "Sort By",
-                  "sortOptions": {
-                    "default": "Default",
-                    "nameDesc": "Name (Z to A)",
-                    "nameAsc": "Name (A to Z)",
-                    "reviewCountDesc": "Review Count (High to Low)",
-                    "reviewCountAsc": "Review Count (Low to High)",
-                    "ratingDesc": "Rating (High to Low)",
-                    "ratingAsc": "Rating (Low to High)"
-                  },
-                  "minRating": "Minimum Rating",
-                  "anyRating": "Any",
-                  "ratingWithValue": "{{rating}}★"
-                }
-              },
-              "sectors": {
-                "technology": "Technology",
-                "healthcare": "Healthcare",
-                "education": "Education",
-                "finance": "Finance",
-                "creativearts": "Creative Arts",
-                "manufacturing": "Manufacturing",
-                "retail": "Retail",
-                "consulting": "Consulting",
-                "nonprofit": "Non-profit",
-                "other": "Other"
-              },
-              "pagination": {
-                "previous": "Previous",
-                "next": "Next",
-                "pageInfo": "Page {{page}} of {{total}}"
-              },
-              "auth": {
-                "login": {          "title": "Welcome Back",
+    "noApplications": "No applications yet.",
+    "viewApplication": "View Application"
+  },
+  "employerWorkplaces": {
+    "title": "My Workplaces",
+    "description": "Manage your workplaces and respond to reviews",
+    "viewApplications": "View Applications",
+    "newWorkplace": "New Workplace",
+    "loadError": "Failed to load your workplaces. Please try again.",
+    "empty": {
+      "title": "No Workplaces Yet",
+      "description": "Create your first workplace or request to join an existing one"
+    },
+    "addNew": {
+      "title": "Add New Workplace",
+      "description": "Create a new workplace or join an existing one"
+    },
+    "applicationsModal": {
+      "title": "My Workplace Applications",
+      "description": "View the status of your requests to manage workplaces.",
+      "loadError": "Could not load your applications.",
+      "noApplications": "You have not applied to any workplaces yet.",
+      "appliedOn": "Applied on {{date}}",
+      "note": "Note: {{note}}",
+      "updatedOn": "Updated {{date}}"
+    },
+    "workplaceLabel": "Workplace",
+    "page": {
+      "loadError": "Failed to load your workplaces"
+    }
+  },
+  "status": {
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "unknown": "Unknown"
+  },
+  "workplaces": {
+    "title": "Workplaces",
+    "description": "Explore and discover companies to learn more about their culture and ratings",
+    "searchTitle": "Search Workplaces",
+    "searchPlaceholder": "Enter company name...",
+    "searching": "Searching...",
+    "search": "Search",
+    "loadError": "Failed to load workplaces. Please try again.",
+    "loading": "Loading...",
+    "workplacesFound": "{{count}} workplace found",
+    "workplacesFound_plural": "{{count}} workplaces found",
+    "empty": {
+      "title": "No Workplaces Found",
+      "adjustFilters": "Try adjusting your filters or search query",
+      "noWorkplaces": "There are no workplaces available at the moment"
+    },
+    "filters": {
+      "title": "Filters",
+      "clear": "Clear",
+      "clearFilters": "Clear Filters",
+      "sector": "Sector",
+      "allSectors": "All Sectors",
+      "location": "Location",
+      "locationPlaceholder": "Enter location...",
+      "sortBy": "Sort By",
+      "sortOptions": {
+        "default": "Default",
+        "nameDesc": "Name (Z to A)",
+        "nameAsc": "Name (A to Z)",
+        "reviewCountDesc": "Review Count (High to Low)",
+        "reviewCountAsc": "Review Count (Low to High)",
+        "ratingDesc": "Rating (High to Low)",
+        "ratingAsc": "Rating (Low to High)"
+      },
+      "minRating": "Minimum Rating",
+      "anyRating": "Any",
+      "ratingWithValue": "{{rating}}★"
+    }
+  },
+  "sectors": {
+    "technology": "Technology",
+    "healthcare": "Healthcare",
+    "education": "Education",
+    "finance": "Finance",
+    "creativearts": "Creative Arts",
+    "manufacturing": "Manufacturing",
+    "retail": "Retail",
+    "consulting": "Consulting",
+    "nonprofit": "Non-profit",
+    "other": "Other"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {{page}} of {{total}}"
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome Back",
       "description": "Sign in to your account to continue",
       "username": "Username *",
       "password": "Password *",
@@ -942,19 +943,18 @@
     "noCv": "No CV found for this application",
     "error": {
       "load": "Failed to load application details. Please try again later.",
-      "approve": "Failed to approve application. Please try again.",
-      "reject": "Failed to reject application. Please try again.",
+      "approve": "Error approving application. Please try again.",
+      "reject": "Error rejecting application. Please try again.",
       "title": "Error Loading Application"
     },
     "success": {
       "approve": "Application approved successfully.",
       "reject": "Application rejected successfully."
     },
-    "applied": {
-      "today": "today",
-      "yesterday": "1 day ago",
-      "daysAgo": "{{count}} days ago"
-    },
+    "applied": "Applied",
+    "appliedToday": "Today",
+    "appliedYesterday": "Yesterday",
+    "appliedDaysAgo": "{{count}} days ago",
     "backToJob": "Back to Job",
     "title": "Application for {{jobTitle}}",
     "atCompany": "at {{company}}",

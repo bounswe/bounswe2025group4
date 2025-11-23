@@ -439,7 +439,7 @@ export default function WorkplaceProfilePage() {
                         <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                           <div className="p-4">
                             <Badge className="mb-2 bg-green-100 text-green-800 hover:bg-green-100">
-                              {job.company}
+                              {job.workplace.companyName}
                             </Badge>
                             <h4 className="font-semibold group-hover:text-primary transition-colors mb-1">
                               {job.title}

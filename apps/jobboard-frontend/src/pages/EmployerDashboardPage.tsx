@@ -22,6 +22,7 @@ type JobPosting = {
   status: string;
   applications: number;
   workplaceId: number | undefined;
+  workplace?: WorkplaceBriefResponse;
 };
 
 type WorkplaceWithJobs = {
@@ -82,6 +83,7 @@ export default function EmployerDashboardPage() {
               status: 'OPEN',
               applications: applications.length,
               workplaceId: job.workplaceId,
+              workplace: job.workplace,
             };
           } catch {
             return {
@@ -90,6 +92,7 @@ export default function EmployerDashboardPage() {
               status: 'OPEN',
               applications: 0,
               workplaceId: job.workplaceId,
+              workplace: job.workplace,
             };
           }
         })
@@ -239,7 +242,7 @@ export default function EmployerDashboardPage() {
           <Card className="border border-border bg-card shadow-sm">
             <div className="p-6 py-12 text-center">
               <p className="text-destructive mb-4">{getErrorMessage()}</p>
-              <Button onClick={() => window.location.reload()}>
+              <Button onClick={() => fetchData()}>
                 {t('jobs.retry')}
               </Button>
             </div>
@@ -381,7 +384,14 @@ export default function EmployerDashboardPage() {
                           <tbody>
                             {wp.jobs.map((job) => (
                               <tr key={job.id} className="border-b last:border-0 hover:bg-muted/20">
-                                <td className="px-4 py-4 text-sm text-foreground">{job.title}</td>
+                                <td className="px-4 py-4 text-sm text-foreground">
+                                  <div className="font-semibold">{job.title}</div>
+                                  {job.workplace?.companyName && (
+                                    <div className="text-xs text-muted-foreground">
+                                      {job.workplace.companyName}
+                                    </div>
+                                  )}
+                                </td>
                                 <td className="px-4 py-4">
                                   <Badge variant={getStatusBadgeVariant(job.status)}>
                                     {getStatusLabel(job.status)}
