@@ -27,7 +27,7 @@ export default [
       ...sharedTestOptions,
       name: 'unit',
       include: ['src/__tests__/**/components/**/*.test.tsx'],
-      setupFiles: './src/test/setup.unit.ts',
+      setupFiles: './src/test/setup.ts',
     },
   }),
   defineConfig({
