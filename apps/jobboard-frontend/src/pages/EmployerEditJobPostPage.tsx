@@ -7,15 +7,17 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { MultiSelectDropdown } from '@/components/ui/multi-select-dropdown';
+import WorkplaceSelector from '@/components/workplace/WorkplaceSelector';
 import CenteredLoader from '@/components/CenteredLoader';
 import { getJobById, updateJob } from '@/services/jobs.service';
 import type { UpdateJobPostRequest, JobPostResponse } from '@/types/api.types';
 import type { EthicalTag } from '@/types/job';
+import type { EmployerWorkplaceBrief } from '@/types/workplace.types';
 
 type JobPostFormData = {
   title: string;
   description: string;
-  company: string;
+  workplaceId: number | null;
   location: string;
   remote: boolean;
   minSalary: string;
@@ -52,7 +54,7 @@ export default function EmployerEditJobPostPage() {
   const [formData, setFormData] = useState<JobPostFormData>({
     title: '',
     description: '',
-    company: '',
+    workplaceId: null,
     location: '',
     remote: false,
     minSalary: '',
@@ -61,6 +63,10 @@ export default function EmployerEditJobPostPage() {
     ethicalTags: [],
     inclusiveOpportunity: false,
   });
+
+  const handleWorkplaceChange = (workplaceId: number, _workplace: EmployerWorkplaceBrief) => {
+    setFormData({ ...formData, workplaceId });
+  };
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -92,7 +98,7 @@ export default function EmployerEditJobPostPage() {
         setFormData({
           title: job.title ?? '',
           description: job.description ?? '',
-          company: job.company ?? '',
+          workplaceId: job.workplaceId ?? null,
           location: job.location ?? '',
           remote: job.remote ?? false,
           minSalary: job.minSalary?.toString() ?? '',
@@ -135,7 +141,7 @@ export default function EmployerEditJobPostPage() {
       const requestData: UpdateJobPostRequest = {
         title: formData.title,
         description: formData.description,
-        company: formData.company,
+        workplaceId: formData.workplaceId ?? undefined,
         location: formData.location,
         remote: formData.remote,
         contact: formData.contactEmail,
@@ -214,19 +220,18 @@ export default function EmployerEditJobPostPage() {
             </div>
 
             <div>
-              <Label htmlFor="company" className="text-sm font-semibold">
-                {t('createJob.companyName', { defaultValue: 'Company Name' })}
+              <Label className="text-sm font-semibold">
+                {t('createJob.workplace', { defaultValue: 'Workplace' })}
               </Label>
-              <Input
-                id="company"
-                type="text"
-                value={formData.company}
-                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                placeholder={t('createJob.companyNamePlaceholder', {
-                  defaultValue: 'eg: Tech Innovators Inc.',
+              <p className="text-xs text-muted-foreground mt-1 mb-2">
+                {t('createJob.workplaceDescription', {
+                  defaultValue: 'Select the workplace this job belongs to',
                 })}
+              </p>
+              <WorkplaceSelector
+                value={formData.workplaceId ?? undefined}
+                onChange={handleWorkplaceChange}
                 className="mt-2"
-                required
               />
             </div>
 
