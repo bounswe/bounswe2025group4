@@ -5,6 +5,11 @@
 /**
  * Job post response from API
  */
+import type { WorkplaceBriefResponse } from './workplace.types';
+
+/**
+ * Job post response from API
+ */
 export interface JobPostResponse {
   id: number;
   jobId?: number;
@@ -13,10 +18,9 @@ export interface JobPostResponse {
   workplaceId?: number;
   title: string;
   description: string;
-  company: string;
+  workplace: WorkplaceBriefResponse;
   location: string;
   remote: boolean;
-  ethicalTags: string;
   inclusiveOpportunity: boolean;
   minSalary: number;
   maxSalary: number;
@@ -33,7 +37,6 @@ export interface CreateJobPostRequest {
   workplaceId: number; // required, links job to workplace
   location: string; // required, min 1 char
   remote: boolean;
-  ethicalTags?: string;
   inclusiveOpportunity?: boolean;
   minSalary?: number;
   maxSalary?: number;
@@ -49,7 +52,6 @@ export interface UpdateJobPostRequest {
   workplaceId?: number;
   location?: string;
   remote?: boolean;
-  ethicalTags?: string;
   inclusiveOpportunity?: boolean;
   minSalary?: number;
   maxSalary?: number;
