@@ -12,7 +12,7 @@ import { getMentorProfile, getMentorMentorshipRequests, getMenteeMentorships, cr
 import type { MentorshipDetailsDTO } from '@/types/api.types';
 import { convertMentorProfileToMentor, convertMentorReviewToMentorshipReview } from '@/utils/mentorship.utils';
 import { profileService } from '@/services/profile.service';
-import type { Profile } from '@/types/profile.types';
+import type { PublicProfile } from '@/types/profile.types';
 import { useAuth } from '@/contexts/AuthContext';
 import CenteredLoader from '@/components/CenteredLoader';
 import CenteredError from '@/components/CenteredError';
@@ -28,8 +28,8 @@ const MentorProfilePage = () => {
   const [mentor, setMentor] = useState<Mentor | null>(null);
   const [reviews, setReviews] = useState<MentorshipReview[]>([]);
   const [requests, setRequests] = useState<MentorshipRequestDTO[]>([]);
-  const [menteeProfiles, setMenteeProfiles] = useState<Record<string, Profile>>({});
-  const [mentorNormalProfile, setMentorNormalProfile] = useState<Profile | null>(null);
+  const [menteeProfiles, setMenteeProfiles] = useState<Record<string, PublicProfile>>({});
+  const [mentorNormalProfile, setMentorNormalProfile] = useState<PublicProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasActiveMentorship, setHasActiveMentorship] = useState(false);
@@ -58,7 +58,7 @@ const MentorProfilePage = () => {
       const backendMentor = await getMentorProfile(mentorId);
       
       let mentorProfileImage: string | undefined;
-      let mentorNormalProfileForConversion: Profile | null = null;
+      let mentorNormalProfileForConversion: PublicProfile | null = null;
       try {
         const mentorProfile = await profileService.getPublicProfile(mentorId);
         mentorProfileImage = mentorProfile.imageUrl;
@@ -75,8 +75,8 @@ const MentorProfilePage = () => {
           bio: mentorNormalProfileForConversion.bio,
           experiences: mentorNormalProfileForConversion.experiences,
           educations: mentorNormalProfileForConversion.educations,
-          skills: mentorNormalProfileForConversion.skills,
-          interests: mentorNormalProfileForConversion.interests,
+          skills: [],
+          interests: [],
         } : undefined
       );
       setMentor(convertedMentor);
@@ -92,7 +92,7 @@ const MentorProfilePage = () => {
           setRequests(mentorRequests);
 
           const uniqueRequesterIds = [...new Set(mentorRequests.map(r => r.requesterId))];
-          const profiles: Record<string, Profile> = {};
+          const profiles: Record<string, PublicProfile> = {};
           const mentorIdNum = parseInt(id || '0', 10);
           const activeMentorshipsList: MentorshipDetailsDTO[] = [];
           const completedMentorshipsList: MentorshipDetailsDTO[] = [];
@@ -535,17 +535,7 @@ const MentorProfilePage = () => {
               <CardTitle>{t('mentorship.profile.skillsTechnologies')}</CardTitle>
             </CardHeader>
             <CardContent>
-              {mentorNormalProfile?.skills && mentorNormalProfile.skills.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {mentorNormalProfile.skills.map((skill) => (
-                    <Badge key={skill.id} variant="secondary">
-                      {skill.name}
-                    </Badge>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">No skills information available.</p>
-              )}
+              <p className="text-sm text-muted-foreground">No skills information available.</p>
             </CardContent>
           </Card>
 

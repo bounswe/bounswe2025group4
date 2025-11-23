@@ -9,7 +9,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { getMenteeMentorships, getMentorMentorshipRequests } from '@/services/mentorship.service';
 import { getChatHistory, ChatWebSocket } from '@/services/chat.service';
 import { profileService } from '@/services/profile.service';
-import type { Profile } from '@/types/profile.types';
+import type { PublicProfile } from '@/types/profile.types';
 import type { MentorshipDetailsDTO, MentorshipRequestDTO } from '@/types/api.types';
 import CenteredLoader from '@/components/CenteredLoader';
 import { toast } from 'react-toastify';
@@ -77,7 +77,7 @@ const ChatPage = () => {
           if (!isNaN(requesterId)) userIds.add(requesterId);
         });
 
-        const profilesMap: Record<number, Profile> = {};
+        const profilesMap: Record<number, PublicProfile> = {};
         await Promise.all(
           Array.from(userIds).map(async (userId) => {
             try {

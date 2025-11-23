@@ -11,7 +11,7 @@ import type { MentorshipRequestDTO } from '@/types/api.types';
 import { useAuth } from '@/contexts/AuthContext';
 import { getMentorMentorshipRequests, respondToMentorshipRequest } from '@/services/mentorship.service';
 import { profileService } from '@/services/profile.service';
-import type { Profile } from '@/types/profile.types';
+import type { PublicProfile } from '@/types/profile.types';
 import CenteredLoader from '@/components/CenteredLoader';
 import CenteredError from '@/components/CenteredError';
 import { toast } from 'react-toastify';
@@ -48,7 +48,7 @@ const MentorRequestsPage = () => {
   const { t } = useTranslation('common');
   const { user } = useAuth();
   const [requests, setRequests] = useState<MentorshipRequestDTO[]>([]);
-  const [menteeProfiles, setMenteeProfiles] = useState<Record<string, Profile>>({});
+  const [menteeProfiles, setMenteeProfiles] = useState<Record<string, PublicProfile>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
@@ -71,7 +71,7 @@ const MentorRequestsPage = () => {
 
         // Fetch profile information for each mentee
         const uniqueRequesterIds = [...new Set(mentorRequests.map(r => r.requesterId))];
-        const profiles: Record<string, Profile> = {};
+        const profiles: Record<string, PublicProfile> = {};
         
         await Promise.all(
           uniqueRequesterIds.map(async (requesterId) => {
@@ -128,7 +128,7 @@ const MentorRequestsPage = () => {
 
       // Refresh mentee profiles for any new requesters
       const uniqueRequesterIds = [...new Set(updatedRequests.map(r => r.requesterId))];
-      const newProfiles: Record<string, Profile> = { ...menteeProfiles };
+      const newProfiles: Record<string, PublicProfile> = { ...menteeProfiles };
       
       await Promise.all(
         uniqueRequesterIds.map(async (requesterId) => {
