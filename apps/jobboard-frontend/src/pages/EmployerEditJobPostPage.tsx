@@ -23,6 +23,7 @@ type JobPostFormData = {
   contactEmail: string;
   ethicalTags: EthicalTag[];
   inclusiveOpportunity: boolean;
+  nonProfit: boolean;
 };
 
 function parseContact(contact: JobPostResponse['contact']): { email: string } {
@@ -60,6 +61,7 @@ export default function EmployerEditJobPostPage() {
     contactEmail: '',
     ethicalTags: [],
     inclusiveOpportunity: false,
+    nonProfit: false,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -100,6 +102,7 @@ export default function EmployerEditJobPostPage() {
           contactEmail: email,
           ethicalTags: tags,
           inclusiveOpportunity: job.inclusiveOpportunity ?? false,
+          nonProfit: job.nonProfit ?? false,
         });
       } catch (err) {
         console.error('Error loading job post for edit:', err);
@@ -143,6 +146,7 @@ export default function EmployerEditJobPostPage() {
         inclusiveOpportunity: formData.inclusiveOpportunity,
         minSalary: formData.minSalary ? parseInt(formData.minSalary, 10) : undefined,
         maxSalary: formData.maxSalary ? parseInt(formData.maxSalary, 10) : undefined,
+        nonProfit: formData.nonProfit,
       };
 
       await updateJob(parseInt(jobId, 10), requestData);
@@ -264,6 +268,29 @@ export default function EmployerEditJobPostPage() {
                   <p className="mt-1 text-xs text-muted-foreground">
                     {t('createJob.remoteWorkDescription', {
                       defaultValue: 'Check this if the position offers remote work options',
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="nonProfit"
+                  checked={formData.nonProfit}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, nonProfit: Boolean(checked) })
+                  }
+                  className="mt-0.5"
+                />
+                <div className="flex-1">
+                  <Label htmlFor="nonProfit" className="text-sm font-medium cursor-pointer">
+                    {t('createJob.nonProfit', { defaultValue: 'Non-Profit Organization' })}
+                  </Label>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t('createJob.nonProfitDescription', {
+                      defaultValue: 'Mark this as a volunteer opportunity from a non-profit organization focused on social impact',
                     })}
                   </p>
                 </div>

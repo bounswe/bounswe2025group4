@@ -38,6 +38,7 @@ export interface CreateJobPostRequest {
   minSalary?: number;
   maxSalary?: number;
   contact: string; // required, min 1 char
+  nonProfit?: boolean;
 }
 
 /**
@@ -54,6 +55,7 @@ export interface UpdateJobPostRequest {
   minSalary?: number;
   maxSalary?: number;
   contact?: string;
+  nonProfit?: boolean;
 }
 
 /**

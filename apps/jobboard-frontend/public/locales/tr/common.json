@@ -1080,6 +1080,8 @@
     "locationPlaceholder": "örn. İstanbul, Türkiye veya Uzaktan",
     "remoteWork": "Uzaktan Çalışma Mevcut",
     "remoteWorkDescription": "Bu pozisyon uzaktan çalışma seçeneği sunuyorsa işaretleyin",
+    "nonProfit": "Kar Amacı Gütmeyen Kuruluş",
+    "nonProfitDescription": "Bunu sosyal etki odaklı kar amacı gütmeyen bir kuruluştan gönüllü fırsatı olarak işaretleyin",
     "salaryRange": "Maaş Aralığı",
     "minimum": "Minimum",
     "maximum": "Maksimum",

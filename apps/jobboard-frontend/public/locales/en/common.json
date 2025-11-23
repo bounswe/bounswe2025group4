@@ -1048,6 +1048,8 @@
     "locationPlaceholder": "e.g., New York, NY or Remote",
     "remoteWork": "Remote Work Available",
     "remoteWorkDescription": "Check if this position offers remote work options",
+    "nonProfit": "Non-Profit Organization",
+    "nonProfitDescription": "Mark this as a volunteer opportunity from a non-profit organization focused on social impact",
     "salaryRange": "Salary Range",
     "minimum": "Minimum",
     "maximum": "Maximum",

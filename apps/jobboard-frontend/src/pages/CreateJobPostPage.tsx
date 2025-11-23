@@ -22,6 +22,7 @@ type JobPostFormData = {
   contactEmail: string;
   ethicalTags: EthicalTag[];
   inclusiveOpportunity: boolean;
+  nonProfit: boolean;
 };
 
 import { useTranslation } from 'react-i18next';
@@ -41,6 +42,7 @@ export default function CreateJobPostPage() {
     contactEmail: '',
     ethicalTags: [],
     inclusiveOpportunity: false,
+    nonProfit: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,6 +61,7 @@ export default function CreateJobPostPage() {
         contact: formData.contactEmail,
         ethicalTags: formData.ethicalTags.join(', '),
         inclusiveOpportunity: formData.inclusiveOpportunity,
+        nonProfit: formData.nonProfit,
       };
 
       await createJob(requestData);
@@ -167,6 +170,26 @@ export default function CreateJobPostPage() {
                   </Label>
                   <p className="text-xs text-muted-foreground mt-1">
                     {t('createJob.remoteWorkDescription')}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Non-Profit Organization */}
+            <div className="mb-4">
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="nonProfit"
+                  checked={formData.nonProfit}
+                  onCheckedChange={() => setFormData({ ...formData, nonProfit: !formData.nonProfit })}
+                  className="mt-0.5"
+                />
+                <div className="flex-1">
+                  <Label htmlFor="nonProfit" className="text-sm font-medium cursor-pointer">
+                    {t('createJob.nonProfit')}
+                  </Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {t('createJob.nonProfitDescription')}
                   </p>
                 </div>
               </div>
