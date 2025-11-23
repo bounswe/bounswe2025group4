@@ -95,7 +95,7 @@ export default function EmployerJobPostDetailsPage() {
     contactInfo = { email: jobPost.contact };
   }
 
-  const ethicalTags = jobPost.ethicalTags ? jobPost.ethicalTags.split(',').map((tag) => tag.trim()) : [];
+  const ethicalTags = jobPost.workplace.ethicalTags;
   const jobPostId = jobPost.id ?? jobPost.jobPostId ?? jobPost.jobId;
 
   const handleEditClick = () => {

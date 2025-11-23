@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
-import { MultiSelectDropdown } from '@/components/ui/multi-select-dropdown';
 import WorkplaceSelector from '@/components/workplace/WorkplaceSelector';
 import { CreateWorkplaceModal } from '@/components/workplace/CreateWorkplaceModal';
 import { JoinWorkplaceModal } from '@/components/workplace/JoinWorkplaceModal';
@@ -16,7 +15,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { createJob } from '@/services/jobs.service';
 import { getMyWorkplaces } from '@/services/employer.service';
 import type { CreateJobPostRequest } from '@/types/api.types';
-import type { EthicalTag } from '@/types/job';
 import type { EmployerWorkplaceBrief } from '@/types/workplace.types';
 
 type JobPostFormData = {
@@ -28,7 +26,6 @@ type JobPostFormData = {
   minSalary: string;
   maxSalary: string;
   contactEmail: string;
-  ethicalTags: EthicalTag[];
   inclusiveOpportunity: boolean;
 };
 
@@ -41,7 +38,6 @@ const defaultFormState: JobPostFormData = {
   minSalary: '',
   maxSalary: '',
   contactEmail: '',
-  ethicalTags: [],
   inclusiveOpportunity: false,
 };
 
@@ -147,7 +143,6 @@ export function CreateJobPostModal({
         minSalary: parseInt(formData.minSalary, 10),
         maxSalary: parseInt(formData.maxSalary, 10),
         contact: formData.contactEmail,
-        ethicalTags: formData.ethicalTags.join(', '),
         inclusiveOpportunity: formData.inclusiveOpportunity,
       };
 
@@ -339,17 +334,7 @@ export function CreateJobPostModal({
               />
             </div>
 
-            <div>
-              <Label className="text-sm font-semibold">{t('createJob.ethicalTags')}</Label>
-              <p className="text-xs text-muted-foreground mt-1 mb-3">
-                {t('createJob.ethicalTagsDescription')}
-              </p>
-              <MultiSelectDropdown
-                selectedTags={formData.ethicalTags}
-                onTagsChange={(tags) => setFormData({ ...formData, ethicalTags: tags })}
-                placeholder={t('createJob.ethicalTagsPlaceholder')}
-              />
-            </div>
+
 
             <div className="p-4 rounded-lg border-2 border-primary/20 bg-primary/5">
               <div className="flex items-start gap-3">
