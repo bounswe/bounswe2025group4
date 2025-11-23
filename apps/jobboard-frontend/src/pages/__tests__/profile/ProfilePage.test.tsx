@@ -4,6 +4,7 @@ import ProfilePage from '../../ProfilePage';
 import { renderWithProviders, setupUserEvent } from '@/test/utils';
 import { server } from '@/test/setup';
 import { API_BASE_URL } from '@/test/handlers';
+import enCommon from '../../../../public/locales/en/common.json';
 import { useAuthStore } from '@/stores/authStore';
 
 // Mock profile data that matches the handlers
@@ -50,6 +51,12 @@ const mockProfile = {
 };
 
 describe('ProfilePage', () => {
+  const profileCopy = (enCommon as any).profile;
+  const dangerZoneCopy = profileCopy.page?.dangerZone;
+  const deleteModalCopy = profileCopy.deleteModal;
+  const createProfileTitle = profileCopy.create?.title;
+  const editProfileImageLabel = profileCopy.header.actions.editImage;
+
   beforeEach(() => {
     // Set up authenticated user state for tests
     useAuthStore.setState({
@@ -133,7 +140,7 @@ describe('ProfilePage', () => {
 
     // Wait for the create profile modal to appear by checking for the heading
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Create Profile' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: createProfileTitle })).toBeInTheDocument();
     });
 
     // Check for form fields in the modal
@@ -209,7 +216,7 @@ describe('ProfilePage', () => {
     });
 
     // Verify that the edit profile image button is present
-    const editImageButton = screen.getByLabelText('Edit profile image');
+    const editImageButton = screen.getByLabelText(editProfileImageLabel);
     expect(editImageButton).toBeInTheDocument();
 
     // Verify the button is clickable (basic interaction test)
@@ -1942,8 +1949,8 @@ describe('ProfilePage', () => {
     });
   });
 
-  describe('Delete Account Functionality', () => {
-    it('displays danger zone section with delete account button', async () => {
+  describe('Delete All Data Functionality', () => {
+    it('displays danger zone section with Delete All Data button', async () => {
       renderWithProviders(<ProfilePage />);
 
       // Wait for profile to load
@@ -1952,17 +1959,17 @@ describe('ProfilePage', () => {
       });
 
       // Check that the Danger Zone section is present
-      expect(screen.getByText('Danger Zone')).toBeInTheDocument();
+      expect(screen.getByText(dangerZoneCopy.title)).toBeInTheDocument();
       
       // Check that the description is present
-      expect(screen.getByText('This action will permanently delete all your profile data.')).toBeInTheDocument();
+      expect(screen.getByText(dangerZoneCopy.description)).toBeInTheDocument();
       
-      // Find the Delete Account button in the danger zone
-      const deleteAccountButton = screen.getByRole('button', { name: 'Delete Account' });
+      // Find the Delete All Data button in the danger zone
+      const deleteAccountButton = screen.getByRole('button', { name: deleteModalCopy.buttons.delete });
       expect(deleteAccountButton).toBeInTheDocument();
     });
 
-    it('opens delete account modal when delete account button is clicked', async () => {
+    it('opens Delete All Data modal when Delete All Data button is clicked', async () => {
       renderWithProviders(<ProfilePage />);
       const user = setupUserEvent();
 
@@ -1971,8 +1978,8 @@ describe('ProfilePage', () => {
         expect(screen.getByText('John Doe')).toBeInTheDocument();
       });
 
-      // Find and click the Delete Account button in the danger zone (the smaller one)
-      const deleteAccountButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      // Find and click the Delete All Data button in the danger zone (the smaller one)
+      const deleteAccountButtons = screen.getAllByRole('button', { name: deleteModalCopy.buttons.delete });
       const dangerZoneDeleteButton = deleteAccountButtons.find(button => 
         button.className.includes('text-xs')
       );
@@ -1980,10 +1987,10 @@ describe('ProfilePage', () => {
       expect(dangerZoneDeleteButton).toBeInTheDocument();
       await user.click(dangerZoneDeleteButton!);
 
-      // Check that the delete account modal appears with proper title
+      // Check that the Delete All Data modal appears with proper title
       await waitFor(() => {
-        expect(screen.getByText('Warning')).toBeInTheDocument();
-        expect(screen.getByText('This action cannot be undone')).toBeInTheDocument();
+        expect(screen.getByText(deleteModalCopy.warningTitle)).toBeInTheDocument();
+        expect(screen.getByText(deleteModalCopy.warningDescription)).toBeInTheDocument();
       });
     });
 
@@ -2003,8 +2010,8 @@ describe('ProfilePage', () => {
         expect(screen.getByText('John Doe')).toBeInTheDocument();
       });
 
-      // Find and click the Delete Account button in the danger zone
-      const deleteAccountButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      // Find and click the Delete All Data button in the danger zone
+      const deleteAccountButtons = screen.getAllByRole('button', { name: deleteModalCopy.buttons.delete });
       const dangerZoneDeleteButton = deleteAccountButtons.find(button => 
         button.className.includes('text-xs')
       );
@@ -2012,23 +2019,23 @@ describe('ProfilePage', () => {
 
       // Wait for modal to appear and proceed to confirmation step
       await waitFor(() => {
-        expect(screen.getByText('Warning')).toBeInTheDocument();
+        expect(screen.getByText(deleteModalCopy.warningTitle)).toBeInTheDocument();
       });
 
       // Click Continue button to proceed to confirmation step
-      const continueButton = screen.getByRole('button', { name: 'Continue' });
+      const continueButton = screen.getByRole('button', { name: deleteModalCopy.buttons.continue });
       await user.click(continueButton);
 
       // Wait for confirmation step and type the confirmation keyword
       await waitFor(() => {
-        expect(screen.getByText('Type DELETE to confirm')).toBeInTheDocument();
+        expect(screen.getByText(/confirm deletion/i)).toBeInTheDocument();
       });
 
       const confirmInput = screen.getByRole('textbox');
       await user.type(confirmInput, 'DELETE');
 
       // Click the final delete button (the one in the modal)
-      const deleteButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      const deleteButtons = screen.getAllByRole('button', { name: deleteModalCopy.buttons.delete });
       const modalDeleteButton = deleteButtons.find(button => 
         button.className.includes('flex-1') && button.className.includes('bg-destructive')
       );
@@ -2041,12 +2048,12 @@ describe('ProfilePage', () => {
       });
     });
 
-    it('handles delete account API error gracefully', async () => {
+    it('handles Delete All Data API error gracefully', async () => {
       // Mock error response for account deletion
       server.use(
         http.delete(`${API_BASE_URL}/profile/delete-all`, () =>
           HttpResponse.json(
-            { message: 'Failed to delete account' },
+            { message: 'Failed to Delete All Data' },
             { status: 500 }
           )
         )
@@ -2060,8 +2067,8 @@ describe('ProfilePage', () => {
         expect(screen.getByText('John Doe')).toBeInTheDocument();
       });
 
-      // Find and click the Delete Account button in the danger zone
-      const deleteAccountButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      // Find and click the Delete All Data button in the danger zone
+      const deleteAccountButtons = screen.getAllByRole('button', { name: deleteModalCopy.buttons.delete });
       const dangerZoneDeleteButton = deleteAccountButtons.find(button => 
         button.className.includes('text-xs')
       );
@@ -2069,22 +2076,22 @@ describe('ProfilePage', () => {
 
       // Wait for modal and proceed through confirmation
       await waitFor(() => {
-        expect(screen.getByText('Warning')).toBeInTheDocument();
+        expect(screen.getByText(deleteModalCopy.warningTitle)).toBeInTheDocument();
       });
 
       // Click Continue button
-      const continueButton = screen.getByRole('button', { name: 'Continue' });
+      const continueButton = screen.getByRole('button', { name: deleteModalCopy.buttons.continue });
       await user.click(continueButton);
 
       // Type confirmation and attempt deletion
       await waitFor(() => {
-        expect(screen.getByText('Type DELETE to confirm')).toBeInTheDocument();
+        expect(screen.getByText(/confirm deletion/i)).toBeInTheDocument();
       });
 
       const confirmInput = screen.getByRole('textbox');
       await user.type(confirmInput, 'DELETE');
 
-      const deleteButtons = screen.getAllByRole('button', { name: 'Delete Account' });
+      const deleteButtons = screen.getAllByRole('button', { name: deleteModalCopy.buttons.delete });
       const modalDeleteButton = deleteButtons.find(button => 
         button.className.includes('flex-1') && button.className.includes('bg-destructive')
       );
@@ -2096,7 +2103,7 @@ describe('ProfilePage', () => {
       });
     });
 
-    it('cancels delete account operation when cancel button is clicked', async () => {
+    it('cancels Delete All Data operation when cancel button is clicked', async () => {
       renderWithProviders(<ProfilePage />);
       const user = setupUserEvent();
 
@@ -2105,13 +2112,13 @@ describe('ProfilePage', () => {
         expect(screen.getByText('John Doe')).toBeInTheDocument();
       });
 
-      // Find and click the Delete Account button
-      const deleteAccountButton = screen.getByRole('button', { name: 'Delete Account' });
+      // Find and click the Delete All Data button
+      const deleteAccountButton = screen.getByRole('button', { name: deleteModalCopy.buttons.delete });
       await user.click(deleteAccountButton);
 
       // Wait for modal to appear
       await waitFor(() => {
-        expect(screen.getByText('Warning')).toBeInTheDocument();
+        expect(screen.getByText(deleteModalCopy.warningTitle)).toBeInTheDocument();
       });
 
       // Find and click the cancel button

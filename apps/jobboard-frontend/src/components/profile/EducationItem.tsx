@@ -16,9 +16,10 @@ interface EducationItemProps {
   education: Education;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
+  isPublicView?: boolean;
 }
 
-export function EducationItem({ education, onEdit, onDelete }: EducationItemProps) {
+export function EducationItem({ education, onEdit, onDelete, isPublicView = false }: EducationItemProps) {
   const { t, i18n } = useTranslation('common');
   const locale = (i18n.resolvedLanguage ?? i18n.language) || 'en';
   const yearFormatter = new Intl.DateTimeFormat(locale, { year: 'numeric' });
@@ -29,23 +30,25 @@ export function EducationItem({ education, onEdit, onDelete }: EducationItemProp
 
   return (
     <div className="bg-muted/30 rounded-lg p-4 group relative">
-      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-        <Button
-          size="icon-sm"
-          variant="ghost"
-          onClick={() => onEdit?.(education.id)}
-        >
-          <Pencil className="h-3 w-3" />
-        </Button>
-        <Button
-          size="icon-sm"
-          variant="ghost"
-          onClick={() => onDelete?.(education.id)}
-          className="text-destructive hover:text-destructive"
-        >
-          <Trash2 className="h-3 w-3" />
-        </Button>
-      </div>
+      {!isPublicView && (
+        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+          <Button
+            size="icon-sm"
+            variant="ghost"
+            onClick={() => onEdit?.(education.id)}
+          >
+            <Pencil className="h-3 w-3" />
+          </Button>
+          <Button
+            size="icon-sm"
+            variant="ghost"
+            onClick={() => onDelete?.(education.id)}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="h-3 w-3" />
+          </Button>
+        </div>
+      )}
       <div className="flex gap-3">
         <div className="mt-1">
           <GraduationCap className="h-5 w-5 text-muted-foreground" />

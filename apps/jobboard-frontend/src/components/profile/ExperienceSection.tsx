@@ -17,6 +17,7 @@ interface ExperienceSectionProps {
   onAdd?: () => void;
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
+  isPublicView?: boolean;
 }
 
 export function ExperienceSection({
@@ -24,6 +25,7 @@ export function ExperienceSection({
   onAdd,
   onEdit,
   onDelete,
+  isPublicView = false,
 }: ExperienceSectionProps) {
   const { t } = useTranslation('common');
 
@@ -31,17 +33,29 @@ export function ExperienceSection({
     <section className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">{t('profile.experience.title')}</h2>
-        <Button size="sm" variant="ghost" className="gap-2" onClick={onAdd}>
-          <Plus className="h-4 w-4" />
-          {t('profile.actions.add')}
-        </Button>
+        {!isPublicView && (
+          <Button size="sm" variant="ghost" className="gap-2" onClick={onAdd}>
+            <Plus className="h-4 w-4" />
+            {t('profile.actions.add')}
+          </Button>
+        )}
       </div>
       {experiences.length > 0 ? (
         <div className="space-y-3">
           {experiences.map((exp) => (
-            <ExperienceItem key={exp.id} experience={exp} onEdit={onEdit} onDelete={onDelete} />
+            <ExperienceItem 
+              key={exp.id} 
+              experience={exp} 
+              onEdit={isPublicView ? undefined : onEdit} 
+              onDelete={isPublicView ? undefined : onDelete} 
+              isPublicView={isPublicView}
+            />
           ))}
         </div>
+      ) : isPublicView ? (
+        <p className="text-muted-foreground text-sm">
+          {t('profile.experience.noExperience')}
+        </p>
       ) : (
         <div
           className="border-2 border-dashed rounded-lg p-6 flex items-center justify-center gap-2 text-muted-foreground hover:border-primary/50 hover:text-primary cursor-pointer transition-colors"

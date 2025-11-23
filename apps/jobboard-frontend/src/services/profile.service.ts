@@ -1,5 +1,5 @@
 import { apiClient } from '@/lib/api-client';
-import type { Profile } from '@/types/profile.types';
+import type { Profile, PublicProfile } from '@/types/profile.types';
 
 /**
  * Profile API Service
@@ -48,7 +48,7 @@ export const profileService = {
    * Get public profile by user ID
    * GET /profile/{userId}
    */
-  getPublicProfile: async (userId: number): Promise<Profile> => {
+  getPublicProfile: async (userId: number): Promise<PublicProfile> => {
     const response = await apiClient.get(`/profile/${userId}`);
     return response.data;
   },

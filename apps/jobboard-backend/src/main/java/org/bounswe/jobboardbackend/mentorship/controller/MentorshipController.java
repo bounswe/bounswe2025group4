@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,6 +21,32 @@ import java.util.List;
 public class MentorshipController {
 
     private final MentorshipService mentorshipService;
+
+    @PostMapping("/{resumeReviewId}/file")
+    public ResponseEntity<ResumeFileResponseDTO> uploadResumeFile(
+            @PathVariable Long resumeReviewId,
+            @RequestPart("file") MultipartFile file
+    ) {
+        ResumeFileResponseDTO dto = mentorshipService.uploadResumeFile(resumeReviewId, file);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/{resumeReviewId}/file")
+    public ResponseEntity<ResumeFileUrlDTO> getResumeFileUrl(
+            @PathVariable Long resumeReviewId
+    ) {
+        ResumeFileUrlDTO dto = mentorshipService.getResumeFileUrl(resumeReviewId);
+        return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/{resumeReviewId}")
+    public ResponseEntity<ResumeReviewDTO> getResumeReview(
+            @PathVariable Long resumeReviewId
+    ) {
+        ResumeReviewDTO dto = mentorshipService.getResumeReview(resumeReviewId);
+        return ResponseEntity.ok(dto);
+    }
+
 
     @GetMapping
     public ResponseEntity<List<MentorProfileDetailDTO>> searchMentors() {
