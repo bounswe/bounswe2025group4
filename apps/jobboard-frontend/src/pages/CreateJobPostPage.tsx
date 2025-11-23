@@ -56,8 +56,8 @@ export default function CreateJobPostPage() {
         company: formData.company,
         location: formData.location,
         remote: formData.remote,
-        minSalary: parseInt(formData.minSalary, 10),
-        maxSalary: parseInt(formData.maxSalary, 10),
+        minSalary: formData.nonProfit ? 0 : parseInt(formData.minSalary, 10),
+        maxSalary: formData.nonProfit ? 0 : parseInt(formData.maxSalary, 10),
         contact: formData.contactEmail,
         ethicalTags: formData.ethicalTags.join(', '),
         inclusiveOpportunity: formData.inclusiveOpportunity,
@@ -181,7 +181,13 @@ export default function CreateJobPostPage() {
                 <Checkbox
                   id="nonProfit"
                   checked={formData.nonProfit}
-                  onCheckedChange={() => setFormData({ ...formData, nonProfit: !formData.nonProfit })}
+                  onCheckedChange={() => setFormData({ 
+                    ...formData, 
+                    nonProfit: !formData.nonProfit,
+                    // Clear salary fields when nonprofit is enabled
+                    minSalary: !formData.nonProfit ? '' : formData.minSalary,
+                    maxSalary: !formData.nonProfit ? '' : formData.maxSalary
+                  })}
                   className="mt-0.5"
                 />
                 <div className="flex-1">
@@ -195,40 +201,42 @@ export default function CreateJobPostPage() {
               </div>
             </div>
 
-            {/* Salary Range */}
-            <div className="mb-4">
-              <Label className="text-sm font-semibold">{t('createJob.salaryRange')}</Label>
-              <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
-                    {t('createJob.minimum')}
-                  </Label>
-                  <Input
-                    id="minSalary"
-                    type="number"
-                    value={formData.minSalary}
-                    onChange={(e) => setFormData({ ...formData, minSalary: e.target.value })}
-                    placeholder={t('createJob.minSalaryPlaceholder')}
-                    className="mt-1"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="maxSalary" className="text-xs text-muted-foreground">
-                    {t('createJob.maximum')}
-                  </Label>
-                  <Input
-                    id="maxSalary"
-                    type="number"
-                    value={formData.maxSalary}
-                    onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value })}
-                    placeholder={t('createJob.maxSalaryPlaceholder')}
-                    className="mt-1"
-                    required
-                  />
+            {/* Salary Range - Hidden for nonprofit positions */}
+            {!formData.nonProfit && (
+              <div className="mb-4">
+                <Label className="text-sm font-semibold">{t('createJob.salaryRange')}</Label>
+                <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
+                      {t('createJob.minimum')}
+                    </Label>
+                    <Input
+                      id="minSalary"
+                      type="number"
+                      value={formData.minSalary}
+                      onChange={(e) => setFormData({ ...formData, minSalary: e.target.value })}
+                      placeholder={t('createJob.minSalaryPlaceholder')}
+                      className="mt-1"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="maxSalary" className="text-xs text-muted-foreground">
+                      {t('createJob.maximum')}
+                    </Label>
+                    <Input
+                      id="maxSalary"
+                      type="number"
+                      value={formData.maxSalary}
+                      onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value })}
+                      placeholder={t('createJob.maxSalaryPlaceholder')}
+                      className="mt-1"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Contact Email */}
             <div className="mb-4">
