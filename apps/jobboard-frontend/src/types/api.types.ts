@@ -35,7 +35,6 @@ export interface CreateJobPostRequest {
   title: string; // max 100 chars
   description: string; // max 1000 chars
   workplaceId: number; // required, links job to workplace
-  location: string; // required, min 1 char
   remote: boolean;
   inclusiveOpportunity?: boolean;
   minSalary?: number;

@@ -21,7 +21,6 @@ type JobPostFormData = {
   title: string;
   description: string;
   workplaceId: number | null;
-  location: string;
   remote: boolean;
   minSalary: string;
   maxSalary: string;
@@ -33,7 +32,6 @@ const defaultFormState: JobPostFormData = {
   title: '',
   description: '',
   workplaceId: null,
-  location: '',
   remote: false,
   minSalary: '',
   maxSalary: '',
@@ -77,7 +75,6 @@ export function CreateJobPostModal({
     setFormData({
       ...defaultFormState,
       workplaceId: selectedInitialWorkplace?.workplace.id ?? null,
-      location: selectedInitialWorkplace?.workplace.location ?? '',
     });
 
     const checkWorkplaces = async () => {
@@ -91,7 +88,6 @@ export function CreateJobPostModal({
           setFormData((prev) => ({
             ...prev,
             workplaceId: prev.workplaceId ?? primary.workplace.id,
-            location: prev.location || primary.workplace.location,
           }));
         }
       } catch (err) {
@@ -109,7 +105,6 @@ export function CreateJobPostModal({
     setFormData((prev) => ({
       ...prev,
       workplaceId,
-      location: prev.location || workplace.workplace.location,
     }));
   };
 
@@ -138,7 +133,6 @@ export function CreateJobPostModal({
         title: formData.title,
         description: formData.description,
         workplaceId: formData.workplaceId,
-        location: formData.location,
         remote: formData.remote,
         minSalary: parseInt(formData.minSalary, 10),
         maxSalary: parseInt(formData.maxSalary, 10),
@@ -253,20 +247,6 @@ export function CreateJobPostModal({
               />
             </div>
 
-            <div>
-              <Label htmlFor="location" className="text-sm font-semibold">
-                {t('createJob.location')}
-              </Label>
-              <Input
-                id="location"
-                type="text"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder={t('createJob.locationPlaceholder')}
-                className="mt-2"
-                required
-              />
-            </div>
 
             <div className="flex items-start gap-3">
               <Checkbox
