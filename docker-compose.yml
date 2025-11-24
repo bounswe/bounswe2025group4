@@ -23,11 +23,11 @@ services:
       GOOGLE_APPLICATION_CREDENTIALS: /app/jobboard-local-service-account-key.json
       APP_ENV: local
       APP_CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:8081
-      APP_VERIFY_EMAIL_URL: http://localhost:5173
+      APP_VERIFY_EMAIL_URL: http://localhost:5173/verify-email
       APP_RESET_PASSWORD_URL: http://localhost:5173/reset-password
-      MAIL_USERNAME: generic_mail_user
-      MAIL_PASSWORD: generic_mail_password
-      APP_JWT_SECRET: generic_jwt_secret_key_for_development_only_12345
+      MAIL_USERNAME: apikey
+      MAIL_PASSWORD: replace_with_actual_mail_password
+      APP_JWT_SECRET: c28c61e4dabc954e44c38803c47a7594
       APP_GCS_BUCKET: bounswe-jobboard
       APP_MAIL_FROM: sezer.cot@bumk1974.com
     volumes:
