@@ -12,6 +12,9 @@ export class EmployerDashboardPage extends BasePage {
   private readonly createWorkplaceButton = By.css(
     'button[aria-label*="Create"], button:has-text("Create Workplace"), [data-testid="create-workplace-btn"]'
   );
+  private readonly createJobButton = By.xpath(
+    '//button[contains(., "Create Job") or contains(., "createJob")]'
+  );
   private readonly workplaceCards = By.css('[data-testid="workplace-card"], .workplace-card');
   private readonly workplaceModal = By.css('[role="dialog"], .modal');
 
@@ -31,10 +34,11 @@ export class EmployerDashboardPage extends BasePage {
    * Click create workplace button
    */
   async clickCreateWorkplace(): Promise<void> {
-    // Try multiple selectors for flexibility
     const possibleSelectors = [
+      // When workplaces exist - "New Workplace" button with Plus icon
+      By.xpath('//button[contains(., "New Workplace") or contains(., "newWorkplace")]'),
+      By.css('button:has(svg) + button:has(svg)'), // The first button in the workplace actions
       this.createWorkplaceButton,
-      By.css('a[href*="create"]'),
     ];
 
     for (const selector of possibleSelectors) {
@@ -51,6 +55,31 @@ export class EmployerDashboardPage extends BasePage {
     }
 
     throw new Error('Create workplace button not found');
+  }
+
+  /**
+   * Click create job button (global or within workplace)
+   */
+  async clickCreateJob(): Promise<void> {
+    const possibleSelectors = [
+      this.createJobButton,
+      By.xpath('//button[contains(., "Post New Job") or contains(., "post new job")]'),
+      By.css('[data-testid="create-job-btn"]'),
+    ];
+
+    for (const selector of possibleSelectors) {
+      try {
+        const exists = await this.elementExists(selector);
+        if (exists) {
+          await this.click(selector);
+          return;
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+
+    throw new Error('Create job button not found');
   }
 
   /**
@@ -94,5 +123,28 @@ export class EmployerDashboardPage extends BasePage {
     } catch (error) {
       return false;
     }
+  }
+
+  /**
+   * Find job posting by title on dashboard tables
+   */
+  async findJobByTitle(title: string): Promise<boolean> {
+    const selectors = [
+      By.xpath(`//table//div[contains(@class, "font-semibold") and contains(., "${title}")]`),
+      By.xpath(`//table//td[contains(., "${title}")]`),
+      By.xpath(`//*[contains(text(), "${title}") and ancestor::table]`),
+    ];
+
+    for (const selector of selectors) {
+      try {
+        if (await this.elementExists(selector)) {
+          return true;
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+
+    return false;
   }
 }
