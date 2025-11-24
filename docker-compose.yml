@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: jobboard-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: jobboard
+    ports:
+      - "5432:5432"
+    networks:
+      - jobboard-network
+
+  backend:
+    build: ./apps/jobboard-backend
+    container_name: jobboard-backend
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/jobboard
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: admin
+      GOOGLE_APPLICATION_CREDENTIALS: /app/jobboard-local-service-account-key.json
+      APP_ENV: local
+      APP_CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:8081
+      APP_VERIFY_EMAIL_URL: http://localhost:5173
+      APP_RESET_PASSWORD_URL: http://localhost:5173/reset-password
+      MAIL_USERNAME: generic_mail_user
+      MAIL_PASSWORD: generic_mail_password
+      APP_JWT_SECRET: generic_jwt_secret_key_for_development_only_12345
+      APP_GCS_BUCKET: bounswe-jobboard
+    volumes:
+      - ./apps/jobboard-backend/jobboard-local-service-account-key.json:/app/jobboard-local-service-account-key.json
+    ports:
+      - "8080:8080"
+    networks:
+      - jobboard-network
+
+  frontend:
+    build:
+      context: ./apps/jobboard-frontend
+      args:
+        VITE_API_URL: http://localhost:8080
+    container_name: jobboard-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - jobboard-network
+
+#  mobile-apk:
+#    build:
+#      context: ./apps/jobboard-mobile
+#      args:
+#        API_BASE_URL: http://10.0.2.2:8080/api
+#    container_name: jobboard-mobile-apk
+#    ports:
+#      - "8081:80"
+#    networks:
+#      - jobboard-network
+
+networks:
+  jobboard-network:
+    driver: bridge

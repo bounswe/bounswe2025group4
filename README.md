@@ -73,6 +73,27 @@ API_BASE_URL=http://10.0.2.2:8080   # Android emulator to host; use LAN IP on a 
 
 ---
 
+## Running Everything with Docker Compose
+
+This is the easiest way to run the full stack (Backend, Frontend, Mobile Web, Database).
+
+### Prerequisites
+1.  **Docker** and **Docker Compose**.
+2.  **Service Account Key**: Ensure `apps/jobboard-backend/jobboard-local-service-account-key.json` exists.
+
+### Steps
+1.  Run the following command in the root directory:
+    ```bash
+    docker compose up --build
+    ```
+2.  Access the applications:
+    *   **Frontend**: http://localhost:5173
+    *   **Mobile APK**: http://localhost:8081/app-release.apk (Download and install on Emulator/Device)
+    *   **Backend API**: http://localhost:8080
+    *   **Database**: localhost:5432
+
+---
+
 ## Quick start (local) — minimal Docker
 
 ### 1) Backend (Docker)
