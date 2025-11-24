@@ -1150,6 +1150,7 @@
     "recentComments": "Recent Comments",
     "recentReviews": "Recent Reviews",
     "sortBy": "Sort reviews",
+    "sortByRating": "Sort by rating",
     "sortOptions": {
       "ratingDesc": "Rating (High to Low)",
       "ratingAsc": "Rating (Low to High)"
@@ -1202,6 +1203,7 @@
   "common": {
     "loading": "Loading...",
     "goHome": "Go to Homepage",
+    "visitWebsite": "Visit Website",
     "edited": "Edited",
     "cancel": "Cancel"
   },
@@ -1299,7 +1301,14 @@
     "profile": {
       "title": "Workplace Profile",
       "notFound": "Workplace not found",
-      "employers": "Employers"
+      "notFoundDescription": "The workplace you're looking for doesn't exist or has been removed.",
+      "aboutCompany": "About the Company",
+      "ethicalCommitments": "Ethical Commitments",
+      "employers": "Employers",
+      "manageRequests": "Manage Requests",
+      "currentJobOpenings": "Current Job Openings",
+      "noJobOpenings": "No job openings at the moment",
+      "viewAllJobs": "View all {{count}} jobs"
     },
     "settings": "Settings",
     "manageRequests": "Manage Requests"
