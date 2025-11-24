@@ -23,10 +23,8 @@ describe('WorkplacesPage Integration', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
     
-    expect(screen.getByText('Workplaces')).toBeInTheDocument();
-    expect(
-      screen.getByText(/discover companies to learn more about their culture and ratings/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText('workplaces.title')).toBeInTheDocument();
+    expect(screen.getByText('workplaces.description')).toBeInTheDocument();
   });
 
   it('fetches and displays workplaces', async () => {
@@ -50,11 +48,17 @@ describe('WorkplacesPage Integration', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    const searchInput = screen.getByPlaceholderText(/company name/i);
+    const searchInput = screen.getByPlaceholderText('workplaces.searchPlaceholder');
     fireEvent.change(searchInput, { target: { value: 'Tech' } });
     
-    const searchButton = screen.getByRole('button', { name: /search/i });
-    fireEvent.click(searchButton);
+    await waitFor(() => {
+      expect(screen.getByText('common.search')).toBeInTheDocument();
+    });
+
+    const searchButton = screen.getByText('common.search').parentElement;
+    if (searchButton) {
+      fireEvent.click(searchButton);
+    }
 
     await waitFor(() => {
       // Should show filtered results
@@ -73,13 +77,13 @@ describe('WorkplacesPage Integration', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    const filterButton = screen.getByText(/Filters/i);
+    const filterButton = screen.getByText('workplaces.filters.title');
     fireEvent.click(filterButton);
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/Sector/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Location/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Sort By/i)).toBeInTheDocument();
+      expect(screen.getByLabelText('workplaces.filters.sector')).toBeInTheDocument();
+      expect(screen.getByLabelText('workplaces.filters.location')).toBeInTheDocument();
+      expect(screen.getByLabelText('workplaces.filters.sortBy')).toBeInTheDocument();
     });
   });
 
@@ -100,8 +104,8 @@ describe('WorkplacesPage Integration', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText(/No Workplaces Found/i)).toBeInTheDocument();
-      expect(screen.getByText(/There are no workplaces available at the moment/i)).toBeInTheDocument();
+      expect(screen.getByText('workplaces.empty.title')).toBeInTheDocument();
+      expect(screen.getByText('workplaces.empty.noWorkplaces')).toBeInTheDocument();
     });
   });
 
@@ -116,7 +120,7 @@ describe('WorkplacesPage Integration', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText(/Failed to load workplaces/i)).toBeInTheDocument();
+      expect(screen.getByText('workplaces.loadError')).toBeInTheDocument();
     });
     
     const retryButton = screen.getByRole('button', { name: /Try Again/i });

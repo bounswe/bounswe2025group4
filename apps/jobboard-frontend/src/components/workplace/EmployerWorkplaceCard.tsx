@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/star-rating';
 import { Building2, MapPin, Settings, Users } from 'lucide-react';
 import type { WorkplaceBriefResponse } from '@/types/workplace.types';
+import { useTranslation } from 'react-i18next';
 
 interface EmployerWorkplaceCardProps {
   workplace: WorkplaceBriefResponse;
@@ -28,6 +29,7 @@ export function EmployerWorkplaceCard({
   hasPendingRequests = false,
 }: EmployerWorkplaceCardProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
 
   return (
     <Card
@@ -109,13 +111,13 @@ export function EmployerWorkplaceCard({
               <Button variant="outline" asChild>
                 <Link to={`/employer/workplace/${workplace.id}/settings`}>
                   <Settings className="h-4 w-4" />
-                  Settings
+                  {t('workplace.settings')}
                 </Link>
               </Button>
               <Button variant="outline" asChild className="relative">
                 <Link to={`/employer/workplace/${workplace.id}/requests`}>
                   <Users className="h-4 w-4" />
-                  Manage Requests
+                  {t('workplace.manageRequests')}
                   {hasPendingRequests && (
                     <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-background" />
                   )}

@@ -2,6 +2,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { NewWorkplaceModal } from '@/components/workplace/NewWorkplaceModal';
 import { describe, it, expect, vi } from 'vitest';
 
+vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
+
 describe('NewWorkplaceModal', () => {
   const defaultProps = {
     open: true,
@@ -16,26 +18,26 @@ describe('NewWorkplaceModal', () => {
 
   it('renders correctly when open', () => {
     renderComponent();
-    expect(screen.getByText('New Workplace')).toBeInTheDocument();
-    expect(screen.getByText('Create Workplace')).toBeInTheDocument();
-    expect(screen.getByText('Join Workplace')).toBeInTheDocument();
+    expect(screen.getByText('workplace.newModal.title')).toBeInTheDocument();
+    expect(screen.getByText('employerWorkplaces.noWorkplaces.createWorkplace')).toBeInTheDocument();
+    expect(screen.getByText('employerWorkplaces.noWorkplaces.joinWorkplace')).toBeInTheDocument();
   });
 
   it('does not render when closed', () => {
     renderComponent({ open: false });
-    expect(screen.queryByText('New Workplace')).not.toBeInTheDocument();
+    expect(screen.queryByText('workplace.newModal.title')).not.toBeInTheDocument();
   });
 
   it('calls onCreateWorkplace when Create card is clicked', () => {
     renderComponent();
-    fireEvent.click(screen.getByText('Create Workplace'));
+    fireEvent.click(screen.getByText('employerWorkplaces.noWorkplaces.createWorkplace'));
     expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
     expect(defaultProps.onCreateWorkplace).toHaveBeenCalled();
   });
 
   it('calls onJoinWorkplace when Join card is clicked', () => {
     renderComponent();
-    fireEvent.click(screen.getByText('Join Workplace'));
+    fireEvent.click(screen.getByText('employerWorkplaces.noWorkplaces.joinWorkplace'));
     expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
     expect(defaultProps.onJoinWorkplace).toHaveBeenCalled();
   });

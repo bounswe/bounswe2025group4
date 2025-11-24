@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router';
 import { type JobType, type EthicalTag } from '@/types/job';
 
-const BASE_SALARY_RANGE: [number, number] = [40, 120];
+const FIXED_SALARY_RANGE: [number, number] = [10, 1000];
 
 export function useFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -10,8 +10,8 @@ export function useFilters() {
   const selectedEthicalTags = (searchParams.get('ethicalTags')?.split(',').filter(Boolean) || []) as EthicalTag[];
   const selectedJobTypes = (searchParams.get('jobTypes')?.split(',').filter(Boolean) || []) as JobType[];
   const salaryRange: [number, number] = [
-    Number(searchParams.get('minSalary')) || BASE_SALARY_RANGE[0],
-    Number(searchParams.get('maxSalary')) || BASE_SALARY_RANGE[1],
+    Number(searchParams.get('minSalary')) || FIXED_SALARY_RANGE[0],
+    Number(searchParams.get('maxSalary')) || FIXED_SALARY_RANGE[1],
   ];
   const companyNameFilter = searchParams.get('companyName') || '';
   const isRemoteOnly = searchParams.get('isRemote') === 'true';
@@ -42,7 +42,7 @@ export function useFilters() {
 
   const setSalaryRange = (range: [number, number]) => {
     setSearchParams((prev) => {
-      if (range[0] !== BASE_SALARY_RANGE[0] || range[1] !== BASE_SALARY_RANGE[1]) {
+      if (range[0] !== FIXED_SALARY_RANGE[0] || range[1] !== FIXED_SALARY_RANGE[1]) {
         prev.set('minSalary', String(range[0]));
         prev.set('maxSalary', String(range[1]));
       } else {
