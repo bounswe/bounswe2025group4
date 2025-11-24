@@ -156,6 +156,10 @@
   "jobPage_remote": "Uzaktan",
   "jobPage_yourPostedJobs": "Yayınladığınız İşler",
   "jobPage_noPostedJobs": "Henüz iş ilanı yayınlamadınız.",
+  "jobPage_tabJobs": "İşler",
+  "jobPage_tabNonProfit": "Kar Amacı Gütmeyen",
+  "jobPage_nonProfitWelcome": "Fark Yaratmak",
+  "jobPage_nonProfitWelcomeMessage": "Kar amacı gütmeyen fırsatları keşfettiğiniz için teşekkürler! Bu pozisyonları değerlendirerek anlamlı amaçlara katkıda bulunuyor ve toplumda olumlu bir etki yaratıyorsunuz.",
 
   "jobDetails_title": "İş Detayları",
   "jobDetails_apply": "Şimdi Başvur",

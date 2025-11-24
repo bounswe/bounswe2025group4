@@ -183,6 +183,7 @@ class ApiService {
     int? minSalary,
     int? maxSalary,
     bool? inclusiveOpportunity,
+    bool? nonProfit,
   }) async {
     final queryParams = <String, dynamic>{};
 
@@ -203,6 +204,9 @@ class ApiService {
     if (maxSalary != null) queryParams['maxSalary'] = maxSalary;
     if (inclusiveOpportunity != null) {
       queryParams['inclusiveOpportunity'] = inclusiveOpportunity;
+    }
+    if (nonProfit != null) {
+      queryParams['nonProfit'] = nonProfit;
     }
 
 

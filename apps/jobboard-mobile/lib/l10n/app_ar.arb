@@ -156,6 +156,10 @@
   "jobPage_remote": "عن بُعد",
   "jobPage_yourPostedJobs": "الوظائف التي نشرتها",
   "jobPage_noPostedJobs": "لم تنشر أي وظائف بعد.",
+  "jobPage_tabJobs": "الوظائف",
+  "jobPage_tabNonProfit": "غير ربحي",
+  "jobPage_nonProfitWelcome": "صنع الفرق",
+  "jobPage_nonProfitWelcomeMessage": "شكراً لك على استكشاف الفرص غير الربحية! من خلال التفكير في هذه الوظائف، أنت تساهم في قضايا ذات معنى وتحدث تأثيراً إيجابياً في المجتمع.",
 
   "jobDetails_title": "تفاصيل الوظيفة",
   "jobDetails_apply": "قدم الآن",
