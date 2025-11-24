@@ -45,7 +45,7 @@ export function NewWorkplaceModal({
         <DialogHeader>
           <DialogTitle>{t('workplace.newModal.title')}</DialogTitle>
           <DialogDescription>
-            Choose how you want to add a workplace to your account
+            {t('workplace.newModal.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -61,9 +61,9 @@ export function NewWorkplaceModal({
                 <Plus className="h-12 w-12 text-primary" />
               </div>
               <div className="text-center">
-                <div className="font-semibold text-lg">{t('employerWorkplaces.noWorkplaces.createWorkplace')}</div>
+                <div className="font-semibold text-lg">{t('workplace.newModal.createWorkplace')}</div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  Create and manage your own workplace
+                  {t('workplace.newModal.createWorkplaceDescription')}
                 </div>
               </div>
             </CardContent>
@@ -79,9 +79,9 @@ export function NewWorkplaceModal({
                 <UserPlus className="h-12 w-12 text-primary" />
               </div>
               <div className="text-center">
-                <div className="font-semibold text-lg">{t('employerWorkplaces.noWorkplaces.joinWorkplace')}</div>
+                <div className="font-semibold text-lg">{t('workplace.newModal.joinWorkplace')}</div>
                 <div className="text-sm text-muted-foreground mt-1">
-                  Request to join an existing workplace
+                  {t('workplace.newModal.joinWorkplaceDescription')}
                 </div>
               </div>
             </CardContent>

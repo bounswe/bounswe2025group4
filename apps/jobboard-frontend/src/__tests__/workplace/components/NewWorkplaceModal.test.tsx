@@ -19,8 +19,8 @@ describe('NewWorkplaceModal', () => {
   it('renders correctly when open', () => {
     renderComponent();
     expect(screen.getByText('workplace.newModal.title')).toBeInTheDocument();
-    expect(screen.getByText('employerWorkplaces.noWorkplaces.createWorkplace')).toBeInTheDocument();
-    expect(screen.getByText('employerWorkplaces.noWorkplaces.joinWorkplace')).toBeInTheDocument();
+    expect(screen.getByText('workplace.newModal.createWorkplace')).toBeInTheDocument();
+    expect(screen.getByText('workplace.newModal.joinWorkplace')).toBeInTheDocument();
   });
 
   it('does not render when closed', () => {
@@ -30,14 +30,14 @@ describe('NewWorkplaceModal', () => {
 
   it('calls onCreateWorkplace when Create card is clicked', () => {
     renderComponent();
-    fireEvent.click(screen.getByText('employerWorkplaces.noWorkplaces.createWorkplace'));
+    fireEvent.click(screen.getByText('workplace.newModal.createWorkplace'));
     expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
     expect(defaultProps.onCreateWorkplace).toHaveBeenCalled();
   });
 
   it('calls onJoinWorkplace when Join card is clicked', () => {
     renderComponent();
-    fireEvent.click(screen.getByText('employerWorkplaces.noWorkplaces.joinWorkplace'));
+    fireEvent.click(screen.getByText('workplace.newModal.joinWorkplace'));
     expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
     expect(defaultProps.onJoinWorkplace).toHaveBeenCalled();
   });
