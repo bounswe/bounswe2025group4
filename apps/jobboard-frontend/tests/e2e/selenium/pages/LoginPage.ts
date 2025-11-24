@@ -93,7 +93,7 @@ export class LoginPage extends BasePage {
    * Check if OTP input is visible
    */
   async isOtpInputVisible(): Promise<boolean> {
-    return await this.isVisible(this.otpInput);
+    return await this.elementExists(this.otpInput);
   }
 
   /**

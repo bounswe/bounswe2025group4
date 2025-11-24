@@ -1124,6 +1124,10 @@
     }
   },
   "reviews": {
+    "reviewTitle": "Review",
+    "rateEthicalPolicies": "Rate Ethical Policies",
+    "rateAtLeastOne": "Please rate at least one ethical policy",
+    "titlePlaceholder": "e.g., My experience at {{company}}",
     "workplaceReviews": "Workplace Reviews",
     "writeReview": "Write a Review",
     "writeReviewFor": "Write a Review for {{company}}",
@@ -1205,7 +1209,8 @@
     "goHome": "Go to Homepage",
     "visitWebsite": "Visit Website",
     "edited": "Edited",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "optional": "Optional"
   },
   "chat": {
     "conversations": "Conversations",
@@ -1241,7 +1246,12 @@
       "fetchError": "Failed to load workplaces"
     },
     "newModal": {
-      "title": "New Workplace"
+      "title": "New Workplace",
+      "description": "Choose how you want to add a workplace to your account",
+      "createWorkplace": "Create Workplace",
+      "joinWorkplace": "Join Workplace",
+      "createWorkplaceDescription": "Create and manage your own workplace",
+      "joinWorkplaceDescription": "Request to join an existing workplace"
     },
     "createModal": {
       "title": "Create Workplace",

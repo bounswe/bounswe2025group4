@@ -30,11 +30,11 @@ export interface TestConfig {
   pageLoadTimeout: number;
   scriptTimeout: number;
   employer: {
-    email: string;
+    username: string;
     password: string;
   };
   employee: {
-    email: string;
+    username: string;
     password: string;
   };
   targetWorkplaceId: string;
@@ -58,11 +58,11 @@ export function getTestConfig(): TestConfig {
     pageLoadTimeout: parseInt(process.env.E2E_PAGE_LOAD_TIMEOUT || '30000', 10),
     scriptTimeout: parseInt(process.env.E2E_SCRIPT_TIMEOUT || '30000', 10),
     employer: {
-      email: process.env.E2E_EMPLOYER_EMAIL || 'e2e-employer@test.com',
+      username: process.env.E2E_EMPLOYER_USERNAME || 'e2e-employer@test.com',
       password: process.env.E2E_EMPLOYER_PASSWORD || 'TestPass123!',
     },
     employee: {
-      email: process.env.E2E_EMPLOYEE_EMAIL || 'e2e-employee@test.com',
+      username: process.env.E2E_EMPLOYEE_USERNAME || 'e2e-employee@test.com',
       password: process.env.E2E_EMPLOYEE_PASSWORD || 'TestPass123!',
     },
     targetWorkplaceId: process.env.E2E_TARGET_WORKPLACE_ID || '1',

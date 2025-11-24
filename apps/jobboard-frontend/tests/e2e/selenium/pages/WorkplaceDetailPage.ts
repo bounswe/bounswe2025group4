@@ -15,6 +15,9 @@ export class WorkplaceDetailPage extends BasePage {
   );
   private readonly reviewModal = By.css('[role="dialog"], .modal');
   private readonly reviews = By.css('[data-testid="review"], .review-card');
+  private readonly ethicalTagsSection = By.xpath(
+    '//h2[contains(translate(normalize-space(.), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "ethical commitments")]/following-sibling::div[1]'
+  );
 
   constructor(driver: WebDriver) {
     super(driver);
@@ -104,6 +107,24 @@ export class WorkplaceDetailPage extends BasePage {
       await this.executeScript('window.scrollTo(0, document.body.scrollHeight * 0.5);');
     } catch (error) {
       // Ignore scroll errors
+    }
+  }
+
+  /**
+   * Get ethical tags displayed on the workplace page
+   */
+  async getEthicalTags(): Promise<string[]> {
+    try {
+      const section = await this.findElement(this.ethicalTagsSection);
+      const tagElements = await section.findElements(
+        By.xpath('.//div[contains(@class, "flex")]/span[1]')
+      );
+      const texts = await Promise.all(tagElements.map((el) => el.getText()));
+      return texts
+        .map((text) => text.trim())
+        .filter((text) => text.length > 0);
+    } catch (error) {
+      return [];
     }
   }
 }

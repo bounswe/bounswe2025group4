@@ -15,7 +15,6 @@
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui --coverage",
     "test:coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui --coverage",
     "preview:e2e": "vite preview --port 5173",
     "test:e2e": "node tests/e2e/selenium/run-tests.js",
     "test:e2e:headed": "cross-env E2E_HEADLESS=false node tests/e2e/selenium/run-tests.js",

@@ -5,12 +5,13 @@
  */
 
 export interface WorkplaceData {
-  name: string;
-  description: string;
-  industry: string;
+  companyName: string;
+  sector: string;
   location: string;
-  website: string;
-  ethicalPolicies: string;
+  website?: string;
+  shortDescription?: string;
+  detailedDescription?: string;
+  ethicalTags?: string[];
 }
 
 /**
@@ -26,14 +27,19 @@ export function generateUniqueWorkplaceName(prefix: string = 'E2E Test Company')
  */
 export function getDefaultWorkplaceData(): WorkplaceData {
   return {
-    name: generateUniqueWorkplaceName(),
-    description:
-      'This is an automated E2E test workplace. It demonstrates ethical workplace practices and values transparency.',
-    industry: 'Technology',
+    companyName: generateUniqueWorkplaceName(),
+    sector: 'Technology',
     location: 'San Francisco, CA',
     website: 'https://example-test-company.com',
-    ethicalPolicies:
-      'We prioritize employee well-being, maintain transparent communication, and uphold fair labor practices.',
+    shortDescription:
+      'An automated E2E test workplace demonstrating ethical workplace practices.',
+    detailedDescription:
+      'This is an automated E2E test workplace. We demonstrate ethical workplace practices, value transparency, prioritize employee well-being, maintain transparent communication, and uphold fair labor practices.',
+    ethicalTags: [
+      'Salary Transparency',
+      'Remote-Friendly',
+      'Inclusive Hiring Practices',
+    ],
   };
 }
 
@@ -52,18 +58,18 @@ export function generateWorkplaceData(overrides: Partial<WorkplaceData> = {}): W
  */
 export const workplaceVariations = {
   techStartup: generateWorkplaceData({
-    name: generateUniqueWorkplaceName('Tech Startup'),
-    industry: 'Technology',
-    description: 'Innovative tech startup focused on AI and machine learning solutions.',
+    companyName: generateUniqueWorkplaceName('Tech Startup'),
+    sector: 'Technology',
+    shortDescription: 'Innovative tech startup focused on AI and machine learning solutions.',
   }),
   healthcareOrg: generateWorkplaceData({
-    name: generateUniqueWorkplaceName('Healthcare Org'),
-    industry: 'Healthcare',
-    description: 'Healthcare organization committed to patient-first care and ethical practices.',
+    companyName: generateUniqueWorkplaceName('Healthcare Org'),
+    sector: 'Healthcare',
+    shortDescription: 'Healthcare organization committed to patient-first care and ethical practices.',
   }),
   educationInst: generateWorkplaceData({
-    name: generateUniqueWorkplaceName('Education Institute'),
-    industry: 'Education',
-    description: 'Educational institution promoting inclusive learning and teacher support.',
+    companyName: generateUniqueWorkplaceName('Education Institute'),
+    sector: 'Education',
+    shortDescription: 'Educational institution promoting inclusive learning and teacher support.',
   }),
 };

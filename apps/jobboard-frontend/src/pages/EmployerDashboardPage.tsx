@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { ChevronDown, ChevronUp, Building2, Plus, UserPlus, MapPin, Star, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -181,12 +182,14 @@ export default function EmployerDashboardPage() {
   };
 
   const handleWorkplaceCreated = () => {
-    setShowCreateModal(false);
-    window.location.reload();
+    toast.success(t('workplace.createModal.workplaceCreatedMessage'));
   };
 
   const handleJoinSuccess = () => {
     setShowJoinModal(false);
+    toast.success(t('workplace.joinModal.requestSubmittedMessage', {
+      company: 'the workplace', // Generic message since we don't have the specific workplace name here
+    }));
     window.location.reload();
   };
 
@@ -204,6 +207,7 @@ export default function EmployerDashboardPage() {
 
   const handleJobCreated = async () => {
     handleCreateModalOpenChange(false);
+    toast.success(t('createJob.submitSuccess'));
     await fetchData();
   };
 

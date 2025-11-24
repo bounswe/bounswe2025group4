@@ -16,6 +16,10 @@ import { fileURLToPath } from 'url';
  */
 export async function initDriver(): Promise<WebDriver> {
   const chromeOptions = getChromeCapabilities() as chrome.Options;
+  chromeOptions.addArguments("--disable-notifications");
+  chromeOptions.addArguments("--disable-features=PushMessaging");
+  chromeOptions.addArguments("--disable-logging");
+  chromeOptions.addArguments("--log-level=3");
 
   // Get the project root directory (where node_modules is)
   const __filename = fileURLToPath(import.meta.url);

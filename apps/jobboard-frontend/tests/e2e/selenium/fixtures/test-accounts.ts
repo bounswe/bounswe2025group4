@@ -17,7 +17,7 @@ export interface TestAccount {
  * Employer test account
  */
 export const employerAccount: TestAccount = {
-  email: config.employer.email,
+  email: config.employer.username,
   password: config.employer.password,
   role: 'employer',
 };
@@ -26,7 +26,7 @@ export const employerAccount: TestAccount = {
  * Employee test account
  */
 export const employeeAccount: TestAccount = {
-  email: config.employee.email,
+  email: config.employee.username,
   password: config.employee.password,
   role: 'employee',
 };

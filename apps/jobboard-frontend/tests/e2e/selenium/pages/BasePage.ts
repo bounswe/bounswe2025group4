@@ -247,4 +247,11 @@ export class BasePage {
     const element = await this.findElement(locator);
     return await element.getCssValue(property);
   }
+
+  /**
+   * Sleep for specified milliseconds
+   */
+  async sleep(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }

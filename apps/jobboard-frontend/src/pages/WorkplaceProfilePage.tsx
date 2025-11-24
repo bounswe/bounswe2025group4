@@ -339,6 +339,7 @@ export default function WorkplaceProfilePage() {
                   <ReviewFormDialog
                     workplaceId={workplace.id}
                     workplaceName={workplace.companyName}
+                    ethicalTags={workplace.ethicalTags}
                     onReviewSubmitted={handleReviewSubmitted}
                   />
                 )}
