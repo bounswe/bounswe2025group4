@@ -89,8 +89,6 @@ const MentorshipPage = () => {
                     bio: profile.bio,
                     experiences: profile.experiences,
                     educations: profile.educations,
-                    skills: [],
-                    interests: []
                   }
                 };
               }

@@ -45,8 +45,8 @@ export function convertMentorProfileToMentor(
     title = "";
   }
   
-  // Languages from normal profile interests (if available) or placeholder
-  const languages = normalProfile?.interests?.map(i => i.name) || ["English"];
+  // Languages placeholder (interests not available in PublicProfile)
+  const languages = ["English"];
   
   // Achievements placeholder (not in normal profile)
   const placeholderAchievements: string[] = [];

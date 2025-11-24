@@ -75,8 +75,6 @@ const MentorProfilePage = () => {
           bio: mentorNormalProfileForConversion.bio,
           experiences: mentorNormalProfileForConversion.experiences,
           educations: mentorNormalProfileForConversion.educations,
-          skills: [],
-          interests: [],
         } : undefined
       );
       setMentor(convertedMentor);
@@ -526,16 +524,6 @@ const MentorProfilePage = () => {
                   <span className="font-semibold">{completedMentorships.length}</span>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {/* Skills & Technologies - From Profile Only */}
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('mentorship.profile.skillsTechnologies')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">No skills information available.</p>
             </CardContent>
           </Card>
 

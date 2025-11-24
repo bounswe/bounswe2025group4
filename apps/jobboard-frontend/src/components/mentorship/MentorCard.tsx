@@ -132,7 +132,7 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
       
       <CardFooter className="flex gap-2">
         <Button asChild className="flex-1">
-          <Link to={`/mentorship/${mentor.id}`}>
+          <Link to={`/mentorship/${mentor.id || ''}`}>
             {t('mentorship.card.viewProfile')}
           </Link>
         </Button>
