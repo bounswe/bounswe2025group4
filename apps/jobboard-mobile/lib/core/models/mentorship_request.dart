@@ -33,6 +33,8 @@ class MentorshipRequest {
 
   /// Requester user ID (if present in response)
   final String? requesterId;
+  String? requesterUsername;
+
 
   /// Mentor user ID (string or int in payload; normalized to string)
   final String mentorId;
@@ -52,6 +54,7 @@ class MentorshipRequest {
   MentorshipRequest({
     required this.id,
     required this.requesterId,
+    required this.requesterUsername,
     required this.mentorId,
     required this.status,
     required this.createdAt,
@@ -59,6 +62,7 @@ class MentorshipRequest {
     this.resumeReviewId,
     this.reviewStatus,
     this.conversationId,
+
   });
 
   factory MentorshipRequest.fromJson(Map<String, dynamic> json) {
@@ -67,6 +71,7 @@ class MentorshipRequest {
       return MentorshipRequest(
         id: json['mentorshipRequestId'].toString(),
         requesterId: null, // not present here
+        requesterUsername: json['requesterUsername']?.toString() ?? '',
         mentorId: json['mentorId']?.toString() ?? '',
         status: _parseStatus(json['requestStatus']?.toString()),
         createdAt: DateTime.parse(json['requestCreatedAt'] as String),
@@ -81,6 +86,7 @@ class MentorshipRequest {
     return MentorshipRequest(
       id: json['id']?.toString() ?? '',
       requesterId: json['requesterId']?.toString(),
+      requesterUsername: json['requesterUsername']?.toString() ?? '',
       mentorId: json['mentorId']?.toString() ?? '',
       status: _parseStatus(json['status']?.toString()),
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -95,6 +101,7 @@ class MentorshipRequest {
     return {
       'id': id,
       'requesterId': requesterId,
+      'requesterUsername': requesterUsername,
       'mentorId': mentorId,
       'status': status.name,
       'createdAt': createdAt.toIso8601String(),

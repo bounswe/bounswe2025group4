@@ -1154,6 +1154,18 @@ class ApiService {
     }
   }
 
+  Future<String?> getUsernameForUser(String userId) async {
+    try {
+      final profile = await getUserProfile(int.parse(userId));
+
+      final full = profile.profile.fullName;
+
+      return full.isNotEmpty ? full : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   // --- Profile Endpoints ---
 
   /// GET /api/profile

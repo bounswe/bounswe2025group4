@@ -17,14 +17,11 @@ class MentorshipRequestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final menteeLabel = (request.requesterId ?? '').isNotEmpty
-        ? request.requesterId!
-        : 'Mentee';
+    final menteeLabel = request.requesterUsername ??
+        request.requesterId ??
+        'Mentee';
     final safeLabel = menteeLabel ?? 'User';
-    final initial = safeLabel.isNotEmpty
-        ? safeLabel[0].toUpperCase()
-        : '?';
-
+    final initial = menteeLabel[0].toUpperCase();
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Padding(

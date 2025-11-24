@@ -74,13 +74,14 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
     });
   }
 
-  void _navigateToMentorProfile(String mentorId, String mentorName) {
+  void _navigateToMentorProfile(String mentorId, String mentorName, int? resumeReviewId) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MentorProfileScreen(
           mentorId: mentorId,
           mentorName: mentorName,
+          resumeReviewId: resumeReviewId,
         ),
       ),
     );
@@ -231,8 +232,9 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                 currentMenteeCount: mentor.currentMentees,
                 averageRating: mentor.averageRating,
                 onTap: () => _navigateToMentorProfile(
-                  mentor.id,
-                  mentor.username,
+                  mentor.id,          // mentorId
+                  mentor.username,    // mentorName
+                  null,               // No resumeReviewId when browsing mentors
                 ),
                 onRequestTap: () => _showRequestMentorshipDialog(
                   mentor.id,
@@ -315,11 +317,11 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
     await mentorProvider.fetchMenteeRequests(authProvider.currentUser!.id);
   }
 
-  void _navigateToDirectMessage(String mentorId, String mentorName) {
+  void _navigateToDirectMessage(String mentorId, String mentorName, int? resumeReviewId) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
-            DirectMessageScreen(mentorId: mentorId, mentorName: mentorName),
+            DirectMessageScreen(mentorId: mentorId, mentorName: mentorName, resumeReviewId: resumeReviewId),
       ),
     );
   }
@@ -467,6 +469,7 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                   onTap: () => _navigateToDirectMessage(
                     req.mentorId,
                     mentorName,
+                    req.resumeReviewId,
                   ),
                   onCompleteTap: null, // not supported in backend
                   onCancelTap: null,   // not supported in backend

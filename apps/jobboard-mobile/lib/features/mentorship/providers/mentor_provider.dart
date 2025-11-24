@@ -66,9 +66,18 @@ class MentorProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _mentorRequests = await _apiService.getMentorshipRequestsAsMentor(
-        mentorId,
-      );
+      final rawRequests =
+      await _apiService.getMentorshipRequestsAsMentor(mentorId);
+
+      // Enrich with requester usernames
+      for (var r in rawRequests) {
+        if (r.requesterId != null) {
+          final username = await _apiService.getUsernameForUser(r.requesterId!);
+          r.requesterUsername = username; // <-- assign here
+        }
+      }
+
+      _mentorRequests = rawRequests;
     } catch (e) {
       _error = e.toString();
       debugPrint('Error fetching mentor requests: $_error');

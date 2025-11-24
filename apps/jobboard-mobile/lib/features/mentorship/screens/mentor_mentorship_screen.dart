@@ -228,9 +228,9 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                         itemBuilder: (context, index) {
                           final request = acceptedRequests[index];
                           final menteeLabel =
-                          (request.requesterId ?? '').isNotEmpty
-                              ? request.requesterId!
-                              : 'Mentee ${request.id}';
+                              request.requesterUsername ??
+                                  request.requesterId ??
+                                  'Mentee ${request.id}';
                           return MenteeCard(
                             menteeLabel: menteeLabel,
                             onChatTap: () {
