@@ -38,6 +38,15 @@ export async function getApplications(
 }
 
 /**
+ * Get applications by job seeker ID
+ * GET /api/applications/job-seeker/{jobSeekerId}
+ */
+export async function getApplicationsByJobSeeker(jobSeekerId: number): Promise<JobApplicationResponse[]> {
+  const response = await api.get<JobApplicationResponse[]>(`/applications/job-seeker/${jobSeekerId}`);
+  return response.data;
+}
+
+/**
  * Get a single application by ID
  * GET /api/applications/{id}
  */

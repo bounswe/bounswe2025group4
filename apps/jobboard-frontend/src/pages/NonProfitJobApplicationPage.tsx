@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { ChevronRight, Upload, X, FileText } from 'lucide-react';
+import { ChevronRight, Upload, X, FileText, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import CenteredLoader from '@/components/CenteredLoader';
 import { cn } from '@/lib/utils';
 import type { JobPostResponse } from '@/types/api.types';
@@ -17,7 +18,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
 const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx'];
 
-export default function JobApplicationPage() {
+export default function NonProfitJobApplicationPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -50,8 +51,8 @@ export default function JobApplicationPage() {
         );
 
         if (hasAppliedToThisJob) {
-          toast.info(t('jobApplication.errors.alreadyApplied'));
-          navigate(`/jobs/${id}`);
+          toast.info(t('nonProfitApplication.errors.alreadyApplied'));
+          navigate(`/nonprofit-jobs/${id}`);
           return;
         }
 
@@ -59,9 +60,9 @@ export default function JobApplicationPage() {
         const jobData = await getJobById(parseInt(id, 10));
         setJob(jobData);
       } catch (err) {
-        console.error('Error fetching job:', err);
-        toast.error(t('jobApplication.errors.loadJob'));
-        navigate('/jobs');
+        console.error('Error fetching volunteer opportunity:', err);
+        toast.error(t('nonProfitApplication.errors.loadJob'));
+        navigate('/nonprofit-jobs');
       } finally {
         setIsLoading(false);
       }
@@ -72,13 +73,13 @@ export default function JobApplicationPage() {
 
   const validateFile = (file: File): boolean => {
     if (file.size > MAX_FILE_SIZE) {
-      toast.error(t('jobApplication.errors.fileTooLarge'));
+      toast.error(t('nonProfitApplication.errors.fileTooLarge'));
       return false;
     }
 
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!ALLOWED_FILE_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(fileExtension)) {
-      toast.error(t('jobApplication.errors.invalidFileType'));
+      toast.error(t('nonProfitApplication.errors.invalidFileType'));
       return false;
     }
 
@@ -123,7 +124,7 @@ export default function JobApplicationPage() {
     e.preventDefault();
 
     if (!id || !cvFile) {
-      toast.error(t('jobApplication.form.cv.required'));
+      toast.error(t('nonProfitApplication.form.cv.required'));
       return;
     }
 
@@ -138,18 +139,14 @@ export default function JobApplicationPage() {
 
       await uploadCv(application.id, cvFile);
 
-      toast.success(t('jobApplication.success.message'));
+      toast.success(t('nonProfitApplication.success.message'));
       navigate('/applications');
     } catch (err) {
-      console.error('Error submitting application:', err);
-      toast.error(t('jobApplication.errors.submitFailed'));
+      console.error('Error submitting volunteer application:', err);
+      toast.error(t('nonProfitApplication.errors.submitFailed'));
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const formatSalary = (min: number, max: number) => {
-    return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
   };
 
   const formatDate = (isoDate: string) => {
@@ -165,126 +162,140 @@ export default function JobApplicationPage() {
     return <CenteredLoader />;
   }
 
+  // Handle location display with fallbacks
+  const location = job.remote 
+    ? t('jobCard.remote') 
+    : job.location || job.workplace.location || t('jobCard.notSpecified');
+
   return (
     <div className="container mx-auto px-4 py-6 lg:py-8" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
-        <Link to="/jobs" className="hover:text-foreground transition-colors">
-          {t('jobApplication.breadcrumb.jobs')}
+        <Link to="/nonprofit-jobs" className="hover:text-foreground transition-colors">
+          {t('nonProfitJobs.volunteer')}
         </Link>
         <ChevronRight className={cn('size-4', isRtl && 'rotate-180')} aria-hidden />
-        <Link to={`/jobs/${id}`} className="hover:text-foreground transition-colors">
+        <Link to={`/nonprofit-jobs/${id}`} className="hover:text-foreground transition-colors">
           {job.title}
         </Link>
         <ChevronRight className={cn('size-4', isRtl && 'rotate-180')} aria-hidden />
-        <span className="text-foreground">{t('jobApplication.breadcrumb.apply')}</span>
+        <span className="text-foreground">{t('nonProfitApplication.breadcrumb.apply')}</span>
       </nav>
 
       <div className="mx-auto max-w-4xl">
-        <h1 className="text-3xl font-bold text-foreground lg:text-4xl mb-8">
-          {t('jobApplication.title', { jobTitle: job.title })}
-        </h1>
+        {/* Header with volunteer badge */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <Badge className="bg-green-500 text-white hover:bg-green-600 flex items-center gap-1">
+              <Heart className="size-3" aria-hidden />
+              {t('nonProfitJobs.volunteerOpportunity')}
+            </Badge>
+          </div>
+          <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
+            {t('nonProfitApplication.title', { jobTitle: job.title })}
+          </h1>
+        </div>
 
-        {/* Job Details Card */}
+        {/* Opportunity Details Card */}
         <Card className="border border-border bg-card shadow-sm mb-8">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">{t('jobApplication.jobDetails.title')}</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('nonProfitApplication.opportunityDetails.title')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-muted-foreground">{t('jobApplication.jobDetails.company')}:</span>
+                <span className="text-muted-foreground">{t('nonProfitApplication.opportunityDetails.organization')}:</span>
                 <span className="ml-2 font-medium">{job.workplace.companyName}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('jobApplication.jobDetails.location')}:</span>
-                <span className="ml-2 font-medium">
-                  {job.remote ? t('jobApplication.jobDetails.remote') : job.location}
-                </span>
+                <span className="text-muted-foreground">{t('nonProfitApplication.opportunityDetails.location')}:</span>
+                <span className="ml-2 font-medium">{location}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('jobApplication.jobDetails.salary')}:</span>
-                <span className="ml-2 font-medium">{formatSalary(job.minSalary, job.maxSalary)}</span>
+                <span className="text-muted-foreground">{t('nonProfitApplication.opportunityDetails.type')}:</span>
+                <span className="ml-2 font-medium text-green-600">{t('nonProfitApplication.opportunityDetails.volunteer')}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('jobApplication.jobDetails.postedOn', { date: formatDate(job.postedDate) })}</span>
+                <span className="text-muted-foreground">{t('nonProfitApplication.opportunityDetails.postedOn', { date: formatDate(job.postedDate) })}</span>
               </div>
             </div>
           </div>
         </Card>
 
-        {/* Application Form */}
+        {/* Volunteer Application Form */}
         <Card className="border border-border bg-card shadow-sm">
           <div className="p-6 lg:p-8">
-            <h2 className="text-xl font-semibold mb-6">{t('jobApplication.form.title')}</h2>
+            <h2 className="text-xl font-semibold mb-2">{t('nonProfitApplication.form.title')}</h2>
+            <p className="text-muted-foreground mb-6">{t('nonProfitApplication.form.subtitle')}</p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Cover Letter */}
+              {/* Motivation Letter */}
               <div>
                 <Label htmlFor="coverLetter" className="text-base font-medium">
-                  {t('jobApplication.form.coverLetter.label')}
+                  {t('nonProfitApplication.form.motivationLetter.label')}
                 </Label>
                 <textarea
                   id="coverLetter"
                   value={coverLetter}
                   onChange={(e) => setCoverLetter(e.target.value.slice(0, 2000))}
-                  placeholder={t('jobApplication.form.coverLetter.placeholder')}
+                  placeholder={t('nonProfitApplication.form.motivationLetter.placeholder')}
                   disabled={isSubmitting}
                   className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[150px] resize-y"
                   maxLength={2000}
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t('jobApplication.form.coverLetter.characterCount', { count: coverLetter.length })}
+                  {t('nonProfitApplication.form.motivationLetter.characterCount', { count: coverLetter.length })}
                 </p>
               </div>
 
               {/* Special Needs */}
               <div>
                 <Label htmlFor="specialNeeds" className="text-base font-medium">
-                  {t('jobApplication.form.specialNeeds.label')}
+                  {t('nonProfitApplication.form.specialNeeds.label')}
                 </Label>
                 <textarea
                   id="specialNeeds"
                   value={specialNeeds}
                   onChange={(e) => setSpecialNeeds(e.target.value.slice(0, 500))}
-                  placeholder={t('jobApplication.form.specialNeeds.placeholder')}
+                  placeholder={t('nonProfitApplication.form.specialNeeds.placeholder')}
                   disabled={isSubmitting}
                   className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px] resize-y"
                   maxLength={500}
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t('jobApplication.form.specialNeeds.characterCount', { count: specialNeeds.length })}
+                  {t('nonProfitApplication.form.specialNeeds.characterCount', { count: specialNeeds.length })}
                 </p>
               </div>
 
-              {/* CV Upload */}
+              {/* Resume/CV Upload */}
               <div>
                 <Label className="text-base font-medium">
-                  {t('jobApplication.form.cv.label')} <span className="text-destructive">*</span>
+                  {t('nonProfitApplication.form.cv.label')} <span className="text-destructive">*</span>
                 </Label>
 
                 {!cvFile ? (
                   <div
                     className={cn(
                       'mt-2 border-2 border-dashed rounded-lg p-8 text-center transition-colors',
-                      'border-border hover:border-primary bg-muted/50',
+                      'border-border hover:border-green-500 bg-green-50/50 dark:bg-green-950/20',
                       isSubmitting && 'opacity-50 cursor-not-allowed'
                     )}
                     onDrop={handleFileDrop}
                     onDragOver={handleDragOver}
                   >
-                    <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                    <Upload className="mx-auto h-12 w-12 text-green-600 mb-4" />
                     <p className="text-sm text-muted-foreground mb-2">
-                      {t('jobApplication.form.cv.dragDrop')}
+                      {t('nonProfitApplication.form.cv.dragDrop')}
                     </p>
                     <Button
                       type="button"
                       variant="outline"
+                      className="border-green-500 text-green-600 hover:bg-green-50"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isSubmitting}
                     >
-                      {t('jobApplication.form.cv.chooseFile')}
+                      {t('nonProfitApplication.form.cv.chooseFile')}
                     </Button>
                     <p className="text-xs text-muted-foreground mt-2">
-                      {t('jobApplication.form.cv.fileTypes')}
+                      {t('nonProfitApplication.form.cv.fileTypes')}
                     </p>
                     <input
                       ref={fileInputRef}
@@ -296,10 +307,10 @@ export default function JobApplicationPage() {
                     />
                   </div>
                 ) : (
-                  <div className="mt-2 border border-border rounded-lg p-4 bg-muted/50">
+                  <div className="mt-2 border border-green-200 rounded-lg p-4 bg-green-50/50 dark:bg-green-950/20">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <FileText className="h-8 w-8 text-primary" />
+                        <FileText className="h-8 w-8 text-green-600" />
                         <div>
                           <p className="text-sm font-medium">{cvFile.name}</p>
                           <p className="text-xs text-muted-foreground">
@@ -326,18 +337,18 @@ export default function JobApplicationPage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate(`/jobs/${id}`)}
+                  onClick={() => navigate(`/nonprofit-jobs/${id}`)}
                   disabled={isSubmitting}
                   className="w-full sm:w-auto"
                 >
-                  {t('jobApplication.form.cancel')}
+                  {t('nonProfitApplication.form.cancel')}
                 </Button>
                 <Button
                   type="submit"
                   disabled={isSubmitting || !cvFile}
-                  className="w-full sm:w-auto sm:ml-auto"
+                  className="w-full sm:w-auto sm:ml-auto bg-green-600 hover:bg-green-700"
                 >
-                  {isSubmitting ? t('jobApplication.form.submitting') : t('jobApplication.form.submit')}
+                  {isSubmitting ? t('nonProfitApplication.form.submitting') : t('nonProfitApplication.form.submit')}
                 </Button>
               </div>
             </form>

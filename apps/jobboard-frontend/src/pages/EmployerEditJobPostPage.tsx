@@ -22,6 +22,7 @@ type JobPostFormData = {
   maxSalary: string;
   contactEmail: string;
   inclusiveOpportunity: boolean;
+  nonProfit: boolean;
 };
 
 function parseContact(contact: JobPostResponse['contact']): { email: string } {
@@ -58,6 +59,7 @@ export default function EmployerEditJobPostPage() {
     maxSalary: '',
     contactEmail: '',
     inclusiveOpportunity: false,
+    nonProfit: false,
   });
 
   const handleWorkplaceChange = (workplaceId: number, _workplace: EmployerWorkplaceBrief) => {
@@ -95,6 +97,7 @@ export default function EmployerEditJobPostPage() {
           maxSalary: job.maxSalary?.toString() ?? '',
           contactEmail: email,
           inclusiveOpportunity: job.inclusiveOpportunity ?? false,
+          nonProfit: job.nonProfit ?? false,
         });
       } catch (err) {
         console.error('Error loading job post for edit:', err);
@@ -135,8 +138,9 @@ export default function EmployerEditJobPostPage() {
         remote: formData.remote,
         contact: formData.contactEmail,
         inclusiveOpportunity: formData.inclusiveOpportunity,
-        minSalary: formData.minSalary ? parseInt(formData.minSalary, 10) : undefined,
-        maxSalary: formData.maxSalary ? parseInt(formData.maxSalary, 10) : undefined,
+        minSalary: formData.nonProfit ? 0 : (formData.minSalary ? parseInt(formData.minSalary, 10) : undefined),
+        maxSalary: formData.nonProfit ? 0 : (formData.maxSalary ? parseInt(formData.maxSalary, 10) : undefined),
+        nonProfit: formData.nonProfit,
       };
 
       await updateJob(parseInt(jobId, 10), requestData);
@@ -264,42 +268,74 @@ export default function EmployerEditJobPostPage() {
             </div>
 
             <div>
-              <Label className="text-sm font-semibold">
-                {t('createJob.salaryRange', { defaultValue: 'Salary Range (USD)' })}
-              </Label>
-              <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
-                    {t('createJob.minimum', { defaultValue: 'Minimum' })}
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="nonProfit"
+                  checked={formData.nonProfit}
+                  onCheckedChange={(checked) =>
+                    setFormData({ 
+                      ...formData, 
+                      nonProfit: Boolean(checked),
+                      // Clear salary fields when nonprofit is enabled
+                      minSalary: Boolean(checked) ? '' : formData.minSalary,
+                      maxSalary: Boolean(checked) ? '' : formData.maxSalary
+                    })
+                  }
+                  className="mt-0.5"
+                />
+                <div className="flex-1">
+                  <Label htmlFor="nonProfit" className="text-sm font-medium cursor-pointer">
+                    {t('createJob.nonProfit', { defaultValue: 'Non-Profit Organization' })}
                   </Label>
-                  <Input
-                    id="minSalary"
-                    type="number"
-                    value={formData.minSalary}
-                    onChange={(e) => setFormData({ ...formData, minSalary: e.target.value })}
-                    placeholder={t('createJob.minSalaryPlaceholder', {
-                      defaultValue: 'e.g., 80000',
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {t('createJob.nonProfitDescription', {
+                      defaultValue: 'Mark this as a volunteer opportunity from a non-profit organization focused on social impact',
                     })}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="maxSalary" className="text-xs text-muted-foreground">
-                    {t('createJob.maximum', { defaultValue: 'Maximum' })}
-                  </Label>
-                  <Input
-                    id="maxSalary"
-                    type="number"
-                    value={formData.maxSalary}
-                    onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value })}
-                    placeholder={t('createJob.maxSalaryPlaceholder', {
-                      defaultValue: 'e.g., 120000',
-                    })}
-                    className="mt-1"
-                  />
+                  </p>
                 </div>
               </div>
             </div>
+
+            {/* Salary Range - Hidden for nonprofit positions */}
+            {!formData.nonProfit && (
+              <div>
+                <Label className="text-sm font-semibold">
+                  {t('createJob.salaryRange', { defaultValue: 'Salary Range (USD)' })}
+                </Label>
+                <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
+                      {t('createJob.minimum', { defaultValue: 'Minimum' })}
+                    </Label>
+                    <Input
+                      id="minSalary"
+                      type="number"
+                      value={formData.minSalary}
+                      onChange={(e) => setFormData({ ...formData, minSalary: e.target.value })}
+                      placeholder={t('createJob.minSalaryPlaceholder', {
+                        defaultValue: 'e.g., 80000',
+                      })}
+                      className="mt-1"
+                      />
+                  </div>
+                  <div>
+                    <Label htmlFor="maxSalary" className="text-xs text-muted-foreground">
+                      {t('createJob.maximum', { defaultValue: 'Maximum' })}
+                    </Label>
+                    <Input
+                      id="maxSalary"
+                      type="number"
+                      value={formData.maxSalary}
+                      onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value })}
+                      placeholder={t('createJob.maxSalaryPlaceholder', {
+                        defaultValue: 'e.g., 120000',
+                      })}
+                      className="mt-1"
+                      />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div>
               <Label htmlFor="contactEmail" className="text-sm font-semibold">

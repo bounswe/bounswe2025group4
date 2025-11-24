@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, MapPin, Download, ExternalLink, Trash2, FileText } from 'lucide-react';
+import { Briefcase, MapPin, Download, ExternalLink, Trash2, FileText, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,8 @@ import {
 } from '@/components/ui/dialog';
 import CenteredLoader from '@/components/CenteredLoader';
 import type { JobApplicationResponse, JobApplicationStatus } from '@/types/api.types';
-import { getApplications, deleteApplication, getCvUrl } from '@/services/applications.service';
+import { getApplicationsByJobSeeker, deleteApplication, getCvUrl } from '@/services/applications.service';
+import { getJobById } from '@/services/jobs.service';
 import { useAuth } from '@/contexts/AuthContext';
 
 type FilterType = 'all' | 'PENDING' | 'APPROVED' | 'REJECTED';
@@ -30,6 +31,7 @@ export default function MyApplicationsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterType>('all');
+  const [nonprofitJobs, setNonprofitJobs] = useState<Set<number>>(new Set());
 
   // Detail modal state
   const [selectedApplication, setSelectedApplication] = useState<JobApplicationResponse | null>(null);
@@ -39,6 +41,34 @@ export default function MyApplicationsPage() {
   const [applicationToWithdraw, setApplicationToWithdraw] = useState<number | null>(null);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
 
+  // Cache for job details to avoid repeated API calls
+  const jobDetailsCache = useMemo(() => new Map(), []);
+
+  // Helper function to get the correct job detail route
+  const getJobDetailRoute = (application: JobApplicationResponse): string => {
+    const isNonprofit = nonprofitJobs.has(application.jobPostId);
+    return isNonprofit ? `/nonprofit-jobs/${application.jobPostId}` : `/jobs/${application.jobPostId}`;
+  };
+
+  // Function to check if a job is nonprofit (with caching)
+  const checkIfNonprofitJob = async (jobPostId: number): Promise<boolean> => {
+    if (jobDetailsCache.has(jobPostId)) {
+      return jobDetailsCache.get(jobPostId);
+    }
+
+    try {
+      const jobDetails = await getJobById(jobPostId);
+      const isNonprofit = !!jobDetails.nonProfit;
+      jobDetailsCache.set(jobPostId, isNonprofit);
+      return isNonprofit;
+    } catch (error) {
+      // If we can't fetch job details, default to regular job
+      console.warn(`Could not fetch details for job ${jobPostId}:`, error);
+      jobDetailsCache.set(jobPostId, false);
+      return false;
+    }
+  };
+
   useEffect(() => {
     const fetchApplications = async () => {
       if (!user) return;
@@ -47,11 +77,24 @@ export default function MyApplicationsPage() {
         setIsLoading(true);
         setError(null);
 
-        const apps = await getApplications({
-          jobSeekerId: user.id,
-        });
+        const apps = await getApplicationsByJobSeeker(user.id);
 
         setApplications(apps);
+
+        // Check which jobs are nonprofit jobs (batch processing for better performance)
+        const nonprofitJobIds = new Set<number>();
+        const uniqueJobIds = [...new Set(apps.map((app) => app.jobPostId))];
+
+        await Promise.all(
+          uniqueJobIds.map(async (jobPostId: number) => {
+            const isNonprofit = await checkIfNonprofitJob(jobPostId);
+            if (isNonprofit) {
+              nonprofitJobIds.add(jobPostId);
+            }
+          })
+        );
+
+        setNonprofitJobs(nonprofitJobIds);
       } catch (err) {
         console.error('Error fetching applications:', err);
         setError(t('myApplications.errors.loadFailed'));
@@ -61,7 +104,7 @@ export default function MyApplicationsPage() {
     };
 
     fetchApplications();
-  }, [user, t]);
+  }, [user, t, jobDetailsCache]);
 
   const filteredApplications = useMemo(() => {
     if (filter === 'all') {
@@ -213,9 +256,20 @@ export default function MyApplicationsPage() {
                     <div className="flex items-start gap-3 mb-3">
                       <Briefcase className="h-5 w-5 text-primary mt-1 shrink-0" />
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-foreground">
-                          {application.title}
-                        </h3>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-lg font-semibold text-foreground">
+                            {application.title}
+                          </h3>
+                          {nonprofitJobs.has(application.jobPostId) && (
+                            <Badge
+                              variant="secondary"
+                              className="border-0 bg-green-500 text-xs font-medium text-white hover:bg-green-600 flex items-center gap-1"
+                            >
+                              <Heart className="size-3" aria-hidden />
+                              {t('nonProfitJobs.volunteerOpportunity')}
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-sm text-muted-foreground">{application.company}</p>
                       </div>
                     </div>
@@ -249,7 +303,7 @@ export default function MyApplicationsPage() {
                       {t('myApplications.applicationCard.actions.viewDetails')}
                     </Button>
                     <Button variant="outline" size="sm" asChild>
-                      <Link to={`/jobs/${application.jobPostId}`}>
+                      <Link to={getJobDetailRoute(application)}>
                         <ExternalLink className="h-4 w-4 mr-2" />
                         {t('myApplications.applicationCard.actions.viewJob')}
                       </Link>
@@ -289,7 +343,18 @@ export default function MyApplicationsPage() {
           {selectedApplication && (
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold mb-1">{selectedApplication.title}</h3>
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="font-semibold">{selectedApplication.title}</h3>
+                  {nonprofitJobs.has(selectedApplication.jobPostId) && (
+                    <Badge
+                      variant="secondary"
+                      className="border-0 bg-green-500 text-xs font-medium text-white hover:bg-green-600 flex items-center gap-1"
+                    >
+                      <Heart className="size-3" aria-hidden />
+                      {t('nonProfitJobs.volunteerOpportunity')}
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground">{selectedApplication.company}</p>
               </div>
 
