@@ -695,6 +695,54 @@
       "backToJobs": "العودة إلى الوظائف"
     }
   },
+  "nonProfitApplication": {
+    "title": "تطوع في {{jobTitle}}",
+    "breadcrumb": {
+      "apply": "تقدم"
+    },
+    "opportunityDetails": {
+      "title": "تفاصيل فرصة التطوع",
+      "organization": "المنظمة",
+      "location": "الموقع",
+      "type": "النوع",
+      "volunteer": "فرصة تطوع",
+      "postedOn": "نُشرت في {{date}}"
+    },
+    "form": {
+      "title": "طلب التطوع",
+      "subtitle": "شارك شغفك بإحداث فرق وأخبرنا لماذا تريد التطوع مع هذه المنظمة.",
+      "motivationLetter": {
+        "label": "رسالة الدافع",
+        "placeholder": "أخبرنا لماذا تتحمس لهذه القضية وكيف تود المساهمة...",
+        "characterCount": "{{count}}/2000 حرف"
+      },
+      "specialNeeds": {
+        "label": "متطلبات إمكانية الوصول",
+        "placeholder": "يرجى وصف أي ترتيبات أو متطلبات إمكانية وصول قد تحتاجها...",
+        "characterCount": "{{count}}/500 حرف"
+      },
+      "cv": {
+        "label": "السيرة الذاتية",
+        "required": "يرجى تحميل سيرتك الذاتية",
+        "dragDrop": "اسحب وأفلت سيرتك الذاتية هنا أو انقر للتصفح",
+        "chooseFile": "اختر ملف",
+        "fileTypes": "PDF أو DOC أو DOCX حتى 10MB"
+      },
+      "cancel": "إلغاء",
+      "submit": "إرسال طلب التطوع",
+      "submitting": "جاري الإرسال..."
+    },
+    "success": {
+      "message": "تم إرسال طلب التطوع بنجاح!"
+    },
+    "errors": {
+      "loadJob": "فشل تحميل تفاصيل فرصة التطوع",
+      "submitFailed": "فشل إرسال طلب التطوع. يرجى المحاولة مرة أخرى.",
+      "fileTooLarge": "يجب أن يكون حجم الملف أقل من 10MB",
+      "invalidFileType": "نوع ملف غير صالح. يرجى تحميل PDF أو DOC أو DOCX",
+      "alreadyApplied": "لقد تقدمت بالفعل لهذه فرصة التطوع."
+    }
+  },
   "myMentorships": {
     "title": "إرشاداتي",
     "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة الخاصة بك",

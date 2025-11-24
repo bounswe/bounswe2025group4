@@ -988,6 +988,54 @@
       "backToJobs": "Back to Jobs"
     }
   },
+  "nonProfitApplication": {
+    "title": "Volunteer for {{jobTitle}}",
+    "breadcrumb": {
+      "apply": "Apply"
+    },
+    "opportunityDetails": {
+      "title": "Volunteer Opportunity Details",
+      "organization": "Organization",
+      "location": "Location",
+      "type": "Type",
+      "volunteer": "Volunteer Opportunity",
+      "postedOn": "Posted on {{date}}"
+    },
+    "form": {
+      "title": "Volunteer Application",
+      "subtitle": "Share your passion for making a difference and tell us why you'd like to volunteer with this organization.",
+      "motivationLetter": {
+        "label": "Motivation Letter",
+        "placeholder": "Tell us why you're passionate about this cause and how you'd like to contribute...",
+        "characterCount": "{{count}}/2000 characters"
+      },
+      "specialNeeds": {
+        "label": "Accessibility Requirements",
+        "placeholder": "Please describe any accommodations or accessibility requirements you may need...",
+        "characterCount": "{{count}}/500 characters"
+      },
+      "cv": {
+        "label": "Resume/CV",
+        "required": "Please upload your resume or CV",
+        "dragDrop": "Drag and drop your resume here or click to browse",
+        "chooseFile": "Choose File",
+        "fileTypes": "PDF, DOC, or DOCX up to 10MB"
+      },
+      "cancel": "Cancel",
+      "submit": "Submit Volunteer Application",
+      "submitting": "Submitting..."
+    },
+    "success": {
+      "message": "Your volunteer application has been submitted successfully!"
+    },
+    "errors": {
+      "loadJob": "Failed to load volunteer opportunity details",
+      "submitFailed": "Failed to submit volunteer application. Please try again.",
+      "fileTooLarge": "File size must be less than 10MB",
+      "invalidFileType": "Invalid file type. Please upload PDF, DOC, or DOCX",
+      "alreadyApplied": "You have already applied for this volunteer opportunity."
+    }
+  },
   "jobApplicationReview": {
     "noCv": "No CV found for this application",
     "error": {

@@ -946,6 +946,54 @@
       "backToJobs": "İş İlanlarına Dön"
     }
   },
+  "nonProfitApplication": {
+    "title": "{{jobTitle}} için Gönüllü Ol",
+    "breadcrumb": {
+      "apply": "Başvur"
+    },
+    "opportunityDetails": {
+      "title": "Gönüllü Fırsat Detayları",
+      "organization": "Organizasyon",
+      "location": "Konum",
+      "type": "Tür",
+      "volunteer": "Gönüllü Fırsatı",
+      "postedOn": "{{date}} tarihinde yayınlandı"
+    },
+    "form": {
+      "title": "Gönüllü Başvurusu",
+      "subtitle": "Fark yaratma konusundaki tutkuyu paylaş ve bu organizasyonla neden gönüllü olmak istediğini anlat.",
+      "motivationLetter": {
+        "label": "Motivasyon Mektubu",
+        "placeholder": "Bu amaca neden tutkulu olduğunu ve nasıl katkıda bulunmak istediğini anlat...",
+        "characterCount": "{{count}}/2000 karakter"
+      },
+      "specialNeeds": {
+        "label": "Erişilebilirlik Gereksinimleri",
+        "placeholder": "İhtiyacınız olabilecek kolay erişim veya erişilebilirlik gereksinimlerini lütfen açıklayın...",
+        "characterCount": "{{count}}/500 karakter"
+      },
+      "cv": {
+        "label": "Özgeçmiş/CV",
+        "required": "Lütfen özgeçmişinizi yükleyin",
+        "dragDrop": "Özgeçmişinizi buraya sürükleyin veya göz atmak için tıklayın",
+        "chooseFile": "Dosya Seç",
+        "fileTypes": "10MB'a kadar PDF, DOC veya DOCX"
+      },
+      "cancel": "İptal",
+      "submit": "Gönüllü Başvurusu Gönder",
+      "submitting": "Gönderiliyor..."
+    },
+    "success": {
+      "message": "Gönüllü başvurunuz başarıyla gönderildi!"
+    },
+    "errors": {
+      "loadJob": "Gönüllü fırsat detayları yüklenemedi",
+      "submitFailed": "Gönüllü başvurusu gönderilemedi. Lütfen tekrar deneyin.",
+      "fileTooLarge": "Dosya boyutu 10MB'dan küçük olmalıdır",
+      "invalidFileType": "Geçersiz dosya türü. Lütfen PDF, DOC veya DOCX yükleyin",
+      "alreadyApplied": "Bu gönüllü fırsatına zaten başvurdunuz."
+    }
+  },
   "myMentorships": {
     "title": "Mentorluklarım",
     "subtitle": "Mentorluk taleplerinizi ve aktif mentorluklarınızı takip edin",
