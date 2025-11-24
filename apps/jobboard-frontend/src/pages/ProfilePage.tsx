@@ -41,36 +41,62 @@ export default function ProfilePage() {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const { t } = useTranslation('common');
 
-  const mockActivity: Activity[] = useMemo(() => {
-    const items = t('profile.activity.items', {
-      returnObjects: true,
-    }) as Array<Pick<Activity, 'type' | 'text' | 'date'>>;
+  const mockActivity: Activity[] = useMemo(() => [
+    {
+      id: 1,
+      type: 'application',
+      text: 'Applied to Senior Product Designer at Innovation Labs',
+      date: '2 days ago',
+    },
+    {
+      id: 2,
+      type: 'forum',
+      text: "Posted a thread on forum: 'Best practices for accessibility in design'",
+      date: '5 days ago',
+    },
+    {
+      id: 3,
+      type: 'comment',
+      text: "Made a comment on 'Remote work strategies for designers'",
+      date: '1 week ago',
+    },
+    {
+      id: 4,
+      type: 'like',
+      text: "Liked a comment on 'Design system implementation'",
+      date: '1 week ago',
+    },
+    {
+      id: 5,
+      type: 'application',
+      text: 'Applied to UX Designer at Creative Studio',
+      date: '2 weeks ago',
+    },
+  ], []);
 
-    return items.map((item, index) => ({
-      id: index + 1,
-      ...item,
-    }));
-  }, [t]);
-
-  const mockPosts: Post[] = useMemo(() => {
-    const items = t('profile.posts.items', {
-      returnObjects: true,
-    }) as Array<Pick<Post, 'title' | 'date'>>;
-
-    const defaults = [
-      { replies: 12, likes: 45 },
-      { replies: 8, likes: 32 },
-      { replies: 24, likes: 67 },
-    ];
-
-    return items.map((item, index) => ({
-      id: index + 1,
-      title: item.title,
-      date: item.date,
-      replies: defaults[index]?.replies ?? 0,
-      likes: defaults[index]?.likes ?? 0,
-    }));
-  }, [t]);
+  const mockPosts: Post[] = useMemo(() => [
+    {
+      id: 1,
+      title: 'User Research Techniques: A Comprehensive Guide',
+      date: '3 days ago',
+      replies: 12,
+      likes: 45,
+    },
+    {
+      id: 2,
+      title: 'My Design Journey: From Student to Professional',
+      date: '1 week ago',
+      replies: 8,
+      likes: 32,
+    },
+    {
+      id: 3,
+      title: 'Essential Daily Tools for Modern Designers',
+      date: '2 weeks ago',
+      replies: 24,
+      likes: 67,
+    },
+  ], []);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -143,7 +169,7 @@ export default function ProfilePage() {
       setProfile(newProfile);
       setShowCreateProfile(false);
       toast.success(t('profile.notifications.createSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.createError'));
     } finally {
       setLoading(false);
@@ -159,7 +185,7 @@ export default function ProfilePage() {
       }
       setShowImageUpload(false);
       toast.success(t('profile.notifications.imageUploadSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.imageUploadError'));
     } finally {
       setIsUploadingImage(false);
@@ -175,7 +201,7 @@ export default function ProfilePage() {
       }
       setShowImageUpload(false);
       toast.success(t('profile.notifications.imageDeleteSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.imageDeleteError'));
     } finally {
       setIsUploadingImage(false);
@@ -188,7 +214,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.deleteExperienceSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.deleteExperienceError'));
     }
   };
@@ -199,7 +225,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.deleteEducationSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.deleteEducationError'));
     }
   };
@@ -210,7 +236,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.deleteSkillSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.deleteSkillError'));
     }
   };
@@ -221,7 +247,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.deleteInterestSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.deleteInterestError'));
     }
   };
@@ -231,7 +257,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.updateProfile({ bio });
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.saveBioSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.saveBioError'));
     }
   };
@@ -246,7 +272,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.saveExperienceSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.saveExperienceError'));
     }
   };
@@ -261,7 +287,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.saveEducationSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.saveEducationError'));
     }
   };
@@ -276,7 +302,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.saveSkillSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.saveSkillError'));
     }
   };
@@ -291,7 +317,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.saveInterestSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.notifications.saveInterestError'));
     }
   };
@@ -303,7 +329,7 @@ export default function ProfilePage() {
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
       toast.success(t('profile.notifications.deleteAccountSuccess'));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t('profile.page.alerts.deleteFailed'));
     } finally {
       setIsDeletingAccount(false);

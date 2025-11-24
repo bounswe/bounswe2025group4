@@ -15,9 +15,26 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { MultiSelectDropdown } from '@/components/ui/multi-select-dropdown';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Building2, Upload, ArrowLeft, Save, Trash2 } from 'lucide-react';
-import { getWorkplaceById, updateWorkplace, uploadWorkplaceImage, deleteWorkplaceImage } from '@/services/workplace.service';
-import { updateWorkplaceSchema, type UpdateWorkplaceFormData } from '@/schemas/update-workplace.schema';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Building2, Upload, ArrowLeft, Save, Trash2, AlertTriangle } from 'lucide-react';
+import {
+  getWorkplaceById,
+  updateWorkplace,
+  uploadWorkplaceImage,
+  deleteWorkplaceImage,
+  deleteWorkplace,
+} from '@/services/workplace.service';
+import {
+  updateWorkplaceSchema,
+  type UpdateWorkplaceFormData,
+} from '@/schemas/update-workplace.schema';
 import type { WorkplaceDetailResponse } from '@/types/workplace.types';
 import type { EthicalTag } from '@/types/job';
 import { getErrorMessage } from '@/utils/error-handler';
@@ -37,6 +54,9 @@ export default function WorkplaceSettingsPage() {
   const [selectedTags, setSelectedTags] = useState<EthicalTag[]>([]);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -71,7 +91,7 @@ export default function WorkplaceSettingsPage() {
       });
     } catch (err) {
       console.error('Failed to load workplace data:', err);
-      setError('Failed to load workplace data');
+      setError(t('workplace.settings.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -103,7 +123,7 @@ export default function WorkplaceSettingsPage() {
     try {
       // Only send fields that have values
       const updateData: Record<string, unknown> = {};
-      
+
       if (data.companyName) updateData.companyName = data.companyName;
       if (data.sector) updateData.sector = data.sector;
       if (data.location) updateData.location = data.location;
@@ -122,10 +142,7 @@ export default function WorkplaceSettingsPage() {
         updateData.ethicalTags = [];
       }
 
-      const updatedWorkplace = await updateWorkplace(
-        parseInt(workplaceId, 10),
-        updateData
-      );
+      const updatedWorkplace = await updateWorkplace(parseInt(workplaceId, 10), updateData);
       setWorkplace(updatedWorkplace);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -145,7 +162,7 @@ export default function WorkplaceSettingsPage() {
 
     try {
       const result = await uploadWorkplaceImage(parseInt(workplaceId, 10), file);
-      
+
       if (workplace) {
         setWorkplace({
           ...workplace,
@@ -174,7 +191,7 @@ export default function WorkplaceSettingsPage() {
 
     try {
       await deleteWorkplaceImage(parseInt(workplaceId, 10));
-      
+
       if (workplace) {
         setWorkplace({
           ...workplace,
@@ -207,6 +224,25 @@ export default function WorkplaceSettingsPage() {
     setValue('ethicalTags', tags);
   };
 
+  const handleDeleteWorkplace = async () => {
+    if (!workplaceId || !workplace) return;
+    if (deleteConfirmation !== workplace.companyName) return;
+
+    setIsDeleting(true);
+    setError(null);
+
+    try {
+      await deleteWorkplace(parseInt(workplaceId, 10));
+      navigate('/employer/workplaces');
+    } catch (err: unknown) {
+      console.error('Failed to delete workplace:', err);
+      setError(getErrorMessage(err, t('workplace.settings.dangerZone.deleteFailed')));
+      setShowDeleteDialog(false);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -219,12 +255,12 @@ export default function WorkplaceSettingsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Workplace not found</h2>
+          <h2 className="text-2xl font-bold mb-2">{t('workplace.settings.notFound.title')}</h2>
           <p className="text-muted-foreground mb-4">
-            The workplace you're looking for doesn't exist or has been removed.
+            {t('workplace.settings.notFound.description')}
           </p>
           <Link to="/employer/workplaces">
-            <Button>Go to My Workplaces</Button>
+            <Button>{t('workplace.settings.notFound.goToWorkplaces')}</Button>
           </Link>
         </div>
       </div>
@@ -240,21 +276,19 @@ export default function WorkplaceSettingsPage() {
             <Link to={`/workplace/${workplaceId}`}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Workplace
+                {t('workplace.settings.backToWorkplace')}
               </Button>
             </Link>
           </div>
-          <h1 className="text-3xl font-bold mb-2">Workplace Settings</h1>
-          <p className="text-muted-foreground">
-            Manage your workplace information and settings
-          </p>
+          <h1 className="text-3xl font-bold mb-2">{t('workplace.settings.title')}</h1>
+          <p className="text-muted-foreground">{t('workplace.settings.subtitle')}</p>
         </div>
 
         {/* Success Message */}
         {success && (
           <Card className="p-4 mb-6 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
             <p className="text-green-800 dark:text-green-200">
-              Workplace updated successfully!
+              {t('workplace.settings.updateSuccess')}
             </p>
           </Card>
         )}
@@ -269,12 +303,12 @@ export default function WorkplaceSettingsPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Image Upload Section */}
           <Card className="p-6">
-            <h2 className="text-xl font-bold">Company Logo</h2>
+            <h2 className="text-xl font-bold">{t('workplace.settings.companyLogo')}</h2>
             <div className="flex items-center gap-6">
               <div className="flex-shrink-0">
                 {imagePreview ? (
                   <Avatar className="h-24 w-24">
-                    <AvatarImage src={imagePreview} alt="Preview" />
+                    <AvatarImage src={imagePreview} alt={t('workplace.settings.imagePreviewAlt')} />
                     <AvatarFallback>
                       <Building2 className="h-12 w-12" />
                     </AvatarFallback>
@@ -305,15 +339,12 @@ export default function WorkplaceSettingsPage() {
                     id="image-upload"
                   />
                   <Label htmlFor="image-upload">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={isUploadingImage}
-                      asChild
-                    >
+                    <Button type="button" variant="outline" disabled={isUploadingImage} asChild>
                       <span>
                         <Upload className="h-4 w-4 mr-2" />
-                        {imagePreview ? 'Change Image' : 'Upload Image'}
+                        {imagePreview
+                          ? t('workplace.settings.changeImage')
+                          : t('workplace.settings.uploadImage')}
                       </span>
                     </Button>
                   </Label>
@@ -337,7 +368,9 @@ export default function WorkplaceSettingsPage() {
                       disabled={isUploadingImage}
                       onClick={() => handleImageUpload(selectedFile)}
                     >
-                      {isUploadingImage ? 'Uploading...' : 'Save Image'}
+                      {isUploadingImage
+                        ? t('workplace.settings.uploading')
+                        : t('workplace.settings.saveImage')}
                     </Button>
                     <Button
                       type="button"
@@ -364,17 +397,17 @@ export default function WorkplaceSettingsPage() {
 
           {/* Basic Information */}
           <Card className="p-6">
-            <h2 className="text-xl font-bold">Basic Information</h2>
+            <h2 className="text-xl font-bold">{t('workplace.settings.basicInformation')}</h2>
             <div className="space-y-4">
               {/* Company Name */}
               <div className="space-y-2">
                 <Label htmlFor="companyName">
-                  Company Name <span className="text-destructive">*</span>
+                  {t('workplace.settings.companyName')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="companyName"
                   {...register('companyName')}
-                  placeholder="Enter company name"
+                  placeholder={t('workplace.settings.companyNamePlaceholder')}
                   className={errors.companyName ? 'border-destructive' : ''}
                 />
                 {errors.companyName && (
@@ -385,12 +418,12 @@ export default function WorkplaceSettingsPage() {
               {/* Sector */}
               <div className="space-y-2">
                 <Label htmlFor="sector">
-                  Sector <span className="text-destructive">*</span>
+                  {t('workplace.settings.sector')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="sector"
                   {...register('sector')}
-                  placeholder="e.g., Technology, Healthcare, Education"
+                  placeholder={t('workplace.settings.sectorPlaceholder')}
                   className={errors.sector ? 'border-destructive' : ''}
                 />
                 {errors.sector && (
@@ -401,12 +434,12 @@ export default function WorkplaceSettingsPage() {
               {/* Location */}
               <div className="space-y-2">
                 <Label htmlFor="location">
-                  Location <span className="text-destructive">*</span>
+                  {t('workplace.settings.location')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="location"
                   {...register('location')}
-                  placeholder="e.g., San Francisco, CA"
+                  placeholder={t('workplace.settings.locationPlaceholder')}
                   className={errors.location ? 'border-destructive' : ''}
                 />
                 {errors.location && (
@@ -416,7 +449,7 @@ export default function WorkplaceSettingsPage() {
 
               {/* Website */}
               <div className="space-y-2">
-                <Label htmlFor="website">Website</Label>
+                <Label htmlFor="website">{t('workplace.settings.website')}</Label>
                 <Input
                   id="website"
                   type="url"
@@ -433,18 +466,18 @@ export default function WorkplaceSettingsPage() {
 
           {/* Description */}
           <Card className="p-6">
-            <h2 className="text-xl font-bold">Description</h2>
+            <h2 className="text-xl font-bold">{t('workplace.settings.description')}</h2>
             <div className="space-y-4">
               {/* Short Description */}
               <div className="space-y-2">
                 <Label htmlFor="shortDescription">
-                  Short Description
+                  {t('workplace.settings.shortDescription')}
                   <span className="text-muted-foreground text-xs ml-2">(max 300 characters)</span>
                 </Label>
                 <Textarea
                   id="shortDescription"
                   {...register('shortDescription')}
-                  placeholder="A brief tagline or summary"
+                  placeholder={t('workplace.settings.shortDescriptionPlaceholder')}
                   rows={2}
                   className={errors.shortDescription ? 'border-destructive' : ''}
                 />
@@ -456,7 +489,7 @@ export default function WorkplaceSettingsPage() {
               {/* Detailed Description */}
               <div className="space-y-2">
                 <Label htmlFor="detailedDescription">
-                  Detailed Description
+                  {t('workplace.settings.detailedDescription')}
                   <span className="text-muted-foreground text-xs ml-2">(max 4000 characters)</span>
                 </Label>
                 <Textarea
@@ -475,7 +508,7 @@ export default function WorkplaceSettingsPage() {
 
           {/* Ethical Tags */}
           <Card className="p-6">
-            <h2 className="text-xl font-bold">Ethical Tags</h2>
+            <h2 className="text-xl font-bold">{t('workplace.settings.ethicalTags')}</h2>
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">
                 Select tags that represent your company's ethical commitments
@@ -489,7 +522,7 @@ export default function WorkplaceSettingsPage() {
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Button
               type="button"
               variant="outline"
@@ -497,24 +530,120 @@ export default function WorkplaceSettingsPage() {
               disabled={isSubmitting}
               className="flex-1"
             >
-              Cancel
+              {t('workplace.settings.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting} className="flex-1">
               {isSubmitting ? (
                 <>
-                  <span className="mr-2">Saving...</span>
+                  <span className="mr-2">{t('workplace.settings.saving')}</span>
                 </>
               ) : (
                 <>
                   <Save className="h-4 w-4 mr-2" />
-                  Save Changes
+                  {t('workplace.settings.saveChanges')}
                 </>
               )}
             </Button>
           </div>
         </form>
+
+        {/* Danger Zone */}
+        <Card className="p-6 mt-8 border-2 border-destructive/50 bg-destructive/5">
+          <div className="flex items-start gap-3 mb-4">
+            <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+            <div>
+              <h2 className="text-xl font-bold text-destructive mb-1">
+                {t('workplace.settings.dangerZone.title')}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t('workplace.settings.dangerZone.deleteDescription')}
+              </p>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => setShowDeleteDialog(true)}
+            className="w-full sm:w-auto"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            {t('workplace.settings.dangerZone.deleteButton')}
+          </Button>
+        </Card>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-destructive">
+                <AlertTriangle className="h-5 w-5 flex-shrink-0" />
+                {t('workplace.settings.dangerZone.confirmTitle')}
+              </DialogTitle>
+              <DialogDescription asChild>
+                <div className="space-y-3 pt-2">
+                  <p className="text-sm">{t('workplace.settings.dangerZone.confirmDescription')}</p>
+                  <p className="font-semibold text-sm">
+                    {t('workplace.settings.dangerZone.confirmWarning')}
+                  </p>
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="delete-confirmation" className="text-sm font-medium">
+                  {t('workplace.settings.dangerZone.confirmPlaceholder')}
+                </Label>
+                <Input
+                  id="delete-confirmation"
+                  value={deleteConfirmation}
+                  onChange={(e) => setDeleteConfirmation(e.target.value)}
+                  placeholder={workplace?.companyName}
+                  className="font-mono"
+                  autoComplete="off"
+                />
+                {deleteConfirmation && deleteConfirmation !== workplace?.companyName && (
+                  <p className="text-xs text-destructive">
+                    Please type the exact workplace name to confirm
+                  </p>
+                )}
+              </div>
+            </div>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteDialog(false);
+                  setDeleteConfirmation('');
+                }}
+                disabled={isDeleting}
+                className="w-full sm:w-auto"
+              >
+                {t('workplace.settings.dangerZone.confirmCancel')}
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleDeleteWorkplace}
+                disabled={
+                  isDeleting ||
+                  deleteConfirmation !== workplace?.companyName
+                }
+                className="w-full sm:w-auto"
+              >
+                {isDeleting ? (
+                  t('workplace.settings.dangerZone.deleting')
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    {t('workplace.settings.dangerZone.confirmButton')}
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
 }
-

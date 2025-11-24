@@ -24,7 +24,7 @@ describe('ResetPasswordPage', () => {
   it('requires a token in the query string', () => {
     renderWithProviders(<ResetPasswordPage />, { initialEntries: ['/reset-password'] });
     expect(
-      screen.getByText(/invalid reset link/i),
+      screen.getByText('auth.reset.invalidDescription'),
     ).toBeInTheDocument();
   });
 
@@ -32,9 +32,9 @@ describe('ResetPasswordPage', () => {
     renderWithProviders(<ResetPasswordPage />, { initialEntries: ['/reset-password?token=abc123'] });
     const user = setupUserEvent();
 
-    await user.type(screen.getByLabelText(/^new password \*/i), 'StrongPass1!');
-    await user.type(screen.getByLabelText(/^confirm new password \*/i), 'StrongPass1!');
-    await user.click(screen.getByRole('button', { name: /reset password/i }));
+    await user.type(screen.getByLabelText('auth.reset.newPassword'), 'StrongPass1!');
+    await user.type(screen.getByLabelText('auth.reset.confirmPassword'), 'StrongPass1!');
+    await user.click(screen.getByRole('button', { name: 'auth.reset.submit' }));
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
@@ -42,7 +42,7 @@ describe('ResetPasswordPage', () => {
         expect.objectContaining({
           replace: true,
           state: expect.objectContaining({
-            message: expect.stringMatching(/password reset successful/i),
+            message: 'auth.reset.success',
           }),
         }),
       );
@@ -62,13 +62,13 @@ describe('ResetPasswordPage', () => {
     renderWithProviders(<ResetPasswordPage />, { initialEntries: ['/reset-password?token=abc123'] });
     const user = setupUserEvent();
 
-    await user.type(screen.getByLabelText(/^new password \*/i), 'SamePassword1!');
-    await user.type(screen.getByLabelText(/^confirm new password \*/i), 'SamePassword1!');
-    await user.click(screen.getByRole('button', { name: /reset password/i }));
+    await user.type(screen.getByLabelText('auth.reset.newPassword'), 'SamePassword1!');
+    await user.type(screen.getByLabelText('auth.reset.confirmPassword'), 'SamePassword1!');
+    await user.click(screen.getByRole('button', { name: 'auth.reset.submit' }));
 
     expect(
       await screen.findByRole('alert'),
-    ).toHaveTextContent(/New password cannot be the same as your old password/i);
+    ).toHaveTextContent('auth.reset.errors.sameAsOld');
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

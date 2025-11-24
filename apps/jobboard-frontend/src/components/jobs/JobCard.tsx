@@ -26,12 +26,21 @@ export function JobCard({ job }: JobCardProps) {
   const { t } = useTranslation('common');
 
   const handleCardClick = () => {
+    // Prevent navigation if clicking on workplace link (if we add one inside)
+    // For now, the whole card navigates to job detail
     navigate(`/jobs/${job.id}`);
   };
 
-  const ethicalTagLabels = job.ethicalTags.map((tag) =>
-    t(`ethicalTags.tags.${TAG_TO_KEY_MAP[tag]}`, tag)
-  );
+  const handleWorkplaceClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/workplace/${job.workplace.id}`);
+  };
+
+  const ethicalTagLabels = job.workplace.ethicalTags.map((tag) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const key = (TAG_TO_KEY_MAP as any)[tag];
+    return t(`ethicalTags.tags.${key ?? tag}`, tag);
+  });
   const jobTypes = job.type.map((type) => t(jobTypeLabelKeyMap[type] ?? type));
   const location =
     job.location.toLowerCase() === 'remote' ? t('jobCard.remote') : job.location;
@@ -42,16 +51,21 @@ export function JobCard({ job }: JobCardProps) {
       onClick={handleCardClick}
     >
       <div className="flex flex-col gap-6 px-4 sm:flex-row sm:items-start">
-        <Avatar className="size-20 self-center rounded-md">
-          <AvatarImage src={job.logoUrl} alt={`${job.company} logo`} />
-          <AvatarFallback className="rounded-md text-sm font-semibold">
-            {job.company
-              .split(' ')
-              .map((part) => part[0])
-              .join('')
-              .slice(0, 3)}
-          </AvatarFallback>
-        </Avatar>
+        <div 
+          className="cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={handleWorkplaceClick}
+        >
+          <Avatar className="size-20 self-center rounded-md">
+            <AvatarImage src={job.workplace.imageUrl} alt={`${job.workplace.companyName} logo`} />
+            <AvatarFallback className="rounded-md text-sm font-semibold">
+              {job.workplace.companyName
+                .split(' ')
+                .map((part) => part[0])
+                .join('')
+                .slice(0, 3)}
+            </AvatarFallback>
+          </Avatar>
+        </div>
         <div className="flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
             {job.inclusiveOpportunity && (
@@ -87,7 +101,12 @@ export function JobCard({ job }: JobCardProps) {
             <div className="text-xl font-semibold text-foreground">
               {job.title}
             </div>
-            <div className="text-sm text-muted-foreground">{job.company}</div>
+            <div 
+              className="text-sm text-muted-foreground hover:text-primary hover:underline cursor-pointer w-fit"
+              onClick={handleWorkplaceClick}
+            >
+              {job.workplace.companyName}
+            </div>
           </div>
 
           {/* Job Types, Salary, Location */}
