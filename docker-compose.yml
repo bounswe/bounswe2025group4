@@ -50,16 +50,16 @@ services:
     networks:
       - jobboard-network
 
-#  mobile-apk:
-#    build:
-#      context: ./apps/jobboard-mobile
-#      args:
-#        API_BASE_URL: http://10.0.2.2:8080/api
-#    container_name: jobboard-mobile-apk
-#    ports:
-#      - "8081:80"
-#    networks:
-#      - jobboard-network
+  mobile-web:
+    build:
+      context: ./apps/jobboard-mobile
+      args:
+        API_BASE_URL: http://localhost:8080
+    container_name: jobboard-mobile-web
+    ports:
+      - "8081:80"
+    networks:
+      - jobboard-network
 
 networks:
   jobboard-network:

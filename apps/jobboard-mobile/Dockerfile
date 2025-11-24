@@ -1,47 +1,32 @@
-FROM --platform=linux/amd64 ubuntu:22.04 AS build
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk unzip curl git xz-utils zip libglu1-mesa && \
-    rm -rf /var/lib/apt/lists/*
-
-ENV ANDROID_HOME="/opt/android-sdk"
-ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
-
-RUN mkdir -p ${ANDROID_HOME}/cmdline-tools && \
-    curl -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip && \
-    unzip commandlinetools.zip -d ${ANDROID_HOME}/cmdline-tools && \
-    mv ${ANDROID_HOME}/cmdline-tools/cmdline-tools ${ANDROID_HOME}/cmdline-tools/latest && \
-    rm commandlinetools.zip
-
-RUN yes | sdkmanager --licenses && \
-    sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
-ENV FLUTTER_HOME="/opt/flutter"
-ENV PATH="${PATH}:${FLUTTER_HOME}/bin"
-
-RUN git clone https://github.com/flutter/flutter.git ${FLUTTER_HOME} && \
-    chown -R root:root ${FLUTTER_HOME} && \
-    chmod -R 755 ${FLUTTER_HOME} && \
-    flutter config --no-analytics && \
-    mkdir -p ${FLUTTER_HOME}/bin/cache/artifacts/gradle_wrapper && \
-    curl -L https://storage.googleapis.com/flutter_infra_release/gradle-wrapper/fd5c1f2c013565a3bea56ada6df9d2b8e96d56aa/gradle-wrapper.tgz -o gradle-wrapper.tgz && \
-    tar --no-same-owner -xzf gradle-wrapper.tgz -C ${FLUTTER_HOME}/bin/cache/artifacts/gradle_wrapper && \
-    rm gradle-wrapper.tgz && \
-    flutter doctor
+# Stage 1: Build the Flutter Web application
+FROM ghcr.io/cirruslabs/flutter:stable AS build
 
 WORKDIR /app
 
+# Copy pubspec files
 COPY pubspec.yaml pubspec.lock ./
+
+# Get dependencies
 RUN flutter pub get
 
+# Copy the rest of the application
 COPY . .
 
+# Build for web
 ARG API_BASE_URL
-RUN flutter build apk --dart-define=API_BASE_URL=$API_BASE_URL --release
+RUN flutter build web --dart-define=API_BASE_URL=$API_BASE_URL --release
 
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
-COPY --from=build /app/build/app/outputs/flutter-apk/app-release.apk /usr/share/nginx/html/app-release.apk
+
+# Copy the build artifacts from the previous stage
+COPY --from=build /app/build/web /usr/share/nginx/html
+
+# Copy custom Nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
 EXPOSE 80
+
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
