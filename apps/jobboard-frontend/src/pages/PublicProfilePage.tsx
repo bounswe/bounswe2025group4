@@ -21,56 +21,50 @@ export default function PublicProfilePage() {
   const { t } = useTranslation('common');
 
   // Mock data for activity and posts (since these are not part of the public profile)
-  const mockActivity: Activity[] = useMemo(() => {
-    try {
-      const items = t('profile.activity.items', {
-        returnObjects: true,
-      }) as Array<Pick<Activity, 'type' | 'text' | 'date'>>;
+  const mockActivity: Activity[] = useMemo(() => [
+    {
+      id: 1,
+      type: 'application',
+      text: 'Applied to Senior Product Designer at Innovation Labs',
+      date: '2 days ago'
+    },
+    {
+      id: 2,
+      type: 'forum',
+      text: 'Posted a thread on forum: Best practices for accessibility in design',
+      date: '5 days ago'
+    },
+    {
+      id: 3,
+      type: 'comment',
+      text: 'Made a comment on Remote work strategies for designers',
+      date: '1 week ago'
+    },
+  ], []);
 
-      // Check if items is an array
-      if (!Array.isArray(items)) {
-        return [];
-      }
-
-      return items.map((item, index) => ({
-        id: index + 1,
-        ...item,
-      }));
-    } catch (error) {
-      console.error('Error loading activity items:', error);
-      return [];
-    }
-  }, [t]);
-
-  const mockPosts: Post[] = useMemo(() => {
-    try {
-      const items = t('profile.posts.items', {
-        returnObjects: true,
-      }) as Array<Pick<Post, 'title' | 'date'>>;
-
-      // Check if items is an array
-      if (!Array.isArray(items)) {
-        return [];
-      }
-
-      const defaults = [
-        { replies: 12, likes: 45 },
-        { replies: 8, likes: 32 },
-        { replies: 24, likes: 67 },
-      ];
-
-      return items.map((item, index) => ({
-        id: index + 1,
-        title: item.title,
-        date: item.date,
-        replies: defaults[index]?.replies ?? 0,
-        likes: defaults[index]?.likes ?? 0,
-      }));
-    } catch (error) {
-      console.error('Error loading posts items:', error);
-      return [];
-    }
-  }, [t]);
+  const mockPosts: Post[] = useMemo(() => [
+    {
+      id: 1,
+      title: 'How to become a better designer',
+      date: '2024-01-15',
+      replies: 12,
+      likes: 45,
+    },
+    {
+      id: 2,
+      title: 'Design system best practices',
+      date: '2024-01-10',
+      replies: 8,
+      likes: 32,
+    },
+    {
+      id: 3,
+      title: 'Remote work tips for creative professionals',
+      date: '2024-01-05',
+      replies: 24,
+      likes: 67,
+    },
+  ], []);
 
   useEffect(() => {
     const loadPublicProfile = async () => {
