@@ -91,8 +91,8 @@ describe('EmployerDashboardPage', () => {
   it('renders job list with title, status badges, and application counts', async () => {
     const mockJobs = [
       createMockJob({ id: 1, title: 'Senior Software Engineer', employerId: 1 }),
-      createMockJob({ id: 2, title: 'Frontend Developer', company: 'WebDev Inc', employerId: 1 }),
-      createMockJob({ id: 3, title: 'Backend Engineer', company: 'DataSoft', employerId: 1 }),
+      createMockJob({ id: 2, title: 'Frontend Developer', employerId: 1, workplace: { id: 1, companyName: 'WebDev Inc', sector: 'Technology', location: 'San Francisco, CA', overallAvg: 4.5, ethicalTags: [], ethicalAverages: {} } }),
+      createMockJob({ id: 3, title: 'Backend Engineer', employerId: 1, workplace: { id: 2, companyName: 'DataSoft', sector: 'Technology', location: 'San Francisco, CA', overallAvg: 4.5, ethicalTags: [], ethicalAverages: {} } }),
     ];
 
     const mockApps = [
@@ -149,8 +149,6 @@ describe('EmployerDashboardPage', () => {
       initialEntries: ['/employer/dashboard']
     });
     setupAuthState();
-
-    const user = setupUserEvent();
 
     await waitFor(() => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -452,7 +450,7 @@ describe('EmployerDashboardPage', () => {
     });
   });
 
-  it('displays jobs with special characters in title and company', async () => {
+  it('displays jobs with special characters in title', async () => {
     const mockJobs = [
       createMockJob({
         id: 1,
@@ -487,8 +485,6 @@ describe('EmployerDashboardPage', () => {
     await waitFor(() => {
       expect(screen.getByText('C++ & C# Developer @ Tech&Co')).toBeInTheDocument();
     });
-
-    expect(screen.getByText('Tech & Innovation Inc.')).toBeInTheDocument();
   });
 
   it('navigates to create job from empty state button', async () => {
@@ -505,8 +501,6 @@ describe('EmployerDashboardPage', () => {
       initialEntries: ['/employer/dashboard']
     });
     setupAuthState();
-
-    const user = setupUserEvent();
 
     await waitFor(() => {
       expect(screen.getByText('employerDashboard.noWorkplaces.title')).toBeInTheDocument();
@@ -566,7 +560,6 @@ describe('EmployerDashboardPage', () => {
       createMockJob({
         id: 1,
         title: 'Minimal Job',
-        company: '',
         location: '',
         employerId: 1
       }),

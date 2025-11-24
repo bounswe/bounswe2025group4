@@ -240,7 +240,10 @@ describe('WorkplaceSettingsPage Integration', () => {
   });
 
   it('deletes workplace when confirmed with correct name', async () => {
-    vi.mocked(workplaceService.deleteWorkplace).mockResolvedValue({ message: 'Workplace deleted successfully' });
+    vi.mocked(workplaceService.deleteWorkplace).mockResolvedValue({ 
+      message: 'Workplace deleted successfully',
+      timestamp: new Date().toISOString()
+    });
 
     renderPage();
 

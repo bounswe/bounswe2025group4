@@ -101,7 +101,7 @@ export function CreateJobPostModal({
     checkWorkplaces();
   }, [open, selectedInitialWorkplace]);
 
-  const handleWorkplaceChange = (workplaceId: number, workplace: EmployerWorkplaceBrief) => {
+  const handleWorkplaceChange = (workplaceId: number, _workplace: EmployerWorkplaceBrief) => {
     setFormData((prev) => ({
       ...prev,
       workplaceId,

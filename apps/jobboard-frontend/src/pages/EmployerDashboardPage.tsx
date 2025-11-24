@@ -98,16 +98,25 @@ export default function EmployerDashboardPage() {
         })
       );
 
-      const validJobs: JobPosting[] = jobsWithCounts.filter((job): job is JobPosting => job !== null);
-
+      const validJobs = jobsWithCounts.filter((job): job is JobPosting & { workplace: WorkplaceBriefResponse } => 
+        job !== null && job.workplace !== undefined
+      );
+      
+      // Get all workplace IDs that the employer belongs to
+      const employerWorkplaceIds = new Set(workplaces.map((wp) => wp.workplace.id));
+      
       const workplacesData: WorkplaceWithJobs[] = workplaces.map((wp: EmployerWorkplaceBrief) => ({
         workplace: wp.workplace,
         role: wp.role,
-        jobs: validJobs.filter((job) => job?.workplaceId === wp.workplace.id),
+        // Match by workplace.id (from the workplace object) as the primary source of truth
+        jobs: validJobs.filter((job) => job.workplace.id === wp.workplace.id),
         isExpanded: true,
       }));
 
-      const unassignedJobs = validJobs.filter((job) => !job?.workplaceId);
+      // Jobs are unassigned if their workplace.id doesn't match any employer workplace
+      const unassignedJobs = validJobs.filter((job) => 
+        !employerWorkplaceIds.has(job.workplace.id)
+      );
       if (unassignedJobs.length > 0) {
         workplacesData.push({
           workplace: {
@@ -386,11 +395,6 @@ export default function EmployerDashboardPage() {
                               <tr key={job.id} className="border-b last:border-0 hover:bg-muted/20">
                                 <td className="px-4 py-4 text-sm text-foreground">
                                   <div className="font-semibold">{job.title}</div>
-                                  {job.workplace?.companyName && (
-                                    <div className="text-xs text-muted-foreground">
-                                      {job.workplace.companyName}
-                                    </div>
-                                  )}
                                 </td>
                                 <td className="px-4 py-4">
                                   <Badge variant={getStatusBadgeVariant(job.status)}>
@@ -432,7 +436,7 @@ export default function EmployerDashboardPage() {
                           }}
                         >
                           <Plus className="h-4 w-4 mr-2" />
-                          {t('employerDashboard.createJobForWorkplace')}
+                          {t('employerDashboard.createJob')}
                         </Button>
                       </div>
                     )}

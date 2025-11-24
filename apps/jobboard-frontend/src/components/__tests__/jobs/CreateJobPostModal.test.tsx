@@ -16,7 +16,18 @@ vi.mock('@/components/workplace/WorkplaceSelector', () => ({
         value={value || ''}
         onChange={(e) => {
           const id = Number(e.target.value);
-          onChange(id, { workplace: { id, companyName: 'Tech Corp' } });
+          onChange(id, { 
+            workplace: { 
+              id, 
+              companyName: 'Tech Corp',
+              sector: 'Technology',
+              location: 'San Francisco, CA',
+              overallAvg: 4.5,
+              ethicalTags: [],
+              ethicalAverages: {}
+            },
+            role: 'OWNER'
+          });
         }}
       >
         <option value="">Select Workplace</option>
