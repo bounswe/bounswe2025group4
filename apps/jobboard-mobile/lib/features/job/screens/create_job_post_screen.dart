@@ -258,27 +258,16 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                           prefixIcon: const Icon(Icons.business),
                         ),
                         value: _selectedWorkplaceId,
+                        isExpanded: true,
                         items: _userWorkplaces.map((item) {
                           return DropdownMenuItem<int>(
                             value: item.workplace.id,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  item.workplace.companyName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  '${item.workplace.location} • ${item.workplace.sector}',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
+                            child: Text(
+                              item.workplace.companyName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           );
                         }).toList(),
@@ -374,6 +363,11 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                           HapticFeedback.lightImpact();
                           setState(() {
                             _isNonProfit = value ?? false;
+                            // Clear salary fields when non-profit is enabled
+                            if (_isNonProfit) {
+                              _minSalaryController.clear();
+                              _maxSalaryController.clear();
+                            }
                           });
                         },
                         controlAffinity: ListTileControlAffinity.leading,
@@ -427,6 +421,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                       // --- Min Salary (Optional) ---
                       TextFormField(
                         controller: _minSalaryController,
+                        enabled: !_isNonProfit,
                         decoration: InputDecoration(
                           labelText:
                               AppLocalizations.of(
@@ -438,12 +433,18 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                               )!.createJob_minSalaryPlaceholder,
                           border: const OutlineInputBorder(),
                           prefixText: '\$',
+                          suffixIcon: _isNonProfit
+                              ? const Icon(
+                                  Icons.block,
+                                  color: Colors.grey,
+                                )
+                              : null,
                         ),
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: false,
                         ),
                         validator: (value) {
-                          if (value != null && value.isNotEmpty) {
+                          if (!_isNonProfit && value != null && value.isNotEmpty) {
                             final sanitizedValue = value.replaceAll(
                               RegExp(r'[^0-9]'),
                               '',
@@ -462,6 +463,7 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                       // --- Max Salary (Optional) ---
                       TextFormField(
                         controller: _maxSalaryController,
+                        enabled: !_isNonProfit,
                         decoration: InputDecoration(
                           labelText:
                               AppLocalizations.of(
@@ -473,12 +475,18 @@ class _CreateJobPostScreenState extends State<CreateJobPostScreen> {
                               )!.createJob_maxSalaryPlaceholder,
                           border: const OutlineInputBorder(),
                           prefixText: '\$',
+                          suffixIcon: _isNonProfit
+                              ? const Icon(
+                                  Icons.block,
+                                  color: Colors.grey,
+                                )
+                              : null,
                         ),
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: false,
                         ),
                         validator: (value) {
-                          if (value != null && value.isNotEmpty) {
+                          if (!_isNonProfit && value != null && value.isNotEmpty) {
                             final sanitizedValue = value.replaceAll(
                               RegExp(r'[^0-9]'),
                               '',

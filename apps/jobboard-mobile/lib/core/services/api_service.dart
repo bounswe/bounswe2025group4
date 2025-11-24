@@ -258,7 +258,6 @@ class ApiService {
     required String description,
     required bool remote,
     required bool inclusiveOpportunity,
-    required bool nonProfit,
 
     // Optional fields
     bool? nonProfit,
@@ -275,7 +274,6 @@ class ApiService {
       'description': description,
       'remote': remote,
       'inclusiveOpportunity': inclusiveOpportunity,
-      'nonProfit': nonProfit,
       // Optional fields, only include if not null
       if (nonProfit != null) 'nonProfit': nonProfit,
       if (contactInformation != null) 'contact': contactInformation,
