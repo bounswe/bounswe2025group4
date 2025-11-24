@@ -259,7 +259,7 @@ abstract class AppLocalizations {
   /// Password length validation error
   ///
   /// In en, this message translates to:
-  /// **'Password must be at least 6 characters'**
+  /// **'Password must be at least 8 characters'**
   String get signUpScreen_passwordTooShort;
 
   /// Password uppercase validation error
@@ -1048,6 +1048,114 @@ abstract class AppLocalizations {
   /// **'Applying...'**
   String get jobDetails_applying;
 
+  /// Already applied message
+  ///
+  /// In en, this message translates to:
+  /// **'You have already applied to this job.'**
+  String get jobDetails_alreadyApplied;
+
+  /// CV upload failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Application submitted but CV upload failed: {error}'**
+  String jobDetails_cvUploadFailed(String error);
+
+  /// Generic apply error
+  ///
+  /// In en, this message translates to:
+  /// **'Error applying: {error}'**
+  String jobDetails_applyErrorGeneric(String error);
+
+  /// Apply dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to Job'**
+  String get jobDetails_applyDialogTitle;
+
+  /// Apply dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'You are applying for: {jobTitle}'**
+  String jobDetails_applyDialogMessage(String jobTitle);
+
+  /// CV upload label
+  ///
+  /// In en, this message translates to:
+  /// **'Upload CV *'**
+  String get jobDetails_cvLabel;
+
+  /// CV file picker placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Choose File (PDF, DOC, DOCX)'**
+  String get jobDetails_cvPlaceholder;
+
+  /// Cover letter label
+  ///
+  /// In en, this message translates to:
+  /// **'Cover Letter (Optional)'**
+  String get jobDetails_coverLetterLabel;
+
+  /// Cover letter hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Explain why you are a great fit for this position...'**
+  String get jobDetails_coverLetterHint;
+
+  /// Special needs label
+  ///
+  /// In en, this message translates to:
+  /// **'Special Needs or Accommodations (Optional)'**
+  String get jobDetails_specialNeedsLabel;
+
+  /// Special needs hint text
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Wheelchair accessibility, flexible hours...'**
+  String get jobDetails_specialNeedsHint;
+
+  /// Special needs help message
+  ///
+  /// In en, this message translates to:
+  /// **'This information will help employers accommodate your needs.'**
+  String get jobDetails_specialNeedsMessage;
+
+  /// Cancel button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get jobDetails_cancelButton;
+
+  /// Submit application button
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Application'**
+  String get jobDetails_submitButton;
+
+  /// Checking application status
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get jobDetails_checkingStatus;
+
+  /// Already applied button text
+  ///
+  /// In en, this message translates to:
+  /// **'Already Applied'**
+  String get jobDetails_alreadyAppliedButton;
+
+  /// Remote job label
+  ///
+  /// In en, this message translates to:
+  /// **'Remote'**
+  String get jobDetails_remote;
+
+  /// Inclusive opportunity label
+  ///
+  /// In en, this message translates to:
+  /// **'Inclusive Opportunity'**
+  String get jobDetails_inclusiveOpportunity;
+
   /// Forum page title
   ///
   /// In en, this message translates to:
@@ -1365,6 +1473,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Request accepted'**
   String get mentorScreen_requestAccepted;
+
+  /// Become a mentor button
+  ///
+  /// In en, this message translates to:
+  /// **'Become a mentor'**
+  String get mentorshipPage_become_a_mentor;
+
+  /// Rating not available message
+  ///
+  /// In en, this message translates to:
+  /// **'Rating not available'**
+  String get mentorProfile_ratingNotAvailable;
+
+  /// Expertise label
+  ///
+  /// In en, this message translates to:
+  /// **'Expertise'**
+  String get mentorProfile_expertise;
 
   /// Request rejected message
   ///
@@ -1942,6 +2068,126 @@ abstract class AppLocalizations {
   /// **'Error creating job: {error}'**
   String createJob_error(String error);
 
+  /// Invalid min salary format error
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid minimum salary format. Please enter whole numbers only.'**
+  String get createJob_invalidMinSalaryFormat;
+
+  /// Invalid max salary format error
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid maximum salary format. Please enter whole numbers only.'**
+  String get createJob_invalidMaxSalaryFormat;
+
+  /// Salary range validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum salary cannot be greater than maximum salary.'**
+  String get createJob_salaryRangeInvalid;
+
+  /// Company name required error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the company name'**
+  String get createJob_companyNameRequired;
+
+  /// Location field label
+  ///
+  /// In en, this message translates to:
+  /// **'Location (e.g., City, State, Country)'**
+  String get createJob_locationLabel;
+
+  /// Location required error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a location'**
+  String get createJob_locationRequiredError;
+
+  /// Remote job checkbox label
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Job'**
+  String get createJob_remoteLabel;
+
+  /// Inclusive opportunity checkbox label
+  ///
+  /// In en, this message translates to:
+  /// **'Inclusive Opportunity'**
+  String get createJob_inclusiveLabel;
+
+  /// Inclusive opportunity subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'This position is open to underrepresented groups'**
+  String get createJob_inclusiveSubtitle;
+
+  /// Description field label
+  ///
+  /// In en, this message translates to:
+  /// **'Job Description'**
+  String get createJob_descriptionLabel;
+
+  /// Description required error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a job description'**
+  String get createJob_descriptionRequiredError;
+
+  /// Contact info field label
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Information (Email/Phone/Link)'**
+  String get createJob_contactLabel;
+
+  /// Contact info required error
+  ///
+  /// In en, this message translates to:
+  /// **'Please provide contact information'**
+  String get createJob_contactRequiredError;
+
+  /// Min salary field label
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum Salary (Optional)'**
+  String get createJob_minSalaryLabel;
+
+  /// Min salary placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 50000'**
+  String get createJob_minSalaryPlaceholder;
+
+  /// Max salary field label
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum Salary (Optional)'**
+  String get createJob_maxSalaryLabel;
+
+  /// Max salary placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., 70000'**
+  String get createJob_maxSalaryPlaceholder;
+
+  /// Valid number validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid whole number'**
+  String get createJob_validNumberError;
+
+  /// Ethical policies section label
+  ///
+  /// In en, this message translates to:
+  /// **'Ethical Policies Compliance'**
+  String get createJob_ethicalPoliciesLabel;
+
+  /// Selected policies count
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String createJob_policiesSelected(int count);
+
   /// Job applications screen title
   ///
   /// In en, this message translates to:
@@ -2019,6 +2265,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Submit'**
   String get jobApplications_submit;
+
+  /// Approve dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Approve Application'**
+  String get jobApplications_approveDialogTitle;
+
+  /// Reject dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Application'**
+  String get jobApplications_rejectDialogTitle;
+
+  /// Approve feedback prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Provide feedback to the applicant (optional):'**
+  String get jobApplications_approveFeedbackPrompt;
+
+  /// Reject feedback prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Provide reason for rejection (optional):'**
+  String get jobApplications_rejectFeedbackPrompt;
+
+  /// Approve feedback hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Great qualifications! We\'ll contact you soon.'**
+  String get jobApplications_approveFeedbackHint;
+
+  /// Reject feedback hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., We have selected other candidates at this time.'**
+  String get jobApplications_rejectFeedbackHint;
+
+  /// Feedback message info
+  ///
+  /// In en, this message translates to:
+  /// **'The applicant will see this feedback.'**
+  String get jobApplications_feedbackMessage;
+
+  /// Cancel button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get jobApplications_cancelButton;
+
+  /// Approve button
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get jobApplications_approveButton;
+
+  /// Reject button
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get jobApplications_rejectButton;
+
+  /// Approve success message
+  ///
+  /// In en, this message translates to:
+  /// **'Application approved successfully'**
+  String get jobApplications_approvedSuccess;
+
+  /// Reject success message
+  ///
+  /// In en, this message translates to:
+  /// **'Application rejected'**
+  String get jobApplications_rejectedSuccess;
+
+  /// Status updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Application status updated'**
+  String get jobApplications_statusUpdatedSuccess;
+
+  /// Applied date label
+  ///
+  /// In en, this message translates to:
+  /// **'Applied: {date}'**
+  String jobApplications_appliedLabel(String date);
+
+  /// Special needs label
+  ///
+  /// In en, this message translates to:
+  /// **'Special Needs: {needs}'**
+  String jobApplications_specialNeedsLabel(String needs);
+
+  /// CV attached label
+  ///
+  /// In en, this message translates to:
+  /// **'CV Attached (tap to view)'**
+  String get jobApplications_cvLabel;
+
+  /// Cover letter label
+  ///
+  /// In en, this message translates to:
+  /// **'Cover Letter'**
+  String get jobApplications_coverLetterLabel;
+
+  /// Feedback label
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback: {feedback}'**
+  String jobApplications_feedbackLabel(String feedback);
+
+  /// Downloading CV message
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading CV...'**
+  String get jobApplications_downloadingCV;
+
+  /// CV saved message
+  ///
+  /// In en, this message translates to:
+  /// **'CV saved to {path}'**
+  String jobApplications_cvSaved(String path);
+
+  /// CV download failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to download CV: {error}'**
+  String jobApplications_cvDownloadFailed(String error);
+
+  /// No CV uploaded message
+  ///
+  /// In en, this message translates to:
+  /// **'No CV uploaded for this application'**
+  String get jobApplications_noCVUploaded;
+
+  /// View CV in browser option
+  ///
+  /// In en, this message translates to:
+  /// **'View CV in Browser'**
+  String get jobApplications_viewCVBrowser;
+
+  /// View CV in browser subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Open CV in your browser'**
+  String get jobApplications_viewCVBrowserSubtitle;
+
+  /// CV open failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open CV. No app available to handle PDF files.'**
+  String get jobApplications_cvOpenFailed;
+
+  /// CV open error message
+  ///
+  /// In en, this message translates to:
+  /// **'Error opening CV: {error}'**
+  String jobApplications_cvOpenError(String error);
+
+  /// Application status: pending
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get jobApplications_statusPending;
+
+  /// Application status: approved
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get jobApplications_statusApproved;
+
+  /// Application status: rejected
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get jobApplications_statusRejected;
+
+  /// Download CV option
+  ///
+  /// In en, this message translates to:
+  /// **'Download CV'**
+  String get jobApplications_downloadCV;
+
+  /// Download CV subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Save CV to your device'**
+  String get jobApplications_downloadCVSubtitle;
+
+  /// CV downloaded success message
+  ///
+  /// In en, this message translates to:
+  /// **'CV downloaded successfully\n{path}'**
+  String jobApplications_cvDownloadedSuccess(String path);
+
+  /// Open button text
+  ///
+  /// In en, this message translates to:
+  /// **'OPEN'**
+  String get jobApplications_openButton;
 
   /// Filter dialog title
   ///
@@ -2133,6 +2577,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Applied: {date}'**
   String myApplications_applied(String date);
+
+  /// Special needs label
+  ///
+  /// In en, this message translates to:
+  /// **'Special Needs: {specialNeeds}'**
+  String myApplications_specialNeeds(String specialNeeds);
 
   /// Feedback label
   ///
@@ -2799,6 +3249,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hide password'**
   String get common_hidePassword;
+
+  /// No description provided for @ethicalPolicy_salary_transparency.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary Transparency'**
+  String get ethicalPolicy_salary_transparency;
+
+  /// No description provided for @ethicalPolicy_equal_pay_policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Equal Pay Policy'**
+  String get ethicalPolicy_equal_pay_policy;
+
+  /// No description provided for @ethicalPolicy_living_wage_employer.
+  ///
+  /// In en, this message translates to:
+  /// **'Living Wage Employer'**
+  String get ethicalPolicy_living_wage_employer;
+
+  /// No description provided for @ethicalPolicy_comprehensive_health_insurance.
+  ///
+  /// In en, this message translates to:
+  /// **'Comprehensive Health Insurance'**
+  String get ethicalPolicy_comprehensive_health_insurance;
+
+  /// No description provided for @ethicalPolicy_performance_based_bonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance-Based Bonus'**
+  String get ethicalPolicy_performance_based_bonus;
+
+  /// No description provided for @ethicalPolicy_retirement_plan_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Retirement Plan Support'**
+  String get ethicalPolicy_retirement_plan_support;
+
+  /// No description provided for @ethicalPolicy_flexible_hours.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexible Hours'**
+  String get ethicalPolicy_flexible_hours;
+
+  /// No description provided for @ethicalPolicy_remote_friendly.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote-Friendly'**
+  String get ethicalPolicy_remote_friendly;
+
+  /// No description provided for @ethicalPolicy_no_after_hours_work_culture.
+  ///
+  /// In en, this message translates to:
+  /// **'No After-Hours Work Culture'**
+  String get ethicalPolicy_no_after_hours_work_culture;
+
+  /// No description provided for @ethicalPolicy_mental_health_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Mental Health Support'**
+  String get ethicalPolicy_mental_health_support;
+
+  /// No description provided for @ethicalPolicy_generous_paid_time_off.
+  ///
+  /// In en, this message translates to:
+  /// **'Generous Paid Time Off'**
+  String get ethicalPolicy_generous_paid_time_off;
+
+  /// No description provided for @ethicalPolicy_paid_parental_leave.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid Parental Leave'**
+  String get ethicalPolicy_paid_parental_leave;
+
+  /// No description provided for @ethicalPolicy_inclusive_hiring_practices.
+  ///
+  /// In en, this message translates to:
+  /// **'Inclusive Hiring Practices'**
+  String get ethicalPolicy_inclusive_hiring_practices;
+
+  /// No description provided for @ethicalPolicy_diverse_leadership.
+  ///
+  /// In en, this message translates to:
+  /// **'Diverse Leadership'**
+  String get ethicalPolicy_diverse_leadership;
+
+  /// No description provided for @ethicalPolicy_lgbtq_friendly_workplace.
+  ///
+  /// In en, this message translates to:
+  /// **'LGBTQ+ Friendly Workplace'**
+  String get ethicalPolicy_lgbtq_friendly_workplace;
+
+  /// No description provided for @ethicalPolicy_disability_inclusive_workplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Disability-Inclusive Workplace'**
+  String get ethicalPolicy_disability_inclusive_workplace;
+
+  /// No description provided for @ethicalPolicy_supports_women_in_leadership.
+  ///
+  /// In en, this message translates to:
+  /// **'Supports Women in Leadership'**
+  String get ethicalPolicy_supports_women_in_leadership;
+
+  /// No description provided for @ethicalPolicy_mentorship_program.
+  ///
+  /// In en, this message translates to:
+  /// **'Mentorship Program'**
+  String get ethicalPolicy_mentorship_program;
+
+  /// No description provided for @ethicalPolicy_learning_development_budget.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning & Development Budget'**
+  String get ethicalPolicy_learning_development_budget;
+
+  /// No description provided for @ethicalPolicy_transparent_promotion_paths.
+  ///
+  /// In en, this message translates to:
+  /// **'Transparent Promotion Paths'**
+  String get ethicalPolicy_transparent_promotion_paths;
+
+  /// No description provided for @ethicalPolicy_internal_mobility.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal Mobility'**
+  String get ethicalPolicy_internal_mobility;
+
+  /// No description provided for @ethicalPolicy_sustainability_focused.
+  ///
+  /// In en, this message translates to:
+  /// **'Sustainability-Focused'**
+  String get ethicalPolicy_sustainability_focused;
+
+  /// No description provided for @ethicalPolicy_ethical_supply_chain.
+  ///
+  /// In en, this message translates to:
+  /// **'Ethical Supply Chain'**
+  String get ethicalPolicy_ethical_supply_chain;
+
+  /// No description provided for @ethicalPolicy_community_volunteering.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Volunteering'**
+  String get ethicalPolicy_community_volunteering;
+
+  /// No description provided for @ethicalPolicy_certified_b_corporation.
+  ///
+  /// In en, this message translates to:
+  /// **'Certified B-Corporation'**
+  String get ethicalPolicy_certified_b_corporation;
 }
 
 class _AppLocalizationsDelegate

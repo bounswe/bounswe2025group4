@@ -90,7 +90,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signUpScreen_passwordTooShort =>
-      'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل';
+      'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل';
 
   @override
   String get signUpScreen_passwordNoUppercase =>
@@ -528,6 +528,70 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jobDetails_applying => 'جارٍ التقديم...';
 
   @override
+  String get jobDetails_alreadyApplied => 'لقد تقدمت بالفعل لهذه الوظيفة.';
+
+  @override
+  String jobDetails_cvUploadFailed(String error) {
+    return 'تم تقديم الطلب ولكن فشل رفع السيرة الذاتية: $error';
+  }
+
+  @override
+  String jobDetails_applyErrorGeneric(String error) {
+    return 'خطأ في التقديم: $error';
+  }
+
+  @override
+  String get jobDetails_applyDialogTitle => 'التقديم للوظيفة';
+
+  @override
+  String jobDetails_applyDialogMessage(String jobTitle) {
+    return 'أنت تتقدم لـ: $jobTitle';
+  }
+
+  @override
+  String get jobDetails_cvLabel => 'رفع السيرة الذاتية *';
+
+  @override
+  String get jobDetails_cvPlaceholder => 'اختر ملف (PDF, DOC, DOCX)';
+
+  @override
+  String get jobDetails_coverLetterLabel => 'خطاب التغطية (اختياري)';
+
+  @override
+  String get jobDetails_coverLetterHint =>
+      'اشرح لماذا أنت مناسب تماماً لهذا المنصب...';
+
+  @override
+  String get jobDetails_specialNeedsLabel =>
+      'الاحتياجات الخاصة أو التسهيلات (اختياري)';
+
+  @override
+  String get jobDetails_specialNeedsHint =>
+      'مثل: إمكانية الوصول للكراسي المتحركة، ساعات مرنة...';
+
+  @override
+  String get jobDetails_specialNeedsMessage =>
+      'ستساعد هذه المعلومات أصحاب العمل على تلبية احتياجاتك.';
+
+  @override
+  String get jobDetails_cancelButton => 'إلغاء';
+
+  @override
+  String get jobDetails_submitButton => 'تقديم الطلب';
+
+  @override
+  String get jobDetails_checkingStatus => 'جارٍ التحقق...';
+
+  @override
+  String get jobDetails_alreadyAppliedButton => 'تم التقديم بالفعل';
+
+  @override
+  String get jobDetails_remote => 'عن بُعد';
+
+  @override
+  String get jobDetails_inclusiveOpportunity => 'فرصة شاملة';
+
+  @override
   String get forumPage_title => 'المنتدى';
 
   @override
@@ -698,6 +762,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mentorScreen_requestAccepted => 'تم قبول الطلب';
+
+  @override
+  String get mentorshipPage_become_a_mentor => 'تصبح مرشدا';
+
+  @override
+  String get mentorProfile_ratingNotAvailable =>
+      'لا تتوفر تقييمات لهذا المرشد.';
+
+  @override
+  String get mentorProfile_expertise => 'الخبرة';
 
   @override
   String get mentorScreen_requestRejected => 'تم رفض الطلب';
@@ -1039,6 +1113,73 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get createJob_invalidMinSalaryFormat =>
+      'تنسيق الحد الأدنى للراتب غير صحيح. الرجاء إدخال أرقام كاملة فقط.';
+
+  @override
+  String get createJob_invalidMaxSalaryFormat =>
+      'تنسيق الحد الأقصى للراتب غير صحيح. الرجاء إدخال أرقام كاملة فقط.';
+
+  @override
+  String get createJob_salaryRangeInvalid =>
+      'الحد الأدنى للراتب لا يمكن أن يكون أكبر من الحد الأقصى للراتب.';
+
+  @override
+  String get createJob_companyNameRequired => 'الرجاء إدخال اسم الشركة';
+
+  @override
+  String get createJob_locationLabel => 'الموقع (مثل: المدينة، الولاية، البلد)';
+
+  @override
+  String get createJob_locationRequiredError => 'الرجاء إدخال موقع';
+
+  @override
+  String get createJob_remoteLabel => 'وظيفة عن بُعد';
+
+  @override
+  String get createJob_inclusiveLabel => 'فرصة شاملة';
+
+  @override
+  String get createJob_inclusiveSubtitle =>
+      'هذا المنصب مفتوح للمجموعات الممثلة تمثيلاً ناقصاً';
+
+  @override
+  String get createJob_descriptionLabel => 'وصف الوظيفة';
+
+  @override
+  String get createJob_descriptionRequiredError => 'الرجاء إدخال وصف الوظيفة';
+
+  @override
+  String get createJob_contactLabel =>
+      'معلومات الاتصال (البريد الإلكتروني/الهاتف/الرابط)';
+
+  @override
+  String get createJob_contactRequiredError => 'الرجاء تقديم معلومات الاتصال';
+
+  @override
+  String get createJob_minSalaryLabel => 'الحد الأدنى للراتب (اختياري)';
+
+  @override
+  String get createJob_minSalaryPlaceholder => 'مثل: 50000';
+
+  @override
+  String get createJob_maxSalaryLabel => 'الحد الأقصى للراتب (اختياري)';
+
+  @override
+  String get createJob_maxSalaryPlaceholder => 'مثل: 70000';
+
+  @override
+  String get createJob_validNumberError => 'الرجاء إدخال رقم صحيح كامل';
+
+  @override
+  String get createJob_ethicalPoliciesLabel => 'الامتثال للسياسات الأخلاقية';
+
+  @override
+  String createJob_policiesSelected(int count) {
+    return '$count محدد';
+  }
+
+  @override
   String get jobApplications_title => 'طلبات الوظائف';
 
   @override
@@ -1089,6 +1230,126 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get jobApplications_submit => 'إرسال';
+
+  @override
+  String get jobApplications_approveDialogTitle => 'الموافقة على الطلب';
+
+  @override
+  String get jobApplications_rejectDialogTitle => 'رفض الطلب';
+
+  @override
+  String get jobApplications_approveFeedbackPrompt =>
+      'تقديم تعليقات للمتقدم (اختياري):';
+
+  @override
+  String get jobApplications_rejectFeedbackPrompt =>
+      'تقديم سبب الرفض (اختياري):';
+
+  @override
+  String get jobApplications_approveFeedbackHint =>
+      'مثل: مؤهلات رائعة! سنتواصل معك قريباً.';
+
+  @override
+  String get jobApplications_rejectFeedbackHint =>
+      'مثل: لقد اخترنا مرشحين آخرين في هذا الوقت.';
+
+  @override
+  String get jobApplications_feedbackMessage => 'سيرى المتقدم هذه التعليقات.';
+
+  @override
+  String get jobApplications_cancelButton => 'إلغاء';
+
+  @override
+  String get jobApplications_approveButton => 'موافقة';
+
+  @override
+  String get jobApplications_rejectButton => 'رفض';
+
+  @override
+  String get jobApplications_approvedSuccess => 'تمت الموافقة على الطلب بنجاح';
+
+  @override
+  String get jobApplications_rejectedSuccess => 'تم رفض الطلب';
+
+  @override
+  String get jobApplications_statusUpdatedSuccess => 'تم تحديث حالة الطلب';
+
+  @override
+  String jobApplications_appliedLabel(String date) {
+    return 'تم التقديم: $date';
+  }
+
+  @override
+  String jobApplications_specialNeedsLabel(String needs) {
+    return 'احتياجات خاصة: $needs';
+  }
+
+  @override
+  String get jobApplications_cvLabel => 'السيرة الذاتية مرفقة (اضغط للعرض)';
+
+  @override
+  String get jobApplications_coverLetterLabel => 'خطاب التغطية';
+
+  @override
+  String jobApplications_feedbackLabel(String feedback) {
+    return 'التعليقات: $feedback';
+  }
+
+  @override
+  String get jobApplications_downloadingCV => 'جارٍ تنزيل السيرة الذاتية...';
+
+  @override
+  String jobApplications_cvSaved(String path) {
+    return 'تم حفظ السيرة الذاتية في: $path';
+  }
+
+  @override
+  String jobApplications_cvDownloadFailed(String error) {
+    return 'فشل تنزيل السيرة الذاتية: $error';
+  }
+
+  @override
+  String get jobApplications_noCVUploaded => 'لم يتم رفع سيرة ذاتية لهذا الطلب';
+
+  @override
+  String get jobApplications_viewCVBrowser => 'عرض السيرة الذاتية في المتصفح';
+
+  @override
+  String get jobApplications_viewCVBrowserSubtitle =>
+      'افتح السيرة الذاتية في متصفحك';
+
+  @override
+  String get jobApplications_cvOpenFailed =>
+      'تعذر فتح السيرة الذاتية. لا يوجد تطبيق متاح للتعامل مع ملفات PDF.';
+
+  @override
+  String jobApplications_cvOpenError(String error) {
+    return 'خطأ في فتح السيرة الذاتية: $error';
+  }
+
+  @override
+  String get jobApplications_statusPending => 'قيد الانتظار';
+
+  @override
+  String get jobApplications_statusApproved => 'مقبول';
+
+  @override
+  String get jobApplications_statusRejected => 'مرفوض';
+
+  @override
+  String get jobApplications_downloadCV => 'تنزيل السيرة الذاتية';
+
+  @override
+  String get jobApplications_downloadCVSubtitle =>
+      'حفظ السيرة الذاتية على جهازك';
+
+  @override
+  String jobApplications_cvDownloadedSuccess(String path) {
+    return 'تم تنزيل السيرة الذاتية بنجاح\n$path';
+  }
+
+  @override
+  String get jobApplications_openButton => 'فتح';
 
   @override
   String get jobFilter_title => 'تصفية الوظائف';
@@ -1149,6 +1410,11 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String myApplications_applied(String date) {
     return 'تم التقديم: $date';
+  }
+
+  @override
+  String myApplications_specialNeeds(String specialNeeds) {
+    return 'الاحتياجات الخاصة: $specialNeeds';
   }
 
   @override
@@ -1509,8 +1775,88 @@ class AppLocalizationsAr extends AppLocalizations {
   String get common_back => 'رجوع';
 
   @override
-  String get common_showPassword => 'Show password';
+  String get common_showPassword => 'إظهار كلمة المرور';
 
   @override
-  String get common_hidePassword => 'Hide password';
+  String get common_hidePassword => 'إخفاء كلمة المرور';
+
+  @override
+  String get ethicalPolicy_salary_transparency => 'شفافية الرواتب';
+
+  @override
+  String get ethicalPolicy_equal_pay_policy => 'سياسة المساواة في الأجور';
+
+  @override
+  String get ethicalPolicy_living_wage_employer => 'صاحب عمل بأجر معيشي';
+
+  @override
+  String get ethicalPolicy_comprehensive_health_insurance => 'تأمين صحي شامل';
+
+  @override
+  String get ethicalPolicy_performance_based_bonus => 'مكافأة على أساس الأداء';
+
+  @override
+  String get ethicalPolicy_retirement_plan_support => 'دعم خطة التقاعد';
+
+  @override
+  String get ethicalPolicy_flexible_hours => 'ساعات عمل مرنة';
+
+  @override
+  String get ethicalPolicy_remote_friendly => 'صديق للعمل عن بُعد';
+
+  @override
+  String get ethicalPolicy_no_after_hours_work_culture =>
+      'ثقافة عدم العمل بعد ساعات العمل';
+
+  @override
+  String get ethicalPolicy_mental_health_support => 'دعم الصحة النفسية';
+
+  @override
+  String get ethicalPolicy_generous_paid_time_off => 'إجازة مدفوعة سخية';
+
+  @override
+  String get ethicalPolicy_paid_parental_leave => 'إجازة والدية مدفوعة';
+
+  @override
+  String get ethicalPolicy_inclusive_hiring_practices => 'ممارسات توظيف شاملة';
+
+  @override
+  String get ethicalPolicy_diverse_leadership => 'قيادة متنوعة';
+
+  @override
+  String get ethicalPolicy_lgbtq_friendly_workplace =>
+      'مكان عمل صديق لمجتمع LGBTQ+';
+
+  @override
+  String get ethicalPolicy_disability_inclusive_workplace =>
+      'مكان عمل شامل لذوي الإعاقة';
+
+  @override
+  String get ethicalPolicy_supports_women_in_leadership =>
+      'يدعم النساء في القيادة';
+
+  @override
+  String get ethicalPolicy_mentorship_program => 'برنامج إرشاد';
+
+  @override
+  String get ethicalPolicy_learning_development_budget =>
+      'ميزانية التعلم والتطوير';
+
+  @override
+  String get ethicalPolicy_transparent_promotion_paths => 'مسارات ترقية شفافة';
+
+  @override
+  String get ethicalPolicy_internal_mobility => 'التنقل الداخلي';
+
+  @override
+  String get ethicalPolicy_sustainability_focused => 'التركيز على الاستدامة';
+
+  @override
+  String get ethicalPolicy_ethical_supply_chain => 'سلسلة توريد أخلاقية';
+
+  @override
+  String get ethicalPolicy_community_volunteering => 'التطوع المجتمعي';
+
+  @override
+  String get ethicalPolicy_certified_b_corporation => 'شركة B معتمدة';
 }

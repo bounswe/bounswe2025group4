@@ -168,11 +168,7 @@ class _IndustrySelectionScreenState extends State<IndustrySelectionScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              const MentorshipSelectionScreen(
-                                                isJobSeeker: true,
-                                              ),
+                                      builder: (context) => const SignUpScreen(),
                                     ),
                                   );
                                 }

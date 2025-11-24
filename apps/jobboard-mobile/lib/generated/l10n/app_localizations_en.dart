@@ -90,7 +90,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signUpScreen_passwordTooShort =>
-      'Password must be at least 6 characters';
+      'Password must be at least 8 characters';
 
   @override
   String get signUpScreen_passwordNoUppercase =>
@@ -533,6 +533,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobDetails_applying => 'Applying...';
 
   @override
+  String get jobDetails_alreadyApplied =>
+      'You have already applied to this job.';
+
+  @override
+  String jobDetails_cvUploadFailed(String error) {
+    return 'Application submitted but CV upload failed: $error';
+  }
+
+  @override
+  String jobDetails_applyErrorGeneric(String error) {
+    return 'Error applying: $error';
+  }
+
+  @override
+  String get jobDetails_applyDialogTitle => 'Apply to Job';
+
+  @override
+  String jobDetails_applyDialogMessage(String jobTitle) {
+    return 'You are applying for: $jobTitle';
+  }
+
+  @override
+  String get jobDetails_cvLabel => 'Upload CV *';
+
+  @override
+  String get jobDetails_cvPlaceholder => 'Choose File (PDF, DOC, DOCX)';
+
+  @override
+  String get jobDetails_coverLetterLabel => 'Cover Letter (Optional)';
+
+  @override
+  String get jobDetails_coverLetterHint =>
+      'Explain why you are a great fit for this position...';
+
+  @override
+  String get jobDetails_specialNeedsLabel =>
+      'Special Needs or Accommodations (Optional)';
+
+  @override
+  String get jobDetails_specialNeedsHint =>
+      'e.g., Wheelchair accessibility, flexible hours...';
+
+  @override
+  String get jobDetails_specialNeedsMessage =>
+      'This information will help employers accommodate your needs.';
+
+  @override
+  String get jobDetails_cancelButton => 'Cancel';
+
+  @override
+  String get jobDetails_submitButton => 'Submit Application';
+
+  @override
+  String get jobDetails_checkingStatus => 'Checking...';
+
+  @override
+  String get jobDetails_alreadyAppliedButton => 'Already Applied';
+
+  @override
+  String get jobDetails_remote => 'Remote';
+
+  @override
+  String get jobDetails_inclusiveOpportunity => 'Inclusive Opportunity';
+
+  @override
   String get forumPage_title => 'Forum';
 
   @override
@@ -704,6 +769,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mentorScreen_requestAccepted => 'Request accepted';
+
+  @override
+  String get mentorshipPage_become_a_mentor => 'Become a mentor';
+
+  @override
+  String get mentorProfile_ratingNotAvailable => 'Rating not available';
+
+  @override
+  String get mentorProfile_expertise => 'Expertise';
 
   @override
   String get mentorScreen_requestRejected => 'Request rejected';
@@ -1045,6 +1119,74 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get createJob_invalidMinSalaryFormat =>
+      'Invalid minimum salary format. Please enter whole numbers only.';
+
+  @override
+  String get createJob_invalidMaxSalaryFormat =>
+      'Invalid maximum salary format. Please enter whole numbers only.';
+
+  @override
+  String get createJob_salaryRangeInvalid =>
+      'Minimum salary cannot be greater than maximum salary.';
+
+  @override
+  String get createJob_companyNameRequired => 'Please enter the company name';
+
+  @override
+  String get createJob_locationLabel => 'Location (e.g., City, State, Country)';
+
+  @override
+  String get createJob_locationRequiredError => 'Please enter a location';
+
+  @override
+  String get createJob_remoteLabel => 'Remote Job';
+
+  @override
+  String get createJob_inclusiveLabel => 'Inclusive Opportunity';
+
+  @override
+  String get createJob_inclusiveSubtitle =>
+      'This position is open to underrepresented groups';
+
+  @override
+  String get createJob_descriptionLabel => 'Job Description';
+
+  @override
+  String get createJob_descriptionRequiredError =>
+      'Please enter a job description';
+
+  @override
+  String get createJob_contactLabel => 'Contact Information (Email/Phone/Link)';
+
+  @override
+  String get createJob_contactRequiredError =>
+      'Please provide contact information';
+
+  @override
+  String get createJob_minSalaryLabel => 'Minimum Salary (Optional)';
+
+  @override
+  String get createJob_minSalaryPlaceholder => 'e.g., 50000';
+
+  @override
+  String get createJob_maxSalaryLabel => 'Maximum Salary (Optional)';
+
+  @override
+  String get createJob_maxSalaryPlaceholder => 'e.g., 70000';
+
+  @override
+  String get createJob_validNumberError => 'Please enter a valid whole number';
+
+  @override
+  String get createJob_ethicalPoliciesLabel => 'Ethical Policies Compliance';
+
+  @override
+  String createJob_policiesSelected(int count) {
+    return '$count selected';
+  }
+
+  @override
   String get jobApplications_title => 'Job Applications';
 
   @override
@@ -1095,6 +1237,128 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get jobApplications_submit => 'Submit';
+
+  @override
+  String get jobApplications_approveDialogTitle => 'Approve Application';
+
+  @override
+  String get jobApplications_rejectDialogTitle => 'Reject Application';
+
+  @override
+  String get jobApplications_approveFeedbackPrompt =>
+      'Provide feedback to the applicant (optional):';
+
+  @override
+  String get jobApplications_rejectFeedbackPrompt =>
+      'Provide reason for rejection (optional):';
+
+  @override
+  String get jobApplications_approveFeedbackHint =>
+      'e.g., Great qualifications! We\'ll contact you soon.';
+
+  @override
+  String get jobApplications_rejectFeedbackHint =>
+      'e.g., We have selected other candidates at this time.';
+
+  @override
+  String get jobApplications_feedbackMessage =>
+      'The applicant will see this feedback.';
+
+  @override
+  String get jobApplications_cancelButton => 'Cancel';
+
+  @override
+  String get jobApplications_approveButton => 'Approve';
+
+  @override
+  String get jobApplications_rejectButton => 'Reject';
+
+  @override
+  String get jobApplications_approvedSuccess =>
+      'Application approved successfully';
+
+  @override
+  String get jobApplications_rejectedSuccess => 'Application rejected';
+
+  @override
+  String get jobApplications_statusUpdatedSuccess =>
+      'Application status updated';
+
+  @override
+  String jobApplications_appliedLabel(String date) {
+    return 'Applied: $date';
+  }
+
+  @override
+  String jobApplications_specialNeedsLabel(String needs) {
+    return 'Special Needs: $needs';
+  }
+
+  @override
+  String get jobApplications_cvLabel => 'CV Attached (tap to view)';
+
+  @override
+  String get jobApplications_coverLetterLabel => 'Cover Letter';
+
+  @override
+  String jobApplications_feedbackLabel(String feedback) {
+    return 'Feedback: $feedback';
+  }
+
+  @override
+  String get jobApplications_downloadingCV => 'Downloading CV...';
+
+  @override
+  String jobApplications_cvSaved(String path) {
+    return 'CV saved to $path';
+  }
+
+  @override
+  String jobApplications_cvDownloadFailed(String error) {
+    return 'Failed to download CV: $error';
+  }
+
+  @override
+  String get jobApplications_noCVUploaded =>
+      'No CV uploaded for this application';
+
+  @override
+  String get jobApplications_viewCVBrowser => 'View CV in Browser';
+
+  @override
+  String get jobApplications_viewCVBrowserSubtitle => 'Open CV in your browser';
+
+  @override
+  String get jobApplications_cvOpenFailed =>
+      'Unable to open CV. No app available to handle PDF files.';
+
+  @override
+  String jobApplications_cvOpenError(String error) {
+    return 'Error opening CV: $error';
+  }
+
+  @override
+  String get jobApplications_statusPending => 'Pending';
+
+  @override
+  String get jobApplications_statusApproved => 'Approved';
+
+  @override
+  String get jobApplications_statusRejected => 'Rejected';
+
+  @override
+  String get jobApplications_downloadCV => 'Download CV';
+
+  @override
+  String get jobApplications_downloadCVSubtitle => 'Save CV to your device';
+
+  @override
+  String jobApplications_cvDownloadedSuccess(String path) {
+    return 'CV downloaded successfully\n$path';
+  }
+
+  @override
+  String get jobApplications_openButton => 'OPEN';
 
   @override
   String get jobFilter_title => 'Filter Jobs';
@@ -1156,6 +1420,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String myApplications_applied(String date) {
     return 'Applied: $date';
+  }
+
+  @override
+  String myApplications_specialNeeds(String specialNeeds) {
+    return 'Special Needs: $specialNeeds';
   }
 
   @override
@@ -1522,4 +1791,87 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get common_hidePassword => 'Hide password';
+
+  @override
+  String get ethicalPolicy_salary_transparency => 'Salary Transparency';
+
+  @override
+  String get ethicalPolicy_equal_pay_policy => 'Equal Pay Policy';
+
+  @override
+  String get ethicalPolicy_living_wage_employer => 'Living Wage Employer';
+
+  @override
+  String get ethicalPolicy_comprehensive_health_insurance =>
+      'Comprehensive Health Insurance';
+
+  @override
+  String get ethicalPolicy_performance_based_bonus => 'Performance-Based Bonus';
+
+  @override
+  String get ethicalPolicy_retirement_plan_support => 'Retirement Plan Support';
+
+  @override
+  String get ethicalPolicy_flexible_hours => 'Flexible Hours';
+
+  @override
+  String get ethicalPolicy_remote_friendly => 'Remote-Friendly';
+
+  @override
+  String get ethicalPolicy_no_after_hours_work_culture =>
+      'No After-Hours Work Culture';
+
+  @override
+  String get ethicalPolicy_mental_health_support => 'Mental Health Support';
+
+  @override
+  String get ethicalPolicy_generous_paid_time_off => 'Generous Paid Time Off';
+
+  @override
+  String get ethicalPolicy_paid_parental_leave => 'Paid Parental Leave';
+
+  @override
+  String get ethicalPolicy_inclusive_hiring_practices =>
+      'Inclusive Hiring Practices';
+
+  @override
+  String get ethicalPolicy_diverse_leadership => 'Diverse Leadership';
+
+  @override
+  String get ethicalPolicy_lgbtq_friendly_workplace =>
+      'LGBTQ+ Friendly Workplace';
+
+  @override
+  String get ethicalPolicy_disability_inclusive_workplace =>
+      'Disability-Inclusive Workplace';
+
+  @override
+  String get ethicalPolicy_supports_women_in_leadership =>
+      'Supports Women in Leadership';
+
+  @override
+  String get ethicalPolicy_mentorship_program => 'Mentorship Program';
+
+  @override
+  String get ethicalPolicy_learning_development_budget =>
+      'Learning & Development Budget';
+
+  @override
+  String get ethicalPolicy_transparent_promotion_paths =>
+      'Transparent Promotion Paths';
+
+  @override
+  String get ethicalPolicy_internal_mobility => 'Internal Mobility';
+
+  @override
+  String get ethicalPolicy_sustainability_focused => 'Sustainability-Focused';
+
+  @override
+  String get ethicalPolicy_ethical_supply_chain => 'Ethical Supply Chain';
+
+  @override
+  String get ethicalPolicy_community_volunteering => 'Community Volunteering';
+
+  @override
+  String get ethicalPolicy_certified_b_corporation => 'Certified B-Corporation';
 }
