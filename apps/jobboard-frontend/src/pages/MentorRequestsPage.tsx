@@ -246,20 +246,6 @@ const MentorRequestsPage = () => {
               {menteeProfile.bio && (
                 <p className="text-sm text-muted-foreground line-clamp-2">{menteeProfile.bio}</p>
               )}
-              {menteeProfile.skills && menteeProfile.skills.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {menteeProfile.skills.slice(0, 5).map((skill) => (
-                    <Badge key={skill.id} variant="secondary" className="text-xs">
-                      {skill.name}
-                    </Badge>
-                  ))}
-                  {menteeProfile.skills.length > 5 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{menteeProfile.skills.length - 5}
-                    </Badge>
-                  )}
-                </div>
-              )}
             </div>
           )}
 
