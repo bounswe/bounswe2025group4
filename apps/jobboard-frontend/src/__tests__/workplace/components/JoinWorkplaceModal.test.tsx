@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import * as workplaceService from '@/services/workplace.service';
 import * as employerService from '@/services/employer.service';
+import type { PaginatedWorkplaceResponse, EmployerWorkplaceBrief } from '@/types/workplace.types';
 
 // Mock services
 vi.mock('@/services/workplace.service', () => ({
@@ -48,19 +49,19 @@ describe('JoinWorkplaceModal', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (workplaceService.getWorkplaces as any).mockResolvedValue({
+    vi.mocked(workplaceService.getWorkplaces).mockResolvedValue({
       content: mockWorkplaces,
       totalPages: 1,
       totalElements: 2,
-    });
-    (employerService.getMyWorkplaces as any).mockResolvedValue([]);
+    } as PaginatedWorkplaceResponse);
+    vi.mocked(employerService.getMyWorkplaces).mockResolvedValue([]);
   });
 
   it('renders search interface initially', async () => {
     renderComponent();
     
-    expect(screen.getByText('Join a Workplace')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Enter company name...')).toBeInTheDocument();
+    expect(screen.getByText('workplace.joinModal.title')).toBeInTheDocument();
+    expect(screen.getByText('workplace.joinModal.searchPlaceholder')).toBeInTheDocument();
     
     await waitFor(() => {
       expect(screen.getByText('Tech Corp')).toBeInTheDocument();
@@ -71,7 +72,7 @@ describe('JoinWorkplaceModal', () => {
   it('searches for workplaces', async () => {
     renderComponent();
     
-    const searchInput = screen.getByPlaceholderText('Enter company name...');
+    const searchInput = screen.getByLabelText('workplace.joinModal.searchPlaceholder');
     fireEvent.change(searchInput, { target: { value: 'Tech' } });
     fireEvent.keyDown(searchInput, { key: 'Enter', code: 'Enter' });
 
@@ -92,8 +93,8 @@ describe('JoinWorkplaceModal', () => {
     fireEvent.click(screen.getByText('Tech Corp'));
 
     await waitFor(() => {
-      expect(screen.getByText('Request to Join')).toBeInTheDocument();
-      expect(screen.getByLabelText(/Note to Administrators/i)).toBeInTheDocument();
+      expect(screen.getByText('workplace.joinModal.requestTitle')).toBeInTheDocument();
+      expect(screen.getByLabelText(/workplace\.joinModal\.noteLabel/i)).toBeInTheDocument();
     });
   });
 
@@ -104,10 +105,10 @@ describe('JoinWorkplaceModal', () => {
       fireEvent.click(screen.getByText('Tech Corp'));
     });
 
-    const noteInput = screen.getByLabelText(/Note to Administrators/i);
+    const noteInput = screen.getByLabelText(/workplace\.joinModal\.noteLabel/i);
     fireEvent.change(noteInput, { target: { value: 'I want to join.' } });
 
-    const submitButton = screen.getByRole('button', { name: /Submit Request/i });
+    const submitButton = screen.getByRole('button', { name: /workplace\.joinModal\.submitRequest/i });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -117,14 +118,14 @@ describe('JoinWorkplaceModal', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Request Submitted')).toBeInTheDocument();
+      expect(screen.getByText('workplace.joinModal.requestSubmitted')).toBeInTheDocument();
     });
   });
 
   it('shows alert if already a member', async () => {
-    (employerService.getMyWorkplaces as any).mockResolvedValue([
-      { workplace: mockWorkplaces[0] } // Already member of Tech Corp
-    ]);
+    vi.mocked(employerService.getMyWorkplaces).mockResolvedValue([
+      { workplace: mockWorkplaces[0] } as EmployerWorkplaceBrief // Already member of Tech Corp
+    ] as EmployerWorkplaceBrief[]);
 
     renderComponent();
     
@@ -135,7 +136,7 @@ describe('JoinWorkplaceModal', () => {
     fireEvent.click(screen.getByText('Tech Corp'));
 
     await waitFor(() => {
-      expect(screen.getByText('You are already an employer of this workplace')).toBeInTheDocument();
+      expect(screen.getByText('workplace.joinModal.alreadyMember')).toBeInTheDocument();
     });
   });
 });

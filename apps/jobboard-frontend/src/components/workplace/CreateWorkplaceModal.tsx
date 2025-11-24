@@ -113,18 +113,18 @@ export function CreateWorkplaceModal({
             <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Workplace Created!</h2>
+            <h2 className="text-2xl font-bold mb-2">{t('workplace.createModal.workplaceCreated')}</h2>
             <p className="text-muted-foreground mb-4">
-              Your workplace has been created successfully. Redirecting to your new workplace...
+              {t('workplace.createModal.workplaceCreatedDescription')}
             </p>
-            <p className="text-sm text-muted-foreground">Redirecting...</p>
+            <p className="text-sm text-muted-foreground">{t('workplace.createModal.redirecting')}</p>
           </div>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Create New Workplace</DialogTitle>
+              <DialogTitle>{t('workplace.createModal.title')}</DialogTitle>
               <DialogDescription>
-                Add your company to the platform and start building your reputation
+                {t('workplace.createModal.description')}
               </DialogDescription>
             </DialogHeader>
 
@@ -139,17 +139,17 @@ export function CreateWorkplaceModal({
               {/* Company Name */}
               <div className="space-y-2">
                 <Label htmlFor="modal-companyName">
-                  Company Name <span className="text-destructive">*</span>
+                  {t('workplace.createModal.companyName')} <span className="text-destructive">*</span>
                 </Label>
                 <Input
                   id="modal-companyName"
                   {...register('companyName')}
-                  placeholder="Enter company name"
+                  placeholder={t('workplace.createModal.companyNamePlaceholder')}
                   className={errors.companyName ? 'border-destructive' : ''}
                   disabled={isSubmitting}
                 />
                 {errors.companyName && (
-                  <p className="text-sm text-destructive">{errors.companyName.message}</p>
+                  <p className="text-sm text-destructive">{t(errors.companyName.message || '')}</p>
                 )}
               </div>
 
@@ -158,58 +158,58 @@ export function CreateWorkplaceModal({
                 {/* Sector */}
                 <div className="space-y-2">
                   <Label htmlFor="modal-sector">
-                    Sector <span className="text-destructive">*</span>
+                    {t('workplace.createModal.sector')} <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="modal-sector"
                     {...register('sector')}
-                    placeholder="e.g., Technology, Healthcare"
+                    placeholder={t('workplace.createModal.sectorPlaceholder')}
                     className={errors.sector ? 'border-destructive' : ''}
                     disabled={isSubmitting}
                   />
                   {errors.sector && (
-                    <p className="text-sm text-destructive">{errors.sector.message}</p>
+                    <p className="text-sm text-destructive">{t(errors.sector.message || '')}</p>
                   )}
                 </div>
 
                 {/* Location */}
                 <div className="space-y-2">
                   <Label htmlFor="modal-location">
-                    Location <span className="text-destructive">*</span>
+                    {t('workplace.createModal.location')} <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     id="modal-location"
                     {...register('location')}
-                    placeholder="e.g., San Francisco, CA"
+                    placeholder={t('workplace.createModal.locationPlaceholder', 'Enter location')}
                     className={errors.location ? 'border-destructive' : ''}
                     disabled={isSubmitting}
                   />
                   {errors.location && (
-                    <p className="text-sm text-destructive">{errors.location.message}</p>
+                    <p className="text-sm text-destructive">{t(errors.location.message || '')}</p>
                   )}
                 </div>
               </div>
 
               {/* Website */}
               <div className="space-y-2">
-                <Label htmlFor="modal-website">Website</Label>
+                <Label htmlFor="modal-website">{t('workplace.createModal.website')}</Label>
                 <Input
                   id="modal-website"
                   type="url"
                   {...register('website')}
-                  placeholder="https://www.example.com"
+                  placeholder={t('workplace.createModal.websitePlaceholder')}
                   className={errors.website ? 'border-destructive' : ''}
                   disabled={isSubmitting}
                 />
                 {errors.website && (
-                  <p className="text-sm text-destructive">{errors.website.message}</p>
+                  <p className="text-sm text-destructive">{t(errors.website.message || '')}</p>
                 )}
               </div>
 
               {/* Short Description */}
               <div className="space-y-2">
                 <Label htmlFor="modal-shortDescription">
-                  Short Description
+                  {t('workplace.createModal.shortDescription')}
                   <span className="text-muted-foreground text-xs ml-2">(max 300 characters)</span>
                 </Label>
                 <Textarea
@@ -221,14 +221,14 @@ export function CreateWorkplaceModal({
                   disabled={isSubmitting}
                 />
                 {errors.shortDescription && (
-                  <p className="text-sm text-destructive">{errors.shortDescription.message}</p>
+                  <p className="text-sm text-destructive">{t(errors.shortDescription.message || '')}</p>
                 )}
               </div>
 
               {/* Detailed Description */}
               <div className="space-y-2">
                 <Label htmlFor="modal-detailedDescription">
-                  Detailed Description
+                  {t('workplace.createModal.detailedDescription')}
                   <span className="text-muted-foreground text-xs ml-2">(max 4000 characters)</span>
                 </Label>
                 <Textarea
@@ -240,7 +240,7 @@ export function CreateWorkplaceModal({
                   disabled={isSubmitting}
                 />
                 {errors.detailedDescription && (
-                  <p className="text-sm text-destructive">{errors.detailedDescription.message}</p>
+                  <p className="text-sm text-destructive">{t(errors.detailedDescription.message || '')}</p>
                 )}
               </div>
 
@@ -256,7 +256,7 @@ export function CreateWorkplaceModal({
                   placeholder={t('ethicalTags.select')}
                 />
                 {errors.ethicalTags && (
-                  <p className="text-sm text-destructive">{errors.ethicalTags.message}</p>
+                  <p className="text-sm text-destructive">{t(errors.ethicalTags.message || '')}</p>
                 )}
               </div>
 
@@ -269,16 +269,16 @@ export function CreateWorkplaceModal({
                   disabled={isSubmitting}
                   className="flex-1"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={isSubmitting} className="flex-1">
                   {isSubmitting ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Creating...
+                      {t('workplace.createModal.creating')}
                     </>
                   ) : (
-                    'Create Workplace'
+                    t('workplace.createModal.submit')
                   )}
                 </Button>
               </div>

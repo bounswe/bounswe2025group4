@@ -843,21 +843,7 @@
       "replyLabel": "{{value}} yanıt",
       "repliesLabel": "{{value}} yanıt",
       "likeLabel": "{{value}} beğeni",
-      "likesLabel": "{{value}} beğeni",
-      "items": [
-        {
-          "title": "Kullanıcı araştırması teknikleri nasıl geliştirilebilir",
-          "date": "3 gün önce"
-        },
-        {
-          "title": "Ürün tasarımına uzanan yolculuğum",
-          "date": "1 hafta önce"
-        },
-        {
-          "title": "Bir tasarımcı olarak günlük kullandığım araçlar",
-          "date": "2 hafta önce"
-        }
-      ]
+      "likesLabel": "{{value}} beğeni"
     }
   },
   "jobApplication": {
