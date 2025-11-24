@@ -246,6 +246,59 @@ export const profileHandlers = [
     return HttpResponse.json({}, { status: 204 });
   }),
 
+  // Get public profile by user ID
+  http.get(`${API_BASE_URL}/profile/:userId`, async ({ params }) => {
+    const { userId } = params;
+    
+    // Handle invalid user ID
+    if (userId === '999') {
+      return HttpResponse.json(
+        { message: 'User not found' },
+        { status: 404 }
+      );
+    }
+    
+    // Return mock public profile (without skills and interests)
+    const mockPublicProfile = {
+      userId: parseInt(userId as string),
+      firstName: 'Jane',
+      lastName: 'Smith',
+      bio: 'Public profile bio for testing',
+      imageUrl: 'https://example.com/public-profile.jpg',
+      educations: [
+        {
+          id: 1,
+          school: 'Public University',
+          degree: 'Master of Science',
+          field: 'Software Engineering',
+          startDate: '2020-09-01',
+          endDate: '2022-06-15',
+          description: 'Advanced software engineering studies'
+        }
+      ],
+      experiences: [
+        {
+          id: 1,
+          company: 'Public Tech Co',
+          position: 'Senior Developer',
+          description: 'Leading development of web applications',
+          startDate: '2022-07-01',
+          endDate: null
+        }
+      ],
+      badges: [
+        {
+          id: 1,
+          name: 'Code Contributor',
+          description: 'Made significant contributions to open source projects',
+          earnedAt: '2024-01-15T00:00:00Z'
+        }
+      ]
+    };
+    
+    return HttpResponse.json(mockPublicProfile, { status: 200 });
+  }),
+
   // Experience CRUD endpoints
   http.post(`${API_BASE_URL}/profile/experience`, async ({ request }) => {
     const body = await request.json() as {

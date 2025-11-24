@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/core/models/user.dart';
 import '../../../core/widgets/a11y.dart';
 
 class MenteeCard extends StatelessWidget {
-  final User mentee;
+  final String menteeLabel;
   final VoidCallback onChatTap;
-  final VoidCallback? onCompleteTap;
-  final VoidCallback? onCancelTap;
 
   const MenteeCard({
     super.key,
-    required this.mentee,
+    required this.menteeLabel,
     required this.onChatTap,
-    this.onCompleteTap,
-    this.onCancelTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final initial =
+    menteeLabel.isNotEmpty ? menteeLabel[0].toUpperCase() : '?';
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
@@ -25,57 +25,25 @@ class MenteeCard extends StatelessWidget {
         children: [
           ListTile(
             leading: A11y(
-              label: 'Mentee avatar for ${mentee.username}',
+              label: 'Mentee avatar for $menteeLabel',
               child: CircleAvatar(
-                child: Text(mentee.username[0].toUpperCase()),
+                child: Text(initial),
               ),
             ),
-            title: Text(mentee.username),
-            subtitle: Text(mentee.jobTitle ?? 'Mentee'),
+            title: Text(
+              menteeLabel,
+              style: theme.textTheme.titleMedium,
+            ),
+            subtitle: const Text('Mentee'),
             trailing: IconButton(
-              icon: const A11y(label: 'Open chat', child: Icon(Icons.chat)),
+              icon: const A11y(
+                label: 'Open chat',
+                child: Icon(Icons.chat),
+              ),
               onPressed: onChatTap,
               tooltip: 'Chat with mentee',
             ),
           ),
-          if (onCompleteTap != null || onCancelTap != null)
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 16.0,
-                right: 16.0,
-                bottom: 8.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (onCompleteTap != null)
-                    TextButton.icon(
-                      icon: const Icon(
-                        Icons.check_circle_outline,
-                        color: Colors.green,
-                      ),
-                      label: const Text(
-                        'Complete',
-                        style: TextStyle(color: Colors.green),
-                      ),
-                      onPressed: onCompleteTap,
-                    ),
-                  const SizedBox(width: 8.0),
-                  if (onCancelTap != null)
-                    TextButton.icon(
-                      icon: const Icon(
-                        Icons.cancel_outlined,
-                        color: Colors.red,
-                      ),
-                      label: const Text(
-                        'Cancel',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      onPressed: onCancelTap,
-                    ),
-                ],
-              ),
-            ),
         ],
       ),
     );

@@ -28,6 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _obscureConfirmPassword = true;
   String? _selectedGender;
 
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -48,8 +49,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final bio = _bioController.text.trim();
 
       final userType = authProvider.onboardingUserType;
-      final mentorshipStatus = authProvider.onboardingMentorshipStatus;
-      final maxMenteeCount = authProvider.onboardingMaxMenteeCount;
 
       if (userType == null) {
         HapticFeedback.vibrate();
@@ -63,14 +62,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
 
       try {
+
+
         final outcome = await context.read<AuthProvider>().register(
           username,
           email,
           password,
           userType,
           bio.isNotEmpty ? bio : null,
-          mentorshipStatus: mentorshipStatus,
-          maxMenteeCount: maxMenteeCount,
         );
 
         if (!mounted) return;
@@ -124,9 +123,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         HapticFeedback.vibrate();
         // Display specific error message
         String errorMessage;
-        if (e.toString().contains('mentor profile')) {
-          errorMessage = AppLocalizations.of(context)!.signUpScreen_mentorProfileFailed;
-        } else if (e.toString().contains('already exist')) {
+        if (e.toString().contains('already exist')) {
           errorMessage = AppLocalizations.of(context)!.signUpScreen_alreadyExists;
         } else {
           errorMessage = AppLocalizations.of(context)!.signUpScreen_registrationFailed(e.toString());
@@ -310,7 +307,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     border: const OutlineInputBorder(),
                   ),
                 ),
-
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _bioController,
