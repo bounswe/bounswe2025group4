@@ -34,17 +34,14 @@ const MentorshipPage = () => {
       }
 
       try {
-        await getMentorProfile(user.id);
-        setHasMentorProfile(true);
+        const profile = await getMentorProfile(user.id);
+        setHasMentorProfile(!!profile);
       } catch (err: any) {
-        // If 404, user doesn't have a profile (this is expected)
-        if (err?.response?.status === 404) {
-          setHasMentorProfile(false);
-        } else {
-          // Other errors - assume no profile
+        // Other errors - assume no profile, only log if it's not a network error
+        if (err?.code !== 'ERR_NETWORK') {
           console.error('Error checking mentor profile:', err);
-          setHasMentorProfile(false);
         }
+        setHasMentorProfile(false);
       }
 
       try {
@@ -92,8 +89,11 @@ const MentorshipPage = () => {
                   }
                 };
               }
-            } catch (err) {
-              // Profile might not exist, that's okay
+            } catch (err: any) {
+              // Profile might not exist (404) or other errors - that's okay, don't log 404s
+              if (err?.response?.status !== 404 && err?.code !== 'ERR_NETWORK') {
+                console.warn(`Could not fetch profile for mentor ${mentor.id}:`, err);
+              }
               mentorProfilesMap[mentor.id] = {};
             }
           })

@@ -84,6 +84,12 @@ export default function CreateMentorProfilePage() {
         setIsLoadingProfile(true);
         const existingProfile = await getMentorProfile(editUserId);
         
+        if (!existingProfile) {
+          // Profile doesn't exist, stay in create mode
+          setIsLoadingProfile(false);
+          return;
+        }
+        
         setFormData(prev => ({
           ...prev,
           expertise: existingProfile.expertise || [],
@@ -249,7 +255,11 @@ export default function CreateMentorProfilePage() {
                           try {
                             const { getMentorProfile } = await import('@/services/mentorship.service');
                             const profile = await getMentorProfile(user.id);
-                            navigate(`/mentorship/${profile.id}`);
+                            if (profile) {
+                              navigate(`/mentorship/${profile.id}`);
+                            } else {
+                              navigate('/mentorship');
+                            }
                           } catch (err) {
                             // If profile not found, just go to mentorship page
                             console.error('Error fetching mentor profile:', err);

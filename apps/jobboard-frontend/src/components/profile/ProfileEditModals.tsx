@@ -115,17 +115,17 @@ function Modal({ isOpen, onClose, title, children }: ModalProps): React.JSX.Elem
 
 // Edit Bio Modal
 export function EditBioModal({ isOpen, onClose, initialBio = '', onSave }: EditBioModalProps): React.JSX.Element {
-  const [bio, setBio] = useState<string>(initialBio);
+  const [bio, setBio] = useState<string>(initialBio || '');
   const { t } = useTranslation('common');
 
   useEffect(() => {
     if (isOpen) {
-      setBio(initialBio);
+      setBio(initialBio || '');
     }
   }, [isOpen, initialBio]);
 
   const handleSave = (): void => {
-    onSave(bio);
+    onSave(bio || '');
     onClose();
   };
 
@@ -137,7 +137,7 @@ export function EditBioModal({ isOpen, onClose, initialBio = '', onSave }: EditB
             {t('profile.about.modal.bioLabel')}
           </label>
           <textarea
-            value={bio}
+            value={bio || ''}
             onChange={(e) => setBio(e.target.value)}
             rows={6}
             className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none"
@@ -145,7 +145,7 @@ export function EditBioModal({ isOpen, onClose, initialBio = '', onSave }: EditB
             maxLength={1000}
           />
           <p className="text-xs text-muted-foreground mt-2">
-            {t('profile.about.modal.characterCount', { count: bio.length })}
+            {t('profile.about.modal.characterCount', { count: (bio || '').length })}
           </p>
         </div>
         <div className="flex justify-end gap-3 pt-4">

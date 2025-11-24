@@ -725,29 +725,8 @@
       "noAccepted": "No Accepted Requests",
       "noAcceptedDesc": "You haven't accepted any mentorship requests yet.",
       "noRejected": "No Rejected Requests",
-      "noRejectedDesc": "You don't have any rejected mentorship requests."
-    },
-    "mentorRequests": {
-      "title": "Mentorship Requests",
-      "subtitle": "Manage mentorship requests from mentees",
-      "pending": "Pending",
-      "accepted": "Accepted",
-      "rejected": "Rejected",
-      "mentee": "Mentee",
-      "requested": "Requested",
-      "accept": "Accept",
-      "reject": "Reject",
-      "processing": "Processing...",
-      "acceptSuccess": "Request accepted successfully!",
-      "rejectSuccess": "Request rejected.",
-      "acceptedMessage": "You have accepted this mentorship request.",
-      "rejectedMessage": "You have rejected this mentorship request.",
-      "noPending": "No Pending Requests",
-      "noPendingDesc": "You don't have any pending mentorship requests.",
-      "noAccepted": "No Accepted Requests",
-      "noAcceptedDesc": "You haven't accepted any mentorship requests yet.",
-      "noRejected": "No Rejected Requests",
-      "noRejectedDesc": "You don't have any rejected mentorship requests."
+      "noRejectedDesc": "You don't have any rejected mentorship requests.",
+      "viewProfile": "View Profile"
     }
   },
   "profile": {

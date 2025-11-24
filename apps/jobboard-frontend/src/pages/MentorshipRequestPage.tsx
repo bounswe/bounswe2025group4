@@ -89,6 +89,9 @@ const MentorshipRequestPage = () => {
         }
 
         const backendMentor = await getMentorProfile(mentorId);
+        if (!backendMentor) {
+          throw new Error('Mentor profile not found');
+        }
         const convertedMentor = convertMentorProfileToMentor(backendMentor);
         setMentor(convertedMentor);
 
@@ -562,12 +565,12 @@ const MentorshipRequestPage = () => {
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
-                        {t('mentorship.request.sendingRequest')}
+                        {t('mentorship.request.sendingRequest') || 'Sending Request...'}
                       </>
                     ) : (
                       <>
                         <Send className="h-4 w-4 mr-2" />
-                        {t('mentorship.request.sendRequest')}
+                        {t('mentorship.request.sendRequest') || 'Send Request'}
                       </>
                     )}
                   </Button>

@@ -28,10 +28,20 @@ export async function getMentors(): Promise<MentorProfileDetailDTO[]> {
 /**
  * Get a single mentor profile by ID
  * GET /api/mentorship/mentor/{userId}
+ * Returns null if profile doesn't exist (404)
  */
-export async function getMentorProfile(userId: number): Promise<MentorProfileDetailDTO> {
-  const response = await api.get<MentorProfileDetailDTO>(`/mentorship/mentor/${userId}`);
-  return response.data;
+export async function getMentorProfile(userId: number): Promise<MentorProfileDetailDTO | null> {
+  try {
+    const response = await api.get<MentorProfileDetailDTO>(`/mentorship/mentor/${userId}`);
+    return response.data;
+  } catch (error: any) {
+    // 404 is expected when user doesn't have a mentor profile - return null silently
+    if (error?.response?.status === 404) {
+      return null;
+    }
+    // Re-throw other errors
+    throw error;
+  }
 }
 
 /**

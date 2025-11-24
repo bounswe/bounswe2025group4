@@ -106,9 +106,9 @@ const MyMentorshipsPage = () => {
           convertMentorshipDetailsToMentorship(m, mentorProfilesMap[m.mentorId])
         );
         
-        // Remove duplicates by id
+        // Remove duplicates by id and mentorId combination
         const uniqueMentorships = Array.from(
-          new Map(convertedMentorships.map(m => [m.id, m])).values()
+          new Map(convertedMentorships.map(m => [`${m.id}-${m.mentorId}`, m])).values()
         );
         
         let allMentorships = uniqueMentorships;
@@ -163,9 +163,9 @@ const MyMentorshipsPage = () => {
         const converted = updatedMentorships.map((m) => 
           convertMentorshipDetailsToMentorship(m, mentorProfilesMap[m.mentorId])
         );
-        // Remove duplicates by id
+        // Remove duplicates by id and mentorId combination
         const uniqueMentorships = Array.from(
-          new Map(converted.map(m => [m.id, m])).values()
+          new Map(converted.map(m => [`${m.id}-${m.mentorId}`, m])).values()
         );
         setMentorships(uniqueMentorships);
         
@@ -238,9 +238,9 @@ const MyMentorshipsPage = () => {
         const converted = updatedMentorships.map((m) => 
           convertMentorshipDetailsToMentorship(m, mentorProfilesMap[m.mentorId])
         );
-        // Remove duplicates by id
+        // Remove duplicates by id and mentorId combination
         const uniqueMentorships = Array.from(
-          new Map(converted.map(m => [m.id, m])).values()
+          new Map(converted.map(m => [`${m.id}-${m.mentorId}`, m])).values()
         );
         setMentorships(uniqueMentorships);
         

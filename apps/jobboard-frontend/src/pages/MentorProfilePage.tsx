@@ -56,6 +56,9 @@ const MentorProfilePage = () => {
       }
 
       const backendMentor = await getMentorProfile(mentorId);
+      if (!backendMentor) {
+        throw new Error('Mentor profile not found');
+      }
       
       let mentorProfileImage: string | undefined;
       let mentorNormalProfileForConversion: PublicProfile | null = null;
@@ -674,33 +677,35 @@ const MentorProfilePage = () => {
                             </div>
                           </div>
                           
-                          <div className="flex gap-2 flex-wrap">
-                            {activeMentorship?.conversationId && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                asChild
-                                className="flex-1 min-w-[100px]"
-                              >
-                                <Link to={`/chat?mentorshipId=${activeMentorship.mentorshipRequestId}`}>
-                                  <MessageCircle className="h-4 w-4 mr-2" />
-                                  {t('mentorship.myMentorships.openChat') || 'Open Chat'}
-                                </Link>
-                              </Button>
-                            )}
-                            
-                            {menteeProfile && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                asChild
-                                className="flex-1 min-w-[100px]"
-                              >
-                                <Link to={`/profile/${requesterIdNum}`}>
-                                  {t('mentorship.profile.viewProfile') || 'View Profile'}
-                                </Link>
-                              </Button>
-                            )}
+                          <div className="flex flex-col gap-2">
+                            <div className="flex gap-2">
+                              {activeMentorship?.conversationId && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  asChild
+                                  className="flex-1"
+                                >
+                                  <Link to={`/chat?mentorshipId=${activeMentorship.mentorshipRequestId}`}>
+                                    <MessageCircle className="h-4 w-4 mr-2" />
+                                    {t('mentorship.myMentorships.openChat') || 'Open Chat'}
+                                  </Link>
+                                </Button>
+                              )}
+                              
+                              {menteeProfile && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  asChild
+                                  className="flex-1"
+                                >
+                                  <Link to={`/profile/${requesterIdNum}`}>
+                                    {t('mentorship.profile.viewProfile') || 'View Profile'}
+                                  </Link>
+                                </Button>
+                              )}
+                            </div>
                             
                             {activeMentorship?.resumeReviewId && (
                               <Button
@@ -724,11 +729,11 @@ const MentorProfilePage = () => {
                                     setCompletingRequestId(null);
                                   }
                                 }}
-                                className="flex-1 min-w-[100px]"
+                                className="w-full"
                               >
                                 {completingRequestId === request.id 
                                   ? (t('mentorship.myMentorships.completing') || 'Completing...')
-                                  : (t('mentorship.myMentorships.complete') || 'Complete')
+                                  : (t('mentorship.myMentorships.complete') || 'Complete Mentorship')
                                 }
                               </Button>
                             )}
@@ -795,34 +800,18 @@ const MentorProfilePage = () => {
                             </div>
                           </div>
                           
-                          <div className="flex gap-2 flex-wrap">
-                            {mentorship.conversationId && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                asChild
-                                className="flex-1 min-w-[100px]"
-                              >
-                                <Link to={`/chat?mentorshipId=${mentorship.mentorshipRequestId}`}>
-                                  <MessageCircle className="h-4 w-4 mr-2" />
-                                  {t('mentorship.myMentorships.openChat') || 'Open Chat'}
-                                </Link>
-                              </Button>
-                            )}
-                            
-                            {menteeProfile && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                asChild
-                                className="flex-1 min-w-[100px]"
-                              >
-                                <Link to={`/profile/${requesterIdNum}`}>
-                                  {t('mentorship.profile.viewProfile') || 'View Profile'}
-                                </Link>
-                              </Button>
-                            )}
-                          </div>
+                          {menteeProfile && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              asChild
+                              className="w-full"
+                            >
+                              <Link to={`/profile/${requesterIdNum}`}>
+                                {t('mentorship.profile.viewProfile') || 'View Profile'}
+                              </Link>
+                            </Button>
+                          )}
                         </div>
                       );
                     })}

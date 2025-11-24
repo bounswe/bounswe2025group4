@@ -250,47 +250,62 @@ const MentorRequestsPage = () => {
           )}
 
           {isPending && (
-            <div className="flex gap-2 pt-2">
-              <Button
-                size="sm"
-                onClick={() => handleRespond(request.id, true)}
-                disabled={isResponding}
-                className="flex-1"
-              >
-                {isResponding ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    {t('mentorship.mentorRequests.processing')}
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    {t('mentorship.mentorRequests.accept')}
-                  </>
-                )}
-              </Button>
+            <div className="space-y-2 pt-2">
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => handleRespond(request.id, true)}
+                  disabled={isResponding}
+                  className="flex-1"
+                >
+                  {isResponding ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {t('mentorship.mentorRequests.processing')}
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      {t('mentorship.mentorRequests.accept')}
+                    </>
+                  )}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleRespond(request.id, false)}
+                  disabled={isResponding}
+                  className="flex-1"
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  {t('mentorship.mentorRequests.reject')}
+                </Button>
+              </div>
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => handleRespond(request.id, false)}
-                disabled={isResponding}
-                className="flex-1"
+                asChild
+                className="w-full"
               >
-                <XCircle className="h-4 w-4 mr-2" />
-                {t('mentorship.mentorRequests.reject')}
+                <Link to={`/profile/${request.requesterId}`}>
+                  {t('mentorship.mentorRequests.viewProfile') || 'View Profile'}
+                </Link>
               </Button>
             </div>
           )}
 
           {!isPending && (
-            <div className="pt-2">
-              <p className="text-sm text-muted-foreground">
-                {request.status.toUpperCase() === 'ACCEPTED'
-                  ? t('mentorship.mentorRequests.acceptedMessage')
-                  : (request.status.toUpperCase() === 'REJECTED' || request.status.toUpperCase() === 'DECLINED')
-                  ? t('mentorship.mentorRequests.rejectedMessage')
-                  : `Status: ${request.status}`}
-              </p>
+            <div className="flex gap-2 pt-2">
+              <Button
+                size="sm"
+                variant="outline"
+                asChild
+                className="flex-1"
+              >
+                <Link to={`/profile/${request.requesterId}`}>
+                  {t('mentorship.mentorRequests.viewProfile') || 'View Profile'}
+                </Link>
+              </Button>
             </div>
           )}
         </CardContent>
