@@ -189,7 +189,7 @@ describe('Public Profile Route Integration', () => {
       // Assert
       await waitFor(() => {
         expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
-        expect(screen.getByText('This is a public profile view. Skills and interests are not displayed for privacy.')).toBeInTheDocument();
+        expect(screen.getByText('profile.public.note')).toBeInTheDocument();
       });
 
       // Should not render private profile elements
@@ -245,7 +245,7 @@ describe('Public Profile Route Integration', () => {
       expect(router.state.location.pathname).toBe('/profile/456');
       
       // Tab navigation shouldn't change URL
-      const activityTab = screen.getByRole('button', { name: 'Activity' });
+      const activityTab = screen.getByRole('button', { name: 'profile.tabs.activity' });
       expect(activityTab).toBeInTheDocument();
       
       // URL should still be the same
