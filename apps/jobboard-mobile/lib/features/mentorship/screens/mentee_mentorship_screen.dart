@@ -11,6 +11,7 @@ import '../providers/mentor_provider.dart';
 import './direct_message_screen.dart';
 import './mentor_profile_screen.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import 'package:collection/collection.dart';
 
 /// -------------------- FIND MENTORS TAB --------------------
 class FindMentorsTab extends StatefulWidget {
@@ -222,7 +223,9 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
               final expertiseText = mentor.expertise.isNotEmpty
                   ? mentor.expertise.join(', ')
                   : 'Mentor';
-
+              final resumeId = mentorProvider.menteeRequests
+                  .firstWhereOrNull((r) => r.mentorId == mentor.id)
+                  ?.resumeReviewId;
               return MentorCard(
                 mentorId: mentor.id,
                 name: mentor.username,
@@ -234,7 +237,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
                 onTap: () => _navigateToMentorProfile(
                   mentor.id,          // mentorId
                   mentor.username,    // mentorName
-                  null,               // No resumeReviewId when browsing mentors
+                  resumeId,               // No resumeReviewId when browsing mentors
                 ),
                 onRequestTap: () => _showRequestMentorshipDialog(
                   mentor.id,
