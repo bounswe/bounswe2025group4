@@ -182,7 +182,7 @@ export default function EmployerJobPostDetailsPage() {
                       key={index}
                       className="inline-block rounded-md bg-primary/10 px-3 py-1 text-sm text-primary"
                     >
-                      {tag}
+                      {t(`ethicalTags.tags.${tag}`, tag)}
                     </span>
                   ))}
                 </div>
