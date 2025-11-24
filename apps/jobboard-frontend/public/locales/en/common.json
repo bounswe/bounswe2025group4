@@ -269,6 +269,12 @@
       "jobs": "Jobs"
     },
     "editJobPost": "Edit Job Post",
+    "loadError": "Failed to load job details. Please try again later.",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "submitError": "Failed to update job posting. Please try again.",
+    "cancel": "Cancel",
+    "saving": "Saving...",
     "jobDescription": "Job Description",
     "salaryRange": "Salary Range",
     "location": "Location",
@@ -582,6 +588,26 @@
       "activity": "Activity",
       "posts": "Posts"
     },
+    "create": {
+      "title": "Create Your Profile",
+      "description": "Welcome! Let's create your professional profile to get started.",
+      "fields": {
+        "firstName": {
+          "label": "First Name",
+          "placeholder": "Enter your first name"
+        },
+        "lastName": {
+          "label": "Last Name",
+          "placeholder": "Enter your last name"
+        },
+        "bio": {
+          "label": "Bio (Optional)",
+          "placeholder": "Tell us about yourself..."
+        }
+      },
+      "helper": "Share a brief description about yourself and your professional background",
+      "submit": "Create Profile"
+    },
     "page": {
       "loadErrorTitle": "Failed to load profile",
       "emptyTitle": "No profile found",
@@ -859,21 +885,7 @@
       "replyLabel": "{{value}} reply",
       "repliesLabel": "{{value}} replies",
       "likeLabel": "{{value}} like",
-      "likesLabel": "{{value}} likes",
-      "items": [
-        {
-          "title": "How to improve user research techniques",
-          "date": "3 days ago"
-        },
-        {
-          "title": "My journey into product design",
-          "date": "1 week ago"
-        },
-        {
-          "title": "Tools I use daily as a designer",
-          "date": "2 weeks ago"
-        }
-      ]
+      "likesLabel": "{{value}} likes"
     }
   },
   "jobApplication": {
@@ -1074,6 +1086,7 @@
     "inclusiveOpportunityDescription": "Mark this position as an inclusive opportunity, welcoming candidates from diverse backgrounds and abilities",
     "submit": "Publish Job Posting",
     "submitting": "Publishing...",
+    "saving": "Saving...",
     "submitError": "Failed to create job posting. Please try again.",
     "submitSuccess": "Job post created successfully!"
   },
@@ -1189,7 +1202,8 @@
   "common": {
     "loading": "Loading...",
     "goHome": "Go to Homepage",
-    "edited": "Edited"
+    "edited": "Edited",
+    "cancel": "Cancel"
   },
   "chat": {
     "conversations": "Conversations",
@@ -1223,6 +1237,66 @@
       "placeholder": "Select a workplace",
       "noWorkplaces": "No workplaces available",
       "fetchError": "Failed to load workplaces"
+    },
+    "newModal": {
+      "title": "New Workplace"
+    },
+    "createModal": {
+      "title": "Create Workplace",
+      "description": "Add your company to the platform and start building your reputation",
+      "companyName": "Company Name",
+      "companyNamePlaceholder": "Enter company name",
+      "sector": "Sector",
+      "sectorPlaceholder": "e.g., Technology, Healthcare",
+      "location": "Location",
+      "website": "Website",
+      "shortDescription": "Short Description",
+      "detailedDescription": "Detailed Description",
+      "submit": "Create Workplace",
+      "workplaceCreated": "Workplace Created!",
+      "workplaceCreatedMessage": "Your workplace has been created successfully.",
+      "errors": {
+        "companyNameRequired": "Company name is required",
+        "sectorRequired": "Sector is required",
+        "locationRequired": "Location is required",
+        "ethicalTagsRequired": "At least one ethical tag is required"
+      },
+      "creating": "Creating...",
+      "redirecting": "Redirecting to your new workplace..."
+    },
+    "joinModal": {
+      "title": "Join a Workplace",
+      "searchPlaceholder": "Search workplaces...",
+      "requestTitle": "Request to Join",
+      "noteLabel": "Note to Administrators",
+      "notePlaceholder": "Optional message explaining why you'd like to join this workplace...",
+      "submitRequest": "Submit Request",
+      "submittingRequest": "Submitting...",
+      "back": "Back",
+      "alreadyMember": "You are already an employer of this workplace",
+      "requestSubmitted": "Request Submitted",
+      "requestSubmittedMessage": "Your request to join {{company}} has been submitted successfully. You will be notified once it's reviewed.",
+      "close": "Close"
+    },
+    "settings": {
+      "saving": "Saving...",
+      "title": "Workplace Settings",
+      "subtitle": "Manage your workplace information and settings",
+      "companyLogo": "Company Logo",
+      "saveImage": "Save Image",
+      "uploadImage": "Upload Image",
+      "uploading": "Uploading...",
+      "updateSuccess": "Workplace updated successfully!",
+      "notFound": {
+        "title": "Workplace not found",
+        "description": "The workplace you're looking for doesn't exist or has been removed.",
+        "goToWorkplaces": "Go to My Workplaces"
+      }
+    },
+    "profile": {
+      "title": "Workplace Profile",
+      "notFound": "Workplace not found",
+      "employers": "Employers"
     }
   }
 }

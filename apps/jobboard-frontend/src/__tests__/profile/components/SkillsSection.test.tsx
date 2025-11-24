@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { SkillsSection } from '@/components/profile/SkillsSection';
 
-vi.mock('react-i18next', async () => await import('@/test/react-i18next'));
+vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 
 const sampleSkills = [
   { id: 1, name: 'TypeScript', level: 'Advanced' },
