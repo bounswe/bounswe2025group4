@@ -33,6 +33,7 @@ import WorkplaceSettingsPage from './pages/WorkplaceSettingsPage';
 import WorkplacesPage from './pages/WorkplacesPage';
 import ChatPage from './pages/ChatPage';
 import PublicProfilePage from './pages/PublicProfilePage';
+import ResumeReviewPage from './pages/ResumeReviewPage';
 
 const router = createBrowserRouter([
   {
@@ -168,6 +169,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <MyMentorshipsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'resume-review/:resumeReviewId',
+        element: (
+          <ProtectedRoute>
+            <ResumeReviewPage />
           </ProtectedRoute>
         ),
       },

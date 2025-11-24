@@ -24,6 +24,8 @@ public class Message {
     @Lob
     private String content;
 
+    private String fileUrl; // URL of uploaded file attachment
+
     private LocalDateTime timestamp;
 
 }

@@ -9,6 +9,8 @@ import type {
   MentorshipDetailsDTO,
   RespondToRequestDTO,
   CreateRatingDTO,
+  ResumeReviewDTO,
+  ResumeFileResponseDTO,
 } from '@/types/api.types';
 
 /**
@@ -135,5 +137,47 @@ export async function completeMentorship(resumeReviewId: number): Promise<void> 
  */
 export async function rateMentor(data: CreateRatingDTO): Promise<void> {
   await api.post('/mentorship/ratings', data);
+}
+
+/**
+ * Get resume review details
+ * GET /api/mentorship/{resumeReviewId}
+ */
+export async function getResumeReview(resumeReviewId: number): Promise<ResumeReviewDTO> {
+  const response = await api.get<ResumeReviewDTO>(`/mentorship/${resumeReviewId}`);
+  return response.data;
+}
+
+/**
+ * Get resume file URL
+ * GET /api/mentorship/{resumeReviewId}/file
+ */
+export async function getResumeFileUrl(resumeReviewId: number): Promise<string> {
+  const response = await api.get<{ fileUrl: string }>(`/mentorship/${resumeReviewId}/file`);
+  return response.data.fileUrl;
+}
+
+/**
+ * Upload resume file
+ * POST /api/mentorship/{resumeReviewId}/file
+ */
+export async function uploadResumeFile(resumeReviewId: number, file: File): Promise<ResumeFileResponseDTO> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await api.post<ResumeFileResponseDTO>(`/mentorship/${resumeReviewId}/file`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+}
+
+/**
+ * Close mentorship
+ * PATCH /api/mentorship/review/{resumeReviewId}/close
+ */
+export async function closeMentorship(resumeReviewId: number): Promise<void> {
+  await api.patch(`/mentorship/review/${resumeReviewId}/close`);
 }
 

@@ -336,6 +336,30 @@ export interface ChatMessageDTO {
   senderAvatar?: string;
 }
 
+// ============================================================================
+// RESUME REVIEW
+// ============================================================================
+
+/**
+ * Resume review response from API
+ */
+export interface ResumeReviewDTO {
+  resumeReviewId: number;
+  fileUrl: string | null;
+  reviewStatus: string; // ACTIVE, COMPLETED, CLOSED
+  feedback: string | null;
+}
+
+/**
+ * Resume file upload response
+ */
+export interface ResumeFileResponseDTO {
+  resumeReviewId: number;
+  fileUrl: string;
+  reviewStatus: string;
+  uploadedAt: string; // ISO 8601 date-time string
+}
+
 /**
  * Request payload for creating a chat message
  */

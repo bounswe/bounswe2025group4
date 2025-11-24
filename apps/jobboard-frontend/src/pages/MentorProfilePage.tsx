@@ -708,34 +708,46 @@ const MentorProfilePage = () => {
                             </div>
                             
                             {activeMentorship?.resumeReviewId && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                disabled={completingRequestId === request.id}
-                                onClick={async () => {
-                                  if (!activeMentorship.resumeReviewId) return;
-                                  
-                                  setCompletingRequestId(request.id);
-                                  try {
-                                    await completeMentorship(activeMentorship.resumeReviewId);
-                                    toast.success(t('mentorship.myMentorships.completeSuccess') || 'Mentorship completed successfully!');
-                                    // Refresh data
-                                    fetchMentorProfile();
-                                  } catch (err: any) {
-                                    console.error('Error completing mentorship:', err);
-                                    const errorMessage = err?.response?.data?.message || err?.message || t('mentorship.myMentorships.completeError') || 'Failed to complete mentorship';
-                                    toast.error(errorMessage);
-                                  } finally {
-                                    setCompletingRequestId(null);
+                              <div className="flex gap-2 w-full">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  asChild
+                                  className="flex-1"
+                                >
+                                  <Link to={`/resume-review/${activeMentorship.resumeReviewId}`}>
+                                    {t('mentorship.profile.reviewResume') || 'Review Resume'}
+                                  </Link>
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={completingRequestId === request.id}
+                                  onClick={async () => {
+                                    if (!activeMentorship.resumeReviewId) return;
+                                    
+                                    setCompletingRequestId(request.id);
+                                    try {
+                                      await completeMentorship(activeMentorship.resumeReviewId);
+                                      toast.success(t('mentorship.myMentorships.completeSuccess') || 'Mentorship completed successfully!');
+                                      // Refresh data
+                                      fetchMentorProfile();
+                                    } catch (err: any) {
+                                      console.error('Error completing mentorship:', err);
+                                      const errorMessage = err?.response?.data?.message || err?.message || t('mentorship.myMentorships.completeError') || 'Failed to complete mentorship';
+                                      toast.error(errorMessage);
+                                    } finally {
+                                      setCompletingRequestId(null);
+                                    }
+                                  }}
+                                  className="flex-1"
+                                >
+                                  {completingRequestId === request.id 
+                                    ? (t('mentorship.myMentorships.completing') || 'Completing...')
+                                    : (t('mentorship.myMentorships.complete') || 'Complete Mentorship')
                                   }
-                                }}
-                                className="w-full"
-                              >
-                                {completingRequestId === request.id 
-                                  ? (t('mentorship.myMentorships.completing') || 'Completing...')
-                                  : (t('mentorship.myMentorships.complete') || 'Complete Mentorship')
-                                }
-                              </Button>
+                                </Button>
+                              </div>
                             )}
                           </div>
                         </div>

@@ -624,6 +624,7 @@
       "viewMentorship": "View My Mentorship",
       "noSpecialties": "No specialties specified",
       "noLanguages": "No languages specified",
+      "viewProfile": "View Profile",
       "complete": "Complete",
       "completing": "Completing...",
       "completeSuccess": "Mentorship completed successfully!",
@@ -631,7 +632,79 @@
       "alreadyRequested": "You already have a pending or active mentorship request with this mentor.",
       "requestSent": "Mentorship request sent successfully!",
       "requestError": "Failed to send mentorship request",
-      "requesting": "Sending..."
+      "requesting": "Sending...",
+      "reviewResume": "Review Resume"
+    },
+    "resumeReview": {
+      "title": {
+        "mentee": "Upload Resume",
+        "mentor": "Review Resume"
+      },
+      "subtitle": {
+        "mentee": "Upload your resume for mentor review",
+        "mentor": "Review and provide feedback on the mentee's resume"
+      },
+      "breadcrumb": {
+        "myMentorships": "My Mentorships",
+        "resumeReview": "Resume Review"
+      },
+      "back": "Back",
+      "backToMentorships": "Back to My Mentorships",
+      "notFound": "Resume Review Not Found",
+      "status": {
+        "active": "Active",
+        "completed": "Completed",
+        "closed": "Closed"
+      },
+      "openChat": "Open Chat",
+      "resume": "Resume",
+      "downloadResume": "Download Resume",
+      "noResume": "No resume uploaded yet",
+      "selectFile": "Select File",
+      "upload": "Upload Resume",
+      "uploadNew": "Upload New Resume",
+      "uploading": "Uploading...",
+      "feedback": "Feedback",
+      "writeFeedback": "Write your feedback",
+      "feedbackPlaceholder": "Provide constructive feedback on the resume...",
+      "saveFeedback": "Save Feedback",
+      "saving": "Saving...",
+      "currentFeedback": "Current Feedback:",
+      "feedbackFromMentor": "Feedback from your mentor:",
+      "waitingForFeedback": "Waiting for mentor feedback...",
+      "feedbackNote": "Note: Feedback feature is coming soon. Please provide feedback via chat for now.",
+      "feedback.info": "Feedback feature is coming soon. Please provide feedback via chat for now.",
+      "noFeedback": "No feedback provided yet",
+      "actions": "Actions",
+      "complete": "Complete Mentorship",
+      "completing": "Completing...",
+      "close": "Close Mentorship",
+      "closing": "Closing...",
+      "success": {
+        "upload": "Resume uploaded successfully!",
+        "feedback": "Feedback saved successfully!",
+        "complete": "Mentorship completed successfully!",
+        "close": "Mentorship closed successfully!"
+      },
+      "error": {
+        "load": "Failed to load resume review",
+        "upload": "Failed to upload resume",
+        "feedback": "Failed to save feedback",
+        "invalidFileType": "Invalid file type. Please upload PDF, DOC, or DOCX files.",
+        "fileTooLarge": "File size must be less than 10MB.",
+        "complete": "Failed to complete mentorship",
+        "close": "Failed to close mentorship"
+      },
+      "info": {
+        "title": {
+          "mentee": "About Resume Upload",
+          "mentor": "About Resume Review"
+        },
+        "description": {
+          "mentee": "Upload your resume for your mentor to review. You can update it anytime.",
+          "mentor": "Review the mentee's resume and provide feedback. You can complete or close the mentorship when done."
+        }
+      }
     },
     "errors": {
       "timeout": "Connection timeout. Please check if the backend server is running.",
@@ -698,6 +771,7 @@
       "openChat": "Open Chat",
       "writeReview": "Write Review",
       "viewProfile": "View Profile",
+      "uploadResume": "Upload Resume",
       "waitingForResponse": "Waiting for Response",
       "viewDetails": "View Details",
       "complete": "Complete Mentorship",

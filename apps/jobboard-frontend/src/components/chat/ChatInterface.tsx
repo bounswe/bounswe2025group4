@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, Paperclip, MoreVertical, ArrowLeft } from 'lucide-react';
+import { Send, MoreVertical, ArrowLeft } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 import type { ChatRoomForUser, ChatMessage } from '@/types/chat';
 
@@ -123,34 +123,22 @@ const ChatInterface = ({ room, messages, onSendMessage, currentUserId = 'current
       {/* Input Area */}
       <div className="p-4 border-t border-border bg-background">
         <div className="flex items-end gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={t('chat.attachFile')}
-            title={t('chat.featureComingSoon')}
-            disabled
-            aria-disabled="true"
-            className="flex-shrink-0"
-          >
-            <Paperclip className="h-5 w-5" />
-          </Button>
-
           <Input
             ref={inputRef}
             type="text"
-            placeholder={t('chat.typeMessage')}
+            placeholder={t('chat.typeMessage') || 'Type a message...'}
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
             onKeyDown={handleKeyPress}
             className="flex-1"
-            aria-label={t('chat.messageInput')}
+            aria-label={t('chat.messageInput') || 'Message input'}
           />
 
           <Button
             onClick={handleSendMessage}
             disabled={!messageInput.trim()}
             size="icon"
-            aria-label={t('chat.sendMessage')}
+            aria-label={t('chat.sendMessage') || 'Send message'}
             className="flex-shrink-0"
           >
             <Send className="h-5 w-5" />
@@ -162,4 +150,3 @@ const ChatInterface = ({ room, messages, onSendMessage, currentUserId = 'current
 };
 
 export default ChatInterface;
-

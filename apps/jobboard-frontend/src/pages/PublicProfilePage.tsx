@@ -22,34 +22,54 @@ export default function PublicProfilePage() {
 
   // Mock data for activity and posts (since these are not part of the public profile)
   const mockActivity: Activity[] = useMemo(() => {
-    const items = t('profile.activity.items', {
-      returnObjects: true,
-    }) as Array<Pick<Activity, 'type' | 'text' | 'date'>>;
+    try {
+      const items = t('profile.activity.items', {
+        returnObjects: true,
+      }) as Array<Pick<Activity, 'type' | 'text' | 'date'>>;
 
-    return items.map((item, index) => ({
-      id: index + 1,
-      ...item,
-    }));
+      // Check if items is an array
+      if (!Array.isArray(items)) {
+        return [];
+      }
+
+      return items.map((item, index) => ({
+        id: index + 1,
+        ...item,
+      }));
+    } catch (error) {
+      console.error('Error loading activity items:', error);
+      return [];
+    }
   }, [t]);
 
   const mockPosts: Post[] = useMemo(() => {
-    const items = t('profile.posts.items', {
-      returnObjects: true,
-    }) as Array<Pick<Post, 'title' | 'date'>>;
+    try {
+      const items = t('profile.posts.items', {
+        returnObjects: true,
+      }) as Array<Pick<Post, 'title' | 'date'>>;
 
-    const defaults = [
-      { replies: 12, likes: 45 },
-      { replies: 8, likes: 32 },
-      { replies: 24, likes: 67 },
-    ];
+      // Check if items is an array
+      if (!Array.isArray(items)) {
+        return [];
+      }
 
-    return items.map((item, index) => ({
-      id: index + 1,
-      title: item.title,
-      date: item.date,
-      replies: defaults[index]?.replies ?? 0,
-      likes: defaults[index]?.likes ?? 0,
-    }));
+      const defaults = [
+        { replies: 12, likes: 45 },
+        { replies: 8, likes: 32 },
+        { replies: 24, likes: 67 },
+      ];
+
+      return items.map((item, index) => ({
+        id: index + 1,
+        title: item.title,
+        date: item.date,
+        replies: defaults[index]?.replies ?? 0,
+        likes: defaults[index]?.likes ?? 0,
+      }));
+    } catch (error) {
+      console.error('Error loading posts items:', error);
+      return [];
+    }
   }, [t]);
 
   useEffect(() => {

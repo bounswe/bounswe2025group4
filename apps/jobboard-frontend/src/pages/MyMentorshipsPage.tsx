@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Clock, CheckCircle, XCircle, MessageCircle, Star, Calendar } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, MessageCircle, Star, Calendar, FileText } from 'lucide-react';
 import type { Mentorship, MentorshipStatus } from '@/types/mentor';
 import { useAuth } from '@/contexts/AuthContext';
 import { getMenteeMentorships, completeMentorship, rateMentor } from '@/services/mentorship.service';
@@ -346,25 +346,19 @@ const MyMentorshipsPage = () => {
                 </Link>
               </Button>
               {mentorship.resumeReviewId && (
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="flex-1"
-                  onClick={() => handleCompleteMentorship(mentorship)}
-                  disabled={completingId === mentorship.id}
-                >
-                  {completingId === mentorship.id ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
-                      {t('mentorship.myMentorships.completing') || 'Completing...'}
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      {t('mentorship.myMentorships.complete') || 'Complete Mentorship'}
-                    </>
-                  )}
-                </Button>
+                <>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    asChild
+                  >
+                    <Link to={`/resume-review/${mentorship.resumeReviewId}`}>
+                      <FileText className="h-4 w-4 mr-2" />
+                      {t('mentorship.myMentorships.uploadResume') || 'Upload Resume'}
+                    </Link>
+                  </Button>
+                </>
               )}
             </>
           )}
