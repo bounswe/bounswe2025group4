@@ -1099,6 +1099,33 @@ class AppLocalizationsTr extends AppLocalizations {
       'Lütfen en az bir etik politika seçin.';
 
   @override
+  String get createJob_selectWorkplace => 'Select Workplace';
+
+  @override
+  String get createJob_workplaceRequired => 'Please select a workplace';
+
+  @override
+  String get createJob_selectWorkplaceError =>
+      'Please select a workplace to post the job';
+
+  @override
+  String get createJob_nonProfitLabel => 'Non-Profit / Volunteer Position';
+
+  @override
+  String get createJob_nonProfitSubtitle =>
+      'This is a volunteer or non-profit position (no salary)';
+
+  @override
+  String get createJob_noWorkplacesTitle => 'No Workplaces Found';
+
+  @override
+  String get createJob_noWorkplacesMessage =>
+      'You need to create or join a workplace before you can post job openings. Create your first workplace to get started!';
+
+  @override
+  String get createJob_createWorkplace => 'Create Workplace';
+
+  @override
   String get createJob_employerError => 'Hata: İşveren hesabı doğrulanamadı.';
 
   @override
@@ -1397,6 +1424,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get jobFilter_remoteOnly => 'Sadece Uzaktan İşler';
+
+  @override
+  String get jobFilter_inclusiveOpportunity => 'Sadece Engelli Dostu';
 
   @override
   String get jobFilter_jobType => 'İş Türü';

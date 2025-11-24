@@ -2032,6 +2032,54 @@ abstract class AppLocalizations {
   /// **'Please select at least one ethical policy.'**
   String get createJob_selectPolicyError;
 
+  /// Workplace selection field label
+  ///
+  /// In en, this message translates to:
+  /// **'Select Workplace'**
+  String get createJob_selectWorkplace;
+
+  /// Workplace selection validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a workplace'**
+  String get createJob_workplaceRequired;
+
+  /// Workplace selection error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a workplace to post the job'**
+  String get createJob_selectWorkplaceError;
+
+  /// Non-profit checkbox label
+  ///
+  /// In en, this message translates to:
+  /// **'Non-Profit / Volunteer Position'**
+  String get createJob_nonProfitLabel;
+
+  /// Non-profit checkbox subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'This is a volunteer or non-profit position (no salary)'**
+  String get createJob_nonProfitSubtitle;
+
+  /// No workplaces title
+  ///
+  /// In en, this message translates to:
+  /// **'No Workplaces Found'**
+  String get createJob_noWorkplacesTitle;
+
+  /// No workplaces message
+  ///
+  /// In en, this message translates to:
+  /// **'You need to create or join a workplace before you can post job openings. Create your first workplace to get started!'**
+  String get createJob_noWorkplacesMessage;
+
+  /// Create workplace button text
+  ///
+  /// In en, this message translates to:
+  /// **'Create Workplace'**
+  String get createJob_createWorkplace;
+
   /// Employer verification error
   ///
   /// In en, this message translates to:
@@ -2529,6 +2577,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remote Jobs Only'**
   String get jobFilter_remoteOnly;
+
+  /// Inclusive opportunity filter label
+  ///
+  /// In en, this message translates to:
+  /// **'Disability-Inclusive Only'**
+  String get jobFilter_inclusiveOpportunity;
 
   /// Job type filter section
   ///

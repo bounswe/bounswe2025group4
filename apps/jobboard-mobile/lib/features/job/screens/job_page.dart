@@ -37,7 +37,6 @@ class _JobPageState extends State<JobPage> {
     'maxSalary': null,
     'isRemote': null,
     'inclusiveOpportunity': null,
-    'jobTypes': <String>[],
   };
   UserType? _userRole; // Changed type to UserType?
 
@@ -91,32 +90,20 @@ class _JobPageState extends State<JobPage> {
         // Pass the search query and filter map to the API service
         postings = await _apiService.fetchJobPostings(
           query: searchQuery,
-          title: _hasActiveFilters() ? _selectedFilters['title'] : null,
-          company: _hasActiveFilters() ? _selectedFilters['companyName'] : null,
-          ethicalTags:
-              _hasActiveFilters() &&
-                      (_selectedFilters['ethicalTags'] as List<String>)
-                          .isNotEmpty
-                  ? (_selectedFilters['ethicalTags'] as List<String>)
-                  : null,
-          minSalary:
-              _hasActiveFilters() && _selectedFilters['minSalary'] != null
-                  ? (_selectedFilters['minSalary'] as num).toInt()
-                  : null,
-          maxSalary:
-              _hasActiveFilters() && _selectedFilters['maxSalary'] != null
-                  ? (_selectedFilters['maxSalary'] as num).toInt()
-                  : null,
-          isRemote: _hasActiveFilters() ? _selectedFilters['isRemote'] : null,
+          title: _selectedFilters['title'],
+          company: _selectedFilters['companyName'],
+          ethicalTags: (_selectedFilters['ethicalTags'] as List<String>).isNotEmpty
+              ? (_selectedFilters['ethicalTags'] as List<String>)
+              : null,
+          minSalary: _selectedFilters['minSalary'] != null
+              ? (_selectedFilters['minSalary'] as num).toInt()
+              : null,
+          maxSalary: _selectedFilters['maxSalary'] != null
+              ? (_selectedFilters['maxSalary'] as num).toInt()
+              : null,
+          isRemote: _selectedFilters['isRemote'] == true ? true : null,
           inclusiveOpportunity:
-              _hasActiveFilters()
-                  ? _selectedFilters['inclusiveOpportunity']
-                  : null,
-          additionalFilters:
-              _hasActiveFilters() &&
-                      (_selectedFilters['jobTypes'] as List<String>).isNotEmpty
-                  ? {'jobTypes': _selectedFilters['jobTypes']}
-                  : null,
+              _selectedFilters['inclusiveOpportunity'] == true ? true : null,
         );
       }
       if (mounted) {
@@ -147,8 +134,8 @@ class _JobPageState extends State<JobPage> {
         (_selectedFilters['ethicalTags'] as List<String>).isNotEmpty ||
         _selectedFilters['minSalary'] != null ||
         _selectedFilters['maxSalary'] != null ||
-        _selectedFilters['isRemote'] != null ||
-        (_selectedFilters['jobTypes'] as List<String>).isNotEmpty;
+        _selectedFilters['isRemote'] == true ||
+        _selectedFilters['inclusiveOpportunity'] == true;
   }
 
   // --- Event Handlers ---
@@ -200,8 +187,10 @@ class _JobPageState extends State<JobPage> {
         filtersChanged = true;
       }
 
-      // Compare boolean filter
-      if (_selectedFilters['isRemote'] != result['isRemote']) {
+      // Compare boolean filters
+      if (_selectedFilters['isRemote'] != result['isRemote'] ||
+          _selectedFilters['inclusiveOpportunity'] !=
+              result['inclusiveOpportunity']) {
         filtersChanged = true;
       }
 
@@ -214,16 +203,6 @@ class _JobPageState extends State<JobPage> {
       );
       if (currentEthicalTags.length != newEthicalTags.length ||
           !currentEthicalTags.containsAll(newEthicalTags)) {
-        filtersChanged = true;
-      }
-
-      // Compare lists (jobTypes)
-      final currentJobTypes = Set<String>.from(
-        _selectedFilters['jobTypes'] as List<String>,
-      );
-      final newJobTypes = Set<String>.from(result['jobTypes'] as List<String>);
-      if (currentJobTypes.length != newJobTypes.length ||
-          !currentJobTypes.containsAll(newJobTypes)) {
         filtersChanged = true;
       }
 

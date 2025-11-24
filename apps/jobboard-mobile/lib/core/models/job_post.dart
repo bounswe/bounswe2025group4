@@ -84,7 +84,7 @@ class JobPost {
           json['remote'] ?? (throw Exception('Missing required field: remote')),
       inclusiveOpportunity: json['inclusiveOpportunity'] ?? false,
       nonProfit: json['nonProfit'] as bool?,
-      contactInformation: json['contact'],
+      contactInformation: json['contact'] as String?,
       postedDate: parseDate(json['postedDate']),
       minSalary: json['minSalary'] as int?,
       maxSalary: json['maxSalary'] as int?,

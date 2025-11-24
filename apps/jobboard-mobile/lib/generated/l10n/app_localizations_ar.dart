@@ -1087,6 +1087,33 @@ class AppLocalizationsAr extends AppLocalizations {
       'الرجاء اختيار سياسة أخلاقية واحدة على الأقل.';
 
   @override
+  String get createJob_selectWorkplace => 'Select Workplace';
+
+  @override
+  String get createJob_workplaceRequired => 'Please select a workplace';
+
+  @override
+  String get createJob_selectWorkplaceError =>
+      'Please select a workplace to post the job';
+
+  @override
+  String get createJob_nonProfitLabel => 'Non-Profit / Volunteer Position';
+
+  @override
+  String get createJob_nonProfitSubtitle =>
+      'This is a volunteer or non-profit position (no salary)';
+
+  @override
+  String get createJob_noWorkplacesTitle => 'No Workplaces Found';
+
+  @override
+  String get createJob_noWorkplacesMessage =>
+      'You need to create or join a workplace before you can post job openings. Create your first workplace to get started!';
+
+  @override
+  String get createJob_createWorkplace => 'Create Workplace';
+
+  @override
   String get createJob_employerError =>
       'خطأ: لا يمكن التحقق من حساب صاحب العمل.';
 
@@ -1383,6 +1410,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get jobFilter_remoteOnly => 'الوظائف عن بُعد فقط';
+
+  @override
+  String get jobFilter_inclusiveOpportunity =>
+      'وظائف شاملة للأشخاص ذوي الإعاقة فقط';
 
   @override
   String get jobFilter_jobType => 'نوع الوظيفة';
