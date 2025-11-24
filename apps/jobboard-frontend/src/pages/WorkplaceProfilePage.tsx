@@ -174,12 +174,12 @@ export default function WorkplaceProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Workplace not found</h2>
+          <h2 className="text-2xl font-bold mb-2">{t('workplace.profile.notFound')}</h2>
           <p className="text-muted-foreground mb-4">
-            The workplace you're looking for doesn't exist or has been removed.
+            {t('workplace.profile.notFoundDescription')}
           </p>
           <Link to="/">
-            <Button>Go Home</Button>
+            <Button>{t('common.goHome')}</Button>
           </Link>
         </div>
       </div>
@@ -211,7 +211,7 @@ export default function WorkplaceProfilePage() {
                   <Link to={`/employer/workplace/${workplace.id}/settings`}>
                     <Button variant="outline" size="sm">
                       <Settings className="h-4 w-4" />
-                      Settings
+                      {t('common.settings')}
                     </Button>
                   </Link>
                 )}
@@ -231,7 +231,7 @@ export default function WorkplaceProfilePage() {
                     <Users className="h-4 w-4" />
                     <span>
                       {workplace.employers.length}{' '}
-                      {workplace.employers.length === 1 ? 'employer' : 'employers'}
+                      {workplace.employers.length === 1 ? t('common.employer') : t('common.employers')}
                     </span>
                   </div>
                 )}
@@ -245,7 +245,7 @@ export default function WorkplaceProfilePage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-primary hover:underline"
                   >
-                    Visit Website
+                    {t('common.visitWebsite')}
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 </div>
@@ -260,7 +260,7 @@ export default function WorkplaceProfilePage() {
             {/* About */}
             {workplace.detailedDescription && (
               <Card className="p-6">
-                <h2 className="text-xl font-bold">About</h2>
+                <h2 className="text-xl font-bold">{t('workplace.profile.aboutCompany')}</h2>
                 <p className="text-foreground leading-relaxed whitespace-pre-wrap">
                   {workplace.detailedDescription}
                 </p>
@@ -270,7 +270,7 @@ export default function WorkplaceProfilePage() {
             {/* Ethical Tags */}
             {workplace.ethicalTags && workplace.ethicalTags.length > 0 && (
               <Card className="p-6">
-                <h2 className="text-xl font-bold">Ethical Commitments</h2>
+                <h2 className="text-xl font-bold">{t('workplace.profile.ethicalCommitments')}</h2>
                 <div className="space-y-2">
                   {workplace.ethicalTags.map((tag) => (
                     <div key={tag} className="flex items-center gap-2">
@@ -286,12 +286,12 @@ export default function WorkplaceProfilePage() {
             {workplace.employers && workplace.employers.length > 0 && (
               <Card className="p-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Employers</h2>
+                  <h2 className="text-xl font-bold">{t('workplace.profile.employers')}</h2>
                   {isOwner && (
                     <Button variant="outline" asChild className="relative">
                       <Link to={`/employer/workplace/${workplace.id}/requests`}>
                         <Users className="h-4 w-4"/>
-                        Manage Requests
+                        {t('workplace.profile.manageRequests')}
                         {hasPendingRequests && (
                           <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-background" />
                         )}
@@ -319,7 +319,7 @@ export default function WorkplaceProfilePage() {
                               </p>
                               <p className="text-xs text-muted-foreground truncate">{employer.email}</p>
                               <Badge variant="outline" className="mt-1 text-xs">
-                                {employer.role}
+                                {t(`common.${employer.role}`)}
                               </Badge>
                             </div>
                           </div>
@@ -334,7 +334,7 @@ export default function WorkplaceProfilePage() {
             {/* Workplace Reviews */}
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Reviews</h2>
+                <h2 className="text-2xl font-bold">{t('reviews.workplaceReviews')}</h2>
                 {canWriteReview && (
                   <ReviewFormDialog
                     workplaceId={workplace.id}
@@ -421,14 +421,14 @@ export default function WorkplaceProfilePage() {
           <div className="space-y-6">
             {/* Current Job Openings */}
             <Card className="p-6">
-              <h3 className="text-lg font-bold">Current Job Openings</h3>
+              <h3 className="text-lg font-bold">{t('workplace.profile.currentJobOpenings')}</h3>
               {jobsLoading ? (
                 <div className="text-center py-4">
-                  <p className="text-sm text-muted-foreground">Loading jobs...</p>
+                  <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
                 </div>
               ) : jobs.length === 0 ? (
                 <div className="text-center py-4">
-                  <p className="text-sm text-muted-foreground">No job openings at the moment.</p>
+                  <p className="text-sm text-muted-foreground">{t('workplace.profile.noJobOpenings')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -461,7 +461,7 @@ export default function WorkplaceProfilePage() {
                               </p>
                             )}
                             <Button className="w-full mt-3" size="sm" variant="outline">
-                              View Job
+                              {t('common.viewJob')}
                             </Button>
                           </div>
                         </div>
@@ -471,7 +471,7 @@ export default function WorkplaceProfilePage() {
                   {jobs.length > 5 && (
                     <Link to="/jobs" className="block">
                       <Button className="w-full" variant="outline" size="sm">
-                        View All Jobs ({jobs.length})
+                        {t('workplace.profile.viewAllJobs', { count: jobs.length })}
                       </Button>
                     </Link>
                   )}

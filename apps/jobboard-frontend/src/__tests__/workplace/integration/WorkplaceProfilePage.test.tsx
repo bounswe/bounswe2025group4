@@ -7,6 +7,8 @@ import { http, HttpResponse } from 'msw';
 import { API_BASE_URL } from '@/test/handlers';
 import { AuthProvider } from '@/contexts/AuthContext';
 
+vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
+
 // Mock jobs service to avoid errors
 vi.mock('@/services/jobs.service', () => ({
   getJobsByEmployer: vi.fn().mockResolvedValue([]),
@@ -29,7 +31,7 @@ describe('WorkplaceProfilePage Integration', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.queryByText(/Loading/i)).not.toBeInTheDocument();
+      expect(screen.queryByText('common.loading')).not.toBeInTheDocument();
     });
 
     expect(screen.getByText('Tech Corp')).toBeInTheDocument();
@@ -54,7 +56,7 @@ describe('WorkplaceProfilePage Integration', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('Reviews')).toBeInTheDocument();
+      expect(screen.getByText('reviews.workplaceReviews')).toBeInTheDocument();
     });
 
     // Check for review stats
@@ -72,7 +74,7 @@ describe('WorkplaceProfilePage Integration', () => {
     renderPage('999');
 
     await waitFor(() => {
-      expect(screen.getByText('Workplace not found')).toBeInTheDocument();
+      expect(screen.getByText('workplace.profile.notFound')).toBeInTheDocument();
     });
   });
 
@@ -80,7 +82,7 @@ describe('WorkplaceProfilePage Integration', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('Employers')).toBeInTheDocument();
+      expect(screen.getByText('workplace.profile.employers')).toBeInTheDocument();
       expect(screen.getByText('employer1')).toBeInTheDocument();
     });
   });
