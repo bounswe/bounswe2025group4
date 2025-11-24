@@ -32,10 +32,19 @@ export async function getMentors(): Promise<MentorProfileDetailDTO[]> {
  */
 export async function getMentorProfile(userId: number): Promise<MentorProfileDetailDTO | null> {
   try {
-    const response = await api.get<MentorProfileDetailDTO>(`/mentorship/mentor/${userId}`);
+    // Use validateStatus to treat 404 as success (not an error) to prevent console logging
+    const response = await api.get<MentorProfileDetailDTO>(`/mentorship/mentor/${userId}`, {
+      validateStatus: (status) => status === 200 || status === 404
+    });
+    
+    // If 404, return null
+    if (response.status === 404) {
+      return null;
+    }
+    
     return response.data;
   } catch (error: any) {
-    // 404 is expected when user doesn't have a mentor profile - return null silently
+    // Fallback: if validateStatus didn't work, check for 404
     if (error?.response?.status === 404) {
       return null;
     }
