@@ -92,17 +92,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Positioned(
-                top: 16,
-                right: 24,
-                child: ThemeToggleSwitch(),
-              ),
-              if (_isLoading)
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (_isLoading)
                 const CircularProgressIndicator()
               else if (_hasError)
                 Text(
@@ -229,8 +226,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
+                ],
+              ),
+            ),
+            const Positioned(
+              top: 16,
+              right: 24,
+              child: ThemeToggleSwitch(),
+            ),
+          ],
         ),
       ),
     );

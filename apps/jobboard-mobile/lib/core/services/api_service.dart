@@ -60,13 +60,6 @@ const List<String> _availableEthicalPolicies = [
   'community_volunteering',
   'certified_b_corporation',
 ];
-const List<String> _availableJobTypes = [
-  'Full-time',
-  'Part-time',
-  'Contract',
-  'Internship',
-];
-
 /// Service for interacting with the backend API.
 class ApiService {
   final http.Client _client;
@@ -79,7 +72,6 @@ class ApiService {
 
   // --- Available Filters (Consider fetching from API) ---
   List<String> get availableEthicalPolicies => _availableEthicalPolicies;
-  List<String> get availableJobTypes => _availableJobTypes;
 
   // --- Helper Methods ---
 
@@ -191,7 +183,6 @@ class ApiService {
     int? minSalary,
     int? maxSalary,
     bool? inclusiveOpportunity,
-    Map<String, dynamic>? additionalFilters,
   }) async {
     final queryParams = <String, dynamic>{};
 
@@ -214,10 +205,6 @@ class ApiService {
       queryParams['inclusiveOpportunity'] = inclusiveOpportunity;
     }
 
-    // Add any additional filters
-    if (additionalFilters != null) {
-      queryParams.addAll(additionalFilters);
-    }
 
     final uri = _buildUri('/jobs', queryParams);
 

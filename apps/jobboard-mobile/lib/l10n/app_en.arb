@@ -1771,6 +1771,10 @@
   "@jobFilter_remoteOnly": {
     "description": "Remote jobs filter label"
   },
+  "jobFilter_inclusiveOpportunity": "Disability-Inclusive Only",
+  "@jobFilter_inclusiveOpportunity": {
+    "description": "Inclusive opportunity filter label"
+  },
   "jobFilter_jobType": "Job Type",
   "@jobFilter_jobType": {
     "description": "Job type filter section"
