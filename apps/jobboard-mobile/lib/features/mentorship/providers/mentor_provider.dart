@@ -281,6 +281,29 @@ class MentorProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> completeMentorship(int resumeReviewId) async {
+    try {
+      await _apiService.completeResumeReview(resumeReviewId);
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> cancelMentorship(int resumeReviewId) async {
+    try {
+      await _apiService.closeResumeReview(resumeReviewId);
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+
   // Helper to update request in both lists
   void _updateRequestInLists(MentorshipRequest updatedRequest) {
     // Update in mentor requests list

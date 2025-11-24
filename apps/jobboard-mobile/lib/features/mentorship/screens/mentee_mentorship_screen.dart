@@ -40,7 +40,11 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
       mentorProvider.fetchCurrentUserMentorProfile(authProvider.currentUser!.id);
+
+      mentorProvider.fetchMenteeRequests(authProvider.currentUser!.id);
+
     });
+
 
   }
 
@@ -215,6 +219,8 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
             ),
           );
         } else {
+          final authProvider =
+          Provider.of<AuthProvider>(context, listen: false);
           contentWidget = ListView.builder(
             itemCount: mentors.length,
             padding: EdgeInsets.zero,
@@ -223,9 +229,12 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
               final expertiseText = mentor.expertise.isNotEmpty
                   ? mentor.expertise.join(', ')
                   : 'Mentor';
-              final resumeId = mentorProvider.menteeRequests
-                  .firstWhereOrNull((r) => r.mentorId == mentor.id)
-                  ?.resumeReviewId;
+
+              final menteeRequests = mentorProvider.menteeRequests;
+              final resumeId = menteeRequests.firstWhereOrNull(
+                (req) => req.mentorId == mentor.id,
+              )?.resumeReviewId;
+
               return MentorCard(
                 mentorId: mentor.id,
                 name: mentor.username,
@@ -474,10 +483,32 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                     mentorName,
                     req.resumeReviewId,
                   ),
-                  onCompleteTap: null, // not supported in backend
-                  onCancelTap: null,   // not supported in backend
+
+
+                  onCompleteTap: req.resumeReviewId != null
+                      ? () async {
+                    final ok = await mentorProvider.completeMentorship(req.resumeReviewId!);
+                    if (ok && mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Mentorship marked as completed")),
+                      );
+                      _loadData(); // refresh
+                    }
+                  }
+                      : null,
+                  onCancelTap: req.resumeReviewId != null
+                      ? () async {
+                    final ok = await mentorProvider.cancelMentorship(req.resumeReviewId!);
+                    if (ok && mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Mentorship cancelled")),
+                      );
+                      _loadData(); // refresh
+                    }
+                  }
+                      : null,
                 );
-              }).toList(),
+              }).toList()
           ],
         );
       },
