@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dialog';
 import CenteredLoader from '@/components/CenteredLoader';
 import type { JobApplicationResponse, JobApplicationStatus } from '@/types/api.types';
-import { getApplications, deleteApplication, getCvUrl } from '@/services/applications.service';
+import { getApplicationsByJobSeeker, deleteApplication, getCvUrl } from '@/services/applications.service';
 import { getJobById } from '@/services/jobs.service';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -77,18 +77,16 @@ export default function MyApplicationsPage() {
         setIsLoading(true);
         setError(null);
 
-        const apps = await getApplications({
-          jobSeekerId: user.id,
-        });
+        const apps = await getApplicationsByJobSeeker(user.id);
 
         setApplications(apps);
 
         // Check which jobs are nonprofit jobs (batch processing for better performance)
         const nonprofitJobIds = new Set<number>();
-        const uniqueJobIds = [...new Set(apps.map(app => app.jobPostId))];
+        const uniqueJobIds = [...new Set(apps.map((app) => app.jobPostId))];
 
         await Promise.all(
-          uniqueJobIds.map(async (jobPostId) => {
+          uniqueJobIds.map(async (jobPostId: number) => {
             const isNonprofit = await checkIfNonprofitJob(jobPostId);
             if (isNonprofit) {
               nonprofitJobIds.add(jobPostId);
