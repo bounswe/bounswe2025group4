@@ -1249,9 +1249,11 @@
       "sector": "Sector",
       "sectorPlaceholder": "e.g., Technology, Healthcare",
       "location": "Location",
+      "locationPlaceholder": "Enter location",
       "website": "Website",
       "shortDescription": "Short Description",
       "detailedDescription": "Detailed Description",
+      "websitePlaceholder": "https://www.example.com",
       "submit": "Create Workplace",
       "workplaceCreated": "Workplace Created!",
       "workplaceCreatedMessage": "Your workplace has been created successfully.",
@@ -1259,7 +1261,8 @@
         "companyNameRequired": "Company name is required",
         "sectorRequired": "Sector is required",
         "locationRequired": "Location is required",
-        "ethicalTagsRequired": "At least one ethical tag is required"
+        "ethicalTagsRequired": "At least one ethical tag is required",
+        "websiteInvalid": "Must be a valid URL"
       },
       "creating": "Creating...",
       "redirecting": "Redirecting to your new workplace..."

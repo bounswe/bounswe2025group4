@@ -3,6 +3,10 @@ import { CreateWorkplaceModal } from '@/components/workplace/CreateWorkplaceModa
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import * as workplaceService from '@/services/workplace.service';
+import type { WorkplaceDetailResponse } from '@/types/workplace.types';
+import type { EthicalTag } from '@/types/job';
+
+vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 
 // Mock the service
 vi.mock('@/services/workplace.service', () => ({
@@ -11,10 +15,10 @@ vi.mock('@/services/workplace.service', () => ({
 
 // Mock MultiSelectDropdown
 vi.mock('@/components/ui/multi-select-dropdown', () => ({
-  MultiSelectDropdown: ({ onTagsChange }: any) => (
-    <button 
+  MultiSelectDropdown: ({ onTagsChange }: { selectedTags: EthicalTag[]; onTagsChange: (tags: EthicalTag[]) => void; placeholder?: string }) => (
+    <button
       type="button"
-      onClick={() => onTagsChange(['Salary Transparency'])}
+      onClick={() => onTagsChange(['Salary Transparency' as EthicalTag])}
       aria-label="select-tags"
     >
       Select Tags
@@ -43,42 +47,53 @@ describe('CreateWorkplaceModal', () => {
 
   it('renders form fields correctly', () => {
     renderComponent();
-    expect(screen.getByLabelText(/Company Name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Sector/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Location/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Website/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Short Description/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Detailed Description/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^workplace\.createModal\.companyName/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^workplace\.createModal\.sector/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^workplace\.createModal\.location/)).toBeInTheDocument();
+    expect(screen.getByText('workplace.createModal.website')).toBeInTheDocument();
+    expect(screen.getByText('workplace.createModal.shortDescription')).toBeInTheDocument();
+    expect(screen.getByText('workplace.createModal.detailedDescription')).toBeInTheDocument();
   });
 
   it('validates required fields', async () => {
     renderComponent();
-    
-    const submitButton = screen.getByRole('button', { name: /Create Workplace/i });
+
+    const submitButton = screen.getByRole('button', { name: 'workplace.createModal.submit' });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText('Company name is required')).toBeInTheDocument();
-      expect(screen.getByText('Sector is required')).toBeInTheDocument();
-      expect(screen.getByText('Location is required')).toBeInTheDocument();
-      expect(screen.getByText('At least one ethical tag is required')).toBeInTheDocument();
+      expect(screen.getByText('workplace.createModal.errors.companyNameRequired')).toBeInTheDocument();
+      expect(screen.getByText('workplace.createModal.errors.sectorRequired')).toBeInTheDocument();
+      expect(screen.getByText('workplace.createModal.errors.locationRequired')).toBeInTheDocument();
+      expect(screen.getByText('workplace.createModal.errors.ethicalTagsRequired')).toBeInTheDocument();
     });
   });
 
   it('submits form with valid data', async () => {
-    const mockWorkplace = { id: 1, companyName: 'Test Corp' };
-    (workplaceService.createWorkplace as any).mockResolvedValue(mockWorkplace);
+    const mockWorkplace: WorkplaceDetailResponse = {
+      id: 1,
+      companyName: 'Test Corp',
+      sector: 'Technology',
+      location: 'New York',
+      ethicalTags: [],
+      overallAvg: 0,
+      ethicalAverages: {},
+      employers: [],
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z'
+    };
+    vi.mocked(workplaceService.createWorkplace).mockResolvedValue(mockWorkplace);
 
     renderComponent();
 
-    fireEvent.change(screen.getByLabelText(/Company Name/i), { target: { value: 'Test Corp' } });
-    fireEvent.change(screen.getByLabelText(/Sector/i), { target: { value: 'Technology' } });
-    fireEvent.change(screen.getByLabelText(/Location/i), { target: { value: 'New York' } });
-    
+    fireEvent.change(screen.getByLabelText(/^workplace\.createModal\.companyName/), { target: { value: 'Test Corp' } });
+    fireEvent.change(screen.getByLabelText(/^workplace\.createModal\.sector/), { target: { value: 'Technology' } });
+    fireEvent.change(screen.getByLabelText(/^workplace\.createModal\.location/), { target: { value: 'New York' } });
+
     // Select an ethical tag using the mock
     fireEvent.click(screen.getByRole('button', { name: 'select-tags' }));
 
-    const submitButton = screen.getByRole('button', { name: /Create Workplace/i });
+    const submitButton = screen.getByRole('button', { name: 'workplace.createModal.submit' });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -91,23 +106,23 @@ describe('CreateWorkplaceModal', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Workplace Created!')).toBeInTheDocument();
+      expect(screen.getByText('workplace.createModal.workplaceCreated')).toBeInTheDocument();
     });
   });
 
   it('handles API errors', async () => {
-    (workplaceService.createWorkplace as any).mockRejectedValue(new Error('API Error'));
+    vi.mocked(workplaceService.createWorkplace).mockRejectedValue(new Error('API Error'));
 
     renderComponent();
 
-    fireEvent.change(screen.getByLabelText(/Company Name/i), { target: { value: 'Test Corp' } });
-    fireEvent.change(screen.getByLabelText(/Sector/i), { target: { value: 'Technology' } });
-    fireEvent.change(screen.getByLabelText(/Location/i), { target: { value: 'New York' } });
-    
+    fireEvent.change(screen.getByLabelText(/^workplace\.createModal\.companyName/), { target: { value: 'Test Corp' } });
+    fireEvent.change(screen.getByLabelText(/^workplace\.createModal\.sector/), { target: { value: 'Technology' } });
+    fireEvent.change(screen.getByLabelText(/^workplace\.createModal\.location/), { target: { value: 'New York' } });
+
     // Select an ethical tag using the mock
     fireEvent.click(screen.getByRole('button', { name: 'select-tags' }));
 
-    const submitButton = screen.getByRole('button', { name: /Create Workplace/i });
+    const submitButton = screen.getByRole('button', { name: 'workplace.createModal.submit' });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
