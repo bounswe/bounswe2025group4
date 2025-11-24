@@ -663,6 +663,18 @@ export const applicationHandlers = [
     return HttpResponse.json(application, { status: 200 });
   }),
 
+  // Get CV URL for application
+  http.get(`${API_BASE_URL}/applications/:id/cv`, async ({ params }) => {
+    const { id } = params;
+    const application = mockApplications.find(app => app.id === Number(id));
+
+    if (!application || !application.cvUrl) {
+      return HttpResponse.json(null, { status: 404 });
+    }
+
+    return HttpResponse.json(application.cvUrl, { status: 200 });
+  }),
+
   // Create new application
   http.post(`${API_BASE_URL}/applications`, async ({ request }) => {
     const body = await request.json() as CreateApplicationRequest;

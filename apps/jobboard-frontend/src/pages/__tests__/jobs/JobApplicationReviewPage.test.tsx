@@ -41,6 +41,17 @@ describe('JobApplicationReviewPage', () => {
   });
 
   it('shows loading state while fetching application', () => {
+    server.use(
+      http.get(`${API_BASE_URL}/applications/1`, async () => {
+        // Delay response to keep loading state visible
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return HttpResponse.json(createMockApplication({ id: 1 }));
+      }),
+      http.get(`${API_BASE_URL}/applications/1/cv`, () => {
+        return HttpResponse.json(null, { status: 404 });
+      })
+    );
+
     renderWithProviders(<JobApplicationReviewPage />, {
       initialEntries: ['/employer/jobs/1/applications/1']
     });
@@ -298,7 +309,7 @@ describe('JobApplicationReviewPage', () => {
       http.get(`${API_BASE_URL}/applications/1/cv`, () => {
         return HttpResponse.json(null, { status: 404 });
       }),
-      http.put(`${API_BASE_URL}/applications/1/approve`, () => {
+      http.put(`${API_BASE_URL}/applications/1/approve`, async () => {
         return HttpResponse.json({ ...mockApplication, status: 'APPROVED' });
       })
     );
@@ -589,6 +600,9 @@ describe('JobApplicationReviewPage', () => {
     server.use(
       http.get(`${API_BASE_URL}/applications/1`, () => {
         return HttpResponse.json({ message: 'Application not found' }, { status: 404 });
+      }),
+      http.get(`${API_BASE_URL}/applications/1/cv`, () => {
+        return HttpResponse.json(null, { status: 404 });
       })
     );
 
@@ -607,6 +621,9 @@ describe('JobApplicationReviewPage', () => {
     server.use(
       http.get(`${API_BASE_URL}/applications/1`, () => {
         return HttpResponse.json({ message: 'Application not found' }, { status: 404 });
+      }),
+      http.get(`${API_BASE_URL}/applications/1/cv`, () => {
+        return HttpResponse.json(null, { status: 404 });
       })
     );
 
