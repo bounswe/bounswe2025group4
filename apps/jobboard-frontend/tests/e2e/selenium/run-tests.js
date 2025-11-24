@@ -13,7 +13,7 @@
  *   node tests/e2e/selenium/run-tests.js 01-workplace       # Run specific test
  */
 
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { dirname, join } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { config } from './config/test.config.ts';
@@ -59,8 +59,8 @@ async function findTestFiles(dir, pattern = null) {
  */
 async function runTestFile(testFilePath) {
   try {
-    // Convert Windows path to file URL
-    const fileUrl = `file:///${testFilePath.replace(/\\/g, '/')}`;
+    // Convert path to file URL (cross-platform)
+    const fileUrl = pathToFileURL(testFilePath).href;
 
     // Dynamic import of the test module
     const testModule = await import(fileUrl);
@@ -153,7 +153,7 @@ async function main() {
 
   console.log(`Found ${testFiles.length} test file(s):\n`);
   testFiles.forEach((file, index) => {
-    const relativePath = file.replace(__dirname, '').replace(/\\/g, '/');
+    const relativePath = file.replace(__dirname, '').replace(/\\/g, '/').replace(/^\//, '');
     console.log(`  ${index + 1}. ${relativePath}`);
   });
   console.log();
