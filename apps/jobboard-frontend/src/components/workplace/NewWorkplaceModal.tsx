@@ -4,6 +4,7 @@
  */
 
 import { Plus, UserPlus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,8 @@ export function NewWorkplaceModal({
   onCreateWorkplace,
   onJoinWorkplace,
 }: NewWorkplaceModalProps) {
+  const { t } = useTranslation('common');
+
   const handleCreateWorkplace = () => {
     onOpenChange(false);
     onCreateWorkplace();
@@ -40,7 +43,7 @@ export function NewWorkplaceModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>New Workplace</DialogTitle>
+          <DialogTitle>{t('workplace.newModal.title')}</DialogTitle>
           <DialogDescription>
             Choose how you want to add a workplace to your account
           </DialogDescription>
@@ -58,7 +61,7 @@ export function NewWorkplaceModal({
                 <Plus className="h-12 w-12 text-primary" />
               </div>
               <div className="text-center">
-                <div className="font-semibold text-lg">Create Workplace</div>
+                <div className="font-semibold text-lg">{t('employerWorkplaces.noWorkplaces.createWorkplace')}</div>
                 <div className="text-sm text-muted-foreground mt-1">
                   Create and manage your own workplace
                 </div>
@@ -76,7 +79,7 @@ export function NewWorkplaceModal({
                 <UserPlus className="h-12 w-12 text-primary" />
               </div>
               <div className="text-center">
-                <div className="font-semibold text-lg">Join Workplace</div>
+                <div className="font-semibold text-lg">{t('employerWorkplaces.noWorkplaces.joinWorkplace')}</div>
                 <div className="text-sm text-muted-foreground mt-1">
                   Request to join an existing workplace
                 </div>

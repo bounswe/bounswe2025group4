@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Building2, MapPin, Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -50,7 +50,7 @@ export default function WorkplaceSelector({
     fetchWorkplaces();
   }, [t]);
 
-  const selectedWorkplace = workplaces.find((w) => w.workplace.id === value);
+  const selectedWorkplace = useMemo(() => workplaces.find((w) => w.workplace.id === value), [workplaces, value]);
 
   if (isLoading) {
     return (

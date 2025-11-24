@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
-import { MultiSelectDropdown } from '@/components/ui/multi-select-dropdown';
 import WorkplaceSelector from '@/components/workplace/WorkplaceSelector';
 import { CreateWorkplaceModal } from '@/components/workplace/CreateWorkplaceModal';
 import { JoinWorkplaceModal } from '@/components/workplace/JoinWorkplaceModal';
@@ -16,19 +15,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { createJob } from '@/services/jobs.service';
 import { getMyWorkplaces } from '@/services/employer.service';
 import type { CreateJobPostRequest } from '@/types/api.types';
-import type { EthicalTag } from '@/types/job';
 import type { EmployerWorkplaceBrief } from '@/types/workplace.types';
 
 type JobPostFormData = {
   title: string;
   description: string;
   workplaceId: number | null;
-  location: string;
   remote: boolean;
   minSalary: string;
   maxSalary: string;
   contactEmail: string;
-  ethicalTags: EthicalTag[];
   inclusiveOpportunity: boolean;
   nonProfit: boolean;
 };
@@ -37,12 +33,10 @@ const defaultFormState: JobPostFormData = {
   title: '',
   description: '',
   workplaceId: null,
-  location: '',
   remote: false,
   minSalary: '',
   maxSalary: '',
   contactEmail: '',
-  ethicalTags: [],
   inclusiveOpportunity: false,
   nonProfit: false,
 };
@@ -83,7 +77,6 @@ export function CreateJobPostModal({
     setFormData({
       ...defaultFormState,
       workplaceId: selectedInitialWorkplace?.workplace.id ?? null,
-      location: selectedInitialWorkplace?.workplace.location ?? '',
     });
 
     const checkWorkplaces = async () => {
@@ -97,7 +90,6 @@ export function CreateJobPostModal({
           setFormData((prev) => ({
             ...prev,
             workplaceId: prev.workplaceId ?? primary.workplace.id,
-            location: prev.location || primary.workplace.location,
           }));
         }
       } catch (err) {
@@ -111,11 +103,10 @@ export function CreateJobPostModal({
     checkWorkplaces();
   }, [open, selectedInitialWorkplace]);
 
-  const handleWorkplaceChange = (workplaceId: number, workplace: EmployerWorkplaceBrief) => {
+  const handleWorkplaceChange = (workplaceId: number, _workplace: EmployerWorkplaceBrief) => {
     setFormData((prev) => ({
       ...prev,
       workplaceId,
-      location: prev.location || workplace.workplace.location,
     }));
   };
 
@@ -144,12 +135,10 @@ export function CreateJobPostModal({
         title: formData.title,
         description: formData.description,
         workplaceId: formData.workplaceId,
-        location: formData.location,
         remote: formData.remote,
         minSalary: formData.nonProfit ? 0 : parseInt(formData.minSalary, 10),
         maxSalary: formData.nonProfit ? 0 : parseInt(formData.maxSalary, 10),
         contact: formData.contactEmail,
-        ethicalTags: formData.ethicalTags.join(', '),
         inclusiveOpportunity: formData.inclusiveOpportunity,
         nonProfit: formData.nonProfit,
       };
@@ -261,20 +250,6 @@ export function CreateJobPostModal({
               />
             </div>
 
-            <div>
-              <Label htmlFor="location" className="text-sm font-semibold">
-                {t('createJob.location')}
-              </Label>
-              <Input
-                id="location"
-                type="text"
-                value={formData.location}
-                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder={t('createJob.locationPlaceholder')}
-                className="mt-2"
-                required
-              />
-            </div>
 
             <div className="flex items-start gap-3">
               <Checkbox
@@ -368,17 +343,7 @@ export function CreateJobPostModal({
               />
             </div>
 
-            <div>
-              <Label className="text-sm font-semibold">{t('createJob.ethicalTags')}</Label>
-              <p className="text-xs text-muted-foreground mt-1 mb-3">
-                {t('createJob.ethicalTagsDescription')}
-              </p>
-              <MultiSelectDropdown
-                selectedTags={formData.ethicalTags}
-                onTagsChange={(tags) => setFormData({ ...formData, ethicalTags: tags })}
-                placeholder={t('createJob.ethicalTagsPlaceholder')}
-              />
-            </div>
+
 
             <div className="p-4 rounded-lg border-2 border-primary/20 bg-primary/5">
               <div className="flex items-start gap-3">

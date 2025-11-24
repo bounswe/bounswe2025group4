@@ -12,24 +12,27 @@ interface SkillsSectionProps {
   skills: Skill[];
   onAdd?: () => void;
   onEdit?: (id: number) => void;
+  isPublicView?: boolean;
 }
 
-export function SkillsSection({ skills, onAdd, onEdit }: SkillsSectionProps) {
+export function SkillsSection({ skills, onAdd, onEdit, isPublicView = false }: SkillsSectionProps) {
   const { t } = useTranslation('common');
 
   return (
     <section className="space-y-3 group">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">{t('profile.skills.title')}</h2>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={onAdd}
-        >
-          <Plus className="h-4 w-4" />
-          {t('profile.actions.add')}
-        </Button>
+        {!isPublicView && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={onAdd}
+          >
+            <Plus className="h-4 w-4" />
+            {t('profile.actions.add')}
+          </Button>
+        )}
       </div>
       {skills.length > 0 ? (
         <div className="flex flex-wrap gap-2">
@@ -39,17 +42,23 @@ export function SkillsSection({ skills, onAdd, onEdit }: SkillsSectionProps) {
               className="bg-muted text-foreground px-3 py-1.5 rounded-full text-sm group/skill relative border"
             >
               {skill.name}
-              <Button
-                size="icon-sm"
-                variant="ghost"
-                className="absolute -top-1 -right-1 h-5 w-5 rounded-full opacity-0 group-hover/skill:opacity-100 transition-opacity bg-muted hover:bg-muted/80"
-                onClick={() => onEdit?.(skill.id)}
-              >
-                <Pencil className="h-2.5 w-2.5" />
-              </Button>
+              {!isPublicView && (
+                <Button
+                  size="icon-sm"
+                  variant="ghost"
+                  className="absolute -top-1 -right-1 h-5 w-5 rounded-full opacity-0 group-hover/skill:opacity-100 transition-opacity bg-muted hover:bg-muted/80"
+                  onClick={() => onEdit?.(skill.id)}
+                >
+                  <Pencil className="h-2.5 w-2.5" />
+                </Button>
+              )}
             </div>
           ))}
         </div>
+      ) : isPublicView ? (
+        <p className="text-muted-foreground text-sm">
+          {t('profile.skills.noSkills')}
+        </p>
       ) : (
         <div
           className="border-2 border-dashed rounded-lg p-6 flex items-center justify-center gap-2 text-muted-foreground hover:border-primary/50 hover:text-primary cursor-pointer transition-colors"

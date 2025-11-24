@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
@@ -76,6 +77,7 @@ interface JoinWorkplaceModalProps {
 }
 
 export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkplaceModalProps) {
+  const { t } = useTranslation();
   const [step, setStep] = useState<'search' | 'request'>('search');
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [searchResults, setSearchResults] = useState<WorkplaceBriefResponse[]>([]);
@@ -232,27 +234,26 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
             <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8 text-green-600 dark:text-green-400" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Request Submitted</h2>
+            <h2 className="text-2xl font-bold mb-2">{t('workplace.joinModal.requestSubmitted')}</h2>
             <p className="text-muted-foreground mb-4">
-              Your request to join <strong>{selectedWorkplace?.companyName}</strong> has been
-              submitted. The workplace administrators will review your request.
+              {t('workplace.joinModal.requestSubmittedMessage', {
+                company: selectedWorkplace?.companyName,
+              })}
             </p>
-            <p className="text-sm text-muted-foreground">Closing...</p>
+            <p className="text-sm text-muted-foreground">{t('workplace.joinModal.closing')}</p>
           </div>
         ) : step === 'search' ? (
           <>
             <DialogHeader>
-              <DialogTitle>Join a Workplace</DialogTitle>
-              <DialogDescription>
-                Search for an existing workplace and request to become an employer
-              </DialogDescription>
+              <DialogTitle>{t('workplace.joinModal.title')}</DialogTitle>
+              <DialogDescription>{t('workplace.joinModal.searchDescription')}</DialogDescription>
             </DialogHeader>
 
             {/* Search Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label htmlFor="modal-search" className="text-base font-semibold">
-                  Search for a workplace
+                  {t('workplace.joinModal.searchPlaceholder')}
                 </Label>
                 <div className="flex gap-2">
                   <Button
@@ -262,7 +263,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                     className="gap-2"
                   >
                     <Filter className="h-4 w-4" />
-                    Filters
+                    {t('workplace.joinModal.filters')}
                     {hasActiveFilters && (
                       <span className="ml-1 rounded-full bg-primary text-primary-foreground px-1.5 py-0.5 text-xs">
                         {
@@ -285,7 +286,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                       className="gap-2"
                     >
                       <X className="h-4 w-4" />
-                      Clear
+                      {t('workplace.joinModal.clear')}
                     </Button>
                   )}
                 </div>
@@ -302,7 +303,9 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                 />
                 <Button onClick={handleSearch} disabled={isSearching}>
                   <Search className="h-4 w-4 mr-2" />
-                  {isSearching ? 'Searching...' : 'Search'}
+                  {isSearching
+                    ? t('workplace.joinModal.searching')
+                    : t('workplace.joinModal.search')}
                 </Button>
               </div>
 
@@ -312,14 +315,14 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Sector Filter */}
                     <div className="space-y-2">
-                      <Label htmlFor="modal-sector">Sector</Label>
+                      <Label htmlFor="modal-sector">{t('workplace.joinModal.sector')}</Label>
                       <select
                         id="modal-sector"
                         value={filters.sector}
                         onChange={(e) => setFilters({ ...filters, sector: e.target.value })}
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                       >
-                        <option value="">All Sectors</option>
+                        <option value="">{t('workplace.joinModal.allSectors')}</option>
                         {SECTORS.map((s) => (
                           <option key={s} value={s}>
                             {s}
@@ -330,7 +333,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
 
                     {/* Location Filter */}
                     <div className="space-y-2">
-                      <Label htmlFor="modal-location">Location</Label>
+                      <Label htmlFor="modal-location">{t('workplace.joinModal.location')}</Label>
                       <Input
                         id="modal-location"
                         value={filters.location}
@@ -342,7 +345,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
 
                     {/* Sort By Filter */}
                     <div className="space-y-2">
-                      <Label htmlFor="modal-sortBy">Sort By</Label>
+                      <Label htmlFor="modal-sortBy">{t('workplace.joinModal.sortBy')}</Label>
                       <select
                         id="modal-sortBy"
                         value={filters.sortBy}
@@ -360,7 +363,9 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                     {/* Minimum Rating Filter */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="modal-minRating">Minimum Rating</Label>
+                        <Label htmlFor="modal-minRating">
+                          {t('workplace.joinModal.minimumRating')}
+                        </Label>
                         <span className="text-sm text-muted-foreground">
                           {filters.minRating > 0 ? `${filters.minRating.toFixed(1)}★` : 'Any'}
                         </span>
@@ -399,7 +404,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
               ) : searchResults.length > 0 ? (
                 <div>
                   <h3 className="font-semibold sticky top-0 bg-background py-1">
-                    Search Results ({searchResults.length})
+                    {t('workplace.joinModal.searchResults', { count: searchResults.length })}
                   </h3>
                   <div className="space-y-3 max-h-[40vh] overflow-y-scroll pr-1">
                     {searchResults.map((workplace) => (
@@ -414,7 +419,9 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
               ) : filters.searchQuery || hasActiveFilters ? (
                 <div className="text-center py-8">
                   <Building2 className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
-                  <p className="text-muted-foreground">No workplaces found</p>
+                  <p className="text-muted-foreground">
+                    {t('workplace.joinModal.noWorkplacesFound')}
+                  </p>
                   {hasActiveFilters && (
                     <Button
                       variant="outline"
@@ -422,7 +429,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                       onClick={handleClearFilters}
                       className="mt-4"
                     >
-                      Clear filters and show all
+                      {t('workplace.joinModal.clearFiltersAndShowAll')}
                     </Button>
                   )}
                 </div>
@@ -446,7 +453,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold">{alreadyMemberWorkplace.companyName}</h3>
                       <p className="text-sm text-muted-foreground">
-                        You are already an employer of this workplace
+                        {t('workplace.joinModal.alreadyMember')}
                       </p>
                     </div>
                     <Button
@@ -477,9 +484,9 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <div>
-                  <DialogTitle>Request to Join</DialogTitle>
+                  <DialogTitle>{t('workplace.joinModal.requestTitle')}</DialogTitle>
                   <DialogDescription>
-                    Submit a request to become an employer at this workplace
+                    {t('workplace.joinModal.requestDescription')}
                   </DialogDescription>
                 </div>
               </div>
@@ -490,7 +497,9 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
               {/* Selected Workplace Preview */}
               {selectedWorkplace && (
                 <div className="mb-4">
-                  <Label className="text-sm font-medium mb-2 block">Selected Workplace</Label>
+                  <Label className="text-sm font-medium mb-2 block">
+                    {t('workplace.joinModal.selectedWorkplace')}
+                  </Label>
                   <WorkplaceCard workplace={selectedWorkplace} />
                 </div>
               )}
@@ -504,13 +513,15 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
 
                 <div className="space-y-2">
                   <Label htmlFor="note">
-                    Note to Administrators (Optional)
-                    <span className="text-muted-foreground text-xs ml-2">(max 500 characters)</span>
+                    {t('workplace.joinModal.noteLabel')}
+                    <span className="text-muted-foreground text-xs ml-2">
+                      {t('workplace.joinModal.noteMaxLength')}
+                    </span>
                   </Label>
                   <Textarea
                     id="note"
                     {...register('note')}
-                    placeholder="Explain why you want to manage this workplace..."
+                    placeholder={t('workplace.joinModal.notePlaceholder')}
                     rows={4}
                     className={errors.note ? 'border-destructive' : ''}
                     disabled={isSubmitting}
@@ -526,16 +537,16 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                     disabled={isSubmitting}
                     className="flex-1"
                   >
-                    Back
+                    {t('workplace.joinModal.back')}
                   </Button>
                   <Button type="submit" disabled={isSubmitting} className="flex-1">
                     {isSubmitting ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Submitting...
+                        {t('workplace.joinModal.submittingRequest')}
                       </>
                     ) : (
-                      'Submit Request'
+                      t('workplace.joinModal.submitRequest')
                     )}
                   </Button>
                 </div>

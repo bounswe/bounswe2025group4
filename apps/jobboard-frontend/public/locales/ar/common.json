@@ -385,6 +385,8 @@
       "openToOpportunities": "متاح لفرص جديدة",
       "currentRole": "{{position}} في {{company}}",
       "joined": "انضم في {{year}}",
+      "posts": "منشورات",
+      "badges": "شارات",
       "stats": {
         "posts": "منشورات",
         "badges": "شارات"
@@ -406,6 +408,7 @@
     "about": {
       "title": "نبذة",
       "addBio": "أضف سيرة ذاتية",
+      "noBio": "لا توجد سيرة ذاتية متوفرة",
       "modal": {
         "title": "تعديل النبذة",
         "bioLabel": "السيرة الذاتية",
@@ -416,6 +419,7 @@
     "experience": {
       "title": "الخبرات",
       "empty": "أضف خبرة",
+      "noExperience": "لا توجد خبرة عمل متوفرة",
       "modal": {
         "addTitle": "إضافة خبرة",
         "editTitle": "تعديل الخبرة",
@@ -449,6 +453,7 @@
     "education": {
       "title": "التعليم",
       "empty": "أضف تعليماً",
+      "noEducation": "لا توجد معلومات تعليمية متوفرة",
       "modal": {
         "addTitle": "إضافة تعليم",
         "editTitle": "تعديل التعليم",
@@ -486,6 +491,7 @@
     "skills": {
       "title": "المهارات",
       "empty": "أضف مهارات",
+      "noSkills": "لا توجد مهارات مدرجة",
       "modal": {
         "addTitle": "إضافة مهارة",
         "editTitle": "تعديل المهارة",
@@ -503,6 +509,7 @@
     "interests": {
       "title": "الاهتمامات",
       "empty": "أضف اهتمامات",
+      "noInterests": "لا توجد اهتمامات مدرجة",
       "modal": {
         "addTitle": "إضافة اهتمام",
         "editTitle": "تعديل الاهتمام",
@@ -602,54 +609,11 @@
       "saveInterestError": "فشل حفظ الاهتمام.",
       "deleteAccountSuccess": "تم حذف جميع بيانات الملف الشخصي."
     },
-    "activity": {
-      "items": [
-        {
-          "type": "application",
-          "text": "تقدّم لوظيفة مصمم منتجات أول في Innovation Labs",
-          "date": "منذ يومين"
-        },
-        {
-          "type": "forum",
-          "text": "نشر موضوعًا في المنتدى بعنوان: \"أفضل الممارسات لتحقيق إمكانية الوصول في التصميم\"",
-          "date": "منذ 5 أيام"
-        },
-        {
-          "type": "comment",
-          "text": "علّق على \"استراتيجيات العمل عن بعد للمصممين\"",
-          "date": "منذ أسبوع"
-        },
-        {
-          "type": "like",
-          "text": "أُعجب بتعليق حول \"تنفيذ نظام التصميم\"",
-          "date": "منذ أسبوع"
-        },
-        {
-          "type": "application",
-          "text": "تقدّم لوظيفة مصمم تجربة مستخدم في Creative Studio",
-          "date": "منذ أسبوعين"
-        }
-      ]
-    },
     "posts": {
       "replyLabel": "{{value}} رد",
       "repliesLabel": "{{value}} ردود",
       "likeLabel": "{{value}} إعجاب",
-      "likesLabel": "{{value}} إعجابات",
-      "items": [
-        {
-          "title": "كيفية تحسين تقنيات أبحاث المستخدمين",
-          "date": "منذ 3 أيام"
-        },
-        {
-          "title": "رحلتي في تصميم المنتجات",
-          "date": "منذ أسبوع"
-        },
-        {
-          "title": "الأدوات التي أستخدمها يوميًا كمصمم",
-          "date": "منذ أسبوعين"
-        }
-      ]
+      "likesLabel": "{{value}} إعجابات"
     }
   },
   "jobApplication": {
@@ -739,7 +703,7 @@
     "findMentors": "البحث عن مرشدين",
     "started": "بدأ",
     "accepted": "مقبول",
-    "completed": "مكتمل",
+    "completedDate": "مكتمل",
     "duration": "المدة",
     "learningGoals": "أهداف التعلم",
     "openChat": "فتح المحادثة",
@@ -945,39 +909,6 @@
       "errorMessage": "فشل إرسال طلب الإرشاد. يرجى المحاولة مرة أخرى."
     }
   },
-  "myMentorships": {
-    "title": "إرشاداتي",
-    "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة",
-    "successMessage": "تم إرسال طلب الإرشاد بنجاح إلى {{mentorName}}!",
-    "active": "نشط",
-    "pending": "قيد الانتظار",
-    "completed": "مكتمل",
-    "rejected": "مرفوض",
-    "noActive": "لا توجد إرشادات نشطة",
-    "noActiveDesc": "ليس لديك أي إرشادات نشطة حتى الآن. ابحث عن مرشد للبدء!",
-    "noPending": "لا توجد طلبات قيد الانتظار",
-    "noPendingDesc": "ليس لديك أي طلبات إرشاد قيد الانتظار.",
-    "noCompleted": "لا توجد إرشادات مكتملة",
-    "noCompletedDesc": "لم تكمل أي إرشادات بعد.",
-    "noRejected": "لا توجد طلبات مرفوضة",
-    "noRejectedDesc": "ليس لديك أي طلبات إرشاد مرفوضة.",
-    "findMentors": "ابحث عن مرشدين",
-    "started": "بدأ",
-    "accepted": "مقبول",
-    "completedDate": "مكتمل",
-    "duration": "المدة",
-    "learningGoals": "أهداف التعلم",
-    "openChat": "فتح المحادثة",
-    "writeReview": "كتابة تقييم",
-    "waitingForResponse": "في انتظار الرد",
-    "viewDetails": "عرض التفاصيل",
-    "status": {
-      "active": "نشط",
-      "pending": "قيد الانتظار",
-      "completed": "مكتمل",
-      "rejected": "مرفوض"
-    }
-  },
   "reviews": {
     "workplaceReviews": "تقييمات مكان العمل",
     "writeReview": "اكتب تقييماً",
@@ -1085,5 +1016,8 @@
     "roleMentee": "مسترشد",
     "selectConversation": "اختر محادثة",
     "selectConversationDesc": "اختر محادثة من القائمة للبدء في الدردشة"
+  },
+  "public": {
+    "note": "هذا الملف الشخصي العام - إمكانيات التعديل غير متاحة"
   }
 }

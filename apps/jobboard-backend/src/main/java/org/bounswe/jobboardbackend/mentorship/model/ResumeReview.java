@@ -35,4 +35,8 @@ public class ResumeReview {
     @OneToOne(mappedBy = "resumeReview", cascade = CascadeType.ALL)
     private Conversation conversation;
 
+    private String resumeUrl;
+
+    private LocalDateTime resumeUploadedAt;
+
 }

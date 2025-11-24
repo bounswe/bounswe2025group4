@@ -3,12 +3,17 @@ package org.bounswe.jobboardbackend.mentorship.service;
 
 import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface MentorshipService {
 
 
+
+    ResumeFileResponseDTO uploadResumeFile(Long resumeReviewId, MultipartFile file);
+    ResumeFileUrlDTO getResumeFileUrl(Long resumeReviewId);
+    ResumeReviewDTO getResumeReview(Long resumeReviewId);
 
     List<MentorshipDetailsDTO> getMentorshipDetailsForMentee(Long menteeId, Long currentUserId);
     List<MentorProfileDetailDTO> searchMentors();
