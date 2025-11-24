@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: jobboard
     ports:
-      - "5432:5432"
+      - "5432"
     networks:
       - jobboard-network
 
@@ -29,6 +29,7 @@ services:
       MAIL_PASSWORD: generic_mail_password
       APP_JWT_SECRET: generic_jwt_secret_key_for_development_only_12345
       APP_GCS_BUCKET: bounswe-jobboard
+      APP_MAIL_FROM: sezer.cot@bumk1974.com
     volumes:
       - ./apps/jobboard-backend/jobboard-local-service-account-key.json:/app/jobboard-local-service-account-key.json
     ports:
