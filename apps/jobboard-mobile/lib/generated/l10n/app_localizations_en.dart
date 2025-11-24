@@ -482,6 +482,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobPage_noPostedJobs => 'You have not posted any jobs yet.';
 
   @override
+  String get jobPage_tabJobs => 'Jobs';
+
+  @override
+  String get jobPage_tabNonProfit => 'Non-Profit';
+
+  @override
+  String get jobPage_nonProfitWelcome => 'Making a Difference';
+
+  @override
+  String get jobPage_nonProfitWelcomeMessage =>
+      'Thank you for exploring non-profit opportunities! By considering these positions, you\'re contributing to meaningful causes and making a positive impact in the community.';
+
+  @override
   String get jobDetails_title => 'Job Details';
 
   @override

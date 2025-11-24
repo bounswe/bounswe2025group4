@@ -952,6 +952,30 @@ abstract class AppLocalizations {
   /// **'You have not posted any jobs yet.'**
   String get jobPage_noPostedJobs;
 
+  /// Jobs tab title
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get jobPage_tabJobs;
+
+  /// Non-Profit tab title
+  ///
+  /// In en, this message translates to:
+  /// **'Non-Profit'**
+  String get jobPage_tabNonProfit;
+
+  /// Non-profit welcome title
+  ///
+  /// In en, this message translates to:
+  /// **'Making a Difference'**
+  String get jobPage_nonProfitWelcome;
+
+  /// Non-profit welcome message
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for exploring non-profit opportunities! By considering these positions, you\'re contributing to meaningful causes and making a positive impact in the community.'**
+  String get jobPage_nonProfitWelcomeMessage;
+
   /// Job details screen title
   ///
   /// In en, this message translates to:

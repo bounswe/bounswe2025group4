@@ -467,6 +467,22 @@
   "@jobPage_noPostedJobs": {
     "description": "No posted jobs message for employers"
   },
+  "jobPage_tabJobs": "Jobs",
+  "@jobPage_tabJobs": {
+    "description": "Jobs tab title"
+  },
+  "jobPage_tabNonProfit": "Non-Profit",
+  "@jobPage_tabNonProfit": {
+    "description": "Non-Profit tab title"
+  },
+  "jobPage_nonProfitWelcome": "Making a Difference",
+  "@jobPage_nonProfitWelcome": {
+    "description": "Non-profit welcome title"
+  },
+  "jobPage_nonProfitWelcomeMessage": "Thank you for exploring non-profit opportunities! By considering these positions, you're contributing to meaningful causes and making a positive impact in the community.",
+  "@jobPage_nonProfitWelcomeMessage": {
+    "description": "Non-profit welcome message"
+  },
 
   "@@_JOB_DETAILS": {},
   "jobDetails_title": "Job Details",

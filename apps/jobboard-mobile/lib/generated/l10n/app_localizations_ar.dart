@@ -477,6 +477,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jobPage_noPostedJobs => 'لم تنشر أي وظائف بعد.';
 
   @override
+  String get jobPage_tabJobs => 'الوظائف';
+
+  @override
+  String get jobPage_tabNonProfit => 'غير ربحي';
+
+  @override
+  String get jobPage_nonProfitWelcome => 'صنع الفرق';
+
+  @override
+  String get jobPage_nonProfitWelcomeMessage =>
+      'شكراً لك على استكشاف الفرص غير الربحية! من خلال التفكير في هذه الوظائف، أنت تساهم في قضايا ذات معنى وتحدث تأثيراً إيجابياً في المجتمع.';
+
+  @override
   String get jobDetails_title => 'تفاصيل الوظيفة';
 
   @override
