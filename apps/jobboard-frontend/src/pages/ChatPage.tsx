@@ -181,7 +181,12 @@ const ChatPage = () => {
           }
         }
 
-        const mappedRooms: ChatRoomForUser[] = chatRooms.map((room): ChatRoomForUser => {
+        // Remove duplicates by id before mapping
+        const uniqueChatRooms = Array.from(
+          new Map(chatRooms.map(room => [room.id, room])).values()
+        );
+
+        const mappedRooms: ChatRoomForUser[] = uniqueChatRooms.map((room): ChatRoomForUser => {
           // Determine the other participant (not the current user)
           const isCurrentUserMentor = room.mentorProfileId === user.id?.toString();
           const participantName = isCurrentUserMentor ? room.menteeProfileName : room.mentorProfileName;

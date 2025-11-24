@@ -689,6 +689,19 @@ const MentorProfilePage = () => {
                               </Button>
                             )}
                             
+                            {menteeProfile && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                asChild
+                                className="flex-1 min-w-[100px]"
+                              >
+                                <Link to={`/profile/${requesterIdNum}`}>
+                                  {t('mentorship.profile.viewProfile') || 'View Profile'}
+                                </Link>
+                              </Button>
+                            )}
+                            
                             {activeMentorship?.resumeReviewId && (
                               <Button
                                 size="sm"
@@ -793,6 +806,19 @@ const MentorProfilePage = () => {
                                 <Link to={`/chat?mentorshipId=${mentorship.mentorshipRequestId}`}>
                                   <MessageCircle className="h-4 w-4 mr-2" />
                                   {t('mentorship.myMentorships.openChat') || 'Open Chat'}
+                                </Link>
+                              </Button>
+                            )}
+                            
+                            {menteeProfile && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                asChild
+                                className="flex-1 min-w-[100px]"
+                              >
+                                <Link to={`/profile/${requesterIdNum}`}>
+                                  {t('mentorship.profile.viewProfile') || 'View Profile'}
                                 </Link>
                               </Button>
                             )}

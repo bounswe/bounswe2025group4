@@ -106,7 +106,12 @@ const MyMentorshipsPage = () => {
           convertMentorshipDetailsToMentorship(m, mentorProfilesMap[m.mentorId])
         );
         
-        let allMentorships = convertedMentorships;
+        // Remove duplicates by id
+        const uniqueMentorships = Array.from(
+          new Map(convertedMentorships.map(m => [m.id, m])).values()
+        );
+        
+        let allMentorships = uniqueMentorships;
         if (newMentorshipFromState) {
           const exists = allMentorships.some(m => m.id === newMentorshipFromState.id);
           if (!exists) {
@@ -158,7 +163,11 @@ const MyMentorshipsPage = () => {
         const converted = updatedMentorships.map((m) => 
           convertMentorshipDetailsToMentorship(m, mentorProfilesMap[m.mentorId])
         );
-        setMentorships(converted);
+        // Remove duplicates by id
+        const uniqueMentorships = Array.from(
+          new Map(converted.map(m => [m.id, m])).values()
+        );
+        setMentorships(uniqueMentorships);
         
         // Switch to completed tab
         setActiveTab('completed');
@@ -229,7 +238,11 @@ const MyMentorshipsPage = () => {
         const converted = updatedMentorships.map((m) => 
           convertMentorshipDetailsToMentorship(m, mentorProfilesMap[m.mentorId])
         );
-        setMentorships(converted);
+        // Remove duplicates by id
+        const uniqueMentorships = Array.from(
+          new Map(converted.map(m => [m.id, m])).values()
+        );
+        setMentorships(uniqueMentorships);
         
         // Keep on completed tab after review
         setActiveTab('completed');
@@ -271,7 +284,7 @@ const MyMentorshipsPage = () => {
             <Avatar className="w-12 h-12 ring-2 ring-blue-100 dark:ring-blue-900">
               <AvatarImage src={mentorship.mentorAvatar} alt={mentorship.mentorName} />
               <AvatarFallback>
-                {mentorship.mentorName.split(' ').map(n => n[0]).join('')}
+                {mentorship.mentorName.split(' ').map(n => n[0]?.toUpperCase() || '').join('')}
               </AvatarFallback>
             </Avatar>
             <div className="absolute -bottom-1 -right-1 p-1 bg-blue-500 rounded-full">
@@ -327,6 +340,11 @@ const MyMentorshipsPage = () => {
                   {t('mentorship.myMentorships.openChat')}
                 </Link>
               </Button>
+              <Button size="sm" variant="outline" className="flex-1" asChild>
+                <Link to={`/mentorship/${mentorship.mentorId}`}>
+                  {t('mentorship.myMentorships.viewProfile') || 'View Profile'}
+                </Link>
+              </Button>
               {mentorship.resumeReviewId && (
                 <Button 
                   size="sm" 
@@ -359,6 +377,11 @@ const MyMentorshipsPage = () => {
                   {t('mentorship.myMentorships.openChat')}
                 </Link>
               </Button>
+              <Button size="sm" variant="outline" className="flex-1" asChild>
+                <Link to={`/mentorship/${mentorship.mentorId}`}>
+                  {t('mentorship.myMentorships.viewProfile') || 'View Profile'}
+                </Link>
+              </Button>
               <Button 
                 size="sm" 
                 variant="outline" 
@@ -372,15 +395,24 @@ const MyMentorshipsPage = () => {
           )}
           
           {mentorship.status === 'pending' && (
-            <Button size="sm" variant="outline" disabled className="flex-1">
-              <Clock className="h-4 w-4 mr-2" />
-              {t('mentorship.myMentorships.waitingForResponse')}
-            </Button>
+            <>
+              <Button size="sm" variant="outline" className="flex-1" asChild>
+                <Link to={`/mentorship/${mentorship.mentorId}`}>
+                  {t('mentorship.myMentorships.viewProfile') || 'View Profile'}
+                </Link>
+              </Button>
+              <Button size="sm" variant="outline" disabled className="flex-1">
+                <Clock className="h-4 w-4 mr-2" />
+                {t('mentorship.myMentorships.waitingForResponse')}
+              </Button>
+            </>
           )}
           
           {mentorship.status === 'rejected' && (
-            <Button size="sm" variant="outline" className="flex-1">
-              {t('mentorship.myMentorships.viewDetails')}
+            <Button size="sm" variant="outline" className="flex-1" asChild>
+              <Link to={`/mentorship/${mentorship.mentorId}`}>
+                {t('mentorship.myMentorships.viewProfile') || 'View Profile'}
+              </Link>
             </Button>
           )}
         </div>
