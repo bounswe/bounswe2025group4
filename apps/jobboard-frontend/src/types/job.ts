@@ -82,6 +82,7 @@ import type { WorkplaceBriefResponse } from './workplace.types';
 export type Job = {
   id: string;
   title: string;
+  description?: string;
   workplace: WorkplaceBriefResponse;
   location: string;
   type: JobType[];
@@ -89,6 +90,7 @@ export type Job = {
   maxSalary: number;
   logoUrl?: string;
   inclusiveOpportunity: boolean;
+  nonProfit?: boolean;
 };
 
 // Extended job type for job details from API

@@ -156,6 +156,10 @@
   "jobPage_remote": "عن بُعد",
   "jobPage_yourPostedJobs": "الوظائف التي نشرتها",
   "jobPage_noPostedJobs": "لم تنشر أي وظائف بعد.",
+  "jobPage_tabJobs": "الوظائف",
+  "jobPage_tabNonProfit": "غير ربحي",
+  "jobPage_nonProfitWelcome": "صنع الفرق",
+  "jobPage_nonProfitWelcomeMessage": "شكراً لك على استكشاف الفرص غير الربحية! من خلال التفكير في هذه الوظائف، أنت تساهم في قضايا ذات معنى وتحدث تأثيراً إيجابياً في المجتمع.",
 
   "jobDetails_title": "تفاصيل الوظيفة",
   "jobDetails_apply": "قدم الآن",
@@ -241,6 +245,9 @@
   "mentorScreen_enterNumber": "أدخل رقماً",
   "mentorScreen_cancel": "إلغاء",
   "mentorScreen_update": "تحديث",
+  "mentorProfile_ratingNotAvailable": "لا تتوفر تقييمات لهذا المرشد.",
+  "mentorProfile_expertise": "الخبرة",
+  "mentorshipPage_become_a_mentor": "تصبح مرشدا",
 
   "mentorScreen_completeMentorship": "إكمال الترابط المهني",
   "mentorScreen_cancelMentorship": "إلغاء الترابط المهني",
@@ -361,6 +368,7 @@
   "jobFilter_maxSalary": "الحد الأقصى للراتب",
   "jobFilter_maxSalaryHint": "مثل: 100000",
   "jobFilter_remoteOnly": "الوظائف عن بُعد فقط",
+  "jobFilter_inclusiveOpportunity": "وظائف شاملة للأشخاص ذوي الإعاقة فقط",
   "jobFilter_jobType": "نوع الوظيفة",
   "jobFilter_clearAll": "مسح الكل",
   "jobFilter_applyFilters": "تطبيق المرشحات",

@@ -19,6 +19,9 @@ import { MapPin, Building2, ExternalLink, Users, Settings, CheckCircle2, ArrowDo
 import { getWorkplaceById } from '@/services/workplace.service';
 import { getJobsByEmployer } from '@/services/jobs.service';
 import { getEmployerRequests } from '@/services/employer.service';
+import { useReportModal } from '@/hooks/useReportModal';
+import { reportWorkplace } from '@/services/workplace-report.service';
+import { Flag } from 'lucide-react';
 import type { ReviewListParams, WorkplaceDetailResponse } from '@/types/workplace.types';
 import type { JobPostResponse } from '@/types/api.types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -36,6 +39,7 @@ export default function WorkplaceProfilePage() {
   const [reviewSortBy, setReviewSortBy] = useState('ratingDesc');
   const [ratingRange, setRatingRange] = useState<{ min?: number; max?: number }>({});
   const [reviewsTotal, setReviewsTotal] = useState<number>(0);
+  const { openReport, ReportModalElement } = useReportModal();
 
   const reviewFilters = useMemo(() => {
     const filterParams: Omit<ReviewListParams, 'page' | 'size'> = {};
@@ -162,6 +166,18 @@ export default function WorkplaceProfilePage() {
 
   const clearRatingRange = () => setRatingRange({});
 
+  const handleWorkplaceReport = () => {
+    if (!workplace) return;
+    openReport({
+      title: 'Report Workplace',
+      subtitle: workplace.companyName,
+      onSubmit: async (message, reason) => {
+        await reportWorkplace(workplace.id, message, reason);
+      },
+    });
+  };
+
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -207,13 +223,23 @@ export default function WorkplaceProfilePage() {
                     <p className="text-lg text-muted-foreground">{workplace.shortDescription}</p>
                   )}
                 </div>
-                {isEmployer && (
+                {isEmployer ? (
                   <Link to={`/employer/workplace/${workplace.id}/settings`}>
                     <Button variant="outline" size="sm">
                       <Settings className="h-4 w-4" />
                       {t('common.settings')}
                     </Button>
                   </Link>
+                ) : (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-muted-foreground hover:text-destructive"
+                    onClick={handleWorkplaceReport}
+                  >
+                    <Flag className="h-4 w-4 mr-2" />
+                    Report
+                  </Button>
                 )}
               </div>
 
@@ -253,6 +279,7 @@ export default function WorkplaceProfilePage() {
             </div>
           </div>
         </Card>
+        {ReportModalElement}
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Content */}

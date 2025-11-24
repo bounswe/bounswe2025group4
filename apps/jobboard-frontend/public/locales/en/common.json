@@ -11,6 +11,7 @@
     "nav": {
       "home": "Home",
       "jobs": "Jobs",
+      "nonProfitJobs": "Volunteer",
       "myApplications": "My Applications",
       "mentorship": "Mentorship",
       "myMentorships": "My Mentorships",
@@ -111,6 +112,41 @@
       "login": "Already have an account? Login"
     }
   },
+  "nonProfitJobs": {
+    "pageTitle": "Opportunities for the Greater Good",
+    "pageDescription": "Not every reward is monetary. These volunteer and purpose-driven roles exist to make a difference — for people, for the planet, and for the future. Whether it's planting trees, helping local communities, or contributing your skills to social causes, every action here counts toward something bigger than ourselves.",
+    "volunteerOpportunity": "Volunteer",
+    "makingADifference": "Making a Difference",
+    "features": {
+      "meaningful": "Meaningful Work",
+      "sustainable": "Sustainable Impact",
+      "community": "Community Focus"
+    },
+    "availableOpportunities": "{{count}} opportunity available",
+    "availableOpportunities_plural": "{{count}} opportunities available",
+    "opportunitiesDescription": "{{count}} ways to make a positive impact in your community and beyond.",
+    "noOpportunities": "No volunteer opportunities available at the moment",
+    "checkBackSoon": "Check back soon for new ways to make a difference in your community.",
+    "browseRegularJobs": "Browse Regular Jobs",
+    "volunteer": "Volunteer",
+    "backToOpportunities": "Back to Opportunities",
+    "volunteerNow": "Volunteer Now",
+    "aboutOrganization": "About the Organization",
+    "opportunityDescription": "Opportunity Description",
+    "makeADifferenceDescription": "Join us in creating meaningful change through volunteer work that makes a real difference in communities and causes you care about.",
+    "defaultDescription": "Make a meaningful impact through volunteer work that contributes to environmental sustainability, community development, and social justice initiatives.",
+    "whatYouGain": {
+      "title": "What You'll Gain",
+      "experience": "Valuable hands-on experience in your field of interest",
+      "networking": "Networking opportunities with like-minded individuals",
+      "skills": "Development of new skills and competencies",
+      "impact": "Direct contribution to meaningful social causes",
+      "purpose": "A sense of purpose and personal fulfillment"
+    },
+    "authRequired": {
+      "description": "You need to create an account to view volunteer opportunities and connect with meaningful organizations."
+    }
+  },
   "jobFilters": {
     "ethicalTags": "Ethical Tags",
     "selectEthicalTags": "Select ethical tags",
@@ -174,7 +210,8 @@
   },
   "jobCard": {
     "remote": "Remote",
-    "inclusiveOpportunity": "Inclusive Opportunity"
+    "inclusiveOpportunity": "Inclusive Opportunity",
+    "notSpecified": "Location not specified"
   },
   "mobileFilters": {
     "open": "Open filters",
@@ -951,6 +988,54 @@
       "backToJobs": "Back to Jobs"
     }
   },
+  "nonProfitApplication": {
+    "title": "Volunteer for {{jobTitle}}",
+    "breadcrumb": {
+      "apply": "Apply"
+    },
+    "opportunityDetails": {
+      "title": "Volunteer Opportunity Details",
+      "organization": "Organization",
+      "location": "Location",
+      "type": "Type",
+      "volunteer": "Volunteer Opportunity",
+      "postedOn": "Posted on {{date}}"
+    },
+    "form": {
+      "title": "Volunteer Application",
+      "subtitle": "Share your passion for making a difference and tell us why you'd like to volunteer with this organization.",
+      "motivationLetter": {
+        "label": "Motivation Letter",
+        "placeholder": "Tell us why you're passionate about this cause and how you'd like to contribute...",
+        "characterCount": "{{count}}/2000 characters"
+      },
+      "specialNeeds": {
+        "label": "Accessibility Requirements",
+        "placeholder": "Please describe any accommodations or accessibility requirements you may need...",
+        "characterCount": "{{count}}/500 characters"
+      },
+      "cv": {
+        "label": "Resume/CV",
+        "required": "Please upload your resume or CV",
+        "dragDrop": "Drag and drop your resume here or click to browse",
+        "chooseFile": "Choose File",
+        "fileTypes": "PDF, DOC, or DOCX up to 10MB"
+      },
+      "cancel": "Cancel",
+      "submit": "Submit Volunteer Application",
+      "submitting": "Submitting..."
+    },
+    "success": {
+      "message": "Your volunteer application has been submitted successfully!"
+    },
+    "errors": {
+      "loadJob": "Failed to load volunteer opportunity details",
+      "submitFailed": "Failed to submit volunteer application. Please try again.",
+      "fileTooLarge": "File size must be less than 10MB",
+      "invalidFileType": "Invalid file type. Please upload PDF, DOC, or DOCX",
+      "alreadyApplied": "You have already applied for this volunteer opportunity."
+    }
+  },
   "jobApplicationReview": {
     "noCv": "No CV found for this application",
     "error": {
@@ -1072,6 +1157,8 @@
     "locationPlaceholder": "e.g., New York, NY or Remote",
     "remoteWork": "Remote Work Available",
     "remoteWorkDescription": "Check if this position offers remote work options",
+    "nonProfit": "Non-Profit Organization",
+    "nonProfitDescription": "Mark this as a volunteer opportunity from a non-profit organization focused on social impact",
     "salaryRange": "Salary Range",
     "minimum": "Minimum",
     "maximum": "Maximum",
