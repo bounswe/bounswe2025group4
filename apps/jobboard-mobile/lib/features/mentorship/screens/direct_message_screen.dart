@@ -7,11 +7,13 @@ import '../../../core/widgets/a11y.dart';
 class DirectMessageScreen extends StatefulWidget {
   final String mentorId;
   final String mentorName;
+  final int? resumeReviewId;
 
   const DirectMessageScreen({
     super.key,
     required this.mentorId,
     required this.mentorName,
+    this.resumeReviewId,
   });
 
   @override

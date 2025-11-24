@@ -772,6 +772,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get mentorScreen_requestAccepted => 'Talep kabul edildi';
 
   @override
+  String get mentorshipPage_become_a_mentor => 'Mentor ol';
+
+  @override
+  String get mentorProfile_ratingNotAvailable =>
+      'Bu mentor için puanlama mevcut değil.';
+
+  @override
+  String get mentorProfile_expertise => 'Uzmanlık';
+
+  @override
   String get mentorScreen_requestRejected => 'Talep reddedildi';
 
   @override

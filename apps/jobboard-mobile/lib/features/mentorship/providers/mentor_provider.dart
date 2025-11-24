@@ -1,12 +1,12 @@
+// lib/core/providers/mentor_provider.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/core/models/mentor_profile.dart';
 import 'package:mobile/core/models/mentorship_request.dart';
-import 'package:mobile/core/models/mentor_review.dart';
 import 'package:mobile/core/services/api_service.dart';
 
 class MentorProvider with ChangeNotifier {
-  final ApiService _apiService;
+  ApiService _apiService;
 
   // Data collections
   List<MentorProfile> _availableMentors = [];
@@ -34,111 +34,125 @@ class MentorProvider with ChangeNotifier {
   bool get isLoadingProfile => _isLoadingProfile;
   String? get error => _error;
 
-  // Get all available mentors from the API
+  void updateApiService(ApiService newApiService) {
+    _apiService = newApiService;
+  }
+
+  // FETCH ALL AVAILABLE MENTORS
   Future<void> fetchAvailableMentors() async {
     _isLoadingMentors = true;
     _error = null;
     notifyListeners();
-
+    print("Fetching available mentors...");
     try {
-      _availableMentors = await _apiService.getAllMentorProfiles();
-      // Filter only available mentors
-      _availableMentors =
-          _availableMentors.where((mentor) => mentor.isAvailable).toList();
+      _availableMentors = await _apiService.getAllMentors();
+      // Filter only available mentors based on derived getter
+      //_availableMentors =
+      //    _availableMentors.where((mentor) => mentor.isAvailable).toList();
+      print("There are {${_availableMentors.length}} available mentors");
     } catch (e) {
       _error = e.toString();
-      print('Error fetching mentors: $_error');
+      debugPrint('Error fetching mentors: $_error');
     } finally {
       _isLoadingMentors = false;
       notifyListeners();
     }
   }
 
-  // Get requests for the current user as a mentor
-  Future<void> fetchMentorRequests() async {
+  // REQUESTS WHERE CURRENT USER IS A MENTOR
+  Future<void> fetchMentorRequests(String mentorId) async {
     _isLoadingMentorRequests = true;
     _error = null;
     notifyListeners();
 
     try {
-      _mentorRequests = await _apiService.getMentorshipRequestsAsMentor();
-      print("Mentor requests: ${_mentorRequests}");
+      final rawRequests =
+      await _apiService.getMentorshipRequestsAsMentor(mentorId);
+
+      // Enrich with requester usernames
+      for (var r in rawRequests) {
+        if (r.requesterId != null) {
+          final username = await _apiService.getUsernameForUser(r.requesterId!);
+          r.requesterUsername = username; // <-- assign here
+        }
+      }
+
+      _mentorRequests = rawRequests;
     } catch (e) {
       _error = e.toString();
-      print('Error fetching mentor requests: $_error');
+      debugPrint('Error fetching mentor requests: $_error');
     } finally {
       _isLoadingMentorRequests = false;
       notifyListeners();
     }
   }
 
-  // Get requests for the current user as a mentee
-  Future<void> fetchMenteeRequests() async {
+  // REQUESTS WHERE CURRENT USER IS A MENTEE
+  Future<void> fetchMenteeRequests(String menteeId) async {
     _isLoadingMenteeRequests = true;
     _error = null;
     notifyListeners();
 
     try {
-      _menteeRequests = await _apiService.getMentorshipRequestsAsMentee();
+      _menteeRequests = await _apiService.getMentorshipRequestsAsMentee(
+        menteeId,
+      );
     } catch (e) {
       _error = e.toString();
-      print('Error fetching mentee requests: $_error');
+      debugPrint('Error fetching mentee requests: $_error');
     } finally {
       _isLoadingMenteeRequests = false;
       notifyListeners();
     }
   }
 
-  // Create a mentorship request
+  // CREATE MENTORSHIP REQUEST
   Future<bool> createMentorshipRequest({
     required int mentorId,
-    required String message,
   }) async {
     try {
       final request = await _apiService.createMentorshipRequest(
         mentorId: mentorId,
-        message: message,
       );
 
-      // Add the new request to the list
+      // Add the new request to the mentee requests list (current user is mentee)
       _menteeRequests.add(request);
       notifyListeners();
       return true;
     } catch (e) {
-      print('Error creating mentorship request: ${e.toString()}');
-      // Don't set _error here, instead throw the exception to be handled by the UI
+      debugPrint('Error creating mentorship request: ${e.toString()}');
       throw Exception('Failed to create mentorship request: ${e.toString()}');
     }
   }
 
-  // Update a mentorship request status
-  Future<bool> updateRequestStatus({
-    required int requestId,
-    required MentorshipRequestStatus status,
+  // RESPOND TO A REQUEST (ACCEPT/REJECT)
+
+  Future<bool> respondToRequest({
+    required String requestId,
+    required bool accept,
   }) async {
     _error = null;
     notifyListeners();
 
     try {
-      final updatedRequest = await _apiService.updateMentorshipRequestStatus(
-        requestId,
-        status,
+      final updatedRequest = await _apiService.respondToMentorshipRequest(
+        requestId: requestId,
+        accept: accept,
       );
 
-      // Update the request in both lists
       _updateRequestInLists(updatedRequest);
       notifyListeners();
       return true;
     } catch (e) {
       _error = e.toString();
-      print('Error updating request status: $_error');
+      debugPrint('Error responding to request: $_error');
       notifyListeners();
       return false;
     }
   }
 
-  // Get the current user's mentor profile if it exists
-  Future<void> fetchCurrentUserMentorProfile(int userId) async {
+  // CURRENT USER'S MENTOR PROFILE
+  Future<void> fetchCurrentUserMentorProfile(String userId) async {
     _isLoadingProfile = true;
     _error = null;
     notifyListeners();
@@ -146,12 +160,12 @@ class MentorProvider with ChangeNotifier {
     try {
       _currentUserMentorProfile = await _apiService.getMentorProfile(userId);
     } catch (e) {
-      // If 404, the user doesn't have a mentor profile yet
+      // If backend returns 404 -> user is not a mentor yet
       if (e.toString().contains('404')) {
         _currentUserMentorProfile = null;
       } else {
         _error = e.toString();
-        print('Error fetching current user mentor profile: $_error');
+        debugPrint('Error fetching current user mentor profile: $_error');
       }
     } finally {
       _isLoadingProfile = false;
@@ -159,10 +173,11 @@ class MentorProvider with ChangeNotifier {
     }
   }
 
-  // Create a mentor profile for the current user
+  // CREATE MENTOR PROFILE
   Future<bool> createMentorProfile({
-    required int capacity,
-    required bool isAvailable,
+    required String userId,
+    required List<String> expertise,
+    required int maxMentees,
   }) async {
     _isLoadingProfile = true;
     _error = null;
@@ -170,72 +185,75 @@ class MentorProvider with ChangeNotifier {
 
     try {
       _currentUserMentorProfile = await _apiService.createMentorProfile(
-        capacity: capacity,
-        isAvailable: isAvailable,
+        userId: userId,
+        expertise: expertise,
+        maxMentees: maxMentees,
       );
       _isLoadingProfile = false;
       notifyListeners();
       return true;
     } catch (e) {
       _error = e.toString();
-      print('Error creating mentor profile: $_error');
+      debugPrint('Error creating mentor profile: $_error');
       _isLoadingProfile = false;
       notifyListeners();
       return false;
     }
   }
 
-  // Update mentor availability
-  Future<bool> updateMentorAvailability(bool isAvailable) async {
-    if (_currentUserMentorProfile == null) return false;
-
-    _isLoadingProfile = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      _currentUserMentorProfile = await _apiService.updateMentorAvailability(
-        isAvailable,
-      );
-      _isLoadingProfile = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString();
-      print('Error updating mentor availability: $_error');
-      _isLoadingProfile = false;
-      notifyListeners();
-      return false;
-    }
-  }
-
-  // Update mentor capacity
-  Future<bool> updateMentorCapacity(int capacity) async {
-    if (_currentUserMentorProfile == null) return false;
-
-    _isLoadingProfile = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      _currentUserMentorProfile = await _apiService.updateMentorCapacity(
-        capacity,
-      );
-      _isLoadingProfile = false;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      _error = e.toString();
-      print('Error updating mentor capacity: $_error');
-      _isLoadingProfile = false;
-      notifyListeners();
-      return false;
-    }
-  }
-
-  // Create a review for a mentor
-  Future<bool> createMentorReview({
+  // UPDATE MENTOR PROFILE
+  Future<bool> updateMentorProfile({
     required String userId,
+    required List<String> expertise,
+    required int maxMentees,
+  }) async {
+    if (_currentUserMentorProfile == null) return false;
+
+    _isLoadingProfile = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _currentUserMentorProfile = await _apiService.updateMentorProfile(
+        userId: userId,
+        expertise: expertise,
+        maxMentees: maxMentees,
+      );
+      _isLoadingProfile = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      debugPrint('Error updating mentor profile: $_error');
+      _isLoadingProfile = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  //DELETE MENTOR PROFILE
+  Future<bool> deleteMentorProfile(String userId) async {
+    _isLoadingProfile = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _apiService.deleteMentorProfile(userId);
+      _currentUserMentorProfile = null;
+      _isLoadingProfile = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      debugPrint('Error deleting mentor profile: $_error');
+      _isLoadingProfile = false;
+      notifyListeners();
+      return false;
+    }
+  }
+  //CREATE RATING FOR RESUME REVIEW
+  Future<bool> createMentorRating({
+    required int resumeReviewId,
     required int rating,
     String? comment,
   }) async {
@@ -243,31 +261,54 @@ class MentorProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      print(
-        'Creating mentor review for mentor $userId with rating $rating and comment $comment',
+      debugPrint(
+        'Creating mentor rating for review $resumeReviewId with rating $rating and comment $comment',
       );
-      await _apiService.createMentorReview(
-        userId: userId,
+      await _apiService.createMentorRating(
+        resumeReviewId: resumeReviewId,
         rating: rating,
         comment: comment,
       );
 
-      // Optionally refresh the mentor profile to get updated rating
+      // refresh mentee/mentor requests or mentor profile here.
       notifyListeners();
       return true;
     } catch (e) {
       _error = e.toString();
-      print('Error creating mentor review: $_error');
+      debugPrint('Error creating mentor rating: $_error');
       notifyListeners();
       return false;
     }
   }
 
+  Future<bool> completeMentorship(int resumeReviewId) async {
+    try {
+      await _apiService.completeResumeReview(resumeReviewId);
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> cancelMentorship(int resumeReviewId) async {
+    try {
+      await _apiService.closeResumeReview(resumeReviewId);
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+
   // Helper to update request in both lists
   void _updateRequestInLists(MentorshipRequest updatedRequest) {
     // Update in mentor requests list
     final mentorIndex = _mentorRequests.indexWhere(
-      (r) => r.id == updatedRequest.id,
+          (r) => r.id == updatedRequest.id,
     );
     if (mentorIndex != -1) {
       _mentorRequests[mentorIndex] = updatedRequest;
@@ -275,7 +316,7 @@ class MentorProvider with ChangeNotifier {
 
     // Update in mentee requests list
     final menteeIndex = _menteeRequests.indexWhere(
-      (r) => r.id == updatedRequest.id,
+          (r) => r.id == updatedRequest.id,
     );
     if (menteeIndex != -1) {
       _menteeRequests[menteeIndex] = updatedRequest;
