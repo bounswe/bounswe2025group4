@@ -147,7 +147,7 @@ export default function HomePage() {
             <div className="mt-6 flex justify-center">
               <div
                 className="group relative cursor-pointer"
-                onClick={() => navigate('/workplaces?sector=nonprofit')}
+                onClick={() => navigate('/nonprofit-jobs')}
               >
                 {/* Strong Outer Glow */}
                 <div
