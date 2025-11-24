@@ -14,6 +14,7 @@ import ProfilePage from './pages/ProfilePage';
 import JobsPage from './pages/JobsPage';
 import NonProfitJobsPage from './pages/NonProfitJobsPage';
 import JobDetailPage from './pages/JobDetailPage';
+import NonProfitJobDetailPage from './pages/NonProfitJobDetailPage';
 import JobApplicationPage from './pages/JobApplicationPage';
 import MyApplicationsPage from './pages/MyApplicationsPage';
 import JobApplicationReviewPage from './pages/JobApplicationReviewPage';
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
         element: <NonProfitJobsPage />,
       },
       {
+        path: 'nonprofit-jobs/:id',
+        element: <NonProfitJobDetailPage />,
+      },
+      {
         path: 'jobs/:id',
         element: <JobDetailPage />,
       },
@@ -69,6 +74,14 @@ const router = createBrowserRouter([
       },
       {
         path: 'jobs/:id/apply',
+        element: (
+          <ProtectedRoute>
+            <JobApplicationPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'nonprofit-jobs/:id/apply',
         element: (
           <ProtectedRoute>
             <JobApplicationPage />

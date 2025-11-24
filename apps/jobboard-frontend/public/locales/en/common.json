@@ -128,6 +128,21 @@
     "noOpportunities": "No volunteer opportunities available at the moment",
     "checkBackSoon": "Check back soon for new ways to make a difference in your community.",
     "browseRegularJobs": "Browse Regular Jobs",
+    "volunteer": "Volunteer",
+    "backToOpportunities": "Back to Opportunities",
+    "volunteerNow": "Volunteer Now",
+    "aboutOrganization": "About the Organization",
+    "opportunityDescription": "Opportunity Description",
+    "makeADifferenceDescription": "Join us in creating meaningful change through volunteer work that makes a real difference in communities and causes you care about.",
+    "defaultDescription": "Make a meaningful impact through volunteer work that contributes to environmental sustainability, community development, and social justice initiatives.",
+    "whatYouGain": {
+      "title": "What You'll Gain",
+      "experience": "Valuable hands-on experience in your field of interest",
+      "networking": "Networking opportunities with like-minded individuals",
+      "skills": "Development of new skills and competencies",
+      "impact": "Direct contribution to meaningful social causes",
+      "purpose": "A sense of purpose and personal fulfillment"
+    },
     "authRequired": {
       "description": "You need to create an account to view volunteer opportunities and connect with meaningful organizations."
     }
@@ -195,7 +210,8 @@
   },
   "jobCard": {
     "remote": "Remote",
-    "inclusiveOpportunity": "Inclusive Opportunity"
+    "inclusiveOpportunity": "Inclusive Opportunity",
+    "notSpecified": "Location not specified"
   },
   "mobileFilters": {
     "open": "Open filters",

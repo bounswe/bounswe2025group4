@@ -128,6 +128,21 @@
     "noOpportunities": "Şu anda gönüllü fırsatları bulunmuyor",
     "checkBackSoon": "Topluluğunuzda fark yaratmanın yeni yolları için yakında tekrar kontrol edin.",
     "browseRegularJobs": "Normal İşlere Göz At",
+    "volunteer": "Gönüllü",
+    "backToOpportunities": "Fırsatlara Geri Dön",
+    "volunteerNow": "Şimdi Gönüllü Ol",
+    "aboutOrganization": "Organizasyon Hakkında",
+    "opportunityDescription": "Fırsat Açıklaması",
+    "makeADifferenceDescription": "Önemsediğiniz topluluklar ve amaçlar için gerçek bir fark yaratan gönüllü çalışmalar yoluyla anlamlı değişim yaratmaya katılın.",
+    "defaultDescription": "Çevresel sürdürülebilirlik, toplum kalkınması ve sosyal adalet girişimlerine katkıda bulunan gönüllü çalışmalar yoluyla anlamlı bir etki yaratın.",
+    "whatYouGain": {
+      "title": "Ne Kazanacaksınız",
+      "experience": "İlgilendiğiniz alanda değerli pratik deneyim",
+      "networking": "Benzer düşünen bireylerle networking fırsatları",
+      "skills": "Yeni beceri ve yetkinliklerin geliştirilmesi",
+      "impact": "Anlamlı sosyal amaçlara doğrudan katkı",
+      "purpose": "Amaç duygusu ve kişisel tatmin"
+    },
     "authRequired": {
       "description": "Gönüllü fırsatlarını görüntülemek ve anlamlı organizasyonlarla bağlantı kurmak için bir hesap oluşturmanız gerekiyor."
     }
@@ -195,7 +210,8 @@
   },
   "jobCard": {
     "remote": "Uzaktan",
-    "inclusiveOpportunity": "Kapsayıcı Fırsat"
+    "inclusiveOpportunity": "Kapsayıcı Fırsat",
+    "notSpecified": "Konum belirtilmemiş"
   },
   "mobileFilters": {
     "open": "Filtreleri aç",

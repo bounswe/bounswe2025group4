@@ -18,6 +18,7 @@ function convertJobPostToJob(jobPost: JobPostResponse): Job {
   return {
     id: jobPost.id.toString(),
     title: jobPost.title,
+    description: jobPost.description,
     workplace: jobPost.workplace,
     location: jobPost.remote ? 'Remote' : jobPost.location,
     type: ['Contract'], // Using 'Contract' type for volunteer/nonprofit positions

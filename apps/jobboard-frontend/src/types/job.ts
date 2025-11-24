@@ -82,6 +82,7 @@ import type { WorkplaceBriefResponse } from './workplace.types';
 export type Job = {
   id: string;
   title: string;
+  description?: string;
   workplace: WorkplaceBriefResponse;
   location: string;
   type: JobType[];

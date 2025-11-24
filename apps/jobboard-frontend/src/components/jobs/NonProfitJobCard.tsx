@@ -16,14 +16,17 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
   const { t } = useTranslation('common');
 
   const handleCardClick = () => {
-    navigate(`/jobs/${job.id}`);
+    navigate(`/nonprofit-jobs/${job.id}`);
   };
 
   const ethicalTagLabels = job.workplace.ethicalTags
     .filter((tag) => TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP])
     .map((tag) => t(`ethicalTags.tags.${TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP]}`, tag));
-  const location =
-    job.location?.toLowerCase() === 'remote' ? t('jobCard.remote') : job.location;
+  
+  // Handle location display with fallbacks
+  const location = job.location?.toLowerCase() === 'remote' 
+    ? t('jobCard.remote') 
+    : job.location || job.workplace.location || t('jobCard.notSpecified');
 
   return (
     <Card
@@ -85,23 +88,25 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
             <div className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
               {job.title}
             </div>
-            <div className="text-base text-muted-foreground font-medium">{job.workplace.companyName}</div>
+            <div className="flex items-center gap-3 text-sm text-muted-foreground">
+              <span className="font-medium">{job.workplace.companyName}</span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <MapPin className="size-4 text-green-500" aria-hidden />
+                <span>{location}</span>
+              </span>
+            </div>
           </div>
 
           {/* Description */}
           <div className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-            {job.nonProfit ? 
-              'Make a meaningful impact through volunteer work that contributes to environmental sustainability, community development, and social justice initiatives. Join us in creating positive change for future generations.'
-              : 'This organization is committed to making a positive difference in the community through ethical practices and social responsibility.'
+            {job.description || 
+              t('nonProfitJobs.defaultDescription', 'Make a meaningful impact through volunteer work that contributes to environmental sustainability, community development, and social justice initiatives.')
             }
           </div>
 
-          {/* Location and Impact Focus */}
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <MapPin className="size-4 text-green-500" aria-hidden />
-              {location}
-            </span>
+          {/* Impact Focus */}
+          <div className="flex items-center gap-1 text-sm">
             <span className="text-green-600 font-medium">
               {t('nonProfitJobs.makingADifference')}
             </span>
