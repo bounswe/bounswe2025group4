@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Clock, CheckCircle, XCircle, MessageCircle, Star, Calendar, FileText } from 'lucide-react';
 import type { Mentorship, MentorshipStatus } from '@/types/mentor';
 import { useAuth } from '@/contexts/AuthContext';
-import { getMenteeMentorships, completeMentorship, rateMentor } from '@/services/mentorship.service';
+import { getMenteeMentorships, rateMentor } from '@/services/mentorship.service';
 import type { CreateRatingDTO } from '@/types/api.types';
 import { convertMentorshipDetailsToMentorship } from '@/utils/mentorship.utils';
 import { profileService } from '@/services/profile.service';
@@ -59,7 +59,6 @@ const MyMentorshipsPage = () => {
   const [mentorships, setMentorships] = useState<Mentorship[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [completingId, setCompletingId] = useState<string | null>(null);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [selectedMentorshipForReview, setSelectedMentorshipForReview] = useState<Mentorship | null>(null);
   const [reviewRating, setReviewRating] = useState<number>(0);
@@ -129,57 +128,6 @@ const MyMentorshipsPage = () => {
 
     fetchMentorships();
   }, [user?.id, location.pathname, newMentorshipFromState]); // Refetch when pathname changes or new mentorship is passed
-
-  const handleCompleteMentorship = async (mentorship: Mentorship) => {
-    if (!mentorship.resumeReviewId) {
-      toast.error(t('mentorship.myMentorships.completeError') || 'Cannot complete mentorship: Review ID not found');
-      return;
-    }
-
-    setCompletingId(mentorship.id);
-
-    try {
-      await completeMentorship(mentorship.resumeReviewId);
-      toast.success(t('mentorship.myMentorships.completeSuccess') || 'Mentorship completed successfully! You can now write a review.');
-      
-      // Refetch mentorships to update status
-      if (user?.id) {
-        const updatedMentorships = await getMenteeMentorships(user.id);
-        
-        // Fetch mentor profiles to get avatars
-        const mentorProfilesMap: Record<number, string | undefined> = {};
-        const uniqueMentorIds = [...new Set(updatedMentorships.map(m => m.mentorId))];
-        await Promise.all(
-          uniqueMentorIds.map(async (mentorId) => {
-            try {
-              const profile = await profileService.getPublicProfile(mentorId);
-              mentorProfilesMap[mentorId] = profile.imageUrl;
-            } catch (err) {
-              mentorProfilesMap[mentorId] = undefined;
-            }
-          })
-        );
-        
-        const converted = updatedMentorships.map((m) => 
-          convertMentorshipDetailsToMentorship(m, mentorProfilesMap[m.mentorId])
-        );
-        // Remove duplicates by id and mentorId combination
-        const uniqueMentorships = Array.from(
-          new Map(converted.map(m => [`${m.id}-${m.mentorId}`, m])).values()
-        );
-        setMentorships(uniqueMentorships);
-        
-        // Switch to completed tab
-        setActiveTab('completed');
-      }
-    } catch (err: any) {
-      console.error('Error completing mentorship:', err);
-      const errorMessage = err?.response?.data?.message || err?.message || t('mentorship.errors.completeFailed') || 'Failed to complete mentorship. Please try again.';
-      toast.error(errorMessage);
-    } finally {
-      setCompletingId(null);
-    }
-  };
 
   const handleOpenReviewDialog = (mentorship: Mentorship) => {
     setSelectedMentorshipForReview(mentorship);
