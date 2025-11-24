@@ -8,12 +8,12 @@ import { API_BASE_URL } from '@/test/handlers';
 describe('RegisterPage', () => {
   async function completeRequiredFields() {
     const user = setupUserEvent();
-    await user.type(screen.getByLabelText(/username/i), 'newuser');
-    await user.type(screen.getByLabelText(/email/i), 'newuser@example.com');
-    await user.type(screen.getByLabelText(/^password \*/i), 'StrongPass1!');
-    await user.type(screen.getByLabelText(/confirm password/i), 'StrongPass1!');
-    await user.selectOptions(screen.getByLabelText(/role/i), 'ROLE_JOBSEEKER');
-    await user.click(screen.getByLabelText(/terms and conditions/i));
+    await user.type(screen.getByLabelText('auth.register.username'), 'newuser');
+    await user.type(screen.getByLabelText('auth.register.email'), 'newuser@example.com');
+    await user.type(screen.getByLabelText('auth.register.password'), 'StrongPass1!');
+    await user.type(screen.getByLabelText('auth.register.confirmPassword'), 'StrongPass1!');
+    await user.selectOptions(screen.getByLabelText('auth.register.role'), 'ROLE_JOBSEEKER');
+    await user.click(screen.getByLabelText('auth.register.termsLabelPlain'));
     return user;
   }
 
@@ -21,10 +21,10 @@ describe('RegisterPage', () => {
     renderWithProviders(<RegisterPage />, { initialEntries: ['/register'] });
 
     const user = await completeRequiredFields();
-    await user.click(screen.getByRole('button', { name: /sign up/i }));
+    await user.click(screen.getByRole('button', { name: 'auth.register.submit' }));
 
     expect(
-      await screen.findByText(/registration successful/i),
+      await screen.findByText('auth.register.success'),
     ).toBeInTheDocument();
   });
 
@@ -41,11 +41,11 @@ describe('RegisterPage', () => {
     renderWithProviders(<RegisterPage />, { initialEntries: ['/register'] });
 
     const user = await completeRequiredFields();
-    await user.click(screen.getByRole('button', { name: /sign up/i }));
+    await user.click(screen.getByRole('button', { name: 'auth.register.submit' }));
 
     expect(
       await screen.findByRole('alert'),
-    ).toHaveTextContent(/Email is already in use/i);
+    ).toHaveTextContent('auth.register.errors.emailInUse');
   });
 
   it('shows a service unavailable message on 401 responses', async () => {
@@ -61,10 +61,10 @@ describe('RegisterPage', () => {
     renderWithProviders(<RegisterPage />, { initialEntries: ['/register'] });
 
     const user = await completeRequiredFields();
-    await user.click(screen.getByRole('button', { name: /sign up/i }));
+    await user.click(screen.getByRole('button', { name: 'auth.register.submit' }));
 
     expect(
       await screen.findByRole('alert'),
-    ).toHaveTextContent(/Service temporarily unavailable/i);
+    ).toHaveTextContent('auth.register.errors.serviceUnavailable');
   });
 });

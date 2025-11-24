@@ -19,6 +19,9 @@ import { MapPin, Building2, ExternalLink, Users, Settings, CheckCircle2, ArrowDo
 import { getWorkplaceById } from '@/services/workplace.service';
 import { getJobsByEmployer } from '@/services/jobs.service';
 import { getEmployerRequests } from '@/services/employer.service';
+import { useReportModal } from '@/hooks/useReportModal';
+import { reportWorkplace } from '@/services/workplace-report.service';
+import { Flag } from 'lucide-react';
 import type { ReviewListParams, WorkplaceDetailResponse } from '@/types/workplace.types';
 import type { JobPostResponse } from '@/types/api.types';
 import { useAuth } from '@/contexts/AuthContext';
@@ -36,6 +39,7 @@ export default function WorkplaceProfilePage() {
   const [reviewSortBy, setReviewSortBy] = useState('ratingDesc');
   const [ratingRange, setRatingRange] = useState<{ min?: number; max?: number }>({});
   const [reviewsTotal, setReviewsTotal] = useState<number>(0);
+  const { openReport, ReportModalElement } = useReportModal();
 
   const reviewFilters = useMemo(() => {
     const filterParams: Omit<ReviewListParams, 'page' | 'size'> = {};
@@ -162,6 +166,18 @@ export default function WorkplaceProfilePage() {
 
   const clearRatingRange = () => setRatingRange({});
 
+  const handleWorkplaceReport = () => {
+    if (!workplace) return;
+    openReport({
+      title: 'Report Workplace',
+      subtitle: workplace.companyName,
+      onSubmit: async (message, reason) => {
+        await reportWorkplace(workplace.id, message, reason);
+      },
+    });
+  };
+
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -174,12 +190,12 @@ export default function WorkplaceProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Workplace not found</h2>
+          <h2 className="text-2xl font-bold mb-2">{t('workplace.profile.notFound')}</h2>
           <p className="text-muted-foreground mb-4">
-            The workplace you're looking for doesn't exist or has been removed.
+            {t('workplace.profile.notFoundDescription')}
           </p>
           <Link to="/">
-            <Button>Go Home</Button>
+            <Button>{t('common.goHome')}</Button>
           </Link>
         </div>
       </div>
@@ -207,13 +223,23 @@ export default function WorkplaceProfilePage() {
                     <p className="text-lg text-muted-foreground">{workplace.shortDescription}</p>
                   )}
                 </div>
-                {isEmployer && (
+                {isEmployer ? (
                   <Link to={`/employer/workplace/${workplace.id}/settings`}>
                     <Button variant="outline" size="sm">
                       <Settings className="h-4 w-4" />
-                      Settings
+                      {t('common.settings')}
                     </Button>
                   </Link>
+                ) : (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-muted-foreground hover:text-destructive"
+                    onClick={handleWorkplaceReport}
+                  >
+                    <Flag className="h-4 w-4 mr-2" />
+                    Report
+                  </Button>
                 )}
               </div>
 
@@ -231,7 +257,7 @@ export default function WorkplaceProfilePage() {
                     <Users className="h-4 w-4" />
                     <span>
                       {workplace.employers.length}{' '}
-                      {workplace.employers.length === 1 ? 'employer' : 'employers'}
+                      {workplace.employers.length === 1 ? t('common.employer') : t('common.employers')}
                     </span>
                   </div>
                 )}
@@ -245,7 +271,7 @@ export default function WorkplaceProfilePage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-primary hover:underline"
                   >
-                    Visit Website
+                    {t('common.visitWebsite')}
                     <ExternalLink className="h-3 w-3" />
                   </a>
                 </div>
@@ -253,6 +279,7 @@ export default function WorkplaceProfilePage() {
             </div>
           </div>
         </Card>
+        {ReportModalElement}
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Content */}
@@ -260,7 +287,7 @@ export default function WorkplaceProfilePage() {
             {/* About */}
             {workplace.detailedDescription && (
               <Card className="p-6">
-                <h2 className="text-xl font-bold">About</h2>
+                <h2 className="text-xl font-bold">{t('workplace.profile.aboutCompany')}</h2>
                 <p className="text-foreground leading-relaxed whitespace-pre-wrap">
                   {workplace.detailedDescription}
                 </p>
@@ -270,7 +297,7 @@ export default function WorkplaceProfilePage() {
             {/* Ethical Tags */}
             {workplace.ethicalTags && workplace.ethicalTags.length > 0 && (
               <Card className="p-6">
-                <h2 className="text-xl font-bold">Ethical Commitments</h2>
+                <h2 className="text-xl font-bold">{t('workplace.profile.ethicalCommitments')}</h2>
                 <div className="space-y-2">
                   {workplace.ethicalTags.map((tag) => (
                     <div key={tag} className="flex items-center gap-2">
@@ -286,12 +313,12 @@ export default function WorkplaceProfilePage() {
             {workplace.employers && workplace.employers.length > 0 && (
               <Card className="p-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold">Employers</h2>
+                  <h2 className="text-xl font-bold">{t('workplace.profile.employers')}</h2>
                   {isOwner && (
                     <Button variant="outline" asChild className="relative">
                       <Link to={`/employer/workplace/${workplace.id}/requests`}>
                         <Users className="h-4 w-4"/>
-                        Manage Requests
+                        {t('workplace.profile.manageRequests')}
                         {hasPendingRequests && (
                           <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-background" />
                         )}
@@ -319,7 +346,7 @@ export default function WorkplaceProfilePage() {
                               </p>
                               <p className="text-xs text-muted-foreground truncate">{employer.email}</p>
                               <Badge variant="outline" className="mt-1 text-xs">
-                                {employer.role}
+                                {t(`common.${employer.role}`)}
                               </Badge>
                             </div>
                           </div>
@@ -334,7 +361,7 @@ export default function WorkplaceProfilePage() {
             {/* Workplace Reviews */}
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold">Reviews</h2>
+                <h2 className="text-2xl font-bold">{t('reviews.workplaceReviews')}</h2>
                 {canWriteReview && (
                   <ReviewFormDialog
                     workplaceId={workplace.id}
@@ -421,14 +448,14 @@ export default function WorkplaceProfilePage() {
           <div className="space-y-6">
             {/* Current Job Openings */}
             <Card className="p-6">
-              <h3 className="text-lg font-bold">Current Job Openings</h3>
+              <h3 className="text-lg font-bold">{t('workplace.profile.currentJobOpenings')}</h3>
               {jobsLoading ? (
                 <div className="text-center py-4">
-                  <p className="text-sm text-muted-foreground">Loading jobs...</p>
+                  <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
                 </div>
               ) : jobs.length === 0 ? (
                 <div className="text-center py-4">
-                  <p className="text-sm text-muted-foreground">No job openings at the moment.</p>
+                  <p className="text-sm text-muted-foreground">{t('workplace.profile.noJobOpenings')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -439,7 +466,7 @@ export default function WorkplaceProfilePage() {
                         <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                           <div className="p-4">
                             <Badge className="mb-2 bg-green-100 text-green-800 hover:bg-green-100">
-                              {job.company}
+                              {job.workplace.companyName}
                             </Badge>
                             <h4 className="font-semibold group-hover:text-primary transition-colors mb-1">
                               {job.title}
@@ -461,7 +488,7 @@ export default function WorkplaceProfilePage() {
                               </p>
                             )}
                             <Button className="w-full mt-3" size="sm" variant="outline">
-                              View Job
+                              {t('common.viewJob')}
                             </Button>
                           </div>
                         </div>
@@ -471,7 +498,7 @@ export default function WorkplaceProfilePage() {
                   {jobs.length > 5 && (
                     <Link to="/jobs" className="block">
                       <Button className="w-full" variant="outline" size="sm">
-                        View All Jobs ({jobs.length})
+                        {t('workplace.profile.viewAllJobs', { count: jobs.length })}
                       </Button>
                     </Link>
                   )}

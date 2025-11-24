@@ -14,6 +14,8 @@ class User {
   final String? employerId; // Added: Specific ID for employer operations
   final MentorshipStatus? mentorshipStatus;
   final int? maxMenteeCount;
+  final List<String>? expertise;
+
   // Add other fields later: profilePicUrl, education, skills, etc.
 
   User({
@@ -29,6 +31,7 @@ class User {
     this.employerId, // Add to constructor
     this.mentorshipStatus,
     this.maxMenteeCount,
+    this.expertise,
   });
 
   // Computed property to get full name
@@ -59,6 +62,7 @@ class User {
               ? MentorshipStatus.values.byName(json['mentorshipStatus'])
               : null,
       maxMenteeCount: json['maxMenteeCount'],
+      expertise: List<String>.from(json['expertise'] ?? []),
     );
   }
 
@@ -76,6 +80,40 @@ class User {
       'employerId': employerId,
       'mentorshipStatus': mentorshipStatus?.name,
       'maxMenteeCount': maxMenteeCount,
+      'expertise': expertise,
     };
   }
+
+  User copyWith({
+    String? id,
+    String? username,
+    String? email,
+    UserType? role,
+    String? firstName,
+    String? lastName,
+    String? jobTitle,
+    String? company,
+    String? bio,
+    String? employerId,
+    MentorshipStatus? mentorshipStatus,
+    int? maxMenteeCount,
+    List<String>? expertise,
+  }) {
+    return User(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      role: role ?? this.role,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      jobTitle: jobTitle ?? this.jobTitle,
+      company: company ?? this.company,
+      bio: bio ?? this.bio,
+      employerId: employerId ?? this.employerId,
+      mentorshipStatus: mentorshipStatus ?? this.mentorshipStatus,
+      maxMenteeCount: maxMenteeCount ?? this.maxMenteeCount,
+      expertise: expertise ?? this.expertise,
+    );
+  }
+
 }
