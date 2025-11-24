@@ -27,6 +27,7 @@ vi.mock('@/services/workplace.service', async () => {
     updateWorkplace: vi.fn(),
     uploadWorkplaceImage: vi.fn(),
     deleteWorkplaceImage: vi.fn(),
+    deleteWorkplace: vi.fn(),
   };
 });
 
@@ -37,6 +38,7 @@ describe('WorkplaceSettingsPage Integration', () => {
         <Routes>
           <Route path="/employer/workplace/:workplaceId/settings" element={<WorkplaceSettingsPage />} />
           <Route path="/workplace/:id" element={<div>Workplace Profile</div>} />
+          <Route path="/employer/workplaces" element={<div>Employer Workplaces</div>} />
         </Routes>
       </MemoryRouter>
     );
@@ -163,6 +165,142 @@ describe('WorkplaceSettingsPage Integration', () => {
 
     await waitFor(() => {
       expect(workplaceService.uploadWorkplaceImage).toHaveBeenCalled();
+    });
+  });
+
+  it('shows delete workplace button in danger zone', async () => {
+    renderPage();
+
+    // Wait for the page to load
+    await waitFor(() => {
+      expect(screen.getByText('workplace.settings.title')).toBeInTheDocument();
+    }, { timeout: 3000 });
+
+    // Check if danger zone is visible
+    expect(screen.getByText('workplace.settings.dangerZone.title')).toBeInTheDocument();
+    expect(screen.getByText('workplace.settings.dangerZone.deleteButton')).toBeInTheDocument();
+  });
+
+  it('opens delete confirmation dialog when delete button is clicked', async () => {
+    renderPage();
+
+    // Wait for the page to load
+    await waitFor(() => {
+      expect(screen.getByText('workplace.settings.title')).toBeInTheDocument();
+    }, { timeout: 3000 });
+
+    // Click the delete button
+    const deleteButton = screen.getByText('workplace.settings.dangerZone.deleteButton');
+    fireEvent.click(deleteButton);
+
+    // Check if dialog opened
+    await waitFor(() => {
+      expect(screen.getByText('workplace.settings.dangerZone.confirmTitle')).toBeInTheDocument();
+      expect(screen.getByText('workplace.settings.dangerZone.confirmDescription')).toBeInTheDocument();
+    });
+  });
+
+  it('delete button is disabled until correct workplace name is entered', async () => {
+    renderPage();
+
+    // Wait for the page to load
+    await waitFor(() => {
+      expect(screen.getByText('workplace.settings.title')).toBeInTheDocument();
+    }, { timeout: 3000 });
+
+    // Click the delete button to open dialog
+    const deleteButton = screen.getByText('workplace.settings.dangerZone.deleteButton');
+    fireEvent.click(deleteButton);
+
+    // Wait for dialog
+    await waitFor(() => {
+      expect(screen.getByText('workplace.settings.dangerZone.confirmTitle')).toBeInTheDocument();
+    });
+
+    // Find the confirm button in the dialog
+    const confirmButton = screen.getByRole('button', { name: /workplace\.settings\.dangerZone\.confirmButton/ });
+
+    // Should be disabled initially
+    expect(confirmButton).toBeDisabled();
+
+    // Enter wrong name
+    const confirmInput = screen.getByPlaceholderText('Tech Corp');
+    fireEvent.change(confirmInput, { target: { value: 'Wrong Name' } });
+
+    // Should still be disabled
+    expect(confirmButton).toBeDisabled();
+
+    // Enter correct name
+    fireEvent.change(confirmInput, { target: { value: 'Tech Corp' } });
+
+    // Should now be enabled
+    await waitFor(() => {
+      expect(confirmButton).not.toBeDisabled();
+    });
+  });
+
+  it('deletes workplace when confirmed with correct name', async () => {
+    vi.mocked(workplaceService.deleteWorkplace).mockResolvedValue({ message: 'Workplace deleted successfully' });
+
+    renderPage();
+
+    // Wait for the page to load
+    await waitFor(() => {
+      expect(screen.getByText('workplace.settings.title')).toBeInTheDocument();
+    }, { timeout: 3000 });
+
+    // Click the delete button
+    const deleteButton = screen.getByText('workplace.settings.dangerZone.deleteButton');
+    fireEvent.click(deleteButton);
+
+    // Wait for dialog
+    await waitFor(() => {
+      expect(screen.getByText('workplace.settings.dangerZone.confirmTitle')).toBeInTheDocument();
+    });
+
+    // Enter correct workplace name
+    const confirmInput = screen.getByPlaceholderText('Tech Corp');
+    fireEvent.change(confirmInput, { target: { value: 'Tech Corp' } });
+
+    // Click confirm delete button
+    const confirmButton = screen.getByRole('button', { name: /workplace\.settings\.dangerZone\.confirmButton/ });
+    fireEvent.click(confirmButton);
+
+    // Verify delete service was called
+    await waitFor(() => {
+      expect(workplaceService.deleteWorkplace).toHaveBeenCalledWith(1);
+    });
+
+    // Verify navigation occurred
+    await waitFor(() => {
+      expect(screen.getByText('Employer Workplaces')).toBeInTheDocument();
+    });
+  });
+
+  it('closes delete dialog when cancel is clicked', async () => {
+    renderPage();
+
+    // Wait for the page to load
+    await waitFor(() => {
+      expect(screen.getByText('workplace.settings.title')).toBeInTheDocument();
+    }, { timeout: 3000 });
+
+    // Click the delete button
+    const deleteButton = screen.getByText('workplace.settings.dangerZone.deleteButton');
+    fireEvent.click(deleteButton);
+
+    // Wait for dialog
+    await waitFor(() => {
+      expect(screen.getByText('workplace.settings.dangerZone.confirmTitle')).toBeInTheDocument();
+    });
+
+    // Click cancel button
+    const cancelButton = screen.getByText('workplace.settings.dangerZone.confirmCancel');
+    fireEvent.click(cancelButton);
+
+    // Dialog should be closed
+    await waitFor(() => {
+      expect(screen.queryByText('workplace.settings.dangerZone.confirmTitle')).not.toBeInTheDocument();
     });
   });
 });
