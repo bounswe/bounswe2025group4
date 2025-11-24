@@ -1324,6 +1324,42 @@
   "@createJob_selectPolicyError": {
     "description": "Policy selection error"
   },
+  "createJob_selectWorkplace": "Select Workplace",
+  "@createJob_selectWorkplace": {
+    "description": "Workplace selection field label"
+  },
+  "createJob_workplaceRequired": "Please select a workplace",
+  "@createJob_workplaceRequired": {
+    "description": "Workplace selection validation message"
+  },
+  "createJob_selectWorkplaceError": "Please select a workplace to post the job",
+  "@createJob_selectWorkplaceError": {
+    "description": "Workplace selection error message"
+  },
+  "createJob_nonProfitLabel": "Non-Profit / Volunteer Position",
+  "@createJob_nonProfitLabel": {
+    "description": "Non-profit checkbox label"
+  },
+  "createJob_nonProfitSubtitle": "This is a volunteer or non-profit position (no salary)",
+  "@createJob_nonProfitSubtitle": {
+    "description": "Non-profit checkbox subtitle"
+  },
+  "createJob_noWorkplacesTitle": "No Workplaces Found",
+  "@createJob_noWorkplacesTitle": {
+    "description": "No workplaces title"
+  },
+  "createJob_noWorkplacesTitle": "No Workplaces Found",
+  "@createJob_noWorkplacesTitle": {
+    "description": "No workplaces title"
+  },
+  "createJob_noWorkplacesMessage": "You need to create or join a workplace before you can post job openings. Create your first workplace to get started!",
+  "@createJob_noWorkplacesMessage": {
+    "description": "No workplaces message"
+  },
+  "createJob_createWorkplace": "Create Workplace",
+  "@createJob_createWorkplace": {
+    "description": "Create workplace button text"
+  },
   "createJob_employerError": "Error: Could not verify employer account.",
   "@createJob_employerError": {
     "description": "Employer verification error"

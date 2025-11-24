@@ -4,6 +4,9 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import * as workplaceService from '@/services/workplace.service';
 import userEvent from '@testing-library/user-event';
+import type { EthicalTag } from '@/types/job';
+
+vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 
 // Mock create service
 vi.mock('@/services/workplace.service', async () => {
@@ -16,10 +19,10 @@ vi.mock('@/services/workplace.service', async () => {
 
 // Mock MultiSelectDropdown to simplify testing
 vi.mock('@/components/ui/multi-select-dropdown', () => ({
-  MultiSelectDropdown: ({ onTagsChange }: any) => (
-    <button 
+  MultiSelectDropdown: ({ onTagsChange }: { onTagsChange: (tags: EthicalTag[]) => void }) => (
+    <button
       type="button"
-      onClick={() => onTagsChange(['Sustainability'])}
+      onClick={() => onTagsChange(['Sustainability' as EthicalTag])}
       aria-label="select-tags"
     >
       Select Tags
@@ -39,11 +42,17 @@ describe('CreateWorkplaceFlow Integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Set up the mock return value
-    (workplaceService.createWorkplace as any).mockResolvedValue({
+    vi.mocked(workplaceService.createWorkplace).mockResolvedValue({
       id: 101,
       companyName: 'New Startup',
       sector: 'Technology',
-      location: 'Remote'
+      location: 'Remote',
+      ethicalTags: ['Sustainability'],
+      overallAvg: 0,
+      ethicalAverages: {},
+      employers: [],
+      createdAt: '2024-01-01T00:00:00Z',
+      updatedAt: '2024-01-01T00:00:00Z'
     });
   });
 
@@ -57,7 +66,7 @@ describe('CreateWorkplaceFlow Integration', () => {
     });
 
     // 1. Open New Workplace Modal
-    const newButton = screen.getByRole('button', { name: /New Workplace/i });
+    const newButton = screen.getByRole('button', { name: 'employerWorkplaces.newWorkplace' });
     await user.click(newButton);
 
     // 2. Wait for the dialog to appear in the portal
@@ -65,7 +74,7 @@ describe('CreateWorkplaceFlow Integration', () => {
     expect(dialog).toBeInTheDocument();
 
     // 3. Find and click Create Workplace option
-    const createOption = screen.getByText('Create Workplace');
+    const createOption = screen.getByText('employerWorkplaces.noWorkplaces.createWorkplace');
     await user.click(createOption);
 
     // 4. Wait for CreateWorkplaceModal to open (another dialog)
@@ -75,14 +84,14 @@ describe('CreateWorkplaceFlow Integration', () => {
       // Should have at least one dialog open
       expect(dialogs.length).toBeGreaterThan(0);
       // Check for the form inputs
-      const companyNameLabel = screen.queryByLabelText(/Company Name/i);
+      const companyNameLabel = screen.queryByLabelText(/^workplace\.createModal\.companyName/);
       expect(companyNameLabel).toBeTruthy();
     }, { timeout: 3000 });
 
     // 5. Fill out form - use fireEvent which works better with react-hook-form
-    const companyNameInput = await screen.findByLabelText(/Company Name/i, {}, { timeout: 2000 });
-    const sectorInput = screen.getByLabelText(/Sector/i);
-    const locationInput = screen.getByLabelText(/Location/i);
+    const companyNameInput = await screen.findByLabelText(/^workplace\.createModal\.companyName/, {}, { timeout: 2000 });
+    const sectorInput = screen.getByLabelText(/^workplace\.createModal\.sector/);
+    const locationInput = screen.getByLabelText(/^workplace\.createModal\.location/);
 
     // Use fireEvent.change which properly triggers react-hook-form handlers
     fireEvent.change(companyNameInput, { target: { value: 'New Startup' } });
@@ -104,7 +113,7 @@ describe('CreateWorkplaceFlow Integration', () => {
     const form = companyNameInput.closest('form');
     expect(form).toBeTruthy();
     
-    const submitButton = screen.getByRole('button', { name: /Create Workplace/i });
+    const submitButton = screen.getByRole('button', { name: 'workplace.createModal.submit' });
     expect(submitButton).toBeInTheDocument();
     expect(submitButton).not.toBeDisabled();
     
@@ -123,7 +132,7 @@ describe('CreateWorkplaceFlow Integration', () => {
     }));
 
     await waitFor(() => {
-      expect(screen.getByText('Workplace Created!')).toBeInTheDocument();
+      expect(screen.getByText('workplace.createModal.workplaceCreated')).toBeInTheDocument();
     });
   });
 });

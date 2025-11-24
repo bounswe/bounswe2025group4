@@ -195,7 +195,7 @@ export default function WorkplacesPage() {
             />
             <Button onClick={handleSearch} disabled={loading}>
               <Search className="h-4 w-4 mr-2" />
-              {loading ? t('workplaces.searching') : t('workplaces.search')}
+              {loading ? t('common.searching') : t('common.search')}
             </Button>
           </div>
 
@@ -215,7 +215,7 @@ export default function WorkplacesPage() {
                     <option value="">{t('workplaces.filters.allSectors')}</option>
                     {SECTORS.map((s) => (
                       <option key={s} value={s}>
-                        {t(`sectors.${s.toLowerCase().replace(/ /g, '')}`)}
+                        {s.toLowerCase().replace(/ /g, '')}
                       </option>
                     ))}
                   </select>

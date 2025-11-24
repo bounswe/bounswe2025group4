@@ -53,17 +53,17 @@ describe('EmployerWorkplaceCard', () => {
 
   it('renders action buttons', () => {
     renderComponent();
-    expect(screen.getByRole('link', { name: /settings/i })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /manage requests/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /workplace\.settings/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /workplace\.manageRequests/i })).toBeInTheDocument();
   });
 
   it('links point to correct locations', () => {
     renderComponent();
     
-    const settingsLink = screen.getByRole('link', { name: /settings/i });
+    const settingsLink = screen.getByRole('link', { name: /workplace\.settings/i });
     expect(settingsLink).toHaveAttribute('href', '/employer/workplace/1/settings');
 
-    const requestsLink = screen.getByRole('link', { name: /manage requests/i });
+    const requestsLink = screen.getByRole('link', { name: /workplace\.manageRequests/i });
     expect(requestsLink).toHaveAttribute('href', '/employer/workplace/1/requests');
   });
 });

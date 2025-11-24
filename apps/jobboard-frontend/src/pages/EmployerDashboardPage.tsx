@@ -22,6 +22,7 @@ type JobPosting = {
   status: string;
   applications: number;
   workplaceId: number | undefined;
+  workplace?: WorkplaceBriefResponse;
 };
 
 type WorkplaceWithJobs = {
@@ -82,6 +83,7 @@ export default function EmployerDashboardPage() {
               status: 'OPEN',
               applications: applications.length,
               workplaceId: job.workplaceId,
+              workplace: job.workplace,
             };
           } catch {
             return {
@@ -90,21 +92,31 @@ export default function EmployerDashboardPage() {
               status: 'OPEN',
               applications: 0,
               workplaceId: job.workplaceId,
+              workplace: job.workplace,
             };
           }
         })
       );
 
-      const validJobs: JobPosting[] = jobsWithCounts.filter((job): job is JobPosting => job !== null);
-
+      const validJobs = jobsWithCounts.filter((job): job is JobPosting & { workplace: WorkplaceBriefResponse } => 
+        job !== null && job.workplace !== undefined
+      );
+      
+      // Get all workplace IDs that the employer belongs to
+      const employerWorkplaceIds = new Set(workplaces.map((wp) => wp.workplace.id));
+      
       const workplacesData: WorkplaceWithJobs[] = workplaces.map((wp: EmployerWorkplaceBrief) => ({
         workplace: wp.workplace,
         role: wp.role,
-        jobs: validJobs.filter((job) => job?.workplaceId === wp.workplace.id),
+        // Match by workplace.id (from the workplace object) as the primary source of truth
+        jobs: validJobs.filter((job) => job.workplace.id === wp.workplace.id),
         isExpanded: true,
       }));
 
-      const unassignedJobs = validJobs.filter((job) => !job?.workplaceId);
+      // Jobs are unassigned if their workplace.id doesn't match any employer workplace
+      const unassignedJobs = validJobs.filter((job) => 
+        !employerWorkplaceIds.has(job.workplace.id)
+      );
       if (unassignedJobs.length > 0) {
         workplacesData.push({
           workplace: {
@@ -239,7 +251,7 @@ export default function EmployerDashboardPage() {
           <Card className="border border-border bg-card shadow-sm">
             <div className="p-6 py-12 text-center">
               <p className="text-destructive mb-4">{getErrorMessage()}</p>
-              <Button onClick={() => window.location.reload()}>
+              <Button onClick={() => fetchData()}>
                 {t('jobs.retry')}
               </Button>
             </div>
@@ -381,7 +393,9 @@ export default function EmployerDashboardPage() {
                           <tbody>
                             {wp.jobs.map((job) => (
                               <tr key={job.id} className="border-b last:border-0 hover:bg-muted/20">
-                                <td className="px-4 py-4 text-sm text-foreground">{job.title}</td>
+                                <td className="px-4 py-4 text-sm text-foreground">
+                                  <div className="font-semibold">{job.title}</div>
+                                </td>
                                 <td className="px-4 py-4">
                                   <Badge variant={getStatusBadgeVariant(job.status)}>
                                     {getStatusLabel(job.status)}
@@ -422,7 +436,7 @@ export default function EmployerDashboardPage() {
                           }}
                         >
                           <Plus className="h-4 w-4 mr-2" />
-                          {t('employerDashboard.createJobForWorkplace')}
+                          {t('employerDashboard.createJob')}
                         </Button>
                       </div>
                     )}

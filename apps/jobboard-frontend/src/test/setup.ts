@@ -2,30 +2,32 @@ import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import enCommon from '../../public/locales/en/common.json';
-import { authHandlers, profileHandlers, API_BASE_URL } from './handlers';
+import { authHandlers, profileHandlers, API_BASE_URL, jobHandlers, applicationHandlers } from './handlers';
 import { workplaceHandlers } from './workplace-handlers';
 
-// Initialize the real i18n instance with production translations for integration-like tests
-i18n.use(initReactI18next).init({
-  lng: 'en',
-  fallbackLng: 'en',
-  ns: ['common'],
-  defaultNS: 'common',
-  resources: { en: { common: enCommon } },
-  interpolation: {
-    escapeValue: false,
+/**
+ * Mock react-i18next to return keys instead of translations
+ * This makes tests faster and language-agnostic
+ */
+vi.mock('react-i18next', async () => await import('./__mocks__/react-i18next'));
+
+/**
+ * Mock the app's i18n instance to prevent initialization
+ * The mocked react-i18next will handle all translation calls
+ */
+vi.mock('@/lib/i18n', () => ({
+  default: {
+    t: (key: string) => key,
+    language: 'en',
+    changeLanguage: () => Promise.resolve(),
+    dir: () => 'ltr',
+    on: () => {},
+    off: () => {},
+    use: () => ({ init: () => Promise.resolve() }),
   },
-  returnNull: false,
-});
+}));
 
-vi.mock('@/lib/i18n', () => {
-  return { default: i18n };
-});
-
-export const server = setupServer(...authHandlers, ...profileHandlers, ...workplaceHandlers);
+export const server = setupServer(...authHandlers, ...profileHandlers, ...workplaceHandlers, ...jobHandlers, ...applicationHandlers);
 
 vi.stubEnv('VITE_API_URL', API_BASE_URL);
 
@@ -50,10 +52,10 @@ if (!window.matchMedia) {
       matches: false,
       media: query,
       onchange: null,
-      addListener: () => {},
-      removeListener: () => {},
-      addEventListener: () => {},
-      removeEventListener: () => {},
+      addListener: () => { },
+      removeListener: () => { },
+      addEventListener: () => { },
+      removeEventListener: () => { },
       dispatchEvent: () => false,
     }),
   });
@@ -61,7 +63,7 @@ if (!window.matchMedia) {
 
 // Mock ResizeObserver
 window.ResizeObserver = class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe() { }
+  unobserve() { }
+  disconnect() { }
 } as typeof ResizeObserver;

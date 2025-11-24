@@ -8,15 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import CenteredLoader from '@/components/CenteredLoader';
 import { WorkplaceCard } from '@/components/workplace/WorkplaceCard';
 import type { JobPostResponse } from '@/types/api.types';
-import type { WorkplaceDetailResponse } from '@/types/workplace.types';
 import { getJobById } from '@/services/jobs.service';
-import { getWorkplaceById } from '@/services/workplace.service';
 import { cn } from '@/lib/utils';
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [job, setJob] = useState<JobPostResponse | null>(null);
-  const [workplace, setWorkplace] = useState<WorkplaceDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { t, i18n } = useTranslation('common');
@@ -32,17 +29,6 @@ export default function JobDetailPage() {
         setError(null);
         const jobData = await getJobById(parseInt(id, 10));
         setJob(jobData);
-
-        // Fetch workplace details if job has workplaceId
-        if (jobData.workplaceId) {
-          try {
-            const workplaceData = await getWorkplaceById(jobData.workplaceId);
-            setWorkplace(workplaceData);
-          } catch (err) {
-            console.error('Error fetching workplace:', err);
-            // Non-critical error - job can still be displayed
-          }
-        }
       } catch (err) {
         console.error('Error fetching job:', err);
         setError('fetch_error');
@@ -115,16 +101,12 @@ export default function JobDetailPage() {
               <div className="flex-1">
                 <h1 className="text-3xl font-bold text-foreground lg:text-4xl">{job.title}</h1>
                 <div className="mt-3 flex flex-wrap items-center gap-2 text-base text-muted-foreground">
-                  {workplace ? (
-                    <Link
-                      to={`/workplace/${workplace.id}`}
-                      className="font-medium hover:text-primary transition-colors"
-                    >
-                      {workplace.companyName}
-                    </Link>
-                  ) : (
-                    <span className="font-medium">{job.company}</span>
-                  )}
+                  <Link
+                    to={`/workplace/${job.workplace.id}`}
+                    className="font-medium hover:text-primary transition-colors"
+                  >
+                    {job.workplace.companyName}
+                  </Link>
                   <span>·</span>
                   <span className="flex items-center gap-1">
                     <MapPin className="size-4" aria-hidden />
@@ -143,14 +125,12 @@ export default function JobDetailPage() {
             </div>
 
             {/* Workplace Information */}
-            {workplace && (
-              <section className="mt-8">
-                <h2 className="text-xl font-semibold text-foreground lg:text-2xl mb-4">
-                  {t('jobDetail.workplace.title')}
-                </h2>
-                <WorkplaceCard workplace={workplace} />
-              </section>
-            )}
+            <section className="mt-8">
+              <h2 className="text-xl font-semibold text-foreground lg:text-2xl mb-4">
+                {t('jobDetail.workplace.title')}
+              </h2>
+              <WorkplaceCard workplace={job.workplace} />
+            </section>
 
             {/* Job Description */}
             <section className="mt-8">
@@ -161,7 +141,7 @@ export default function JobDetailPage() {
             </section>
 
             {/* Ethical Tags */}
-            {(job.ethicalTags || job.inclusiveOpportunity) && (
+            {(job.workplace.ethicalTags.length > 0 || job.inclusiveOpportunity) && (
               <section className="mt-8">
                 <div className="rounded-lg bg-primary/10 p-6">
                   <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
@@ -179,9 +159,9 @@ export default function JobDetailPage() {
                   )}
 
                   {/* Ethical Tags */}
-                  {job.ethicalTags && (
+                  {job.workplace.ethicalTags.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-2">
-                      {job.ethicalTags.split(',').map((tag, index) => (
+                      {job.workplace.ethicalTags.map((tag, index) => (
                         <Badge key={index} variant="secondary" className="text-sm">
                           {tag.trim()}
                         </Badge>

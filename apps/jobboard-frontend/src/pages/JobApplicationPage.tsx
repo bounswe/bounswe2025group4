@@ -191,7 +191,7 @@ export default function JobApplicationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">{t('jobApplication.jobDetails.company')}:</span>
-                <span className="ml-2 font-medium">{job.company}</span>
+                <span className="ml-2 font-medium">{job.workplace.companyName}</span>
               </div>
               <div>
                 <span className="text-muted-foreground">{t('jobApplication.jobDetails.location')}:</span>

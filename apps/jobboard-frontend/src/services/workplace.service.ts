@@ -153,3 +153,11 @@ export async function deleteWorkplaceImage(id: number): Promise<ApiMessage> {
   const response = await api.delete<ApiMessage>(`${BASE_PATH}/${id}/image`);
   return response.data;
 }
+
+/**
+ * Delete a workplace (requires employer role and permissions)
+ */
+export async function deleteWorkplace(id: number): Promise<ApiMessage> {
+  const response = await api.delete<ApiMessage>(`${BASE_PATH}/${id}`);
+  return response.data;
+}
