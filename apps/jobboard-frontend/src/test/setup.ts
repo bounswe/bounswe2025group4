@@ -32,7 +32,7 @@ export const server = setupServer(...authHandlers, ...profileHandlers, ...workpl
 vi.stubEnv('VITE_API_URL', API_BASE_URL);
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: 'warn' });
+  server.listen({ onUnhandledRequest: 'error' });
 });
 
 afterEach(() => {

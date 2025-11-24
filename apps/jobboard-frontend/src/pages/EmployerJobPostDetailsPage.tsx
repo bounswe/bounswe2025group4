@@ -10,6 +10,12 @@ import type { JobPostResponse, JobApplicationResponse } from '@/types/api.types'
 import CenteredLoader from '@/components/CenteredLoader';
 
 import { useTranslation } from 'react-i18next';
+import { TAG_TO_KEY_MAP } from '@/constants/ethical-tags';
+
+// Convert ethical tag names to translation keys
+const getEthicalTagTranslationKey = (tag: string): string => {
+  return TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP] || tag.toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
+};
 
 export default function EmployerJobPostDetailsPage() {
   const { t } = useTranslation('common');
@@ -96,6 +102,7 @@ export default function EmployerJobPostDetailsPage() {
   }
 
   const ethicalTags = jobPost.workplace.ethicalTags;
+
   const jobPostId = jobPost.id ?? jobPost.jobPostId ?? jobPost.jobId;
 
   const handleEditClick = () => {
@@ -182,7 +189,7 @@ export default function EmployerJobPostDetailsPage() {
                       key={index}
                       className="inline-block rounded-md bg-primary/10 px-3 py-1 text-sm text-primary"
                     >
-                      {t(`ethicalTags.tags.${tag}`, tag)}
+                      {t(`ethicalTags.tags.${getEthicalTagTranslationKey(tag)}`, tag)}
                     </span>
                   ))}
                 </div>

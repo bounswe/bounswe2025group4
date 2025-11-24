@@ -522,7 +522,7 @@ export default function WorkplaceSettingsPage() {
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Button
               type="button"
               variant="outline"
@@ -548,17 +548,23 @@ export default function WorkplaceSettingsPage() {
         </form>
 
         {/* Danger Zone */}
-        <Card className="p-6 border-destructive/50 bg-destructive/5">
-          <h2 className="text-xl font-bold text-destructive mb-2">
-            {t('workplace.settings.dangerZone.title')}
-          </h2>
-          <p className="text-sm text-muted-foreground mb-4">
-            {t('workplace.settings.dangerZone.deleteDescription')}
-          </p>
+        <Card className="p-6 mt-8 border-2 border-destructive/50 bg-destructive/5">
+          <div className="flex items-start gap-3 mb-4">
+            <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+            <div>
+              <h2 className="text-xl font-bold text-destructive mb-1">
+                {t('workplace.settings.dangerZone.title')}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {t('workplace.settings.dangerZone.deleteDescription')}
+              </p>
+            </div>
+          </div>
           <Button
             type="button"
             variant="destructive"
             onClick={() => setShowDeleteDialog(true)}
+            className="w-full sm:w-auto"
           >
             <Trash2 className="h-4 w-4 mr-2" />
             {t('workplace.settings.dangerZone.deleteButton')}
@@ -567,16 +573,16 @@ export default function WorkplaceSettingsPage() {
 
         {/* Delete Confirmation Dialog */}
         <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-destructive">
-                <AlertTriangle className="h-5 w-5" />
+                <AlertTriangle className="h-5 w-5 flex-shrink-0" />
                 {t('workplace.settings.dangerZone.confirmTitle')}
               </DialogTitle>
               <DialogDescription asChild>
-                <div className="space-y-2 pt-2">
-                  <p>{t('workplace.settings.dangerZone.confirmDescription')}</p>
-                  <p className="font-semibold pt-2">
+                <div className="space-y-3 pt-2">
+                  <p className="text-sm">{t('workplace.settings.dangerZone.confirmDescription')}</p>
+                  <p className="font-semibold text-sm">
                     {t('workplace.settings.dangerZone.confirmWarning')}
                   </p>
                 </div>
@@ -584,7 +590,7 @@ export default function WorkplaceSettingsPage() {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="delete-confirmation">
+                <Label htmlFor="delete-confirmation" className="text-sm font-medium">
                   {t('workplace.settings.dangerZone.confirmPlaceholder')}
                 </Label>
                 <Input
@@ -592,10 +598,17 @@ export default function WorkplaceSettingsPage() {
                   value={deleteConfirmation}
                   onChange={(e) => setDeleteConfirmation(e.target.value)}
                   placeholder={workplace?.companyName}
+                  className="font-mono"
+                  autoComplete="off"
                 />
+                {deleteConfirmation && deleteConfirmation !== workplace?.companyName && (
+                  <p className="text-xs text-destructive">
+                    Please type the exact workplace name to confirm
+                  </p>
+                )}
               </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="gap-2 sm:gap-0">
               <Button
                 type="button"
                 variant="outline"
@@ -604,6 +617,7 @@ export default function WorkplaceSettingsPage() {
                   setDeleteConfirmation('');
                 }}
                 disabled={isDeleting}
+                className="w-full sm:w-auto"
               >
                 {t('workplace.settings.dangerZone.confirmCancel')}
               </Button>
@@ -615,6 +629,7 @@ export default function WorkplaceSettingsPage() {
                   isDeleting ||
                   deleteConfirmation !== workplace?.companyName
                 }
+                className="w-full sm:w-auto"
               >
                 {isDeleting ? (
                   t('workplace.settings.dangerZone.deleting')

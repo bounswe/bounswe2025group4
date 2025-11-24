@@ -1,10 +1,38 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
 import { renderWithProviders, setupUserEvent } from '@/test/utils';
 import { server } from '@/test/setup';
 import { http, HttpResponse } from 'msw';
 import { API_BASE_URL, createMockJob } from '@/test/handlers';
 import EmployerEditJobPostPage from '@/pages/EmployerEditJobPostPage';
+import type { UpdateJobPostRequest } from '@/types/api.types';
+import type { EmployerWorkplaceBrief } from '@/types/workplace.types';
+
+// Mock WorkplaceSelector to avoid dropdown issues in tests
+vi.mock('@/components/workplace/WorkplaceSelector', () => ({
+  default: ({ value, onChange }: { value: number | undefined; onChange: (id: number, workplace: Partial<EmployerWorkplaceBrief>) => void }) => (
+    <div data-testid="workplace-selector">
+      <select
+        value={value || ''}
+        onChange={(e) => onChange(Number(e.target.value), {
+          role: 'ADMIN',
+          workplace: {
+            id: Number(e.target.value),
+            companyName: 'Test Workplace',
+            sector: 'Technology',
+            location: 'Test City',
+            overallAvg: 4.5,
+            ethicalTags: [],
+            ethicalAverages: {}
+          }
+        })}
+      >
+        <option value="">Select workplace</option>
+        <option value="1">Test Workplace</option>
+      </select>
+    </div>
+  ),
+}));
 
 const mockNavigate = vi.fn();
 
@@ -58,7 +86,7 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText(/failed to load job details/i)).toBeInTheDocument();
+      expect(screen.getByText('editJob.loadError')).toBeInTheDocument();
     });
   });
 
@@ -67,13 +95,11 @@ describe('EmployerEditJobPostPage', () => {
       id: 1,
       title: 'Existing Job Title',
       description: 'Existing job description',
-      company: 'Existing Company',
       location: 'Existing Location',
       remote: true,
       minSalary: 100000,
       maxSalary: 150000,
       contact: 'existing@company.com',
-      ethicalTags: 'Salary Transparency, Remote-Friendly',
       inclusiveOpportunity: true,
     });
 
@@ -92,15 +118,14 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Check form is pre-populated
-    expect((screen.getByLabelText(/job title/i) as HTMLInputElement).value).toBe('Existing Job Title');
-    expect((screen.getByLabelText(/job description/i) as HTMLTextAreaElement).value).toBe('Existing job description');
-    expect((screen.getByLabelText(/company name/i) as HTMLInputElement).value).toBe('Existing Company');
-    expect((screen.getByLabelText(/location/i) as HTMLInputElement).value).toBe('Existing Location');
-    expect((screen.getByLabelText(/minimum/i) as HTMLInputElement).value).toBe('100000');
-    expect((screen.getByLabelText(/maximum/i) as HTMLInputElement).value).toBe('150000');
-    expect((screen.getByLabelText(/contact email/i) as HTMLInputElement).value).toBe('existing@company.com');
-    expect(screen.getByLabelText(/remote work/i)).toBeChecked();
-    expect(screen.getByLabelText(/inclusive opportunity/i)).toBeChecked();
+    expect((screen.getByLabelText('createJob.jobTitle') as HTMLInputElement).value).toBe('Existing Job Title');
+    expect((screen.getByLabelText('createJob.jobDescription') as HTMLTextAreaElement).value).toBe('Existing job description');
+    expect((screen.getByLabelText('createJob.location') as HTMLInputElement).value).toBe('Existing Location');
+    expect((screen.getByLabelText('createJob.minimum') as HTMLInputElement).value).toBe('100000');
+    expect((screen.getByLabelText('createJob.maximum') as HTMLInputElement).value).toBe('150000');
+    expect((screen.getByLabelText('createJob.contactEmail') as HTMLInputElement).value).toBe('existing@company.com');
+    expect(screen.getByLabelText('createJob.remoteWork')).toBeChecked();
+    expect(screen.getByLabelText('createJob.inclusiveOpportunity')).toBeChecked();
   });
 
   it('parses JSON contact format correctly', async () => {
@@ -123,7 +148,7 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Should parse JSON and extract email
-    expect((screen.getByLabelText(/contact email/i) as HTMLInputElement).value).toBe('json@company.com');
+    expect((screen.getByLabelText('createJob.contactEmail') as HTMLInputElement).value).toBe('json@company.com');
   });
 
   it('parses plain string contact format correctly', async () => {
@@ -146,12 +171,12 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Should use plain string as email
-    expect((screen.getByLabelText(/contact email/i) as HTMLInputElement).value).toBe('plain@company.com');
+    expect((screen.getByLabelText('createJob.contactEmail') as HTMLInputElement).value).toBe('plain@company.com');
   });
 
-  it('parses comma-separated ethical tags', async () => {
+  it('displays workplace selector', async () => {
     const mockJob = createMockJob({
-      ethicalTags: 'Salary Transparency, Remote-Friendly, Flexible Hours',
+      id: 1,
     });
 
     server.use(
@@ -168,9 +193,8 @@ describe('EmployerEditJobPostPage', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    // MultiSelectDropdown should be rendered with tags
-    // The component should parse and split the tags correctly
-    expect(screen.getByText(/select ethical policies/i)).toBeInTheDocument();
+    // Workplace selector should be displayed
+    expect(screen.getByText('createJob.workplaceDescription')).toBeInTheDocument();
   });
 
   it('updates job successfully with changed values', async () => {
@@ -181,7 +205,7 @@ describe('EmployerEditJobPostPage', () => {
         return HttpResponse.json(mockJob);
       }),
       http.put(`${API_BASE_URL}/jobs/:id`, async ({ request }) => {
-        const body = await request.json() as any;
+        const body = await request.json() as UpdateJobPostRequest;
         return HttpResponse.json({
           ...mockJob,
           ...body,
@@ -200,12 +224,12 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Change title
-    const titleInput = screen.getByLabelText(/job title/i);
+    const titleInput = screen.getByLabelText('createJob.jobTitle');
     await user.clear(titleInput);
     await user.type(titleInput, 'Updated Job Title');
 
     // Submit form
-    const submitButton = screen.getByRole('button', { name: /save changes/i });
+    const submitButton = screen.getByRole('button', { name: 'editJob.save' });
     await user.click(submitButton);
 
     // Should navigate to job detail page on success
@@ -240,12 +264,12 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Submit form
-    const submitButton = screen.getByRole('button', { name: /save changes/i });
+    const submitButton = screen.getByRole('button', { name: 'editJob.save' });
     await user.click(submitButton);
 
     // Should show error message
     await waitFor(() => {
-      expect(screen.getByText(/failed to update job posting/i)).toBeInTheDocument();
+      expect(screen.getByText('editJob.submitError')).toBeInTheDocument();
     });
 
     // Should NOT navigate
@@ -272,7 +296,7 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Click cancel button
-    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    const cancelButton = screen.getByRole('button', { name: 'editJob.cancel' });
     await user.click(cancelButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/1');
@@ -281,8 +305,8 @@ describe('EmployerEditJobPostPage', () => {
   it('handles optional salary fields (can be undefined)', async () => {
     const mockJob = createMockJob({
       id: 1,
-      minSalary: undefined as any,
-      maxSalary: undefined as any,
+      minSalary: undefined,
+      maxSalary: undefined,
     });
 
     server.use(
@@ -290,7 +314,7 @@ describe('EmployerEditJobPostPage', () => {
         return HttpResponse.json(mockJob);
       }),
       http.put(`${API_BASE_URL}/jobs/:id`, async ({ request }) => {
-        const body = await request.json() as any;
+        const body = await request.json() as UpdateJobPostRequest;
         // Salary should be undefined if not provided
         expect(body.minSalary).toBeUndefined();
         expect(body.maxSalary).toBeUndefined();
@@ -312,11 +336,11 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Salary fields should be empty
-    expect((screen.getByLabelText(/minimum/i) as HTMLInputElement).value).toBe('');
-    expect((screen.getByLabelText(/maximum/i) as HTMLInputElement).value).toBe('');
+    expect((screen.getByLabelText('createJob.minimum') as HTMLInputElement).value).toBe('');
+    expect((screen.getByLabelText('createJob.maximum') as HTMLInputElement).value).toBe('');
 
     // Submit without filling salary
-    const submitButton = screen.getByRole('button', { name: /save changes/i });
+    const submitButton = screen.getByRole('button', { name: 'editJob.save' });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -347,8 +371,8 @@ describe('EmployerEditJobPostPage', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    const submitButton = screen.getByRole('button', { name: /save changes/i });
-    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    const submitButton = screen.getByRole('button', { name: 'editJob.save' });
+    const cancelButton = screen.getByRole('button', { name: 'editJob.cancel' });
 
     // Submit form
     await user.click(submitButton);
@@ -384,14 +408,439 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Initially shows "Save Changes"
-    expect(screen.getByRole('button', { name: /save changes/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'editJob.save' })).toBeInTheDocument();
 
-    const submitButton = screen.getByRole('button', { name: /save changes/i });
+    const submitButton = screen.getByRole('button', { name: 'editJob.save' });
     await user.click(submitButton);
 
     // Should show "Saving..." during submission
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /saving/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'editJob.saving' })).toBeInTheDocument();
+    });
+  });
+
+  // Edge case tests
+  it('handles editing job with very long title and description', async () => {
+    const longTitle = 'A'.repeat(200);
+    const longDescription = 'B'.repeat(5000);
+
+    const mockJob = createMockJob({
+      id: 1,
+      title: longTitle,
+      description: longDescription,
+    });
+
+    server.use(
+      http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+        return HttpResponse.json(mockJob);
+      })
+    );
+
+    renderWithProviders(<EmployerEditJobPostPage />, {
+      initialEntries: ['/employer/jobs/1/edit']
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    expect((screen.getByLabelText('createJob.jobTitle') as HTMLInputElement).value).toBe(longTitle);
+    expect((screen.getByLabelText('createJob.jobDescription') as HTMLTextAreaElement).value).toBe(longDescription);
+  });
+
+  it('handles special characters in job fields', async () => {
+    const mockJob = createMockJob({
+      id: 1,
+      title: 'C++ & C# Developer @ Tech&Co',
+      location: 'São Paulo, Brasil',
+    });
+
+    server.use(
+      http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+        return HttpResponse.json(mockJob);
+      })
+    );
+
+    renderWithProviders(<EmployerEditJobPostPage />, {
+      initialEntries: ['/employer/jobs/1/edit']
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    expect((screen.getByLabelText('createJob.jobTitle') as HTMLInputElement).value).toBe('C++ & C# Developer @ Tech&Co');
+    expect((screen.getByLabelText('createJob.location') as HTMLInputElement).value).toBe('São Paulo, Brasil');
+  });
+
+  // it('updates only changed fields', async () => {
+  //   const mockJob = createMockJob({
+  //     id: 1,
+  //     title: 'Original Title',
+  //     description: 'Original description',
+  //   });
+
+  //   let updatePayload: UpdateJobPostRequest | null = null;
+
+  //   server.use(
+  //     http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+  //       return HttpResponse.json(mockJob);
+  //     }),
+  //     http.put(`${API_BASE_URL}/jobs/:id`, async ({ request }) => {
+  //       updatePayload = await request.json() as UpdateJobPostRequest;
+  //       return HttpResponse.json({
+  //         ...mockJob,
+  //         ...updatePayload,
+  //       });
+  //     })
+  //   );
+
+  //   renderWithProviders(<EmployerEditJobPostPage />, {
+  //     initialEntries: ['/employer/jobs/1/edit']
+  //   });
+
+  //   const user = setupUserEvent();
+
+  //   await waitFor(() => {
+  //     expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  //   });
+
+  //   // Check initial value
+  //   const titleInput = screen.getByLabelText('createJob.jobTitle') as HTMLInputElement;
+  //   expect(titleInput.value).toBe('Original Title');
+
+  //   // Focus the input first
+  //   await user.click(titleInput);
+
+  //   // Select all text and type the new title
+  //   await user.keyboard('{Control>}a{/Control}Updated Title Only');
+
+  //   // Wait for the change to propagate
+  //   await waitFor(() => {
+  //     expect(titleInput.value).toBe('Updated Title Only');
+  //   }, { timeout: 3000 });
+
+  //   const submitButton = screen.getByRole('button', { name: 'editJob.save' });
+  //   await user.click(submitButton);
+
+  //   await waitFor(() => {
+  //     expect(mockNavigate).toHaveBeenCalled();
+  //   });
+
+  //   // Update should include the changed title
+  //   expect(updatePayload!.title).toBe('Updated Title Only');
+  // });
+
+  it('handles editing salary range', async () => {
+    const mockJob = createMockJob({
+      id: 1,
+      minSalary: 80000,
+      maxSalary: 120000,
+    });
+
+    server.use(
+      http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+        return HttpResponse.json(mockJob);
+      }),
+      http.put(`${API_BASE_URL}/jobs/:id`, async ({ request }) => {
+        const body = await request.json() as UpdateJobPostRequest;
+        return HttpResponse.json({
+          ...mockJob,
+          ...body,
+        });
+      })
+    );
+
+    renderWithProviders(<EmployerEditJobPostPage />, {
+      initialEntries: ['/employer/jobs/1/edit']
+    });
+
+    const user = setupUserEvent();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    // Change salary
+    const minInput = screen.getByLabelText('createJob.minimum');
+    const maxInput = screen.getByLabelText('createJob.maximum');
+
+    await user.clear(minInput);
+    await user.type(minInput, '100000');
+
+    await user.clear(maxInput);
+    await user.type(maxInput, '150000');
+
+    const submitButton = screen.getByRole('button', { name: 'editJob.save' });
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/1');
+    });
+  });
+
+  it('toggles remote work and inclusive opportunity checkboxes', async () => {
+    const mockJob = createMockJob({
+      id: 1,
+      remote: false,
+      inclusiveOpportunity: false,
+    });
+
+    server.use(
+      http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+        return HttpResponse.json(mockJob);
+      }),
+      http.put(`${API_BASE_URL}/jobs/:id`, async ({ request }) => {
+        const body = await request.json() as UpdateJobPostRequest;
+        return HttpResponse.json({
+          ...mockJob,
+          ...body,
+        });
+      })
+    );
+
+    renderWithProviders(<EmployerEditJobPostPage />, {
+      initialEntries: ['/employer/jobs/1/edit']
+    });
+
+    const user = setupUserEvent();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    const remoteCheckbox = screen.getByLabelText('createJob.remoteWork');
+    const inclusiveCheckbox = screen.getByLabelText('createJob.inclusiveOpportunity');
+
+    // Initially unchecked
+    expect(remoteCheckbox).not.toBeChecked();
+    expect(inclusiveCheckbox).not.toBeChecked();
+
+    // Toggle both
+    fireEvent.click(remoteCheckbox);
+    fireEvent.click(inclusiveCheckbox);
+
+    await waitFor(() => {
+      expect(remoteCheckbox).toBeChecked();
+      expect(inclusiveCheckbox).toBeChecked();
+    });
+
+    const submitButton = screen.getByRole('button', { name: 'editJob.save' });
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalled();
+    });
+  });
+
+  it('handles network timeout gracefully', async () => {
+    const mockJob = createMockJob({ id: 1 });
+
+    server.use(
+      http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+        return HttpResponse.json(mockJob);
+      }),
+      http.put(`${API_BASE_URL}/jobs/:id`, async () => {
+        await new Promise(resolve => setTimeout(resolve, 5000)); // Long delay
+        return HttpResponse.json(mockJob);
+      })
+    );
+
+    renderWithProviders(<EmployerEditJobPostPage />, {
+      initialEntries: ['/employer/jobs/1/edit']
+    });
+
+    const user = setupUserEvent();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    const submitButton = screen.getByRole('button', { name: 'editJob.save' });
+    await user.click(submitButton);
+
+    // Should show saving state
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'editJob.saving' })).toBeInTheDocument();
+    });
+  });
+
+  it('handles multiline description correctly', async () => {
+    const multilineDescription = 'Line 1\nLine 2\nLine 3\n\nLine 5';
+    const mockJob = createMockJob({
+      id: 1,
+      description: multilineDescription,
+    });
+
+    server.use(
+      http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+        return HttpResponse.json(mockJob);
+      })
+    );
+
+    renderWithProviders(<EmployerEditJobPostPage />, {
+      initialEntries: ['/employer/jobs/1/edit']
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    expect((screen.getByLabelText('createJob.jobDescription') as HTMLTextAreaElement).value).toBe(multilineDescription);
+  });
+
+  it('renders form fields correctly', async () => {
+    const mockJob = createMockJob({
+      id: 1,
+    });
+
+    server.use(
+      http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+        return HttpResponse.json(mockJob);
+      })
+    );
+
+    renderWithProviders(<EmployerEditJobPostPage />, {
+      initialEntries: ['/employer/jobs/1/edit']
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    // Check that all form fields are rendered
+    expect(screen.getByLabelText('createJob.jobTitle')).toBeInTheDocument();
+    expect(screen.getByLabelText('createJob.jobDescription')).toBeInTheDocument();
+    expect(screen.getByLabelText('createJob.location')).toBeInTheDocument();
+    expect(screen.getByLabelText('createJob.contactEmail')).toBeInTheDocument();
+  });
+
+  // it('preserves form state after failed update', async () => {
+  //   const mockJob = createMockJob({ id: 1 });
+  //   let updatePayload: UpdateJobPostRequest | null = null;
+
+  //   server.use(
+  //     http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+  //       return HttpResponse.json(mockJob);
+  //     }),
+  //     http.put(`${API_BASE_URL}/jobs/:id`, async ({ request }) => {
+  //       updatePayload = await request.json() as UpdateJobPostRequest;
+  //       return HttpResponse.json(
+  //         { message: 'Server error' },
+  //         { status: 500 }
+  //       );
+  //     })
+  //   );
+
+  //   renderWithProviders(<EmployerEditJobPostPage />, {
+  //     initialEntries: ['/employer/jobs/1/edit']
+  //   });
+
+  //   const user = setupUserEvent();
+
+  //   await waitFor(() => {
+  //     expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  //   });
+
+  //   const newTitle = 'Updated Title';
+  //   const titleInput = screen.getByLabelText('createJob.jobTitle') as HTMLInputElement;
+
+  //   // Focus the input first
+  //   await user.click(titleInput);
+
+  //   // Select all text and type the new title
+  //   await user.keyboard('{Control>}a{/Control}' + newTitle);
+
+  //   // Wait for the change to propagate
+  //   await waitFor(() => {
+  //     expect(titleInput.value).toBe(newTitle);
+  //   }, { timeout: 3000 });
+
+  //   const submitButton = screen.getByRole('button', { name: 'editJob.save' });
+  //   await user.click(submitButton);
+
+  //   await waitFor(() => {
+  //     expect(screen.getByText('editJob.submitError')).toBeInTheDocument();
+  //   });
+
+  //   // Form should have attempted to update with the new title
+  //   expect(updatePayload!.title).toBe(newTitle);
+
+  //   // Try submitting again to verify form state is preserved
+  //   await user.click(submitButton);
+
+  //   await waitFor(() => {
+  //     // Should get another error, but with the same payload
+  //     expect(updatePayload!.title).toBe(newTitle);
+  //   });
+  // });
+
+  it('handles very large salary values', async () => {
+    const mockJob = createMockJob({
+      id: 1,
+      minSalary: 1000000,
+      maxSalary: 10000000,
+    });
+
+    server.use(
+      http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+        return HttpResponse.json(mockJob);
+      })
+    );
+
+    renderWithProviders(<EmployerEditJobPostPage />, {
+      initialEntries: ['/employer/jobs/1/edit']
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    expect((screen.getByLabelText('createJob.minimum') as HTMLInputElement).value).toBe('1000000');
+    expect((screen.getByLabelText('createJob.maximum') as HTMLInputElement).value).toBe('10000000');
+  });
+
+  it('handles editing contact email to different format', async () => {
+    const mockJob = createMockJob({
+      id: 1,
+      contact: 'old@company.com',
+    });
+
+    server.use(
+      http.get(`${API_BASE_URL}/jobs/:id`, async () => {
+        return HttpResponse.json(mockJob);
+      }),
+      http.put(`${API_BASE_URL}/jobs/:id`, async ({ request }) => {
+        const body = await request.json() as UpdateJobPostRequest;
+        return HttpResponse.json({
+          ...mockJob,
+          ...body,
+        });
+      })
+    );
+
+    renderWithProviders(<EmployerEditJobPostPage />, {
+      initialEntries: ['/employer/jobs/1/edit']
+    });
+
+    const user = setupUserEvent();
+
+    await waitFor(() => {
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    const contactInput = screen.getByLabelText('createJob.contactEmail');
+    fireEvent.change(contactInput, { target: { value: 'new@company.co.uk' } });
+
+    await waitFor(() => {
+      expect((contactInput as HTMLInputElement).value).toBe('new@company.co.uk');
+    });
+
+    const submitButton = screen.getByRole('button', { name: 'editJob.save' });
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalled();
     });
   });
 });
