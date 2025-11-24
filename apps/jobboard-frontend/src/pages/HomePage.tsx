@@ -1,32 +1,60 @@
-import { Button } from "@/components/ui/button";
-import heroBackground from "@/assets/hero-background.jpg";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { Button } from '@/components/ui/button';
+import heroBackground from '@/assets/hero-background.jpg';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import {
   Search,
-  Briefcase,
   Users,
-  MessageCircle,
-  Target,
+  Briefcase,
+  FileText,
+  GraduationCap,
   Heart,
   Globe,
-} from "lucide-react";
-import { type FormEvent, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+  MessageCircle,
+  UserCheck,
+} from 'lucide-react';
+import { type FormEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { getDashboardStats, type DashboardStatsResponse } from '@/services/dashboard.service';
 
 export default function HomePage() {
   const isMediumOrLarger = useMediaQuery('(min-width: 768px)');
   const navigate = useNavigate();
   const { t } = useTranslation('common');
   const [searchTerm, setSearchTerm] = useState('');
+  const [stats, setStats] = useState<DashboardStatsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const formatNumber = (value: number | null | undefined) => {
+    if (typeof value === 'number' && !Number.isNaN(value)) {
+      return value.toLocaleString();
+    }
+    return '0';
+  };
+
+  const renderStatsSkeleton = () => (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4" aria-hidden="true">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <Card key={`stats-skeleton-${index}`} className="overflow-hidden">
+          <CardHeader className="pb-2">
+            <div className="w-12 h-12 bg-primary/10 rounded-lg mb-4 animate-pulse" />
+            <div className="h-5 w-32 bg-muted rounded animate-pulse" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="h-9 w-24 bg-muted rounded animate-pulse" />
+            <div className="space-y-2">
+              <div className="h-4 w-full bg-muted rounded animate-pulse" />
+              <div className="h-4 w-5/6 bg-muted rounded animate-pulse" />
+              <div className="h-4 w-2/3 bg-muted rounded animate-pulse" />
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
 
   const handleHeroSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -37,6 +65,23 @@ export default function HomePage() {
       navigate('/jobs');
     }
   };
+
+  const fetchStats = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const data = await getDashboardStats();
+      setStats(data);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -97,152 +142,298 @@ export default function HomePage() {
                 {t('home.hero.searchButton')}
               </Button>
             </form>
+
+            {/* Non-profit opportunities button */}
+            <div className="mt-6 flex justify-center">
+              <div
+                className="group relative cursor-pointer"
+                onClick={() => navigate('/nonprofit-jobs')}
+              >
+                {/* Strong Outer Glow */}
+                <div
+                  className="absolute inset-0 
+                 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600
+                 dark:from-blue-600 dark:via-indigo-600 dark:to-blue-700
+                 opacity-70 blur-3xl
+                 rounded-3xl
+                 transition-all group-hover:opacity-95"
+                ></div>
+
+                {/* Inner Glow Layer (adds depth) */}
+                <div
+                  className="absolute inset-0 
+                 bg-gradient-to-r from-blue-400/50 via-blue-500/40 to-indigo-500/40
+                 dark:from-blue-700/40 dark:via-blue-600/40 dark:to-indigo-600/40
+                 blur-xl rounded-2xl opacity-80
+                 group-hover:opacity-100 transition-opacity"
+                ></div>
+
+                {/* Foreground Glass Card */}
+                <div
+                  className="relative 
+                 bg-white/85 dark:bg-white/10
+                 backdrop-blur-xl
+                 border border-white/60 dark:border-white/10
+                 shadow-2xl rounded-2xl
+                 px-10 py-7
+                 flex items-center gap-3
+                 hover:scale-[1.03] active:scale-[0.98]
+                 transition-all duration-300"
+                >
+                  <Heart className="size-6 text-blue-700 dark:text-blue-400" />
+                  <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {t('home.hero.discoverNonProfit')}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Main Content */}
       <main id="main-content">
-        {/* Daily Quote Box */}
+        {/* Community Statistics Section */}
         <section
-          aria-label={t('home.quote.title')}
-          className="container mx-auto px-4 -mt-12 relative z-20"
-        >
-          <Card className="max-w-4xl mx-auto">
-            <CardContent className="py-6">
-              <div className="flex items-start gap-4">
-                <div className="text-4xl text-primary" aria-hidden="true">
-                  &ldquo;
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-primary mb-2">
-                    {t('home.quote.title')}
-                  </p>
-                  <blockquote className="text-lg italic text-foreground/80">
-                    {t('home.quote.text')}
-                  </blockquote>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    - {t('home.quote.author')}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* For Job Seekers Section */}
-        <section
-          aria-labelledby="job-seekers-heading"
+          id="stats-section"
+          aria-labelledby="stats-heading"
           className="container mx-auto px-4 py-16"
         >
-        <div className="text-center mb-12">
-          <h2 id="job-seekers-heading" className="text-3xl md:text-4xl font-bold mb-4">
-            {t('home.jobSeekers.title')}
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('home.jobSeekers.description')}
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-            <CardHeader>
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4" aria-hidden="true">
-                <Briefcase className="text-primary size-6" />
-              </div>
-              <CardTitle>{t('home.jobSeekers.cards.ethical.title')}</CardTitle>
-              <CardDescription>
-                {t('home.jobSeekers.cards.ethical.description')}
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-            <CardHeader>
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4" aria-hidden="true">
-                <Users className="text-primary size-6" />
-              </div>
-              <CardTitle>{t('home.jobSeekers.cards.resources.title')}</CardTitle>
-              <CardDescription>
-                {t('home.jobSeekers.cards.resources.description')}
-              </CardDescription>
-            </CardHeader>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-            <CardHeader>
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4" aria-hidden="true">
-                <MessageCircle className="text-primary size-6" />
-              </div>
-              <CardTitle>{t('home.jobSeekers.cards.community.title')}</CardTitle>
-              <CardDescription>
-                {t('home.jobSeekers.cards.community.description')}
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
-      </section>
-
-      {/* For Employers Section */}
-      <section
-        aria-labelledby="employers-heading"
-        className="py-16"
-      >
-        <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 id="employers-heading" className="text-3xl md:text-4xl font-bold mb-4">
-              {t('home.employers.title')}
+            <h2 id="stats-heading" className="text-3xl md:text-4xl font-bold mb-4">
+              {t('home.stats.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              {t('home.employers.description')}
+              {t('home.stats.subtitle')}
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-              <CardHeader>
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4" aria-hidden="true">
-                  <Target className="text-primary size-6" />
-                </div>
-                <CardTitle>{t('home.employers.cards.talent.title')}</CardTitle>
-                <CardDescription>
-                  {t('home.employers.cards.talent.description')}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+          {error && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground mb-4">{t('home.stats.error')}</p>
+              <Button onClick={fetchStats} variant="outline">
+                {t('home.stats.retry')}
+              </Button>
+            </div>
+          )}
 
-            <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4" aria-hidden="true">
-                  <Heart className="text-primary size-6" />
-                </div>
-                <CardTitle>{t('home.employers.cards.values.title')}</CardTitle>
-                <CardDescription>
-                  {t('home.employers.cards.values.description')}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+          {loading && !error && renderStatsSkeleton()}
 
-            <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-              <CardHeader>
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4" aria-hidden="true">
-                  <Globe className="text-primary size-6" />
-                </div>
-                <CardTitle>{t('home.employers.cards.brand.title')}</CardTitle>
-                <CardDescription>
-                  {t('home.employers.cards.brand.description')}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+          {stats && !loading && !error && (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {/* Users Stats Card */}
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-2">
+                  <div
+                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                    aria-hidden="true"
+                  >
+                    <Users className="text-primary size-6" />
+                  </div>
+                  <CardTitle className="text-lg">{t('home.stats.users.title')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-primary mb-3">
+                    {formatNumber(stats.totalUsers)}
+                  </div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.users.employers')}</span>
+                      <span className="font-medium text-foreground">
+                        {formatNumber(stats.totalEmployers)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.users.jobSeekers')}</span>
+                      <span className="font-medium text-foreground">
+                        {formatNumber(stats.totalJobSeekers)}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Jobs Stats Card */}
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-2">
+                  <div
+                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                    aria-hidden="true"
+                  >
+                    <Briefcase className="text-primary size-6" />
+                  </div>
+                  <CardTitle className="text-lg">{t('home.stats.jobs.title')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-primary mb-3">
+                    {formatNumber(stats.totalJobPosts)}
+                  </div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.jobs.remote')}</span>
+                      <span className="font-medium text-foreground">
+                        {formatNumber(stats.remoteJobs)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.jobs.inclusive')}</span>
+                      <span className="font-medium text-foreground">
+                        {formatNumber(stats.inclusiveOpportunities)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.jobs.newThisWeek')}</span>
+                      <span className="font-medium text-green-600">
+                        +{formatNumber(stats.newJobsThisWeek)}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Applications Stats Card */}
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-2">
+                  <div
+                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                    aria-hidden="true"
+                  >
+                    <FileText className="text-primary size-6" />
+                  </div>
+                  <CardTitle className="text-lg">{t('home.stats.applications.title')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-primary mb-3">
+                    {formatNumber(stats.totalApplications)}
+                  </div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.applications.pending')}</span>
+                      <span className="font-medium text-yellow-600">
+                        {formatNumber(stats.pendingApplications)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.applications.accepted')}</span>
+                      <span className="font-medium text-green-600">
+                        {formatNumber(stats.acceptedApplications)}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Mentorship Stats Card */}
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-2">
+                  <div
+                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                    aria-hidden="true"
+                  >
+                    <GraduationCap className="text-primary size-6" />
+                  </div>
+                  <CardTitle className="text-lg">{t('home.stats.mentorship.title')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-primary mb-3">
+                    {formatNumber(stats.totalMentors)}
+                  </div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.mentorship.accepted')}</span>
+                      <span className="font-medium text-foreground">
+                        {formatNumber(stats.acceptedMentorships)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.mentorship.completed')}</span>
+                      <span className="font-medium text-foreground">
+                        {formatNumber(stats.completedMentorships)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.mentorship.reviews')}</span>
+                      <span className="font-medium text-foreground">
+                        {formatNumber(stats.totalReviews)}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </section>
+
+        {/* Features Section */}
+        <section aria-labelledby="features-heading" className="bg-muted/30 py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 id="features-heading" className="text-3xl md:text-4xl font-bold mb-4">
+                {t('home.features.title')}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {t('home.features.subtitle')}
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
+                <CardHeader>
+                  <div
+                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                    aria-hidden="true"
+                  >
+                    <Heart className="text-primary size-6" />
+                  </div>
+                  <CardTitle>{t('home.features.ethical.title')}</CardTitle>
+                  <CardDescription>{t('home.features.ethical.description')}</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
+                <CardHeader>
+                  <div
+                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                    aria-hidden="true"
+                  >
+                    <Globe className="text-primary size-6" />
+                  </div>
+                  <CardTitle>{t('home.features.inclusive.title')}</CardTitle>
+                  <CardDescription>{t('home.features.inclusive.description')}</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
+                <CardHeader>
+                  <div
+                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                    aria-hidden="true"
+                  >
+                    <UserCheck className="text-primary size-6" />
+                  </div>
+                  <CardTitle>{t('home.features.mentorship.title')}</CardTitle>
+                  <CardDescription>{t('home.features.mentorship.description')}</CardDescription>
+                </CardHeader>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
+                <CardHeader>
+                  <div
+                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                    aria-hidden="true"
+                  >
+                    <MessageCircle className="text-primary size-6" />
+                  </div>
+                  <CardTitle>{t('home.features.community.title')}</CardTitle>
+                  <CardDescription>{t('home.features.community.description')}</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
         {/* CTA Section */}
-        <section
-          aria-labelledby="cta-heading"
-          className="bg-primary/5 py-16"
-        >
+        <section aria-labelledby="cta-heading" className="bg-primary/5 py-16">
           <div className="container mx-auto px-4 text-center">
             <h2 id="cta-heading" className="text-3xl md:text-4xl font-bold mb-4">
               {t('home.cta.title')}
@@ -250,12 +441,23 @@ export default function HomePage() {
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
               {t('home.cta.description')}
             </p>
-            <Button
-              size="lg"
-              className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              {t('home.cta.button')}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                onClick={() => navigate('/register')}
+                className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {t('home.cta.signUp')}
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => navigate('/login')}
+                className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {t('home.cta.login')}
+              </Button>
+            </div>
           </div>
         </section>
       </main>
