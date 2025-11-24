@@ -26,6 +26,7 @@ const ChatPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<ChatWebSocket | null>(null);
+  const roomsRef = useRef<ChatRoomForUser[]>([]);
   const accessToken = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
@@ -203,6 +204,7 @@ const ChatPage = () => {
         });
 
         setRooms(mappedRooms);
+        roomsRef.current = mappedRooms;
 
         const messagesMap: Record<string, ChatMessage[]> = {};
         await Promise.all(
@@ -233,8 +235,8 @@ const ChatPage = () => {
         // Note: activeRoomId will be set later, so we'll calculate unread count for all rooms
         // and then mark active room messages as read in a separate effect
         const currentUserIdStr = user.id?.toString();
-        setRooms(prevRooms => 
-          prevRooms.map(room => {
+        setRooms(prevRooms => {
+          const updated = prevRooms.map(room => {
             const messages = messagesMap[room.id] || [];
             if (messages.length === 0) {
               return {
@@ -258,8 +260,10 @@ const ChatPage = () => {
               lastMessageTime: lastMessage.timestamp,
               unreadCount,
             };
-          })
-        );
+          });
+          roomsRef.current = updated;
+          return updated;
+        });
       } catch (err) {
         console.error('[ChatPage] Error fetching chat rooms:', err);
         setError('Failed to load chat rooms. Please try again later.');
@@ -281,8 +285,9 @@ const ChatPage = () => {
         return;
       }
       
-      if (rooms.length > 0) {
-        const existingRoom = rooms.find(r => r.mentorshipId === mentorshipIdFromUrl);
+      // Check if room already exists using ref
+      if (roomsRef.current.length > 0) {
+        const existingRoom = roomsRef.current.find(r => r.mentorshipId === mentorshipIdFromUrl);
         if (existingRoom) {
           setActiveRoomId(existingRoom.id);
           setIsLoading(false);
@@ -350,7 +355,9 @@ const ChatPage = () => {
             if (prev.some(r => r.mentorshipId === mentorshipIdFromUrl)) {
               return prev;
             }
-            return [...prev, newRoom];
+            const updated = [...prev, newRoom];
+            roomsRef.current = updated;
+            return updated;
           });
           setActiveRoomId(roomId);
           setIsLoading(false);
@@ -452,7 +459,9 @@ const ChatPage = () => {
                 if (prev.some(r => r.mentorshipId === mentorshipIdFromUrl)) {
                   return prev;
                 }
-                return [...prev, newRoom];
+                const updated = [...prev, newRoom];
+                roomsRef.current = updated;
+                return updated;
               });
               setActiveRoomId(roomId);
               setIsLoading(false);
@@ -506,13 +515,16 @@ const ChatPage = () => {
     };
 
     // Only run if we have a mentorshipId in URL and haven't found the room yet
-    if (mentorshipIdFromUrl && (!rooms.length || !rooms.some(r => r.mentorshipId === mentorshipIdFromUrl))) {
-      createRoomFromMentorshipId();
-    } else if (!mentorshipIdFromUrl) {
+    if (mentorshipIdFromUrl) {
+      // Check rooms using ref to avoid dependency
+      if (!roomsRef.current.length || !roomsRef.current.some(r => r.mentorshipId === mentorshipIdFromUrl)) {
+        createRoomFromMentorshipId();
+      }
+    } else {
       // If no mentorshipId in URL, ensure loading is false (fetchChatRooms will handle it)
       setIsLoading(false);
     }
-  }, [mentorshipIdFromUrl, user?.id, isAuthenticated, rooms]);
+  }, [mentorshipIdFromUrl, user?.id, isAuthenticated]);
 
   // Set active room from URL parameter
   useEffect(() => {
@@ -542,8 +554,8 @@ const ChatPage = () => {
           });
 
           // Reset unread count for this room
-          setRooms(prevRooms =>
-            prevRooms.map(r => {
+          setRooms(prevRooms => {
+            const updated = prevRooms.map(r => {
               if (r.id === roomId) {
                 return {
                   ...r,
@@ -551,8 +563,10 @@ const ChatPage = () => {
                 };
               }
               return r;
-            })
-          );
+            });
+            roomsRef.current = updated;
+            return updated;
+          });
         }
         return;
       }
@@ -582,8 +596,8 @@ const ChatPage = () => {
         });
 
         // Reset unread count for first room
-        setRooms(prevRooms =>
-          prevRooms.map(room => {
+        setRooms(prevRooms => {
+          const updated = prevRooms.map(room => {
             if (room.id === firstRoomId) {
               return {
                 ...room,
@@ -591,11 +605,13 @@ const ChatPage = () => {
               };
             }
             return room;
-          })
-        );
+          });
+          roomsRef.current = updated;
+          return updated;
+        });
       }
     }
-  }, [mentorshipIdFromUrl, rooms, activeRoomId, user?.id]);
+  }, [mentorshipIdFromUrl, activeRoomId, user?.id]);
 
   const activeRoom = rooms.find(room => room.id === activeRoomId);
   const activeMessages = activeRoomId ? messagesByRoom[activeRoomId] || [] : [];
@@ -658,8 +674,8 @@ const ChatPage = () => {
               });
 
               // Update room's last message and unread count
-              setRooms(prevRooms =>
-                prevRooms.map(room => {
+              setRooms(prevRooms => {
+                const updated = prevRooms.map(room => {
                   if (room.id !== activeRoomId) {
                     // If message is from another user and room is not active, increment unread count
                     const isOwnMessage = message.senderId === user?.id?.toString();
@@ -684,8 +700,10 @@ const ChatPage = () => {
                     lastMessageTime: message.timestamp,
                     unreadCount: 0, // Active room has no unread messages
                   };
-                })
-              );
+                });
+                roomsRef.current = updated;
+                return updated;
+              });
             },
             (error: Error) => {
               console.error('[ChatPage] WebSocket error:', error);
@@ -737,8 +755,8 @@ const ChatPage = () => {
     });
 
     // Reset unread count for active room
-    setRooms(prevRooms =>
-      prevRooms.map(room => {
+    setRooms(prevRooms => {
+      const updated = prevRooms.map(room => {
         if (room.id === activeRoomId) {
           return {
             ...room,
@@ -746,8 +764,10 @@ const ChatPage = () => {
           };
         }
         return room;
-      })
-    );
+      });
+      roomsRef.current = updated;
+      return updated;
+    });
   }, [activeRoomId, user?.id]);
 
   const handleRoomSelect = (roomId: string) => {
@@ -771,8 +791,8 @@ const ChatPage = () => {
     });
 
     // Update room unread count to 0
-    setRooms(prevRooms =>
-      prevRooms.map(room => {
+    setRooms(prevRooms => {
+      const updated = prevRooms.map(room => {
         if (room.id !== roomId) {
           return room;
         }
@@ -780,8 +800,10 @@ const ChatPage = () => {
           ...room,
           unreadCount: 0,
         };
-      })
-    );
+      });
+      roomsRef.current = updated;
+      return updated;
+    });
 
     // Mark all messages in this room as read
     setMessagesByRoom(prevMessages => ({
@@ -816,8 +838,8 @@ const ChatPage = () => {
     }));
 
     // Update room's last message
-    setRooms(prevRooms =>
-      prevRooms.map(room => {
+    setRooms(prevRooms => {
+      const updated = prevRooms.map(room => {
         if (room.id !== activeRoomId) {
           return room;
         }
@@ -826,8 +848,10 @@ const ChatPage = () => {
           lastMessage: content,
           lastMessageTime: new Date().toISOString(),
         };
-      })
-    );
+      });
+      roomsRef.current = updated;
+      return updated;
+    });
 
     // Send message via WebSocket
     if (wsRef.current && wsRef.current.isConnected()) {
