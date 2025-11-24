@@ -15,21 +15,15 @@ import { AxiosError } from 'axios';
  * Convert API JobPostResponse to Job type for NonProfitJobCard component
  */
 function convertJobPostToJob(jobPost: JobPostResponse): Job {
-  // Parse ethical tags (comma-separated string) into EthicalTag array
-  const ethicalTags = jobPost.ethicalTags
-    ? (jobPost.ethicalTags.split(',').map((tag) => tag.trim()) as any[])
-    : [];
-
   return {
     id: jobPost.id.toString(),
     title: jobPost.title,
-    company: jobPost.company,
+    workplace: jobPost.workplace,
     location: jobPost.remote ? 'Remote' : jobPost.location,
-    ethicalTags,
     type: ['Contract'], // Using 'Contract' type for volunteer/nonprofit positions
     minSalary: 0, // Non-profit jobs don't have salary
     maxSalary: 0,
-    logoUrl: undefined,
+    logoUrl: jobPost.workplace.imageUrl,
     inclusiveOpportunity: jobPost.inclusiveOpportunity,
     nonProfit: jobPost.nonProfit,
   };

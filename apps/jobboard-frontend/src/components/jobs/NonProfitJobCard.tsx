@@ -19,11 +19,11 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
     navigate(`/jobs/${job.id}`);
   };
 
-  const ethicalTagLabels = job.ethicalTags.map((tag) =>
-    t(`ethicalTags.tags.${TAG_TO_KEY_MAP[tag]}`, tag)
-  );
+  const ethicalTagLabels = job.workplace.ethicalTags
+    .filter((tag) => TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP])
+    .map((tag) => t(`ethicalTags.tags.${TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP]}`, tag));
   const location =
-    job.location.toLowerCase() === 'remote' ? t('jobCard.remote') : job.location;
+    job.location?.toLowerCase() === 'remote' ? t('jobCard.remote') : job.location;
 
   return (
     <Card
@@ -32,9 +32,9 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
     >
       <div className="flex flex-col gap-6 px-6 py-6 sm:flex-row sm:items-start">
         <Avatar className="size-16 self-center rounded-md">
-          <AvatarImage src={job.logoUrl} alt={`${job.company} logo`} />
+          <AvatarImage src={job.logoUrl} alt={`${job.workplace.companyName} logo`} />
           <AvatarFallback className="rounded-md text-sm font-semibold bg-green-100 text-green-700">
-            {job.company
+            {job.workplace.companyName
               .split(' ')
               .map((part) => part[0])
               .join('')
@@ -85,7 +85,7 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
             <div className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
               {job.title}
             </div>
-            <div className="text-base text-muted-foreground font-medium">{job.company}</div>
+            <div className="text-base text-muted-foreground font-medium">{job.workplace.companyName}</div>
           </div>
 
           {/* Description */}
