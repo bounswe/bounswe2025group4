@@ -102,7 +102,7 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
               />
             ))}
           </div>
-          <span className="ml-2 text-sm font-semibold">{mentor.rating}</span>
+          <span className="ml-2 text-sm font-semibold">{mentor.rating.toFixed(1)}</span>
           <span className="ml-1 text-sm text-muted-foreground">({mentor.reviews} {t('mentorship.card.reviews')})</span>
         </div>
         

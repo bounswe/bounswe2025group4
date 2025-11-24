@@ -226,7 +226,7 @@ const MentorProfilePage = () => {
                     className={`h-5 w-5 ${i < Math.floor(mentor.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
                   />
                 ))}
-                <span className="ml-2 font-semibold">{mentor.rating}</span>
+                <span className="ml-2 font-semibold">{mentor.rating.toFixed(1)}</span>
                 <span className="ml-1 text-muted-foreground">({mentor.reviews} {t('mentorship.profile.reviews')})</span>
               </div>
               
@@ -519,7 +519,7 @@ const MentorProfilePage = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">{t('mentorship.profile.averageRating')}:</span>
-                <span className="font-semibold">{mentor.rating}/5</span>
+                <span className="font-semibold">{mentor.rating.toFixed(1)}/5</span>
               </div>
               {isOwnProfile && (
                 <div className="flex justify-between">
