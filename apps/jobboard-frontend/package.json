@@ -18,7 +18,8 @@
     "test:ui": "vitest --ui --coverage",
     "preview:e2e": "vite preview --port 5173",
     "test:e2e": "node tests/e2e/selenium/run-tests.js",
-    "test:e2e:headed": "cross-env E2E_HEADLESS=false node tests/e2e/selenium/run-tests.js"
+    "test:e2e:headed": "cross-env E2E_HEADLESS=false node tests/e2e/selenium/run-tests.js",
+    "postinstall": "node scripts/postinstall-chromedriver.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

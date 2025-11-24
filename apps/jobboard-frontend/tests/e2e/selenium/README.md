@@ -79,6 +79,12 @@ Dependencies are already installed if you've run `pnpm install`. The E2E framewo
 }
 ```
 
+**Note:** ChromeDriver binary installation is handled automatically via:
+- `.npmrc` configuration file (allows chromedriver's install script)
+- `postinstall` script (ensures chromedriver binary is downloaded after package installation)
+
+If you encounter ChromeDriver issues, see the [Troubleshooting](#troubleshooting) section below.
+
 ### Environment Configuration
 
 1. Copy the example environment file:
@@ -427,13 +433,41 @@ jobs:
 
 ### ChromeDriver Issues
 
-**Error:** `ChromeDriver not found`
+**Error:** `spawn chromedriver.exe ENOENT` or `ChromeDriver not found`
 
-**Solution:**
-```bash
-cd node_modules/chromedriver
-node install.js
-```
+**Cause:** ChromeDriver's install script may be blocked by pnpm's security settings, preventing the binary from being downloaded.
+
+**Solutions (in order):**
+
+1. **Automatic fix (recommended):** The project includes a postinstall script that should handle this automatically. If it didn't run, try:
+   ```bash
+   pnpm install
+   ```
+
+2. **Manual installation:**
+   ```bash
+   node node_modules/chromedriver/install.js
+   ```
+
+3. **Approve chromedriver scripts (if using pnpm):**
+   ```bash
+   pnpm approve-builds chromedriver
+   ```
+   Then select chromedriver and reinstall:
+   ```bash
+   pnpm install
+   ```
+
+4. **Verify installation:**
+   ```bash
+   # Windows PowerShell
+   Test-Path "node_modules\chromedriver\lib\chromedriver\chromedriver.exe"
+   
+   # Linux/Mac
+   test -f node_modules/chromedriver/lib/chromedriver/chromedriver
+   ```
+
+**Note:** The project includes `.npmrc` with `enable-pre-post-scripts=true` to prevent this issue for new installations.
 
 ### Headless Mode Failures
 
