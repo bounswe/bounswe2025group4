@@ -69,6 +69,7 @@
     "@vitest/coverage-v8": "^4.0.8",
     "@vitest/ui": "4.0.8",
     "chromedriver": "^142.0.3",
+    "cross-env": "^7.0.3",
     "dotenv": "^17.2.3",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
