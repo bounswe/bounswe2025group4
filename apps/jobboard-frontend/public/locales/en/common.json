@@ -1300,6 +1300,8 @@
       "title": "Workplace Profile",
       "notFound": "Workplace not found",
       "employers": "Employers"
-    }
+    },
+    "settings": "Settings",
+    "manageRequests": "Manage Requests"
   }
 }
