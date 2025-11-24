@@ -14,8 +14,12 @@
       "myApplications": "طلباتي",
       "myMentorships": "إرشاداتي",
       "mentorship": "الإرشاد",
+      "chat": "المحادثة",
       "forum": "المنتدى",
-      "employerDashboard": "لوحة صاحب العمل"
+      "employerDashboard": "لوحة صاحب العمل",
+      "workplaces": "أماكن العمل",
+      "myWorkplaces": "أماكن عملي",
+      "browseWorkplaces": "استعراض أماكن العمل"
     },
     "auth": {
       "login": "تسجيل الدخول",
@@ -364,6 +368,8 @@
       "openToOpportunities": "متاح لفرص جديدة",
       "currentRole": "{{position}} في {{company}}",
       "joined": "انضم في {{year}}",
+      "posts": "منشورات",
+      "badges": "شارات",
       "stats": {
         "posts": "منشورات",
         "badges": "شارات"
@@ -385,6 +391,7 @@
     "about": {
       "title": "نبذة",
       "addBio": "أضف سيرة ذاتية",
+      "noBio": "لا توجد سيرة ذاتية متوفرة",
       "modal": {
         "title": "تعديل النبذة",
         "bioLabel": "السيرة الذاتية",
@@ -395,6 +402,7 @@
     "experience": {
       "title": "الخبرات",
       "empty": "أضف خبرة",
+      "noExperience": "لا توجد خبرة عمل متوفرة",
       "modal": {
         "addTitle": "إضافة خبرة",
         "editTitle": "تعديل الخبرة",
@@ -428,6 +436,7 @@
     "education": {
       "title": "التعليم",
       "empty": "أضف تعليماً",
+      "noEducation": "لا توجد معلومات تعليمية متوفرة",
       "modal": {
         "addTitle": "إضافة تعليم",
         "editTitle": "تعديل التعليم",
@@ -465,6 +474,7 @@
     "skills": {
       "title": "المهارات",
       "empty": "أضف مهارات",
+      "noSkills": "لا توجد مهارات مدرجة",
       "modal": {
         "addTitle": "إضافة مهارة",
         "editTitle": "تعديل المهارة",
@@ -482,6 +492,7 @@
     "interests": {
       "title": "الاهتمامات",
       "empty": "أضف اهتمامات",
+      "noInterests": "لا توجد اهتمامات مدرجة",
       "modal": {
         "addTitle": "إضافة اهتمام",
         "editTitle": "تعديل الاهتمام",
@@ -581,54 +592,11 @@
       "saveInterestError": "فشل حفظ الاهتمام.",
       "deleteAccountSuccess": "تم حذف جميع بيانات الملف الشخصي."
     },
-    "activity": {
-      "items": [
-        {
-          "type": "application",
-          "text": "تقدّم لوظيفة مصمم منتجات أول في Innovation Labs",
-          "date": "منذ يومين"
-        },
-        {
-          "type": "forum",
-          "text": "نشر موضوعًا في المنتدى بعنوان: \"أفضل الممارسات لتحقيق إمكانية الوصول في التصميم\"",
-          "date": "منذ 5 أيام"
-        },
-        {
-          "type": "comment",
-          "text": "علّق على \"استراتيجيات العمل عن بعد للمصممين\"",
-          "date": "منذ أسبوع"
-        },
-        {
-          "type": "like",
-          "text": "أُعجب بتعليق حول \"تنفيذ نظام التصميم\"",
-          "date": "منذ أسبوع"
-        },
-        {
-          "type": "application",
-          "text": "تقدّم لوظيفة مصمم تجربة مستخدم في Creative Studio",
-          "date": "منذ أسبوعين"
-        }
-      ]
-    },
     "posts": {
       "replyLabel": "{{value}} رد",
       "repliesLabel": "{{value}} ردود",
       "likeLabel": "{{value}} إعجاب",
-      "likesLabel": "{{value}} إعجابات",
-      "items": [
-        {
-          "title": "كيفية تحسين تقنيات أبحاث المستخدمين",
-          "date": "منذ 3 أيام"
-        },
-        {
-          "title": "رحلتي في تصميم المنتجات",
-          "date": "منذ أسبوع"
-        },
-        {
-          "title": "الأدوات التي أستخدمها يوميًا كمصمم",
-          "date": "منذ أسبوعين"
-        }
-      ]
+      "likesLabel": "{{value}} إعجابات"
     }
   },
   "jobApplication": {
@@ -718,7 +686,7 @@
     "findMentors": "البحث عن مرشدين",
     "started": "بدأ",
     "accepted": "مقبول",
-    "completed": "مكتمل",
+    "completedDate": "مكتمل",
     "duration": "المدة",
     "learningGoals": "أهداف التعلم",
     "openChat": "فتح المحادثة",
@@ -922,37 +890,115 @@
       "errorMessage": "فشل إرسال طلب الإرشاد. يرجى المحاولة مرة أخرى."
     }
   },
-  "myMentorships": {
-    "title": "إرشاداتي",
-    "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة",
-    "successMessage": "تم إرسال طلب الإرشاد بنجاح إلى {{mentorName}}!",
-    "active": "نشط",
-    "pending": "قيد الانتظار",
-    "completed": "مكتمل",
-    "rejected": "مرفوض",
-    "noActive": "لا توجد إرشادات نشطة",
-    "noActiveDesc": "ليس لديك أي إرشادات نشطة حتى الآن. ابحث عن مرشد للبدء!",
-    "noPending": "لا توجد طلبات قيد الانتظار",
-    "noPendingDesc": "ليس لديك أي طلبات إرشاد قيد الانتظار.",
-    "noCompleted": "لا توجد إرشادات مكتملة",
-    "noCompletedDesc": "لم تكمل أي إرشادات بعد.",
-    "noRejected": "لا توجد طلبات مرفوضة",
-    "noRejectedDesc": "ليس لديك أي طلبات إرشاد مرفوضة.",
-    "findMentors": "ابحث عن مرشدين",
-    "started": "بدأ",
-    "accepted": "مقبول",
-    "completedDate": "مكتمل",
-    "duration": "المدة",
-    "learningGoals": "أهداف التعلم",
-    "openChat": "فتح المحادثة",
-    "writeReview": "كتابة تقييم",
-    "waitingForResponse": "في انتظار الرد",
-    "viewDetails": "عرض التفاصيل",
-    "status": {
-      "active": "نشط",
-      "pending": "قيد الانتظار",
-      "completed": "مكتمل",
-      "rejected": "مرفوض"
+  "reviews": {
+    "workplaceReviews": "تقييمات مكان العمل",
+    "writeReview": "اكتب تقييماً",
+    "writeReviewFor": "اكتب تقييماً لـ {{company}}",
+    "shareExperience": "شارك تجربتك في العمل في هذه الشركة",
+    "rateYourExperience": "قيّم تجربتك",
+    "yourReview": "تقييمك",
+    "reviewPlaceholder": "شارك تجربتك في العمل في هذه الشركة. ماذا أعجبك؟ ما الذي يمكن تحسينه؟",
+    "characters": "حرف",
+    "anonymous": "مجهول",
+    "postAnonymously": "انشر بشكل مجهول",
+    "submitReview": "إرسال التقييم",
+    "submitting": "جارٍ الإرسال...",
+    "cancel": "إلغاء",
+    "categories": {
+      "culture": "الثقافة",
+      "benefits": "المزايا",
+      "workLifeBalance": "التوازن بين العمل والحياة",
+      "management": "الإدارة",
+      "careerGrowth": "النمو الوظيفي"
+    },
+    "categoryRatings": "تقييمات الفئات",
+    "basedOn": "بناءً على {{count}} تقييم",
+    "basedOn_plural": "بناءً على {{count}} تقييمات",
+    "recentComments": "التعليقات الأخيرة",
+    "recentReviews": "التقييمات الأخيرة",
+    "sortBy": "ترتيب التقييمات",
+    "sortOptions": {
+      "ratingDesc": "التقييم (من الأعلى إلى الأدنى)",
+      "ratingAsc": "التقييم (من الأدنى إلى الأعلى)"
+    },
+    "ratingFilter": "نطاق التقييم",
+    "minRating": "الأدنى",
+    "maxRating": "الأعلى",
+    "clearFilters": "إعادة التعيين",
+    "totalReviews": "{{count}} تقييم",
+    "totalReviews_plural": "{{count}} تقييمات",
+    "noReviews": "لا توجد تقييمات حتى الآن. كن أول من يشارك تجربته!",
+    "loadMore": "تحميل المزيد",
+    "loading": "جارٍ التحميل...",
+    "helpful": "مفيد",
+    "report": "إبلاغ",
+    "today": "اليوم",
+    "yesterday": "أمس",
+    "daysAgo": "منذ {{count}} يوم",
+    "daysAgo_plural": "منذ {{count}} أيام",
+    "weeksAgo": "منذ {{count}} أسبوع",
+    "weeksAgo_plural": "منذ {{count}} أسابيع",
+    "monthsAgo": "منذ {{count}} شهر",
+    "monthsAgo_plural": "منذ {{count}} أشهر",
+    "yearsAgo": "منذ {{count}} سنة",
+    "yearsAgo_plural": "منذ {{count}} سنوات",
+    "aboutCompany": "عن {{company}}",
+    "seeWhatEmployeesSay": "انظر ما يقوله الموظفون",
+    "viewAllReviews": "عرض جميع التقييمات",
+    "seeAllReviews": "عرض جميع التقييمات",
+    "reply": {
+      "employerResponse": "رد صاحب العمل",
+      "confirmDelete": "هل أنت متأكد من أنك تريد حذف هذا الرد؟",
+      "deleteError": "فشل حذف الرد. يرجى المحاولة مرة أخرى."
+    },
+    "errors": {
+      "allRatingsRequired": "يرجى تقييم جميع الفئات",
+      "commentTooShort": "يجب أن يكون التقييم 10 أحرف على الأقل",
+      "commentTooLong": "يجب ألا يتجاوز التقييم 2000 حرف",
+      "submissionFailed": "فشل إرسال التقييم. يرجى المحاولة مرة أخرى."
     }
+  },
+  "company": {
+    "aboutUs": "معلومات عنا",
+    "ethicalPolicyCommitments": "التزامات السياسة الأخلاقية",
+    "currentJobOpenings": "الوظائف الشاغرة الحالية",
+    "viewJob": "عرض الوظيفة",
+    "notFound": "الشركة غير موجودة",
+    "notFoundDescription": "الشركة التي تبحث عنها غير موجودة أو تم إزالتها."
+  },
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "goHome": "الذهاب إلى الصفحة الرئيسية",
+    "edited": "تم التعديل"
+  },
+  "chat": {
+    "conversations": "المحادثات",
+    "noConversations": "لا توجد محادثات بعد",
+    "openConversationWith": "فتح المحادثة مع {{name}}",
+    "back": "العودة إلى المحادثات",
+    "online": "متصل",
+    "offline": "غير متصل",
+    "justNow": "الآن",
+    "minutesAgo": "منذ {{count}} دقيقة",
+    "hoursAgo": "منذ {{count}} ساعة",
+    "daysAgo": "منذ {{count}} يوم",
+    "noMessages": "لا توجد رسائل",
+    "unreadMessages": "{{count}} رسائل غير مقروءة",
+    "noMessagesYet": "لا توجد رسائل بعد",
+    "startConversation": "ابدأ المحادثة بإرسال رسالة",
+    "typeMessage": "اكتب رسالة...",
+    "messageInput": "إدخال الرسالة",
+    "sendMessage": "إرسال الرسالة",
+    "attachFile": "إرفاق ملف",
+    "moreOptions": "المزيد من الخيارات",
+    "featureComingSoon": "قريباً",
+    "you": "أنت",
+    "roleMentor": "مرشد",
+    "roleMentee": "مسترشد",
+    "selectConversation": "اختر محادثة",
+    "selectConversationDesc": "اختر محادثة من القائمة للبدء في الدردشة"
+  },
+  "public": {
+    "note": "هذا الملف الشخصي العام - إمكانيات التعديل غير متاحة"
   }
 }

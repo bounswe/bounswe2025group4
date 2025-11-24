@@ -253,16 +253,15 @@ class ApiService {
   /// Note: employerId is determined from the auth token, not sent in request body.
   Future<JobPost> createJobPost({
     // Required fields based on backend API
+    required int workplaceId,
     required String title,
     required String description,
-    required String company,
-    required String location,
     required bool remote,
-    required String ethicalTags,
     required bool inclusiveOpportunity,
     required bool nonProfit,
 
     // Optional fields
+    bool? nonProfit,
     String? contactInformation,
     int? minSalary,
     int? maxSalary,
@@ -271,15 +270,14 @@ class ApiService {
 
     // Construct the body based on backend API specification
     final body = jsonEncode({
+      'workplaceId': workplaceId,
       'title': title,
       'description': description,
-      'company': company,
-      'location': location,
       'remote': remote,
-      'ethicalTags': ethicalTags,
       'inclusiveOpportunity': inclusiveOpportunity,
       'nonProfit': nonProfit,
       // Optional fields, only include if not null
+      if (nonProfit != null) 'nonProfit': nonProfit,
       if (contactInformation != null) 'contact': contactInformation,
       if (minSalary != null) 'minSalary': minSalary,
       if (maxSalary != null) 'maxSalary': maxSalary,
@@ -304,9 +302,15 @@ class ApiService {
   /// Updates an existing job post.
   Future<JobPost> updateJobPost(String jobId, JobPost jobPost) async {
     final uri = _buildUri('/jobs/$jobId');
+    
+    // Get workplaceId from the jobPost's workplace
+    if (jobPost.workplace == null) {
+      throw Exception('Cannot update job post: workplace information is missing');
+    }
+    
     final body = jsonEncode(
-      jobPost.toJsonForUpdate(),
-    ); // Use the dedicated toJson
+      jobPost.toJsonForUpdate(jobPost.workplace!.id),
+    );
 
     try {
       // Use dynamically generated headers

@@ -6,22 +6,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
-import { MultiSelectDropdown } from '@/components/ui/multi-select-dropdown';
+import WorkplaceSelector from '@/components/workplace/WorkplaceSelector';
 import CenteredLoader from '@/components/CenteredLoader';
 import { getJobById, updateJob } from '@/services/jobs.service';
 import type { UpdateJobPostRequest, JobPostResponse } from '@/types/api.types';
-import type { EthicalTag } from '@/types/job';
+import type { EmployerWorkplaceBrief } from '@/types/workplace.types';
 
 type JobPostFormData = {
   title: string;
   description: string;
-  company: string;
+  workplaceId: number | null;
   location: string;
   remote: boolean;
   minSalary: string;
   maxSalary: string;
   contactEmail: string;
-  ethicalTags: EthicalTag[];
   inclusiveOpportunity: boolean;
 };
 
@@ -52,15 +51,18 @@ export default function EmployerEditJobPostPage() {
   const [formData, setFormData] = useState<JobPostFormData>({
     title: '',
     description: '',
-    company: '',
+    workplaceId: null,
     location: '',
     remote: false,
     minSalary: '',
     maxSalary: '',
     contactEmail: '',
-    ethicalTags: [],
     inclusiveOpportunity: false,
   });
+
+  const handleWorkplaceChange = (workplaceId: number, _workplace: EmployerWorkplaceBrief) => {
+    setFormData({ ...formData, workplaceId });
+  };
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -82,23 +84,16 @@ export default function EmployerEditJobPostPage() {
         const job = await getJobById(parseInt(jobId, 10));
 
         const { email } = parseContact(job.contact ?? '');
-        const tags = job.ethicalTags
-          ? (job.ethicalTags
-              .split(',')
-              .map((tag) => tag.trim())
-              .filter(Boolean) as EthicalTag[])
-          : [];
 
         setFormData({
           title: job.title ?? '',
           description: job.description ?? '',
-          company: job.company ?? '',
+          workplaceId: job.workplaceId ?? job.workplace?.id ?? null,
           location: job.location ?? '',
           remote: job.remote ?? false,
           minSalary: job.minSalary?.toString() ?? '',
           maxSalary: job.maxSalary?.toString() ?? '',
           contactEmail: email,
-          ethicalTags: tags,
           inclusiveOpportunity: job.inclusiveOpportunity ?? false,
         });
       } catch (err) {
@@ -135,11 +130,10 @@ export default function EmployerEditJobPostPage() {
       const requestData: UpdateJobPostRequest = {
         title: formData.title,
         description: formData.description,
-        company: formData.company,
+        workplaceId: formData.workplaceId ?? undefined,
         location: formData.location,
         remote: formData.remote,
         contact: formData.contactEmail,
-        ethicalTags: formData.ethicalTags.join(', '),
         inclusiveOpportunity: formData.inclusiveOpportunity,
         minSalary: formData.minSalary ? parseInt(formData.minSalary, 10) : undefined,
         maxSalary: formData.maxSalary ? parseInt(formData.maxSalary, 10) : undefined,
@@ -214,19 +208,18 @@ export default function EmployerEditJobPostPage() {
             </div>
 
             <div>
-              <Label htmlFor="company" className="text-sm font-semibold">
-                {t('createJob.companyName', { defaultValue: 'Company Name' })}
+              <Label className="text-sm font-semibold">
+                {t('createJob.workplace', { defaultValue: 'Workplace' })}
               </Label>
-              <Input
-                id="company"
-                type="text"
-                value={formData.company}
-                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                placeholder={t('createJob.companyNamePlaceholder', {
-                  defaultValue: 'eg: Tech Innovators Inc.',
+              <p className="text-xs text-muted-foreground mt-1 mb-2">
+                {t('createJob.workplaceDescription', {
+                  defaultValue: 'Select the workplace this job belongs to',
                 })}
+              </p>
+              <WorkplaceSelector
+                value={formData.workplaceId ?? undefined}
+                onChange={handleWorkplaceChange}
                 className="mt-2"
-                required
               />
             </div>
 
@@ -288,7 +281,6 @@ export default function EmployerEditJobPostPage() {
                       defaultValue: 'e.g., 80000',
                     })}
                     className="mt-1"
-                    required
                   />
                 </div>
                 <div>
@@ -304,7 +296,6 @@ export default function EmployerEditJobPostPage() {
                       defaultValue: 'e.g., 120000',
                     })}
                     className="mt-1"
-                    required
                   />
                 </div>
               </div>
@@ -327,24 +318,7 @@ export default function EmployerEditJobPostPage() {
               />
             </div>
 
-            <div>
-              <Label className="text-sm font-semibold">
-                {t('createJob.ethicalTags', { defaultValue: 'Ethical Policies' })}
-              </Label>
-              <p className="mt-1 mb-3 text-xs text-muted-foreground">
-                {t('createJob.ethicalTagsDescription', {
-                  defaultValue:
-                    'Select the ethical policies or programs that apply to this job opportunity.',
-                })}
-              </p>
-              <MultiSelectDropdown
-                selectedTags={formData.ethicalTags}
-                onTagsChange={(tags) => setFormData({ ...formData, ethicalTags: tags })}
-                placeholder={t('createJob.ethicalTagsPlaceholder', {
-                  defaultValue: 'Select ethical policies',
-                })}
-              />
-            </div>
+
 
             <div className="rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
               <div className="flex items-start gap-3">

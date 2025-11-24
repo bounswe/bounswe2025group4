@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/pagination';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { type Job, type JobType, type EthicalTag } from '@/types/job';
+import { type Job, type JobType } from '@/types/job';
 import { useFilters } from '@/hooks/useFilters';
 import { getJobs } from '@/services/jobs.service';
 import type { JobPostResponse } from '@/types/api.types';
@@ -31,11 +31,6 @@ const ITEMS_PER_PAGE = 10;
  * Convert API JobPostResponse to Job type for JobCard component
  */
 function convertJobPostToJob(jobPost: JobPostResponse): Job {
-  // Parse ethical tags (comma-separated string) into EthicalTag array
-  const ethicalTags = jobPost.ethicalTags
-    ? (jobPost.ethicalTags.split(',').map((tag) => tag.trim()) as EthicalTag[])
-    : [];
-
   // Note: API doesn't provide job type field, using default value
   // This can be enhanced if the API adds job type information in the future
   const type: JobType[] = ['Full-time'];
@@ -43,13 +38,21 @@ function convertJobPostToJob(jobPost: JobPostResponse): Job {
   return {
     id: jobPost.id.toString(),
     title: jobPost.title,
-    company: jobPost.company,
+    workplace: jobPost.workplace || {
+      id: 0,
+      companyName: 'Unknown Company',
+      sector: 'Unknown',
+      location: 'Unknown',
+      shortDescription: undefined,
+      overallAvg: 0,
+      ethicalTags: [],
+      ethicalAverages: {},
+    },
     location: jobPost.remote ? 'Remote' : jobPost.location,
-    ethicalTags,
     type,
     minSalary: Math.floor(jobPost.minSalary / 1000), // Convert to 'k' format
     maxSalary: Math.floor(jobPost.maxSalary / 1000),
-    logoUrl: undefined, // API doesn't provide logo
+    logoUrl: jobPost.workplace?.imageUrl, // Use workplace logo if available
     inclusiveOpportunity: jobPost.inclusiveOpportunity,
   };
 }
@@ -77,6 +80,8 @@ export default function JobsPage() {
     isDisabilityInclusive,
     resetFilters
   } = useFilters();
+
+  // Create derived keys for useEffect dependencies (to prevent unnecessary re-renders)
   const ethicalTagsKey = selectedEthicalTags.join(',');
   const salaryKey = `${salaryRange[0]}-${salaryRange[1]}`;
 

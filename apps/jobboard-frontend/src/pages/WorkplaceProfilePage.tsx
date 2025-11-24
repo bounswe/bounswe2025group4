@@ -1,0 +1,486 @@
+/**
+ * WorkplaceProfilePage
+ * Displays workplace details with reviews and allows employers to manage
+ */
+
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ReviewStats } from '@/components/reviews/ReviewStats';
+import { ReviewList } from '@/components/reviews/ReviewList';
+import { ReviewFormDialog } from '@/components/reviews/ReviewFormDialog';
+import { MapPin, Building2, ExternalLink, Users, Settings, CheckCircle2, ArrowDown, ArrowUp } from 'lucide-react';
+import { getWorkplaceById } from '@/services/workplace.service';
+import { getJobsByEmployer } from '@/services/jobs.service';
+import { getEmployerRequests } from '@/services/employer.service';
+import type { ReviewListParams, WorkplaceDetailResponse } from '@/types/workplace.types';
+import type { JobPostResponse } from '@/types/api.types';
+import { useAuth } from '@/contexts/AuthContext';
+
+export default function WorkplaceProfilePage() {
+  const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation('common');
+  const { isAuthenticated, user } = useAuth();
+  const [workplace, setWorkplace] = useState<WorkplaceDetailResponse | null>(null);
+  const [jobs, setJobs] = useState<JobPostResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [jobsLoading, setJobsLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [hasPendingRequests, setHasPendingRequests] = useState(false);
+  const [reviewSortBy, setReviewSortBy] = useState('ratingDesc');
+  const [ratingRange, setRatingRange] = useState<{ min?: number; max?: number }>({});
+  const [reviewsTotal, setReviewsTotal] = useState<number>(0);
+
+  const reviewFilters = useMemo(() => {
+    const filterParams: Omit<ReviewListParams, 'page' | 'size'> = {};
+
+    if (reviewSortBy) {
+      filterParams.sortBy = reviewSortBy;
+    }
+
+    const hasMin = ratingRange.min !== undefined;
+    const hasMax = ratingRange.max !== undefined;
+    if (hasMin || hasMax) {
+      const minPart = hasMin ? ratingRange.min ?? 0 : 0;
+      const maxPart = hasMax ? ratingRange.max ?? 5 : 5;
+      filterParams.ratingFilter = `${minPart},${maxPart}`;
+    }
+
+    return filterParams;
+  }, [ratingRange, reviewSortBy]);
+
+  useEffect(() => {
+    loadWorkplaceData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, refreshKey]);
+
+  const loadWorkplaceData = async () => {
+    if (!id) return;
+
+    setLoading(true);
+    try {
+      const data = await getWorkplaceById(parseInt(id, 10), true, 5);
+      setWorkplace(data);
+      setReviewsTotal(data.reviewCount ?? data.recentReviews?.length ?? 0);
+
+      // Load jobs for all employers in the workplace
+      if (data.employers && data.employers.length > 0) {
+        loadWorkplaceJobs(data.employers.map((emp) => emp.userId));
+      }
+
+      // Check for pending employer requests if user is an employer
+      const isEmployer = data.employers?.some((emp) => emp.userId === user?.id);
+      if (isEmployer) {
+        try {
+          const requests = await getEmployerRequests(parseInt(id, 10), { size: 10 });
+          const hasPending = requests.content.some(
+            (req) => req.status === 'PENDING' || req.status.toUpperCase() === 'PENDING'
+          );
+          setHasPendingRequests(hasPending);
+        } catch (err) {
+          // Silently fail - user might not have permission to view requests
+          console.warn('Failed to fetch employer requests:', err);
+          setHasPendingRequests(false);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load workplace data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadWorkplaceJobs = async (employerIds: number[]) => {
+    setJobsLoading(true);
+    try {
+      // Fetch jobs for all employers and combine them
+      const allJobsPromises = employerIds.map((employerId) =>
+        getJobsByEmployer(employerId).catch((err) => {
+          console.error(`Failed to load jobs for employer ${employerId}:`, err);
+          return [];
+        }),
+      );
+
+      const allJobsArrays = await Promise.all(allJobsPromises);
+      const combinedJobs = allJobsArrays.flat();
+
+      // Remove duplicates based on job ID
+      const uniqueJobs = combinedJobs.filter(
+        (job, index, self) =>
+          index ===
+          self.findIndex(
+            (j) => (j.id || j.jobId || j.jobPostId) === (job.id || job.jobId || job.jobPostId),
+          ),
+      );
+
+      setJobs(uniqueJobs);
+    } catch (error) {
+      console.error('Failed to load workplace jobs:', error);
+      setJobs([]);
+    } finally {
+      setJobsLoading(false);
+    }
+  };
+
+  const handleReviewSubmitted = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
+
+  const toggleSortDirection = () => {
+    setReviewSortBy((prev) => (prev === 'ratingDesc' ? 'ratingAsc' : 'ratingDesc'));
+  };
+
+  const isEmployer = workplace?.employers?.some((emp) => emp.userId === user?.id);
+  const employerRole = workplace?.employers?.find((emp) => emp.userId === user?.id)?.role;
+  const isOwner = employerRole === 'OWNER';
+  // Employers can write reviews for workplaces they don't manage
+  const canWriteReview = isAuthenticated && (user?.role === 'ROLE_JOBSEEKER' || (user?.role === 'ROLE_EMPLOYER' && !isEmployer));
+  const hasRatingFilter = ratingRange.min !== undefined || ratingRange.max !== undefined;
+
+  const handleRatingRangeChange = (bound: 'min' | 'max', value: string) => {
+    const parsedValue = value === '' ? undefined : Number.parseFloat(value);
+
+    setRatingRange((prev) => {
+      const next = { ...prev };
+
+      if (parsedValue === undefined || Number.isNaN(parsedValue)) {
+        delete next[bound];
+        return next;
+      }
+
+      const clampedValue = Math.min(Math.max(parsedValue, 0), 5);
+      next[bound] = clampedValue;
+      return next;
+    });
+  };
+
+  const clearRatingRange = () => setRatingRange({});
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">{t('common.loading')}</p>
+      </div>
+    );
+  }
+
+  if (!workplace) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2">{t('workplace.profile.notFound')}</h2>
+          <p className="text-muted-foreground mb-4">
+            {t('workplace.profile.notFoundDescription')}
+          </p>
+          <Link to="/">
+            <Button>{t('common.goHome')}</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Workplace Header */}
+        <Card className="p-8 mb-6">
+          <div className="flex flex-col md:flex-row gap-6">
+            <Avatar className="h-24 w-24">
+              <AvatarImage src={workplace.imageUrl} alt={workplace.companyName} />
+              <AvatarFallback className="text-2xl bg-primary/10">
+                <Building2 className="h-12 w-12 text-primary" />
+              </AvatarFallback>
+            </Avatar>
+
+            <div className="flex-1">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h1 className="text-3xl font-bold mb-2">{workplace.companyName}</h1>
+                  {workplace.shortDescription && (
+                    <p className="text-lg text-muted-foreground">{workplace.shortDescription}</p>
+                  )}
+                </div>
+                {isEmployer && (
+                  <Link to={`/employer/workplace/${workplace.id}/settings`}>
+                    <Button variant="outline" size="sm">
+                      <Settings className="h-4 w-4" />
+                      {t('common.settings')}
+                    </Button>
+                  </Link>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Building2 className="h-4 w-4" />
+                  <span>{workplace.sector}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  <span>{workplace.location}</span>
+                </div>
+                {workplace.employers && workplace.employers.length > 0 && (
+                  <div className="flex items-center gap-1">
+                    <Users className="h-4 w-4" />
+                    <span>
+                      {workplace.employers.length}{' '}
+                      {workplace.employers.length === 1 ? t('common.employer') : t('common.employers')}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {workplace.website && (
+                <div className="mt-4">
+                  <a
+                    href={workplace.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-primary hover:underline"
+                  >
+                    {t('common.visitWebsite')}
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* About */}
+            {workplace.detailedDescription && (
+              <Card className="p-6">
+                <h2 className="text-xl font-bold">{t('workplace.profile.aboutCompany')}</h2>
+                <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+                  {workplace.detailedDescription}
+                </p>
+              </Card>
+            )}
+
+            {/* Ethical Tags */}
+            {workplace.ethicalTags && workplace.ethicalTags.length > 0 && (
+              <Card className="p-6">
+                <h2 className="text-xl font-bold">{t('workplace.profile.ethicalCommitments')}</h2>
+                <div className="space-y-2">
+                  {workplace.ethicalTags.map((tag) => (
+                    <div key={tag} className="flex items-center gap-2">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
+                      <span className="text-foreground">{tag}</span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+
+            {/* Employers Section - visible to everyone */}
+            {workplace.employers && workplace.employers.length > 0 && (
+              <Card className="p-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold">{t('workplace.profile.employers')}</h2>
+                  {isOwner && (
+                    <Button variant="outline" asChild className="relative">
+                      <Link to={`/employer/workplace/${workplace.id}/requests`}>
+                        <Users className="h-4 w-4"/>
+                        {t('workplace.profile.manageRequests')}
+                        {hasPendingRequests && (
+                          <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-background" />
+                        )}
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {workplace.employers.map((employer) => {
+                    const initials = employer.nameSurname
+                      ? employer.nameSurname.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+                      : employer.username.slice(0, 2).toUpperCase();
+                    return (
+                      <Link key={employer.userId} to={`/profile/${employer.userId}`}>
+                        <Card className="p-3 hover:shadow-md transition-shadow cursor-pointer">
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-10 w-10">
+                              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                                {initials}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm truncate">
+                                {employer.nameSurname || employer.username}
+                              </p>
+                              <p className="text-xs text-muted-foreground truncate">{employer.email}</p>
+                              <Badge variant="outline" className="mt-1 text-xs">
+                                {t(`common.${employer.role}`)}
+                              </Badge>
+                            </div>
+                          </div>
+                        </Card>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </Card>
+            )}
+
+            {/* Workplace Reviews */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">{t('reviews.workplaceReviews')}</h2>
+                {canWriteReview && (
+                  <ReviewFormDialog
+                    workplaceId={workplace.id}
+                    workplaceName={workplace.companyName}
+                    onReviewSubmitted={handleReviewSubmitted}
+                  />
+                )}
+              </div>
+
+              <ReviewStats
+                overallAvg={workplace.overallAvg}
+                ethicalAverages={workplace.ethicalAverages}
+                ethicalTags={workplace.ethicalTags}
+                totalReviews={reviewsTotal || workplace.reviewCount || workplace.recentReviews?.length || 0}
+                recentReviews={workplace.recentReviews ?? []}
+              />
+
+              <Separator />
+
+              <ReviewList
+                workplaceId={workplace.id}
+                canReply={isEmployer}
+                filters={reviewFilters}
+                actions={
+                  <>
+                    <Button
+                      id="review-sort"
+                      variant="outline"
+                      size="sm"
+                      onClick={toggleSortDirection}
+                      aria-label={t('reviews.sortBy')}
+                    >
+                      {reviewSortBy === 'ratingDesc' ? (
+                        <ArrowDown className="h-4 w-4" />
+                      ) : (
+                        <ArrowUp className="h-4 w-4" />
+                      )}
+                      {t('reviews.sortByRating')}
+                    </Button>
+                    <Input
+                      id="rating-min"
+                      type="number"
+                      inputMode="decimal"
+                      min={0}
+                      max={5}
+                      step={0.1}
+                      value={ratingRange.min ?? ''}
+                      onChange={(e) => handleRatingRangeChange('min', e.target.value)}
+                      placeholder={t('reviews.minRating')}
+                      className="w-20 h-8 text-sm"
+                    />
+                    <span className="text-sm text-muted-foreground">-</span>
+                    <Input
+                      id="rating-max"
+                      type="number"
+                      inputMode="decimal"
+                      min={0}
+                      max={5}
+                      step={0.1}
+                      value={ratingRange.max ?? ''}
+                      onChange={(e) => handleRatingRangeChange('max', e.target.value)}
+                      placeholder={t('reviews.maxRating')}
+                      className="w-20 h-8 text-sm"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearRatingRange}
+                      disabled={!hasRatingFilter}
+                      className="h-8 px-2"
+                    >
+                      {t('reviews.clearFilters')}
+                    </Button>
+                  </>
+                }
+                reviewsPerPage={10}
+                onTotalsChange={setReviewsTotal}
+                key={refreshKey}
+              />
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Current Job Openings */}
+            <Card className="p-6">
+              <h3 className="text-lg font-bold">{t('workplace.profile.currentJobOpenings')}</h3>
+              {jobsLoading ? (
+                <div className="text-center py-4">
+                  <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+                </div>
+              ) : jobs.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-sm text-muted-foreground">{t('workplace.profile.noJobOpenings')}</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {jobs.slice(0, 5).map((job) => {
+                    const jobId = job.id || job.jobId || job.jobPostId;
+                    return (
+                      <Link key={jobId} to={`/jobs/${jobId}`} className="block group">
+                        <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                          <div className="p-4">
+                            <Badge className="mb-2 bg-green-100 text-green-800 hover:bg-green-100">
+                              {job.workplace.companyName}
+                            </Badge>
+                            <h4 className="font-semibold group-hover:text-primary transition-colors mb-1">
+                              {job.title}
+                            </h4>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                              <MapPin className="h-3 w-3" />
+                              <span>{job.location}</span>
+                              {job.remote && (
+                                <>
+                                  <span>•</span>
+                                  <span>Remote</span>
+                                </>
+                              )}
+                            </div>
+                            {job.minSalary && job.maxSalary && (
+                              <p className="text-sm text-muted-foreground mb-2">
+                                ${job.minSalary.toLocaleString()} - $
+                                {job.maxSalary.toLocaleString()}
+                              </p>
+                            )}
+                            <Button className="w-full mt-3" size="sm" variant="outline">
+                              {t('common.viewJob')}
+                            </Button>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                  {jobs.length > 5 && (
+                    <Link to="/jobs" className="block">
+                      <Button className="w-full" variant="outline" size="sm">
+                        {t('workplace.profile.viewAllJobs', { count: jobs.length })}
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              )}
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

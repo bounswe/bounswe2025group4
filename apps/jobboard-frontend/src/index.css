@@ -138,4 +138,7 @@
   html[dir='rtl'] body {
     font-family: 'Noto Sans Arabic', var(--font-family);
   }
+  html {
+    scrollbar-gutter: stable;
+  }
 }
