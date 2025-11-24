@@ -9,7 +9,7 @@ on:
     branches: [ main, dev ]
     paths:
       - "apps/jobboard-mobile/**"
-  workflow_dispatch: # Manuel tetikleme için
+  workflow_dispatch:
 
 jobs:
   build-android:
