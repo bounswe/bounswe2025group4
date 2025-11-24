@@ -17,15 +17,21 @@ import JobApplicationPage from './pages/JobApplicationPage';
 import MyApplicationsPage from './pages/MyApplicationsPage';
 import JobApplicationReviewPage from './pages/JobApplicationReviewPage';
 import EmployerDashboardPage from './pages/EmployerDashboardPage';
-import CreateJobPostPage from './pages/CreateJobPostPage';
 import EmployerJobPostDetailsPage from './pages/EmployerJobPostDetailsPage';
 import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForumPage from './pages/ForumPage';
 import MentorshipPage from './pages/MentorshipPage';
+import WorkplaceProfilePage from './pages/WorkplaceProfilePage';
+import EmployerWorkplacesPage from './pages/EmployerWorkplacesPage';
+import ManageEmployerRequestsPage from './pages/ManageEmployerRequestsPage';
+import WorkplaceSettingsPage from './pages/WorkplaceSettingsPage';
+import WorkplacesPage from './pages/WorkplacesPage';
 import MentorProfilePage from './pages/MentorProfilePage';
 import MentorshipRequestPage from './pages/MentorshipRequestPage';
 import MyMentorshipsPage from './pages/MyMentorshipsPage';
+import ChatPage from './pages/ChatPage';
+import PublicProfilePage from './pages/PublicProfilePage';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +53,14 @@ const router = createBrowserRouter([
       {
         path: 'jobs/:id',
         element: <JobDetailPage />,
+      },
+      {
+        path: 'workplace/:id',
+        element: <WorkplaceProfilePage />,
+      },
+      {
+        path: 'workplaces',
+        element: <WorkplacesPage />,
       },
       {
         path: 'jobs/:id/apply',
@@ -73,10 +87,26 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'employer/jobs/create',
+        path: 'employer/workplaces',
         element: (
           <ProtectedRoute>
-            <CreateJobPostPage />
+            <EmployerWorkplacesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/:workplaceId/requests',
+        element: (
+          <ProtectedRoute>
+            <ManageEmployerRequestsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/:workplaceId/settings',
+        element: (
+          <ProtectedRoute>
+            <WorkplaceSettingsPage />
           </ProtectedRoute>
         ),
       },
@@ -133,6 +163,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: 'chat',
+        element: (
+          <ProtectedRoute>
+            <ChatPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: 'forum',
         element: <ForumPage />,
       },
@@ -168,6 +206,12 @@ const router = createBrowserRouter([
         path: 'profile',
         element: (
             <ProfilePage />
+        ),
+      },
+      {
+        path: 'profile/:userId',
+        element: (
+            <PublicProfilePage />
         ),
       },
     ],

@@ -14,8 +14,12 @@
       "myApplications": "My Applications",
       "mentorship": "Mentorship",
       "myMentorships": "My Mentorships",
+      "chat": "Chat",
       "forum": "Forum",
-      "employerDashboard": "Employer Dashboard"
+      "employerDashboard": "Employer Dashboard",
+      "workplaces": "Workplaces",
+      "myWorkplaces": "My Workplaces",
+      "browseWorkplaces": "Browse Workplaces"
     },
     "auth": {
       "login": "Login",
@@ -197,6 +201,9 @@
     "inclusiveOpportunity": "Inclusive Opportunity",
     "contact": {
       "title": "Contact Information"
+    },
+    "workplace": {
+      "title": "About the Company"
     }
   },
   "employerDashboard": {
@@ -209,11 +216,25 @@
       "support": "Help and Support"
     },
     "title": "Employer Dashboard",
+    "subtitle": "Manage your job postings and workplaces",
     "currentPostings": "Current Job Postings",
     "createJob": "Create New Job Posting",
     "loadingError": "Failed to load job postings. Please try again later.",
     "emptyState": "You haven't created any job postings yet.",
     "emptyCta": "Create Your First Job Posting",
+    "addWorkplace": "Add Workplace",
+    "joinWorkplace": "Join Workplace",
+    "unassignedJobs": "Unassigned Jobs",
+    "jobCount": "jobs",
+    "jobCount_one": "job",
+    "noJobsInWorkplace": "No job postings in this workplace yet.",
+    "createJobForWorkplace": "Create Job Posting",
+    "noWorkplaces": {
+      "title": "No Workplaces Yet",
+      "description": "Create a workplace or join an existing one to start posting jobs.",
+      "createWorkplace": "Create Workplace",
+      "joinWorkplace": "Join Workplace"
+    },
     "table": {
       "jobTitle": "Job Title",
       "status": "Status",
@@ -258,11 +279,100 @@
     "inclusiveOpportunityDescription": "This position is designated as an inclusive opportunity, welcoming candidates from diverse backgrounds.",
     "applicationsReceived": "Applications Received ({{count}})",
     "noApplications": "No applications received yet.",
-    "viewApplication": "View Application"
-  },
-  "auth": {
-    "login": {
-      "title": "Welcome Back",
+        "viewApplication": "View Application"                                                                 
+      },                                                                                                      
+      "employerWorkplaces": {
+        "title": "My Workplaces",
+        "description": "Manage your workplaces and respond to reviews",
+        "viewApplications": "View Applications",
+        "newWorkplace": "New Workplace",
+        "loadError": "Failed to load your workplaces. Please try again.",
+        "empty": {
+          "title": "No Workplaces Yet",
+          "description": "Create your first workplace or request to join an existing one"
+        },
+        "addNew": {
+          "title": "Add New Workplace",
+          "description": "Create a new workplace or join an existing one"
+        },
+        "applicationsModal": {
+          "title": "My Workplace Applications",
+          "description": "View the status of your requests to manage workplaces.",
+          "loadError": "Could not load your applications.",
+          "noApplications": "You have not applied to any workplaces yet.",
+          "appliedOn": "Applied on {{date}}",
+          "note": "Note: {{note}}",
+          "updatedOn": "Updated {{date}}"
+        },
+        "workplaceLabel": "Workplace",
+            "page": {
+              "loadError": "Failed to load your workplaces"
+            }
+          },
+          "status": {
+            "pending": "Pending",
+            "accepted": "Accepted",
+            "rejected": "Rejected",
+                "unknown": "Unknown"
+              },
+              "workplaces": {
+                "title": "Workplaces",
+                "description": "Explore and discover companies to learn more about their culture and ratings",
+                "searchTitle": "Search Workplaces",
+                "searchPlaceholder": "Enter company name...",
+                "searching": "Searching...",
+                "search": "Search",
+                "loadError": "Failed to load workplaces. Please try again.",
+                "loading": "Loading...",
+                "workplacesFound": "{{count}} workplace found",
+                "workplacesFound_plural": "{{count}} workplaces found",
+                "empty": {
+                  "title": "No Workplaces Found",
+                  "adjustFilters": "Try adjusting your filters or search query",
+                  "noWorkplaces": "There are no workplaces available at the moment"
+                },
+                "filters": {
+                  "title": "Filters",
+                  "clear": "Clear",
+                  "clearFilters": "Clear Filters",
+                  "sector": "Sector",
+                  "allSectors": "All Sectors",
+                  "location": "Location",
+                  "locationPlaceholder": "Enter location...",
+                  "sortBy": "Sort By",
+                  "sortOptions": {
+                    "default": "Default",
+                    "nameDesc": "Name (Z to A)",
+                    "nameAsc": "Name (A to Z)",
+                    "reviewCountDesc": "Review Count (High to Low)",
+                    "reviewCountAsc": "Review Count (Low to High)",
+                    "ratingDesc": "Rating (High to Low)",
+                    "ratingAsc": "Rating (Low to High)"
+                  },
+                  "minRating": "Minimum Rating",
+                  "anyRating": "Any",
+                  "ratingWithValue": "{{rating}}★"
+                }
+              },
+              "sectors": {
+                "technology": "Technology",
+                "healthcare": "Healthcare",
+                "education": "Education",
+                "finance": "Finance",
+                "creativearts": "Creative Arts",
+                "manufacturing": "Manufacturing",
+                "retail": "Retail",
+                "consulting": "Consulting",
+                "nonprofit": "Non-profit",
+                "other": "Other"
+              },
+              "pagination": {
+                "previous": "Previous",
+                "next": "Next",
+                "pageInfo": "Page {{page}} of {{total}}"
+              },
+              "auth": {
+                "login": {          "title": "Welcome Back",
       "description": "Sign in to your account to continue",
       "username": "Username *",
       "password": "Password *",
@@ -457,7 +567,6 @@
       "findMentors": "Find Mentors",
       "started": "Started",
       "accepted": "Accepted",
-      "completed": "Completed",
       "duration": "Duration",
       "learningGoals": "Learning Goals",
       "openChat": "Open Chat",
@@ -489,6 +598,8 @@
       "openToOpportunities": "Open to opportunities",
       "currentRole": "{{position}} at {{company}}",
       "joined": "Joined in {{year}}",
+      "posts": "posts",
+      "badges": "badges",
       "stats": {
         "posts": "Posts",
         "badges": "Badges"
@@ -510,6 +621,7 @@
     "about": {
       "title": "About",
       "addBio": "Add bio",
+      "noBio": "No bio available",
       "modal": {
         "title": "Edit About",
         "bioLabel": "Bio",
@@ -520,6 +632,7 @@
     "experience": {
       "title": "Experience",
       "empty": "Add experience",
+      "noExperience": "No work experience available",
       "modal": {
         "addTitle": "Add Experience",
         "editTitle": "Edit Experience",
@@ -553,6 +666,7 @@
     "education": {
       "title": "Education",
       "empty": "Add education",
+      "noEducation": "No education information available",
       "modal": {
         "addTitle": "Add Education",
         "editTitle": "Edit Education",
@@ -590,6 +704,7 @@
     "skills": {
       "title": "Skills",
       "empty": "Add skills",
+      "noSkills": "No skills listed",
       "modal": {
         "addTitle": "Add Skill",
         "editTitle": "Edit Skill",
@@ -607,6 +722,7 @@
     "interests": {
       "title": "Interests",
       "empty": "Add interests",
+      "noInterests": "No interests listed",
       "modal": {
         "addTitle": "Add Interest",
         "editTitle": "Edit Interest",
@@ -705,6 +821,9 @@
       "saveInterestSuccess": "Interest saved successfully.",
       "saveInterestError": "Failed to save interest.",
       "deleteAccountSuccess": "All profile data has been deleted."
+    },
+    "public": {
+      "note": "This is a public profile view. Skills and interests are not displayed for privacy."
     },
     "activity": {
       "items": [
@@ -841,7 +960,6 @@
     "atCompany": "at {{company}}",
     "applicantInfo": "Applicant Information",
     "status": "Status",
-    "applied": "Applied",
     "coverLetter": "Cover Letter",
     "specialNeeds": "Special Needs or Accommodations",
     "cv": "CV / Resume",
@@ -923,6 +1041,15 @@
   "createJob": {
     "title": "Create Job Posting",
     "subtitle": "Post a new job opportunity and find the perfect candidate",
+    "workplace": "Workplace",
+    "workplaceDescription": "Select the workplace this job belongs to",
+    "workplaceRequired": "Please select a workplace for this job posting",
+    "noWorkplaces": {
+      "title": "No Workplaces Available",
+      "description": "You need to be part of a workplace to create job postings. Create a new workplace or request to join an existing one.",
+      "createWorkplace": "Create Workplace",
+      "joinWorkplace": "Join Workplace"
+    },
     "jobTitle": "Job Title",
     "jobTitlePlaceholder": "e.g., Senior Software Engineer",
     "jobDescription": "Job Description",
@@ -981,6 +1108,121 @@
       "pending": "Pending",
       "completed": "Completed",
       "rejected": "Rejected"
+    }
+  },
+  "reviews": {
+    "workplaceReviews": "Workplace Reviews",
+    "writeReview": "Write a Review",
+    "writeReviewFor": "Write a Review for {{company}}",
+    "shareExperience": "Share your experience working at this company",
+    "rateYourExperience": "Rate Your Experience",
+    "yourReview": "Your Review",
+    "reviewPlaceholder": "Share your experience working at this company. What did you like? What could be improved?",
+    "characters": "characters",
+    "anonymous": "Anonymous",
+    "postAnonymously": "Post anonymously",
+    "submitReview": "Submit Review",
+    "submitting": "Submitting...",
+    "cancel": "Cancel",
+    "categories": {
+      "culture": "Culture",
+      "benefits": "Benefits",
+      "workLifeBalance": "Work-Life Balance",
+      "management": "Management",
+      "careerGrowth": "Career Growth"
+    },
+    "categoryRatings": "Category Ratings",
+    "basedOn": "Based on {{count}} review",
+    "basedOn_plural": "Based on {{count}} reviews",
+    "recentComments": "Recent Comments",
+    "recentReviews": "Recent Reviews",
+    "sortBy": "Sort reviews",
+    "sortOptions": {
+      "ratingDesc": "Rating (High to Low)",
+      "ratingAsc": "Rating (Low to High)"
+    },
+    "ratingFilter": "Rating range",
+    "minRating": "Min",
+    "maxRating": "Max",
+    "clearFilters": "Reset filters",
+    "totalReviews": "{{count}} review",
+    "totalReviews_plural": "{{count}} reviews",
+    "noReviews": "No reviews yet. Be the first to share your experience!",
+    "loadMore": "Load More Reviews",
+    "loading": "Loading...",
+    "helpful": "Helpful",
+    "report": "Report",
+    "today": "today",
+    "yesterday": "yesterday",
+    "daysAgo": "{{count}} day ago",
+    "daysAgo_plural": "{{count}} days ago",
+    "weeksAgo": "{{count}} week ago",
+    "weeksAgo_plural": "{{count}} weeks ago",
+    "monthsAgo": "{{count}} month ago",
+    "monthsAgo_plural": "{{count}} months ago",
+    "yearsAgo": "{{count}} year ago",
+    "yearsAgo_plural": "{{count}} years ago",
+    "aboutCompany": "About {{company}}",
+    "seeWhatEmployeesSay": "See what employees say",
+    "viewAllReviews": "View All Reviews",
+    "seeAllReviews": "See All Reviews",
+    "reply": {
+      "employerResponse": "Employer Response",
+      "confirmDelete": "Are you sure you want to delete this reply?",
+      "deleteError": "Failed to delete reply. Please try again."
+    },
+    "errors": {
+      "allRatingsRequired": "Please rate all categories",
+      "commentTooShort": "Review must be at least 10 characters",
+      "commentTooLong": "Review must be at most 2000 characters",
+      "submissionFailed": "Failed to submit review. Please try again."
+    }
+  },
+  "company": {
+    "aboutUs": "About Us",
+    "ethicalPolicyCommitments": "Ethical Policy Commitments",
+    "currentJobOpenings": "Current Job Openings",
+    "viewJob": "View Job",
+    "notFound": "Company Not Found",
+    "notFoundDescription": "The company you're looking for doesn't exist or has been removed."
+  },
+  "common": {
+    "loading": "Loading...",
+    "goHome": "Go to Homepage",
+    "edited": "Edited"
+  },
+  "chat": {
+    "conversations": "Conversations",
+    "noConversations": "No conversations yet",
+    "openConversationWith": "Open conversation with {{name}}",
+    "back": "Back to conversations",
+    "online": "Online",
+    "offline": "Offline",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "noMessages": "No messages",
+    "unreadMessages": "{{count}} unread messages",
+    "noMessagesYet": "No messages yet",
+    "startConversation": "Start a conversation by sending a message",
+    "typeMessage": "Type a message...",
+    "messageInput": "Message input",
+    "sendMessage": "Send message",
+    "attachFile": "Attach file",
+    "moreOptions": "More options",
+    "featureComingSoon": "Coming soon",
+    "you": "You",
+    "roleMentor": "Mentor",
+    "roleMentee": "Mentee",
+    "selectConversation": "Select a conversation",
+    "selectConversationDesc": "Choose a conversation from the list to start chatting"
+  },
+  "workplace": {
+    "selector": {
+      "placeholder": "Select a workplace",
+      "noWorkplaces": "No workplaces available",
+      "fetchError": "Failed to load workplaces"
     }
   }
 }

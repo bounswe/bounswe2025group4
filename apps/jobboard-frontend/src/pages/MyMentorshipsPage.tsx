@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,7 +18,7 @@ const mockMentorships: Mentorship[] = [
     mentorTitle: "Senior Software Engineer at Google",
     mentorAvatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
     menteeId: "user1",
-    menteeName: "You",
+    menteeName: "Merve Kaya",
     status: "active",
     createdAt: "2024-01-15",
     acceptedAt: "2024-01-16",
@@ -38,7 +38,7 @@ const mockMentorships: Mentorship[] = [
     mentorTitle: "Product Manager at Microsoft",
     mentorAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
     menteeId: "user1",
-    menteeName: "You",
+    menteeName: "Merve Kaya",
     status: "pending",
     createdAt: "2024-01-20",
     goals: [
@@ -57,7 +57,7 @@ const mockMentorships: Mentorship[] = [
     mentorTitle: "UX Designer at Apple",
     mentorAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
     menteeId: "user1",
-    menteeName: "You",
+    menteeName: "Merve Kaya",
     status: "completed",
     createdAt: "2023-10-01",
     acceptedAt: "2023-10-02",
@@ -184,9 +184,11 @@ const MyMentorshipsPage = () => {
 
         <div className="flex gap-2 pt-2">
           {mentorship.status === 'active' && (
-            <Button size="sm" className="flex-1">
-              <MessageCircle className="h-4 w-4 mr-2" />
-              {t('myMentorships.openChat')}
+            <Button size="sm" className="flex-1" asChild>
+              <Link to={`/chat?mentorshipId=${mentorship.id}`}>
+                <MessageCircle className="h-4 w-4 mr-2" />
+                {t('myMentorships.openChat')}
+              </Link>
             </Button>
           )}
           
