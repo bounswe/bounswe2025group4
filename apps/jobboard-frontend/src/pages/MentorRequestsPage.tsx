@@ -205,7 +205,7 @@ const MentorRequestsPage = () => {
                 />
                 <AvatarFallback>
                   {menteeProfiles[request.requesterId] 
-                    ? `${menteeProfiles[request.requesterId].firstName[0]}${menteeProfiles[request.requesterId].lastName[0]}`
+                    ? `${(menteeProfiles[request.requesterId].firstName?.[0] || '').toUpperCase()}${(menteeProfiles[request.requesterId].lastName?.[0] || '').toUpperCase()}`
                     : <User className="h-6 w-6" />}
                 </AvatarFallback>
               </Avatar>

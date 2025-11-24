@@ -205,7 +205,7 @@ const MentorProfilePage = () => {
           <Avatar className="w-32 h-32">
             <AvatarImage src={mentor.profileImage} alt={mentor.name} />
             <AvatarFallback className="text-2xl">
-              {mentor.name.split(' ').map(n => n[0]).join('')}
+              {mentor.name.split(' ').map(n => n[0]?.toUpperCase() || '').join('')}
             </AvatarFallback>
           </Avatar>
           
@@ -464,7 +464,7 @@ const MentorProfilePage = () => {
                         <Avatar className="w-10 h-10">
                           <AvatarImage src={review.menteeAvatar} alt={review.menteeName} />
                           <AvatarFallback>
-                            {review.menteeName.split(' ').map(n => n[0]).join('')}
+                            {review.menteeName.split(' ').map(n => n[0]?.toUpperCase() || '').join('')}
                           </AvatarFallback>
                         </Avatar>
                         
@@ -565,7 +565,7 @@ const MentorProfilePage = () => {
                                 <AvatarImage src={menteeProfile?.imageUrl} alt={menteeProfile ? `${menteeProfile.firstName} ${menteeProfile.lastName}` : ''} />
                                 <AvatarFallback className="text-xs">
                                   {menteeProfile 
-                                    ? `${menteeProfile.firstName?.[0] || ''}${menteeProfile.lastName?.[0] || ''}`
+                                    ? `${(menteeProfile.firstName?.[0] || '').toUpperCase()}${(menteeProfile.lastName?.[0] || '').toUpperCase()}`
                                     : 'U'}
                                 </AvatarFallback>
                               </Avatar>
@@ -662,7 +662,7 @@ const MentorProfilePage = () => {
                                 <AvatarImage src={menteeProfile?.imageUrl} alt={menteeProfile ? `${menteeProfile.firstName} ${menteeProfile.lastName}` : ''} />
                                 <AvatarFallback>
                                   {menteeProfile 
-                                    ? `${menteeProfile.firstName[0]}${menteeProfile.lastName[0]}`
+                                    ? `${(menteeProfile.firstName?.[0] || '').toUpperCase()}${(menteeProfile.lastName?.[0] || '').toUpperCase()}`
                                     : 'U'}
                                 </AvatarFallback>
                               </Avatar>
@@ -770,7 +770,7 @@ const MentorProfilePage = () => {
                                 <AvatarImage src={menteeProfile?.imageUrl} alt={menteeProfile ? `${menteeProfile.firstName} ${menteeProfile.lastName}` : ''} />
                                 <AvatarFallback>
                                   {menteeProfile 
-                                    ? `${menteeProfile.firstName[0]}${menteeProfile.lastName[0]}`
+                                    ? `${(menteeProfile.firstName?.[0] || '').toUpperCase()}${(menteeProfile.lastName?.[0] || '').toUpperCase()}`
                                     : 'U'}
                                 </AvatarFallback>
                               </Avatar>

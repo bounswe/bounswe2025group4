@@ -36,7 +36,7 @@ const ChatPage = () => {
         return;
       }
 
-      if (mentorshipIdFromUrl && rooms.length === 0) {
+      if (mentorshipIdFromUrl && roomsRef.current.length === 0) {
         setIsLoading(false);
         return;
       }
@@ -528,8 +528,8 @@ const ChatPage = () => {
 
   // Set active room from URL parameter
   useEffect(() => {
-    if (mentorshipIdFromUrl && rooms.length > 0) {
-      const room = rooms.find(r => r.mentorshipId === mentorshipIdFromUrl);
+    if (mentorshipIdFromUrl && roomsRef.current.length > 0) {
+      const room = roomsRef.current.find(r => r.mentorshipId === mentorshipIdFromUrl);
       if (room) {
         const roomId = room.id;
         setActiveRoomId(roomId);
@@ -572,8 +572,8 @@ const ChatPage = () => {
       }
     }
 
-    if (!activeRoomId && rooms.length > 0) {
-      const firstRoomId = rooms[0].id;
+    if (!activeRoomId && roomsRef.current.length > 0) {
+      const firstRoomId = roomsRef.current[0].id;
       setActiveRoomId(firstRoomId);
       
       // Mark messages in first room as read immediately
