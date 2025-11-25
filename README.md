@@ -79,7 +79,8 @@ This is the easiest way to run the full stack (Backend, Frontend, Mobile Web, Da
 
 ### Prerequisites
 1.  **Docker** and **Docker Compose**.
-2.  **Service Account Key**: Ensure `apps/jobboard-backend/jobboard-local-service-account-key.json` exists.
+2.  **Service Account Key**: Ensure `apps/jobboard-backend/jobboard-local-service-account-key.json` exists if you want to use features involving file uploads like profile photographs or CVs.
+3.  **Sendgrid API Key**: If you want to test the registration email verification and 2FA flow. Set this at mail_password env variable on docker compose.
 
 ### Steps
 1.  Run the following command in the root directory:
@@ -88,9 +89,11 @@ This is the easiest way to run the full stack (Backend, Frontend, Mobile Web, Da
     ```
 2.  Access the applications:
     *   **Frontend**: http://localhost:5173
-    *   **Mobile APK**: http://localhost:8081/app-release.apk (Download and install on Emulator/Device)
+    *   **Mobile App on Web**: http://localhost:8081/
     *   **Backend API**: http://localhost:8080
     *   **Database**: localhost:5432
+
+The registration verifications and 2FA mails are disabled at local development environments for ease. You can use 000000 as 2FA code.
 
 ---
 
