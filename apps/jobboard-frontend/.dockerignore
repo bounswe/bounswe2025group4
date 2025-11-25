@@ -1,0 +1,11 @@
+node_modules
+.pnpm-store
+dist
+.vite
+.git
+.gitignore
+Dockerfile
+Dockerfile.prod
+*.log
+.env
+.env.*

@@ -1,7 +1,7 @@
 FROM node:20-bookworm AS build
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN npm install -g pnpm && pnpm install  --prod --ignore-scripts
+RUN npm install -g pnpm && pnpm install --ignore-scripts
 COPY . .
 ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
