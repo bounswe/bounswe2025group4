@@ -9,7 +9,7 @@ export interface ChatMessage {
 }
 
 export interface ChatRoom {
-  id: string; // Conversation.id / channelId - backend'den gelecek
+  id: string; // Conversation.id / channelId
   mentorshipId: string; // Mentorship ID - ACCEPTED/ACTIVE mentorship
   mentorProfileId: string;
   mentorProfileName: string;

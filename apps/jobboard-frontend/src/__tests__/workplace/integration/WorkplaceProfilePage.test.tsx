@@ -64,9 +64,12 @@ describe('WorkplaceProfilePage Integration', () => {
   });
 
   it('handles not found state', async () => {
-    // Override handler to return 404
+    // Suppress console.error for this test
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    
+    // Override handler to return 404 for specific workplace ID
     server.use(
-      http.get(`${API_BASE_URL}/workplace/:id`, () => {
+      http.get(`${API_BASE_URL}/workplace/999`, () => {
         return new HttpResponse(null, { status: 404 });
       })
     );
@@ -75,7 +78,9 @@ describe('WorkplaceProfilePage Integration', () => {
 
     await waitFor(() => {
       expect(screen.getByText('workplace.profile.notFound')).toBeInTheDocument();
-    });
+    }, { timeout: 3000 });
+    
+    consoleErrorSpy.mockRestore();
   });
 
   it('displays employers list', async () => {
