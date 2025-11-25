@@ -38,8 +38,8 @@ class Profile {
         .toList() ?? [];
     
     return Profile(
-      id: json['id'],
-      userId: json['userId'],
+      id: json['id'] ?? json['userId'],
+      userId: json['userId'] ?? json['id'],
       fullName: fullName,
       phone: json['phone'],
       location: json['location'],

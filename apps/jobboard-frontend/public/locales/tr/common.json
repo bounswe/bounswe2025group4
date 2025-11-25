@@ -10,7 +10,8 @@
     "menu": "Menü",
     "nav": {
       "home": "Ana Sayfa",
-      "jobs": "İlanlar",
+      "jobs": "İş İlanları",
+      "nonProfitJobs": "Gönüllülük",
       "myApplications": "Başvurularım",
       "mentorship": "Mentorluk",
       "myMentorships": "Mentorluklarım",
@@ -42,7 +43,8 @@
       "searchLabel": "İş ara",
       "searchPlaceholderDesktop": "Örn. 'Yazılım Mühendisi' gibi işler ara",
       "searchPlaceholderMobile": "İş ara",
-      "searchButton": "Ara"
+      "searchButton": "Ara",
+      "discoverNonProfit": "Kar Amacı Gütmeyen Fırsatları Keşfet"
     },
     "quote": {
       "title": "Günün İlham Verici Sözü",
@@ -111,6 +113,41 @@
       "login": "Zaten hesabınız var mı? Giriş Yapın"
     }
   },
+  "nonProfitJobs": {
+    "pageTitle": "Toplumsal Fayda İçin Fırsatlar",
+    "pageDescription": "Her ödül parasal değildir. Bu gönüllü ve amaç odaklı roller, insanlar, gezegen ve gelecek için bir fark yaratmak amacıyla var. Ağaç dikmek, yerel topluluklara yardım etmek veya becerilerinizi sosyal amaçlar için kullanmak olsun, buradaki her eylem kendimizden daha büyük bir şeye katkı sağlar.",
+    "volunteerOpportunity": "Gönüllü",
+    "makingADifference": "Fark Yaratıyor",
+    "features": {
+      "meaningful": "Anlamlı İş",
+      "sustainable": "Sürdürülebilir Etki",
+      "community": "Toplum Odaklı"
+    },
+    "availableOpportunities": "{{count}} fırsat mevcut",
+    "availableOpportunities_plural": "{{count}} fırsat mevcut",
+    "opportunitiesDescription": "Topluluğunuzda ve ötesinde olumlu etki yaratmanın {{count}} yolu.",
+    "noOpportunities": "Şu anda gönüllü fırsatları bulunmuyor",
+    "checkBackSoon": "Topluluğunuzda fark yaratmanın yeni yolları için yakında tekrar kontrol edin.",
+    "browseRegularJobs": "Normal İşlere Göz At",
+    "volunteer": "Gönüllü",
+    "backToOpportunities": "Fırsatlara Geri Dön",
+    "volunteerNow": "Şimdi Gönüllü Ol",
+    "aboutOrganization": "Organizasyon Hakkında",
+    "opportunityDescription": "Fırsat Açıklaması",
+    "makeADifferenceDescription": "Önemsediğiniz topluluklar ve amaçlar için gerçek bir fark yaratan gönüllü çalışmalar yoluyla anlamlı değişim yaratmaya katılın.",
+    "defaultDescription": "Çevresel sürdürülebilirlik, toplum kalkınması ve sosyal adalet girişimlerine katkıda bulunan gönüllü çalışmalar yoluyla anlamlı bir etki yaratın.",
+    "whatYouGain": {
+      "title": "Ne Kazanacaksınız",
+      "experience": "İlgilendiğiniz alanda değerli pratik deneyim",
+      "networking": "Benzer düşünen bireylerle networking fırsatları",
+      "skills": "Yeni beceri ve yetkinliklerin geliştirilmesi",
+      "impact": "Anlamlı sosyal amaçlara doğrudan katkı",
+      "purpose": "Amaç duygusu ve kişisel tatmin"
+    },
+    "authRequired": {
+      "description": "Gönüllü fırsatlarını görüntülemek ve anlamlı organizasyonlarla bağlantı kurmak için bir hesap oluşturmanız gerekiyor."
+    }
+  },
   "jobFilters": {
     "ethicalTags": "Etik Etiketler",
     "selectEthicalTags": "Etik etiketleri seçin",
@@ -174,7 +211,8 @@
   },
   "jobCard": {
     "remote": "Uzaktan",
-    "inclusiveOpportunity": "Kapsayıcı Fırsat"
+    "inclusiveOpportunity": "Kapsayıcı Fırsat",
+    "notSpecified": "Konum belirtilmemiş"
   },
   "mobileFilters": {
     "open": "Filtreleri aç",
@@ -910,6 +948,54 @@
       "backToJobs": "İş İlanlarına Dön"
     }
   },
+  "nonProfitApplication": {
+    "title": "{{jobTitle}} için Gönüllü Ol",
+    "breadcrumb": {
+      "apply": "Başvur"
+    },
+    "opportunityDetails": {
+      "title": "Gönüllü Fırsat Detayları",
+      "organization": "Organizasyon",
+      "location": "Konum",
+      "type": "Tür",
+      "volunteer": "Gönüllü Fırsatı",
+      "postedOn": "{{date}} tarihinde yayınlandı"
+    },
+    "form": {
+      "title": "Gönüllü Başvurusu",
+      "subtitle": "Fark yaratma konusundaki tutkuyu paylaş ve bu organizasyonla neden gönüllü olmak istediğini anlat.",
+      "motivationLetter": {
+        "label": "Motivasyon Mektubu",
+        "placeholder": "Bu amaca neden tutkulu olduğunu ve nasıl katkıda bulunmak istediğini anlat...",
+        "characterCount": "{{count}}/2000 karakter"
+      },
+      "specialNeeds": {
+        "label": "Erişilebilirlik Gereksinimleri",
+        "placeholder": "İhtiyacınız olabilecek kolay erişim veya erişilebilirlik gereksinimlerini lütfen açıklayın...",
+        "characterCount": "{{count}}/500 karakter"
+      },
+      "cv": {
+        "label": "Özgeçmiş/CV",
+        "required": "Lütfen özgeçmişinizi yükleyin",
+        "dragDrop": "Özgeçmişinizi buraya sürükleyin veya göz atmak için tıklayın",
+        "chooseFile": "Dosya Seç",
+        "fileTypes": "10MB'a kadar PDF, DOC veya DOCX"
+      },
+      "cancel": "İptal",
+      "submit": "Gönüllü Başvurusu Gönder",
+      "submitting": "Gönderiliyor..."
+    },
+    "success": {
+      "message": "Gönüllü başvurunuz başarıyla gönderildi!"
+    },
+    "errors": {
+      "loadJob": "Gönüllü fırsat detayları yüklenemedi",
+      "submitFailed": "Gönüllü başvurusu gönderilemedi. Lütfen tekrar deneyin.",
+      "fileTooLarge": "Dosya boyutu 10MB'dan küçük olmalıdır",
+      "invalidFileType": "Geçersiz dosya türü. Lütfen PDF, DOC veya DOCX yükleyin",
+      "alreadyApplied": "Bu gönüllü fırsatına zaten başvurdunuz."
+    }
+  },
   "myMentorships": {
     "title": "Mentorluklarım",
     "subtitle": "Mentorluk taleplerinizi ve aktif mentorluklarınızı takip edin",
@@ -1056,6 +1142,8 @@
     "locationPlaceholder": "örn. İstanbul, Türkiye veya Uzaktan",
     "remoteWork": "Uzaktan Çalışma Mevcut",
     "remoteWorkDescription": "Bu pozisyon uzaktan çalışma seçeneği sunuyorsa işaretleyin",
+    "nonProfit": "Kar Amacı Gütmeyen Kuruluş",
+    "nonProfitDescription": "Bunu sosyal etki odaklı kar amacı gütmeyen bir kuruluştan gönüllü fırsatı olarak işaretleyin",
     "salaryRange": "Maaş Aralığı",
     "minimum": "Minimum",
     "maximum": "Maksimum",

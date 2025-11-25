@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:mobile/core/models/mentor_profile.dart';
 import 'package:mobile/core/models/mentor_review.dart';
 import 'package:mobile/core/services/api_service.dart';
 import 'package:mobile/core/providers/quote_provider.dart';
-import 'package:mobile/core/models/user.dart';
-import 'package:mobile/core/models/user_type.dart';
+import 'package:mobile/features/mentorship/providers/mentor_provider.dart';
 import '../../../generated/l10n/app_localizations.dart';
 
 class MentorProfileScreen extends StatefulWidget {
-  final int mentorId;
-  final String userId;
+  final String mentorId;          // userId of mentor
   final String mentorName;
+  final int? resumeReviewId;      // optional, only needed for rating
 
   const MentorProfileScreen({
     super.key,
     required this.mentorId,
-    required this.userId,
     required this.mentorName,
+    this.resumeReviewId,
   });
 
   @override
@@ -28,7 +27,6 @@ class MentorProfileScreen extends StatefulWidget {
 class _MentorProfileScreenState extends State<MentorProfileScreen> {
   bool _isLoading = true;
   MentorProfile? _mentorProfile;
-  List<MentorReview> _reviews = [];
   String? _errorMessage;
   bool _isSubmittingRating = false;
   int _selectedRating = 0;
@@ -50,93 +48,14 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
-      _reviews = [];
     });
 
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
-      final profile = MentorProfile(
-        id: widget.mentorId, // <- use named args + widget.*
-        user: User(
-          id: "101",
-          username: widget.mentorName,
-          email: "alice.johnson@openai.com",
-          role: UserType.ROLE_EMPLOYER,
-          firstName: widget.mentorName,
-          lastName: "",
-          jobTitle: "Machine Learning Engineer",
-          company: "OpenAI",
-        ),
-        capacity: 15,
-        currentMenteeCount: 10,
-        averageRating: 4.8,
-        reviewCount: 5,
-        isAvailable: true,
-      );
-      //await apiService.getMentorProfile(
-        //int.parse(widget.userId),
-      //);
-      final reviews = null;
-      //await apiService.getMentorReviews(
-      //  int.parse(widget.userId),
-      //);
+      final profile = await apiService.getMentorProfile(widget.mentorId);
 
       setState(() {
         _mentorProfile = profile;
-        _reviews = [
-          MentorReview(
-            id: 1,
-            mentor: User(
-              id: "101",
-              username: widget.mentorName,
-              email: "alice.johnson@openai.com",
-              role: UserType.ROLE_EMPLOYER,
-              firstName: widget.mentorName,
-              lastName: "",
-              jobTitle: "Machine Learning Engineer",
-              company: "OpenAI",
-            ),
-            mentee: User(
-              id: "110",
-              username: "jacob_gun",
-              email: "jacob.gun@gmail.com",
-              role: UserType.ROLE_JOBSEEKER,
-              firstName: "Jacob",
-              lastName: "Gun",
-              jobTitle: "Student",
-              company: "Harvard University",
-            ),
-            rating: 4,
-            comment: "Great mentor! Really helped me with my project.",
-            createdAt: DateTime.now(),
-          ),
-          MentorReview(
-            id: 2,
-            mentor: User(
-              id: "101",
-              username: widget.mentorName,
-              email: "alice.johnson@openai.com",
-              role: UserType.ROLE_EMPLOYER,
-              firstName: widget.mentorName,
-              lastName: "",
-              jobTitle: "Machine Learning Engineer",
-              company: "OpenAI",
-            ),
-            mentee: User(
-              id: "119",
-              username: "cool_guy",
-              email: "henryk_laurent@gmail.com",
-              role: UserType.ROLE_JOBSEEKER,
-              firstName: "Henryk",
-              lastName: "Laurent",
-              jobTitle: "Software Engineering Intern",
-              company: "Dream Corp",
-            ),
-            rating: 5,
-            comment: "I'm so satisfied with your mentorship! You are the best mentor!",
-            createdAt: DateTime.now(),
-          )
-        ]; //reviews
         _isLoading = false;
       });
     } catch (e) {
@@ -149,92 +68,109 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
   }
 
   void _showRatingDialog() {
+    if (widget.resumeReviewId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.mentorProfile_ratingNotAvailable,
+          ),
+        ),
+      );
+      return;
+    }
+
     int dialogRating = _selectedRating;
 
     showDialog(
       context: context,
-      builder:
-          (dialogContext) => StatefulBuilder(
-            builder:
-                (context, setDialogState) => AlertDialog(
-                  title: Text(AppLocalizations.of(context).mentorProfile_rateTitle(widget.mentorName)),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(AppLocalizations.of(context).mentorProfile_selectRating),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(5, (index) {
-                          return IconButton(
-                            icon: Icon(
-                              index < dialogRating
-                                  ? Icons.star
-                                  : Icons.star_border,
-                              color: Colors.amber,
-                              size: 36,
-                            ),
-                            onPressed: () {
-                              setDialogState(() {
-                                dialogRating = index + 1;
-                                print('Selected rating: $dialogRating');
-                              });
-                              setState(() {
-                                _selectedRating = dialogRating;
-                              });
-                            },
-                          );
-                        }),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _commentController,
-                        decoration: InputDecoration(
-                          labelText: AppLocalizations.of(context).mentorProfile_commentOptional,
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 3,
-                      ),
-                    ],
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        setState(() {
-                          _selectedRating = 0;
-                          _commentController.clear();
-                        });
-                      },
-                      child: Text(AppLocalizations.of(context)!.mentorScreen_cancel),
-                    ),
-                    ElevatedButton(
-                      onPressed:
-                          dialogRating > 0
-                              ? () {
-                                setState(() {
-                                  _selectedRating = dialogRating;
-                                });
-                                _submitRating();
-                              }
-                              : null,
-                      child: Text(
-                        _isSubmittingRating 
-                            ? AppLocalizations.of(context)!.mentorProfile_submitting 
-                            : AppLocalizations.of(context)!.mentorProfile_submit,
-                      ),
-                    ),
-                  ],
-                ),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text(
+            AppLocalizations.of(context)!.mentorProfile_rateTitle(
+              widget.mentorName,
+            ),
           ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.mentorProfile_selectRating,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  return IconButton(
+                    icon: Icon(
+                      index < dialogRating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                      size: 36,
+                    ),
+                    onPressed: () {
+                      setDialogState(() {
+                        dialogRating = index + 1;
+                      });
+                      setState(() {
+                        _selectedRating = dialogRating;
+                      });
+                    },
+                  );
+                }),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _commentController,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!
+                      .mentorProfile_commentOptional,
+                  border: const OutlineInputBorder(),
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                setState(() {
+                  _selectedRating = 0;
+                  _commentController.clear();
+                });
+              },
+              child:
+              Text(AppLocalizations.of(context)!.mentorScreen_cancel),
+            ),
+            ElevatedButton(
+              onPressed: !_isSubmittingRating && dialogRating > 0
+                  ? () {
+                setState(() {
+                  _selectedRating = dialogRating;
+                });
+                _submitRating();
+              }
+                  : null,
+              child: Text(
+                _isSubmittingRating
+                    ? AppLocalizations.of(context)!.mentorProfile_submitting
+                    : AppLocalizations.of(context)!.mentorProfile_submit,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Future<void> _submitRating() async {
-    if (_selectedRating == 0) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.mentorProfile_selectRatingError)));
+    if (_selectedRating == 0 || widget.resumeReviewId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.mentorProfile_selectRatingError,
+          ),
+        ),
+      );
       return;
     }
 
@@ -244,10 +180,13 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
 
     try {
       final comment = _commentController.text.trim();
-      final apiService = Provider.of<ApiService>(context, listen: false);
+      final mentorProvider = Provider.of<MentorProvider>(
+        context,
+        listen: false,
+      );
 
-      await apiService.createMentorReview(
-        userId: widget.userId,
+      await mentorProvider.createMentorRating(
+        resumeReviewId: widget.resumeReviewId!,
         rating: _selectedRating,
         comment: comment.isNotEmpty ? comment : null,
       );
@@ -255,7 +194,11 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.mentorProfile_ratingSubmitted)),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.mentorProfile_ratingSubmitted,
+            ),
+          ),
         );
         setState(() {
           _selectedRating = 0;
@@ -265,11 +208,14 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
         _loadMentorProfile();
       }
     } catch (e) {
-      print('Error submitting rating: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.mentorProfile_ratingError(e.toString())),
+            content: Text(
+              AppLocalizations.of(context)!.mentorProfile_ratingError(
+                e.toString(),
+              ),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -285,41 +231,56 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final canRate = widget.resumeReviewId != null;
+
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.mentorProfile_title(widget.mentorName))),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _errorMessage != null
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(_errorMessage!),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _loadMentorProfile,
-                      child: Text(AppLocalizations.of(context)!.common_retry),
-                    ),
-                  ],
-                ),
-              )
-              : _buildProfileContent(),
+      appBar: AppBar(
+        title: Text(
+          AppLocalizations.of(context)!.mentorProfile_title(widget.mentorName),
+        ),
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_errorMessage!),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadMentorProfile,
+              child: Text(
+                AppLocalizations.of(context)!.common_retry,
+              ),
+            ),
+          ],
+        ),
+      )
+          : _buildProfileContent(),
       floatingActionButton:
-          !_isLoading && _errorMessage == null
-              ? FloatingActionButton(
-                onPressed: _showRatingDialog,
-                child: const Icon(Icons.star),
-                tooltip: AppLocalizations.of(context)!.mentorProfile_rateMentor,
-              )
-              : null,
+      !_isLoading && _errorMessage == null && canRate
+          ? FloatingActionButton(
+        onPressed: _showRatingDialog,
+        child: const Icon(Icons.star),
+        tooltip: AppLocalizations.of(context)!
+            .mentorProfile_rateMentor,
+      )
+          : null,
     );
   }
 
   Widget _buildProfileContent() {
-    if (_mentorProfile == null) {
-      return Center(child: Text(AppLocalizations.of(context)!.mentorProfile_noProfileData));
+    final profile = _mentorProfile;
+    if (profile == null) {
+      return Center(
+        child: Text(
+          AppLocalizations.of(context)!.mentorProfile_noProfileData,
+        ),
+      );
     }
+
+    final reviews = profile.reviews;
 
     return SingleChildScrollView(
       child: Padding(
@@ -327,50 +288,33 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header
             Row(
               children: [
                 CircleAvatar(
                   radius: 40,
                   child: Text(
-                    _mentorProfile!.user.username[0].toUpperCase(),
+                    profile.username.isNotEmpty
+                        ? profile.username[0].toUpperCase()
+                        : '?',
                     style: const TextStyle(fontSize: 30),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _mentorProfile!.user.username,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      if (_mentorProfile!.user.jobTitle != null)
-                        Text(
-                          _mentorProfile!.user.jobTitle!,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      if (_mentorProfile!.user.company != null)
-                        Text(
-                          AppLocalizations.of(context)!.mentorProfile_atCompany(_mentorProfile!.user.company!),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                    ],
+                  child: Text(
+                    profile.username,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 24),
 
+            // Quote card
             Consumer<QuoteProvider>(
               builder: (context, quoteProvider, child) {
                 if (quoteProvider.hasQuote) {
@@ -408,6 +352,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
             ),
             const SizedBox(height: 16),
 
+            // Rating summary
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -427,7 +372,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                         Row(
                           children: List.generate(5, (index) {
                             return Icon(
-                              index < _mentorProfile!.averageRating
+                              index < profile.averageRating.round()
                                   ? Icons.star
                                   : Icons.star_border,
                               color: Colors.amber,
@@ -436,7 +381,8 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '${_mentorProfile!.averageRating.toStringAsFixed(1)} (${AppLocalizations.of(context)!.mentorProfile_reviews(_mentorProfile!.reviewCount)})',
+                          '${profile.averageRating.toStringAsFixed(1)} '
+                              '(${AppLocalizations.of(context)!.mentorProfile_reviews(profile.reviewCount)})',
                           style: const TextStyle(fontSize: 16),
                         ),
                       ],
@@ -447,6 +393,7 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
             ),
             const SizedBox(height: 16),
 
+            // Mentorship info
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -464,48 +411,22 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                     _buildInfoRow(
                       AppLocalizations.of(context)!.mentorProfile_capacity,
                       AppLocalizations.of(context)!.mentorProfile_mentees(
-                        _mentorProfile!.currentMenteeCount, 
-                        _mentorProfile!.capacity
+                        profile.currentMentees,
+                        profile.maxMentees,
                       ),
                     ),
-                    _buildInfoRow(
-                      AppLocalizations.of(context)!.mentorProfile_status,
-                      _mentorProfile!.isAvailable
-                          ? AppLocalizations.of(context)!.mentorProfile_available
-                          : AppLocalizations.of(context)!.mentorProfile_notAvailable,
-                    ),
+                    if (profile.expertise.isNotEmpty)
+                      _buildInfoRow(
+                        AppLocalizations.of(context)!.mentorProfile_expertise,
+                        profile.expertise.join(', '),
+                      ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
-            if (_mentorProfile!.user.bio != null)
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppLocalizations.of(context)!.mentorProfile_about,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _mentorProfile!.user.bio!,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            const SizedBox(height: 16),
-
-            _buildReviewsSection(),
+            _buildReviewsSection(reviews),
           ],
         ),
       ),
@@ -519,15 +440,23 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
         children: [
           Text(
             '$label: ',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          Text(value, style: const TextStyle(fontSize: 16)),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildReviewsSection() {
+  Widget _buildReviewsSection(List<MentorReview> reviews) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -536,45 +465,43 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
           children: [
             Text(
               AppLocalizations.of(context)!.mentorProfile_rating,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 12),
-            if (_reviews.isEmpty)
+            if (reviews.isEmpty)
               Text(
                 AppLocalizations.of(context)!.mentorProfile_noReviews,
-                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                ),
               )
             else
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: _reviews.length,
+                itemCount: reviews.length,
                 itemBuilder: (context, index) {
-                  final review = _reviews[index];
-                  String formattedDate = 'Date unknown';
-                  final createdAtString = review.createdAt?.toString();
-                  if (createdAtString != null) {
-                    try {
-                      final dateTime = DateTime.parse(createdAtString);
-                      formattedDate = DateFormat(
-                        'MMM d, yyyy',
-                      ).format(dateTime);
-                    } catch (e) {
-                      print('Error parsing review date: $createdAtString');
-                    }
-                  }
+                  final review = reviews[index];
+                  final formattedDate = DateFormat('MMM d, yyyy')
+                      .format(review.createdAt);
+
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
                               children: List.generate(5, (i) {
                                 return Icon(
-                                  i < review.rating
+                                  i < review.rating.round()
                                       ? Icons.star
                                       : Icons.star_border,
                                   color: Colors.amber,
@@ -583,7 +510,10 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               }),
                             ),
                             Text(
-                              AppLocalizations.of(context)!.mentorProfile_byUser(review.mentee.username),
+                              AppLocalizations.of(context)!
+                                  .mentorProfile_byUser(
+                                review.reviewerUsername,
+                              ),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[600],
@@ -600,17 +530,16 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                               style: const TextStyle(fontSize: 14),
                             ),
                           ),
-                        if (review.createdAt != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(
-                              formattedDate,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            formattedDate,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
                             ),
                           ),
+                        ),
                       ],
                     ),
                   );

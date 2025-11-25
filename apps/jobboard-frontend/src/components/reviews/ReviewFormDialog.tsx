@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -18,10 +18,12 @@ import { useTranslation } from 'react-i18next';
 import { createReview } from '@/services/reviews.service';
 import type { ReviewCreateRequest } from '@/types/workplace.types';
 import { getErrorMessage } from '@/utils/error-handler';
+import { TAG_TO_KEY_MAP } from '@/constants/ethical-tags';
 
 interface ReviewFormDialogProps {
   workplaceId: number;
   workplaceName: string;
+  ethicalTags?: string[];
   onReviewSubmitted?: () => void;
   trigger?: React.ReactNode;
 }
@@ -29,6 +31,7 @@ interface ReviewFormDialogProps {
 export function ReviewFormDialog({
   workplaceId,
   workplaceName,
+  ethicalTags,
   onReviewSubmitted,
   trigger,
 }: ReviewFormDialogProps) {
@@ -37,28 +40,37 @@ export function ReviewFormDialog({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Default ethical policies - can be customized
-  const defaultPolicies = [
-    'diversity',
-    'sustainability',
-    'workLifeBalance',
-    'fairCompensation',
-    'transparency',
-  ];
+  const policyOptions = useMemo(
+    () => (ethicalTags && ethicalTags.length > 0 ? ethicalTags : []),
+    [ethicalTags]
+  );
+
+  const createEmptyPolicyRatings = useCallback(
+    (policies: string[]) => Object.fromEntries(policies.map((policy) => [policy, 0])),
+    []
+  );
 
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    policyRatings: Object.fromEntries(defaultPolicies.map(p => [p, 0])),
+    policyRatings: createEmptyPolicyRatings(policyOptions),
     anonymous: false,
   });
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      policyRatings: createEmptyPolicyRatings(policyOptions),
+    }));
+  }, [policyOptions, createEmptyPolicyRatings]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     // Validation - at least one rating required
-    const hasRating = Object.values(formData.policyRatings).some(r => r > 0);
+    const hasRating =
+      policyOptions.length === 0 || Object.values(formData.policyRatings).some(r => r > 0);
     if (!hasRating) {
       setError(t('reviews.errors.atLeastOneRating'));
       return;
@@ -102,24 +114,25 @@ export function ReviewFormDialog({
     setFormData({
       title: '',
       content: '',
-      policyRatings: Object.fromEntries(defaultPolicies.map(p => [p, 0])),
+      policyRatings: createEmptyPolicyRatings(policyOptions),
       anonymous: false,
     });
     setError(null);
   };
 
   const handlePolicyRatingChange = (policy: string, value: number) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       policyRatings: {
-        ...formData.policyRatings,
+        ...prev.policyRatings,
         [policy]: value,
       },
-    });
+    }));
   };
 
-  const formatPolicyName = (policy: string) => {
-    return policy.replace(/([A-Z])/g, ' $1').trim();
+  const getPolicyLabel = (policy: string) => {
+    const translationKey = TAG_TO_KEY_MAP[policy as keyof typeof TAG_TO_KEY_MAP];
+    return translationKey ? t(`ethicalTags.tags.${translationKey}`, policy) : policy;
   };
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -159,13 +172,13 @@ export function ReviewFormDialog({
             <p className="text-sm text-muted-foreground">{t('reviews.rateAtLeastOne')}</p>
 
             <div className="grid gap-4">
-              {defaultPolicies.map((policy) => (
+              {policyOptions.map((policy) => (
                 <div key={policy} className="flex items-center justify-between">
                   <Label htmlFor={policy} className="capitalize">
-                    {formatPolicyName(policy)}
+                    {getPolicyLabel(policy)}
                   </Label>
                   <StarRating
-                    value={formData.policyRatings[policy]}
+                    value={formData.policyRatings[policy] || 0}
                     onChange={(value) => handlePolicyRatingChange(policy, value)}
                     size="md"
                   />

@@ -43,9 +43,9 @@ export default function Header() {
             <nav className="hidden md:flex items-center gap-2">
               {isEmployer ? (
                 <>
-                  <Button variant="ghost" asChild>
-                      <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
-                    </Button>
+                <Button variant="ghost" asChild>
+                  <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
+                </Button>
                   <Button variant="ghost" asChild>
                     <Link to="/employer/workplaces">{t('header.nav.myWorkplaces')}</Link>
                   </Button>
@@ -71,6 +71,9 @@ export default function Header() {
                 <>
                   <Button variant="ghost" asChild>
                     <Link to="/jobs">{t('header.nav.jobs')}</Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/nonprofit-jobs">{t('header.nav.nonProfitJobs')}</Link>
                   </Button>
                   {isAuthenticated && isJobSeeker && (
                     <Button variant="ghost" asChild>
@@ -146,11 +149,11 @@ export default function Header() {
               <nav className="flex flex-col gap-2">
                 {isEmployer ? (
                   <>
-                    <Button variant="ghost" asChild className="justify-start">
-                        <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                          {t('header.nav.employerDashboard')}
-                        </Link>
-                      </Button>
+                  <Button variant="ghost" asChild className="justify-start">
+                    <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                      {t('header.nav.employerDashboard')}
+                    </Link>
+                  </Button>
                     <Button variant="ghost" asChild className="justify-start">
                       <Link to="/employer/workplaces" onClick={() => setIsMobileMenuOpen(false)}>
                         {t('header.nav.myWorkplaces')}
@@ -189,6 +192,11 @@ export default function Header() {
                     <Button variant="ghost" asChild className="justify-start">
                       <Link to="/jobs" onClick={() => setIsMobileMenuOpen(false)}>
                         {t('header.nav.jobs')}
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/nonprofit-jobs" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('header.nav.nonProfitJobs')}
                       </Link>
                     </Button>
                     {isAuthenticated && isJobSeeker && (

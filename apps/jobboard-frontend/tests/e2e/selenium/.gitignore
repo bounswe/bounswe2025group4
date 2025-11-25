@@ -1,0 +1,17 @@
+# E2E Test Artifacts
+
+# Screenshots
+screenshots/*.png
+screenshots/*.jpg
+!screenshots/README.md
+
+# Environment files (keep .example)
+.env.e2e
+!.env.e2e.example
+
+# Test results
+test-results/
+reports/
+
+# Logs
+*.log

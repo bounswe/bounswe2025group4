@@ -10,7 +10,7 @@ import CenteredLoader from '@/components/CenteredLoader';
 import { cn } from '@/lib/utils';
 import type { JobPostResponse } from '@/types/api.types';
 import { getJobById } from '@/services/jobs.service';
-import { createApplication, uploadCv, getApplications } from '@/services/applications.service';
+import { createApplication, uploadCv, getApplicationsByJobSeeker } from '@/services/applications.service';
 import { useAuth } from '@/contexts/AuthContext';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -42,13 +42,14 @@ export default function JobApplicationPage() {
       try {
         setIsLoading(true);
 
-        // Check if user already applied
-        const applications = await getApplications({
-          jobPostId: parseInt(id, 10),
-          jobSeekerId: user.id,
-        });
+        // Check if user already applied to this specific job
+        const allApplications = await getApplicationsByJobSeeker(user.id);
 
-        if (applications.length > 0) {
+        const hasAppliedToThisJob = allApplications.some(
+          (app) => app.jobPostId === parseInt(id, 10)
+        );
+
+        if (hasAppliedToThisJob) {
           toast.info(t('jobApplication.errors.alreadyApplied'));
           navigate(`/jobs/${id}`);
           return;

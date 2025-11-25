@@ -34,8 +34,8 @@ vi.mock('@/components/workplace/NewWorkplaceModal', () => ({
       <div role="dialog">
         workplace.newModal.title
         <button onClick={() => onOpenChange(false)}>common.cancel</button>
-        <button onClick={onCreateWorkplace}>employerWorkplaces.noWorkplaces.createWorkplace</button>
-        <button onClick={onJoinWorkplace}>employerWorkplaces.noWorkplaces.joinWorkplace</button>
+        <button onClick={onCreateWorkplace}>workplace.newModal.createWorkplace</button>
+        <button onClick={onJoinWorkplace}>workplace.newModal.joinWorkplace</button>
       </div>
     ) : null
   )
@@ -118,7 +118,7 @@ describe('EmployerWorkplacesPage Integration', () => {
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'employerWorkplaces.newWorkplace' }));
-    fireEvent.click(screen.getByText('employerWorkplaces.noWorkplaces.createWorkplace'));
+    fireEvent.click(screen.getByText('workplace.newModal.createWorkplace'));
 
     expect(screen.getByText('workplace.createModal.title')).toBeInTheDocument();
   });
@@ -132,7 +132,7 @@ describe('EmployerWorkplacesPage Integration', () => {
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'employerWorkplaces.newWorkplace' }));
-    fireEvent.click(screen.getByText('employerWorkplaces.noWorkplaces.joinWorkplace'));
+    fireEvent.click(screen.getByText('workplace.newModal.joinWorkplace'));
 
     expect(screen.getByText('workplace.joinModal.title')).toBeInTheDocument();
   });

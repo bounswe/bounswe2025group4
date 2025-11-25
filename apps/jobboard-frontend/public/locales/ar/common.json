@@ -11,15 +11,12 @@
     "nav": {
       "home": "الرئيسية",
       "jobs": "الوظائف",
+      "nonProfitJobs": "التطوع",
       "myApplications": "طلباتي",
       "myMentorships": "إرشاداتي",
       "mentorship": "الإرشاد",
-      "chat": "المحادثة",
       "forum": "المنتدى",
-      "employerDashboard": "لوحة صاحب العمل",
-      "workplaces": "أماكن العمل",
-      "myWorkplaces": "أماكن عملي",
-      "browseWorkplaces": "استعراض أماكن العمل"
+      "employerDashboard": "لوحة صاحب العمل"
     },
     "auth": {
       "login": "تسجيل الدخول",
@@ -42,7 +39,8 @@
       "searchLabel": "ابحث عن وظائف",
       "searchPlaceholderDesktop": "ابحث عن وظائف، مثل «مهندس برمجيات»",
       "searchPlaceholderMobile": "ابحث عن وظائف",
-      "searchButton": "بحث"
+      "searchButton": "بحث",
+      "discoverNonProfit": "اكتشف فرص المنظمات غير الربحية"
     },
     "quote": {
       "title": "اقتباس اليوم الملهم",
@@ -111,6 +109,41 @@
       "login": "هل لديك حساب بالفعل؟ تسجيل الدخول"
     }
   },
+  "nonProfitJobs": {
+    "pageTitle": "فرص من أجل الخير العام",
+    "pageDescription": "ليس كل مكافأة نقدية. هذه الأدوار التطوعية والهادفة موجودة لإحداث فرق - للناس وللكوكب وللمستقبل. سواء كان زراعة الأشجار أو مساعدة المجتمعات المحلية أو المساهمة بمهاراتك في القضايا الاجتماعية، فإن كل عمل هنا يساهم في شيء أكبر من أنفسنا.",
+    "volunteerOpportunity": "تطوع",
+    "makingADifference": "إحداث فرق",
+    "features": {
+      "meaningful": "عمل ذو معنى",
+      "sustainable": "تأثير مستدام",
+      "community": "تركيز على المجتمع"
+    },
+    "availableOpportunities": "{{count}} فرصة متاحة",
+    "availableOpportunities_plural": "{{count}} فرصة متاحة",
+    "opportunitiesDescription": "{{count}} طريقة لإحداث تأثير إيجابي في مجتمعك وما وراءه.",
+    "noOpportunities": "لا توجد فرص تطوعية متاحة في الوقت الحالي",
+    "checkBackSoon": "تحقق مرة أخرى قريبًا للحصول على طرق جديدة لإحداث فرق في مجتمعك.",
+    "browseRegularJobs": "تصفح الوظائف العادية",
+    "volunteer": "التطوع",
+    "backToOpportunities": "العودة إلى الفرص",
+    "volunteerNow": "تطوع الآن",
+    "aboutOrganization": "حول المنظمة",
+    "opportunityDescription": "وصف الفرصة",
+    "makeADifferenceDescription": "انضم إلينا في إحداث تغيير ذي معنى من خلال العمل التطوعي الذي يحدث فرقًا حقيقيًا في المجتمعات والقضايا التي تهتم بها.",
+    "defaultDescription": "أحدث تأثيرًا ذا معنى من خلال العمل التطوعي الذي يساهم في الاستدامة البيئية وتنمية المجتمع ومبادرات العدالة الاجتماعية.",
+    "whatYouGain": {
+      "title": "ما ستكسبه",
+      "experience": "خبرة عملية قيمة في مجال اهتمامك",
+      "networking": "فرص التواصل مع أفراد متشابهين في التفكير",
+      "skills": "تطوير مهارات وكفاءات جديدة",
+      "impact": "مساهمة مباشرة في القضايا الاجتماعية ذات المعنى",
+      "purpose": "شعور بالهدف والإشباع الشخصي"
+    },
+    "authRequired": {
+      "description": "تحتاج إلى إنشاء حساب لعرض فرص التطوع والتواصل مع المنظمات ذات المعنى."
+    }
+  },
   "jobFilters": {
     "ethicalTags": "العلامات الأخلاقية",
     "selectEthicalTags": "اختر العلامات الأخلاقية",
@@ -174,7 +207,8 @@
   },
   "jobCard": {
     "remote": "عن بُعد",
-    "inclusiveOpportunity": "فرصة شاملة"
+    "inclusiveOpportunity": "فرصة شاملة",
+    "notSpecified": "الموقع غير محدد"
   },
   "mobileFilters": {
     "open": "فتح عوامل التصفية",
@@ -662,6 +696,54 @@
       "backToJobs": "العودة إلى الوظائف"
     }
   },
+  "nonProfitApplication": {
+    "title": "تطوع في {{jobTitle}}",
+    "breadcrumb": {
+      "apply": "تقدم"
+    },
+    "opportunityDetails": {
+      "title": "تفاصيل فرصة التطوع",
+      "organization": "المنظمة",
+      "location": "الموقع",
+      "type": "النوع",
+      "volunteer": "فرصة تطوع",
+      "postedOn": "نُشرت في {{date}}"
+    },
+    "form": {
+      "title": "طلب التطوع",
+      "subtitle": "شارك شغفك بإحداث فرق وأخبرنا لماذا تريد التطوع مع هذه المنظمة.",
+      "motivationLetter": {
+        "label": "رسالة الدافع",
+        "placeholder": "أخبرنا لماذا تتحمس لهذه القضية وكيف تود المساهمة...",
+        "characterCount": "{{count}}/2000 حرف"
+      },
+      "specialNeeds": {
+        "label": "متطلبات إمكانية الوصول",
+        "placeholder": "يرجى وصف أي ترتيبات أو متطلبات إمكانية وصول قد تحتاجها...",
+        "characterCount": "{{count}}/500 حرف"
+      },
+      "cv": {
+        "label": "السيرة الذاتية",
+        "required": "يرجى تحميل سيرتك الذاتية",
+        "dragDrop": "اسحب وأفلت سيرتك الذاتية هنا أو انقر للتصفح",
+        "chooseFile": "اختر ملف",
+        "fileTypes": "PDF أو DOC أو DOCX حتى 10MB"
+      },
+      "cancel": "إلغاء",
+      "submit": "إرسال طلب التطوع",
+      "submitting": "جاري الإرسال..."
+    },
+    "success": {
+      "message": "تم إرسال طلب التطوع بنجاح!"
+    },
+    "errors": {
+      "loadJob": "فشل تحميل تفاصيل فرصة التطوع",
+      "submitFailed": "فشل إرسال طلب التطوع. يرجى المحاولة مرة أخرى.",
+      "fileTooLarge": "يجب أن يكون حجم الملف أقل من 10MB",
+      "invalidFileType": "نوع ملف غير صالح. يرجى تحميل PDF أو DOC أو DOCX",
+      "alreadyApplied": "لقد تقدمت بالفعل لهذه فرصة التطوع."
+    }
+  },
   "myMentorships": {
     "title": "إرشاداتي",
     "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة الخاصة بك",
@@ -807,6 +889,8 @@
     "locationPlaceholder": "مثال: الرياض، السعودية أو عن بُعد",
     "remoteWork": "العمل عن بُعد متاح",
     "remoteWorkDescription": "حدد هذا الخيار إذا كانت هذه الوظيفة توفر خيارات العمل عن بُعد",
+    "nonProfit": "منظمة غير ربحية",
+    "nonProfitDescription": "حدد هذا كفرصة تطوعية من منظمة غير ربحية تركز على التأثير الاجتماعي",
     "salaryRange": "نطاق الراتب",
     "minimum": "الحد الأدنى",
     "maximum": "الحد الأقصى",

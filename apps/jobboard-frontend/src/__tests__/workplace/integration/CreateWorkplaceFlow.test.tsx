@@ -74,7 +74,7 @@ describe('CreateWorkplaceFlow Integration', () => {
     expect(dialog).toBeInTheDocument();
 
     // 3. Find and click Create Workplace option
-    const createOption = screen.getByText('employerWorkplaces.noWorkplaces.createWorkplace');
+    const createOption = screen.getByText('workplace.newModal.createWorkplace');
     await user.click(createOption);
 
     // 4. Wait for CreateWorkplaceModal to open (another dialog)

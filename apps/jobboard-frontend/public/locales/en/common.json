@@ -11,6 +11,7 @@
     "nav": {
       "home": "Home",
       "jobs": "Jobs",
+      "nonProfitJobs": "Volunteer",
       "myApplications": "My Applications",
       "mentorship": "Mentorship",
       "myMentorships": "My Mentorships",
@@ -42,53 +43,69 @@
       "searchLabel": "Search for jobs",
       "searchPlaceholderDesktop": "Search for jobs, e.g. 'Software Engineer'",
       "searchPlaceholderMobile": "Search for jobs",
-      "searchButton": "Search"
+      "searchButton": "Search",
+      "discoverNonProfit": "Discover Non-Profit Opportunities"
     },
-    "quote": {
-      "title": "Daily Inspirational Quote",
-      "text": "The future belongs to those who believe in the beauty of their dreams.",
-      "author": "Eleanor Roosevelt"
-    },
-    "jobSeekers": {
-      "title": "For Job Seekers",
-      "description": "Empowering Your Career Journey. We provide the tools and resources you need to find a fulfilling career that aligns with your values.",
-      "cards": {
-        "ethical": {
-          "title": "Ethical Job Listings",
-          "description": "Browse a curated list of job openings from companies committed to ethical practices and social responsibility."
-        },
-        "resources": {
-          "title": "Career Development Resources",
-          "description": "Access resources to enhance your skills, including resume workshops, interview tips, and career coaching."
-        },
-        "community": {
-          "title": "Community Forum",
-          "description": "Engage with a community of like-minded professionals, share insights, and network with ethical leaders."
-        }
+    "stats": {
+      "title": "Our Community Impact",
+      "subtitle": "Real numbers that showcase our growing community of ethical professionals and employers",
+      "loading": "Loading statistics...",
+      "error": "Unable to load statistics",
+      "retry": "Try Again",
+      "users": {
+        "title": "Community Members",
+        "total": "Total Members",
+        "employers": "Employers",
+        "jobSeekers": "Job Seekers"
+      },
+      "jobs": {
+        "title": "Job Opportunities",
+        "total": "Total Jobs",
+        "remote": "Remote Positions",
+        "inclusive": "Inclusive Opportunities",
+        "newThisWeek": "New This Week"
+      },
+      "applications": {
+        "title": "Applications",
+        "total": "Total Applications",
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "rejected": "Rejected"
+      },
+      "mentorship": {
+        "title": "Mentorship Program",
+        "mentors": "Active Mentors",
+        "accepted": "Active Mentorships",
+        "pending": "Pending Requests",
+        "completed": "Completed",
+        "reviews": "Reviews Given"
       }
     },
-    "employers": {
-      "title": "For Employers",
-      "description": "Building a Better Workforce. Connect with talented individuals who are passionate about making a difference.",
-      "cards": {
-        "talent": {
-          "title": "Attract Top Talent",
-          "description": "Connect with purpose-driven professionals who are passionate about making a difference."
-        },
-        "values": {
-          "title": "Showcase Your Values",
-          "description": "Highlight your company's commitment to ethics, sustainability, and social impact."
-        },
-        "brand": {
-          "title": "Build a Stronger Brand",
-          "description": "Enhance your reputation and attract customers who value ethical business practices."
-        }
+    "features": {
+      "title": "Why Choose Ethica Jobs?",
+      "subtitle": "We connect ethical employers with purpose-driven professionals",
+      "ethical": {
+        "title": "Ethical First",
+        "description": "Every employer on our platform is committed to ethical practices and social responsibility."
+      },
+      "inclusive": {
+        "title": "Inclusive Opportunities",
+        "description": "We highlight positions that welcome candidates from all backgrounds and abilities."
+      },
+      "mentorship": {
+        "title": "Mentorship Network",
+        "description": "Connect with experienced professionals who can guide your career journey."
+      },
+      "community": {
+        "title": "Supportive Community",
+        "description": "Join forums, share insights, and network with like-minded professionals."
       }
     },
     "cta": {
-      "title": "Join the Ethical Careers Community",
-      "description": "Sign up today to start your journey towards a more meaningful and impactful career.",
-      "button": "Get Started"
+      "title": "Ready to Join Our Community?",
+      "description": "Create your free account today and discover purpose-driven career opportunities.",
+      "signUp": "Sign Up Now",
+      "login": "Already have an account? Log In"
     }
   },
   "jobs": {
@@ -109,6 +126,41 @@
       "invitation": "Join Ethica Jobs today and discover purpose-driven career opportunities that align with your values!",
       "signUp": "Create Account",
       "login": "Already have an account? Login"
+    }
+  },
+  "nonProfitJobs": {
+    "pageTitle": "Opportunities for the Greater Good",
+    "pageDescription": "Not every reward is monetary. These volunteer and purpose-driven roles exist to make a difference — for people, for the planet, and for the future. Whether it's planting trees, helping local communities, or contributing your skills to social causes, every action here counts toward something bigger than ourselves.",
+    "volunteerOpportunity": "Volunteer",
+    "makingADifference": "Making a Difference",
+    "features": {
+      "meaningful": "Meaningful Work",
+      "sustainable": "Sustainable Impact",
+      "community": "Community Focus"
+    },
+    "availableOpportunities": "{{count}} opportunity available",
+    "availableOpportunities_plural": "{{count}} opportunities available",
+    "opportunitiesDescription": "{{count}} ways to make a positive impact in your community and beyond.",
+    "noOpportunities": "No volunteer opportunities available at the moment",
+    "checkBackSoon": "Check back soon for new ways to make a difference in your community.",
+    "browseRegularJobs": "Browse Regular Jobs",
+    "volunteer": "Volunteer",
+    "backToOpportunities": "Back to Opportunities",
+    "volunteerNow": "Volunteer Now",
+    "aboutOrganization": "About the Organization",
+    "opportunityDescription": "Opportunity Description",
+    "makeADifferenceDescription": "Join us in creating meaningful change through volunteer work that makes a real difference in communities and causes you care about.",
+    "defaultDescription": "Make a meaningful impact through volunteer work that contributes to environmental sustainability, community development, and social justice initiatives.",
+    "whatYouGain": {
+      "title": "What You'll Gain",
+      "experience": "Valuable hands-on experience in your field of interest",
+      "networking": "Networking opportunities with like-minded individuals",
+      "skills": "Development of new skills and competencies",
+      "impact": "Direct contribution to meaningful social causes",
+      "purpose": "A sense of purpose and personal fulfillment"
+    },
+    "authRequired": {
+      "description": "You need to create an account to view volunteer opportunities and connect with meaningful organizations."
     }
   },
   "jobFilters": {
@@ -174,7 +226,8 @@
   },
   "jobCard": {
     "remote": "Remote",
-    "inclusiveOpportunity": "Inclusive Opportunity"
+    "inclusiveOpportunity": "Inclusive Opportunity",
+    "notSpecified": "Location not specified"
   },
   "mobileFilters": {
     "open": "Open filters",
@@ -1180,6 +1233,54 @@
       "backToJobs": "Back to Jobs"
     }
   },
+  "nonProfitApplication": {
+    "title": "Volunteer for {{jobTitle}}",
+    "breadcrumb": {
+      "apply": "Apply"
+    },
+    "opportunityDetails": {
+      "title": "Volunteer Opportunity Details",
+      "organization": "Organization",
+      "location": "Location",
+      "type": "Type",
+      "volunteer": "Volunteer Opportunity",
+      "postedOn": "Posted on {{date}}"
+    },
+    "form": {
+      "title": "Volunteer Application",
+      "subtitle": "Share your passion for making a difference and tell us why you'd like to volunteer with this organization.",
+      "motivationLetter": {
+        "label": "Motivation Letter",
+        "placeholder": "Tell us why you're passionate about this cause and how you'd like to contribute...",
+        "characterCount": "{{count}}/2000 characters"
+      },
+      "specialNeeds": {
+        "label": "Accessibility Requirements",
+        "placeholder": "Please describe any accommodations or accessibility requirements you may need...",
+        "characterCount": "{{count}}/500 characters"
+      },
+      "cv": {
+        "label": "Resume/CV",
+        "required": "Please upload your resume or CV",
+        "dragDrop": "Drag and drop your resume here or click to browse",
+        "chooseFile": "Choose File",
+        "fileTypes": "PDF, DOC, or DOCX up to 10MB"
+      },
+      "cancel": "Cancel",
+      "submit": "Submit Volunteer Application",
+      "submitting": "Submitting..."
+    },
+    "success": {
+      "message": "Your volunteer application has been submitted successfully!"
+    },
+    "errors": {
+      "loadJob": "Failed to load volunteer opportunity details",
+      "submitFailed": "Failed to submit volunteer application. Please try again.",
+      "fileTooLarge": "File size must be less than 10MB",
+      "invalidFileType": "Invalid file type. Please upload PDF, DOC, or DOCX",
+      "alreadyApplied": "You have already applied for this volunteer opportunity."
+    }
+  },
   "jobApplicationReview": {
     "noCv": "No CV found for this application",
     "error": {
@@ -1301,6 +1402,8 @@
     "locationPlaceholder": "e.g., New York, NY or Remote",
     "remoteWork": "Remote Work Available",
     "remoteWorkDescription": "Check if this position offers remote work options",
+    "nonProfit": "Non-Profit Organization",
+    "nonProfitDescription": "Mark this as a volunteer opportunity from a non-profit organization focused on social impact",
     "salaryRange": "Salary Range",
     "minimum": "Minimum",
     "maximum": "Maximum",
@@ -1374,6 +1477,10 @@
     }
   },
   "reviews": {
+    "reviewTitle": "Review",
+    "rateEthicalPolicies": "Rate Ethical Policies",
+    "rateAtLeastOne": "Please rate at least one ethical policy",
+    "titlePlaceholder": "e.g., My experience at {{company}}",
     "workplaceReviews": "Workplace Reviews",
     "writeReview": "Write a Review",
     "writeReviewFor": "Write a Review for {{company}}",
@@ -1455,7 +1562,8 @@
     "goHome": "Go to Homepage",
     "visitWebsite": "Visit Website",
     "edited": "Edited",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "optional": "Optional"
   },
   "chat": {
     "conversations": "Conversations",
@@ -1500,7 +1608,12 @@
       "fetchError": "Failed to load workplaces"
     },
     "newModal": {
-      "title": "New Workplace"
+      "title": "New Workplace",
+      "description": "Choose how you want to add a workplace to your account",
+      "createWorkplace": "Create Workplace",
+      "joinWorkplace": "Join Workplace",
+      "createWorkplaceDescription": "Create and manage your own workplace",
+      "joinWorkplaceDescription": "Request to join an existing workplace"
     },
     "createModal": {
       "title": "Create Workplace",
