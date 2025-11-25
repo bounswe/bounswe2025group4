@@ -272,19 +272,19 @@ export default function HomePage() {
                     <div className="flex justify-between">
                       <span>{t('home.stats.jobs.remote')}</span>
                       <span className="font-medium text-foreground">
-                        {formatNumber(stats.remoteJobs)}
+                        {formatNumber(stats.remoteJobsCount)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>{t('home.stats.jobs.inclusive')}</span>
                       <span className="font-medium text-foreground">
-                        {formatNumber(stats.inclusiveOpportunities)}
+                        {formatNumber(stats.inclusiveJobsCount)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>{t('home.stats.jobs.newThisWeek')}</span>
                       <span className="font-medium text-green-600">
-                        +{formatNumber(stats.newJobsThisWeek)}
+                        +{formatNumber(stats.newJobsThisWeekCount)}
                       </span>
                     </div>
                   </div>
@@ -310,13 +310,13 @@ export default function HomePage() {
                     <div className="flex justify-between">
                       <span>{t('home.stats.applications.pending')}</span>
                       <span className="font-medium text-yellow-600">
-                        {formatNumber(stats.pendingApplications)}
+                        {formatNumber(stats.totalPendingApplications)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>{t('home.stats.applications.accepted')}</span>
                       <span className="font-medium text-green-600">
-                        {formatNumber(stats.acceptedApplications)}
+                        {formatNumber(stats.totalAcceptedApplications)}
                       </span>
                     </div>
                   </div>
@@ -354,7 +354,7 @@ export default function HomePage() {
                     <div className="flex justify-between">
                       <span>{t('home.stats.mentorship.reviews')}</span>
                       <span className="font-medium text-foreground">
-                        {formatNumber(stats.totalReviews)}
+                        {formatNumber(stats.totalMentorReviews)}
                       </span>
                     </div>
                   </div>

@@ -10,26 +10,33 @@ export interface DashboardStatsResponse {
   totalEmployers: number;
   totalJobSeekers: number;
 
+  // Forum statistics
+  totalForumPosts: number;
+
   // Job post statistics
   totalJobPosts: number;
-  remoteJobs: number;
-  inclusiveOpportunities: number;
-  newJobsThisWeek: number;
+  remoteJobsCount: number;
+  inclusiveJobsCount: number;
+  newJobsThisWeekCount: number;
 
   // Application statistics
   totalApplications: number;
-  pendingApplications: number;
-  acceptedApplications: number;
-  rejectedApplications: number;
+  totalPendingApplications: number;
+  totalAcceptedApplications: number;
+  totalRejectedApplications: number;
 
   // Mentorship statistics
   totalMentors: number;
+  totalMentorshipRequests: number;
   acceptedMentorships: number;
-  pendingMentorships: number;
+  pendingMentorshipRequests: number;
   completedMentorships: number;
-  declinedMentorships: number;
-  closedMentorships: number;
-  totalReviews: number;
+  declinedMentorshipRequests: number;
+  closedMentorshipRequests: number;
+  totalMentorReviews: number;
+
+  // Resume review statistics
+  totalResumeReviews: number;
 }
 
 /**
