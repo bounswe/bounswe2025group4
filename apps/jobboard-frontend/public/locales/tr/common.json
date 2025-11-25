@@ -282,48 +282,48 @@
     },
     "applied": {
       "today": "Bugün baÅŸvuruldu",
-      "yesterday": "1 gÃ¼n Ã¶nce baÅŸvuruldu",
-      "daysAgo": "{{count}} gÃ¼n Ã¶nce baÅŸvuruldu"
+      "yesterday": "1 gün önce başvuruldu",
+      "daysAgo": "{{count}} gün önce başvuruldu"
     },
-    "backToDashboard": "Panele Geri DÃ¶n",
+    "backToDashboard": "Panele Geri Dön",
     "breadcrumb": {
-      "jobs": "Ä°lanlar"
+      "jobs": "İlanlar"
     },
-    "editJobPost": "Ä°lanÄ± DÃ¼zenle",
-    "jobDescription": "Ä°ÅŸ TanÄ±mÄ±",
-    "salaryRange": "MaaÅŸ AralÄ±ÄŸÄ±",
+    "editJobPost": "İlanı Düzenle",
+    "jobDescription": "İş Tanımı",
+    "salaryRange": "Maaş Aralığı",
     "location": "Konum",
     "remote": "Uzaktan",
-    "contact": "Ä°letiÅŸim Bilgileri",
+    "contact": "İletişim Bilgileri",
     "ethicalPolicies": "Etik Politikalar",
-    "inclusiveOpportunity": "KapsayÄ±cÄ± FÄ±rsat",
-    "inclusiveOpportunityDescription": "Bu pozisyon, farklÄ± geÃ§miÅŸlerden gelen adaylarÄ± memnuniyetle karÅŸÄ±layan kapsayÄ±cÄ± bir fÄ±rsat olarak belirlenmiÅŸtir.",
-    "applicationsReceived": "AlÄ±nan BaÅŸvurular ({{count}})",
-    "noApplications": "HenÃ¼z baÅŸvuru alÄ±nmadÄ±.",
-    "viewApplication": "BaÅŸvuruyu GÃ¶rÃ¼ntÃ¼le"
+    "inclusiveOpportunity": "Kapsayıcı Fırsat",
+    "inclusiveOpportunityDescription": "Bu pozisyon, farklı geçmişlerden gelen adayları memnuniyetle karşılayan kapsayıcı bir fırsat olarak belirlenmiştir.",
+    "applicationsReceived": "Alınan Başvurular ({{count}})",
+    "noApplications": "Henüz başvuru alınmadı.",
+    "viewApplication": "Başvuruyu Görüntüle"
   },
   "employerWorkplaces": {
-    "title": "Ä°ÅŸ Yerlerim",
-    "description": "Ä°ÅŸ yerlerinizi yÃ¶netin ve deÄŸerlendirmelere yanÄ±t verin",
-    "viewApplications": "BaÅŸvurularÄ± GÃ¶rÃ¼ntÃ¼le",
-    "newWorkplace": "Yeni Ä°ÅŸ Yeri",
-    "loadError": "Ä°ÅŸ yerleriniz yÃ¼klenemedi. LÃ¼tfen tekrar deneyin.",
+    "title": "İş Yerlerim",
+    "description": "İş yerlerinizi yönetin ve değerlendirmelere yanıt verin",
+    "viewApplications": "Başvuruları Görüntüle",
+    "newWorkplace": "Yeni İş Yeri",
+    "loadError": "İş yerleriniz yüklenemedi. Lütfen tekrar deneyin.",
     "empty": {
-      "title": "HenÃ¼z Ä°ÅŸ Yeri Yok",
-      "description": "Ä°lk iÅŸ yerinizi oluÅŸturun veya mevcut birine katÄ±lma isteÄŸi gÃ¶nderin"
+      "title": "Henüz İş Yeri Yok",
+      "description": "İlk iş yerinizi oluşturun veya mevcut birine katılma isteği gönderin"
     },
     "addNew": {
-      "title": "Yeni Ä°ÅŸ Yeri Ekle",
-      "description": "Yeni bir iÅŸ yeri oluÅŸturun veya mevcut birine katÄ±lÄ±n"
+      "title": "Yeni İş Yeri Ekle",
+      "description": "Yeni bir iş yeri oluşturun veya mevcut birine katılın"
     },
     "applicationsModal": {
-      "title": "Ä°ÅŸ Yeri BaÅŸvurularÄ±m",
-      "description": "Ä°ÅŸ yerlerini yÃ¶netme taleplerinizin durumunu gÃ¶rÃ¼ntÃ¼leyin.",
-      "loadError": "BaÅŸvurularÄ±nÄ±z yÃ¼klenemedi.",
-      "noApplications": "HenÃ¼z hiÃ§bir iÅŸ yerine baÅŸvurmadÄ±nÄ±z.",
-      "appliedOn": "{{date}} tarihinde baÅŸvuruldu",
+      "title": "İş Yeri Başvurularım",
+      "description": "İş yerlerini yönetme taleplerinizin durumunu görüntüleyin.",
+      "loadError": "Başvurularınız yüklenemedi.",
+      "noApplications": "Henüz hiçbir iş yerine başvurmadınız.",
+      "appliedOn": "{{date}} tarihinde başvuruldu",
       "note": "Not: {{note}}",
-      "updatedOn": "{{date}} tarihinde gÃ¼ncellendi"
+      "updatedOn": "{{date}} tarihinde güncellendi"
     },
     "workplaceLabel": "Ä°ÅŸ Yeri",
     "page": {
@@ -337,58 +337,58 @@
     "unknown": "Bilinmiyor"
   },
   "workplaces": {
-    "title": "Ä°ÅŸ Yerleri",
-    "description": "Åžirketleri kÃ¼ltÃ¼rleri ve deÄŸerlendirmeleri hakkÄ±nda daha fazla bilgi edinmek iÃ§in keÅŸfedin ve inceleyin",
-    "searchTitle": "Ä°ÅŸ Yeri Ara",
-    "searchPlaceholder": "Åžirket adÄ± girin...",
-    "searching": "AranÄ±yor...",
+    "title": "İş Yerleri",
+    "description": "Şirketleri kültürleri ve değerlendirmeleri hakkında daha fazla bilgi edinmek için keşfedin ve inceleyin",
+    "searchTitle": "İş Yeri Ara",
+    "searchPlaceholder": "Şirket adı girin...",
+    "searching": "Aranıyor...",
     "search": "Ara",
-    "loadError": "Ä°ÅŸ yerleri yÃ¼klenemedi. LÃ¼tfen tekrar deneyin.",
+    "loadError": "İş yerleri yüklenemedi. Lütfen tekrar deneyin.",
     "loading": "YÃ¼kleniyor...",
-    "workplacesFound": "{{count}} iÅŸ yeri bulundu",
-    "workplacesFound_plural": "{{count}} iÅŸ yeri bulundu",
+    "workplacesFound": "{{count}} iş yeri bulundu",
+    "workplacesFound_plural": "{{count}} iş yeri bulundu",
     "empty": {
-      "title": "Ä°ÅŸ Yeri BulunamadÄ±",
-      "adjustFilters": "Filtrelerinizi veya arama sorgunuzu ayarlamayÄ± deneyin",
-      "noWorkplaces": "Åžu anda mevcut iÅŸ yeri yok"
+      "title": "İş Yeri Bulunamadı",
+      "adjustFilters": "Filtrelerinizi veya arama sorgunuzu ayarlamayı deneyin",
+      "noWorkplaces": "Şu anda mevcut iş yeri yok"
     },
     "filters": {
       "title": "Filtreler",
       "clear": "Temizle",
       "clearFilters": "Filtreleri Temizle",
-      "sector": "SektÃ¶r",
-      "allSectors": "TÃ¼m SektÃ¶rler",
+      "sector": "Sektör",
+      "allSectors": "Tüm Sektörler",
       "location": "Konum",
       "locationPlaceholder": "Konum girin...",
-      "sortBy": "SÄ±rala",
+      "sortBy": "Sırala",
       "sortOptions": {
-        "default": "VarsayÄ±lan",
-        "nameDesc": "Isme gore (Z'den A'ya)",
-        "nameAsc": "Isme gore (A'dan Z'ye)",
-        "reviewCountDesc": "Yorum sayisi (Coktan aza)",
-        "reviewCountAsc": "Yorum sayisi (Azdan coka)",
-        "ratingDesc": "Puana gore (Yuksekten dusuge)",
-        "ratingAsc": "Puana gore (Dusukten yuksege)"
+        "default": "Varsayılan",
+        "nameDesc": "İsme göre (Z'den A'ya)",
+        "nameAsc": "İsme göre (A'dan Z'ye)",
+        "reviewCountDesc": "Yorum sayısı (Çoktan aza)",
+        "reviewCountAsc": "Yorum sayısı (Azdan çoğa)",
+        "ratingDesc": "Puana göre (Yüksekten aza)",
+        "ratingAsc": "Puana göre (Azdan yükseğe)"
       },
       "minRating": "Minimum Puan",
       "anyRating": "Herhangi",
-      "ratingWithValue": "{{rating}}â˜…"
+      "ratingWithValue": "{{rating}}★"
     }
   },
   "sectors": {
     "technology": "Teknoloji",
-    "healthcare": "SaÄŸlÄ±k",
-    "education": "EÄŸitim",
+    "healthcare": "Sağlık",
+    "education": "Eğitim",
     "finance": "Finans",
-    "creativearts": "YaratÄ±cÄ± Sanatlar",
+    "creativearts": "Yaratıcı Sanatlar",
     "manufacturing": "Ãœretim",
     "retail": "Perakende",
-    "consulting": "DanÄ±ÅŸmanlÄ±k",
-    "nonprofit": "Kar AmacÄ± GÃ¼tmeyen",
-    "other": "DiÄŸer"
+    "consulting": "Danışmanlık",
+    "nonprofit": "Kar Amacı Gütmeyen",
+    "other": "Diğer"
   },
   "pagination": {
-    "previous": "Ã–nceki",
+    "previous": "Önceki",
     "next": "Sonraki",
     "pageInfo": "Sayfa {{page}} / {{total}}"
   },
@@ -1239,7 +1239,8 @@
   "common": {
     "loading": "Yükleniyor...",
     "goHome": "Ana Sayfaya Git",
-    "edited": "Düzenlendi"
+    "edited": "Düzenlendi",
+    "search": "Ara"
   },
   "chat": {
     "conversations": "Sohbetler",

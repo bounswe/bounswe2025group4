@@ -1313,7 +1313,8 @@
     "visitWebsite": "Visit Website",
     "edited": "Edited",
     "cancel": "Cancel",
-    "optional": "Optional"
+    "optional": "Optional",
+    "search": "Search"
   },
   "chat": {
     "conversations": "Conversations",
