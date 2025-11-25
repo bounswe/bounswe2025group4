@@ -94,6 +94,8 @@ This is the easiest way to run the full stack (Backend, Frontend, Mobile Web, Da
     *   **Database**: localhost:5432
 
 The registration verifications and 2FA mails are disabled at local development environments for ease. You can use 000000 as 2FA code.
+It is suggested to select a mobile device from developer tools when using the mobile app on browser for best experience.
+If you want to use the apk file, see the below instructions for building an apk, or download the latest version from releases.
 
 ---
 
