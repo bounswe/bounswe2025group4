@@ -27,7 +27,7 @@ services:
       APP_RESET_PASSWORD_URL: http://localhost:5173/reset-password
       MAIL_USERNAME: apikey
       MAIL_PASSWORD: replace_with_actual_mail_password
-      APP_JWT_SECRET: c28c61e4dabc954e44c38803c47a7594
+      APP_JWT_SECRET: GsvmU2XXI6GF8WI5+XiFafU6aSYao6cyK1KP+WhfINM=
       APP_GCS_BUCKET: bounswe-jobboard
       APP_MAIL_FROM: sezer.cot@bumk1974.com
     volumes:
@@ -54,7 +54,7 @@ services:
     build:
       context: ./apps/jobboard-mobile
       args:
-        API_BASE_URL: http://localhost:8080
+        API_BASE_URL: http://localhost:8080/api
     container_name: jobboard-mobile-web
     ports:
       - "8081:80"
