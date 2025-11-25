@@ -53,6 +53,17 @@ export interface Profile {
   updatedAt: string;
 }
 
+export interface PublicProfile {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  bio?: string;
+  imageUrl?: string;
+  educations: Education[];
+  experiences: Experience[];
+  badges?: Badge[];
+}
+
 export interface Activity {
   id: number;
   type: 'application' | 'forum' | 'comment' | 'like';

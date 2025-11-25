@@ -11,10 +11,16 @@
     "nav": {
       "home": "Home",
       "jobs": "Jobs",
+      "nonProfitJobs": "Volunteer",
       "myApplications": "My Applications",
       "mentorship": "Mentorship",
+      "myMentorships": "My Mentorships",
+      "chat": "Chat",
       "forum": "Forum",
-      "employerDashboard": "Employer Dashboard"
+      "employerDashboard": "Employer Dashboard",
+      "workplaces": "Workplaces",
+      "myWorkplaces": "My Workplaces",
+      "browseWorkplaces": "Browse Workplaces"
     },
     "auth": {
       "login": "Login",
@@ -37,53 +43,69 @@
       "searchLabel": "Search for jobs",
       "searchPlaceholderDesktop": "Search for jobs, e.g. 'Software Engineer'",
       "searchPlaceholderMobile": "Search for jobs",
-      "searchButton": "Search"
+      "searchButton": "Search",
+      "discoverNonProfit": "Discover Non-Profit Opportunities"
     },
-    "quote": {
-      "title": "Daily Inspirational Quote",
-      "text": "The future belongs to those who believe in the beauty of their dreams.",
-      "author": "Eleanor Roosevelt"
-    },
-    "jobSeekers": {
-      "title": "For Job Seekers",
-      "description": "Empowering Your Career Journey. We provide the tools and resources you need to find a fulfilling career that aligns with your values.",
-      "cards": {
-        "ethical": {
-          "title": "Ethical Job Listings",
-          "description": "Browse a curated list of job openings from companies committed to ethical practices and social responsibility."
-        },
-        "resources": {
-          "title": "Career Development Resources",
-          "description": "Access resources to enhance your skills, including resume workshops, interview tips, and career coaching."
-        },
-        "community": {
-          "title": "Community Forum",
-          "description": "Engage with a community of like-minded professionals, share insights, and network with ethical leaders."
-        }
+    "stats": {
+      "title": "Our Community Impact",
+      "subtitle": "Real numbers that showcase our growing community of ethical professionals and employers",
+      "loading": "Loading statistics...",
+      "error": "Unable to load statistics",
+      "retry": "Try Again",
+      "users": {
+        "title": "Community Members",
+        "total": "Total Members",
+        "employers": "Employers",
+        "jobSeekers": "Job Seekers"
+      },
+      "jobs": {
+        "title": "Job Opportunities",
+        "total": "Total Jobs",
+        "remote": "Remote Positions",
+        "inclusive": "Inclusive Opportunities",
+        "newThisWeek": "New This Week"
+      },
+      "applications": {
+        "title": "Applications",
+        "total": "Total Applications",
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "rejected": "Rejected"
+      },
+      "mentorship": {
+        "title": "Mentorship Program",
+        "mentors": "Active Mentors",
+        "accepted": "Active Mentorships",
+        "pending": "Pending Requests",
+        "completed": "Completed",
+        "reviews": "Reviews Given"
       }
     },
-    "employers": {
-      "title": "For Employers",
-      "description": "Building a Better Workforce. Connect with talented individuals who are passionate about making a difference.",
-      "cards": {
-        "talent": {
-          "title": "Attract Top Talent",
-          "description": "Connect with purpose-driven professionals who are passionate about making a difference."
-        },
-        "values": {
-          "title": "Showcase Your Values",
-          "description": "Highlight your company's commitment to ethics, sustainability, and social impact."
-        },
-        "brand": {
-          "title": "Build a Stronger Brand",
-          "description": "Enhance your reputation and attract customers who value ethical business practices."
-        }
+    "features": {
+      "title": "Why Choose Ethica Jobs?",
+      "subtitle": "We connect ethical employers with purpose-driven professionals",
+      "ethical": {
+        "title": "Ethical First",
+        "description": "Every employer on our platform is committed to ethical practices and social responsibility."
+      },
+      "inclusive": {
+        "title": "Inclusive Opportunities",
+        "description": "We highlight positions that welcome candidates from all backgrounds and abilities."
+      },
+      "mentorship": {
+        "title": "Mentorship Network",
+        "description": "Connect with experienced professionals who can guide your career journey."
+      },
+      "community": {
+        "title": "Supportive Community",
+        "description": "Join forums, share insights, and network with like-minded professionals."
       }
     },
     "cta": {
-      "title": "Join the Ethical Careers Community",
-      "description": "Sign up today to start your journey towards a more meaningful and impactful career.",
-      "button": "Get Started"
+      "title": "Ready to Join Our Community?",
+      "description": "Create your free account today and discover purpose-driven career opportunities.",
+      "signUp": "Sign Up Now",
+      "login": "Already have an account? Log In"
     }
   },
   "jobs": {
@@ -92,7 +114,7 @@
     "searchAria": "Search jobs",
     "clearSearch": "Clear search",
     "error": "Failed to load jobs. Please try again later.",
-    "retry": "Try Again",
+    "retry": "Retry",
     "results": "{{count}} job found",
     "results_plural": "{{count}} jobs found",
     "resultsDescription": "{{count}} opportunities match your current filters.",
@@ -104,6 +126,41 @@
       "invitation": "Join Ethica Jobs today and discover purpose-driven career opportunities that align with your values!",
       "signUp": "Create Account",
       "login": "Already have an account? Login"
+    }
+  },
+  "nonProfitJobs": {
+    "pageTitle": "Opportunities for the Greater Good",
+    "pageDescription": "Not every reward is monetary. These volunteer and purpose-driven roles exist to make a difference — for people, for the planet, and for the future. Whether it's planting trees, helping local communities, or contributing your skills to social causes, every action here counts toward something bigger than ourselves.",
+    "volunteerOpportunity": "Volunteer",
+    "makingADifference": "Making a Difference",
+    "features": {
+      "meaningful": "Meaningful Work",
+      "sustainable": "Sustainable Impact",
+      "community": "Community Focus"
+    },
+    "availableOpportunities": "{{count}} opportunity available",
+    "availableOpportunities_plural": "{{count}} opportunities available",
+    "opportunitiesDescription": "{{count}} ways to make a positive impact in your community and beyond.",
+    "noOpportunities": "No volunteer opportunities available at the moment",
+    "checkBackSoon": "Check back soon for new ways to make a difference in your community.",
+    "browseRegularJobs": "Browse Regular Jobs",
+    "volunteer": "Volunteer",
+    "backToOpportunities": "Back to Opportunities",
+    "volunteerNow": "Volunteer Now",
+    "aboutOrganization": "About the Organization",
+    "opportunityDescription": "Opportunity Description",
+    "makeADifferenceDescription": "Join us in creating meaningful change through volunteer work that makes a real difference in communities and causes you care about.",
+    "defaultDescription": "Make a meaningful impact through volunteer work that contributes to environmental sustainability, community development, and social justice initiatives.",
+    "whatYouGain": {
+      "title": "What You'll Gain",
+      "experience": "Valuable hands-on experience in your field of interest",
+      "networking": "Networking opportunities with like-minded individuals",
+      "skills": "Development of new skills and competencies",
+      "impact": "Direct contribution to meaningful social causes",
+      "purpose": "A sense of purpose and personal fulfillment"
+    },
+    "authRequired": {
+      "description": "You need to create an account to view volunteer opportunities and connect with meaningful organizations."
     }
   },
   "jobFilters": {
@@ -169,7 +226,8 @@
   },
   "jobCard": {
     "remote": "Remote",
-    "inclusiveOpportunity": "Inclusive Opportunity"
+    "inclusiveOpportunity": "Inclusive Opportunity",
+    "notSpecified": "Location not specified"
   },
   "mobileFilters": {
     "open": "Open filters",
@@ -196,6 +254,9 @@
     "inclusiveOpportunity": "Inclusive Opportunity",
     "contact": {
       "title": "Contact Information"
+    },
+    "workplace": {
+      "title": "About the Company"
     }
   },
   "employerDashboard": {
@@ -208,11 +269,25 @@
       "support": "Help and Support"
     },
     "title": "Employer Dashboard",
+    "subtitle": "Manage your job postings and workplaces",
     "currentPostings": "Current Job Postings",
-    "createJob": "Create New Job Posting",
+    "createJob": "Post New Job",
     "loadingError": "Failed to load job postings. Please try again later.",
-    "emptyState": "You haven't created any job postings yet.",
-    "emptyCta": "Create Your First Job Posting",
+    "emptyState": "No job postings yet",
+    "emptyCta": "Post Your First Job",
+    "addWorkplace": "Add Workplace",
+    "joinWorkplace": "Join Workplace",
+    "unassignedJobs": "Unassigned Jobs",
+    "jobCount": "jobs",
+    "jobCount_one": "job",
+    "noJobsInWorkplace": "No job postings yet",
+    "createJobForWorkplace": "Post Your First Job",
+    "noWorkplaces": {
+      "title": "No Workplaces Yet",
+      "description": "Create a workplace or join an existing one to start posting jobs.",
+      "createWorkplace": "Create Workplace",
+      "joinWorkplace": "Join Workplace"
+    },
     "table": {
       "jobTitle": "Job Title",
       "status": "Status",
@@ -239,7 +314,7 @@
     },
     "applied": {
       "today": "Applied today",
-      "yesterday": "Applied 1 day ago",
+      "yesterday": "Applied yesterday",
       "daysAgo": "Applied {{count}} days ago"
     },
     "backToDashboard": "Back to Dashboard",
@@ -247,6 +322,12 @@
       "jobs": "Jobs"
     },
     "editJobPost": "Edit Job Post",
+    "loadError": "Failed to load job details. Please try again later.",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "submitError": "Failed to update job posting. Please try again.",
+    "cancel": "Cancel",
+    "saving": "Saving...",
     "jobDescription": "Job Description",
     "salaryRange": "Salary Range",
     "location": "Location",
@@ -254,10 +335,100 @@
     "contact": "Contact Information",
     "ethicalPolicies": "Ethical Policies",
     "inclusiveOpportunity": "Inclusive Opportunity",
-    "inclusiveOpportunityDescription": "This position is designated as an inclusive opportunity, welcoming candidates from diverse backgrounds.",
+    "inclusiveOpportunityDescription": "This position welcomes candidates from diverse backgrounds.",
     "applicationsReceived": "Applications Received ({{count}})",
-    "noApplications": "No applications received yet.",
+    "noApplications": "No applications yet.",
     "viewApplication": "View Application"
+  },
+  "employerWorkplaces": {
+    "title": "My Workplaces",
+    "description": "Manage your workplaces and respond to reviews",
+    "viewApplications": "View Applications",
+    "newWorkplace": "New Workplace",
+    "loadError": "Failed to load your workplaces. Please try again.",
+    "empty": {
+      "title": "No Workplaces Yet",
+      "description": "Create your first workplace or request to join an existing one"
+    },
+    "addNew": {
+      "title": "Add New Workplace",
+      "description": "Create a new workplace or join an existing one"
+    },
+    "applicationsModal": {
+      "title": "My Workplace Applications",
+      "description": "View the status of your requests to manage workplaces.",
+      "loadError": "Could not load your applications.",
+      "noApplications": "You have not applied to any workplaces yet.",
+      "appliedOn": "Applied on {{date}}",
+      "note": "Note: {{note}}",
+      "updatedOn": "Updated {{date}}"
+    },
+    "workplaceLabel": "Workplace",
+    "page": {
+      "loadError": "Failed to load your workplaces"
+    }
+  },
+  "status": {
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "unknown": "Unknown"
+  },
+  "workplaces": {
+    "title": "Workplaces",
+    "description": "Explore and discover companies to learn more about their culture and ratings",
+    "searchTitle": "Search Workplaces",
+    "searchPlaceholder": "Enter company name...",
+    "searching": "Searching...",
+    "search": "Search",
+    "loadError": "Failed to load workplaces. Please try again.",
+    "loading": "Loading...",
+    "workplacesFound": "{{count}} workplace found",
+    "workplacesFound_plural": "{{count}} workplaces found",
+    "empty": {
+      "title": "No Workplaces Found",
+      "adjustFilters": "Try adjusting your filters or search query",
+      "noWorkplaces": "There are no workplaces available at the moment"
+    },
+    "filters": {
+      "title": "Filters",
+      "clear": "Clear",
+      "clearFilters": "Clear Filters",
+      "sector": "Sector",
+      "allSectors": "All Sectors",
+      "location": "Location",
+      "locationPlaceholder": "Enter location...",
+      "sortBy": "Sort By",
+      "sortOptions": {
+        "default": "Default",
+        "nameDesc": "Name (Z to A)",
+        "nameAsc": "Name (A to Z)",
+        "reviewCountDesc": "Review Count (High to Low)",
+        "reviewCountAsc": "Review Count (Low to High)",
+        "ratingDesc": "Rating (High to Low)",
+        "ratingAsc": "Rating (Low to High)"
+      },
+      "minRating": "Minimum Rating",
+      "anyRating": "Any",
+      "ratingWithValue": "{{rating}}★"
+    }
+  },
+  "sectors": {
+    "technology": "Technology",
+    "healthcare": "Healthcare",
+    "education": "Education",
+    "finance": "Finance",
+    "creativearts": "Creative Arts",
+    "manufacturing": "Manufacturing",
+    "retail": "Retail",
+    "consulting": "Consulting",
+    "nonprofit": "Non-profit",
+    "other": "Other"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {{page}} of {{total}}"
   },
   "auth": {
     "login": {
@@ -276,6 +447,10 @@
         "serviceUnavailable": "Service temporarily unavailable. Please try again later or contact support.",
         "invalidCredentials": "Invalid username or password. Please try again.",
         "generic": "Login failed. Please try again."
+      },
+      "notifications": {
+        "loginSuccess": "Login successful! Redirecting...",
+        "2faRequired": "Two-factor authentication required. Please check your email."
       }
     },
     "register": {
@@ -361,7 +536,332 @@
       "errors": {
         "invalid": "Invalid or expired OTP code. Please try again.",
         "generic": "OTP verification failed. Please try again."
+      },
+      "success": "OTP verification successful! You are now logged in."
+    }
+  },
+  "mentorship": {
+    "title": "Find a Mentor",
+    "subtitle": "Find experienced mentors to guide your career",
+    "searchPlaceholder": "Search mentors by name, expertise, or skills...",
+    "noResults": "No mentors found. Try adjusting your search.",
+    "becomeMentor": "Become a Mentor",
+    "viewMyProfile": "View My Profile",
+    "authRequired": {
+      "title": "Account Required",
+      "description": "You need to create an account to view mentors and request mentorship. Join Ethica Jobs today and connect with experienced professionals!",
+      "invitation": "Create your free account now and start your mentorship journey.",
+      "viewMore": "Sign up to view all available mentors",
+      "signUp": "Create Account",
+      "login": "Already have an account? Log In"
+    },
+    "card": {
+      "reviews": "reviews",
+      "mentoring": "Mentoring",
+      "hour": "hour",
+      "more": "more",
+      "viewProfile": "View Profile",
+      "request": "Request",
+      "requested": "Requested",
+      "full": "Full"
+    },
+    "createMentorProfile": {
+      "title": "Become a Mentor",
+      "subtitle": "Create your mentor profile to help others grow in their careers",
+      "expertise": "Expertise",
+      "expertiseHint": "Add your areas of expertise (e.g., React, TypeScript, Product Management)",
+      "expertisePlaceholder": "Enter expertise area",
+      "expertiseRequired": "Please add at least one area of expertise",
+      "profileIncompleteTitle": "Complete Your Profile First",
+      "profileIncompleteMessage": "Please complete your profile (add a bio) before becoming a mentor.",
+      "completeProfile": "Complete Profile",
+      "profileRequired": "Please complete your profile first",
+      "profileBioRequired": "Please add a bio to your profile first",
+      "add": "Add",
+      "bio": "About",
+      "bioHint": "Tell potential mentees about yourself and your mentoring approach",
+      "bioPlaceholder": "I have 10 years of experience in software development and I'm passionate about helping new developers grow...",
+      "bioRequired": "About is required",
+      "experience": "Experience",
+      "experienceHint": "Describe your professional experience and background",
+      "experiencePlaceholder": "10+ years in software development, worked at...",
+      "education": "Education",
+      "educationHint": "Your educational background",
+      "educationPlaceholder": "e.g., MS Computer Science, Stanford University",
+      "languages": "Languages",
+      "languagesHint": "Languages you can mentor in",
+      "languagesPlaceholder": "Enter language",
+      "achievements": "Key Achievements",
+      "achievementsHint": "Add your notable achievements and accomplishments",
+      "achievementsPlaceholder": "e.g., Led development of major product, Published articles",
+      "linkedinUrl": "LinkedIn URL",
+      "linkedinUrlPlaceholder": "https://linkedin.com/in/yourprofile",
+      "githubUrl": "GitHub URL",
+      "githubUrlPlaceholder": "https://github.com/yourusername",
+      "websiteUrl": "Website URL",
+      "websiteUrlPlaceholder": "https://yourwebsite.com",
+      "hourlyRate": "Hourly Rate (Optional)",
+      "hourlyRateHint": "If you charge for mentorship, specify your hourly rate",
+      "hourlyRatePlaceholder": "e.g., 150",
+      "availability": "Availability",
+      "availabilityHint": "When are you available for mentorship sessions?",
+      "availabilityPlaceholder": "e.g., Monday-Friday, 6-9 PM PST",
+      "selectDays": "Select Available Days",
+      "timeStart": "Start Time",
+      "timeEnd": "End Time",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
+      "maxMentees": "Maximum Number of Mentees",
+      "maxMenteesHint": "How many mentees can you mentor at the same time?",
+      "maxMenteesPlaceholder": "e.g., 5",
+      "maxMenteesInvalid": "Please enter a valid number (minimum 1)",
+      "step1Title": "Basic Information",
+      "step2Title": "Additional Details",
+      "next": "Next",
+      "back": "Back",
+      "submit": "Create Mentor Profile",
+      "submitting": "Creating...",
+      "update": "Update Profile",
+      "updating": "Updating...",
+      "editTitle": "Edit Mentor Profile",
+      "editSubtitle": "Update your mentor profile information",
+      "updateSuccess": "Mentor profile updated successfully!",
+      "errorLoading": "Failed to load mentor profile",
+      "cancel": "Cancel",
+      "success": "Mentor profile created successfully!",
+      "error": "Failed to create mentor profile",
+      "checking": "Checking for existing profile...",
+      "alreadyExists": "You already have a mentor profile. Please update your existing profile instead.",
+      "alreadyExistsTitle": "Mentor Profile Already Exists",
+      "alreadyExistsMessage": "You already have a mentor profile. To update your profile, please use the edit option.",
+      "viewProfile": "View My Profile",
+      "backToMentors": "Back to Mentors"
+    },
+    "profile": {
+      "reviews": "reviews",
+      "remote": "Remote",
+      "hour": "hour",
+      "website": "Website",
+      "requestMentorship": "Request Mentorship",
+      "unavailable": "Currently Unavailable",
+      "editProfile": "Edit Profile",
+      "viewProfile": "View Profile",
+      "about": "About",
+      "experience": "Experience",
+      "keyAchievements": "Key Achievements",
+      "education": "Education",
+      "specialties": "Specialties",
+      "languages": "Languages",
+      "reviewsTitle": "Reviews ({{count}})",
+      "mentorshipStats": "Mentorship Stats",
+      "currentMentees": "Current Mentees",
+      "totalReviews": "Total Reviews",
+      "averageRating": "Average Rating",
+      "skillsTechnologies": "Skills & Technologies",
+      "requests": "Mentorship Requests",
+      "mentorshipRequests": "Mentorship Requests",
+      "pendingRequests": "Pending Requests",
+      "viewAllRequests": "View All Requests",
+      "noPendingRequests": "No pending requests",
+      "activeMentees": "Active Mentees",
+      "chat": "Chat",
+      "viewAllMentees": "View All Mentees",
+      "noActiveMentees": "No active mentees yet.",
+      "notFound": "Mentor profile not found.",
+      "viewMentorship": "View My Mentorship",
+      "noSpecialties": "No specialties specified",
+      "noLanguages": "No languages specified",
+      "viewProfile": "View Profile",
+      "complete": "Complete",
+      "completing": "Completing...",
+      "completeSuccess": "Mentorship completed successfully!",
+      "completedMentorships": "Completed Mentorships",
+      "alreadyRequested": "You already have a pending or active mentorship request with this mentor.",
+      "requestSent": "Mentorship request sent successfully!",
+      "requestError": "Failed to send mentorship request",
+      "requesting": "Sending...",
+      "reviewResume": "Review Resume"
+    },
+    "resumeReview": {
+      "title": {
+        "mentee": "Upload Resume",
+        "mentor": "Review Resume"
+      },
+      "subtitle": {
+        "mentee": "Upload your resume for mentor review",
+        "mentor": "Review and provide feedback on the mentee's resume"
+      },
+      "breadcrumb": {
+        "myMentorships": "My Mentorships",
+        "resumeReview": "Resume Review"
+      },
+      "back": "Back",
+      "backToMentorships": "Back to My Mentorships",
+      "notFound": "Resume Review Not Found",
+      "status": {
+        "active": "Active",
+        "completed": "Completed",
+        "closed": "Closed"
+      },
+      "openChat": "Open Chat",
+      "resume": "Resume",
+      "downloadResume": "Download Resume",
+      "noResume": "No resume uploaded yet",
+      "selectFile": "Select File",
+      "upload": "Upload Resume",
+      "uploadNew": "Upload New Resume",
+      "uploading": "Uploading...",
+      "feedback": "Feedback",
+      "writeFeedback": "Write your feedback",
+      "feedbackPlaceholder": "Provide constructive feedback on the resume...",
+      "saveFeedback": "Save Feedback",
+      "saving": "Saving...",
+      "currentFeedback": "Current Feedback:",
+      "feedbackFromMentor": "Feedback from your mentor:",
+      "waitingForFeedback": "Waiting for mentor feedback...",
+      "feedbackNote": "Note: Feedback feature is coming soon. Please provide feedback via chat for now.",
+      "feedback.info": "Feedback feature is coming soon. Please provide feedback via chat for now.",
+      "noFeedback": "No feedback provided yet",
+      "actions": "Actions",
+      "complete": "Complete Mentorship",
+      "completing": "Completing...",
+      "close": "Close Mentorship",
+      "closing": "Closing...",
+      "success": {
+        "upload": "Resume uploaded successfully!",
+        "feedback": "Feedback saved successfully!",
+        "complete": "Mentorship completed successfully!",
+        "close": "Mentorship closed successfully!"
+      },
+      "error": {
+        "load": "Failed to load resume review",
+        "upload": "Failed to upload resume",
+        "feedback": "Failed to save feedback",
+        "invalidFileType": "Invalid file type. Please upload PDF, DOC, or DOCX files.",
+        "fileTooLarge": "File size must be less than 10MB.",
+        "complete": "Failed to complete mentorship",
+        "close": "Failed to close mentorship"
+      },
+      "info": {
+        "title": {
+          "mentee": "About Resume Upload",
+          "mentor": "About Resume Review"
+        },
+        "description": {
+          "mentee": "Upload your resume for your mentor to review. You can update it anytime.",
+          "mentor": "Review the mentee's resume and provide feedback. You can complete or close the mentorship when done."
+        }
       }
+    },
+    "errors": {
+      "timeout": "Connection timeout. Please check if the backend server is running.",
+      "networkError": "Cannot connect to server. Please check if the backend is running.",
+      "loadFailed": "Failed to load mentors. Please try again later.",
+      "loadMentorshipsFailed": "Failed to load mentorships. Please try again later.",
+      "completeFailed": "Failed to complete mentorship. Please try again.",
+      "reviewFailed": "Failed to submit review. Please try again.",
+      "genericError": "An error occurred. Please try again later."
+    },
+    "request": {
+      "backToProfile": "Back to Mentor Profile",
+      "title": "Request Mentorship",
+      "subtitle": "Send a mentorship request to {{mentorName}}",
+      "reviews": "reviews",
+      "mentoring": "Mentoring",
+      "specialties": "Specialties",
+      "fullCapacity": "This mentor is currently at full capacity",
+      "formTitle": "Mentorship Request",
+      "formDescription": "Tell the mentor about your goals and what you hope to achieve through mentorship.",
+      "messageLabel": "Message to Mentor",
+      "messagePlaceholder": "Hi, I'm interested in learning React and TypeScript. I have some experience with JavaScript but would love to get better at building scalable applications...",
+      "messageHint": "Introduce yourself and explain why you're interested in mentorship with this mentor.",
+      "goalsLabel": "Learning Goals",
+      "goalsPlaceholder": "1. Master React hooks and state management\n2. Learn TypeScript best practices\n3. Improve system design skills\n4. Prepare for senior developer interviews",
+      "goalsHint": "List your specific learning objectives and what you want to achieve.",
+      "durationLabel": "Expected Mentorship Duration",
+      "durationPlaceholder": "e.g., 3 months, 6 months, 1 year",
+      "timeLabel": "Preferred Meeting Time",
+      "timePlaceholder": "e.g., Weekends, Weekday evenings, Flexible",
+      "timeHint": "Select your preferred days and time for mentorship sessions",
+      "resumeLabel": "Resume/CV URL (Optional)",
+      "resumePlaceholder": "https://your-resume.com or Google Drive link",
+      "resumeHint": "Share your resume to help the mentor understand your background better.",
+      "sendRequest": "Send Mentorship Request",
+      "sendingRequest": "Sending Request...",
+      "cancel": "Cancel",
+      "successMessage": "Mentorship request sent successfully!",
+      "errorMessage": "Failed to send mentorship request. Please try again.",
+      "alreadyExists": "You already have a pending or accepted request for this mentor.",
+      "userNotAuthenticated": "You must be logged in to send a mentorship request"
+    },
+    "myMentorships": {
+      "title": "My Mentorships",
+      "subtitle": "Track your mentorship requests and active mentorships",
+      "successMessage": "Mentorship request sent successfully to {{mentorName}}!",
+      "active": "Active",
+      "pending": "Pending",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "noActive": "No Active Mentorships",
+      "noActiveDesc": "You don't have any active mentorships yet. Find a mentor to get started!",
+      "noPending": "No Pending Requests",
+      "noPendingDesc": "You don't have any pending mentorship requests.",
+      "noCompleted": "No Completed Mentorships",
+      "noCompletedDesc": "You haven't completed any mentorships yet.",
+      "noRejected": "No Rejected Requests",
+      "noRejectedDesc": "You don't have any rejected mentorship requests.",
+      "findMentors": "Find Mentors",
+      "started": "Started",
+      "accepted": "Accepted",
+      "duration": "Duration",
+      "learningGoals": "Learning Goals",
+      "openChat": "Open Chat",
+      "writeReview": "Write Review",
+      "viewProfile": "View Profile",
+      "uploadResume": "Upload Resume",
+      "waitingForResponse": "Waiting for Response",
+      "viewDetails": "View Details",
+      "complete": "Complete Mentorship",
+      "completing": "Completing...",
+      "completeSuccess": "Mentorship completed successfully! You can now write a review.",
+      "completeError": "Cannot complete mentorship: Review ID not found",
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "active": "Active",
+        "completed": "Completed"
+      }
+    },
+    "mentorRequests": {
+      "title": "Mentorship Requests",
+      "subtitle": "View and manage mentorship requests from mentees",
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "mentee": "Mentee",
+      "requested": "Requested",
+      "accept": "Accept",
+      "reject": "Reject",
+      "processing": "Processing...",
+      "acceptSuccess": "Request accepted successfully!",
+      "rejectSuccess": "Request rejected.",
+      "acceptedMessage": "You have accepted this mentorship request.",
+      "rejectedMessage": "You have rejected this mentorship request.",
+      "noPending": "No Pending Requests",
+      "noPendingDesc": "You don't have any pending mentorship requests.",
+      "noAccepted": "No Accepted Requests",
+      "noAcceptedDesc": "You haven't accepted any mentorship requests yet.",
+      "noRejected": "No Rejected Requests",
+      "noRejectedDesc": "You don't have any rejected mentorship requests.",
+      "viewProfile": "View Profile"
     }
   },
   "profile": {
@@ -369,6 +869,26 @@
       "about": "About",
       "activity": "Activity",
       "posts": "Posts"
+    },
+    "create": {
+      "title": "Create Your Profile",
+      "description": "Welcome! Let's create your professional profile to get started.",
+      "fields": {
+        "firstName": {
+          "label": "First Name",
+          "placeholder": "Enter your first name"
+        },
+        "lastName": {
+          "label": "Last Name",
+          "placeholder": "Enter your last name"
+        },
+        "bio": {
+          "label": "Bio (Optional)",
+          "placeholder": "Tell us about yourself..."
+        }
+      },
+      "helper": "Share a brief description about yourself and your professional background",
+      "submit": "Create Profile"
     },
     "page": {
       "loadErrorTitle": "Failed to load profile",
@@ -387,6 +907,8 @@
       "openToOpportunities": "Open to opportunities",
       "currentRole": "{{position}} at {{company}}",
       "joined": "Joined in {{year}}",
+      "posts": "posts",
+      "badges": "badges",
       "stats": {
         "posts": "Posts",
         "badges": "Badges"
@@ -408,6 +930,7 @@
     "about": {
       "title": "About",
       "addBio": "Add bio",
+      "noBio": "No bio available",
       "modal": {
         "title": "Edit About",
         "bioLabel": "Bio",
@@ -418,6 +941,7 @@
     "experience": {
       "title": "Experience",
       "empty": "Add experience",
+      "noExperience": "No work experience available",
       "modal": {
         "addTitle": "Add Experience",
         "editTitle": "Edit Experience",
@@ -451,6 +975,7 @@
     "education": {
       "title": "Education",
       "empty": "Add education",
+      "noEducation": "No education information available",
       "modal": {
         "addTitle": "Add Education",
         "editTitle": "Edit Education",
@@ -488,6 +1013,7 @@
     "skills": {
       "title": "Skills",
       "empty": "Add skills",
+      "noSkills": "No skills listed",
       "modal": {
         "addTitle": "Add Skill",
         "editTitle": "Edit Skill",
@@ -505,6 +1031,7 @@
     "interests": {
       "title": "Interests",
       "empty": "Add interests",
+      "noInterests": "No interests listed",
       "modal": {
         "addTitle": "Add Interest",
         "editTitle": "Edit Interest",
@@ -577,6 +1104,36 @@
       "confirmationLabel": "Confirmation",
       "confirmationPlaceholder": "Type {{keyword}} to confirm"
     },
+    "notifications": {
+      "createSuccess": "Profile created successfully!",
+      "createError": "Failed to create profile. Please try again.",
+      "imageUploadSuccess": "Profile image uploaded successfully.",
+      "imageUploadError": "Failed to upload profile image.",
+      "imageDeleteSuccess": "Profile image deleted successfully.",
+      "imageDeleteError": "Failed to delete profile image.",
+      "deleteExperienceSuccess": "Experience deleted successfully.",
+      "deleteExperienceError": "Failed to delete experience.",
+      "deleteEducationSuccess": "Education deleted successfully.",
+      "deleteEducationError": "Failed to delete education.",
+      "deleteSkillSuccess": "Skill deleted successfully.",
+      "deleteSkillError": "Failed to delete skill.",
+      "deleteInterestSuccess": "Interest deleted successfully.",
+      "deleteInterestError": "Failed to delete interest.",
+      "saveBioSuccess": "Bio updated successfully.",
+      "saveBioError": "Failed to update bio.",
+      "saveExperienceSuccess": "Experience saved successfully.",
+      "saveExperienceError": "Failed to save experience.",
+      "saveEducationSuccess": "Education saved successfully.",
+      "saveEducationError": "Failed to save education.",
+      "saveSkillSuccess": "Skill saved successfully.",
+      "saveSkillError": "Failed to save skill.",
+      "saveInterestSuccess": "Interest saved successfully.",
+      "saveInterestError": "Failed to save interest.",
+      "deleteAccountSuccess": "All profile data has been deleted."
+    },
+    "public": {
+      "note": "This is a public profile view. Skills and interests are not displayed for privacy."
+    },
     "activity": {
       "items": [
         {
@@ -610,21 +1167,7 @@
       "replyLabel": "{{value}} reply",
       "repliesLabel": "{{value}} replies",
       "likeLabel": "{{value}} like",
-      "likesLabel": "{{value}} likes",
-      "items": [
-        {
-          "title": "How to improve user research techniques",
-          "date": "3 days ago"
-        },
-        {
-          "title": "My journey into product design",
-          "date": "1 week ago"
-        },
-        {
-          "title": "Tools I use daily as a designer",
-          "date": "2 weeks ago"
-        }
-      ]
+      "likesLabel": "{{value}} likes"
     }
   },
   "jobApplication": {
@@ -690,25 +1233,75 @@
       "backToJobs": "Back to Jobs"
     }
   },
+  "nonProfitApplication": {
+    "title": "Volunteer for {{jobTitle}}",
+    "breadcrumb": {
+      "apply": "Apply"
+    },
+    "opportunityDetails": {
+      "title": "Volunteer Opportunity Details",
+      "organization": "Organization",
+      "location": "Location",
+      "type": "Type",
+      "volunteer": "Volunteer Opportunity",
+      "postedOn": "Posted on {{date}}"
+    },
+    "form": {
+      "title": "Volunteer Application",
+      "subtitle": "Share your passion for making a difference and tell us why you'd like to volunteer with this organization.",
+      "motivationLetter": {
+        "label": "Motivation Letter",
+        "placeholder": "Tell us why you're passionate about this cause and how you'd like to contribute...",
+        "characterCount": "{{count}}/2000 characters"
+      },
+      "specialNeeds": {
+        "label": "Accessibility Requirements",
+        "placeholder": "Please describe any accommodations or accessibility requirements you may need...",
+        "characterCount": "{{count}}/500 characters"
+      },
+      "cv": {
+        "label": "Resume/CV",
+        "required": "Please upload your resume or CV",
+        "dragDrop": "Drag and drop your resume here or click to browse",
+        "chooseFile": "Choose File",
+        "fileTypes": "PDF, DOC, or DOCX up to 10MB"
+      },
+      "cancel": "Cancel",
+      "submit": "Submit Volunteer Application",
+      "submitting": "Submitting..."
+    },
+    "success": {
+      "message": "Your volunteer application has been submitted successfully!"
+    },
+    "errors": {
+      "loadJob": "Failed to load volunteer opportunity details",
+      "submitFailed": "Failed to submit volunteer application. Please try again.",
+      "fileTooLarge": "File size must be less than 10MB",
+      "invalidFileType": "Invalid file type. Please upload PDF, DOC, or DOCX",
+      "alreadyApplied": "You have already applied for this volunteer opportunity."
+    }
+  },
   "jobApplicationReview": {
     "noCv": "No CV found for this application",
     "error": {
       "load": "Failed to load application details. Please try again later.",
-      "approve": "Failed to approve application. Please try again.",
-      "reject": "Failed to reject application. Please try again.",
+      "approve": "Error approving application. Please try again.",
+      "reject": "Error rejecting application. Please try again.",
       "title": "Error Loading Application"
     },
-    "applied": {
-      "today": "today",
-      "yesterday": "1 day ago",
-      "daysAgo": "{{count}} days ago"
+    "success": {
+      "approve": "Application approved successfully.",
+      "reject": "Application rejected successfully."
     },
+    "applied": "Applied",
+    "appliedToday": "Today",
+    "appliedYesterday": "Yesterday",
+    "appliedDaysAgo": "{{count}} days ago",
     "backToJob": "Back to Job",
     "title": "Application for {{jobTitle}}",
     "atCompany": "at {{company}}",
     "applicantInfo": "Applicant Information",
     "status": "Status",
-    "applied": "Applied",
     "coverLetter": "Cover Letter",
     "specialNeeds": "Special Needs or Accommodations",
     "cv": "CV / Resume",
@@ -790,6 +1383,15 @@
   "createJob": {
     "title": "Create Job Posting",
     "subtitle": "Post a new job opportunity and find the perfect candidate",
+    "workplace": "Workplace",
+    "workplaceDescription": "Select the workplace this job belongs to",
+    "workplaceRequired": "Please select a workplace for this job posting",
+    "noWorkplaces": {
+      "title": "No Workplaces Available",
+      "description": "You need to be part of a workplace to create job postings. Create a new workplace or request to join an existing one.",
+      "createWorkplace": "Create Workplace",
+      "joinWorkplace": "Join Workplace"
+    },
     "jobTitle": "Job Title",
     "jobTitlePlaceholder": "e.g., Senior Software Engineer",
     "jobDescription": "Job Description",
@@ -800,6 +1402,8 @@
     "locationPlaceholder": "e.g., New York, NY or Remote",
     "remoteWork": "Remote Work Available",
     "remoteWorkDescription": "Check if this position offers remote work options",
+    "nonProfit": "Non-Profit Organization",
+    "nonProfitDescription": "Mark this as a volunteer opportunity from a non-profit organization focused on social impact",
     "salaryRange": "Salary Range",
     "minimum": "Minimum",
     "maximum": "Maximum",
@@ -814,6 +1418,306 @@
     "inclusiveOpportunityDescription": "Mark this position as an inclusive opportunity, welcoming candidates from diverse backgrounds and abilities",
     "submit": "Publish Job Posting",
     "submitting": "Publishing...",
-    "submitError": "Failed to create job posting. Please try again."
+    "saving": "Saving...",
+    "submitError": "Failed to create job posting. Please try again.",
+    "submitSuccess": "Job post created successfully!"
+  },
+  "myMentorships": {
+    "title": "My Mentorships",
+    "subtitle": "Track your mentorship requests and active mentorships",
+    "successMessage": "Mentorship request sent successfully to {{mentorName}}!",
+    "active": "Active",
+    "pending": "Pending",
+    "completed": "Completed",
+    "rejected": "Rejected",
+    "noActive": "No Active Mentorships",
+    "noActiveDesc": "You don't have any active mentorships yet. Find a mentor to get started!",
+    "noPending": "No Pending Requests",
+    "noPendingDesc": "You don't have any pending mentorship requests.",
+    "noCompleted": "No Completed Mentorships",
+    "noCompletedDesc": "You haven't completed any mentorships yet.",
+    "noRejected": "No Rejected Requests",
+    "noRejectedDesc": "You don't have any rejected mentorship requests.",
+    "findMentors": "Find Mentors",
+    "started": "Started",
+    "accepted": "Accepted",
+    "completedDate": "Completed",
+    "duration": "Duration",
+    "learningGoals": "Learning Goals",
+    "openChat": "Open Chat",
+    "writeReview": "Write Review",
+    "waitingForResponse": "Waiting for Response",
+    "viewDetails": "View Details",
+    "complete": "Complete Mentorship",
+    "completing": "Completing...",
+    "completeSuccess": "Mentorship completed successfully! You can now write a review.",
+    "completeError": "Cannot complete mentorship: Review ID not found",
+    "reviewTitle": "Write a Review",
+    "reviewDescription": "Share your experience with {{mentorName}}",
+    "rating": "Rating",
+    "ratingRequired": "Please select a rating",
+    "rating1": "Poor",
+    "rating2": "Fair",
+    "rating3": "Good",
+    "rating4": "Very Good",
+    "rating5": "Excellent",
+    "comment": "Comment",
+    "commentPlaceholder": "Share your experience...",
+    "characters": "characters",
+    "submitReview": "Submit Review",
+    "submitting": "Submitting...",
+    "reviewSuccess": "Review submitted successfully!",
+    "reviewError": "Cannot submit review: Review ID not found",
+    "cancel": "Cancel",
+    "status": {
+      "active": "Active",
+      "pending": "Pending",
+      "completed": "Completed",
+      "rejected": "Rejected"
+    }
+  },
+  "reviews": {
+    "reviewTitle": "Review",
+    "rateEthicalPolicies": "Rate Ethical Policies",
+    "rateAtLeastOne": "Please rate at least one ethical policy",
+    "titlePlaceholder": "e.g., My experience at {{company}}",
+    "workplaceReviews": "Workplace Reviews",
+    "writeReview": "Write a Review",
+    "writeReviewFor": "Write a Review for {{company}}",
+    "shareExperience": "Share your experience working at this company",
+    "rateYourExperience": "Rate Your Experience",
+    "yourReview": "Your Review",
+    "reviewPlaceholder": "Share your experience working at this company. What did you like? What could be improved?",
+    "characters": "characters",
+    "anonymous": "Anonymous",
+    "postAnonymously": "Post anonymously",
+    "submitReview": "Submit Review",
+    "submitting": "Submitting...",
+    "cancel": "Cancel",
+    "categories": {
+      "culture": "Culture",
+      "benefits": "Benefits",
+      "workLifeBalance": "Work-Life Balance",
+      "management": "Management",
+      "careerGrowth": "Career Growth"
+    },
+    "categoryRatings": "Category Ratings",
+    "basedOn": "Based on {{count}} review",
+    "basedOn_plural": "Based on {{count}} reviews",
+    "recentComments": "Recent Comments",
+    "recentReviews": "Recent Reviews",
+    "sortBy": "Sort reviews",
+    "sortByRating": "Sort by rating",
+    "sortOptions": {
+      "ratingDesc": "Rating (High to Low)",
+      "ratingAsc": "Rating (Low to High)"
+    },
+    "ratingFilter": "Rating range",
+    "minRating": "Min",
+    "maxRating": "Max",
+    "clearFilters": "Reset filters",
+    "totalReviews": "{{count}} review",
+    "totalReviews_plural": "{{count}} reviews",
+    "noReviews": "No reviews yet. Be the first to share your experience!",
+    "loadMore": "Load More Reviews",
+    "loading": "Loading...",
+    "helpful": "Helpful",
+    "report": "Report",
+    "today": "today",
+    "yesterday": "yesterday",
+    "daysAgo": "{{count}} day ago",
+    "daysAgo_plural": "{{count}} days ago",
+    "weeksAgo": "{{count}} week ago",
+    "weeksAgo_plural": "{{count}} weeks ago",
+    "monthsAgo": "{{count}} month ago",
+    "monthsAgo_plural": "{{count}} months ago",
+    "yearsAgo": "{{count}} year ago",
+    "yearsAgo_plural": "{{count}} years ago",
+    "aboutCompany": "About {{company}}",
+    "seeWhatEmployeesSay": "See what employees say",
+    "viewAllReviews": "View All Reviews",
+    "seeAllReviews": "See All Reviews",
+    "reply": {
+      "employerResponse": "Employer Response",
+      "confirmDelete": "Are you sure you want to delete this reply?",
+      "deleteError": "Failed to delete reply. Please try again."
+    },
+    "errors": {
+      "allRatingsRequired": "Please rate all categories",
+      "commentTooShort": "Review must be at least 10 characters",
+      "commentTooLong": "Review must be at most 2000 characters",
+      "submissionFailed": "Failed to submit review. Please try again."
+    }
+  },
+  "company": {
+    "aboutUs": "About Us",
+    "ethicalPolicyCommitments": "Ethical Policy Commitments",
+    "currentJobOpenings": "Current Job Openings",
+    "viewJob": "View Job",
+    "notFound": "Company Not Found",
+    "notFoundDescription": "The company you're looking for doesn't exist or has been removed."
+  },
+  "common": {
+    "loading": "Loading...",
+    "goHome": "Go to Homepage",
+    "visitWebsite": "Visit Website",
+    "edited": "Edited",
+    "cancel": "Cancel",
+    "optional": "Optional",
+    "search": "Search"
+  },
+  "chat": {
+    "conversations": "Conversations",
+    "noConversations": "No conversations yet",
+    "openConversationWith": "Open conversation with {{name}}",
+    "back": "Back to conversations",
+    "online": "Online",
+    "offline": "Offline",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago",
+    "noMessages": "No messages",
+    "unreadMessages": "{{count}} unread messages",
+    "noMessagesYet": "No messages yet",
+    "startConversation": "Start a conversation by sending a message",
+    "typeMessage": "Type a message...",
+    "messageInput": "Message input",
+    "sendMessage": "Send message",
+    "attachFile": "Attach file",
+    "moreOptions": "More options",
+    "featureComingSoon": "Coming soon",
+    "you": "You",
+    "roleMentor": "Mentor",
+    "roleMentee": "Mentee",
+    "selectConversation": "Select a conversation",
+    "selectConversationDesc": "Choose a conversation from the list to start chatting",
+    "connectionNotReady": "Chat connection is not ready. Message will be sent when connection is established.",
+    "connectionError": "Chat connection error",
+    "sendError": "Failed to send message. Please try again.",
+    "connected": "Chat connected!",
+    "disconnected": "Chat disconnected.",
+    "loadError": "Failed to load chat. Please try again later.",
+    "notReady": "Chat is not ready yet. Please wait a moment and try again.",
+    "authRequired": "You must be logged in to use chat",
+    "noConversationsDesc": "You need to have an active mentorship to start chatting."
+  },
+  "workplace": {
+    "selector": {
+      "placeholder": "Select a workplace",
+      "noWorkplaces": "No workplaces available",
+      "fetchError": "Failed to load workplaces"
+    },
+    "newModal": {
+      "title": "New Workplace",
+      "description": "Choose how you want to add a workplace to your account",
+      "createWorkplace": "Create Workplace",
+      "joinWorkplace": "Join Workplace",
+      "createWorkplaceDescription": "Create and manage your own workplace",
+      "joinWorkplaceDescription": "Request to join an existing workplace"
+    },
+    "createModal": {
+      "title": "Create Workplace",
+      "description": "Add your company to the platform and start building your reputation",
+      "companyName": "Company Name",
+      "companyNamePlaceholder": "Enter company name",
+      "sector": "Sector",
+      "sectorPlaceholder": "e.g., Technology, Healthcare",
+      "location": "Location",
+      "locationPlaceholder": "Enter location",
+      "website": "Website",
+      "shortDescription": "Short Description",
+      "detailedDescription": "Detailed Description",
+      "websitePlaceholder": "https://www.example.com",
+      "submit": "Create Workplace",
+      "workplaceCreated": "Workplace Created!",
+      "workplaceCreatedMessage": "Your workplace has been created successfully.",
+      "errors": {
+        "companyNameRequired": "Company name is required",
+        "sectorRequired": "Sector is required",
+        "locationRequired": "Location is required",
+        "ethicalTagsRequired": "At least one ethical tag is required",
+        "websiteInvalid": "Must be a valid URL"
+      },
+      "creating": "Creating...",
+      "redirecting": "Redirecting to your new workplace..."
+    },
+    "joinModal": {
+      "title": "Join a Workplace",
+      "searchPlaceholder": "Search workplaces...",
+      "requestTitle": "Request to Join",
+      "noteLabel": "Note to Administrators",
+      "notePlaceholder": "Optional message explaining why you'd like to join this workplace...",
+      "submitRequest": "Submit Request",
+      "submittingRequest": "Submitting...",
+      "back": "Back",
+      "alreadyMember": "You are already an employer of this workplace",
+      "requestSubmitted": "Request Submitted",
+      "requestSubmittedMessage": "Your request to join {{company}} has been submitted successfully. You will be notified once it's reviewed.",
+      "close": "Close"
+    },
+    "settings": {
+      "saving": "Saving...",
+      "title": "Workplace Settings",
+      "subtitle": "Manage your workplace information and settings",
+      "companyLogo": "Company Logo",
+      "saveImage": "Save Image",
+      "uploadImage": "Upload Image",
+      "changeImage": "Change Image",
+      "uploading": "Uploading...",
+      "updateSuccess": "Workplace updated successfully!",
+      "notFound": {
+        "title": "Workplace not found",
+        "description": "The workplace you're looking for doesn't exist or has been removed.",
+        "goToWorkplaces": "Go to My Workplaces"
+      },
+      "backToWorkplace": "Back to Workplace",
+      "basicInformation": "Basic Information",
+      "companyName": "Company Name",
+      "sector": "Sector",
+      "location": "Location",
+      "website": "Website",
+      "description": "Description",
+      "shortDescription": "Short Description",
+      "detailedDescription": "Detailed Description",
+      "ethicalTags": "Ethical Tags",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "failedToLoad": "Failed to load workplace data",
+      "companyNamePlaceholder": "Enter company name",
+      "sectorPlaceholder": "e.g., Technology, Healthcare, Education",
+      "locationPlaceholder": "Enter location",
+      "shortDescriptionPlaceholder": "A brief tagline or summary",
+      "imagePreviewAlt": "Preview",
+      "dangerZone": {
+        "title": "Danger Zone",
+        "deleteWorkplace": "Delete Workplace",
+        "deleteDescription": "Permanently delete this workplace and all associated data. This action cannot be undone.",
+        "deleteButton": "Delete Workplace",
+        "confirmTitle": "Confirm Workplace Deletion",
+        "confirmDescription": "Are you sure you want to delete this workplace? This will permanently delete all workplace data including job postings, reviews, and employer associations.",
+        "confirmWarning": "This action cannot be undone. Type the workplace name to confirm:",
+        "confirmPlaceholder": "Type workplace name to confirm",
+        "confirmButton": "Delete Permanently",
+        "confirmCancel": "Cancel",
+        "deleting": "Deleting...",
+        "deleteSuccess": "Workplace deleted successfully",
+        "deleteFailed": "Failed to delete workplace"
+      }
+    },
+    "profile": {
+      "title": "Workplace Profile",
+      "notFound": "Workplace not found",
+      "notFoundDescription": "The workplace you're looking for doesn't exist or has been removed.",
+      "aboutCompany": "About the Company",
+      "ethicalCommitments": "Ethical Commitments",
+      "employers": "Employers",
+      "manageRequests": "Manage Requests",
+      "currentJobOpenings": "Current Job Openings",
+      "noJobOpenings": "No job openings at the moment",
+      "viewAllJobs": "View all {{count}} jobs"
+    },
+    "settings": "Settings",
+    "manageRequests": "Manage Requests"
   }
 }

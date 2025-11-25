@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { registerSchema, type RegisterFormData } from '../schemas/register.schema';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -14,8 +15,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const [registrationComplete, setRegistrationComplete] = useState(false);
   const { t } = useTranslation('common');
 
@@ -38,8 +37,6 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
-    setErrorMessage('');
-    setSuccessMessage('');
 
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/register`, {
@@ -54,16 +51,16 @@ export default function RegisterPage() {
       if (response.data?.message && response.data.message.toLowerCase().includes('error')) {
         const errorMsg = response.data.message;
         if (errorMsg.includes('Email is already in use')) {
-          setErrorMessage(t('auth.register.errors.emailInUse'));
+          toast.error(t('auth.register.errors.emailInUse'));
         } else if (errorMsg.includes('Username is already taken')) {
-          setErrorMessage(t('auth.register.errors.usernameInUse'));
+          toast.error(t('auth.register.errors.usernameInUse'));
         } else {
-          setErrorMessage(errorMsg);
+          toast.error(errorMsg);
         }
       } else if (response.data?.error) {
-        setErrorMessage(response.data.error);
+        toast.error(response.data.error);
       } else if (response.status === 200 || response.status === 201) {
-        setSuccessMessage(t('auth.register.success'));
+        toast.success(t('auth.register.success'));
         setRegistrationComplete(true);
         // Don't auto-redirect, let user verify email first
       }
@@ -72,33 +69,33 @@ export default function RegisterPage() {
         const responseData = error.response?.data as { message?: string; error?: string } | undefined;
 
         if (error.response?.status === 401) {
-          setErrorMessage(t('auth.register.errors.serviceUnavailable'));
+          toast.error(t('auth.register.errors.serviceUnavailable'));
           return;
         }
 
         if (responseData?.message) {
-          setErrorMessage(responseData.message);
+          toast.error(responseData.message);
           return;
         }
 
         if (responseData?.error) {
-          setErrorMessage(responseData.error);
+          toast.error(responseData.error);
           return;
         }
 
         if (error.message) {
-          setErrorMessage(error.message);
+          toast.error(error.message);
           return;
         }
 
-        setErrorMessage(t('auth.register.errors.generic'));
+        toast.error(t('auth.register.errors.generic'));
         return;
       }
 
       if (error instanceof Error) {
-        setErrorMessage(error.message);
+        toast.error(error.message);
       } else {
-        setErrorMessage(t('auth.register.errors.generic'));
+        toast.error(t('auth.register.errors.generic'));
       }
     } finally {
       setIsLoading(false);
@@ -113,8 +110,8 @@ export default function RegisterPage() {
             {registrationComplete ? t('auth.register.checkEmail') : t('auth.register.createAccount')}
           </CardTitle>
           <CardDescription>
-            {registrationComplete 
-              ? t('auth.register.verificationLink') 
+            {registrationComplete
+              ? t('auth.register.verificationLink')
               : t('auth.register.description')}
           </CardDescription>
         </CardHeader>
@@ -122,9 +119,6 @@ export default function RegisterPage() {
         <CardContent>
           {registrationComplete ? (
             <div className="space-y-4 text-center py-4">
-              <div className="rounded-md bg-green-50 p-4 text-sm text-green-800 dark:bg-green-900/20 dark:text-green-400" role="alert">
-                {successMessage}
-              </div>
               <p className="text-sm text-muted-foreground">
                 Didn't receive the email? Check your spam folder or{' '}
                 <button
@@ -342,20 +336,6 @@ export default function RegisterPage() {
               <p id="terms-error" className="text-sm text-destructive" role="alert">
                 {errors.agreeToTerms.message}
               </p>
-            )}
-
-            {/* Error Message */}
-            {errorMessage && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive" role="alert">
-                {errorMessage}
-              </div>
-            )}
-
-            {/* Success Message */}
-            {successMessage && (
-              <div className="rounded-md bg-green-50 p-3 text-sm text-green-800" role="status">
-                {successMessage}
-              </div>
             )}
 
             {/* Submit Button */}

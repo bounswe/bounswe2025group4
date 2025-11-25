@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring STOMP Chat Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+<div class="container mx-auto p-4 md:p-8 max-w-2xl">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">WebSocket STOMP Chat Test</h1>
+
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl font-semibold mb-4">1. Connection</h2>
+        <div class="mb-4">
+            <label for="token" class="block text-sm font-medium text-gray-700 mb-1">JWT Token (Bearer)</label>
+            <input type="text" id="token" class="w-full p-2 border border-gray-300 rounded-md" placeholder="eyJhbGciOi...">
+        </div>
+        <div class="mb-4">
+            <label for="convoId" class="block text-sm font-medium text-gray-700 mb-1">Conversation ID</label>
+            <input type="text" id="convoId" class="w-full p-2 border border-gray-300 rounded-md" placeholder="1">
+        </div>
+        <div class="mb-4">
+            <label for="reviewId" class="block text-sm font-medium text-gray-700 mb-1">Resume Review ID (for complete/close)</label>
+            <input type="text" id="reviewId" class="w-full p-2 border border-gray-300 rounded-md" placeholder="1">
+        </div>
+        <div class="flex space-x-4">
+            <button id="connect" class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition">Connect</button>
+            <button id="disconnect" class="w-full bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition" disabled>Disconnect</button>
+        </div>
+        <div id="status" class="mt-3 text-sm text-gray-600">Status: Not Connected</div>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl font-semibold mb-4">2. Send Message</h2>
+        <div class="mb-4">
+            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
+            <input type="text" id="message" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Hello!">
+        </div>
+        <button id="send" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition" disabled>Send</button>
+
+        <button id="complete" class="w-full mt-4 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition" disabled>Complete Mentorship</button>
+
+        <button id="close" class="w-full mt-2 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition" disabled>Close (Abort) Mentorship</button>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold mb-4">3. Messages</h2>
+        <div id="messages" class="h-64 overflow-y-auto bg-gray-50 p-4 rounded-md border border-gray-200">
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let stompClient = null;
+    let isChatClosed = false;
+
+    const connectButton = document.getElementById('connect');
+    const disconnectButton = document.getElementById('disconnect');
+    const sendButton = document.getElementById('send');
+    const completeButton = document.getElementById('complete');
+    const closeButton = document.getElementById('close');
+    const tokenInput = document.getElementById('token');
+    const convoIdInput = document.getElementById('convoId');
+    const reviewIdInput = document.getElementById('reviewId');
+    const messageInput = document.getElementById('message');
+    const messagesDiv = document.getElementById('messages');
+    const statusDiv = document.getElementById('status');
+
+    function setConnected(connected) {
+        connectButton.disabled = connected;
+        disconnectButton.disabled = !connected;
+
+        sendButton.disabled = !connected || isChatClosed;
+        completeButton.disabled = !connected || isChatClosed;
+        closeButton.disabled = !connected || isChatClosed;
+        messageInput.disabled = !connected || isChatClosed;
+
+        statusDiv.textContent = connected ? 'Status: Connected' : 'Status: Not Connected';
+        if (!connected) {
+            messagesDiv.innerHTML = '';
+            isChatClosed = false;
+        }
+    }
+
+    function showMessage(message) {
+        const msgRow = document.createElement('div');
+        msgRow.className = 'p-2 mb-2 bg-white rounded-md shadow-sm border border-gray-200';
+
+        const sender = document.createElement('strong');
+
+        if (message.senderUsername === 'System') {
+            sender.className = 'text-red-600 font-semibold';
+            sender.textContent = 'System';
+            isChatClosed = true;
+            sendButton.disabled = true;
+            completeButton.disabled = true;
+            closeButton.disabled = true;
+            messageInput.disabled = true;
+            messageInput.placeholder = "This chat has been closed.";
+        } else {
+            sender.className = 'text-blue-600';
+            sender.textContent = message.senderUsername || 'Unknown';
+        }
+
+        const content = document.createElement('span');
+        content.textContent = `: ${message.content}`;
+
+        msgRow.appendChild(sender);
+        msgRow.appendChild(content);
+        messagesDiv.appendChild(msgRow);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function fetchHistory(conversationId, token) {
+        try {
+            const response = await fetch(`/api/chat/history/${conversationId}`, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch history: ' + response.statusText);
+            }
+
+            const history = await response.json();
+            messagesDiv.innerHTML = '';
+
+            for (const message of history) {
+                showMessage(message);
+                if (message.senderUsername === 'System') {
+                    isChatClosed = true;
+                }
+            }
+
+            if(isChatClosed) {
+                sendButton.disabled = true;
+                completeButton.disabled = true; // UPDATED
+                closeButton.disabled = true; // NEW
+                messageInput.disabled = true;
+                messageInput.placeholder = "This chat has been closed.";
+            }
+
+        } catch (error) {
+            console.error('Error fetching history:', error);
+            statusDiv.textContent = 'Status: Failed to fetch history.';
+        }
+    }
+
+    function connect() {
+        const token = tokenInput.value.trim();
+        const conversationId = convoIdInput.value.trim();
+
+        if (!token || !conversationId) {
+            alert('JWT Token and Conversation ID are required.');
+            return;
+        }
+
+        isChatClosed = false;
+        const headers = { "Authorization": `Bearer ${token}` };
+        const socket = new SockJS('/ws-chat');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect(headers,
+            (frame) => {
+                setConnected(true);
+                statusDiv.textContent = `Status: Connected as ${frame.headers['user-name']}`;
+                console.log('Connected: ' + frame);
+                fetchHistory(conversationId, token);
+                const topic = `/topic/conversation/${conversationId}`;
+                stompClient.subscribe(topic, (message) => {
+                    showMessage(JSON.parse(message.body));
+                });
+            },
+            (error) => {
+                console.error('Connection error: ' + error);
+                statusDiv.textContent = 'Status: Connection Failed! Check console.';
+            }
+        );
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+        console.log("Disconnected");
+    }
+
+    function sendMessage() {
+        if (isChatClosed) return;
+
+        const conversationId = convoIdInput.value.trim();
+        const messageContent = messageInput.value.trim();
+
+        if (messageContent && stompClient) {
+            const chatMessage = { content: messageContent };
+            const destination = `/app/chat.sendMessage/${conversationId}`;
+            stompClient.send(destination, {}, JSON.stringify(chatMessage));
+            messageInput.value = '';
+        }
+    }
+
+    async function sendPatchRequest(endpoint) {
+        const reviewId = reviewIdInput.value.trim();
+        const token = tokenInput.value.trim();
+
+        if (!reviewId) {
+            alert('Please enter a Resume Review ID to complete/close it.');
+            return;
+        }
+
+        const confirmAction = confirm(`Are you sure you want to ${endpoint.split('/').pop()} this mentorship?`);
+        if (!confirmAction) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/mentorship/review/${reviewId}/${endpoint}`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!response.ok) {
+                let errorMsg = `Failed to ${endpoint} mentorship.`;
+                try {
+                    const errorData = await response.json();
+                    errorMsg = errorData.message || errorMsg;
+                } catch(e) {}
+                throw new Error(errorMsg);
+            }
+
+            console.log(`'${endpoint}' request sent successfully.`);
+
+        } catch (error) {
+            console.error(`Error during /${endpoint}:`, error);
+            alert('Error: ' + error.message);
+        }
+    }
+
+    function completeMentorship() {
+        sendPatchRequest('complete');
+    }
+
+    function closeMentorship() {
+        sendPatchRequest('close');
+    }
+
+    connectButton.addEventListener('click', connect);
+    disconnectButton.addEventListener('click', disconnect);
+    sendButton.addEventListener('click', sendMessage);
+    completeButton.addEventListener('click', completeMentorship);
+    closeButton.addEventListener('click', closeMentorship);
+</script>
+
+</body>
+</html>

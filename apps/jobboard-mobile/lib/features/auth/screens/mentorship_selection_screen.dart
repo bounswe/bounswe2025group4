@@ -164,52 +164,32 @@ class _MentorshipSelectionScreenState extends State<MentorshipSelectionScreen> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed:
-                            (selectedChoice != null &&
-                                    (selectedChoice != 'mentor' ||
-                                        maxMenteeCountError == null))
-                                ? () {
-                                  final authProvider =
-                                      Provider.of<AuthProvider>(
-                                        context,
-                                        listen: false,
-                                      );
+                        onPressed: (selectedChoice != null &&
+                            (selectedChoice != 'mentor' || maxMenteeCountError == null))
+                            ? () {
+                          final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-                                  // Set user type based on selection
-                                  if (widget.isJobSeeker) {
-                                    authProvider.setOnboardingUserType(
-                                      UserType.ROLE_JOBSEEKER,
-                                    );
-                                  } else {
-                                    authProvider.setOnboardingUserType(
-                                      UserType.ROLE_EMPLOYER,
-                                    );
-                                  }
 
-                                  // Set mentorship status based on selection
-                                  if (selectedChoice == 'mentor') {
-                                    authProvider.setOnboardingMentorshipStatus(
-                                      MentorshipStatus.MENTOR,
-                                    );
-                                    // Set max mentee count
-                                    authProvider.setOnboardingMaxMenteeCount(
-                                      maxMenteeCount,
-                                    );
-                                  } else if (selectedChoice == 'mentee') {
-                                    authProvider.setOnboardingMentorshipStatus(
-                                      MentorshipStatus.MENTEE,
-                                    );
-                                  }
+                          // Set MENTORSHIP STATUS
+                          /*if (selectedChoice == 'mentor') {
+                            authProvider.setOnboardingMentorshipStatus(MentorshipStatus.MENTOR);
+                            authProvider.setOnboardingMaxMenteeCount(maxMenteeCount);
+                            print(">>> authProvider set onboarding mentor");
+                            print(authProvider.onboardingMentorshipStatus);
+                          } else {
+                            authProvider.setOnboardingMentorshipStatus(MentorshipStatus.MENTEE);
+                            print(">>> authProvider set onboarding mentee");
+                            print(authProvider.onboardingMentorshipStatus);
+                          }*/
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => const SignUpScreen(),
-                                    ),
-                                  );
-                                }
-                                : null,
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpScreen(),
+                            ),
+                          );
+                        }
+                            : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                           shape: RoundedRectangleBorder(

@@ -3,13 +3,12 @@ import '../../../core/widgets/a11y.dart';
 
 class PendingRequestCard extends StatelessWidget {
   final String mentorName;
-  final String
-  status; // e.g., "Pending", "Rejected" (though maybe rejected shouldn't show here?)
+  final String status;
 
   const PendingRequestCard({
     super.key,
     required this.mentorName,
-    this.status = 'Pending',
+    this.status = 'PENDING',
   });
 
   @override
@@ -39,7 +38,6 @@ class PendingRequestCard extends StatelessWidget {
             color: theme.hintColor,
           ),
         ),
-        // Optionally add an onTap if needed later (e.g., to withdraw request)
       ),
     );
   }

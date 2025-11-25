@@ -14,6 +14,7 @@ import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.security.JwtUtils;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,7 +33,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-
+    @Value("${app.env}")
+    private String appEnv;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
@@ -137,9 +139,11 @@ public class AuthService {
         };
 
         newUser.setRole(role);
-        newUser.setEmailVerified(false);
+        newUser.setEmailVerified(!appEnv.equals("prod"));
         userRepository.save(newUser);
-        sendEmailForRegister(newUser);
+        if (appEnv.equals("prod")) {
+            sendEmailForRegister(newUser);
+        }
 
         return new MessageResponse("User registered. Please verify your email.");
     }

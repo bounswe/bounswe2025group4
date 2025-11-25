@@ -27,19 +27,28 @@ public class JobPostController {
     public ResponseEntity<List<JobPostResponse>> getFiltered(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String companyName,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String sector,
             @RequestParam(required = false) List<String> ethicalTags,
             @RequestParam(required = false) Integer minSalary,
             @RequestParam(required = false) Integer maxSalary,
             @RequestParam(required = false) Boolean isRemote,
-            @RequestParam(required = false) Boolean inclusiveOpportunity
+            @RequestParam(required = false) Boolean inclusiveOpportunity,
+            @RequestParam(required = false) Boolean nonProfit
     ) {
-        return ResponseEntity.ok(service.getFiltered(title, companyName, ethicalTags, minSalary, maxSalary, isRemote, inclusiveOpportunity));
+        return ResponseEntity.ok(service.getFiltered(title, companyName, location, sector, ethicalTags, minSalary, maxSalary, isRemote, inclusiveOpportunity, nonProfit));
     }
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/employer/{employerId}")
     public ResponseEntity<List<JobPostResponse>> getByEmployerId(@PathVariable Long employerId) {
         return ResponseEntity.ok(service.getByEmployerId(employerId));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/workplace/{workplaceId}")
+    public ResponseEntity<List<JobPostResponse>> getByWorkplaceId(@PathVariable Long workplaceId) {
+        return ResponseEntity.ok(service.getByWorkplaceId(workplaceId));
     }
 
     @PreAuthorize("isAuthenticated()")

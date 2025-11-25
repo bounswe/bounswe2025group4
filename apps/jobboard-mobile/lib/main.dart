@@ -7,6 +7,7 @@ import 'core/providers/profile_provider.dart';
 import 'core/providers/font_size_provider.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/services/api_service.dart';
+import 'features/mentorship/providers/mentor_provider.dart';
 import 'app.dart'; // Adjust path
 
 void main() {
@@ -39,6 +40,15 @@ void main() {
               (context, apiService, previous) =>
                   previous!..updateApiService(apiService),
         ),
+
+        ChangeNotifierProxyProvider<ApiService, MentorProvider>(
+          create: (context) => MentorProvider(
+            apiService: Provider.of<ApiService>(context, listen: false),
+          ),
+          update: (context, apiService, previous) =>
+          previous!..updateApiService(apiService),
+        ),
+
       ],
       child: const MyApp(),
     ),

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { ProfileHeader } from '@/components/profile/ProfileHeader';
 import { AboutSection } from '@/components/profile/AboutSection';
 import { ExperienceSection } from '@/components/profile/ExperienceSection';
@@ -21,7 +22,6 @@ import { DeleteAccountModal } from '@/components/profile/DeleteAccountModal';
 import type { Profile, Activity, Post, Experience, Education, Skill, Interest } from '@/types/profile.types';
 import { profileService } from '@/services/profile.service';
 import CenteredLoader from '@/components/CenteredLoader';
-import { useAuthStore } from '@/stores/authStore';
 
 type ModalKey = 'bio' | 'experience' | 'education' | 'skill' | 'interest';
 
@@ -34,83 +34,85 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'posts'>('about');
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showCreateProfile, setShowCreateProfile] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const { t } = useTranslation('common');
-  const loadErrorFallback = t('profile.page.loadErrorTitle');
 
-  const mockActivity: Activity[] = useMemo(() => {
-    const items = t('profile.activity.items', {
-      returnObjects: true,
-    }) as Array<Pick<Activity, 'type' | 'text' | 'date'>>;
+  const mockActivity: Activity[] = useMemo(() => [
+    {
+      id: 1,
+      type: 'application',
+      text: 'Applied to Senior Product Designer at Innovation Labs',
+      date: '2 days ago',
+    },
+    {
+      id: 2,
+      type: 'forum',
+      text: "Posted a thread on forum: 'Best practices for accessibility in design'",
+      date: '5 days ago',
+    },
+    {
+      id: 3,
+      type: 'comment',
+      text: "Made a comment on 'Remote work strategies for designers'",
+      date: '1 week ago',
+    },
+    {
+      id: 4,
+      type: 'like',
+      text: "Liked a comment on 'Design system implementation'",
+      date: '1 week ago',
+    },
+    {
+      id: 5,
+      type: 'application',
+      text: 'Applied to UX Designer at Creative Studio',
+      date: '2 weeks ago',
+    },
+  ], []);
 
-    return items.map((item, index) => ({
-      id: index + 1,
-      ...item,
-    }));
-  }, [t]);
-
-  const mockPosts: Post[] = useMemo(() => {
-    const items = t('profile.posts.items', {
-      returnObjects: true,
-    }) as Array<Pick<Post, 'title' | 'date'>>;
-
-    const defaults = [
-      { replies: 12, likes: 45 },
-      { replies: 8, likes: 32 },
-      { replies: 24, likes: 67 },
-    ];
-
-    return items.map((item, index) => ({
-      id: index + 1,
-      title: item.title,
-      date: item.date,
-      replies: defaults[index]?.replies ?? 0,
-      likes: defaults[index]?.likes ?? 0,
-    }));
-  }, [t]);
+  const mockPosts: Post[] = useMemo(() => [
+    {
+      id: 1,
+      title: 'User Research Techniques: A Comprehensive Guide',
+      date: '3 days ago',
+      replies: 12,
+      likes: 45,
+    },
+    {
+      id: 2,
+      title: 'My Design Journey: From Student to Professional',
+      date: '1 week ago',
+      replies: 8,
+      likes: 32,
+    },
+    {
+      id: 3,
+      title: 'Essential Daily Tools for Modern Designers',
+      date: '2 weeks ago',
+      replies: 24,
+      likes: 67,
+    },
+  ], []);
 
   useEffect(() => {
     const loadProfile = async () => {
       try {
         setLoading(true);
-        setError(null);
-
-        // Debug: Check auth state
-        console.log('ProfilePage: Loading profile...');
-        const authState = useAuthStore.getState();
-        console.log('ProfilePage: Auth state:', {
-          isAuthenticated: authState.isAuthenticated,
-          hasToken: !!authState.accessToken,
-          user: authState.user,
-        });
-
         const profileData = await profileService.getMyProfile();
         setProfile(profileData);
-        console.log('ProfilePage: Profile loaded successfully');
       } catch (err) {
-        console.error('Failed to load profile:', err);
-        console.error('Error details:', {
-          message: err instanceof Error ? err.message : 'Unknown error',
-          response: (err as unknown as { response?: { data?: unknown } })?.response?.data,
-          status: (err as unknown as { response?: { status?: number } })?.response?.status,
-        });
-
-        // Check if it's a profile not found error
         const errorResponse = (err as unknown as { response?: { data?: unknown } })?.response?.data;
         const isProfileNotFound =
           (err as unknown as { response?: { status?: number } })?.response?.status === 404 && (errorResponse as { code?: string })?.code === 'PROFILE_NOT_FOUND';
 
         if (isProfileNotFound) {
-          console.log('ProfilePage: Profile not found, showing create modal');
           setShowCreateProfile(true);
-          setError(null);
         } else {
-          setError(err instanceof Error ? err.message : loadErrorFallback);
+          toast.error(t('profile.page.loadErrorTitle'));
         }
       } finally {
         setLoading(false);
@@ -118,7 +120,7 @@ export default function ProfilePage() {
     };
 
     loadProfile();
-  }, [loadErrorFallback]);
+  }, [t]);
 
   const [modals, setModals] = useState<Record<ModalKey, boolean>>({
     bio: false,
@@ -166,11 +168,9 @@ export default function ProfilePage() {
       const newProfile = await profileService.createProfile(data);
       setProfile(newProfile);
       setShowCreateProfile(false);
-      console.log('ProfilePage: Profile created successfully');
-    } catch (err) {
-      console.error('Failed to create profile:', err);
-      // You might want to show a toast notification here
-      setError(err instanceof Error ? err.message : 'Failed to create profile');
+      toast.success(t('profile.notifications.createSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.createError'));
     } finally {
       setLoading(false);
     }
@@ -180,21 +180,13 @@ export default function ProfilePage() {
     try {
       setIsUploadingImage(true);
       const result = await profileService.uploadImage(file);
-
-      // Update profile with new image URL
       if (profile) {
-        setProfile({
-          ...profile,
-          imageUrl: result.imageUrl,
-          updatedAt: result.updatedAt,
-        });
+        setProfile({ ...profile, imageUrl: result.imageUrl, updatedAt: result.updatedAt });
       }
-
       setShowImageUpload(false);
-      console.log('ProfilePage: Image uploaded successfully');
-    } catch (err) {
-      console.error('Failed to upload image:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.imageUploadSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.imageUploadError'));
     } finally {
       setIsUploadingImage(false);
     }
@@ -204,21 +196,13 @@ export default function ProfilePage() {
     try {
       setIsUploadingImage(true);
       await profileService.deleteImage();
-
-      // Update profile to remove image URL
       if (profile) {
-        setProfile({
-          ...profile,
-          imageUrl: undefined,
-          updatedAt: new Date().toISOString(),
-        });
+        setProfile({ ...profile, imageUrl: undefined, updatedAt: new Date().toISOString() });
       }
-
       setShowImageUpload(false);
-      console.log('ProfilePage: Image deleted successfully');
-    } catch (err) {
-      console.error('Failed to delete image:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.imageDeleteSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.imageDeleteError'));
     } finally {
       setIsUploadingImage(false);
     }
@@ -227,52 +211,44 @@ export default function ProfilePage() {
   const handleDeleteExperience = async (id: number) => {
     try {
       await profileService.deleteExperience(id);
-      // Refresh profile data
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-      console.log('ProfilePage: Experience deleted successfully');
-    } catch (err) {
-      console.error('Failed to delete experience:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.deleteExperienceSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.deleteExperienceError'));
     }
   };
 
   const handleDeleteEducation = async (id: number) => {
     try {
       await profileService.deleteEducation(id);
-      // Refresh profile data
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-      console.log('ProfilePage: Education deleted successfully');
-    } catch (err) {
-      console.error('Failed to delete education:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.deleteEducationSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.deleteEducationError'));
     }
   };
 
   const handleDeleteSkill = async (id: number) => {
     try {
       await profileService.deleteSkill(id);
-      // Refresh profile data
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-      console.log('ProfilePage: Skill deleted successfully');
-    } catch (err) {
-      console.error('Failed to delete skill:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.deleteSkillSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.deleteSkillError'));
     }
   };
 
   const handleDeleteInterest = async (id: number) => {
     try {
       await profileService.deleteInterest(id);
-      // Refresh profile data
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-      console.log('ProfilePage: Interest deleted successfully');
-    } catch (err) {
-      console.error('Failed to delete interest:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.deleteInterestSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.deleteInterestError'));
     }
   };
 
@@ -280,81 +256,69 @@ export default function ProfilePage() {
     try {
       const updatedProfile = await profileService.updateProfile({ bio });
       setProfile(updatedProfile);
-    } catch (err) {
-      console.error('Failed to update bio:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.saveBioSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.saveBioError'));
     }
   };
 
   const handleSaveExperience = async (data: ExperienceFormData) => {
     try {
       if (data.id) {
-        // Update existing
         await profileService.updateExperience(data.id, data);
       } else {
-        // Add new
         await profileService.addExperience(data);
       }
-      // Refresh profile data
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-    } catch (err) {
-      console.error('Failed to save experience:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.saveExperienceSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.saveExperienceError'));
     }
   };
 
   const handleSaveEducation = async (data: EducationFormData) => {
     try {
       if (data.id) {
-        // Update existing
         await profileService.updateEducation(data.id, data);
       } else {
-        // Add new
         await profileService.addEducation(data);
       }
-      // Refresh profile data
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-    } catch (err) {
-      console.error('Failed to save education:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.saveEducationSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.saveEducationError'));
     }
   };
 
   const handleSaveSkill = async (data: SkillFormData) => {
     try {
       if (data.id) {
-        // Update existing
         await profileService.updateSkill(data.id, data);
       } else {
-        // Add new
         await profileService.addSkill(data);
       }
-      // Refresh profile data
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-    } catch (err) {
-      console.error('Failed to save skill:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.saveSkillSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.saveSkillError'));
     }
   };
 
   const handleSaveInterest = async (data: InterestFormData) => {
     try {
       if (data.id) {
-        // Update existing
         await profileService.updateInterest(data.id, data);
       } else {
-        // Add new
         await profileService.addInterest(data);
       }
-      // Refresh profile data
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-    } catch (err) {
-      console.error('Failed to save interest:', err);
-      // You might want to show a toast notification here
+      toast.success(t('profile.notifications.saveInterestSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.notifications.saveInterestError'));
     }
   };
 
@@ -362,18 +326,11 @@ export default function ProfilePage() {
     try {
       setIsDeletingAccount(true);
       await profileService.deleteAllProfileData();
-
-      // Refresh the profile to show empty state
       const updatedProfile = await profileService.getMyProfile();
       setProfile(updatedProfile);
-
-      console.log('ProfilePage: All profile data deleted successfully');
-      
-      // Optionally, you could redirect the user or show a success message
-      // For now, we'll just refresh the profile to show the empty state
-    } catch (err) {
-      console.error('Failed to delete profile data:', err);
-      alert(t('profile.page.alerts.deleteFailed'));
+      toast.success(t('profile.notifications.deleteAccountSuccess'));
+    } catch (_err) {
+      toast.error(t('profile.page.alerts.deleteFailed'));
     } finally {
       setIsDeletingAccount(false);
     }
@@ -381,17 +338,6 @@ export default function ProfilePage() {
 
   if (loading) {
     return <CenteredLoader />;
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-5xl mx-auto space-y-6 py-16">
-        <div className="bg-destructive/10 border border-destructive text-destructive rounded-lg p-6 text-center">
-          <p className="font-medium">{t('profile.page.loadErrorTitle')}</p>
-          <p className="text-sm mt-2">{error}</p>
-        </div>
-      </div>
-    );
   }
 
   if (!profile && !showCreateProfile) {
@@ -407,7 +353,6 @@ export default function ProfilePage() {
     );
   }
 
-  // Show create profile modal if profile doesn't exist
   if (showCreateProfile) {
     return (
       <div className="max-w-5xl mx-auto space-y-6 py-16">
@@ -420,7 +365,6 @@ export default function ProfilePage() {
     );
   }
 
-  // Profile must exist at this point
   if (!profile) return null;
 
   return (
@@ -435,7 +379,6 @@ export default function ProfilePage() {
           onEditImage={() => setShowImageUpload(true)}
         />
 
-        {/* Tabs */}
         <div className="border-b mb-6">
           <div className="flex gap-8">
             <button
@@ -471,7 +414,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Tab Content */}
         {activeTab === 'about' && (
           <div className="grid md:grid-cols-3 gap-6">
             <div className="md:col-span-2 space-y-6">
@@ -479,15 +421,11 @@ export default function ProfilePage() {
 
               <ExperienceSection
                 experiences={profile.experiences.sort((a, b) => {
-                  // Current jobs (no endDate) should be first
                   if (!a.endDate && b.endDate) return -1;
                   if (a.endDate && !b.endDate) return 1;
                   if (!a.endDate && !b.endDate) {
-                    // If both are current, sort by startDate descending
                     return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
                   }
-
-                  // Both have endDates, sort by endDate descending (most recent first)
                   const endDateA = a.endDate ? new Date(a.endDate) : new Date();
                   const endDateB = b.endDate ? new Date(b.endDate) : new Date();
                   return endDateB.getTime() - endDateA.getTime();
@@ -495,7 +433,6 @@ export default function ProfilePage() {
                 onAdd={() => openModal('experience')}
                 onEdit={(id) => {
                   const exp = profile.experiences.find((e) => e.id === id);
-                  console.log('Editing experience:', exp);
                   openModal('experience', exp);
                 }}
                 onDelete={handleDeleteExperience}
@@ -511,7 +448,6 @@ export default function ProfilePage() {
                 onDelete={handleDeleteEducation}
               />
 
-              {/* Danger Zone */}
               <div className="border border-destructive/20 rounded-lg p-4 bg-destructive/5">
                 <h4 className="text-sm font-medium text-destructive mb-2">
                   {t('profile.page.dangerZone.title')}
@@ -554,7 +490,6 @@ export default function ProfilePage() {
         {activeTab === 'posts' && <PostsTab posts={mockPosts} />}
       </div>
 
-      {/* Modals */}
       <EditBioModal
         isOpen={modals.bio}
         onClose={() => closeModal('bio')}

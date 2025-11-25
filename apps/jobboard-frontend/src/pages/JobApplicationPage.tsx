@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronRight, Upload, X, FileText, CheckCircle } from 'lucide-react';
+import { toast } from 'react-toastify';
+import { ChevronRight, Upload, X, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -9,7 +10,7 @@ import CenteredLoader from '@/components/CenteredLoader';
 import { cn } from '@/lib/utils';
 import type { JobPostResponse } from '@/types/api.types';
 import { getJobById } from '@/services/jobs.service';
-import { createApplication, uploadCv, getApplications } from '@/services/applications.service';
+import { createApplication, uploadCv, getApplicationsByJobSeeker } from '@/services/applications.service';
 import { useAuth } from '@/contexts/AuthContext';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -28,17 +29,11 @@ export default function JobApplicationPage() {
   const [job, setJob] = useState<JobPostResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [alreadyApplied, setAlreadyApplied] = useState(false);
 
   // Form fields
   const [coverLetter, setCoverLetter] = useState('');
   const [specialNeeds, setSpecialNeeds] = useState('');
   const [cvFile, setCvFile] = useState<File | null>(null);
-  const [fileError, setFileError] = useState<string | null>(null);
-
-  // Success state
-  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     const fetchJobAndCheckApplication = async () => {
@@ -46,60 +41,59 @@ export default function JobApplicationPage() {
 
       try {
         setIsLoading(true);
-        setError(null);
+
+        // Check if user already applied to this specific job
+        const allApplications = await getApplicationsByJobSeeker(user.id);
+
+        const hasAppliedToThisJob = allApplications.some(
+          (app) => app.jobPostId === parseInt(id, 10)
+        );
+
+        if (hasAppliedToThisJob) {
+          toast.info(t('jobApplication.errors.alreadyApplied'));
+          navigate(`/jobs/${id}`);
+          return;
+        }
 
         // Fetch job details
         const jobData = await getJobById(parseInt(id, 10));
         setJob(jobData);
-
-        // Check if user already applied
-        const applications = await getApplications({
-          jobPostId: parseInt(id, 10),
-          jobSeekerId: user.id,
-        });
-
-        if (applications.length > 0) {
-          setAlreadyApplied(true);
-        }
       } catch (err) {
         console.error('Error fetching job:', err);
-        setError(t('jobApplication.errors.loadJob'));
+        toast.error(t('jobApplication.errors.loadJob'));
+        navigate('/jobs');
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchJobAndCheckApplication();
-  }, [id, user, t]);
+  }, [id, user, t, navigate]);
 
-  const validateFile = (file: File): string | null => {
-    // Check file size
+  const validateFile = (file: File): boolean => {
     if (file.size > MAX_FILE_SIZE) {
-      return t('jobApplication.errors.fileTooLarge');
+      toast.error(t('jobApplication.errors.fileTooLarge'));
+      return false;
     }
 
-    // Check file type
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!ALLOWED_FILE_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(fileExtension)) {
-      return t('jobApplication.errors.invalidFileType');
+      toast.error(t('jobApplication.errors.invalidFileType'));
+      return false;
     }
 
-    return null;
+    return true;
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const error = validateFile(file);
-    if (error) {
-      setFileError(error);
-      setCvFile(null);
-      return;
+    if (validateFile(file)) {
+      setCvFile(file);
+    } else {
+      handleRemoveFile();
     }
-
-    setFileError(null);
-    setCvFile(file);
   };
 
   const handleFileDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -107,15 +101,11 @@ export default function JobApplicationPage() {
     const file = e.dataTransfer.files[0];
     if (!file) return;
 
-    const error = validateFile(file);
-    if (error) {
-      setFileError(error);
-      setCvFile(null);
-      return;
+    if (validateFile(file)) {
+      setCvFile(file);
+    } else {
+      handleRemoveFile();
     }
-
-    setFileError(null);
-    setCvFile(file);
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -124,7 +114,6 @@ export default function JobApplicationPage() {
 
   const handleRemoveFile = () => {
     setCvFile(null);
-    setFileError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -134,29 +123,27 @@ export default function JobApplicationPage() {
     e.preventDefault();
 
     if (!id || !cvFile) {
-      setFileError(t('jobApplication.form.cv.required'));
+      toast.error(t('jobApplication.form.cv.required'));
       return;
     }
 
     try {
       setIsSubmitting(true);
-      setError(null);
 
-      // Step 1: Create application
       const application = await createApplication({
         jobPostId: parseInt(id, 10),
         coverLetter: coverLetter.trim() || undefined,
         specialNeeds: specialNeeds.trim() || undefined,
       });
 
-      // Step 2: Upload CV
       await uploadCv(application.id, cvFile);
 
-      // Show success message
-      setIsSuccess(true);
+      toast.success(t('jobApplication.success.message'));
+      navigate('/applications');
     } catch (err) {
       console.error('Error submitting application:', err);
-      setError(t('jobApplication.errors.submitFailed'));
+      toast.error(t('jobApplication.errors.submitFailed'));
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -174,74 +161,8 @@ export default function JobApplicationPage() {
     });
   };
 
-  if (isLoading) {
+  if (isLoading || !job) {
     return <CenteredLoader />;
-  }
-
-  if (error && !job) {
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-semibold">{t('jobApplication.errors.loadJob')}</h1>
-        <Button asChild className="mt-6">
-          <Link to="/jobs">{t('jobApplication.breadcrumb.jobs')}</Link>
-        </Button>
-      </div>
-    );
-  }
-
-  if (!job) {
-    return null;
-  }
-
-  // Success screen
-  if (isSuccess) {
-    return (
-      <div className="container mx-auto px-4 py-12" dir={isRtl ? 'rtl' : 'ltr'}>
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-6 flex justify-center">
-            <CheckCircle className="h-20 w-20 text-green-500" />
-          </div>
-          <h1 className="text-3xl font-bold text-foreground mb-4">
-            {t('jobApplication.success.title')}
-          </h1>
-          <p className="text-lg text-muted-foreground mb-8">
-            {t('jobApplication.success.message')}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link to="/applications">{t('jobApplication.success.viewApplications')}</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/jobs">{t('jobApplication.success.backToJobs')}</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Already applied screen
-  if (alreadyApplied) {
-    return (
-      <div className="container mx-auto px-4 py-12" dir={isRtl ? 'rtl' : 'ltr'}>
-        <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-3xl font-bold text-foreground mb-4">
-            {t('jobApplication.alreadyApplied.title')}
-          </h1>
-          <p className="text-lg text-muted-foreground mb-8">
-            {t('jobApplication.alreadyApplied.message')}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link to="/applications">{t('jobApplication.alreadyApplied.viewApplication')}</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/jobs">{t('jobApplication.alreadyApplied.backToJobs')}</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -271,7 +192,7 @@ export default function JobApplicationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-muted-foreground">{t('jobApplication.jobDetails.company')}:</span>
-                <span className="ml-2 font-medium">{job.company}</span>
+                <span className="ml-2 font-medium">{job.workplace.companyName}</span>
               </div>
               <div>
                 <span className="text-muted-foreground">{t('jobApplication.jobDetails.location')}:</span>
@@ -294,12 +215,6 @@ export default function JobApplicationPage() {
         <Card className="border border-border bg-card shadow-sm">
           <div className="p-6 lg:p-8">
             <h2 className="text-xl font-semibold mb-6">{t('jobApplication.form.title')}</h2>
-
-            {error && (
-              <div className="mb-6 p-4 rounded-md bg-destructive/10 border border-destructive">
-                <p className="text-sm text-destructive">{error}</p>
-              </div>
-            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Cover Letter */}
@@ -350,7 +265,7 @@ export default function JobApplicationPage() {
                   <div
                     className={cn(
                       'mt-2 border-2 border-dashed rounded-lg p-8 text-center transition-colors',
-                      fileError ? 'border-destructive bg-destructive/5' : 'border-border hover:border-primary bg-muted/50',
+                      'border-border hover:border-primary bg-muted/50',
                       isSubmitting && 'opacity-50 cursor-not-allowed'
                     )}
                     onDrop={handleFileDrop}
@@ -403,10 +318,6 @@ export default function JobApplicationPage() {
                       </Button>
                     </div>
                   </div>
-                )}
-
-                {fileError && (
-                  <p className="mt-2 text-sm text-destructive">{fileError}</p>
                 )}
               </div>
 

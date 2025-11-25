@@ -77,17 +77,20 @@ export const ETHICAL_TAGS_BY_CATEGORY: Record<EthicalTagCategory, EthicalTag[]> 
 
 export type JobType = 'Full-time' | 'Part-time' | 'Contract';
 
+import type { WorkplaceBriefResponse } from './workplace.types';
+
 export type Job = {
   id: string;
   title: string;
-  company: string;
+  description?: string;
+  workplace: WorkplaceBriefResponse;
   location: string;
-  ethicalTags: EthicalTag[];
   type: JobType[];
   minSalary: number;
   maxSalary: number;
   logoUrl?: string;
   inclusiveOpportunity: boolean;
+  nonProfit?: boolean;
 };
 
 // Extended job type for job details from API
@@ -96,10 +99,9 @@ export type JobDetail = {
   employerId: number;
   title: string;
   description: string;
-  company: string;
+  workplace: WorkplaceBriefResponse;
   location: string;
   remote: boolean;
-  ethicalTags: string;
   inclusiveOpportunity: boolean;
   minSalary: number;
   maxSalary: number;

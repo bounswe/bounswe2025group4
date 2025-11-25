@@ -26,6 +26,8 @@ public class JobApplicationController {
         this.service = service;
     }
 
+    // Legacy endpoint with query parameters (kept for backward compatibility)
+    // This endpoint is split into two separate endpoints.
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<List<JobApplicationResponse>> getFiltered(
@@ -39,6 +41,25 @@ public class JobApplicationController {
         } else {
             throw new HandleException(ErrorCode.MISSING_FILTER_PARAMETER, "Missing filter parameter, at least one of jobSeekerId or jobPostId must be provided");
         }
+    }
+
+    
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/job-seeker/{jobSeekerId}")
+    public ResponseEntity<List<JobApplicationResponse>> getByJobSeeker(@PathVariable Long jobSeekerId) {
+        return ResponseEntity.ok(service.getByJobSeekerId(jobSeekerId));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/job-post/{jobPostId}")
+    public ResponseEntity<List<JobApplicationResponse>> getByJobPost(@PathVariable Long jobPostId) {
+        return ResponseEntity.ok(service.getByJobPostId(jobPostId));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/workplace/{workplaceId}")
+    public ResponseEntity<List<JobApplicationResponse>> getByWorkplace(@PathVariable Long workplaceId) {
+        return ResponseEntity.ok(service.getByWorkplaceId(workplaceId));
     }
 
     @PreAuthorize("isAuthenticated()")

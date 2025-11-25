@@ -12,17 +12,31 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import VerifyOtpPage from './pages/VerifyOtpPage';
 import ProfilePage from './pages/ProfilePage';
 import JobsPage from './pages/JobsPage';
+import NonProfitJobsPage from './pages/NonProfitJobsPage';
 import JobDetailPage from './pages/JobDetailPage';
+import NonProfitJobDetailPage from './pages/NonProfitJobDetailPage';
 import JobApplicationPage from './pages/JobApplicationPage';
+import NonProfitJobApplicationPage from './pages/NonProfitJobApplicationPage';
 import MyApplicationsPage from './pages/MyApplicationsPage';
 import JobApplicationReviewPage from './pages/JobApplicationReviewPage';
 import EmployerDashboardPage from './pages/EmployerDashboardPage';
-import CreateJobPostPage from './pages/CreateJobPostPage';
 import EmployerJobPostDetailsPage from './pages/EmployerJobPostDetailsPage';
 import EmployerEditJobPostPage from './pages/EmployerEditJobPostPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ForumPage from './pages/ForumPage';
 import MentorshipPage from './pages/MentorshipPage';
+import MentorProfilePage from './pages/MentorProfilePage';
+import MyMentorshipsPage from './pages/MyMentorshipsPage';
+import CreateMentorProfilePage from './pages/CreateMentorProfilePage';
+import MentorRequestsPage from './pages/MentorRequestsPage';
+import WorkplaceProfilePage from './pages/WorkplaceProfilePage';
+import EmployerWorkplacesPage from './pages/EmployerWorkplacesPage';
+import ManageEmployerRequestsPage from './pages/ManageEmployerRequestsPage';
+import WorkplaceSettingsPage from './pages/WorkplaceSettingsPage';
+import WorkplacesPage from './pages/WorkplacesPage';
+import ChatPage from './pages/ChatPage';
+import PublicProfilePage from './pages/PublicProfilePage';
+import ResumeReviewPage from './pages/ResumeReviewPage';
 
 const router = createBrowserRouter([
   {
@@ -42,14 +56,38 @@ const router = createBrowserRouter([
         element: <JobsPage />,
       },
       {
+        path: 'nonprofit-jobs',
+        element: <NonProfitJobsPage />,
+      },
+      {
+        path: 'nonprofit-jobs/:id',
+        element: <NonProfitJobDetailPage />,
+      },
+      {
         path: 'jobs/:id',
         element: <JobDetailPage />,
+      },
+      {
+        path: 'workplace/:id',
+        element: <WorkplaceProfilePage />,
+      },
+      {
+        path: 'workplaces',
+        element: <WorkplacesPage />,
       },
       {
         path: 'jobs/:id/apply',
         element: (
           <ProtectedRoute>
             <JobApplicationPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'nonprofit-jobs/:id/apply',
+        element: (
+          <ProtectedRoute>
+            <NonProfitJobApplicationPage />
           </ProtectedRoute>
         ),
       },
@@ -70,10 +108,26 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'employer/jobs/create',
+        path: 'employer/workplaces',
         element: (
           <ProtectedRoute>
-            <CreateJobPostPage />
+            <EmployerWorkplacesPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/:workplaceId/requests',
+        element: (
+          <ProtectedRoute>
+            <ManageEmployerRequestsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'employer/workplace/:workplaceId/settings',
+        element: (
+          <ProtectedRoute>
+            <WorkplaceSettingsPage />
           </ProtectedRoute>
         ),
       },
@@ -104,6 +158,62 @@ const router = createBrowserRouter([
       {
         path: 'mentorship',
         element: <MentorshipPage />,
+      },
+      {
+        path: 'mentorship/mentor/create',
+        element: (
+          <ProtectedRoute>
+            <CreateMentorProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'mentorship/mentor/edit',
+        element: (
+          <ProtectedRoute>
+            <CreateMentorProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'mentorship/:id',
+        element: (
+          <ProtectedRoute>
+            <MentorProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'my-mentorships',
+        element: (
+          <ProtectedRoute>
+            <MyMentorshipsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'resume-review/:resumeReviewId',
+        element: (
+          <ProtectedRoute>
+            <ResumeReviewPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'mentor/requests',
+        element: (
+          <ProtectedRoute>
+            <MentorRequestsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'chat',
+        element: (
+          <ProtectedRoute>
+            <ChatPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'forum',
@@ -141,6 +251,12 @@ const router = createBrowserRouter([
         path: 'profile',
         element: (
             <ProfilePage />
+        ),
+      },
+      {
+        path: 'profile/:userId',
+        element: (
+            <PublicProfilePage />
         ),
       },
     ],

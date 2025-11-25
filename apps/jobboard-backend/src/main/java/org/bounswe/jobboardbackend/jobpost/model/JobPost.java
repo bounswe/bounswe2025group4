@@ -1,6 +1,7 @@
 package org.bounswe.jobboardbackend.jobpost.model;
 
 import org.bounswe.jobboardbackend.auth.model.User;
+import org.bounswe.jobboardbackend.workplace.model.Workplace;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,30 +25,28 @@ public class JobPost {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User employer;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "workplace_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Workplace workplace;
+
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false, length = 5000)
     private String description;
-
-    @Column(nullable = false)
-    private String company;
-
-    @Column(nullable = false)
-    private String location;
 
     private boolean remote;
 
-    private String ethicalTags; // comma-separated for now (e.g. "open-source,remote-first")
-
     private boolean inclusiveOpportunity; // targeted toward candidates with disabilities
+
+    private boolean nonProfit; // indicates if this is a non-profit/volunteer position
 
     private Integer minSalary;
     private Integer maxSalary;
 
     @Column(nullable = false)
     private String contact;
-
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime postedDate;
