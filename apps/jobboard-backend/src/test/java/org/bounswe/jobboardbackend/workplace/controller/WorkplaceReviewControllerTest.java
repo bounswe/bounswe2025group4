@@ -220,8 +220,13 @@ class WorkplaceReviewControllerTest {
                                 anyLong(), anyInt(), anyInt(), any(), any(), any(), any(), any(), any()))
                                 .thenReturn(response);
 
+                Authentication auth = new UsernamePasswordAuthenticationToken(
+                                USER_1,
+                                null,
+                                Collections.emptyList());
+
                 mockMvc.perform(get("/api/workplace/{workplaceId}/review", workplaceId)
-                                .with(user("user1@test.com"))
+                                .with(authentication(auth))
                                 .param("page", String.valueOf(page))
                                 .param("size", String.valueOf(size))
                                 .param("ratingFilter", ratingFilter)
@@ -270,8 +275,13 @@ class WorkplaceReviewControllerTest {
                                 anyLong(), anyInt(), anyInt(), any(), any(), any(), any(), any(), any()))
                                 .thenReturn(response);
 
+                Authentication auth = new UsernamePasswordAuthenticationToken(
+                                USER_1,
+                                null,
+                                Collections.emptyList());
+
                 mockMvc.perform(get("/api/workplace/{workplaceId}/review", workplaceId)
-                                .with(user("user1@test.com")))
+                                .with(authentication(auth)))
                                 .andExpect(status().isOk());
 
                 ArgumentCaptor<Integer> pageCaptor = ArgumentCaptor.forClass(Integer.class);
@@ -304,8 +314,13 @@ class WorkplaceReviewControllerTest {
                 ReviewResponse res = new ReviewResponse();
                 when(reviewService.getOne(eq(workplaceId), eq(reviewId), any())).thenReturn(res);
 
+                Authentication auth = new UsernamePasswordAuthenticationToken(
+                                USER_1,
+                                null,
+                                Collections.emptyList());
+
                 mockMvc.perform(get("/api/workplace/{workplaceId}/review/{reviewId}", workplaceId, reviewId)
-                                .with(user("user1@test.com")))
+                                .with(authentication(auth)))
                                 .andExpect(status().isOk());
 
                 verify(reviewService).getOne(eq(workplaceId), eq(reviewId), any());
