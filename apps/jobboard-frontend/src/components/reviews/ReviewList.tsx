@@ -21,6 +21,7 @@ interface ReviewListProps {
   reviewsPerPage?: number;
   actions?: ReactNode;
   onTotalsChange?: (total: number) => void;
+  onReviewUpdate?: (reviewId: number, updates: Partial<ReviewResponse>) => void;
 }
 
 export function ReviewList({
@@ -30,6 +31,7 @@ export function ReviewList({
   reviewsPerPage = 10,
   actions,
   onTotalsChange,
+  onReviewUpdate,
 }: ReviewListProps) {
   const { t } = useTranslation('common');
   const [reviews, setReviews] = useState<ReviewResponse[]>([]);
@@ -72,6 +74,23 @@ export function ReviewList({
   const handleReviewUpdate = () => {
     // Reload current page to reflect changes
     loadReviews(currentPage);
+  };
+
+  const handleHelpfulUpdate = (
+    reviewId: number,
+    newHelpfulCount: number,
+    helpfulByUser?: boolean,
+  ) => {
+    // Update the specific review's helpful count and user state in local state
+    setReviews((prevReviews) =>
+      prevReviews.map((review) =>
+        review.id === reviewId
+          ? { ...review, helpfulCount: newHelpfulCount, helpfulByUser }
+          : review,
+      ),
+    );
+    // Notify parent component if needed
+    onReviewUpdate?.(reviewId, { helpfulCount: newHelpfulCount, helpfulByUser });
   };
 
   // Generate page numbers for pagination (0-indexed to 1-indexed for display)
@@ -144,6 +163,7 @@ export function ReviewList({
                 review={review}
                 canReply={canReply}
                 onUpdate={handleReviewUpdate}
+                onHelpfulUpdate={handleHelpfulUpdate}
               />
             ))}
           </div>
@@ -155,9 +175,7 @@ export function ReviewList({
                   <PaginationPrevious
                     onClick={() => currentPage > 0 && handlePageChange(currentPage - 1)}
                     className={
-                      currentPage === 0
-                        ? 'pointer-events-none opacity-50'
-                        : 'cursor-pointer'
+                      currentPage === 0 ? 'pointer-events-none opacity-50' : 'cursor-pointer'
                     }
                   />
                 </PaginationItem>
