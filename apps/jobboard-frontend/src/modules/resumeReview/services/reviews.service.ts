@@ -3,7 +3,7 @@
  * Handles workplace review and reply operations
  */
 
-import { api } from '@/lib/api-client';
+import { api } from '@shared/lib/api-client';
 import type {
   ReviewCreateRequest,
   ReviewUpdateRequest,
@@ -15,7 +15,7 @@ import type {
   ReviewListParams,
   ReviewReportCreate,
   ApiMessage,
-} from '@/types/workplace.types';
+} from '@shared/types/workplace.types';
 
 const BASE_PATH = '/workplace';
 

@@ -3,7 +3,7 @@
  * Handles all workplace-related API calls
  */
 
-import { api } from '@/lib/api-client';
+import { api } from '@shared/lib/api-client';
 import type {
   WorkplaceCreateRequest,
   WorkplaceUpdateRequest,
@@ -13,7 +13,7 @@ import type {
   PaginatedWorkplaceResponse,
   WorkplaceListParams,
   ApiMessage,
-} from '@/types/workplace.types';
+} from '@shared/types/workplace.types';
 
 const BASE_PATH = '/workplace';
 

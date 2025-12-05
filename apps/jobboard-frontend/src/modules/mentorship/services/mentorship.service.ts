@@ -1,4 +1,4 @@
-import { api } from '@/lib/api-client';
+import { api } from '@shared/lib/api-client';
 import type {
   CreateMentorProfileDTO,
   UpdateMentorProfileDTO,
@@ -11,7 +11,7 @@ import type {
   CreateRatingDTO,
   ResumeReviewDTO,
   ResumeFileResponseDTO,
-} from '@/types/api.types';
+} from '@shared/types/api.types';
 
 /**
  * Mentorship Service

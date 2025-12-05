@@ -1,5 +1,5 @@
-import { apiClient } from '@/lib/api-client';
-import type { Profile, PublicProfile } from '@/types/profile.types';
+import { apiClient } from '@shared/lib/api-client';
+import type { Profile, PublicProfile } from '@shared/types/profile.types';
 
 /**
  * Profile API Service

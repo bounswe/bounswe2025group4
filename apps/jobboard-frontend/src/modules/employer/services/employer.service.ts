@@ -3,7 +3,7 @@
  * Handles employer workflow operations (join requests, employer management)
  */
 
-import { api } from '@/lib/api-client';
+import { api } from '@shared/lib/api-client';
 import type {
   EmployerWorkplaceBrief,
   EmployerListItem,
@@ -13,7 +13,7 @@ import type {
   PaginatedEmployerRequestResponse,
   EmployerRequestListParams,
   ApiMessage,
-} from '@/types/workplace.types';
+} from '@shared/types/workplace.types';
 
 const BASE_PATH = '/workplace';
 

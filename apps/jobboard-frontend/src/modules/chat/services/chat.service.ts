@@ -1,6 +1,6 @@
-import { api } from '@/lib/api-client';
-import type { ChatMessageDTO } from '@/types/api.types';
-import type { ChatMessage } from '@/types/chat';
+import { api } from '@shared/lib/api-client';
+import type { ChatMessageDTO } from '@shared/types/api.types';
+import type { ChatMessage } from '@shared/types/chat';
 import SockJS from 'sockjs-client';
 import { Client, type StompSubscription } from '@stomp/stompjs';
 
