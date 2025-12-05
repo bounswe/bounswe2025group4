@@ -11,18 +11,49 @@ import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useReportModal } from '@/hooks/useReportModal';
 import { reportWorkplaceReview } from '@/services/workplace-report.service';
+import { useReviewHelpful } from '@/hooks/useReviewHelpful';
 
 interface ReviewCardProps {
   workplaceId: number;
   review: ReviewResponse;
   canReply?: boolean;
   onUpdate?: () => void;
+  onHelpfulUpdate?: (reviewId: number, newHelpfulCount: number, helpfulByUser?: boolean) => void;
 }
 
-export function ReviewCard({ workplaceId, review, canReply, onUpdate }: ReviewCardProps) {
+export function ReviewCard({
+  workplaceId,
+  review,
+  canReply,
+  onUpdate,
+  onHelpfulUpdate,
+}: ReviewCardProps) {
   const { t } = useTranslation('common');
   const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false);
   const { openReport, ReportModalElement } = useReportModal();
+
+  // Initialize helpful vote hook
+  const {
+    helpfulCount,
+    userVoted,
+    isLoading: isHelpfulLoading,
+    toggleHelpful,
+    canVote,
+  } = useReviewHelpful({
+    workplaceId,
+    reviewId: review.id,
+    initialHelpfulCount: review.helpfulCount,
+    initialUserVoted: review.helpfulByUser ?? false, // sync initial state from API
+  });
+
+  // Handle helpful count updates
+  const handleHelpfulClick = async () => {
+    const updatedReview = await toggleHelpful();
+    // Notify parent component of helpful count change
+    if (updatedReview) {
+      onHelpfulUpdate?.(review.id, updatedReview.helpfulCount, updatedReview.helpfulByUser);
+    }
+  };
 
   const handleReport = () => {
     openReport({
@@ -96,9 +127,7 @@ export function ReviewCard({ workplaceId, review, canReply, onUpdate }: ReviewCa
             </div>
 
             {/* Title */}
-            {review.title && (
-              <h5 className="font-medium text-foreground mb-2">{review.title}</h5>
-            )}
+            {review.title && <h5 className="font-medium text-foreground mb-2">{review.title}</h5>}
 
             {/* Content */}
             {review.content && (
@@ -123,12 +152,23 @@ export function ReviewCard({ workplaceId, review, canReply, onUpdate }: ReviewCa
 
             {/* Actions */}
             <div className="flex items-center gap-4 pt-3 border-t">
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <ThumbsUp className="h-4 w-4" />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleHelpfulClick}
+                disabled={isHelpfulLoading || !canVote}
+                className={`flex items-center gap-1.5 text-sm ${
+                  userVoted
+                    ? 'text-primary hover:text-primary/80'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title={canVote ? t('reviews.toggleHelpful') : t('reviews.helpful')}
+              >
+                <ThumbsUp className={`h-4 w-4 ${userVoted ? 'fill-current' : ''}`} />
                 <span>
-                  {t('reviews.helpful')} ({review.helpfulCount})
+                  {t('reviews.helpful')} ({helpfulCount})
                 </span>
-              </div>
+              </Button>
               {canReply && !review.reply && (
                 <Button
                   variant="outline"

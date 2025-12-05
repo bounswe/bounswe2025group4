@@ -97,6 +97,7 @@ export interface ReviewResponse {
   content?: string;
   anonymous: boolean;
   helpfulCount: number;
+  helpfulByUser?: boolean;
   overallRating: number;
   ethicalPolicyRatings: Record<string, number>;
   reply?: ReplyResponse;

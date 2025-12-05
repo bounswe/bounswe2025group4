@@ -26,18 +26,15 @@ const BASE_PATH = '/workplace';
  */
 export async function getWorkplaceReviews(
   workplaceId: number,
-  params: ReviewListParams = {}
+  params: ReviewListParams = {},
 ): Promise<PaginatedReviewResponse> {
-  const response = await api.get<PaginatedReviewResponse>(
-    `${BASE_PATH}/${workplaceId}/review`,
-    {
-      params: {
-        page: params.page ?? 0,
-        size: params.size ?? 10,
-        ...params,
-      },
-    }
-  );
+  const response = await api.get<PaginatedReviewResponse>(`${BASE_PATH}/${workplaceId}/review`, {
+    params: {
+      page: params.page ?? 0,
+      size: params.size ?? 10,
+      ...params,
+    },
+  });
   return response.data;
 }
 
@@ -46,13 +43,8 @@ export async function getWorkplaceReviews(
  * @param workplaceId Workplace ID
  * @param reviewId Review ID
  */
-export async function getReview(
-  workplaceId: number,
-  reviewId: number
-): Promise<ReviewResponse> {
-  const response = await api.get<ReviewResponse>(
-    `${BASE_PATH}/${workplaceId}/review/${reviewId}`
-  );
+export async function getReview(workplaceId: number, reviewId: number): Promise<ReviewResponse> {
+  const response = await api.get<ReviewResponse>(`${BASE_PATH}/${workplaceId}/review/${reviewId}`);
   return response.data;
 }
 
@@ -63,12 +55,9 @@ export async function getReview(
  */
 export async function createReview(
   workplaceId: number,
-  request: ReviewCreateRequest
+  request: ReviewCreateRequest,
 ): Promise<ReviewResponse> {
-  const response = await api.post<ReviewResponse>(
-    `${BASE_PATH}/${workplaceId}/review`,
-    request
-  );
+  const response = await api.post<ReviewResponse>(`${BASE_PATH}/${workplaceId}/review`, request);
   return response.data;
 }
 
@@ -81,26 +70,31 @@ export async function createReview(
 export async function updateReview(
   workplaceId: number,
   reviewId: number,
-  request: ReviewUpdateRequest
+  request: ReviewUpdateRequest,
 ): Promise<ReviewResponse> {
   const response = await api.put<ReviewResponse>(
     `${BASE_PATH}/${workplaceId}/review/${reviewId}`,
-    request
+    request,
   );
   return response.data;
 }
 
+// ============================================================================
+// Helpful Vote Operations
+// ============================================================================
+
 /**
- * Delete a review
+ * Mark a review as helpful.
+ * Backend only exposes this POST endpoint for helpful count interaction.
  * @param workplaceId Workplace ID
  * @param reviewId Review ID
  */
-export async function deleteReview(
+export async function markReviewHelpful(
   workplaceId: number,
-  reviewId: number
-): Promise<ApiMessage> {
-  const response = await api.delete<ApiMessage>(
-    `${BASE_PATH}/${workplaceId}/review/${reviewId}`
+  reviewId: number,
+): Promise<ReviewResponse> {
+  const response = await api.post<ReviewResponse>(
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}/helpful`,
   );
   return response.data;
 }
@@ -114,11 +108,11 @@ export async function deleteReview(
 export async function reportReview(
   workplaceId: number,
   reviewId: number,
-  request: ReviewReportCreate
+  request: ReviewReportCreate,
 ): Promise<ApiMessage> {
   const response = await api.post<ApiMessage>(
     `${BASE_PATH}/${workplaceId}/review/${reviewId}/report`,
-    request
+    request,
   );
   return response.data;
 }
@@ -126,21 +120,6 @@ export async function reportReview(
 // ============================================================================
 // Reply Operations
 // ============================================================================
-
-/**
- * Get the reply to a review
- * @param workplaceId Workplace ID
- * @param reviewId Review ID
- */
-export async function getReply(
-  workplaceId: number,
-  reviewId: number
-): Promise<ReplyResponse> {
-  const response = await api.get<ReplyResponse>(
-    `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`
-  );
-  return response.data;
-}
 
 /**
  * Create a reply to a review (employer only)
@@ -151,11 +130,11 @@ export async function getReply(
 export async function createReply(
   workplaceId: number,
   reviewId: number,
-  request: ReplyCreateRequest
+  request: ReplyCreateRequest,
 ): Promise<ReplyResponse> {
   const response = await api.post<ReplyResponse>(
     `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`,
-    request
+    request,
   );
   return response.data;
 }
@@ -169,11 +148,11 @@ export async function createReply(
 export async function updateReply(
   workplaceId: number,
   reviewId: number,
-  request: ReplyUpdateRequest
+  request: ReplyUpdateRequest,
 ): Promise<ReplyResponse> {
   const response = await api.put<ReplyResponse>(
     `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`,
-    request
+    request,
   );
   return response.data;
 }
@@ -183,12 +162,9 @@ export async function updateReply(
  * @param workplaceId Workplace ID
  * @param reviewId Review ID
  */
-export async function deleteReply(
-  workplaceId: number,
-  reviewId: number
-): Promise<ApiMessage> {
+export async function deleteReply(workplaceId: number, reviewId: number): Promise<ApiMessage> {
   const response = await api.delete<ApiMessage>(
-    `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`
+    `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`,
   );
   return response.data;
 }
