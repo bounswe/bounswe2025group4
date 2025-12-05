@@ -15,7 +15,7 @@ import {
 } from '@shared/components/ui/dialog';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import type { JobApplicationResponse, JobApplicationStatus } from '@shared/types/api.types';
-import { getApplicationsByJobSeeker, deleteApplication, getCvUrl } from '@modules/applications/services/applications.service';
+import { getApplicationsByJobSeeker, deleteApplication, getCvUrl } from '@modules/jobs/applications/services/applications.service';
 import { getJobById } from '@modules/jobs/services/jobs.service';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 

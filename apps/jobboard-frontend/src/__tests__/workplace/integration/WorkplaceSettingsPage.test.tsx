@@ -11,7 +11,7 @@ import type { WorkplaceDetailResponse, WorkplaceImageResponseDto } from '@shared
 vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 
 // Mock useAuth hook
-vi.mock('@shared/contexts/AuthContext', () => ({
+vi.mock('@/modules/auth/contexts/AuthContext', () => ({
   useAuth: () => ({
     user: { id: 1, username: 'testuser', email: 'test@example.com', role: 'ROLE_EMPLOYER' },
     isAuthenticated: true

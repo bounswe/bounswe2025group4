@@ -16,7 +16,7 @@ import {
 } from '@shared/components/ui/dropdown-menu';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { ReplyFormDialog } from './ReplyFormDialog';
-import { deleteReply } from '@modules/resumeReview/services/reviews.service';
+import { deleteReply } from '@modules/mentorship/services/reviews.service';
 import type { ReplyResponse } from '@shared/types/workplace.types';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 

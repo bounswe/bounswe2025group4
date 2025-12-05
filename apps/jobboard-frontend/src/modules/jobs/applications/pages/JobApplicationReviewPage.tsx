@@ -6,7 +6,7 @@ import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Avatar, AvatarFallback } from '@shared/components/ui/avatar';
 import { Label } from '@shared/components/ui/label';
-import { getApplicationById, approveApplication, rejectApplication, getCvUrl } from '@modules/applications/services/applications.service';
+import { getApplicationById, approveApplication, rejectApplication, getCvUrl } from '@modules/jobs/applications/services/applications.service';
 import type { JobApplicationResponse } from '@shared/types/api.types';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 

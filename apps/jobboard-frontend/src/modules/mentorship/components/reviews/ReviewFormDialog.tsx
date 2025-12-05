@@ -15,7 +15,7 @@ import { Textarea } from '@shared/components/ui/textarea';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { StarRating } from '@shared/components/ui/star-rating';
 import { useTranslation } from 'react-i18next';
-import { createReview } from '@modules/resumeReview/services/reviews.service';
+import { createReview } from '@modules/mentorship/services/reviews.service';
 import type { ReviewCreateRequest } from '@shared/types/workplace.types';
 import { getErrorMessage } from '@shared/utils/error-handler';
 import { TAG_TO_KEY_MAP } from '@shared/constants/ethical-tags';

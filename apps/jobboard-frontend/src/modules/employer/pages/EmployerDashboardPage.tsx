@@ -8,7 +8,7 @@ import { Badge } from '@shared/components/ui/badge';
 import { Card } from '@shared/components/ui/card';
 import { CreateJobPostModal } from '@modules/jobs/components/jobs/CreateJobPostModal';
 import { getJobsByEmployer } from '@modules/jobs/services/jobs.service';
-import { getApplications } from '@modules/applications/services/applications.service';
+import { getApplications } from '@modules/jobs/applications/services/applications.service';
 import { getMyWorkplaces } from '@modules/employer/services/employer.service';
 import { CreateWorkplaceModal } from '@/modules/workplace/components/CreateWorkplaceModal';
 import { JoinWorkplaceModal } from '@/modules/workplace/components/JoinWorkplaceModal';

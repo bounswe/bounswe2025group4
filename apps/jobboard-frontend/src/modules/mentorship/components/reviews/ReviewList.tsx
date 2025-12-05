@@ -11,7 +11,7 @@ import {
 import type { ReviewResponse, ReviewListParams } from '@shared/types/workplace.types';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
-import { getWorkplaceReviews } from '@modules/resumeReview/services/reviews.service';
+import { getWorkplaceReviews } from '@modules/mentorship/services/reviews.service';
 import type { ReactNode } from 'react';
 
 interface ReviewListProps {

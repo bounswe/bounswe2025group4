@@ -8,7 +8,7 @@ import { API_BASE_URL } from '@/test/handlers';
 import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';
 
 // Mock WorkplaceSelector to avoid complex setup
-vi.mock('@modules/workplace/components/workplace/WorkplaceSelector', () => ({
+vi.mock('@/modules/workplace/components/WorkplaceSelector', () => ({
   default: ({ onChange, value }: { onChange: (id: number, workplace: EmployerWorkplaceBrief) => void; value?: number }) => (
     <div data-testid="workplace-selector">
       <select

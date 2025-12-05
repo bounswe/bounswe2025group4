@@ -4,7 +4,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import { markReviewHelpful } from '@modules/resumeReview/services/reviews.service';
+import { markReviewHelpful } from '@modules/mentorship/services/reviews.service';
 import type { ReviewResponse } from '@shared/types/workplace.types';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';

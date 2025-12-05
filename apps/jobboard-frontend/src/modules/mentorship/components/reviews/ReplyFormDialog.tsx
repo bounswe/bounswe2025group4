@@ -19,7 +19,7 @@ import {
 import { Button } from '@shared/components/ui/button';
 import { Textarea } from '@shared/components/ui/textarea';
 import { Label } from '@shared/components/ui/label';
-import { createReply, updateReply } from '@modules/resumeReview/services/reviews.service';
+import { createReply, updateReply } from '@modules/mentorship/services/reviews.service';
 import type { ReplyResponse } from '@shared/types/workplace.types';
 import { getErrorMessage } from '@shared/utils/error-handler';
 

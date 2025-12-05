@@ -5,7 +5,7 @@ import type { ReviewResponse } from '@shared/types/workplace.types';
 
 const mockMarkReviewHelpful = vi.fn();
 
-vi.mock('@modules/resumeReview/services/reviews.service', () => ({
+vi.mock('@modules/mentorship/services/reviews.service', () => ({
   markReviewHelpful: (...args: unknown[]) => mockMarkReviewHelpful(...args),
 }));
 

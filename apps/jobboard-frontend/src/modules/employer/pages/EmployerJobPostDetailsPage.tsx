@@ -5,7 +5,7 @@ import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Avatar, AvatarFallback } from '@shared/components/ui/avatar';
 import { getJobById } from '@modules/jobs/services/jobs.service';
-import { getApplications } from '@modules/applications/services/applications.service';
+import { getApplications } from '@modules/jobs/applications/services/applications.service';
 import type { JobPostResponse, JobApplicationResponse } from '@shared/types/api.types';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 
