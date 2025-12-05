@@ -23,6 +23,7 @@ public class ReviewResponse {
     private Double overallRating;
     private Map<String, Integer> ethicalPolicyRatings;
     private ReplyResponse reply;
+    private boolean isHelpfulByUser;
     private Instant createdAt;
     private Instant updatedAt;
 }

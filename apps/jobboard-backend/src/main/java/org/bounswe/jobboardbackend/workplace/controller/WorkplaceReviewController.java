@@ -23,9 +23,11 @@ public class WorkplaceReviewController {
 
     private User currentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) throw new AccessDeniedException("Unauthenticated");
+        if (auth == null || !auth.isAuthenticated())
+            throw new AccessDeniedException("Unauthenticated");
         Object principal = auth.getPrincipal();
-        if (principal instanceof User u) return u;
+        if (principal instanceof User u)
+            return u;
         if (principal instanceof UserDetails ud) {
             String key = ud.getUsername();
             return userRepository.findByEmail(key).or(() -> userRepository.findByUsername(key))
@@ -39,44 +41,52 @@ public class WorkplaceReviewController {
     // === REVIEWS ===
     @PostMapping("/review")
     public ResponseEntity<ReviewResponse> create(@PathVariable Long workplaceId,
-                                                 @RequestBody @Valid ReviewCreateRequest req) {
+            @RequestBody @Valid ReviewCreateRequest req) {
         var res = reviewService.createReview(workplaceId, req, currentUser());
         return ResponseEntity.ok(res);
     }
 
     @GetMapping("/review")
     public ResponseEntity<PaginatedResponse<ReviewResponse>> list(@PathVariable Long workplaceId,
-                                                                  @RequestParam(defaultValue = "0") int page,
-                                                                  @RequestParam(defaultValue = "10") int size,
-                                                                  @RequestParam(required = false) String ratingFilter,
-                                                                  @RequestParam(required = false) String sortBy,
-                                                                  @RequestParam(required = false) Boolean hasComment,
-                                                                  @RequestParam(required = false) String policy,
-                                                                  @RequestParam(required = false) Integer policyMin) {
-        var res = reviewService.listReviews(workplaceId, page, size, ratingFilter, sortBy, hasComment, policy, policyMin);
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String ratingFilter,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) Boolean hasComment,
+            @RequestParam(required = false) String policy,
+            @RequestParam(required = false) Integer policyMin) {
+        var res = reviewService.listReviews(workplaceId, page, size, ratingFilter, sortBy, hasComment, policy,
+                policyMin, currentUser());
         return ResponseEntity.ok(res);
     }
 
     @GetMapping("/review/{reviewId}")
     public ResponseEntity<ReviewResponse> getOne(@PathVariable Long workplaceId,
-                                                 @PathVariable Long reviewId) {
-        return ResponseEntity.ok(reviewService.getOne(workplaceId, reviewId));
+            @PathVariable Long reviewId) {
+        return ResponseEntity.ok(reviewService.getOne(workplaceId, reviewId, currentUser()));
     }
 
     @PutMapping("/review/{reviewId}")
     public ResponseEntity<ReviewResponse> update(@PathVariable Long workplaceId,
-                                                 @PathVariable Long reviewId,
-                                                 @RequestBody @Valid ReviewUpdateRequest req) {
+            @PathVariable Long reviewId,
+            @RequestBody @Valid ReviewUpdateRequest req) {
         var res = reviewService.updateReview(workplaceId, reviewId, req, currentUser());
         return ResponseEntity.ok(res);
     }
 
     @DeleteMapping("/review/{reviewId}")
     public ResponseEntity<ApiMessage> delete(@PathVariable Long workplaceId,
-                                             @PathVariable Long reviewId) {
+            @PathVariable Long reviewId) {
         boolean isAdmin = false; // TODO: implement isAdmin check in milestone 3
         reviewService.deleteReview(workplaceId, reviewId, currentUser(), isAdmin);
         return ResponseEntity.ok(ApiMessage.builder().message("Review deleted").code("REVIEW_DELETED").build());
+    }
+
+    @PostMapping("/review/{reviewId}/helpful")
+    public ResponseEntity<ReviewResponse> toggleHelpful(@PathVariable Long workplaceId,
+            @PathVariable Long reviewId) {
+        var res = reviewService.toggleHelpful(workplaceId, reviewId, currentUser());
+        return ResponseEntity.ok(res);
     }
 
 }
