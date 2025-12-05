@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import WorkplacesPage from '@/pages/WorkplacesPage';
+import WorkplacesPage from '@modules/workplace/pages/WorkplacesPage';
 import { describe, it, expect } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { server } from '@/test/setup';

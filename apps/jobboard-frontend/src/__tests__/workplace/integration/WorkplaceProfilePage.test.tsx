@@ -1,17 +1,17 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import WorkplaceProfilePage from '@/pages/WorkplaceProfilePage';
+import WorkplaceProfilePage from '@modules/workplace/pages/WorkplaceProfilePage';
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { server } from '@/test/setup';
 import { http, HttpResponse } from 'msw';
 import { API_BASE_URL } from '@/test/handlers';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider } from '@shared/contexts/AuthContext';
 
 vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 
 // Mock jobs service to avoid errors
-vi.mock('@/services/jobs.service', () => ({
+vi.mock('@modules/jobs/services/jobs.service', () => ({
   getJobsByEmployer: vi.fn().mockResolvedValue([]),
 }));
 

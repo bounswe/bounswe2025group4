@@ -1,0 +1,35 @@
+import type { RouteObject } from 'react-router-dom';
+import { lazy } from 'react';
+
+const JobApplicationPage = lazy(() => import('./pages/JobApplicationPage'));
+const JobApplicationReviewPage = lazy(() => import('./pages/JobApplicationReviewPage'));
+const MyApplicationsPage = lazy(() => import('./pages/MyApplicationsPage'));
+import ProtectedRoute from '@shared/components/common/ProtectedRoute';
+
+export const applicationsRoutes: RouteObject[] = [
+  {
+    path: 'jobs/:id/apply',
+    element: (
+      <ProtectedRoute>
+        <JobApplicationPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: 'applications',
+    element: (
+      <ProtectedRoute>
+        <MyApplicationsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: 'employer/jobs/:jobId/applications/:applicationId',
+    element: (
+      <ProtectedRoute>
+        <JobApplicationReviewPage />
+      </ProtectedRoute>
+    ),
+  },
+];
+

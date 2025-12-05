@@ -4,9 +4,9 @@ import { MemoryRouter } from 'react-router-dom';
 import type { InitialEntry } from 'react-router';
 import userEvent from '@testing-library/user-event';
 import { ToastContainer } from 'react-toastify';
-import { I18nProvider } from '@/providers/I18nProvider';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { useAuthStore } from '@/stores/authStore';
+import { I18nProvider } from '@shared/providers/I18nProvider';
+import { AuthProvider } from '@shared/contexts/AuthContext';
+import { useAuthStore } from '@shared/stores/authStore';
 import 'react-toastify/dist/ReactToastify.css';
 
 type RenderOptions = {

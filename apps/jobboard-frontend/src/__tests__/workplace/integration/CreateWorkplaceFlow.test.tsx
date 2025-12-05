@@ -1,16 +1,16 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import EmployerWorkplacesPage from '@/pages/EmployerWorkplacesPage';
+import EmployerWorkplacesPage from '@modules/workplace/pages/EmployerWorkplacesPage';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
-import * as workplaceService from '@/services/workplace.service';
+import * as workplaceService from '@modules/workplace/services/workplace.service';
 import userEvent from '@testing-library/user-event';
-import type { EthicalTag } from '@/types/job';
+import type { EthicalTag } from '@shared/types/job';
 
 vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 
 // Mock create service
-vi.mock('@/services/workplace.service', async () => {
-  const actual = await vi.importActual('@/services/workplace.service');
+vi.mock('@modules/workplace/services/workplace.service', async () => {
+  const actual = await vi.importActual('@modules/workplace/services/workplace.service');
   return {
     ...actual,
     createWorkplace: vi.fn(),
@@ -18,7 +18,7 @@ vi.mock('@/services/workplace.service', async () => {
 });
 
 // Mock MultiSelectDropdown to simplify testing
-vi.mock('@/components/ui/multi-select-dropdown', () => ({
+vi.mock('@shared/components/ui/multi-select-dropdown', () => ({
   MultiSelectDropdown: ({ onTagsChange }: { onTagsChange: (tags: EthicalTag[]) => void }) => (
     <button
       type="button"

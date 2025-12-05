@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import EmployerWorkplacesPage from '@/pages/EmployerWorkplacesPage';
+import EmployerWorkplacesPage from '@modules/workplace/pages/EmployerWorkplacesPage';
 import { describe, it, expect, vi } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { server } from '@/test/setup';
@@ -28,7 +28,7 @@ interface JoinWorkplaceModalProps {
 vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 
 // Mock child components to simplify integration test
-vi.mock('@/components/workplace/NewWorkplaceModal', () => ({
+vi.mock('@modules/workplace/components/workplace/NewWorkplaceModal', () => ({
   NewWorkplaceModal: ({ open, onOpenChange, onCreateWorkplace, onJoinWorkplace }: NewWorkplaceModalProps) => (
     open ? (
       <div role="dialog">
@@ -41,7 +41,7 @@ vi.mock('@/components/workplace/NewWorkplaceModal', () => ({
   )
 }));
 
-vi.mock('@/components/workplace/CreateWorkplaceModal', () => ({
+vi.mock('@modules/workplace/components/workplace/CreateWorkplaceModal', () => ({
   CreateWorkplaceModal: ({ open, onOpenChange }: CreateWorkplaceModalProps) => (
     open ? (
       <div role="dialog">
@@ -52,7 +52,7 @@ vi.mock('@/components/workplace/CreateWorkplaceModal', () => ({
   )
 }));
 
-vi.mock('@/components/workplace/JoinWorkplaceModal', () => ({
+vi.mock('@modules/workplace/components/workplace/JoinWorkplaceModal', () => ({
   JoinWorkplaceModal: ({ open, onOpenChange }: JoinWorkplaceModalProps) => (
     open ? (
       <div role="dialog">

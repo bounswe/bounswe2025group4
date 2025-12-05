@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
-import type { Education, Skill, Interest } from '@/types/profile.types';
-import type { JobPostResponse, JobApplicationResponse } from '@/types/api.types';
+import type { Education, Skill, Interest } from '@shared/types/profile.types';
+import type { JobPostResponse, JobApplicationResponse } from '@shared/types/api.types';
 
 export const API_BASE_URL = 'https://api.example.com/api';
 
