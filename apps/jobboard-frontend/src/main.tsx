@@ -2,10 +2,10 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Router } from './router.tsx';
 import './index.css';
-import './lib/i18n';
-import { ThemeProvider } from './providers/ThemeProvider.tsx';
-import { AuthProvider } from './contexts/AuthContext';
-import { I18nProvider } from './providers/I18nProvider';
+import '@shared/lib/i18n';
+import { ThemeProvider } from '@shared/providers/ThemeProvider.tsx';
+import { AuthProvider } from '@shared/contexts/AuthContext';
+import { I18nProvider } from '@shared/providers/I18nProvider';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
