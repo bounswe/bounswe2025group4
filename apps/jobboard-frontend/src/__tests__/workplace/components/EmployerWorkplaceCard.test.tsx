@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import { EmployerWorkplaceCard } from '@/components/workplace/EmployerWorkplaceCard';
+import { EmployerWorkplaceCard } from '@modules/workplace/components/workplace/EmployerWorkplaceCard';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
-import type { EmployerWorkplaceBrief } from '@/types/workplace.types';
+import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';
 
 // Mock useNavigate
 vi.mock('react-router-dom', async () => {

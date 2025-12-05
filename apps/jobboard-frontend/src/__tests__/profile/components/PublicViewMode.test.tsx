@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { AboutSection } from '@/components/profile/AboutSection';
-import { ExperienceSection } from '@/components/profile/ExperienceSection';
-import { EducationSection } from '@/components/profile/EducationSection';
-import type { Experience, Education } from '@/types/profile.types';
+import { AboutSection } from '@modules/profile/components/profile/AboutSection';
+import { ExperienceSection } from '@modules/profile/components/profile/ExperienceSection';
+import { EducationSection } from '@modules/profile/components/profile/EducationSection';
+import type { Experience, Education } from '@shared/types/profile.types';
 
 vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 
