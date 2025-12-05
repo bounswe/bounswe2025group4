@@ -7,7 +7,7 @@ import { API_BASE_URL } from '@/test/handlers';
 import PublicProfilePage from '@modules/profile/pages/PublicProfilePage';
 import type { PublicProfile } from '@shared/types/profile.types';
 import { I18nProvider } from '@shared/providers/I18nProvider';
-import { AuthProvider } from '@shared/contexts/AuthContext';
+import { AuthProvider } from '@/modules/auth/contexts/AuthContext';
 import { useAuthStore } from '@shared/stores/authStore';
 import { ToastContainer } from 'react-toastify';
 

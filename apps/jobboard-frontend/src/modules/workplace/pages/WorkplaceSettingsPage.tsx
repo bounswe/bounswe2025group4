@@ -38,7 +38,7 @@ import {
 import type { WorkplaceDetailResponse } from '@shared/types/workplace.types';
 import type { EthicalTag } from '@shared/types/job';
 import { getErrorMessage } from '@shared/utils/error-handler';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 export default function WorkplaceSettingsPage() {
   const { workplaceId } = useParams<{ workplaceId: string }>();

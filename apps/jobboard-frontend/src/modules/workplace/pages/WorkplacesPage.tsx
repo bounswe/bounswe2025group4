@@ -10,7 +10,7 @@ import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Slider } from '@shared/components/ui/slider';
 import { Search, Building2, Filter, X, ChevronLeft, ChevronRight } from 'lucide-react';
-import { WorkplaceCard } from '@modules/workplace/components/workplace/WorkplaceCard';
+import { WorkplaceCard } from '@/modules/workplace/components/WorkplaceCard';
 import { getWorkplaces } from '@modules/workplace/services/workplace.service';
 import type { WorkplaceBriefResponse } from '@shared/types/workplace.types';
 import CenteredLoader from '@shared/components/common/CenteredLoader';

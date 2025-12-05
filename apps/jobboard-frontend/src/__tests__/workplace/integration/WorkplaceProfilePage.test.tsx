@@ -6,7 +6,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { server } from '@/test/setup';
 import { http, HttpResponse } from 'msw';
 import { API_BASE_URL } from '@/test/handlers';
-import { AuthProvider } from '@shared/contexts/AuthContext';
+import { AuthProvider } from '@/modules/auth/contexts/AuthContext';
 
 vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 

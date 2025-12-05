@@ -9,7 +9,7 @@ import { Label } from '@shared/components/ui/label';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Badge } from '@shared/components/ui/badge';
 import { createMentorProfile, updateMentorProfile, getMentorProfile } from '@modules/mentorship/services/mentorship.service';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import type { CreateMentorProfileDTO, UpdateMentorProfileDTO } from '@shared/types/api.types';
 import { profileService } from '@modules/profile/services/profile.service';
 import type { Profile } from '@shared/types/profile.types';

@@ -3,7 +3,7 @@ import heroBackground from '@/assets/hero-background.jpg';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/components/ui/card';
 import { Input } from '@shared/components/ui/input';
 import { useMediaQuery } from '@shared/hooks/useMediaQuery';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import {
   Search,
   Users,

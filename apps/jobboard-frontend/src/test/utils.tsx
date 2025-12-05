@@ -5,7 +5,7 @@ import type { InitialEntry } from 'react-router';
 import userEvent from '@testing-library/user-event';
 import { ToastContainer } from 'react-toastify';
 import { I18nProvider } from '@shared/providers/I18nProvider';
-import { AuthProvider } from '@shared/contexts/AuthContext';
+import { AuthProvider } from '@/modules/auth/contexts/AuthContext';
 import { useAuthStore } from '@shared/stores/authStore';
 import 'react-toastify/dist/ReactToastify.css';
 

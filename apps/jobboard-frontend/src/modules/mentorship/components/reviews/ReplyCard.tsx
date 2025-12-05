@@ -18,7 +18,7 @@ import { Card, CardContent } from '@shared/components/ui/card';
 import { ReplyFormDialog } from './ReplyFormDialog';
 import { deleteReply } from '@modules/resumeReview/services/reviews.service';
 import type { ReplyResponse } from '@shared/types/workplace.types';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 interface ReplyCardProps {
   workplaceId: number;

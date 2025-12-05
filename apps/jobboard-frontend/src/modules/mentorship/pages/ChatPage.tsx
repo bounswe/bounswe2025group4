@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import ChatRoomList from '@modules/chat/components/chat/ChatRoomList';
 import ChatInterface from '@modules/chat/components/chat/ChatInterface';
 import type { ChatRoom, ChatRoomForUser, ChatMessage } from '@shared/types/chat';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import { useAuthStore } from '@shared/stores/authStore';
 import { getMenteeMentorships, getMentorMentorshipRequests } from '@modules/mentorship/services/mentorship.service';
 import { getChatHistory, ChatWebSocket } from '@modules/chat/services/chat.service';

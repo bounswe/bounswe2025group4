@@ -24,7 +24,7 @@ import { reportWorkplace } from '@modules/workplace/services/workplace-report.se
 import { Flag } from 'lucide-react';
 import type { ReviewListParams, WorkplaceDetailResponse } from '@shared/types/workplace.types';
 import type { JobPostResponse } from '@shared/types/api.types';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 export default function WorkplaceProfilePage() {
   const { id } = useParams<{ id: string }>();

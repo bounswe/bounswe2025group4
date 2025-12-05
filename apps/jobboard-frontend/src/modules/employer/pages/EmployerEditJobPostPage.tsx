@@ -6,7 +6,7 @@ import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { Card } from '@shared/components/ui/card';
-import WorkplaceSelector from '@modules/workplace/components/workplace/WorkplaceSelector';
+import WorkplaceSelector from '@/modules/workplace/components/WorkplaceSelector';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import { getJobById, updateJob } from '@modules/jobs/services/jobs.service';
 import type { UpdateJobPostRequest, JobPostResponse } from '@shared/types/api.types';

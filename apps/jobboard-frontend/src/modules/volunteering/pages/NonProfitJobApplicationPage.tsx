@@ -12,7 +12,7 @@ import { cn } from '@shared/lib/utils';
 import type { JobPostResponse } from '@shared/types/api.types';
 import { getJobById } from '@modules/jobs/services/jobs.service';
 import { createApplication, uploadCv, getApplicationsByJobSeeker } from '@modules/applications/services/applications.service';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_FILE_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];

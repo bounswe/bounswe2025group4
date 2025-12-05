@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { EmployerWorkplaceCard } from '@modules/workplace/components/workplace/EmployerWorkplaceCard';
+import { EmployerWorkplaceCard } from '@/modules/workplace/components/EmployerWorkplaceCard';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';

@@ -7,7 +7,7 @@ import { Card, CardContent } from '@shared/components/ui/card';
 import { Input } from '@shared/components/ui/input';
 import MentorCard from '@modules/mentorship/components/mentorship/MentorCard';
 import { type Mentor } from '@shared/types/mentor';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import { cn } from '@shared/lib/utils';
 import { getMentors, getMentorProfile, getMenteeMentorships } from '@modules/mentorship/services/mentorship.service';
 import { convertMentorProfileToMentor } from '@shared/utils/mentorship.utils';

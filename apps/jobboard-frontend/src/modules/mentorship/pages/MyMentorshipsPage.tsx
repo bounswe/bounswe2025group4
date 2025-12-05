@@ -11,7 +11,7 @@ import { Textarea } from '@shared/components/ui/textarea';
 import { Label } from '@shared/components/ui/label';
 import { Clock, CheckCircle, XCircle, MessageCircle, Star, Calendar, FileText } from 'lucide-react';
 import type { Mentorship, MentorshipStatus } from '@shared/types/mentor';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import { getMenteeMentorships, rateMentor } from '@modules/mentorship/services/mentorship.service';
 import type { CreateRatingDTO } from '@shared/types/api.types';
 import { convertMentorshipDetailsToMentorship } from '@shared/utils/mentorship.utils';

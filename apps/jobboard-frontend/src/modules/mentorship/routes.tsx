@@ -1,18 +1,32 @@
 import type { RouteObject } from 'react-router-dom';
 import { lazy } from 'react';
+import ProtectedRoute from '@shared/components/common/ProtectedRoute';
 
-const CreateMentorProfilePage = lazy(() => import('./pages/CreateMentorProfilePage'));
-const MentorProfilePage = lazy(() => import('./pages/MentorProfilePage'));
-const MentorRequestsPage = lazy(() => import('./pages/MentorRequestsPage'));
 const MentorshipPage = lazy(() => import('./pages/MentorshipPage'));
+const MentorProfilePage = lazy(() => import('./pages/MentorProfilePage'));
 const MentorshipRequestPage = lazy(() => import('./pages/MentorshipRequestPage'));
 const MyMentorshipsPage = lazy(() => import('./pages/MyMentorshipsPage'));
-import ProtectedRoute from '@shared/components/common/ProtectedRoute';
+const CreateMentorProfilePage = lazy(() => import('./pages/CreateMentorProfilePage'));
+const MentorRequestsPage = lazy(() => import('./pages/MentorRequestsPage'));
+const ResumeReviewPage = lazy(() => import('./pages/ResumeReviewPage'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
 
 export const mentorshipRoutes: RouteObject[] = [
   {
     path: 'mentorship',
     element: <MentorshipPage />,
+  },
+  {
+    path: 'mentorship/:id',
+    element: <MentorProfilePage />,
+  },
+  {
+    path: 'mentorship/:id/request',
+    element: (
+      <ProtectedRoute>
+        <MentorshipRequestPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: 'mentorship/mentor/create',
@@ -31,10 +45,10 @@ export const mentorshipRoutes: RouteObject[] = [
     ),
   },
   {
-    path: 'mentorship/:id',
+    path: 'mentor/requests',
     element: (
       <ProtectedRoute>
-        <MentorProfilePage />
+        <MentorRequestsPage />
       </ProtectedRoute>
     ),
   },
@@ -47,18 +61,18 @@ export const mentorshipRoutes: RouteObject[] = [
     ),
   },
   {
-    path: 'mentor/requests',
+    path: 'resume-review/:resumeReviewId',
     element: (
       <ProtectedRoute>
-        <MentorRequestsPage />
+        <ResumeReviewPage />
       </ProtectedRoute>
     ),
   },
   {
-    path: 'mentorship/:id/request',
+    path: 'chat',
     element: (
       <ProtectedRoute>
-        <MentorshipRequestPage />
+        <ChatPage />
       </ProtectedRoute>
     ),
   },

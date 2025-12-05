@@ -23,7 +23,7 @@ import type {
   EmployerListItem,
   WorkplaceDetailResponse,
 } from '@shared/types/workplace.types';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import { getErrorMessage } from '@shared/utils/error-handler';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';

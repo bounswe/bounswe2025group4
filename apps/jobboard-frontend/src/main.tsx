@@ -4,7 +4,7 @@ import { Router } from './router.tsx';
 import './index.css';
 import '@shared/lib/i18n';
 import { ThemeProvider } from '@shared/providers/ThemeProvider.tsx';
-import { AuthProvider } from '@shared/contexts/AuthContext';
+import { AuthProvider } from '@/modules/auth/contexts/AuthContext.tsx';
 import { I18nProvider } from '@shared/providers/I18nProvider';
 
 createRoot(document.getElementById('root')!).render(

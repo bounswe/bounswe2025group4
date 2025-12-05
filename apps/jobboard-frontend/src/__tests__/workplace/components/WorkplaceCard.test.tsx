@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { WorkplaceCard } from '@modules/workplace/components/workplace/WorkplaceCard';
+import { WorkplaceCard } from '@/modules/workplace/components/WorkplaceCard';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 import type { WorkplaceBriefResponse } from '@shared/types/workplace.types';

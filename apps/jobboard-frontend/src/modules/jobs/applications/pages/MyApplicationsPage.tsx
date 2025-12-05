@@ -17,7 +17,7 @@ import CenteredLoader from '@shared/components/common/CenteredLoader';
 import type { JobApplicationResponse, JobApplicationStatus } from '@shared/types/api.types';
 import { getApplicationsByJobSeeker, deleteApplication, getCvUrl } from '@modules/applications/services/applications.service';
 import { getJobById } from '@modules/jobs/services/jobs.service';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 type FilterType = 'all' | 'PENDING' | 'APPROVED' | 'REJECTED';
 

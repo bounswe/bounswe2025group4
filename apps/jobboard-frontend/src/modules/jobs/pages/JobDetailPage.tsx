@@ -6,7 +6,7 @@ import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Badge } from '@shared/components/ui/badge';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
-import { WorkplaceCard } from '@modules/workplace/components/workplace/WorkplaceCard';
+import { WorkplaceCard } from '@/modules/workplace/components/WorkplaceCard';
 import type { JobPostResponse } from '@shared/types/api.types';
 import { getJobById } from '@modules/jobs/services/jobs.service';
 import { cn } from '@shared/lib/utils';

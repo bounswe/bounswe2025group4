@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { CreateWorkplaceModal } from '@modules/workplace/components/workplace/CreateWorkplaceModal';
+import { CreateWorkplaceModal } from '@/modules/workplace/components/CreateWorkplaceModal';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import * as workplaceService from '@modules/workplace/services/workplace.service';

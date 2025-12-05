@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avata
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { Star, ArrowLeft, Send, Clock, Users, AlertCircle } from 'lucide-react';
 import type { Mentor, Mentorship } from '@shared/types/mentor';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import { getMentorProfile, createMentorshipRequest, getMenteeMentorships } from '@modules/mentorship/services/mentorship.service';
 import { convertMentorProfileToMentor } from '@shared/utils/mentorship.utils';
 import CenteredLoader from '@shared/components/common/CenteredLoader';

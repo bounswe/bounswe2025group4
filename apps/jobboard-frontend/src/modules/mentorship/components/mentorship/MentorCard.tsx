@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@shared/components/ui/avata
 import { Link, useNavigate } from "react-router-dom";
 import type { Mentor } from "@shared/types/mentor";
 import { createMentorshipRequest } from "@modules/mentorship/services/mentorship.service";
-import { useAuth } from "@shared/contexts/AuthContext";
+import { useAuth } from "@/modules/auth/contexts/AuthContext";
 import { toast } from "react-toastify";
 
 interface MentorCardProps {

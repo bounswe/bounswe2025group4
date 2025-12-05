@@ -21,7 +21,7 @@ import {
   DialogTitle,
 } from '@shared/components/ui/dialog';
 import { Search, Building2, Filter, X, CheckCircle2, ArrowLeft, Loader2 } from 'lucide-react';
-import { WorkplaceCard } from '@modules/workplace/components/workplace/WorkplaceCard';
+import { WorkplaceCard } from '@/modules/workplace/components/WorkplaceCard';
 import { getWorkplaces } from '@modules/workplace/services/workplace.service';
 import { createEmployerRequest, getMyWorkplaces } from '@modules/employer/services/employer.service';
 import {

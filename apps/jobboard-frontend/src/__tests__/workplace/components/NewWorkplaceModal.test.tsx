@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { NewWorkplaceModal } from '@modules/workplace/components/workplace/NewWorkplaceModal';
+import { NewWorkplaceModal } from '@/modules/workplace/components/NewWorkplaceModal';
 import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));

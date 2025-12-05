@@ -21,10 +21,10 @@ import { getMyWorkplaces, getEmployerRequests, getMyEmployerRequests } from '@mo
 import type { EmployerWorkplaceBrief, EmployerRequestResponse } from '@shared/types/workplace.types';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
-import { NewWorkplaceModal } from '@modules/workplace/components/workplace/NewWorkplaceModal';
-import { JoinWorkplaceModal } from '@modules/workplace/components/workplace/JoinWorkplaceModal';
-import { CreateWorkplaceModal } from '@modules/workplace/components/workplace/CreateWorkplaceModal';
-import { EmployerWorkplaceCard } from '@modules/workplace/components/workplace/EmployerWorkplaceCard';
+import { NewWorkplaceModal } from '@/modules/workplace/components/NewWorkplaceModal';
+import { JoinWorkplaceModal } from '@/modules/workplace/components/JoinWorkplaceModal';
+import { CreateWorkplaceModal } from '@/modules/workplace/components/CreateWorkplaceModal';
+import { EmployerWorkplaceCard } from '@/modules/workplace/components/EmployerWorkplaceCard';
 import { getErrorMessage } from '@shared/utils/error-handler';
 
 export default function EmployerWorkplacesPage() {

@@ -10,8 +10,8 @@ import { CreateJobPostModal } from '@modules/jobs/components/jobs/CreateJobPostM
 import { getJobsByEmployer } from '@modules/jobs/services/jobs.service';
 import { getApplications } from '@modules/applications/services/applications.service';
 import { getMyWorkplaces } from '@modules/employer/services/employer.service';
-import { CreateWorkplaceModal } from '@modules/workplace/components/workplace/CreateWorkplaceModal';
-import { JoinWorkplaceModal } from '@modules/workplace/components/workplace/JoinWorkplaceModal';
+import { CreateWorkplaceModal } from '@/modules/workplace/components/CreateWorkplaceModal';
+import { JoinWorkplaceModal } from '@/modules/workplace/components/JoinWorkplaceModal';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import { useAuthStore } from '@shared/stores/authStore';
 import type { JobPostResponse } from '@shared/types/api.types';

@@ -13,7 +13,7 @@ import type { MentorshipDetailsDTO } from '@shared/types/api.types';
 import { convertMentorProfileToMentor, convertMentorReviewToMentorshipReview } from '@shared/utils/mentorship.utils';
 import { profileService } from '@modules/profile/services/profile.service';
 import type { PublicProfile } from '@shared/types/profile.types';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
 import type { MentorshipRequestDTO } from '@shared/types/api.types';

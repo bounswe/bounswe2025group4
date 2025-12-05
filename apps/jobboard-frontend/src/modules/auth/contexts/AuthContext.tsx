@@ -5,8 +5,8 @@ import {
   useCallback,
 } from 'react';
 import type { ReactNode } from 'react';
-import { useAuthStore } from '../stores/authStore';
-import type { User, LoginResponse } from '../types/auth.types';
+import { useAuthStore } from '@shared/stores/authStore';
+import type { User, LoginResponse } from '@shared/types/auth.types';
 
 /**
  * Auth context type definition

@@ -14,7 +14,7 @@ import {
 } from '@modules/mentorship/services/mentorship.service';
 import type { ResumeReviewDTO, MentorshipDetailsDTO, MentorshipRequestDTO } from '@shared/types/api.types';
 import { getMenteeMentorships } from '@modules/mentorship/services/mentorship.service';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 export default function ResumeReviewPage() {
   const { resumeReviewId } = useParams<{ resumeReviewId: string }>();

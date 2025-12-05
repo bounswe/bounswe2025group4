@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avata
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
 import { Clock, CheckCircle, XCircle, User, Calendar } from 'lucide-react';
 import type { MentorshipRequestDTO } from '@shared/types/api.types';
-import { useAuth } from '@shared/contexts/AuthContext';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import { getMentorMentorshipRequests, respondToMentorshipRequest } from '@modules/mentorship/services/mentorship.service';
 import { profileService } from '@modules/profile/services/profile.service';
 import type { PublicProfile } from '@shared/types/profile.types';
