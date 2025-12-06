@@ -1,17 +1,17 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import WorkplaceSettingsPage from '@/pages/WorkplaceSettingsPage';
+import WorkplaceSettingsPage from '@modules/workplace/pages/WorkplaceSettingsPage';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { server } from '@/test/setup';
 import { http, HttpResponse } from 'msw';
 import { API_BASE_URL } from '@/test/handlers';
-import * as workplaceService from '@/services/workplace.service';
-import type { WorkplaceDetailResponse, WorkplaceImageResponseDto } from '@/types/workplace.types';
+import * as workplaceService from '@modules/workplace/services/workplace.service';
+import type { WorkplaceDetailResponse, WorkplaceImageResponseDto } from '@shared/types/workplace.types';
 
 vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
 
 // Mock useAuth hook
-vi.mock('@/contexts/AuthContext', () => ({
+vi.mock('@/modules/auth/contexts/AuthContext', () => ({
   useAuth: () => ({
     user: { id: 1, username: 'testuser', email: 'test@example.com', role: 'ROLE_EMPLOYER' },
     isAuthenticated: true
@@ -20,8 +20,8 @@ vi.mock('@/contexts/AuthContext', () => ({
 }));
 
 // Mock update service
-vi.mock('@/services/workplace.service', async () => {
-  const actual = await vi.importActual('@/services/workplace.service');
+vi.mock('@modules/workplace/services/workplace.service', async () => {
+  const actual = await vi.importActual('@modules/workplace/services/workplace.service');
   return {
     ...actual,
     updateWorkplace: vi.fn(),
@@ -38,7 +38,7 @@ describe('WorkplaceSettingsPage Integration', () => {
         <Routes>
           <Route path="/employer/workplace/:workplaceId/settings" element={<WorkplaceSettingsPage />} />
           <Route path="/workplace/:id" element={<div>Workplace Profile</div>} />
-          <Route path="/employer/workplaces" element={<div>Employer Workplaces</div>} />
+          <Route path="/workplaces" element={<div>Employer Workplaces</div>} />
         </Routes>
       </MemoryRouter>
     );

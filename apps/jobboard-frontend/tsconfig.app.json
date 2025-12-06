@@ -27,7 +27,9 @@
     /* Tailwind */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@shared/*": ["./src/modules/shared/*"]
     }
   },
   "include": ["src"]

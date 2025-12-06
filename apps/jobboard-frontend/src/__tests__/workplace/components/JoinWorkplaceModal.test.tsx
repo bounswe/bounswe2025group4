@@ -1,16 +1,16 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { JoinWorkplaceModal } from '@/components/workplace/JoinWorkplaceModal';
+import { JoinWorkplaceModal } from '@/modules/workplace/components/JoinWorkplaceModal';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
-import * as workplaceService from '@/services/workplace.service';
-import * as employerService from '@/services/employer.service';
-import type { PaginatedWorkplaceResponse, EmployerWorkplaceBrief } from '@/types/workplace.types';
+import * as workplaceService from '@modules/workplace/services/workplace.service';
+import * as employerService from '@modules/employer/services/employer.service';
+import type { PaginatedWorkplaceResponse, EmployerWorkplaceBrief } from '@shared/types/workplace.types';
 
 // Mock services
-vi.mock('@/services/workplace.service', () => ({
+vi.mock('@modules/workplace/services/workplace.service', () => ({
   getWorkplaces: vi.fn(),
 }));
-vi.mock('@/services/employer.service', () => ({
+vi.mock('@modules/employer/services/employer.service', () => ({
   createEmployerRequest: vi.fn(),
   getMyWorkplaces: vi.fn(),
 }));

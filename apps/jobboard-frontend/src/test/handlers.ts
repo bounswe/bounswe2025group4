@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
-import type { Education, Skill, Interest } from '@/types/profile.types';
-import type { JobPostResponse, JobApplicationResponse } from '@/types/api.types';
+import type { Education, Skill, Interest } from '@shared/types/profile.types';
+import type { JobPostResponse, JobApplicationResponse } from '@shared/types/api.types';
 
 export const API_BASE_URL = 'https://api.example.com/api';
 
@@ -503,9 +503,11 @@ export function createMockJob(overrides: Partial<JobPostResponse> = {}): JobPost
 
   // If overrides contains ethicalTags as a string, convert it to array in workplace
   if ('ethicalTags' in overrides && typeof overrides.ethicalTags === 'string') {
-    const ethicalTagsArray = overrides.ethicalTags.length > 0
-      ? overrides.ethicalTags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0)
-      : [];
+    const ethicalTagsValue = overrides.ethicalTags as string;
+    const ethicalTagsArray =
+      ethicalTagsValue.length > 0
+        ? ethicalTagsValue.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0)
+        : [];
     const { ethicalTags, ...restOverrides } = overrides;
     return {
       ...base,
@@ -805,3 +807,4 @@ export const applicationHandlers = [
     return HttpResponse.json({}, { status: 204 });
   }),
 ];
+
