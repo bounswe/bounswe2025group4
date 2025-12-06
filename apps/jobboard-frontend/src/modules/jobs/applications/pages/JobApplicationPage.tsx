@@ -50,7 +50,7 @@ export default function JobApplicationPage() {
         );
 
         if (hasAppliedToThisJob) {
-          toast.info(t('jobApplication.errors.alreadyApplied'));
+          toast.info(t('applications.job.errors.alreadyApplied'));
           navigate(`/jobs/${id}`);
           return;
         }
@@ -60,7 +60,7 @@ export default function JobApplicationPage() {
         setJob(jobData);
       } catch (err) {
         console.error('Error fetching job:', err);
-        toast.error(t('jobApplication.errors.loadJob'));
+        toast.error(t('applications.job.errors.loadJob'));
         navigate('/jobs');
       } finally {
         setIsLoading(false);
@@ -72,13 +72,13 @@ export default function JobApplicationPage() {
 
   const validateFile = (file: File): boolean => {
     if (file.size > MAX_FILE_SIZE) {
-      toast.error(t('jobApplication.errors.fileTooLarge'));
+      toast.error(t('applications.job.errors.fileTooLarge'));
       return false;
     }
 
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!ALLOWED_FILE_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(fileExtension)) {
-      toast.error(t('jobApplication.errors.invalidFileType'));
+      toast.error(t('applications.job.errors.invalidFileType'));
       return false;
     }
 
@@ -123,7 +123,7 @@ export default function JobApplicationPage() {
     e.preventDefault();
 
     if (!id || !cvFile) {
-      toast.error(t('jobApplication.form.cv.required'));
+      toast.error(t('applications.job.form.cv.required'));
       return;
     }
 
@@ -138,11 +138,11 @@ export default function JobApplicationPage() {
 
       await uploadCv(application.id, cvFile);
 
-      toast.success(t('jobApplication.success.message'));
+      toast.success(t('applications.job.success.message'));
       navigate('/applications');
     } catch (err) {
       console.error('Error submitting application:', err);
-      toast.error(t('jobApplication.errors.submitFailed'));
+      toast.error(t('applications.job.errors.submitFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -170,42 +170,42 @@ export default function JobApplicationPage() {
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
         <Link to="/jobs" className="hover:text-foreground transition-colors">
-          {t('jobApplication.breadcrumb.jobs')}
+          {t('applications.job.breadcrumb.jobs')}
         </Link>
         <ChevronRight className={cn('size-4', isRtl && 'rotate-180')} aria-hidden />
         <Link to={`/jobs/${id}`} className="hover:text-foreground transition-colors">
           {job.title}
         </Link>
         <ChevronRight className={cn('size-4', isRtl && 'rotate-180')} aria-hidden />
-        <span className="text-foreground">{t('jobApplication.breadcrumb.apply')}</span>
+        <span className="text-foreground">{t('applications.job.breadcrumb.apply')}</span>
       </nav>
 
       <div className="mx-auto max-w-4xl">
         <h1 className="text-3xl font-bold text-foreground lg:text-4xl mb-8">
-          {t('jobApplication.title', { jobTitle: job.title })}
+          {t('applications.job.title', { jobTitle: job.title })}
         </h1>
 
         {/* Job Details Card */}
         <Card className="border border-border bg-card shadow-sm mb-8">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">{t('jobApplication.jobDetails.title')}</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('applications.job.jobDetails.title')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-muted-foreground">{t('jobApplication.jobDetails.company')}:</span>
+                <span className="text-muted-foreground">{t('applications.job.jobDetails.company')}:</span>
                 <span className="ml-2 font-medium">{job.workplace.companyName}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('jobApplication.jobDetails.location')}:</span>
+                <span className="text-muted-foreground">{t('applications.job.jobDetails.location')}:</span>
                 <span className="ml-2 font-medium">
-                  {job.remote ? t('jobApplication.jobDetails.remote') : job.location}
+                  {job.remote ? t('applications.job.jobDetails.remote') : job.location}
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('jobApplication.jobDetails.salary')}:</span>
+                <span className="text-muted-foreground">{t('applications.job.jobDetails.salary')}:</span>
                 <span className="ml-2 font-medium">{formatSalary(job.minSalary, job.maxSalary)}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('jobApplication.jobDetails.postedOn', { date: formatDate(job.postedDate) })}</span>
+                <span className="text-muted-foreground">{t('applications.job.jobDetails.postedOn', { date: formatDate(job.postedDate) })}</span>
               </div>
             </div>
           </div>
@@ -214,51 +214,51 @@ export default function JobApplicationPage() {
         {/* Application Form */}
         <Card className="border border-border bg-card shadow-sm">
           <div className="p-6 lg:p-8">
-            <h2 className="text-xl font-semibold mb-6">{t('jobApplication.form.title')}</h2>
+            <h2 className="text-xl font-semibold mb-6">{t('applications.job.form.title')}</h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Cover Letter */}
               <div>
                 <Label htmlFor="coverLetter" className="text-base font-medium">
-                  {t('jobApplication.form.coverLetter.label')}
+                  {t('applications.job.form.coverLetter.label')}
                 </Label>
                 <textarea
                   id="coverLetter"
                   value={coverLetter}
                   onChange={(e) => setCoverLetter(e.target.value.slice(0, 2000))}
-                  placeholder={t('jobApplication.form.coverLetter.placeholder')}
+                  placeholder={t('applications.job.form.coverLetter.placeholder')}
                   disabled={isSubmitting}
                   className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[150px] resize-y"
                   maxLength={2000}
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t('jobApplication.form.coverLetter.characterCount', { count: coverLetter.length })}
+                  {t('applications.job.form.coverLetter.characterCount', { count: coverLetter.length })}
                 </p>
               </div>
 
               {/* Special Needs */}
               <div>
                 <Label htmlFor="specialNeeds" className="text-base font-medium">
-                  {t('jobApplication.form.specialNeeds.label')}
+                  {t('applications.job.form.specialNeeds.label')}
                 </Label>
                 <textarea
                   id="specialNeeds"
                   value={specialNeeds}
                   onChange={(e) => setSpecialNeeds(e.target.value.slice(0, 500))}
-                  placeholder={t('jobApplication.form.specialNeeds.placeholder')}
+                  placeholder={t('applications.job.form.specialNeeds.placeholder')}
                   disabled={isSubmitting}
                   className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px] resize-y"
                   maxLength={500}
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t('jobApplication.form.specialNeeds.characterCount', { count: specialNeeds.length })}
+                  {t('applications.job.form.specialNeeds.characterCount', { count: specialNeeds.length })}
                 </p>
               </div>
 
               {/* CV Upload */}
               <div>
                 <Label className="text-base font-medium">
-                  {t('jobApplication.form.cv.label')} <span className="text-destructive">*</span>
+                  {t('applications.job.form.cv.label')} <span className="text-destructive">*</span>
                 </Label>
 
                 {!cvFile ? (
@@ -273,7 +273,7 @@ export default function JobApplicationPage() {
                   >
                     <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
                     <p className="text-sm text-muted-foreground mb-2">
-                      {t('jobApplication.form.cv.dragDrop')}
+                      {t('applications.job.form.cv.dragDrop')}
                     </p>
                     <Button
                       type="button"
@@ -281,10 +281,10 @@ export default function JobApplicationPage() {
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isSubmitting}
                     >
-                      {t('jobApplication.form.cv.chooseFile')}
+                      {t('applications.job.form.cv.chooseFile')}
                     </Button>
                     <p className="text-xs text-muted-foreground mt-2">
-                      {t('jobApplication.form.cv.fileTypes')}
+                      {t('applications.job.form.cv.fileTypes')}
                     </p>
                     <input
                       ref={fileInputRef}
@@ -330,14 +330,14 @@ export default function JobApplicationPage() {
                   disabled={isSubmitting}
                   className="w-full sm:w-auto"
                 >
-                  {t('jobApplication.form.cancel')}
+                  {t('applications.job.form.cancel')}
                 </Button>
                 <Button
                   type="submit"
                   disabled={isSubmitting || !cvFile}
                   className="w-full sm:w-auto sm:ml-auto"
                 >
-                  {isSubmitting ? t('jobApplication.form.submitting') : t('jobApplication.form.submit')}
+                  {isSubmitting ? t('applications.job.form.submitting') : t('applications.job.form.submit')}
                 </Button>
               </div>
             </form>
@@ -347,3 +347,4 @@ export default function JobApplicationPage() {
     </div>
   );
 }
+

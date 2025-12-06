@@ -84,8 +84,8 @@ describe('EmployerDashboardPage', () => {
     });
 
     // Check for empty state message
-    expect(screen.getByText('employerDashboard.noWorkplaces.title')).toBeInTheDocument();
-    expect(screen.getByText('employerDashboard.noWorkplaces.description')).toBeInTheDocument();
+    expect(screen.getByText('employer.dashboard.noWorkplaces.title')).toBeInTheDocument();
+    expect(screen.getByText('employer.dashboard.noWorkplaces.description')).toBeInTheDocument();
   });
 
   it('renders job list with title, status badges, and application counts', async () => {
@@ -132,7 +132,7 @@ describe('EmployerDashboardPage', () => {
     expect(applicationCells.some(cell => cell.textContent === '0')).toBe(true);
 
     // Check for status badges
-    expect(screen.getAllByText('employerDashboard.statusLabels.open').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('employer.dashboard.statusLabels.open').length).toBeGreaterThan(0);
   });
 
   it('navigates to create job page on button click', async () => {
@@ -186,7 +186,7 @@ describe('EmployerDashboardPage', () => {
     });
 
     // Click the "Manage" button
-    const manageButton = screen.getByRole('button', { name: 'employerDashboard.actions.manage' });
+    const manageButton = screen.getByRole('button', { name: 'employer.dashboard.actions.manage' });
     await user.click(manageButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/1');
@@ -208,7 +208,7 @@ describe('EmployerDashboardPage', () => {
     setupAuthState();
 
     await waitFor(() => {
-      expect(screen.getByText('employerDashboard.loadingError')).toBeInTheDocument();
+      expect(screen.getByText('employer.dashboard.loadingError')).toBeInTheDocument();
     });
 
     // Should show retry button
@@ -273,7 +273,7 @@ describe('EmployerDashboardPage', () => {
     });
 
     // Should display status badges
-    const badges = screen.getAllByText('employerDashboard.statusLabels.open');
+    const badges = screen.getAllByText('employer.dashboard.statusLabels.open');
     expect(badges.length).toBeGreaterThan(0);
   });
 
@@ -439,7 +439,7 @@ describe('EmployerDashboardPage', () => {
     const user = setupUserEvent();
 
     await waitFor(() => {
-      expect(screen.getByText('employerDashboard.loadingError')).toBeInTheDocument();
+      expect(screen.getByText('employer.dashboard.loadingError')).toBeInTheDocument();
     });
 
     const retryButton = screen.getByRole('button', { name: 'jobs.retry' });
@@ -503,11 +503,11 @@ describe('EmployerDashboardPage', () => {
     setupAuthState();
 
     await waitFor(() => {
-      expect(screen.getByText('employerDashboard.noWorkplaces.title')).toBeInTheDocument();
+      expect(screen.getByText('employer.dashboard.noWorkplaces.title')).toBeInTheDocument();
     });
 
     // In the empty state, there should be create and join workplace buttons
-    const createButton = screen.getByRole('button', { name: 'employerDashboard.noWorkplaces.createWorkplace' });
+    const createButton = screen.getByRole('button', { name: 'employer.dashboard.noWorkplaces.createWorkplace' });
     expect(createButton).toBeInTheDocument();
   });
 
@@ -609,7 +609,7 @@ describe('EmployerDashboardPage', () => {
       expect(screen.getByText('Job 1')).toBeInTheDocument();
     });
 
-    const manageButtons = screen.getAllByRole('button', { name: 'employerDashboard.actions.manage' });
+    const manageButtons = screen.getAllByRole('button', { name: 'employer.dashboard.actions.manage' });
     expect(manageButtons.length).toBe(3);
   });
 
@@ -639,7 +639,7 @@ describe('EmployerDashboardPage', () => {
       expect(screen.getByText('Job Alpha')).toBeInTheDocument();
     });
 
-    const manageButtons = screen.getAllByRole('button', { name: 'employerDashboard.actions.manage' });
+    const manageButtons = screen.getAllByRole('button', { name: 'employer.dashboard.actions.manage' });
 
     // Click first manage button
     await user.click(manageButtons[0]);
@@ -647,4 +647,5 @@ describe('EmployerDashboardPage', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/5');
   });
 });
+
 

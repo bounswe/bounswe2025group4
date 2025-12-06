@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { AlertCircle, Search, X } from 'lucide-react';
 import { Button } from '@shared/components/ui/button';
 import { Card, CardContent } from '@shared/components/ui/card';
@@ -14,16 +14,48 @@ import { convertMentorProfileToMentor } from '@shared/utils/mentorship.utils';
 import { profileService } from '@modules/profile/services/profile.service';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
+import MyMentorshipsPage from './MyMentorshipsPage';
+import ChatPage from './ChatPage';
 
-const MentorshipPage = () => {
+type MentorshipTab = 'browse' | 'my' | 'chat';
+
+type MentorshipPageProps = {
+  initialTab?: MentorshipTab;
+};
+
+const MentorshipPage = ({ initialTab = 'browse' }: MentorshipPageProps) => {
   const { t } = useTranslation('common');
   const { isAuthenticated, user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState<MentorshipTab>(
+    tabParam === 'my' || tabParam === 'chat' ? (tabParam as MentorshipTab) : initialTab
+  );
   const [searchInput, setSearchInput] = useState('');
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasMentorProfile, setHasMentorProfile] = useState(false);
   const [requestedMentorIds, setRequestedMentorIds] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    if (tabParam === 'my' || tabParam === 'chat') {
+      setActiveTab(tabParam as MentorshipTab);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (value: string) => {
+    const nextTab: MentorshipTab = value === 'my' || value === 'chat' ? value : 'browse';
+    setActiveTab(nextTab);
+    const next = new URLSearchParams(searchParams);
+    if (nextTab === 'browse') {
+      next.delete('tab');
+    } else {
+      next.set('tab', nextTab);
+    }
+    setSearchParams(next, { replace: true });
+  };
 
   useEffect(() => {
     const checkMentorProfile = async () => {
@@ -154,127 +186,164 @@ const MentorshipPage = () => {
   if (error) {
     return <CenteredError message={error} />;
   }
-  
+
+  const renderAuthPrompt = () => (
+    <Card className="max-w-3xl">
+      <CardContent className="py-8 space-y-4 text-center">
+        <h2 className="text-2xl font-semibold">{t('mentorship.authRequired.title')}</h2>
+        <p className="text-muted-foreground">
+          {t('mentorship.authRequired.description')}
+        </p>
+        <div className="flex justify-center gap-3">
+          <Button asChild>
+            <Link to="/login">{t('layout.header.auth.login')}</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/register">{t('layout.header.auth.signup')}</Link>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="container mx-auto px-4 py-6 lg:py-8">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
-              {t('mentorship.title')}
-            </h1>
-            <p className="mt-2 text-muted-foreground">
-              {t('mentorship.subtitle') || 'Find experienced mentors to guide your career'}
-            </p>
-          </div>
-          {isAuthenticated && (
-            <>
-              {hasMentorProfile ? (
-                <Button asChild variant="outline">
-                  <Link to={`/mentorship/${user?.id}`}>
-                    {t('mentorship.viewMyProfile') || 'View My Profile'}
-                  </Link>
-                </Button>
-              ) : (
-                <Button asChild>
-                  <Link to="/mentorship/mentor/create">
-                    {t('mentorship.becomeMentor')}
-                  </Link>
-                </Button>
-              )}
-            </>
-          )}
-        </div>
-        
-        {/* Search Bar */}
-        <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder={t('mentorship.searchPlaceholder') || 'Search mentors by name, expertise, or skills...'}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            className="pl-10 pr-10"
-          />
-          {searchInput && (
-            <button
-              onClick={() => setSearchInput('')}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              aria-label="Clear search"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-      </div>
-      
-      {/* Auth Required Banner (if not authenticated) */}
-      {!isAuthenticated && (
-        <Card className="gap-4 py-4 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950 mb-6">
-          <CardContent className="px-4 space-y-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-              <div className="space-y-2 flex-1">
-                <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
-                  {t('mentorship.authRequired.title')}
-                </h3>
-                <p className="text-sm text-amber-800 dark:text-amber-200">
-                  {t('mentorship.authRequired.description')}
-                </p>
-                <p className="text-sm text-amber-700 dark:text-amber-300">
-                  {t('mentorship.authRequired.invitation')}
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full space-y-6">
+        <TabsList className="grid w-full max-w-2xl grid-cols-3">
+          <TabsTrigger value="browse">{t('mentorship.tabs.browse', 'Browse')}</TabsTrigger>
+          <TabsTrigger value="my">{t('mentorship.tabs.my', 'My Mentorships')}</TabsTrigger>
+          <TabsTrigger value="chat">{t('mentorship.tabs.chat', 'Chat')}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="browse" className="mt-2">
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <div>
+                <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
+                  {t('mentorship.title')}
+                </h1>
+                <p className="mt-2 text-muted-foreground">
+                  {t('mentorship.subtitle') || 'Find experienced mentors to guide your career'}
                 </p>
               </div>
+              {isAuthenticated && (
+                <>
+                  {hasMentorProfile ? (
+                    <Button asChild variant="outline">
+                      <Link to={`/mentorship/${user?.id}`}>
+                        {t('mentorship.viewMyProfile') || 'View My Profile'}
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button asChild>
+                      <Link to="/mentorship/mentor/create">
+                        {t('mentorship.becomeMentor')}
+                      </Link>
+                    </Button>
+                  )}
+                </>
+              )}
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button asChild className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600">
-                <Link to="/register">{t('mentorship.authRequired.signUp')}</Link>
-              </Button>
-              <Button asChild variant="outline" className="border-amber-300 dark:border-amber-700">
-                <Link to="/login">{t('mentorship.authRequired.login')}</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* Mentor Grid (blurred if not authenticated) */}
-      {filteredMentors.length > 0 ? (
-        <div className={cn(
-          "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
-          !isAuthenticated && "opacity-60 pointer-events-none blur-sm select-none"
-        )}>
-          {filteredMentors.map((mentor) => {
-            const mentorIdNum = parseInt(mentor.id, 10);
-            const hasRequested = !isNaN(mentorIdNum) && requestedMentorIds.has(mentorIdNum);
-            return (
-              <MentorCard 
-                key={mentor.id} 
-                mentor={mentor} 
-                hasRequested={hasRequested}
+            
+            {/* Search Bar */}
+            <div className="relative mb-6">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder={t('mentorship.searchPlaceholder') || 'Search mentors by name, expertise, or skills...'}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="pl-10 pr-10"
               />
-            );
-          })}
-        </div>
-      ) : (
-        <Card>
-          <CardContent className="text-center py-12">
-            <p className="text-muted-foreground">
-              {t('mentorship.noResults') || 'No mentors found. Try adjusting your search.'}
-            </p>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* Login Prompt Overlay (if not authenticated) */}
-      {!isAuthenticated && (
-        <div className="text-center mt-6">
-          <p className="text-muted-foreground mb-4">
-            {t('mentorship.authRequired.viewMore')}
-          </p>
-        </div>
-      )}
+              {searchInput && (
+                <button
+                  onClick={() => setSearchInput('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label="Clear search"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {/* Auth Required Banner (if not authenticated) */}
+          {!isAuthenticated && (
+            <Card className="gap-4 py-4 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950 mb-6">
+              <CardContent className="px-4 space-y-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div className="space-y-2 flex-1">
+                    <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
+                      {t('mentorship.authRequired.title')}
+                    </h3>
+                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                      {t('mentorship.authRequired.description')}
+                    </p>
+                    <p className="text-sm text-amber-700 dark:text-amber-300">
+                      {t('mentorship.authRequired.invitation')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button asChild className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600">
+                    <Link to="/register">{t('mentorship.authRequired.signUp')}</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="border-amber-300 dark:border-amber-700">
+                    <Link to="/login">{t('mentorship.authRequired.login')}</Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
+          {/* Mentor Grid (blurred if not authenticated) */}
+          {filteredMentors.length > 0 ? (
+            <div className={cn(
+              "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+              !isAuthenticated && "opacity-60 pointer-events-none blur-sm select-none"
+            )}>
+              {filteredMentors.map((mentor) => {
+                const mentorIdNum = parseInt(mentor.id, 10);
+                const hasRequested = !isNaN(mentorIdNum) && requestedMentorIds.has(mentorIdNum);
+                return (
+                  <MentorCard 
+                    key={mentor.id} 
+                    mentor={mentor} 
+                    hasRequested={hasRequested}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="text-center py-12">
+                <p className="text-muted-foreground">
+                  {t('mentorship.noResults') || 'No mentors found. Try adjusting your search.'}
+                </p>
+              </CardContent>
+            </Card>
+          )}
+          
+          {/* Login Prompt Overlay (if not authenticated) */}
+          {!isAuthenticated && (
+            <div className="text-center mt-6">
+              <p className="text-muted-foreground mb-4">
+                {t('mentorship.authRequired.viewMore')}
+              </p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="my" className="mt-2">
+          {!isAuthenticated ? renderAuthPrompt() : activeTab === 'my' ? <MyMentorshipsPage /> : null}
+        </TabsContent>
+
+        <TabsContent value="chat" className="mt-2">
+          {!isAuthenticated ? renderAuthPrompt() : activeTab === 'chat' ? <ChatPage /> : null}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

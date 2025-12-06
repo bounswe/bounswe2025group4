@@ -196,40 +196,40 @@ export default function HomePage() {
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               {isEmployer ? (
                 <>
-                  <Button variant="secondary" onClick={() => navigate('/employer/workplaces')}>
-                    {t('header.nav.myWorkplaces')}
+                  <Button variant="secondary" onClick={() => navigate('/workplaces?tab=my')}>
+                    {t('layout.header.nav.myWorkplaces')}
                   </Button>
                   <Button variant="ghost" onClick={() => navigate('/nonprofit-jobs')}>
-                    {t('header.nav.nonProfitJobs')}
+                    {t('layout.header.nav.nonProfitJobs')}
                   </Button>
                   <Button variant="ghost" onClick={() => navigate('/mentorship')}>
-                    {t('header.nav.mentorship')}
+                    {t('layout.header.nav.mentorship')}
                   </Button>
                   <Button variant="ghost" onClick={() => navigate('/forum')}>
-                    {t('header.nav.forum')}
+                    {t('layout.header.nav.forum')}
                   </Button>
                 </>
               ) : (
                 <>
                   <Button variant="secondary" onClick={() => navigate('/jobs')}>
-                    {t('header.nav.jobs')}
+                    {t('layout.header.nav.jobs')}
                   </Button>
                   <Button variant="ghost" onClick={() => navigate('/nonprofit-jobs')}>
-                    {t('header.nav.nonProfitJobs')}
+                    {t('layout.header.nav.nonProfitJobs')}
                   </Button>
                   {isAuthenticated && isJobSeeker && (
                     <Button variant="ghost" onClick={() => navigate('/applications')}>
-                      {t('header.nav.myApplications')}
+                      {t('layout.header.nav.myApplications')}
                     </Button>
                   )}
-                  <Button variant="ghost" onClick={() => navigate('/workplaces')}>
-                    {t('header.nav.workplaces')}
+                  <Button variant="ghost" onClick={() => navigate('/jobs?tab=workplaces')}>
+                    {t('layout.header.nav.workplaces')}
                   </Button>
                   <Button variant="ghost" onClick={() => navigate('/mentorship')}>
-                    {t('header.nav.mentorship')}
+                    {t('layout.header.nav.mentorship')}
                   </Button>
                   <Button variant="ghost" onClick={() => navigate('/forum')}>
-                    {t('header.nav.forum')}
+                    {t('layout.header.nav.forum')}
                   </Button>
                 </>
               )}
@@ -511,3 +511,4 @@ export default function HomePage() {
     </div>
   );
 }
+

@@ -118,14 +118,14 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Check form is pre-populated
-    expect((screen.getByLabelText('createJob.jobTitle') as HTMLInputElement).value).toBe('Existing Job Title');
-    expect((screen.getByLabelText('createJob.jobDescription') as HTMLTextAreaElement).value).toBe('Existing job description');
-    expect((screen.getByLabelText('createJob.location') as HTMLInputElement).value).toBe('Existing Location');
-    expect((screen.getByLabelText('createJob.minimum') as HTMLInputElement).value).toBe('100000');
-    expect((screen.getByLabelText('createJob.maximum') as HTMLInputElement).value).toBe('150000');
-    expect((screen.getByLabelText('createJob.contactEmail') as HTMLInputElement).value).toBe('existing@company.com');
-    expect(screen.getByLabelText('createJob.remoteWork')).toBeChecked();
-    expect(screen.getByLabelText('createJob.inclusiveOpportunity')).toBeChecked();
+    expect((screen.getByLabelText('employer.createJob.jobTitle') as HTMLInputElement).value).toBe('Existing Job Title');
+    expect((screen.getByLabelText('employer.createJob.jobDescription') as HTMLTextAreaElement).value).toBe('Existing job description');
+    expect((screen.getByLabelText('employer.createJob.location') as HTMLInputElement).value).toBe('Existing Location');
+    expect((screen.getByLabelText('employer.createJob.minimum') as HTMLInputElement).value).toBe('100000');
+    expect((screen.getByLabelText('employer.createJob.maximum') as HTMLInputElement).value).toBe('150000');
+    expect((screen.getByLabelText('employer.createJob.contactEmail') as HTMLInputElement).value).toBe('existing@company.com');
+    expect(screen.getByLabelText('employer.createJob.remoteWork')).toBeChecked();
+    expect(screen.getByLabelText('employer.createJob.inclusiveOpportunity')).toBeChecked();
   });
 
   it('parses JSON contact format correctly', async () => {
@@ -148,7 +148,7 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Should parse JSON and extract email
-    expect((screen.getByLabelText('createJob.contactEmail') as HTMLInputElement).value).toBe('json@company.com');
+    expect((screen.getByLabelText('employer.createJob.contactEmail') as HTMLInputElement).value).toBe('json@company.com');
   });
 
   it('parses plain string contact format correctly', async () => {
@@ -171,7 +171,7 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Should use plain string as email
-    expect((screen.getByLabelText('createJob.contactEmail') as HTMLInputElement).value).toBe('plain@company.com');
+    expect((screen.getByLabelText('employer.createJob.contactEmail') as HTMLInputElement).value).toBe('plain@company.com');
   });
 
   it('displays workplace selector', async () => {
@@ -194,7 +194,7 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Workplace selector should be displayed
-    expect(screen.getByText('createJob.workplaceDescription')).toBeInTheDocument();
+    expect(screen.getByText('employer.createJob.workplaceDescription')).toBeInTheDocument();
   });
 
   it('updates job successfully with changed values', async () => {
@@ -224,7 +224,7 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Change title
-    const titleInput = screen.getByLabelText('createJob.jobTitle');
+    const titleInput = screen.getByLabelText('employer.createJob.jobTitle');
     await user.clear(titleInput);
     await user.type(titleInput, 'Updated Job Title');
 
@@ -336,8 +336,8 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Salary fields should be empty
-    expect((screen.getByLabelText('createJob.minimum') as HTMLInputElement).value).toBe('');
-    expect((screen.getByLabelText('createJob.maximum') as HTMLInputElement).value).toBe('');
+    expect((screen.getByLabelText('employer.createJob.minimum') as HTMLInputElement).value).toBe('');
+    expect((screen.getByLabelText('employer.createJob.maximum') as HTMLInputElement).value).toBe('');
 
     // Submit without filling salary
     const submitButton = screen.getByRole('button', { name: 'editJob.save' });
@@ -444,8 +444,8 @@ describe('EmployerEditJobPostPage', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    expect((screen.getByLabelText('createJob.jobTitle') as HTMLInputElement).value).toBe(longTitle);
-    expect((screen.getByLabelText('createJob.jobDescription') as HTMLTextAreaElement).value).toBe(longDescription);
+    expect((screen.getByLabelText('employer.createJob.jobTitle') as HTMLInputElement).value).toBe(longTitle);
+    expect((screen.getByLabelText('employer.createJob.jobDescription') as HTMLTextAreaElement).value).toBe(longDescription);
   });
 
   it('handles special characters in job fields', async () => {
@@ -469,8 +469,8 @@ describe('EmployerEditJobPostPage', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    expect((screen.getByLabelText('createJob.jobTitle') as HTMLInputElement).value).toBe('C++ & C# Developer @ Tech&Co');
-    expect((screen.getByLabelText('createJob.location') as HTMLInputElement).value).toBe('São Paulo, Brasil');
+    expect((screen.getByLabelText('employer.createJob.jobTitle') as HTMLInputElement).value).toBe('C++ & C# Developer @ Tech&Co');
+    expect((screen.getByLabelText('employer.createJob.location') as HTMLInputElement).value).toBe('São Paulo, Brasil');
   });
 
   it('handles editing salary range', async () => {
@@ -504,8 +504,8 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Change salary
-    const minInput = screen.getByLabelText('createJob.minimum');
-    const maxInput = screen.getByLabelText('createJob.maximum');
+    const minInput = screen.getByLabelText('employer.createJob.minimum');
+    const maxInput = screen.getByLabelText('employer.createJob.maximum');
 
     await user.clear(minInput);
     await user.type(minInput, '100000');
@@ -551,8 +551,8 @@ describe('EmployerEditJobPostPage', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    const remoteCheckbox = screen.getByLabelText('createJob.remoteWork');
-    const inclusiveCheckbox = screen.getByLabelText('createJob.inclusiveOpportunity');
+    const remoteCheckbox = screen.getByLabelText('employer.createJob.remoteWork');
+    const inclusiveCheckbox = screen.getByLabelText('employer.createJob.inclusiveOpportunity');
 
     // Initially unchecked
     expect(remoteCheckbox).not.toBeChecked();
@@ -628,7 +628,7 @@ describe('EmployerEditJobPostPage', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    expect((screen.getByLabelText('createJob.jobDescription') as HTMLTextAreaElement).value).toBe(multilineDescription);
+    expect((screen.getByLabelText('employer.createJob.jobDescription') as HTMLTextAreaElement).value).toBe(multilineDescription);
   });
 
   it('renders form fields correctly', async () => {
@@ -651,10 +651,10 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     // Check that all form fields are rendered
-    expect(screen.getByLabelText('createJob.jobTitle')).toBeInTheDocument();
-    expect(screen.getByLabelText('createJob.jobDescription')).toBeInTheDocument();
-    expect(screen.getByLabelText('createJob.location')).toBeInTheDocument();
-    expect(screen.getByLabelText('createJob.contactEmail')).toBeInTheDocument();
+    expect(screen.getByLabelText('employer.createJob.jobTitle')).toBeInTheDocument();
+    expect(screen.getByLabelText('employer.createJob.jobDescription')).toBeInTheDocument();
+    expect(screen.getByLabelText('employer.createJob.location')).toBeInTheDocument();
+    expect(screen.getByLabelText('employer.createJob.contactEmail')).toBeInTheDocument();
   });
 
   it('handles very large salary values', async () => {
@@ -678,8 +678,8 @@ describe('EmployerEditJobPostPage', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    expect((screen.getByLabelText('createJob.minimum') as HTMLInputElement).value).toBe('1000000');
-    expect((screen.getByLabelText('createJob.maximum') as HTMLInputElement).value).toBe('10000000');
+    expect((screen.getByLabelText('employer.createJob.minimum') as HTMLInputElement).value).toBe('1000000');
+    expect((screen.getByLabelText('employer.createJob.maximum') as HTMLInputElement).value).toBe('10000000');
   });
 
   it('handles editing contact email to different format', async () => {
@@ -711,7 +711,7 @@ describe('EmployerEditJobPostPage', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    const contactInput = screen.getByLabelText('createJob.contactEmail');
+    const contactInput = screen.getByLabelText('employer.createJob.contactEmail');
     fireEvent.change(contactInput, { target: { value: 'new@company.co.uk' } });
 
     await waitFor(() => {
@@ -726,4 +726,5 @@ describe('EmployerEditJobPostPage', () => {
     });
   });
 });
+
 

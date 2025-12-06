@@ -179,14 +179,14 @@ export default function EmployerEditJobPostPage() {
           <form onSubmit={handleSubmit} className="space-y-4 p-4 lg:p-6">
             <div>
               <Label htmlFor="title" className="text-sm font-semibold">
-                {t('createJob.jobTitle', { defaultValue: 'Job Title' })}
+                {t('employer.createJob.jobTitle', { defaultValue: 'Job Title' })}
               </Label>
               <Input
                 id="title"
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder={t('createJob.jobTitlePlaceholder', {
+                placeholder={t('employer.createJob.jobTitlePlaceholder', {
                   defaultValue: 'eg: Senior Product Manager',
                 })}
                 className="mt-2"
@@ -196,13 +196,13 @@ export default function EmployerEditJobPostPage() {
 
             <div>
               <Label htmlFor="description" className="text-sm font-semibold">
-                {t('createJob.jobDescription', { defaultValue: 'Job Description' })}
+                {t('employer.createJob.jobDescription', { defaultValue: 'Job Description' })}
               </Label>
               <textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder={t('createJob.jobDescriptionPlaceholder', {
+                placeholder={t('employer.createJob.jobDescriptionPlaceholder', {
                   defaultValue:
                     'Provide a detailed description of the role, responsibilities, qualifications, and company culture',
                 })}
@@ -213,10 +213,10 @@ export default function EmployerEditJobPostPage() {
 
             <div>
               <Label className="text-sm font-semibold">
-                {t('createJob.workplace', { defaultValue: 'Workplace' })}
+                {t('employer.createJob.workplace', { defaultValue: 'Workplace' })}
               </Label>
               <p className="text-xs text-muted-foreground mt-1 mb-2">
-                {t('createJob.workplaceDescription', {
+                {t('employer.createJob.workplaceDescription', {
                   defaultValue: 'Select the workplace this job belongs to',
                 })}
               </p>
@@ -229,14 +229,14 @@ export default function EmployerEditJobPostPage() {
 
             <div>
               <Label htmlFor="location" className="text-sm font-semibold">
-                {t('createJob.location', { defaultValue: 'Location' })}
+                {t('employer.createJob.location', { defaultValue: 'Location' })}
               </Label>
               <Input
                 id="location"
                 type="text"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                placeholder={t('createJob.locationPlaceholder', {
+                placeholder={t('employer.createJob.locationPlaceholder', {
                   defaultValue: 'eg: San Francisco, CA',
                 })}
                 className="mt-2"
@@ -256,10 +256,10 @@ export default function EmployerEditJobPostPage() {
                 />
                 <div className="flex-1">
                   <Label htmlFor="remote" className="text-sm font-medium cursor-pointer">
-                    {t('createJob.remoteWork', { defaultValue: 'Remote Work Available' })}
+                    {t('employer.createJob.remoteWork', { defaultValue: 'Remote Work Available' })}
                   </Label>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {t('createJob.remoteWorkDescription', {
+                    {t('employer.createJob.remoteWorkDescription', {
                       defaultValue: 'Check this if the position offers remote work options',
                     })}
                   </p>
@@ -285,10 +285,10 @@ export default function EmployerEditJobPostPage() {
                 />
                 <div className="flex-1">
                   <Label htmlFor="nonProfit" className="text-sm font-medium cursor-pointer">
-                    {t('createJob.nonProfit', { defaultValue: 'Non-Profit Organization' })}
+                    {t('employer.createJob.nonProfit', { defaultValue: 'Non-Profit Organization' })}
                   </Label>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {t('createJob.nonProfitDescription', {
+                    {t('employer.createJob.nonProfitDescription', {
                       defaultValue: 'Mark this as a volunteer opportunity from a non-profit organization focused on social impact',
                     })}
                   </p>
@@ -300,19 +300,19 @@ export default function EmployerEditJobPostPage() {
             {!formData.nonProfit && (
               <div>
                 <Label className="text-sm font-semibold">
-                  {t('createJob.salaryRange', { defaultValue: 'Salary Range (USD)' })}
+                  {t('employer.createJob.salaryRange', { defaultValue: 'Salary Range (USD)' })}
                 </Label>
                 <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
-                      {t('createJob.minimum', { defaultValue: 'Minimum' })}
+                      {t('employer.createJob.minimum', { defaultValue: 'Minimum' })}
                     </Label>
                     <Input
                       id="minSalary"
                       type="number"
                       value={formData.minSalary}
                       onChange={(e) => setFormData({ ...formData, minSalary: e.target.value })}
-                      placeholder={t('createJob.minSalaryPlaceholder', {
+                      placeholder={t('employer.createJob.minSalaryPlaceholder', {
                         defaultValue: 'e.g., 80000',
                       })}
                       className="mt-1"
@@ -320,14 +320,14 @@ export default function EmployerEditJobPostPage() {
                   </div>
                   <div>
                     <Label htmlFor="maxSalary" className="text-xs text-muted-foreground">
-                      {t('createJob.maximum', { defaultValue: 'Maximum' })}
+                      {t('employer.createJob.maximum', { defaultValue: 'Maximum' })}
                     </Label>
                     <Input
                       id="maxSalary"
                       type="number"
                       value={formData.maxSalary}
                       onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value })}
-                      placeholder={t('createJob.maxSalaryPlaceholder', {
+                      placeholder={t('employer.createJob.maxSalaryPlaceholder', {
                         defaultValue: 'e.g., 120000',
                       })}
                       className="mt-1"
@@ -339,14 +339,14 @@ export default function EmployerEditJobPostPage() {
 
             <div>
               <Label htmlFor="contactEmail" className="text-sm font-semibold">
-                {t('createJob.contactEmail', { defaultValue: 'Contact Email' })}
+                {t('employer.createJob.contactEmail', { defaultValue: 'Contact Email' })}
               </Label>
               <Input
                 id="contactEmail"
                 type="email"
                 value={formData.contactEmail}
                 onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-                placeholder={t('createJob.contactEmailPlaceholder', {
+                placeholder={t('employer.createJob.contactEmailPlaceholder', {
                   defaultValue: 'eg: hiring@company.com',
                 })}
                 className="mt-2"
@@ -371,12 +371,12 @@ export default function EmployerEditJobPostPage() {
                 />
                 <div className="flex-1">
                   <Label htmlFor="inclusiveOpportunity" className="text-sm font-semibold cursor-pointer">
-                    {t('createJob.inclusiveOpportunity', {
+                    {t('employer.createJob.inclusiveOpportunity', {
                       defaultValue: 'Inclusive Opportunity',
                     })}
                   </Label>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {t('createJob.inclusiveOpportunityDescription', {
+                    {t('employer.createJob.inclusiveOpportunityDescription', {
                       defaultValue:
                         'Highlight this job as welcoming candidates from diverse backgrounds.',
                     })}
@@ -421,3 +421,4 @@ export default function EmployerEditJobPostPage() {
     </div>
   );
 }
+

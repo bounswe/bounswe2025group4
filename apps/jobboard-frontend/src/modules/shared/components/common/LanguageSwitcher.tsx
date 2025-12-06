@@ -31,17 +31,17 @@ export function LanguageSwitcher({ className, showLabel = false }: LanguageSwitc
     <div className={cn('flex items-center gap-2 text-sm text-muted-foreground', className)}>
       <Globe2 className="size-4 shrink-0" aria-hidden />
       {showLabel && (
-        <span className="font-medium text-foreground">{t('languageSwitcher.label')}</span>
+        <span className="font-medium text-foreground">{t('layout.languageSwitcher.label')}</span>
       )}
       <label className="sr-only" htmlFor="language-switcher">
-        {t('languageSwitcher.label')}
+        {t('layout.languageSwitcher.label')}
       </label>
       <select
         id="language-switcher"
         className="min-w-[110px] rounded-md border border-input bg-background px-2 py-1 text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         value={languageCode}
         onChange={handleChange}
-        aria-label={t('languageSwitcher.label')}
+        aria-label={t('layout.languageSwitcher.label')}
       >
         {languageConfig.map((lang) => (
           <option key={lang.code} value={lang.code}>
@@ -52,3 +52,4 @@ export function LanguageSwitcher({ className, showLabel = false }: LanguageSwitc
     </div>
   );
 }
+

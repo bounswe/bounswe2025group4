@@ -283,7 +283,7 @@ const MyMentorshipsPage = () => {
           {mentorship.status === 'active' && (
             <>
               <Button size="sm" className="flex-1" asChild>
-                <Link to={`/chat?mentorshipId=${mentorship.id}`}>
+                <Link to={`/mentorship/chat?mentorshipId=${mentorship.id}`}>
                   <MessageCircle className="h-4 w-4 mr-2" />
                   {t('mentorship.myMentorships.openChat')}
                 </Link>
@@ -314,7 +314,7 @@ const MyMentorshipsPage = () => {
           {mentorship.status === 'completed' && (
             <>
               <Button size="sm" className="flex-1" asChild>
-                <Link to={`/chat?mentorshipId=${mentorship.id}`}>
+                <Link to={`/mentorship/chat?mentorshipId=${mentorship.id}`}>
                   <MessageCircle className="h-4 w-4 mr-2" />
                   {t('mentorship.myMentorships.openChat')}
                 </Link>

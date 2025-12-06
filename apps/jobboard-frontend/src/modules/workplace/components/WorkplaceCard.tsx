@@ -88,3 +88,4 @@ export function WorkplaceCard({ workplace, onClick }: WorkplaceCardProps) {
   // Default behavior: wrap in Link for navigation
   return <Link to={`/workplace/${workplace.id}`}>{cardContent}</Link>;
 }
+

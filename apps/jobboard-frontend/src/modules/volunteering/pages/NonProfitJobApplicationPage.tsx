@@ -51,7 +51,7 @@ export default function NonProfitJobApplicationPage() {
         );
 
         if (hasAppliedToThisJob) {
-          toast.info(t('nonProfitApplication.errors.alreadyApplied'));
+          toast.info(t('applications.volunteer.errors.alreadyApplied'));
           navigate(`/nonprofit-jobs/${id}`);
           return;
         }
@@ -61,7 +61,7 @@ export default function NonProfitJobApplicationPage() {
         setJob(jobData);
       } catch (err) {
         console.error('Error fetching volunteer opportunity:', err);
-        toast.error(t('nonProfitApplication.errors.loadJob'));
+        toast.error(t('applications.volunteer.errors.loadJob'));
         navigate('/nonprofit-jobs');
       } finally {
         setIsLoading(false);
@@ -73,13 +73,13 @@ export default function NonProfitJobApplicationPage() {
 
   const validateFile = (file: File): boolean => {
     if (file.size > MAX_FILE_SIZE) {
-      toast.error(t('nonProfitApplication.errors.fileTooLarge'));
+      toast.error(t('applications.volunteer.errors.fileTooLarge'));
       return false;
     }
 
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     if (!ALLOWED_FILE_TYPES.includes(file.type) && !ALLOWED_EXTENSIONS.includes(fileExtension)) {
-      toast.error(t('nonProfitApplication.errors.invalidFileType'));
+      toast.error(t('applications.volunteer.errors.invalidFileType'));
       return false;
     }
 
@@ -124,7 +124,7 @@ export default function NonProfitJobApplicationPage() {
     e.preventDefault();
 
     if (!id || !cvFile) {
-      toast.error(t('nonProfitApplication.form.cv.required'));
+      toast.error(t('applications.volunteer.form.cv.required'));
       return;
     }
 
@@ -139,11 +139,11 @@ export default function NonProfitJobApplicationPage() {
 
       await uploadCv(application.id, cvFile);
 
-      toast.success(t('nonProfitApplication.success.message'));
+      toast.success(t('applications.volunteer.success.message'));
       navigate('/applications');
     } catch (err) {
       console.error('Error submitting volunteer application:', err);
-      toast.error(t('nonProfitApplication.errors.submitFailed'));
+      toast.error(t('applications.volunteer.errors.submitFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -164,22 +164,22 @@ export default function NonProfitJobApplicationPage() {
 
   // Handle location display with fallbacks
   const location = job.remote 
-    ? t('jobCard.remote') 
-    : job.location || job.workplace.location || t('jobCard.notSpecified');
+    ? t('jobs.card.remote') 
+    : job.location || job.workplace.location || t('jobs.card.notSpecified');
 
   return (
     <div className="container mx-auto px-4 py-6 lg:py-8" dir={isRtl ? 'rtl' : 'ltr'}>
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
         <Link to="/nonprofit-jobs" className="hover:text-foreground transition-colors">
-          {t('nonProfitJobs.volunteer')}
+          {t('volunteering.volunteer')}
         </Link>
         <ChevronRight className={cn('size-4', isRtl && 'rotate-180')} aria-hidden />
         <Link to={`/nonprofit-jobs/${id}`} className="hover:text-foreground transition-colors">
           {job.title}
         </Link>
         <ChevronRight className={cn('size-4', isRtl && 'rotate-180')} aria-hidden />
-        <span className="text-foreground">{t('nonProfitApplication.breadcrumb.apply')}</span>
+        <span className="text-foreground">{t('applications.volunteer.breadcrumb.apply')}</span>
       </nav>
 
       <div className="mx-auto max-w-4xl">
@@ -188,33 +188,33 @@ export default function NonProfitJobApplicationPage() {
           <div className="flex items-center gap-3 mb-4">
             <Badge className="bg-green-500 text-white hover:bg-green-600 flex items-center gap-1">
               <Heart className="size-3" aria-hidden />
-              {t('nonProfitJobs.volunteerOpportunity')}
+              {t('volunteering.volunteerOpportunity')}
             </Badge>
           </div>
           <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
-            {t('nonProfitApplication.title', { jobTitle: job.title })}
+            {t('applications.volunteer.title', { jobTitle: job.title })}
           </h1>
         </div>
 
         {/* Opportunity Details Card */}
         <Card className="border border-border bg-card shadow-sm mb-8">
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4">{t('nonProfitApplication.opportunityDetails.title')}</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('applications.volunteer.opportunityDetails.title')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-muted-foreground">{t('nonProfitApplication.opportunityDetails.organization')}:</span>
+                <span className="text-muted-foreground">{t('applications.volunteer.opportunityDetails.organization')}:</span>
                 <span className="ml-2 font-medium">{job.workplace.companyName}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('nonProfitApplication.opportunityDetails.location')}:</span>
+                <span className="text-muted-foreground">{t('applications.volunteer.opportunityDetails.location')}:</span>
                 <span className="ml-2 font-medium">{location}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('nonProfitApplication.opportunityDetails.type')}:</span>
-                <span className="ml-2 font-medium text-green-600">{t('nonProfitApplication.opportunityDetails.volunteer')}</span>
+                <span className="text-muted-foreground">{t('applications.volunteer.opportunityDetails.type')}:</span>
+                <span className="ml-2 font-medium text-green-600">{t('applications.volunteer.opportunityDetails.volunteer')}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{t('nonProfitApplication.opportunityDetails.postedOn', { date: formatDate(job.postedDate) })}</span>
+                <span className="text-muted-foreground">{t('applications.volunteer.opportunityDetails.postedOn', { date: formatDate(job.postedDate) })}</span>
               </div>
             </div>
           </div>
@@ -223,52 +223,52 @@ export default function NonProfitJobApplicationPage() {
         {/* Volunteer Application Form */}
         <Card className="border border-border bg-card shadow-sm">
           <div className="p-6 lg:p-8">
-            <h2 className="text-xl font-semibold mb-2">{t('nonProfitApplication.form.title')}</h2>
-            <p className="text-muted-foreground mb-6">{t('nonProfitApplication.form.subtitle')}</p>
+            <h2 className="text-xl font-semibold mb-2">{t('applications.volunteer.form.title')}</h2>
+            <p className="text-muted-foreground mb-6">{t('applications.volunteer.form.subtitle')}</p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Motivation Letter */}
               <div>
                 <Label htmlFor="coverLetter" className="text-base font-medium">
-                  {t('nonProfitApplication.form.motivationLetter.label')}
+                  {t('applications.volunteer.form.motivationLetter.label')}
                 </Label>
                 <textarea
                   id="coverLetter"
                   value={coverLetter}
                   onChange={(e) => setCoverLetter(e.target.value.slice(0, 2000))}
-                  placeholder={t('nonProfitApplication.form.motivationLetter.placeholder')}
+                  placeholder={t('applications.volunteer.form.motivationLetter.placeholder')}
                   disabled={isSubmitting}
                   className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[150px] resize-y"
                   maxLength={2000}
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t('nonProfitApplication.form.motivationLetter.characterCount', { count: coverLetter.length })}
+                  {t('applications.volunteer.form.motivationLetter.characterCount', { count: coverLetter.length })}
                 </p>
               </div>
 
               {/* Special Needs */}
               <div>
                 <Label htmlFor="specialNeeds" className="text-base font-medium">
-                  {t('nonProfitApplication.form.specialNeeds.label')}
+                  {t('applications.volunteer.form.specialNeeds.label')}
                 </Label>
                 <textarea
                   id="specialNeeds"
                   value={specialNeeds}
                   onChange={(e) => setSpecialNeeds(e.target.value.slice(0, 500))}
-                  placeholder={t('nonProfitApplication.form.specialNeeds.placeholder')}
+                  placeholder={t('applications.volunteer.form.specialNeeds.placeholder')}
                   disabled={isSubmitting}
                   className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px] resize-y"
                   maxLength={500}
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t('nonProfitApplication.form.specialNeeds.characterCount', { count: specialNeeds.length })}
+                  {t('applications.volunteer.form.specialNeeds.characterCount', { count: specialNeeds.length })}
                 </p>
               </div>
 
               {/* Resume/CV Upload */}
               <div>
                 <Label className="text-base font-medium">
-                  {t('nonProfitApplication.form.cv.label')} <span className="text-destructive">*</span>
+                  {t('applications.volunteer.form.cv.label')} <span className="text-destructive">*</span>
                 </Label>
 
                 {!cvFile ? (
@@ -283,7 +283,7 @@ export default function NonProfitJobApplicationPage() {
                   >
                     <Upload className="mx-auto h-12 w-12 text-green-600 mb-4" />
                     <p className="text-sm text-muted-foreground mb-2">
-                      {t('nonProfitApplication.form.cv.dragDrop')}
+                      {t('applications.volunteer.form.cv.dragDrop')}
                     </p>
                     <Button
                       type="button"
@@ -292,10 +292,10 @@ export default function NonProfitJobApplicationPage() {
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isSubmitting}
                     >
-                      {t('nonProfitApplication.form.cv.chooseFile')}
+                      {t('applications.volunteer.form.cv.chooseFile')}
                     </Button>
                     <p className="text-xs text-muted-foreground mt-2">
-                      {t('nonProfitApplication.form.cv.fileTypes')}
+                      {t('applications.volunteer.form.cv.fileTypes')}
                     </p>
                     <input
                       ref={fileInputRef}
@@ -341,14 +341,14 @@ export default function NonProfitJobApplicationPage() {
                   disabled={isSubmitting}
                   className="w-full sm:w-auto"
                 >
-                  {t('nonProfitApplication.form.cancel')}
+                  {t('applications.volunteer.form.cancel')}
                 </Button>
                 <Button
                   type="submit"
                   disabled={isSubmitting || !cvFile}
                   className="w-full sm:w-auto sm:ml-auto bg-green-600 hover:bg-green-700"
                 >
-                  {isSubmitting ? t('nonProfitApplication.form.submitting') : t('nonProfitApplication.form.submit')}
+                  {isSubmitting ? t('applications.volunteer.form.submitting') : t('applications.volunteer.form.submit')}
                 </Button>
               </div>
             </form>
@@ -358,3 +358,4 @@ export default function NonProfitJobApplicationPage() {
     </div>
   );
 }
+

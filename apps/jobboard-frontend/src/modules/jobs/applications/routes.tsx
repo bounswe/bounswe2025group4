@@ -1,9 +1,8 @@
-import type { RouteObject } from 'react-router-dom';
+import { Navigate, type RouteObject } from 'react-router-dom';
 import { lazy } from 'react';
 
 const JobApplicationPage = lazy(() => import('./pages/JobApplicationPage'));
 const JobApplicationReviewPage = lazy(() => import('./pages/JobApplicationReviewPage'));
-const MyApplicationsPage = lazy(() => import('./pages/MyApplicationsPage'));
 import ProtectedRoute from '@shared/components/common/ProtectedRoute';
 
 export const applicationsRoutes: RouteObject[] = [
@@ -19,7 +18,7 @@ export const applicationsRoutes: RouteObject[] = [
     path: 'applications',
     element: (
       <ProtectedRoute>
-        <MyApplicationsPage />
+        <Navigate to="/jobs?tab=applications" replace />
       </ProtectedRoute>
     ),
   },

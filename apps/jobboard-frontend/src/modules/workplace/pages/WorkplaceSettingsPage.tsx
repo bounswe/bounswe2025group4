@@ -233,7 +233,7 @@ export default function WorkplaceSettingsPage() {
 
     try {
       await deleteWorkplace(parseInt(workplaceId, 10));
-      navigate('/employer/workplaces');
+      navigate('/workplaces?tab=my');
     } catch (err: unknown) {
       console.error('Failed to delete workplace:', err);
       setError(getErrorMessage(err, t('workplace.settings.dangerZone.deleteFailed')));
@@ -259,7 +259,7 @@ export default function WorkplaceSettingsPage() {
           <p className="text-muted-foreground mb-4">
             {t('workplace.settings.notFound.description')}
           </p>
-          <Link to="/employer/workplaces">
+          <Link to="/workplaces?tab=my">
             <Button>{t('workplace.settings.notFound.goToWorkplaces')}</Button>
           </Link>
         </div>
@@ -516,7 +516,7 @@ export default function WorkplaceSettingsPage() {
               <MultiSelectDropdown
                 selectedTags={selectedTags}
                 onTagsChange={handleTagsChange}
-                placeholder={t('ethicalTags.select')}
+                placeholder={t('jobs.tags.select')}
               />
             </div>
           </Card>
@@ -647,3 +647,4 @@ export default function WorkplaceSettingsPage() {
     </div>
   );
 }
+

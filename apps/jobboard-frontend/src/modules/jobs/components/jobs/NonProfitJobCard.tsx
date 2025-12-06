@@ -21,12 +21,12 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
 
   const ethicalTagLabels = job.workplace.ethicalTags
     .filter((tag) => TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP])
-    .map((tag) => t(`ethicalTags.tags.${TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP]}`, tag));
+    .map((tag) => t(`jobs.tags.tags.${TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP]}`, tag));
   
   // Handle location display with fallbacks
   const location = job.location?.toLowerCase() === 'remote' 
-    ? t('jobCard.remote') 
-    : job.location || job.workplace.location || t('jobCard.notSpecified');
+    ? t('jobs.card.remote') 
+    : job.location || job.workplace.location || t('jobs.card.notSpecified');
 
   return (
     <Card
@@ -53,7 +53,7 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
               className="border-0 bg-green-500 text-xs font-medium text-white hover:bg-green-600 flex items-center gap-1"
             >
               <Heart className="size-3" aria-hidden />
-              {t('nonProfitJobs.volunteerOpportunity')}
+              {t('volunteering.volunteerOpportunity')}
             </Badge>
             {job.inclusiveOpportunity && (
               <Badge
@@ -61,7 +61,7 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
                 className="border-0 bg-blue-500 text-xs font-medium text-white hover:bg-blue-600 flex items-center gap-1"
               >
                 <Accessibility className="size-3" aria-hidden />
-                {t('jobCard.inclusiveOpportunity')}
+                {t('jobs.card.inclusiveOpportunity')}
               </Badge>
             )}
             {ethicalTagLabels.slice(0, 2).map((tag, idx) => (
@@ -101,14 +101,14 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
           {/* Description */}
           <div className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
             {job.description || 
-              t('nonProfitJobs.defaultDescription', 'Make a meaningful impact through volunteer work that contributes to environmental sustainability, community development, and social justice initiatives.')
+              t('volunteering.defaultDescription', 'Make a meaningful impact through volunteer work that contributes to environmental sustainability, community development, and social justice initiatives.')
             }
           </div>
 
           {/* Impact Focus */}
           <div className="flex items-center gap-1 text-sm">
             <span className="text-green-600 font-medium">
-              {t('nonProfitJobs.makingADifference')}
+              {t('volunteering.makingADifference')}
             </span>
           </div>
         </div>
@@ -116,3 +116,4 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
     </Card>
   );
 }
+

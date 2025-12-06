@@ -87,7 +87,7 @@ export default function ResumeReviewPage() {
         console.error('Error fetching resume review:', err);
         toast.error('Failed to load resume review');
         setIsLoading(false);
-        navigate('/my-mentorships');
+        navigate('/mentorship/my');
       }
     };
 
@@ -151,7 +151,7 @@ export default function ResumeReviewPage() {
       <div className="container mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-semibold mb-4">Resume Review Not Found</h1>
         <Button asChild>
-          <Link to="/my-mentorships">Back to My Mentorships</Link>
+          <Link to="/mentorship/my">Back to My Mentorships</Link>
         </Button>
       </div>
     );
@@ -164,7 +164,7 @@ export default function ResumeReviewPage() {
   return (
     <div className="container mx-auto px-4 py-6 lg:py-8">
       <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-        <Link to="/my-mentorships" className="hover:text-foreground transition-colors">
+        <Link to="/mentorship/my" className="hover:text-foreground transition-colors">
           My Mentorships
         </Link>
         <span>/</span>
@@ -183,7 +183,7 @@ export default function ResumeReviewPage() {
           </p>
         </div>
         <Button variant="outline" asChild>
-          <Link to="/my-mentorships">
+          <Link to="/mentorship/my">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Link>

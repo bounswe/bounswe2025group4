@@ -16,9 +16,9 @@ function formatSalary(value: number) {
 }
 
 const jobTypeLabelKeyMap: Record<JobType, string> = {
-  'Full-time': 'jobFilters.jobTypeOptions.fullTime',
-  'Part-time': 'jobFilters.jobTypeOptions.partTime',
-  'Contract': 'jobFilters.jobTypeOptions.contract',
+  'Full-time': 'jobs.filters.jobTypeOptions.fullTime',
+  'Part-time': 'jobs.filters.jobTypeOptions.partTime',
+  'Contract': 'jobs.filters.jobTypeOptions.contract',
 };
 
 export function JobCard({ job }: JobCardProps) {
@@ -39,11 +39,11 @@ export function JobCard({ job }: JobCardProps) {
   const ethicalTagLabels = job.workplace.ethicalTags.map((tag) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const key = (TAG_TO_KEY_MAP as any)[tag];
-    return t(`ethicalTags.tags.${key ?? tag}`, tag);
+    return t(`jobs.tags.tags.${key ?? tag}`, tag);
   });
   const jobTypes = job.type.map((type) => t(jobTypeLabelKeyMap[type] ?? type));
   const location =
-    job.location.toLowerCase() === 'remote' ? t('jobCard.remote') : job.location;
+    job.location.toLowerCase() === 'remote' ? t('jobs.card.remote') : job.location;
 
   return (
     <Card
@@ -74,7 +74,7 @@ export function JobCard({ job }: JobCardProps) {
                 className="border-0 bg-blue-500 text-xs font-medium text-white hover:bg-blue-600 flex items-center gap-1"
               >
                 <Accessibility className="size-3" aria-hidden />
-                {t('jobCard.inclusiveOpportunity')}
+                {t('jobs.card.inclusiveOpportunity')}
               </Badge>
             )}
             {ethicalTagLabels.slice(0, 3).map((tag, idx) => (
@@ -129,3 +129,4 @@ export function JobCard({ job }: JobCardProps) {
     </Card>
   );
 }
+

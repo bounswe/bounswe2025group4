@@ -253,7 +253,7 @@ export function CreateWorkplaceModal({
                 <MultiSelectDropdown
                   selectedTags={selectedTags}
                   onTagsChange={handleTagsChange}
-                  placeholder={t('ethicalTags.select')}
+                  placeholder={t('jobs.tags.select')}
                 />
                 {errors.ethicalTags && (
                   <p className="text-sm text-destructive">{t(errors.ethicalTags.message || '')}</p>
@@ -289,3 +289,4 @@ export function CreateWorkplaceModal({
     </Dialog>
   );
 }
+

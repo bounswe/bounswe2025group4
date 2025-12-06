@@ -109,11 +109,11 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('ethicalTags.tags.salaryTransparency')).toBeInTheDocument();
+      expect(screen.getByText('jobs.tags.tags.salaryTransparency')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('ethicalTags.tags.remoteFriendly')).toBeInTheDocument();
-    expect(screen.getByText('ethicalTags.tags.mentalHealthSupport')).toBeInTheDocument();
+    expect(screen.getByText('jobs.tags.tags.remoteFriendly')).toBeInTheDocument();
+    expect(screen.getByText('jobs.tags.tags.mentalHealthSupport')).toBeInTheDocument();
   });
 
   it('does not display ethical tags section when tags are empty', async () => {
@@ -142,7 +142,7 @@ describe('EmployerJobPostDetailsPage', () => {
       expect(screen.getByRole('heading', { name: createMockJob().title })).toBeInTheDocument();
     });
 
-    expect(screen.queryByText('employerJobPostDetails.ethicalPolicies')).not.toBeInTheDocument();
+    expect(screen.queryByText('employer.jobPostDetails.ethicalPolicies')).not.toBeInTheDocument();
   });
 
   it('displays inclusive opportunity section when enabled', async () => {
@@ -165,7 +165,7 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.inclusiveOpportunity')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.inclusiveOpportunity')).toBeInTheDocument();
     });
   });
 
@@ -192,7 +192,7 @@ describe('EmployerJobPostDetailsPage', () => {
       expect(screen.getByRole('heading', { name: createMockJob().title })).toBeInTheDocument();
     });
 
-    expect(screen.queryByText('employerJobPostDetails.inclusiveOpportunity')).not.toBeInTheDocument();
+    expect(screen.queryByText('employer.jobPostDetails.inclusiveOpportunity')).not.toBeInTheDocument();
   });
 
   it('displays remote location correctly', async () => {
@@ -216,7 +216,7 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.remote (New York, NY)')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.remote (New York, NY)')).toBeInTheDocument();
     });
   });
 
@@ -303,7 +303,7 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     expect(screen.getByText('Jane Smith')).toBeInTheDocument();
-    expect(screen.getAllByText('employerJobPostDetails.viewApplication')).toHaveLength(2);
+    expect(screen.getAllByText('employer.jobPostDetails.viewApplication')).toHaveLength(2);
   });
 
   it('displays empty state when no applications exist', async () => {
@@ -323,7 +323,7 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.noApplications')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.noApplications')).toBeInTheDocument();
     });
   });
 
@@ -351,7 +351,7 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.applied.today')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.applied.today')).toBeInTheDocument();
     });
   });
 
@@ -379,7 +379,7 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.applied.yesterday')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.applied.yesterday')).toBeInTheDocument();
     });
   });
 
@@ -407,7 +407,7 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.applied.daysAgo')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.applied.daysAgo')).toBeInTheDocument();
     });
   });
 
@@ -429,10 +429,10 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.editJobPost')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.editJobPost')).toBeInTheDocument();
     });
 
-    const editButton = screen.getByText('employerJobPostDetails.editJobPost');
+    const editButton = screen.getByText('employer.jobPostDetails.editJobPost');
     await user.click(editButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/1/edit');
@@ -466,7 +466,7 @@ describe('EmployerJobPostDetailsPage', () => {
       expect(screen.getByText('John Doe')).toBeInTheDocument();
     });
 
-    const viewButton = screen.getByText('employerJobPostDetails.viewApplication');
+    const viewButton = screen.getByText('employer.jobPostDetails.viewApplication');
     await user.click(viewButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/1/applications/123');
@@ -484,10 +484,10 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.error.title')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.error.title')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('employerJobPostDetails.backToDashboard')).toBeInTheDocument();
+    expect(screen.getByText('employer.jobPostDetails.backToDashboard')).toBeInTheDocument();
   });
 
   it('handles applications fetch failure gracefully', async () => {
@@ -507,7 +507,7 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.error.title')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.error.title')).toBeInTheDocument();
     });
   });
 
@@ -523,10 +523,10 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.backToDashboard')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.backToDashboard')).toBeInTheDocument();
     });
 
-    const backButton = screen.getByText('employerJobPostDetails.backToDashboard');
+    const backButton = screen.getByText('employer.jobPostDetails.backToDashboard');
     // Link component navigation is handled by the router, not mockNavigate
     expect(backButton).toHaveAttribute('href', '/employer/dashboard');
   });
@@ -734,8 +734,9 @@ describe('EmployerJobPostDetailsPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('employerJobPostDetails.applicationsReceived')).toBeInTheDocument();
+      expect(screen.getByText('employer.jobPostDetails.applicationsReceived')).toBeInTheDocument();
     });
   });
 });
+
 

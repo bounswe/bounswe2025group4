@@ -201,7 +201,7 @@ const MentorshipRequestPage = () => {
       };
       
       // Success - Redirect to my mentorships page with the new request
-      navigate('/my-mentorships', { 
+      navigate('/mentorship/my', { 
         state: { 
           showSuccess: true,
           mentorName: mentor.name,

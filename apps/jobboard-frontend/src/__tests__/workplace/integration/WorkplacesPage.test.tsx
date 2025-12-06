@@ -1,10 +1,15 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import WorkplacesPage from '@modules/workplace/pages/WorkplacesPage';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { server } from '@/test/setup';
 import { http, HttpResponse } from 'msw';
 import { API_BASE_URL } from '@/test/handlers';
+
+vi.mock('@/modules/auth/contexts/AuthContext', () => ({
+  useAuth: () => ({ user: null, isAuthenticated: false }),
+}));
+
+import WorkplacesPage from '@modules/workplace/pages/WorkplacesPage';
 
 describe('WorkplacesPage Integration', () => {
   const renderPage = () => {

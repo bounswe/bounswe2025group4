@@ -87,9 +87,9 @@ describe('JobCard', () => {
 
     renderWithProviders(<JobCard job={job} />);
 
-    expect(screen.getByText('ethicalTags.tags.salaryTransparency')).toBeInTheDocument();
-    expect(screen.getByText('ethicalTags.tags.remoteFriendly')).toBeInTheDocument();
-    expect(screen.getByText('ethicalTags.tags.mentalHealthSupport')).toBeInTheDocument();
+    expect(screen.getByText('jobs.tags.tags.salaryTransparency')).toBeInTheDocument();
+    expect(screen.getByText('jobs.tags.tags.remoteFriendly')).toBeInTheDocument();
+    expect(screen.getByText('jobs.tags.tags.mentalHealthSupport')).toBeInTheDocument();
   });
 
   it('shows truncated ethical tags with count badge when more than 3', () => {
@@ -109,16 +109,16 @@ describe('JobCard', () => {
     renderWithProviders(<JobCard job={job} />);
 
     // Should show first 3 tags
-    expect(screen.getByText('ethicalTags.tags.salaryTransparency')).toBeInTheDocument();
-    expect(screen.getByText('ethicalTags.tags.equalPayPolicy')).toBeInTheDocument();
-    expect(screen.getByText('ethicalTags.tags.livingWageEmployer')).toBeInTheDocument();
+    expect(screen.getByText('jobs.tags.tags.salaryTransparency')).toBeInTheDocument();
+    expect(screen.getByText('jobs.tags.tags.equalPayPolicy')).toBeInTheDocument();
+    expect(screen.getByText('jobs.tags.tags.livingWageEmployer')).toBeInTheDocument();
 
     // Should show +2 badge
     expect(screen.getByText('+2')).toBeInTheDocument();
 
     // Should NOT show remaining tags
-    expect(screen.queryByText('ethicalTags.tags.comprehensiveHealthInsurance')).not.toBeInTheDocument();
-    expect(screen.queryByText('ethicalTags.tags.performanceBasedBonus')).not.toBeInTheDocument();
+    expect(screen.queryByText('jobs.tags.tags.comprehensiveHealthInsurance')).not.toBeInTheDocument();
+    expect(screen.queryByText('jobs.tags.tags.performanceBasedBonus')).not.toBeInTheDocument();
   });
 
   it('displays inclusive opportunity badge when enabled', () => {
@@ -128,7 +128,7 @@ describe('JobCard', () => {
 
     renderWithProviders(<JobCard job={job} />);
 
-    expect(screen.getByText('jobCard.inclusiveOpportunity')).toBeInTheDocument();
+    expect(screen.getByText('jobs.card.inclusiveOpportunity')).toBeInTheDocument();
   });
 
   it('does not display inclusive opportunity badge when disabled', () => {
@@ -138,7 +138,7 @@ describe('JobCard', () => {
 
     renderWithProviders(<JobCard job={job} />);
 
-    expect(screen.queryByText('jobCard.inclusiveOpportunity')).not.toBeInTheDocument();
+    expect(screen.queryByText('jobs.card.inclusiveOpportunity')).not.toBeInTheDocument();
   });
 
   it('displays "Remote" when location is "remote"', () => {
@@ -148,7 +148,7 @@ describe('JobCard', () => {
 
     renderWithProviders(<JobCard job={job} />);
 
-    expect(screen.getByText('jobCard.remote')).toBeInTheDocument();
+    expect(screen.getByText('jobs.card.remote')).toBeInTheDocument();
   });
 
   it('displays multiple job types correctly', () => {
@@ -158,7 +158,7 @@ describe('JobCard', () => {
 
     renderWithProviders(<JobCard job={job} />);
 
-    expect(screen.getByText('jobFilters.jobTypeOptions.fullTime / jobFilters.jobTypeOptions.contract')).toBeInTheDocument();
+    expect(screen.getByText('jobs.filters.jobTypeOptions.fullTime / jobs.filters.jobTypeOptions.contract')).toBeInTheDocument();
   });
 
   it('navigates to job detail page when card is clicked', async () => {
@@ -302,7 +302,7 @@ describe('JobCard', () => {
 
     renderWithProviders(<JobCard job={job} />);
 
-    expect(screen.getByText('jobFilters.jobTypeOptions.partTime')).toBeInTheDocument();
+    expect(screen.getByText('jobs.filters.jobTypeOptions.partTime')).toBeInTheDocument();
   });
 
   it('displays job type as Contract', () => {
@@ -353,7 +353,7 @@ describe('JobCard', () => {
 
     renderWithProviders(<JobCard job={job} />);
 
-    expect(screen.getByText('jobFilters.jobTypeOptions.fullTime / jobFilters.jobTypeOptions.partTime / jobFilters.jobTypeOptions.contract')).toBeInTheDocument();
+    expect(screen.getByText('jobs.filters.jobTypeOptions.fullTime / jobs.filters.jobTypeOptions.partTime / jobs.filters.jobTypeOptions.contract')).toBeInTheDocument();
   });
 
   it('applies hover effect classes', () => {
@@ -382,3 +382,4 @@ describe('JobCard', () => {
     expect(screen.getByText('Tech Corp')).toBeInTheDocument();
   });
 });
+

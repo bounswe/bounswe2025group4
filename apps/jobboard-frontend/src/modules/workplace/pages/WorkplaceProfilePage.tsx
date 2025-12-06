@@ -512,3 +512,4 @@ export default function WorkplaceProfilePage() {
     </div>
   );
 }
+

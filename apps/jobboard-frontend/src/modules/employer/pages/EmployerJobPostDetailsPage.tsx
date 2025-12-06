@@ -46,7 +46,7 @@ export default function EmployerJobPostDetailsPage() {
         setApplications(applicationsData);
       } catch (err) {
         console.error('Error fetching job details:', err);
-        setError(t('employerJobPostDetails.error.load'));
+        setError(t('employer.jobPostDetails.error.load'));
       } finally {
         setIsLoading(false);
       }
@@ -66,9 +66,9 @@ export default function EmployerJobPostDetailsPage() {
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return t('employerJobPostDetails.applied.today');
-    if (diffDays === 1) return t('employerJobPostDetails.applied.yesterday');
-    return t('employerJobPostDetails.applied.daysAgo', { count: diffDays });
+    if (diffDays === 0) return t('employer.jobPostDetails.applied.today');
+    if (diffDays === 1) return t('employer.jobPostDetails.applied.yesterday');
+    return t('employer.jobPostDetails.applied.daysAgo', { count: diffDays });
   };
 
   if (isLoading) {
@@ -79,13 +79,13 @@ export default function EmployerJobPostDetailsPage() {
     return (
       <div className="container mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-semibold">
-          {error ? t('employerJobPostDetails.error.title') : t('employerJobPostDetails.error.notFound')}
+          {error ? t('employer.jobPostDetails.error.title') : t('employer.jobPostDetails.error.notFound')}
         </h1>
         <p className="mt-2 text-muted-foreground">
-          {error || t('employerJobPostDetails.error.description')}
+          {error || t('employer.jobPostDetails.error.description')}
         </p>
         <Button asChild className="mt-6">
-          <Link to="/employer/dashboard">{t('employerJobPostDetails.backToDashboard')}</Link>
+          <Link to="/employer/dashboard">{t('employer.jobPostDetails.backToDashboard')}</Link>
         </Button>
       </div>
     );
@@ -120,7 +120,7 @@ export default function EmployerJobPostDetailsPage() {
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
         <Link to="/employer/dashboard" className="hover:text-foreground transition-colors">
-          {t('employerJobPostDetails.breadcrumb.jobs')}
+          {t('employer.jobPostDetails.breadcrumb.jobs')}
         </Link>
         <ChevronRight className="size-4" aria-hidden />
         <span className="text-foreground">{jobPost.title}</span>
@@ -141,19 +141,19 @@ export default function EmployerJobPostDetailsPage() {
                 onClick={handleEditClick}
               >
                 <Edit className="size-4" />
-                {t('employerJobPostDetails.editJobPost')}
+                {t('employer.jobPostDetails.editJobPost')}
               </Button>
             </div>
 
             {/* Job Description */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employerJobPostDetails.jobDescription')}</h2>
+              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employer.jobPostDetails.jobDescription')}</h2>
               <p className="mt-3 leading-relaxed text-muted-foreground">{jobPost.description}</p>
             </section>
 
             {/* Salary Range */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employerJobPostDetails.salaryRange')}</h2>
+              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employer.jobPostDetails.salaryRange')}</h2>
               <p className="mt-3 text-muted-foreground">
                 {formatSalary(jobPost.minSalary, jobPost.maxSalary)}
               </p>
@@ -161,9 +161,9 @@ export default function EmployerJobPostDetailsPage() {
 
             {/* Location */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employerJobPostDetails.location')}</h2>
+              <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employer.jobPostDetails.location')}</h2>
               <p className="mt-3 text-muted-foreground">
-                {jobPost.remote ? t('employerJobPostDetails.remote') : jobPost.location}
+                {jobPost.remote ? t('employer.jobPostDetails.remote') : jobPost.location}
                 {jobPost.remote && jobPost.location && ` (${jobPost.location})`}
               </p>
             </section>
@@ -171,7 +171,7 @@ export default function EmployerJobPostDetailsPage() {
             {/* Contact Information */}
             <section className="mb-8">
               <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
-                {t('employerJobPostDetails.contact')}
+                {t('employer.jobPostDetails.contact')}
               </h2>
               <p className="mt-3 text-muted-foreground">
                 {contactInfo.name && `${contactInfo.name}: `}
@@ -182,14 +182,14 @@ export default function EmployerJobPostDetailsPage() {
             {/* Ethical Tags */}
             {ethicalTags.length > 0 && (
               <section className="mb-8">
-                <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employerJobPostDetails.ethicalPolicies')}</h2>
+                <h2 className="text-xl font-semibold text-foreground lg:text-2xl">{t('employer.jobPostDetails.ethicalPolicies')}</h2>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {ethicalTags.map((tag, index) => (
                     <span
                       key={index}
                       className="inline-block rounded-md bg-primary/10 px-3 py-1 text-sm text-primary"
                     >
-                      {t(`ethicalTags.tags.${getEthicalTagTranslationKey(tag)}`, tag)}
+                      {t(`jobs.tags.tags.${getEthicalTagTranslationKey(tag)}`, tag)}
                     </span>
                   ))}
                 </div>
@@ -200,10 +200,10 @@ export default function EmployerJobPostDetailsPage() {
             {jobPost.inclusiveOpportunity && (
               <section className="mb-8">
                 <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
-                  {t('employerJobPostDetails.inclusiveOpportunity')}
+                  {t('employer.jobPostDetails.inclusiveOpportunity')}
                 </h2>
                 <p className="mt-3 leading-relaxed text-muted-foreground">
-                  {t('employerJobPostDetails.inclusiveOpportunityDescription')}
+                  {t('employer.jobPostDetails.inclusiveOpportunityDescription')}
                 </p>
               </section>
             )}
@@ -211,10 +211,10 @@ export default function EmployerJobPostDetailsPage() {
             {/* Applications Received */}
             <section>
               <h2 className="mb-4 text-xl font-semibold text-foreground lg:text-2xl">
-                {t('employerJobPostDetails.applicationsReceived', { count: applications.length })}
+                {t('employer.jobPostDetails.applicationsReceived', { count: applications.length })}
               </h2>
               {applications.length === 0 ? (
-                <p className="text-muted-foreground">{t('employerJobPostDetails.noApplications')}</p>
+                <p className="text-muted-foreground">{t('employer.jobPostDetails.noApplications')}</p>
               ) : (
                 <div className="space-y-3">
                   {applications.map((application) => (
@@ -239,7 +239,7 @@ export default function EmployerJobPostDetailsPage() {
                           variant="outline"
                           onClick={() => handleViewApplication(application.id)}
                         >
-                          {t('employerJobPostDetails.viewApplication')}
+                          {t('employer.jobPostDetails.viewApplication')}
                         </Button>
                       </div>
                     </Card>
@@ -253,3 +253,4 @@ export default function EmployerJobPostDetailsPage() {
     </div>
   );
 }
+

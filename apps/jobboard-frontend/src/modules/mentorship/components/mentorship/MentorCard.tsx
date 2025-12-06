@@ -55,7 +55,7 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
     try {
       await createMentorshipRequest({ mentorId: parseInt(mentor.id, 10) });
       toast.success(t('mentorship.card.requestSent') || 'Mentorship request sent successfully!');
-      navigate('/my-mentorships', {
+      navigate('/mentorship/my', {
         state: { 
           showSuccess: true, 
           mentorName: mentor.name,

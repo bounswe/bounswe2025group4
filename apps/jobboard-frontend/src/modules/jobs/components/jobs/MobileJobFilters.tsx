@@ -37,10 +37,10 @@ export function MobileJobFilters({
             type="button"
             variant="outline"
             className="gap-2 lg:hidden"
-            aria-label={t('mobileFilters.open')}
+            aria-label={t('jobs.mobileFilters.open')}
           >
             <FilterIcon className="size-4" aria-hidden />
-          {t('mobileFilters.title')}
+          {t('jobs.mobileFilters.title')}
         </Button>
       </SheetTrigger>
       <SheetContent
@@ -49,7 +49,7 @@ export function MobileJobFilters({
       >
         <SheetHeader className="px-4 pt-6">
           <SheetTitle className="text-xl font-semibold">
-            {t('mobileFilters.title')}
+            {t('jobs.mobileFilters.title')}
           </SheetTitle>
         </SheetHeader>
         <div className="flex-1 space-y-6 overflow-y-auto px-4 pb-6">
@@ -66,14 +66,14 @@ export function MobileJobFilters({
                 onResetFilters?.();
               }}
             >
-              {t('mobileFilters.reset')}
+              {t('jobs.mobileFilters.reset')}
             </Button>
             <Button
               type="button"
               className="flex-1 bg-blue-600 text-white hover:bg-blue-700"
               onClick={() => onOpenChange(false)}
             >
-              {t('mobileFilters.apply')}
+              {t('jobs.mobileFilters.apply')}
             </Button>
           </div>
         </SheetFooter>
@@ -81,3 +81,4 @@ export function MobileJobFilters({
     </Sheet>
   );
 }
+

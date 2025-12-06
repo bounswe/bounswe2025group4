@@ -11,22 +11,22 @@ export default function Footer() {
         <div className="hidden md:grid grid-cols-[1fr_auto_1fr] items-center gap-6">
           <div className="flex gap-6 text-sm text-muted-foreground">
             <Link to="#" className="hover:text-foreground transition-colors">
-              {t('footer.about')}
+              {t('layout.footer.about')}
             </Link>
             <Link to="#" className="hover:text-foreground transition-colors">
-              {t('footer.contact')}
+              {t('layout.footer.contact')}
             </Link>
             <Link to="#" className="hover:text-foreground transition-colors">
-              {t('footer.privacy')}
+              {t('layout.footer.privacy')}
             </Link>
             <Link to="#" className="hover:text-foreground transition-colors">
-              {t('footer.terms')}
+              {t('layout.footer.terms')}
             </Link>
           </div>
 
           <p className="text-sm text-muted-foreground text-center">
             <Link to="/" className="hover:text-foreground transition-colors font-medium">
-              {t('footer.brandSuffix')}
+              {t('layout.footer.brandSuffix')}
             </Link>
             {' - '}
             {new Date().getFullYear()}
@@ -50,7 +50,7 @@ export default function Footer() {
         <div className="flex flex-col md:hidden items-center justify-center gap-4">
           <p className="text-sm text-muted-foreground text-center">
             <Link to="/" className="hover:text-foreground transition-colors font-medium">
-              {t('footer.brandSuffix')} 
+              {t('layout.footer.brandSuffix')} 
             </Link>
             {' - '}
             {new Date().getFullYear()}
@@ -60,3 +60,4 @@ export default function Footer() {
     </footer>
   );
 }
+

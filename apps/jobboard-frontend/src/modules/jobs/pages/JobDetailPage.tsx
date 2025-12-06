@@ -46,11 +46,11 @@ export default function JobDetailPage() {
 
   if (error || !job) {
     const errorTitle = error
-      ? t('jobDetail.error.title')
-      : t('jobDetail.error.missing');
+      ? t('jobs.detail.error.title')
+      : t('jobs.detail.error.missing');
     const errorMessage = error
-      ? t('jobDetail.error.fetch')
-      : t('jobDetail.error.description');
+      ? t('jobs.detail.error.fetch')
+      : t('jobs.detail.error.description');
 
     return (
       <div className="container mx-auto px-4 py-12 text-center">
@@ -61,7 +61,7 @@ export default function JobDetailPage() {
           {errorMessage}
         </p>
         <Button asChild className="mt-6">
-          <Link to="/jobs">{t('jobDetail.backToJobs')}</Link>
+          <Link to="/jobs">{t('jobs.detail.backToJobs')}</Link>
         </Button>
       </div>
     );
@@ -86,7 +86,7 @@ export default function JobDetailPage() {
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
         <Link to="/jobs" className="hover:text-foreground transition-colors">
-          {t('jobDetail.breadcrumb.jobs')}
+          {t('jobs.detail.breadcrumb.jobs')}
         </Link>
         <ChevronRight className={cn('size-4', isRtl && 'rotate-180')} aria-hidden />
         <span className="text-foreground">{job.title}</span>
@@ -110,7 +110,7 @@ export default function JobDetailPage() {
                   <span>·</span>
                   <span className="flex items-center gap-1">
                     <MapPin className="size-4" aria-hidden />
-                    {job.remote ? t('jobCard.remote') : job.location}
+                    {job.remote ? t('jobs.card.remote') : job.location}
                   </span>
                   <span>·</span>
                   <span className="flex items-center gap-1">
@@ -120,14 +120,14 @@ export default function JobDetailPage() {
                 </div>
               </div>
               <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90" asChild>
-                <Link to={`/jobs/${id}/apply`}>{t('jobDetail.applyNow')}</Link>
+                <Link to={`/jobs/${id}/apply`}>{t('jobs.detail.applyNow')}</Link>
               </Button>
             </div>
 
             {/* Workplace Information */}
             <section className="mt-8">
               <h2 className="text-xl font-semibold text-foreground lg:text-2xl mb-4">
-                {t('jobDetail.workplace.title')}
+                {t('jobs.detail.workplace.title')}
               </h2>
               <WorkplaceCard workplace={job.workplace} />
             </section>
@@ -135,7 +135,7 @@ export default function JobDetailPage() {
             {/* Job Description */}
             <section className="mt-8">
               <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
-                {t('jobDetail.description')}
+                {t('jobs.detail.description')}
               </h2>
               <p className="mt-3 leading-relaxed text-muted-foreground whitespace-pre-wrap">{job.description}</p>
             </section>
@@ -145,7 +145,7 @@ export default function JobDetailPage() {
               <section className="mt-8">
                 <div className="rounded-lg bg-primary/10 p-6">
                   <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
-                    {t('jobDetail.ethicalPolicy.title')}
+                    {t('jobs.detail.ethicalPolicy.title')}
                   </h2>
 
                   {/* Inclusive Opportunity Badge */}
@@ -153,7 +153,7 @@ export default function JobDetailPage() {
                     <div className="mt-3">
                       <Badge className="bg-blue-500 text-white hover:bg-blue-600 text-sm flex items-center gap-1 w-fit">
                         <Accessibility className="size-4" aria-hidden />
-                        {t('jobDetail.inclusiveOpportunity')}
+                        {t('jobs.detail.inclusiveOpportunity')}
                       </Badge>
                     </div>
                   )}
@@ -175,7 +175,7 @@ export default function JobDetailPage() {
             {/* Contact Information */}
             <section className="mt-8">
               <h2 className="text-xl font-semibold text-foreground lg:text-2xl">
-                {t('jobDetail.contact.title')}
+                {t('jobs.detail.contact.title')}
               </h2>
               <div className="mt-2">
                 <p className="text-sm font-semibold text-foreground">{contactInfo.name}</p>
@@ -194,3 +194,4 @@ export default function JobDetailPage() {
     </div>
   );
 }
+

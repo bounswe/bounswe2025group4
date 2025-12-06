@@ -132,7 +132,7 @@ export function ReviewFormDialog({
 
   const getPolicyLabel = (policy: string) => {
     const translationKey = TAG_TO_KEY_MAP[policy as keyof typeof TAG_TO_KEY_MAP];
-    return translationKey ? t(`ethicalTags.tags.${translationKey}`, policy) : policy;
+    return translationKey ? t(`jobs.tags.tags.${translationKey}`, policy) : policy;
   };
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -247,3 +247,4 @@ export function ReviewFormDialog({
     </Dialog>
   );
 }
+

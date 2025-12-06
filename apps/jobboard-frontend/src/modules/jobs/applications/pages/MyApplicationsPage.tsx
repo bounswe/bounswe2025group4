@@ -97,7 +97,7 @@ export default function MyApplicationsPage() {
         setNonprofitJobs(nonprofitJobIds);
       } catch (err) {
         console.error('Error fetching applications:', err);
-        setError(t('myApplications.errors.loadFailed'));
+        setError(t('applications.mine.errors.loadFailed'));
       } finally {
         setIsLoading(false);
       }
@@ -135,7 +135,7 @@ export default function MyApplicationsPage() {
       setApplicationToWithdraw(null);
     } catch (err) {
       console.error('Error withdrawing application:', err);
-      setError(t('myApplications.withdraw.error'));
+      setError(t('applications.mine.withdraw.error'));
     } finally {
       setIsWithdrawing(false);
     }
@@ -193,27 +193,27 @@ export default function MyApplicationsPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
-          {t('myApplications.title')}
+          {t('applications.mine.title')}
         </h1>
-        <p className="mt-2 text-muted-foreground">{t('myApplications.subtitle')}</p>
+        <p className="mt-2 text-muted-foreground">{t('applications.mine.subtitle')}</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <Card className="p-4">
-          <p className="text-sm text-muted-foreground">{t('myApplications.stats.total')}</p>
+          <p className="text-sm text-muted-foreground">{t('applications.mine.stats.total')}</p>
           <p className="text-2xl font-bold">{stats.total}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-sm text-muted-foreground">{t('myApplications.stats.pending')}</p>
+          <p className="text-sm text-muted-foreground">{t('applications.mine.stats.pending')}</p>
           <p className="text-2xl font-bold text-amber-600">{stats.pending}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-sm text-muted-foreground">{t('myApplications.stats.approved')}</p>
+          <p className="text-sm text-muted-foreground">{t('applications.mine.stats.approved')}</p>
           <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-sm text-muted-foreground">{t('myApplications.stats.rejected')}</p>
+          <p className="text-sm text-muted-foreground">{t('applications.mine.stats.rejected')}</p>
           <p className="text-2xl font-bold text-red-600">{stats.rejected}</p>
         </Card>
       </div>
@@ -227,7 +227,7 @@ export default function MyApplicationsPage() {
             onClick={() => setFilter(filterOption)}
             size="sm"
           >
-            {t(`myApplications.filters.${filterOption.toLowerCase()}`)}
+            {t(`applications.mine.filters.${filterOption.toLowerCase()}`)}
           </Button>
         ))}
       </div>
@@ -236,10 +236,10 @@ export default function MyApplicationsPage() {
       {filteredApplications.length === 0 ? (
         <Card className="p-12 text-center">
           <Briefcase className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
-          <h2 className="text-xl font-semibold mb-2">{t('myApplications.empty.title')}</h2>
-          <p className="text-muted-foreground mb-6">{t('myApplications.empty.message')}</p>
+          <h2 className="text-xl font-semibold mb-2">{t('applications.mine.empty.title')}</h2>
+          <p className="text-muted-foreground mb-6">{t('applications.mine.empty.message')}</p>
           <Button asChild>
-            <Link to="/jobs">{t('myApplications.empty.browseJobs')}</Link>
+            <Link to="/jobs">{t('applications.mine.empty.browseJobs')}</Link>
           </Button>
         </Card>
       ) : (
@@ -266,7 +266,7 @@ export default function MyApplicationsPage() {
                               className="border-0 bg-green-500 text-xs font-medium text-white hover:bg-green-600 flex items-center gap-1"
                             >
                               <Heart className="size-3" aria-hidden />
-                              {t('nonProfitJobs.volunteerOpportunity')}
+                              {t('volunteering.volunteerOpportunity')}
                             </Badge>
                           )}
                         </div>
@@ -277,7 +277,7 @@ export default function MyApplicationsPage() {
                     <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
-                        {t('myApplications.applicationCard.appliedOn', {
+                        {t('applications.mine.applicationCard.appliedOn', {
                           date: formatDate(application.appliedDate),
                         })}
                       </span>
@@ -285,7 +285,7 @@ export default function MyApplicationsPage() {
                         variant={getStatusBadgeVariant(application.status)}
                         className="font-medium"
                       >
-                        {t(`myApplications.applicationCard.status.${application.status}`)}
+                        {t(`applications.mine.applicationCard.status.${application.status}`)}
                       </Badge>
                     </div>
                   </div>
@@ -300,12 +300,12 @@ export default function MyApplicationsPage() {
                         setIsDetailModalOpen(true);
                       }}
                     >
-                      {t('myApplications.applicationCard.actions.viewDetails')}
+                      {t('applications.mine.applicationCard.actions.viewDetails')}
                     </Button>
                     <Button variant="outline" size="sm" asChild>
                       <Link to={getJobDetailRoute(application)}>
                         <ExternalLink className="h-4 w-4 mr-2" />
-                        {t('myApplications.applicationCard.actions.viewJob')}
+                        {t('applications.mine.applicationCard.actions.viewJob')}
                       </Link>
                     </Button>
                     {application.cvUrl && (
@@ -315,7 +315,7 @@ export default function MyApplicationsPage() {
                         onClick={() => handleDownloadCV(application.id)}
                       >
                         <Download className="h-4 w-4 mr-2" />
-                        {t('myApplications.applicationCard.actions.downloadCV')}
+                        {t('applications.mine.applicationCard.actions.downloadCV')}
                       </Button>
                     )}
                     <Button
@@ -338,7 +338,7 @@ export default function MyApplicationsPage() {
       <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{t('myApplications.details.title')}</DialogTitle>
+            <DialogTitle>{t('applications.mine.details.title')}</DialogTitle>
           </DialogHeader>
           {selectedApplication && (
             <div className="space-y-4">
@@ -351,7 +351,7 @@ export default function MyApplicationsPage() {
                       className="border-0 bg-green-500 text-xs font-medium text-white hover:bg-green-600 flex items-center gap-1"
                     >
                       <Heart className="size-3" aria-hidden />
-                      {t('nonProfitJobs.volunteerOpportunity')}
+                      {t('volunteering.volunteerOpportunity')}
                     </Badge>
                   )}
                 </div>
@@ -360,23 +360,23 @@ export default function MyApplicationsPage() {
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-muted-foreground">{t('myApplications.details.status')}:</span>
+                  <span className="text-muted-foreground">{t('applications.mine.details.status')}:</span>
                   <Badge
                     variant={getStatusBadgeVariant(selectedApplication.status)}
                     className="ml-2"
                   >
-                    {t(`myApplications.applicationCard.status.${selectedApplication.status}`)}
+                    {t(`applications.mine.applicationCard.status.${selectedApplication.status}`)}
                   </Badge>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">{t('myApplications.details.appliedDate')}:</span>
+                  <span className="text-muted-foreground">{t('applications.mine.details.appliedDate')}:</span>
                   <span className="ml-2">{formatDate(selectedApplication.appliedDate)}</span>
                 </div>
               </div>
 
               {selectedApplication.coverLetter && (
                 <div>
-                  <h4 className="font-medium mb-2">{t('myApplications.details.coverLetter')}</h4>
+                  <h4 className="font-medium mb-2">{t('applications.mine.details.coverLetter')}</h4>
                   <div className="p-4 bg-muted rounded-md text-sm whitespace-pre-wrap">
                     {selectedApplication.coverLetter}
                   </div>
@@ -385,7 +385,7 @@ export default function MyApplicationsPage() {
 
               {selectedApplication.specialNeeds && (
                 <div>
-                  <h4 className="font-medium mb-2">{t('myApplications.details.specialNeeds')}</h4>
+                  <h4 className="font-medium mb-2">{t('applications.mine.details.specialNeeds')}</h4>
                   <div className="p-4 bg-muted rounded-md text-sm whitespace-pre-wrap">
                     {selectedApplication.specialNeeds}
                   </div>
@@ -394,7 +394,7 @@ export default function MyApplicationsPage() {
 
               {selectedApplication.feedback && (
                 <div>
-                  <h4 className="font-medium mb-2">{t('myApplications.details.feedback')}</h4>
+                  <h4 className="font-medium mb-2">{t('applications.mine.details.feedback')}</h4>
                   <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md text-sm whitespace-pre-wrap">
                     {selectedApplication.feedback}
                   </div>
@@ -403,13 +403,13 @@ export default function MyApplicationsPage() {
 
               {selectedApplication.cvUrl && (
                 <div>
-                  <h4 className="font-medium mb-2">{t('myApplications.details.cv')}</h4>
+                  <h4 className="font-medium mb-2">{t('applications.mine.details.cv')}</h4>
                   <Button
                     variant="outline"
                     onClick={() => handleDownloadCV(selectedApplication.id)}
                   >
                     <FileText className="h-4 w-4 mr-2" />
-                    {t('myApplications.details.downloadCV')}
+                    {t('applications.mine.details.downloadCV')}
                   </Button>
                 </div>
               )}
@@ -417,7 +417,7 @@ export default function MyApplicationsPage() {
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDetailModalOpen(false)}>
-              {t('myApplications.details.close')}
+              {t('applications.mine.details.close')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -427,8 +427,8 @@ export default function MyApplicationsPage() {
       <Dialog open={applicationToWithdraw !== null} onOpenChange={(open) => !open && setApplicationToWithdraw(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('myApplications.withdraw.title')}</DialogTitle>
-            <DialogDescription>{t('myApplications.withdraw.message')}</DialogDescription>
+            <DialogTitle>{t('applications.mine.withdraw.title')}</DialogTitle>
+            <DialogDescription>{t('applications.mine.withdraw.message')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
@@ -436,14 +436,14 @@ export default function MyApplicationsPage() {
               onClick={() => setApplicationToWithdraw(null)}
               disabled={isWithdrawing}
             >
-              {t('myApplications.withdraw.cancel')}
+              {t('applications.mine.withdraw.cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleWithdraw}
               disabled={isWithdrawing}
             >
-              {isWithdrawing ? t('jobs.retry') : t('myApplications.withdraw.confirm')}
+              {isWithdrawing ? t('jobs.retry') : t('applications.mine.withdraw.confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -451,3 +451,4 @@ export default function MyApplicationsPage() {
     </div>
   );
 }
+

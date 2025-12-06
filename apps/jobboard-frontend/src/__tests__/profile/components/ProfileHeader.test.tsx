@@ -58,3 +58,4 @@ describe('ProfileHeader (unit)', () => {
     expect(onEditImage).toHaveBeenCalledTimes(1);
   });
 });
+

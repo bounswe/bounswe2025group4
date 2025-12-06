@@ -122,7 +122,7 @@ export default function EmployerDashboardPage() {
         workplacesData.push({
           workplace: {
             id: -1,
-            companyName: t('employerDashboard.unassignedJobs'),
+            companyName: t('employer.dashboard.unassignedJobs'),
             sector: '',
             location: '',
             overallAvg: 0,
@@ -171,14 +171,14 @@ export default function EmployerDashboardPage() {
 
   const getStatusLabel = (status: string) => {
     const key = status.toLowerCase();
-    return t(`employerDashboard.statusLabels.${key}`, { defaultValue: status });
+    return t(`employer.dashboard.statusLabels.${key}`, { defaultValue: status });
   };
 
   const getErrorMessage = () => {
     if (error === 'auth') {
       return t('auth.login.errors.generic');
     }
-    return t('employerDashboard.loadingError');
+    return t('employer.dashboard.loadingError');
   };
 
   const handleWorkplaceCreated = () => {
@@ -207,7 +207,7 @@ export default function EmployerDashboardPage() {
 
   const handleJobCreated = async () => {
     handleCreateModalOpenChange(false);
-    toast.success(t('createJob.submitSuccess'));
+    toast.success(t('employer.createJob.submitSuccess'));
     await fetchData();
   };
 
@@ -230,11 +230,11 @@ export default function EmployerDashboardPage() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground">
-                {t('employerDashboard.title')}
+                {t('employer.dashboard.title')}
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                {t('employerDashboard.subtitle', {
-                  defaultValue: t('employerDashboard.currentPostings'),
+                {t('employer.dashboard.subtitle', {
+                  defaultValue: t('employer.dashboard.currentPostings'),
                 })}
               </p>
             </div>
@@ -244,7 +244,7 @@ export default function EmployerDashboardPage() {
                   onClick={() => handleOpenCreateJob()}
                   className="bg-primary text-primary-foreground hover:bg-primary/90"
                 >
-                  {t('employerDashboard.createJob')}
+                  {t('employer.dashboard.createJob')}
                 </Button>
               )}
             </div>
@@ -266,19 +266,19 @@ export default function EmployerDashboardPage() {
             <div className="p-8 text-center">
               <Building2 className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
               <h2 className="text-xl font-semibold mb-2">
-                {t('employerDashboard.noWorkplaces.title')}
+                {t('employer.dashboard.noWorkplaces.title')}
               </h2>
               <p className="text-muted-foreground mb-6">
-                {t('employerDashboard.noWorkplaces.description')}
+                {t('employer.dashboard.noWorkplaces.description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button onClick={() => setShowCreateModal(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  {t('employerDashboard.noWorkplaces.createWorkplace')}
+                  {t('employer.dashboard.noWorkplaces.createWorkplace')}
                 </Button>
                 <Button variant="outline" onClick={() => setShowJoinModal(true)}>
                   <UserPlus className="h-4 w-4 mr-2" />
-                  {t('employerDashboard.noWorkplaces.joinWorkplace')}
+                  {t('employer.dashboard.noWorkplaces.joinWorkplace')}
                 </Button>
               </div>
             </div>
@@ -290,11 +290,11 @@ export default function EmployerDashboardPage() {
             <div className="flex gap-2 justify-end">
               <Button variant="outline" size="sm" onClick={() => setShowCreateModal(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                {t('employerDashboard.addWorkplace')}
+                {t('employer.dashboard.addWorkplace')}
               </Button>
               <Button variant="outline" size="sm" onClick={() => setShowJoinModal(true)}>
                 <UserPlus className="h-4 w-4 mr-2" />
-                {t('employerDashboard.joinWorkplace')}
+                {t('employer.dashboard.joinWorkplace')}
               </Button>
             </div>
 
@@ -343,7 +343,7 @@ export default function EmployerDashboardPage() {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Briefcase className="w-4 h-4" />
                         <span>
-                          {wp.jobs.length} {t('employerDashboard.jobCount', { count: wp.jobs.length })}
+                          {wp.jobs.length} {t('employer.dashboard.jobCount', { count: wp.jobs.length })}
                         </span>
                       </div>
                       {wp.isExpanded ? (
@@ -361,7 +361,7 @@ export default function EmployerDashboardPage() {
                     {wp.jobs.length === 0 ? (
                       <div className="p-6 text-center">
                         <p className="text-muted-foreground mb-4">
-                          {t('employerDashboard.noJobsInWorkplace')}
+                          {t('employer.dashboard.noJobsInWorkplace')}
                         </p>
                         {wp.workplace.id !== -1 && (
                           <Button
@@ -371,7 +371,7 @@ export default function EmployerDashboardPage() {
                               handleOpenCreateJob(wp.workplace.id);
                             }}
                           >
-                            {t('employerDashboard.createJobForWorkplace')}
+                            {t('employer.dashboard.createJobForWorkplace')}
                           </Button>
                         )}
                       </div>
@@ -381,16 +381,16 @@ export default function EmployerDashboardPage() {
                           <thead>
                             <tr className="border-b bg-muted/30">
                               <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">
-                                {t('employerDashboard.table.jobTitle')}
+                                {t('employer.dashboard.table.jobTitle')}
                               </th>
                               <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">
-                                {t('employerDashboard.table.status')}
+                                {t('employer.dashboard.table.status')}
                               </th>
                               <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">
-                                {t('employerDashboard.table.applications')}
+                                {t('employer.dashboard.table.applications')}
                               </th>
                               <th className="px-4 py-3 text-left text-sm font-semibold text-foreground">
-                                {t('employerDashboard.table.actions')}
+                                {t('employer.dashboard.table.actions')}
                               </th>
                             </tr>
                           </thead>
@@ -418,7 +418,7 @@ export default function EmployerDashboardPage() {
                                         navigate(`/employer/jobs/${job.id}`);
                                       }}
                                     >
-                                      {t('employerDashboard.actions.manage')}
+                                      {t('employer.dashboard.actions.manage')}
                                     </Button>
                                   </div>
                                 </td>
@@ -440,7 +440,7 @@ export default function EmployerDashboardPage() {
                           }}
                         >
                           <Plus className="h-4 w-4 mr-2" />
-                          {t('employerDashboard.createJob')}
+                          {t('employer.dashboard.createJob')}
                         </Button>
                       </div>
                     )}
@@ -471,3 +471,4 @@ export default function EmployerDashboardPage() {
     </div>
   );
 }
+

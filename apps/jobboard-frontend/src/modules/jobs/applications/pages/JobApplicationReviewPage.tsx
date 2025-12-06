@@ -40,14 +40,14 @@ export default function JobApplicationReviewPage() {
           setCvUrl(url);
         } catch (_cvErr) {
           // CV not found or error fetching - this is okay, not all applications may have CVs
-          console.log(t('jobApplicationReview.noCv'));
+          console.log(t('applications.review.noCv'));
           setCvUrl(null);
         } finally {
           setIsCvLoading(false);
         }
       } catch (err) {
         console.error('Error fetching application:', err);
-        toast.error(t('jobApplicationReview.error.load'));
+        toast.error(t('applications.review.error.load'));
         setIsLoading(false);
         setIsCvLoading(false);
       }
@@ -62,11 +62,11 @@ export default function JobApplicationReviewPage() {
     try {
       setIsSubmitting(true);
       await approveApplication(parseInt(applicationId, 10), feedback || undefined);
-      toast.success(t('jobApplicationReview.success.approve'));
+      toast.success(t('applications.review.success.approve'));
       navigate(`/employer/jobs/${jobId}`);
     } catch (err) {
       console.error('Error approving application:', err);
-      toast.error(t('jobApplicationReview.error.approve'));
+      toast.error(t('applications.review.error.approve'));
     } finally {
       setIsSubmitting(false);
     }
@@ -78,11 +78,11 @@ export default function JobApplicationReviewPage() {
     try {
       setIsSubmitting(true);
       await rejectApplication(parseInt(applicationId, 10), feedback || undefined);
-      toast.success(t('jobApplicationReview.success.reject'));
+      toast.success(t('applications.review.success.reject'));
       navigate(`/employer/jobs/${jobId}`);
     } catch (err) {
       console.error('Error rejecting application:', err);
-      toast.error(t('jobApplicationReview.error.reject'));
+      toast.error(t('applications.review.error.reject'));
     } finally {
       setIsSubmitting(false);
     }
@@ -96,9 +96,9 @@ export default function JobApplicationReviewPage() {
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return t('jobApplicationReview.appliedToday');
-    if (diffDays === 1) return t('jobApplicationReview.appliedYesterday');
-    return t('jobApplicationReview.appliedDaysAgo', { count: diffDays });
+    if (diffDays === 0) return t('applications.review.appliedToday');
+    if (diffDays === 1) return t('applications.review.appliedYesterday');
+    return t('applications.review.appliedDaysAgo', { count: diffDays });
   };
 
   if (isLoading) {
@@ -108,9 +108,9 @@ export default function JobApplicationReviewPage() {
   if (!application) {
     return (
       <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-semibold">{t('jobApplicationReview.error.title')}</h1>
+        <h1 className="text-2xl font-semibold">{t('applications.review.error.title')}</h1>
         <Button asChild className="mt-6">
-          <Link to={`/employer/jobs/${jobId}`}>{t('jobApplicationReview.backToJob')}</Link>
+          <Link to={`/employer/jobs/${jobId}`}>{t('applications.review.backToJob')}</Link>
         </Button>
       </div>
     );
@@ -122,10 +122,10 @@ export default function JobApplicationReviewPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
-            {t('jobApplicationReview.title', { jobTitle: application.title })}
+            {t('applications.review.title', { jobTitle: application.title })}
           </h1>
           <p className="mt-2 text-muted-foreground">
-            {t('jobApplicationReview.atCompany', { company: application.company })}
+            {t('applications.review.atCompany', { company: application.company })}
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export default function JobApplicationReviewPage() {
           {/* Applicant Information */}
           <Card className="border border-border bg-card shadow-sm">
             <div className="p-6">
-              <h2 className="mb-4 text-xl font-semibold">{t('jobApplicationReview.applicantInfo')}</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t('applications.review.applicantInfo')}</h2>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                 <Avatar className="size-20 self-center rounded-md sm:self-start">
                   <AvatarFallback className="rounded-md text-lg font-semibold">
@@ -148,11 +148,11 @@ export default function JobApplicationReviewPage() {
                     <p className="text-lg font-semibold text-foreground">
                       {application.applicantName}
                     </p>
-                    <p className="text-sm text-muted-foreground">{t('jobApplicationReview.status')}: {application.status}</p>
+                    <p className="text-sm text-muted-foreground">{t('applications.review.status')}: {application.status}</p>
                   </div>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {t('jobApplicationReview.applied')} {formatDate(application.appliedDate)}
+                  {t('applications.review.applied')} {formatDate(application.appliedDate)}
                 </div>
               </div>
             </div>
@@ -162,7 +162,7 @@ export default function JobApplicationReviewPage() {
           {application.coverLetter && (
             <Card className="border border-border bg-card shadow-sm">
               <div className="p-6">
-                <h2 className="mb-4 text-xl font-semibold">{t('jobApplicationReview.coverLetter')}</h2>
+                <h2 className="mb-4 text-xl font-semibold">{t('applications.review.coverLetter')}</h2>
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
                   {application.coverLetter}
                 </p>
@@ -174,7 +174,7 @@ export default function JobApplicationReviewPage() {
           {application.specialNeeds && (
             <Card className="border border-border bg-card shadow-sm">
               <div className="p-6">
-                <h2 className="mb-4 text-xl font-semibold">{t('jobApplicationReview.specialNeeds')}</h2>
+                <h2 className="mb-4 text-xl font-semibold">{t('applications.review.specialNeeds')}</h2>
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
                   {application.specialNeeds}
                 </p>
@@ -185,9 +185,9 @@ export default function JobApplicationReviewPage() {
           {/* CV / Resume */}
           <Card className="border border-border bg-card shadow-sm">
             <div className="p-6">
-              <h2 className="mb-4 text-xl font-semibold">{t('jobApplicationReview.cv')}</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t('applications.review.cv')}</h2>
               {isCvLoading ? (
-                <p className="text-sm text-muted-foreground">{t('jobApplicationReview.loadingCv')}</p>
+                <p className="text-sm text-muted-foreground">{t('applications.review.loadingCv')}</p>
               ) : cvUrl ? (
                 <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/50">
                   <div className="flex-shrink-0">
@@ -197,10 +197,10 @@ export default function JobApplicationReviewPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground">
-                      {t('jobApplicationReview.resumeOf', { name: application?.applicantName })}
+                      {t('applications.review.resumeOf', { name: application?.applicantName })}
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {t('jobApplicationReview.downloadToView')}
+                      {t('applications.review.downloadToView')}
                     </p>
                   </div>
                   <Button
@@ -217,14 +217,14 @@ export default function JobApplicationReviewPage() {
                       className="flex items-center gap-2"
                     >
                       <Download className="size-4" />
-                      {t('jobApplicationReview.download')}
+                      {t('applications.review.download')}
                     </a>
                   </Button>
                 </div>
               ) : (
                 <div className="p-4 rounded-lg border border-dashed border-muted-foreground/30 bg-muted/30">
                   <p className="text-sm text-muted-foreground text-center">
-                    {t('jobApplicationReview.noCvAttached')}
+                    {t('applications.review.noCvAttached')}
                   </p>
                 </div>
               )}
@@ -235,7 +235,7 @@ export default function JobApplicationReviewPage() {
           {application.feedback && (
             <Card className="border border-border bg-card shadow-sm">
               <div className="p-6">
-                <h2 className="mb-4 text-xl font-semibold">{t('jobApplicationReview.existingFeedback')}</h2>
+                <h2 className="mb-4 text-xl font-semibold">{t('applications.review.existingFeedback')}</h2>
                 <p className="text-sm text-muted-foreground">{application.feedback}</p>
               </div>
             </Card>
@@ -244,17 +244,17 @@ export default function JobApplicationReviewPage() {
           {/* Decision */}
           <Card className="border border-border bg-card shadow-sm">
             <div className="p-6">
-              <h2 className="mb-4 text-xl font-semibold">{t('jobApplicationReview.decision')}</h2>
+              <h2 className="mb-4 text-xl font-semibold">{t('applications.review.decision')}</h2>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="feedback" className="text-sm font-medium">
-                    {t('jobApplicationReview.feedback')}
+                    {t('applications.review.feedback')}
                   </Label>
                   <textarea
                     id="feedback"
                     value={feedback}
                     onChange={(e) => setFeedback(e.target.value)}
-                    placeholder={t('jobApplicationReview.feedbackPlaceholder')}
+                    placeholder={t('applications.review.feedbackPlaceholder')}
                     disabled={isSubmitting}
                     className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px] resize-y"
                   />
@@ -265,14 +265,14 @@ export default function JobApplicationReviewPage() {
                     onClick={handleReject}
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? t('jobApplicationReview.processing') : t('jobApplicationReview.reject')}
+                    {isSubmitting ? t('applications.review.processing') : t('applications.review.reject')}
                   </Button>
                   <Button
                     onClick={handleApprove}
                     disabled={isSubmitting}
                     className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                   >
-                    {isSubmitting ? t('jobApplicationReview.processing') : t('jobApplicationReview.approve')}
+                    {isSubmitting ? t('applications.review.processing') : t('applications.review.approve')}
                   </Button>
                 </div>
               </div>
@@ -283,3 +283,4 @@ export default function JobApplicationReviewPage() {
     </div>
   );
 }
+

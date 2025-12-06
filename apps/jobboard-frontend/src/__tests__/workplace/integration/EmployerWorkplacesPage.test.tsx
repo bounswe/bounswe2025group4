@@ -80,8 +80,8 @@ describe('EmployerWorkplacesPage Integration', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
     
-    expect(screen.getByText('employerWorkplaces.title')).toBeInTheDocument();
-    expect(screen.getByText('employerWorkplaces.description')).toBeInTheDocument();
+    expect(screen.getByText('employer.workplaces.title')).toBeInTheDocument();
+    expect(screen.getByText('employer.workplaces.description')).toBeInTheDocument();
   });
 
   it('fetches and displays employer workplaces', async () => {
@@ -103,7 +103,7 @@ describe('EmployerWorkplacesPage Integration', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    const newButton = screen.getByRole('button', { name: 'employerWorkplaces.newWorkplace' });
+    const newButton = screen.getByRole('button', { name: 'employer.workplaces.newWorkplace' });
     fireEvent.click(newButton);
 
     expect(screen.getByText('workplace.newModal.title')).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe('EmployerWorkplacesPage Integration', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'employerWorkplaces.newWorkplace' }));
+    fireEvent.click(screen.getByRole('button', { name: 'employer.workplaces.newWorkplace' }));
     fireEvent.click(screen.getByText('workplace.newModal.createWorkplace'));
 
     expect(screen.getByText('workplace.createModal.title')).toBeInTheDocument();
@@ -131,7 +131,7 @@ describe('EmployerWorkplacesPage Integration', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'employerWorkplaces.newWorkplace' }));
+    fireEvent.click(screen.getByRole('button', { name: 'employer.workplaces.newWorkplace' }));
     fireEvent.click(screen.getByText('workplace.newModal.joinWorkplace'));
 
     expect(screen.getByText('workplace.joinModal.title')).toBeInTheDocument();
@@ -147,8 +147,9 @@ describe('EmployerWorkplacesPage Integration', () => {
     renderPage();
 
     await waitFor(() => {
-      expect(screen.getByText('employerWorkplaces.empty.title')).toBeInTheDocument();
-      expect(screen.getByText('employerWorkplaces.empty.description')).toBeInTheDocument();
+      expect(screen.getByText('employer.workplaces.empty.title')).toBeInTheDocument();
+      expect(screen.getByText('employer.workplaces.empty.description')).toBeInTheDocument();
     });
   });
 });
+

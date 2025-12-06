@@ -115,7 +115,7 @@ describe('JobApplicationReviewPage', () => {
       expect(screen.getByText('This is my cover letter. I have 5 years of experience.')).toBeInTheDocument();
     });
 
-    expect(screen.getAllByText('jobApplicationReview.coverLetter')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('applications.review.coverLetter')[0]).toBeInTheDocument();
   });
 
   it('does not display cover letter section when not present', async () => {
@@ -141,7 +141,7 @@ describe('JobApplicationReviewPage', () => {
       expect(screen.getByText(mockApplication.applicantName)).toBeInTheDocument();
     });
 
-    expect(screen.queryByText('jobApplicationReview.coverLetter')).not.toBeInTheDocument();
+    expect(screen.queryByText('applications.review.coverLetter')).not.toBeInTheDocument();
   });
 
   it('displays special needs when present', async () => {
@@ -167,7 +167,7 @@ describe('JobApplicationReviewPage', () => {
       expect(screen.getByText('Needs flexible work hours for medical appointments')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('jobApplicationReview.specialNeeds')).toBeInTheDocument();
+    expect(screen.getByText('applications.review.specialNeeds')).toBeInTheDocument();
   });
 
   it('does not display special needs section when not present', async () => {
@@ -193,7 +193,7 @@ describe('JobApplicationReviewPage', () => {
       expect(screen.getByText(mockApplication.applicantName)).toBeInTheDocument();
     });
 
-    expect(screen.queryByText('jobApplicationReview.specialNeeds')).not.toBeInTheDocument();
+    expect(screen.queryByText('applications.review.specialNeeds')).not.toBeInTheDocument();
   });
 
   it('displays CV download button when CV is available', async () => {
@@ -213,10 +213,10 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('link', { name: 'jobApplicationReview.download' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'applications.review.download' })).toBeInTheDocument();
     });
 
-    const downloadButton = screen.getByRole('link', { name: 'jobApplicationReview.download' });
+    const downloadButton = screen.getByRole('link', { name: 'applications.review.download' });
     expect(downloadButton).toHaveAttribute('href', 'https://example.com/cv.pdf');
     expect(downloadButton).toHaveAttribute('target', '_blank');
   });
@@ -238,7 +238,7 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.noCvAttached')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.noCvAttached')).toBeInTheDocument();
     });
   });
 
@@ -265,7 +265,7 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.loadingCv')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.loadingCv')).toBeInTheDocument();
     });
 
     resolveCV!(null);
@@ -291,7 +291,7 @@ describe('JobApplicationReviewPage', () => {
       expect(screen.getByText(mockApplication.applicantName)).toBeInTheDocument();
     });
 
-    const feedbackTextarea = screen.getByRole('textbox', { name: /jobApplicationReview\.feedback/i });
+    const feedbackTextarea = screen.getByRole('textbox', { name: /applications\.review\.feedback/i });
 
     fireEvent.change(feedbackTextarea, { target: { value: 'Great candidate with strong experience' } });
 
@@ -319,10 +319,10 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.approve')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.approve')).toBeInTheDocument();
     });
 
-    const approveButton = screen.getByText('jobApplicationReview.approve');
+    const approveButton = screen.getByText('applications.review.approve');
     await user.click(approveButton);
 
     await waitFor(() => {
@@ -354,13 +354,13 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.approve')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.approve')).toBeInTheDocument();
     });
 
-    const feedbackTextarea = screen.getByPlaceholderText('jobApplicationReview.feedbackPlaceholder');
+    const feedbackTextarea = screen.getByPlaceholderText('applications.review.feedbackPlaceholder');
     await user.type(feedbackTextarea, 'Excellent qualifications');
 
-    const approveButton = screen.getByText('jobApplicationReview.approve');
+    const approveButton = screen.getByText('applications.review.approve');
     await user.click(approveButton);
 
     await waitFor(() => {
@@ -389,10 +389,10 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.reject')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.reject')).toBeInTheDocument();
     });
 
-    const rejectButton = screen.getByText('jobApplicationReview.reject');
+    const rejectButton = screen.getByText('applications.review.reject');
     await user.click(rejectButton);
 
     await waitFor(() => {
@@ -424,13 +424,13 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.reject')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.reject')).toBeInTheDocument();
     });
 
-    const feedbackTextarea = screen.getByPlaceholderText('jobApplicationReview.feedbackPlaceholder');
+    const feedbackTextarea = screen.getByPlaceholderText('applications.review.feedbackPlaceholder');
     await user.type(feedbackTextarea, 'Not a good fit at this time');
 
-    const rejectButton = screen.getByText('jobApplicationReview.reject');
+    const rejectButton = screen.getByText('applications.review.reject');
     await user.click(rejectButton);
 
     await waitFor(() => {
@@ -459,14 +459,14 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.approve')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.approve')).toBeInTheDocument();
     });
 
-    const approveButton = screen.getByText('jobApplicationReview.approve');
+    const approveButton = screen.getByText('applications.review.approve');
     await user.click(approveButton);
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.error.approve')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.error.approve')).toBeInTheDocument();
     });
 
     // Should not navigate on error
@@ -494,14 +494,14 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.reject')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.reject')).toBeInTheDocument();
     });
 
-    const rejectButton = screen.getByText('jobApplicationReview.reject');
+    const rejectButton = screen.getByText('applications.review.reject');
     await user.click(rejectButton);
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.error.reject')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.error.reject')).toBeInTheDocument();
     });
 
     // Should not navigate on error
@@ -523,10 +523,10 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.error.title')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.error.title')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('jobApplicationReview.backToJob')).toBeInTheDocument();
+    expect(screen.getByText('applications.review.backToJob')).toBeInTheDocument();
   });
 
   it('navigates back to job when Back to Job button is clicked', async () => {
@@ -544,10 +544,10 @@ describe('JobApplicationReviewPage', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('jobApplicationReview.backToJob')).toBeInTheDocument();
+      expect(screen.getByText('applications.review.backToJob')).toBeInTheDocument();
     });
 
-    const backButton = screen.getByText('jobApplicationReview.backToJob');
+    const backButton = screen.getByText('applications.review.backToJob');
     expect(backButton).toHaveAttribute('href', '/employer/jobs/1');
   });
 
@@ -656,4 +656,5 @@ describe('JobApplicationReviewPage', () => {
     ).toBeInTheDocument();
   });
 });
+
 

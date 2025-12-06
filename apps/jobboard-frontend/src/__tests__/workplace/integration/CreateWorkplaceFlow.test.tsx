@@ -66,7 +66,7 @@ describe('CreateWorkplaceFlow Integration', () => {
     });
 
     // 1. Open New Workplace Modal
-    const newButton = screen.getByRole('button', { name: 'employerWorkplaces.newWorkplace' });
+    const newButton = screen.getByRole('button', { name: 'employer.workplaces.newWorkplace' });
     await user.click(newButton);
 
     // 2. Wait for the dialog to appear in the portal
@@ -136,3 +136,4 @@ describe('CreateWorkplaceFlow Integration', () => {
     });
   });
 });
+

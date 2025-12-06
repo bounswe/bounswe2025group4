@@ -88,27 +88,27 @@ export default function NonProfitJobsPage() {
         </div>
         
         <h1 className="text-4xl font-bold text-foreground mb-4">
-          {t('nonProfitJobs.pageTitle')}
+          {t('volunteering.pageTitle')}
         </h1>
         
         <div className="max-w-3xl mx-auto">
           <p className="text-lg text-muted-foreground leading-relaxed">
-            {t('nonProfitJobs.pageDescription')}
+            {t('volunteering.pageDescription')}
           </p>
         </div>
 
         <div className="flex justify-center gap-8 mt-8 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Heart className="size-4 text-red-500" />
-            <span>{t('nonProfitJobs.features.meaningful')}</span>
+            <span>{t('volunteering.features.meaningful')}</span>
           </div>
           <div className="flex items-center gap-2">
             <Leaf className="size-4 text-green-500" />
-            <span>{t('nonProfitJobs.features.sustainable')}</span>
+            <span>{t('volunteering.features.sustainable')}</span>
           </div>
           <div className="flex items-center gap-2">
             <Users className="size-4 text-blue-500" />
-            <span>{t('nonProfitJobs.features.community')}</span>
+            <span>{t('volunteering.features.community')}</span>
           </div>
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function NonProfitJobsPage() {
                       {t('jobs.authRequired.title')}
                     </h3>
                     <p className="text-sm text-amber-800 dark:text-amber-200">
-                      {t('nonProfitJobs.authRequired.description')}
+                      {t('volunteering.authRequired.description')}
                     </p>
                     <p className="text-sm text-amber-700 dark:text-amber-300">
                       {t('jobs.authRequired.invitation')}
@@ -155,10 +155,10 @@ export default function NonProfitJobsPage() {
           <>
             <div className="flex flex-col gap-2 mb-8">
               <h2 className="text-2xl font-semibold">
-                {t('nonProfitJobs.availableOpportunities', { count: jobCount })}
+                {t('volunteering.availableOpportunities', { count: jobCount })}
               </h2>
               <span className="text-sm text-muted-foreground">
-                {t('nonProfitJobs.opportunitiesDescription', { count: jobCount })}
+                {t('volunteering.opportunitiesDescription', { count: jobCount })}
               </span>
             </div>
 
@@ -172,14 +172,14 @@ export default function NonProfitJobsPage() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-xl text-muted-foreground">
-                    {t('nonProfitJobs.noOpportunities')}
+                    {t('volunteering.noOpportunities')}
                   </p>
                   <p className="text-sm text-muted-foreground max-w-md">
-                    {t('nonProfitJobs.checkBackSoon')}
+                    {t('volunteering.checkBackSoon')}
                   </p>
                 </div>
                 <Button asChild variant="outline">
-                  <Link to="/jobs">{t('nonProfitJobs.browseRegularJobs')}</Link>
+                  <Link to="/jobs">{t('volunteering.browseRegularJobs')}</Link>
                 </Button>
               </div>
             ) : (
@@ -195,3 +195,4 @@ export default function NonProfitJobsPage() {
     </div>
   );
 }
+

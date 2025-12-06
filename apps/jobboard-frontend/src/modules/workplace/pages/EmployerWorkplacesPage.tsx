@@ -80,7 +80,7 @@ export default function EmployerWorkplacesPage() {
       setWorkplacesWithRequests(workplacesWithPendingRequests);
     } catch (err) {
       console.error('Failed to load workplaces:', err);
-      setError(getErrorMessage(err, t('employerWorkplaces.loadError')));
+      setError(getErrorMessage(err, t('employer.workplaces.loadError')));
     } finally {
       setLoading(false);
     }
@@ -95,7 +95,7 @@ export default function EmployerWorkplacesPage() {
     } catch (err) {
       console.error('Failed to load employer requests:', err);
       setRequestsError(
-        getErrorMessage(err, t('employerWorkplaces.applicationsModal.loadError'))
+        getErrorMessage(err, t('employer.workplaces.applicationsModal.loadError'))
       );
     } finally {
       setRequestsLoading(false);
@@ -104,11 +104,11 @@ export default function EmployerWorkplacesPage() {
 
   const getStatusLabel = (status: string) => {
     const normalized = status?.toUpperCase();
-    if (normalized === 'PENDING') return t('employerWorkplaces.status.pending');
+    if (normalized === 'PENDING') return t('employer.workplaces.status.pending');
     if (normalized === 'APPROVED' || normalized === 'ACCEPTED')
-      return t('employerWorkplaces.status.accepted');
-    if (normalized === 'REJECTED') return t('employerWorkplaces.status.rejected');
-    return status || t('employerWorkplaces.status.unknown');
+      return t('employer.workplaces.status.accepted');
+    if (normalized === 'REJECTED') return t('employer.workplaces.status.rejected');
+    return status || t('employer.workplaces.status.unknown');
   };
 
   const getStatusClasses = (status: string) => {
@@ -131,26 +131,26 @@ export default function EmployerWorkplacesPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-3xl font-bold mb-2">{t('employerWorkplaces.title')}</h1>
+            <h1 className="text-3xl font-bold mb-2">{t('employer.workplaces.title')}</h1>
             <p className="text-muted-foreground">
-              {t('employerWorkplaces.description')}
+              {t('employer.workplaces.description')}
             </p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => setIsApplicationsModalOpen(true)} className="gap-2">
               <ListChecks className="h-4 w-4" />
-              {t('employerWorkplaces.viewApplications')}
+              {t('employer.workplaces.viewApplications')}
             </Button>
             <Button onClick={() => setIsNewWorkplaceModalOpen(true)}>
               <Plus className="h-4 w-4" />
-              {t('employerWorkplaces.newWorkplace')}
+              {t('employer.workplaces.newWorkplace')}
             </Button>
           </div>
         </div>
 
         {error && (
           <CenteredError
-            message={error ?? t('employerWorkplaces.loadError')}
+            message={error ?? t('employer.workplaces.loadError')}
             onRetry={loadWorkplaces}
           />
         )}
@@ -159,14 +159,14 @@ export default function EmployerWorkplacesPage() {
         {!error && workplaces.length === 0 && (
           <Card className="p-8 text-center gap-2">
             <Building2 className="h-12 w-12 mx-auto text-muted-foreground" />
-            <h2 className="text-xl font-semibold">{t('employerWorkplaces.empty.title')}</h2>
+            <h2 className="text-xl font-semibold">{t('employer.workplaces.empty.title')}</h2>
             <p className="text-muted-foreground mb-2">
-              {t('employerWorkplaces.empty.description')}
+              {t('employer.workplaces.empty.description')}
             </p>
             <div className="flex justify-center">
               <Button onClick={() => setIsNewWorkplaceModalOpen(true)}>
                 <Plus className="h-4 w-4" />
-                {t('employerWorkplaces.newWorkplace')}
+                {t('employer.workplaces.newWorkplace')}
               </Button>
             </div>
           </Card>
@@ -193,9 +193,9 @@ export default function EmployerWorkplacesPage() {
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
                   <Plus className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-1">{t('employerWorkplaces.addNew.title')}</h3>
+                <h3 className="text-lg font-semibold mb-1">{t('employer.workplaces.addNew.title')}</h3>
                 <p className="text-muted-foreground text-sm">
-                  {t('employerWorkplaces.addNew.description')}
+                  {t('employer.workplaces.addNew.description')}
                 </p>
               </div>
             </Card>
@@ -206,9 +206,9 @@ export default function EmployerWorkplacesPage() {
         <Dialog open={isApplicationsModalOpen} onOpenChange={setIsApplicationsModalOpen}>
           <DialogContent className="max-w-3xl">
             <DialogHeader>
-              <DialogTitle>{t('employerWorkplaces.applicationsModal.title')}</DialogTitle>
+              <DialogTitle>{t('employer.workplaces.applicationsModal.title')}</DialogTitle>
               <DialogDescription>
-                {t('employerWorkplaces.applicationsModal.description')}
+                {t('employer.workplaces.applicationsModal.description')}
               </DialogDescription>
             </DialogHeader>
 
@@ -224,7 +224,7 @@ export default function EmployerWorkplacesPage() {
               </div>
             ) : myRequests.length === 0 ? (
               <Card className="p-6 text-center">
-                <p className="text-muted-foreground">{t('employerWorkplaces.applicationsModal.noApplications')}</p>
+                <p className="text-muted-foreground">{t('employer.workplaces.applicationsModal.noApplications')}</p>
               </Card>
             ) : (
               <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
@@ -234,16 +234,16 @@ export default function EmployerWorkplacesPage() {
                       <div className="space-y-1">
                         <p className="font-semibold">
                           {request.workplaceCompanyName ||
-                            `${t('employerWorkplaces.workplaceLabel')} #${request.workplaceId}`}
+                            `${t('employer.workplaces.workplaceLabel')} #${request.workplaceId}`}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          {t('employerWorkplaces.applicationsModal.appliedOn', {
+                          {t('employer.workplaces.applicationsModal.appliedOn', {
                             date: format(new Date(request.createdAt), 'MMM d, yyyy'),
                           })}
                         </p>
                         {request.note && (
                           <p className="text-sm text-muted-foreground">
-                            {t('employerWorkplaces.applicationsModal.note', { note: request.note })}
+                            {t('employer.workplaces.applicationsModal.note', { note: request.note })}
                           </p>
                         )}
                       </div>
@@ -252,7 +252,7 @@ export default function EmployerWorkplacesPage() {
                           {getStatusLabel(request.status)}
                         </Badge>
                         <p className="text-xs text-muted-foreground">
-                          {t('employerWorkplaces.applicationsModal.updatedOn', {
+                          {t('employer.workplaces.applicationsModal.updatedOn', {
                             date: format(new Date(request.updatedAt), 'MMM d, yyyy'),
                           })}
                         </p>
@@ -290,3 +290,4 @@ export default function EmployerWorkplacesPage() {
     </div>
   );
 }
+

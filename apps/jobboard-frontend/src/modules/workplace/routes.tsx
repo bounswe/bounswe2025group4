@@ -1,7 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 import { lazy } from 'react';
+import { Navigate } from 'react-router-dom';
 
-const EmployerWorkplacesPage = lazy(() => import('./pages/EmployerWorkplacesPage'));
 const ManageEmployerRequestsPage = lazy(() => import('./pages/ManageEmployerRequestsPage'));
 const WorkplaceProfilePage = lazy(() => import('./pages/WorkplaceProfilePage'));
 const WorkplaceSettingsPage = lazy(() => import('./pages/WorkplaceSettingsPage'));
@@ -19,11 +19,7 @@ export const workplaceRoutes: RouteObject[] = [
   },
   {
     path: 'employer/workplaces',
-    element: (
-      <ProtectedRoute>
-        <EmployerWorkplacesPage />
-      </ProtectedRoute>
-    ),
+    element: <Navigate to="/workplaces?tab=my" replace />,
   },
   {
     path: 'employer/workplace/:workplaceId/requests',

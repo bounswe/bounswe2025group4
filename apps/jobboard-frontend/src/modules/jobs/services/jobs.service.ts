@@ -85,3 +85,4 @@ export async function updateJob(id: number, data: UpdateJobPostRequest): Promise
 export async function deleteJob(id: number): Promise<void> {
   await api.delete(`/jobs/${id}`);
 }
+

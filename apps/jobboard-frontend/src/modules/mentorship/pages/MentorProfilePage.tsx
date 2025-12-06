@@ -254,7 +254,7 @@ const MentorProfilePage = () => {
                 className="w-full md:w-auto"
                 asChild
               >
-                <Link to="/my-mentorships">
+                <Link to="/mentorship/my">
                   {t('mentorship.profile.viewMentorship') || 'View My Mentorship'}
                 </Link>
               </Button>
@@ -291,7 +291,7 @@ const MentorProfilePage = () => {
                     await createMentorshipRequest({ mentorId: parseInt(id, 10) });
                     toast.success(t('mentorship.profile.requestSent') || 'Mentorship request sent successfully!');
                     setHasActiveMentorship(true); // Disable button after successful request
-                    navigate('/my-mentorships', {
+                    navigate('/mentorship/my', {
                       state: { 
                         showSuccess: true, 
                         mentorName: mentor.name,

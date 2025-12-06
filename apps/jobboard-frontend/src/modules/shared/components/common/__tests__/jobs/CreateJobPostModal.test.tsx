@@ -81,8 +81,8 @@ describe('CreateJobPostModal', () => {
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     });
 
-    expect(screen.getByText('createJob.title')).toBeInTheDocument();
-    expect(screen.getByLabelText('createJob.jobTitle')).toBeInTheDocument();
+    expect(screen.getByText('employer.createJob.title')).toBeInTheDocument();
+    expect(screen.getByLabelText('employer.createJob.jobTitle')).toBeInTheDocument();
     expect(screen.getByTestId('workplace-selector')).toBeInTheDocument();
   });
 
@@ -109,18 +109,18 @@ describe('CreateJobPostModal', () => {
     });
 
     // Fill form
-    await user.type(screen.getByLabelText('createJob.jobTitle'), 'Software Engineer');
-    await user.type(screen.getByLabelText('createJob.jobDescription'), 'Great job');
+    await user.type(screen.getByLabelText('employer.createJob.jobTitle'), 'Software Engineer');
+    await user.type(screen.getByLabelText('employer.createJob.jobDescription'), 'Great job');
 
     // Select workplace
     await user.selectOptions(screen.getByTestId('workplace-select'), '1');
 
-    await user.type(screen.getByLabelText('createJob.minimum'), '100000');
-    await user.type(screen.getByLabelText('createJob.maximum'), '150000');
-    await user.type(screen.getByLabelText('createJob.contactEmail'), 'hr@tech.com');
+    await user.type(screen.getByLabelText('employer.createJob.minimum'), '100000');
+    await user.type(screen.getByLabelText('employer.createJob.maximum'), '150000');
+    await user.type(screen.getByLabelText('employer.createJob.contactEmail'), 'hr@tech.com');
 
     // Submit
-    await user.click(screen.getByRole('button', { name: 'createJob.submit' }));
+    await user.click(screen.getByRole('button', { name: 'employer.createJob.submit' }));
 
     await waitFor(() => {
       expect(mockOnSuccess).toHaveBeenCalled();
@@ -151,19 +151,20 @@ describe('CreateJobPostModal', () => {
     });
 
     // Fill form
-    await user.type(screen.getByLabelText('createJob.jobTitle'), 'Software Engineer');
-    await user.type(screen.getByLabelText('createJob.jobDescription'), 'Great job');
+    await user.type(screen.getByLabelText('employer.createJob.jobTitle'), 'Software Engineer');
+    await user.type(screen.getByLabelText('employer.createJob.jobDescription'), 'Great job');
     await user.selectOptions(screen.getByTestId('workplace-select'), '1');
-    await user.type(screen.getByLabelText('createJob.minimum'), '100000');
-    await user.type(screen.getByLabelText('createJob.maximum'), '150000');
-    await user.type(screen.getByLabelText('createJob.contactEmail'), 'hr@tech.com');
+    await user.type(screen.getByLabelText('employer.createJob.minimum'), '100000');
+    await user.type(screen.getByLabelText('employer.createJob.maximum'), '150000');
+    await user.type(screen.getByLabelText('employer.createJob.contactEmail'), 'hr@tech.com');
 
     // Submit
-    await user.click(screen.getByRole('button', { name: 'createJob.submit' }));
+    await user.click(screen.getByRole('button', { name: 'employer.createJob.submit' }));
 
     await waitFor(() => {
-      expect(screen.getByText('createJob.submitError')).toBeInTheDocument();
+      expect(screen.getByText('employer.createJob.submitError')).toBeInTheDocument();
     });
     expect(mockOnSuccess).not.toHaveBeenCalled();
   });
 });
+

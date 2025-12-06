@@ -23,7 +23,6 @@ export default function Header() {
   const currentLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(currentLanguage) === 'rtl';
   const isEmployer = user?.role === 'ROLE_EMPLOYER';
-  const isJobSeeker = user?.role === 'ROLE_JOBSEEKER';
 
   const handleLogout = () => {
     logout();
@@ -36,71 +35,45 @@ export default function Header() {
         <div className="container mx-auto flex h-12 md:h-16 items-center px-5">
           <div className="flex flex-1 items-center gap-6">
             <Link to="/" className="flex items-center space-x-2">
-              <span className="text-xl font-bold">{t('header.brand')}</span>
+              <span className="text-xl font-bold">{t('layout.header.brand')}</span>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-2">
               {isEmployer ? (
                 <>
-                <Button variant="ghost" asChild>
-                  <Link to="/employer/dashboard">{t('header.nav.employerDashboard')}</Link>
-                </Button>
                   <Button variant="ghost" asChild>
-                    <Link to="/employer/workplaces">{t('header.nav.myWorkplaces')}</Link>
+                    <Link to="/employer/dashboard">{t('layout.header.nav.employerDashboard')}</Link>
                   </Button>
                   <Button variant="ghost" asChild>
-                    <Link to="/workplaces">{t('header.nav.browseWorkplaces')}</Link>
+                    <Link to="/workplaces?tab=my">{t('layout.header.nav.workplaces')}</Link>
                   </Button>
                   <Button variant="ghost" asChild>
-                    <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
+                    <Link to="/nonprofit-jobs">{t('layout.header.nav.nonProfitJobs')}</Link>
                   </Button>
                   <Button variant="ghost" asChild>
-                    <Link to="/nonprofit-jobs">{t('header.nav.nonProfitJobs')}</Link>
-                  </Button>
-                  {isAuthenticated && (
-                    <Button variant="ghost" asChild>
-                      <Link to="/my-mentorships">{t('header.nav.myMentorships')}</Link>
-                    </Button>
-                  )}
-                  <Button variant="ghost" asChild>
-                    <Link to="/forum">{t('header.nav.forum')}</Link>
+                    <Link to="/mentorship">{t('layout.header.nav.mentorship')}</Link>
                   </Button>
                   <Button variant="ghost" asChild>
-                    <Link to="/chat">{t('header.nav.chat')}</Link>
+                    <Link to="/forum">{t('layout.header.nav.forum')}</Link>
                   </Button>
                 </>
               ) : (
                 <>
                   <Button variant="ghost" asChild>
-                    <Link to="/jobs">{t('header.nav.jobs')}</Link>
+                    <Link to="/jobs">{t('layout.header.nav.jobs')}</Link>
                   </Button>
                   <Button variant="ghost" asChild>
-                    <Link to="/nonprofit-jobs">{t('header.nav.nonProfitJobs')}</Link>
-                  </Button>
-                  {isAuthenticated && isJobSeeker && (
-                    <Button variant="ghost" asChild>
-                      <Link to="/applications">{t('header.nav.myApplications')}</Link>
-                    </Button>
-                  )}
-                  <Button variant="ghost" asChild>
-                    <Link to="/workplaces">{t('header.nav.workplaces')}</Link>
+                    <Link to="/nonprofit-jobs">{t('layout.header.nav.nonProfitJobs')}</Link>
                   </Button>
                   <Button variant="ghost" asChild>
-                    <Link to="/mentorship">{t('header.nav.mentorship')}</Link>
+                  <Link to="/jobs?tab=workplaces">{t('layout.header.nav.workplaces')}</Link>
                   </Button>
-                  {isAuthenticated && (
-                    <Button variant="ghost" asChild>
-                      <Link to="/my-mentorships">{t('header.nav.myMentorships')}</Link>
-                    </Button>
-                  )}
-                  {isAuthenticated && (
-                    <Button variant="ghost" asChild>
-                      <Link to="/chat">{t('header.nav.chat')}</Link>
-                    </Button>
-                  )}
                   <Button variant="ghost" asChild>
-                    <Link to="/forum">{t('header.nav.forum')}</Link>
+                    <Link to="/mentorship">{t('layout.header.nav.mentorship')}</Link>
+                  </Button>
+                  <Button variant="ghost" asChild>
+                    <Link to="/forum">{t('layout.header.nav.forum')}</Link>
                   </Button>
                 </>
               )}
@@ -114,19 +87,19 @@ export default function Header() {
             {isAuthenticated ? (
               <>
                 <Button variant="ghost" asChild>
-                  <Link to="/profile">{t('header.auth.profile')}</Link>
+                  <Link to="/profile">{t('layout.header.auth.profile')}</Link>
                 </Button>
                 <Button variant="outline" onClick={handleLogout}>
-                  {t('header.auth.logout')}
+                  {t('layout.header.auth.logout')}
                 </Button>
               </>
             ) : (
               <>
                 <Button variant="ghost" asChild>
-                  <Link to="/login">{t('header.auth.login')}</Link>
+                  <Link to="/login">{t('layout.header.auth.login')}</Link>
                 </Button>
                 <Button asChild>
-                  <Link to="/register">{t('header.auth.signup')}</Link>
+                  <Link to="/register">{t('layout.header.auth.signup')}</Link>
                 </Button>
               </>
             )}
@@ -139,59 +112,42 @@ export default function Header() {
                 variant="ghost"
                 size="icon"
                 className="md:hidden"
-                aria-label={t('header.menu')}
+                aria-label={t('layout.header.menu')}
               >
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side={isRtl ? 'left' : 'right'} className="w-2/3">
               <SheetHeader>
-                <SheetTitle>{t('header.menu')}</SheetTitle>
+                <SheetTitle>{t('layout.header.menu')}</SheetTitle>
               </SheetHeader>
 
               <nav className="flex flex-col gap-2">
                 {isEmployer ? (
                   <>
-                  <Button variant="ghost" asChild className="justify-start">
-                    <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                      {t('header.nav.employerDashboard')}
-                    </Link>
-                  </Button>
                     <Button variant="ghost" asChild className="justify-start">
-                      <Link to="/employer/workplaces" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.myWorkplaces')}
+                      <Link to="/employer/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('layout.header.nav.employerDashboard')}
                       </Link>
                     </Button>
                     <Button variant="ghost" asChild className="justify-start">
-                      <Link to="/workplaces" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.browseWorkplaces')}
+                    <Link to="/workplaces?tab=my" onClick={() => setIsMobileMenuOpen(false)}>
+                      {t('layout.header.nav.workplaces')}
+                    </Link>
+                  </Button>
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/nonprofit-jobs" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('layout.header.nav.nonProfitJobs')}
                       </Link>
                     </Button>
                     <Button variant="ghost" asChild className="justify-start">
                       <Link to="/mentorship" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.mentorship')}
+                        {t('layout.header.nav.mentorship')}
                       </Link>
                     </Button>
-                    <Button variant="ghost" asChild className="justify-start">
-                      <Link to="/nonprofit-jobs" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.nonProfitJobs')}
-                      </Link>
-                    </Button>
-                    {isAuthenticated && (
-                      <Button variant="ghost" asChild className="justify-start">
-                        <Link to="/my-mentorships" onClick={() => setIsMobileMenuOpen(false)}>
-                          {t('header.nav.myMentorships')}
-                        </Link>
-                      </Button>
-                    )}
                     <Button variant="ghost" asChild className="justify-start">
                       <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.forum')}
-                      </Link>
-                    </Button>
-                    <Button variant="ghost" asChild className="justify-start">
-                      <Link to="/chat" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.chat')}
+                        {t('layout.header.nav.forum')}
                       </Link>
                     </Button>
                   </>
@@ -199,48 +155,27 @@ export default function Header() {
                   <>
                     <Button variant="ghost" asChild className="justify-start">
                       <Link to="/jobs" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.jobs')}
+                        {t('layout.header.nav.jobs')}
                       </Link>
                     </Button>
                     <Button variant="ghost" asChild className="justify-start">
                       <Link to="/nonprofit-jobs" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.nonProfitJobs')}
+                        {t('layout.header.nav.nonProfitJobs')}
                       </Link>
                     </Button>
-                    {isAuthenticated && isJobSeeker && (
-                      <Button variant="ghost" asChild className="justify-start">
-                        <Link to="/applications" onClick={() => setIsMobileMenuOpen(false)}>
-                          {t('header.nav.myApplications')}
-                        </Link>
-                      </Button>
-                    )}
                     <Button variant="ghost" asChild className="justify-start">
-                      <Link to="/workplaces" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.workplaces')}
+                      <Link to="/jobs?tab=workplaces" onClick={() => setIsMobileMenuOpen(false)}>
+                        {t('layout.header.nav.workplaces')}
                       </Link>
                     </Button>
                     <Button variant="ghost" asChild className="justify-start">
                       <Link to="/mentorship" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.mentorship')}
+                        {t('layout.header.nav.mentorship')}
                       </Link>
                     </Button>
-                    {isAuthenticated && (
-                      <Button variant="ghost" asChild className="justify-start">
-                        <Link to="/my-mentorships" onClick={() => setIsMobileMenuOpen(false)}>
-                          {t('header.nav.myMentorships')}
-                        </Link>
-                      </Button>
-                    )}
-                    {isAuthenticated && (
-                      <Button variant="ghost" asChild className="justify-start">
-                        <Link to="/chat" onClick={() => setIsMobileMenuOpen(false)}>
-                          {t('header.nav.chat')}
-                        </Link>
-                      </Button>
-                    )}
                     <Button variant="ghost" asChild className="justify-start">
                       <Link to="/forum" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.nav.forum')}
+                        {t('layout.header.nav.forum')}
                       </Link>
                     </Button>
                   </>
@@ -251,7 +186,7 @@ export default function Header() {
                 {isAuthenticated ? (
                   <>
                     <Button variant="ghost" asChild className="justify-start">
-                      <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>{t('header.auth.profile')}</Link>
+                      <Link to="/profile" onClick={() => setIsMobileMenuOpen(false)}>{t('layout.header.auth.profile')}</Link>
                     </Button>
                     <Button
                     variant="outline"
@@ -260,19 +195,19 @@ export default function Header() {
                         setIsMobileMenuOpen(false);
                       }}
                   >
-                      {t('header.auth.logout')}
+                      {t('layout.header.auth.logout')}
                     </Button>
                   </>
                 ) : (
                   <>
                     <Button variant="outline" asChild>
                       <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.auth.login')}
+                        {t('layout.header.auth.login')}
                       </Link>
                     </Button>
                     <Button asChild>
                       <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
-                        {t('header.auth.signup')}
+                        {t('layout.header.auth.signup')}
                       </Link>
                     </Button>
                   </>
@@ -288,3 +223,4 @@ export default function Header() {
     </>
   );
 }
+

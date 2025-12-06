@@ -124,7 +124,7 @@ export function CreateJobPostModal({
     e.preventDefault();
 
     if (!formData.workplaceId) {
-      toast.error(t('createJob.workplaceRequired'));
+      toast.error(t('employer.createJob.workplaceRequired'));
       return;
     }
 
@@ -144,12 +144,12 @@ export function CreateJobPostModal({
       };
 
       await createJob(requestData);
-      toast.success(t('createJob.submitSuccess'));
+      toast.success(t('employer.createJob.submitSuccess'));
       onSuccess?.();
       onOpenChange(false);
     } catch (err) {
       console.error('Error creating job:', err);
-      toast.error(t('createJob.submitError'));
+      toast.error(t('employer.createJob.submitError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -161,19 +161,19 @@ export function CreateJobPostModal({
         <div className="p-6 text-center">
           <Building2 className="h-14 w-14 mx-auto text-muted-foreground mb-4" />
           <h2 className="text-xl font-semibold mb-2">
-            {t('createJob.noWorkplaces.title')}
+            {t('employer.createJob.noWorkplaces.title')}
           </h2>
           <p className="text-muted-foreground mb-6">
-            {t('createJob.noWorkplaces.description')}
+            {t('employer.createJob.noWorkplaces.description')}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button onClick={() => setShowCreateModal(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              {t('createJob.noWorkplaces.createWorkplace')}
+              {t('employer.createJob.noWorkplaces.createWorkplace')}
             </Button>
             <Button variant="outline" onClick={() => setShowJoinModal(true)}>
               <UserPlus className="h-4 w-4 mr-2" />
-              {t('createJob.noWorkplaces.joinWorkplace')}
+              {t('employer.createJob.noWorkplaces.joinWorkplace')}
             </Button>
           </div>
         </div>
@@ -196,7 +196,7 @@ export function CreateJobPostModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl min-w-[50vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{t('createJob.title')}</DialogTitle>
+          <DialogTitle>{t('employer.createJob.title')}</DialogTitle>
         </DialogHeader>
 
         {isLoading ? (
@@ -209,10 +209,10 @@ export function CreateJobPostModal({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label className="text-sm font-semibold">
-                {t('createJob.workplace')}
+                {t('employer.createJob.workplace')}
               </Label>
               <p className="text-xs text-muted-foreground mt-1 mb-2">
-                {t('createJob.workplaceDescription')}
+                {t('employer.createJob.workplaceDescription')}
               </p>
               <WorkplaceSelector
                 value={formData.workplaceId ?? undefined}
@@ -223,14 +223,14 @@ export function CreateJobPostModal({
 
             <div>
               <Label htmlFor="title" className="text-sm font-semibold">
-                {t('createJob.jobTitle')}
+                {t('employer.createJob.jobTitle')}
               </Label>
               <Input
                 id="title"
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder={t('createJob.jobTitlePlaceholder')}
+                placeholder={t('employer.createJob.jobTitlePlaceholder')}
                 className="mt-2"
                 required
               />
@@ -238,13 +238,13 @@ export function CreateJobPostModal({
 
             <div>
               <Label htmlFor="description" className="text-sm font-semibold">
-                {t('createJob.jobDescription')}
+                {t('employer.createJob.jobDescription')}
               </Label>
               <textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder={t('createJob.jobDescriptionPlaceholder')}
+                placeholder={t('employer.createJob.jobDescriptionPlaceholder')}
                 className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[150px] resize-y"
                 required
               />
@@ -260,10 +260,10 @@ export function CreateJobPostModal({
               />
               <div className="flex-1">
                 <Label htmlFor="remote" className="text-sm font-medium cursor-pointer">
-                  {t('createJob.remoteWork')}
+                  {t('employer.createJob.remoteWork')}
                 </Label>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {t('createJob.remoteWorkDescription')}
+                  {t('employer.createJob.remoteWorkDescription')}
                 </p>
               </div>
             </div>
@@ -283,10 +283,10 @@ export function CreateJobPostModal({
               />
               <div className="flex-1">
                 <Label htmlFor="nonProfit" className="text-sm font-medium cursor-pointer">
-                  {t('createJob.nonProfit')}
+                  {t('employer.createJob.nonProfit')}
                 </Label>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {t('createJob.nonProfitDescription')}
+                  {t('employer.createJob.nonProfitDescription')}
                 </p>
               </div>
             </div>
@@ -294,32 +294,32 @@ export function CreateJobPostModal({
             {/* Salary Range - Hidden for nonprofit positions */}
             {!formData.nonProfit && (
               <div>
-                <Label className="text-sm font-semibold">{t('createJob.salaryRange')}</Label>
+                <Label className="text-sm font-semibold">{t('employer.createJob.salaryRange')}</Label>
                 <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
-                      {t('createJob.minimum')}
+                      {t('employer.createJob.minimum')}
                     </Label>
                     <Input
                       id="minSalary"
                       type="number"
                       value={formData.minSalary}
                       onChange={(e) => setFormData({ ...formData, minSalary: e.target.value })}
-                      placeholder={t('createJob.minSalaryPlaceholder')}
+                      placeholder={t('employer.createJob.minSalaryPlaceholder')}
                       className="mt-1"
                       required
                     />
                   </div>
                   <div>
                     <Label htmlFor="maxSalary" className="text-xs text-muted-foreground">
-                      {t('createJob.maximum')}
+                      {t('employer.createJob.maximum')}
                     </Label>
                     <Input
                       id="maxSalary"
                       type="number"
                       value={formData.maxSalary}
                       onChange={(e) => setFormData({ ...formData, maxSalary: e.target.value })}
-                      placeholder={t('createJob.maxSalaryPlaceholder')}
+                      placeholder={t('employer.createJob.maxSalaryPlaceholder')}
                       className="mt-1"
                       required
                     />
@@ -330,14 +330,14 @@ export function CreateJobPostModal({
 
             <div>
               <Label htmlFor="contactEmail" className="text-sm font-semibold">
-                {t('createJob.contactEmail')}
+                {t('employer.createJob.contactEmail')}
               </Label>
               <Input
                 id="contactEmail"
                 type="email"
                 value={formData.contactEmail}
                 onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-                placeholder={t('createJob.contactEmailPlaceholder')}
+                placeholder={t('employer.createJob.contactEmailPlaceholder')}
                 className="mt-2"
                 required
               />
@@ -357,10 +357,10 @@ export function CreateJobPostModal({
                 />
                 <div className="flex-1">
                   <Label htmlFor="inclusiveOpportunity" className="text-sm font-semibold cursor-pointer">
-                    {t('createJob.inclusiveOpportunity')}
+                    {t('employer.createJob.inclusiveOpportunity')}
                   </Label>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {t('createJob.inclusiveOpportunityDescription')}
+                    {t('employer.createJob.inclusiveOpportunityDescription')}
                   </p>
                 </div>
               </div>
@@ -381,7 +381,7 @@ export function CreateJobPostModal({
                 disabled={isSubmitting}
                 className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
               >
-                {isSubmitting ? t('createJob.submitting') : t('createJob.submit')}
+                {isSubmitting ? t('employer.createJob.submitting') : t('employer.createJob.submit')}
               </Button>
             </div>
           </form>
@@ -392,3 +392,4 @@ export function CreateJobPostModal({
 }
 
 export default CreateJobPostModal;
+
