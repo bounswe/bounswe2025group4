@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
+<<<<<<< HEAD
 import { useQueryClient } from '@tanstack/react-query';
+=======
+>>>>>>> cf3c791c (feat: enhance localization and routing structure, add volunteering section, and implement access guards for workplaces)
 import ChatRoomList from '@modules/mentorship/components/chat/ChatRoomList';
 import ChatInterface from '@modules/mentorship/components/chat/ChatInterface';
 import type { ChatRoom, ChatRoomForUser, ChatMessage } from '@shared/types/chat';

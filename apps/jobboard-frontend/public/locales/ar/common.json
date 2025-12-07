@@ -45,10 +45,14 @@
   "common": {
     "loading": "جارٍ التحميل...",
     "goHome": "الذهاب إلى الصفحة الرئيسية",
+<<<<<<< HEAD
     "visitWebsite": "زيارة الموقع الإلكتروني",
     "settings": "الإعدادات",
     "employer": "صاحب عمل",
     "employers": "أصحاب العمل",
+=======
+    "visitWebsite": "زيارة الموقع",
+>>>>>>> cf3c791c (feat: enhance localization and routing structure, add volunteering section, and implement access guards for workplaces)
     "edited": "تم التعديل",
     "cancel": "إلغاء",
     "optional": "اختياري",
@@ -359,10 +363,14 @@
         "title": "معلومات التواصل"
       },
       "workplace": {
+<<<<<<< HEAD
         "title": "عن الشركة",
         "sector": "القطاع",
         "location": "الموقع",
         "overallRating": "تقييم الشركة الأخلاقي"
+=======
+        "title": "عن الشركة"
+>>>>>>> cf3c791c (feat: enhance localization and routing structure, add volunteering section, and implement access guards for workplaces)
       }
     }
   },
@@ -822,6 +830,7 @@
       "page": {
         "loadError": "تعذر تحميل أماكن عملك"
       }
+<<<<<<< HEAD
     }
   },
   "workplaces": {
@@ -1102,7 +1111,140 @@
     "roles": {
       "owner": "المالك",
       "manager": "المدير"
+=======
+>>>>>>> cf3c791c (feat: enhance localization and routing structure, add volunteering section, and implement access guards for workplaces)
     }
+  },
+  "workplaces": {
+    "title": "أماكن العمل",
+    "description": "استكشف أماكن العمل للتعرف على الثقافة والتقييمات",
+    "tabs": {
+      "browse": "استعراض",
+      "my": "أماكن عملي"
+    },
+    "searchTitle": "البحث عن أماكن العمل",
+    "searchPlaceholder": "أدخل اسم الشركة...",
+    "searching": "جاري البحث...",
+    "search": "بحث",
+    "loadError": "تعذر تحميل أماكن العمل. يرجى المحاولة مرة أخرى.",
+    "loading": "جارٍ التحميل...",
+    "workplacesFound": "{{count}} مكان عمل تم العثور عليه",
+    "workplacesFound_plural": "{{count}} أماكن عمل تم العثور عليها",
+    "empty": {
+      "title": "لم يتم العثور على أماكن عمل",
+      "adjustFilters": "جرّب تعديل الفلاتر أو البحث",
+      "noWorkplaces": "لا توجد أماكن عمل حالياً"
+    },
+    "filters": {
+      "title": "الفلاتر",
+      "clear": "مسح",
+      "clearFilters": "مسح الفلاتر",
+      "sector": "القطاع",
+      "allSectors": "جميع القطاعات",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع...",
+      "sortBy": "ترتيب حسب",
+      "sortOptions": {
+        "default": "افتراضي",
+        "nameDesc": "الاسم (من ي إلى أ)",
+        "nameAsc": "الاسم (من أ إلى ي)",
+        "reviewCountDesc": "عدد المراجعات (من الأعلى إلى الأدنى)",
+        "reviewCountAsc": "عدد المراجعات (من الأدنى إلى الأعلى)",
+        "ratingDesc": "التقييم (من الأعلى إلى الأدنى)",
+        "ratingAsc": "التقييم (من الأدنى إلى الأعلى)"
+      },
+      "minRating": "الحد الأدنى للتقييم",
+      "anyRating": "أي",
+      "ratingWithValue": "{{rating}}★"
+    }
+  },
+  "forum": {
+    "tabs": {
+      "browse": "تصفح المواضيع",
+      "create": "إنشاء موضوع",
+      "mine": "منشوراتي"
+    }
+  },
+  "workplace": {
+    "selector": {
+      "placeholder": "اختر مكان عمل",
+      "noWorkplaces": "لا توجد أماكن عمل متاحة",
+      "fetchError": "تعذر تحميل أماكن العمل"
+    },
+    "newModal": {
+      "title": "مكان عمل جديد",
+      "description": "اختر كيف تريد إضافة مكان عمل لحسابك",
+      "createWorkplace": "إنشاء مكان عمل",
+      "joinWorkplace": "الانضمام إلى مكان عمل",
+      "createWorkplaceDescription": "أنشئ وادِر مكان عملك",
+      "joinWorkplaceDescription": "اطلب الانضمام إلى مكان عمل موجود"
+    },
+    "createModal": {
+      "title": "إنشاء مكان عمل",
+      "description": "أضف شركتك إلى المنصة وابدأ بناء سمعتك",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "أدخل اسم الشركة",
+      "sector": "القطاع",
+      "sectorPlaceholder": "مثلاً: تقنية، صحة",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع",
+      "website": "الموقع الإلكتروني",
+      "shortDescription": "وصف قصير",
+      "detailedDescription": "وصف تفصيلي",
+      "websitePlaceholder": "https://www.example.com",
+      "submit": "إنشاء مكان العمل",
+      "workplaceCreated": "تم إنشاء مكان العمل!",
+      "workplaceCreatedMessage": "تم إنشاء مكان العمل بنجاح.",
+      "errors": {
+        "companyNameRequired": "اسم الشركة مطلوب",
+        "sectorRequired": "القطاع مطلوب",
+        "locationRequired": "الموقع مطلوب",
+        "ethicalTagsRequired": "مطلوب علامة أخلاقية واحدة على الأقل",
+        "websiteInvalid": "يجب أن يكون رابطًا صالحًا"
+      },
+      "creating": "جارٍ الإنشاء...",
+      "redirecting": "يتم تحويلك إلى مكان العمل الجديد..."
+    },
+    "joinModal": {
+      "title": "انضم إلى مكان عمل",
+      "searchPlaceholder": "البحث عن أماكن العمل...",
+      "requestTitle": "طلب الانضمام",
+      "noteLabel": "ملاحظة للمسؤولين",
+      "notePlaceholder": "رسالة اختيارية تشرح سبب رغبتك في الانضمام...",
+      "submitRequest": "إرسال الطلب",
+      "submittingRequest": "جارٍ الإرسال...",
+      "back": "رجوع",
+      "alreadyMember": "أنت بالفعل صاحب عمل في هذا المكان",
+      "requestSubmitted": "تم إرسال الطلب",
+      "requestSubmittedMessage": "تم إرسال طلب الانضمام إلى {{company}}. سيتم إعلامك بعد المراجعة.",
+      "close": "إغلاق"
+    },
+    "settings": "الإعدادات",
+    "profile": {
+      "title": "ملف مكان العمل",
+      "notFound": "مكان العمل غير موجود",
+      "notFoundDescription": "مكان العمل الذي تبحث عنه غير موجود أو تمت إزالته.",
+      "aboutCompany": "عن الشركة",
+      "ethicalCommitments": "الالتزامات الأخلاقية",
+      "employers": "أصحاب العمل",
+      "manageRequests": "إدارة الطلبات",
+      "currentJobOpenings": "الوظائف الحالية",
+      "noJobOpenings": "لا توجد وظائف حالياً",
+      "viewAllJobs": "عرض كل {{count}} وظيفة"
+    },
+    "manageRequests": "إدارة الطلبات"
+  },
+  "sectors": {
+    "technology": "التقنية",
+    "healthcare": "الرعاية الصحية",
+    "education": "التعليم",
+    "finance": "المالية",
+    "creativearts": "الفنون الإبداعية",
+    "manufacturing": "التصنيع",
+    "retail": "التجزئة",
+    "consulting": "الاستشارات",
+    "nonprofit": "غير ربحي",
+    "other": "أخرى"
   },
   "mentorship": {
     "title": "ابحث عن مرشد",
@@ -1805,6 +1947,7 @@
     "notReady": "الدردشة ليست جاهزة بعد. يرجى الانتظار قليلاً ثم المحاولة.",
     "authRequired": "يجب تسجيل الدخول لاستخدام الدردشة",
     "noConversationsDesc": "تحتاج إلى وجود إرشاد نشط لبدء الدردشة."
+<<<<<<< HEAD
   },
   "errors": {
     "DEFAULT": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
@@ -1877,5 +2020,7 @@
     "RESUME_FILE_CONTENT_TYPE_INVALID": "نوع ملف السيرة الذاتية غير صالح.",
     "RESUME_FILE_UPLOAD_FAILED": "فشل رفع السيرة الذاتية. يرجى المحاولة مرة أخرى.",
     "RESUME_FILE_NOT_FOUND": "ملف السيرة الذاتية غير موجود."
+=======
+>>>>>>> cf3c791c (feat: enhance localization and routing structure, add volunteering section, and implement access guards for workplaces)
   }
 }
