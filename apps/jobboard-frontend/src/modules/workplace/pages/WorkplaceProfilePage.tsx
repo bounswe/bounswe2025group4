@@ -27,7 +27,8 @@ import type { JobPostResponse } from '@shared/types/api.types';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 export default function WorkplaceProfilePage() {
-  const { id } = useParams<{ id: string }>();
+  const { id, workplaceId } = useParams<{ id?: string; workplaceId?: string }>();
+  const resolvedId = workplaceId ?? id;
   const { t } = useTranslation('common');
   const { isAuthenticated, user } = useAuth();
   const [workplace, setWorkplace] = useState<WorkplaceDetailResponse | null>(null);
@@ -62,14 +63,19 @@ export default function WorkplaceProfilePage() {
   useEffect(() => {
     loadWorkplaceData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, refreshKey]);
+  }, [resolvedId, refreshKey]);
 
   const loadWorkplaceData = async () => {
-    if (!id) return;
+    if (!resolvedId) return;
 
     setLoading(true);
     try {
-      const data = await getWorkplaceById(parseInt(id, 10), true, 5);
+      const numericId = parseInt(resolvedId, 10);
+      if (Number.isNaN(numericId)) {
+        setLoading(false);
+        return;
+      }
+      const data = await getWorkplaceById(numericId, true, 5);
       setWorkplace(data);
       setReviewsTotal(data.reviewCount ?? data.recentReviews?.length ?? 0);
 
@@ -82,7 +88,7 @@ export default function WorkplaceProfilePage() {
       const isEmployer = data.employers?.some((emp) => emp.userId === user?.id);
       if (isEmployer) {
         try {
-          const requests = await getEmployerRequests(parseInt(id, 10), { size: 10 });
+          const requests = await getEmployerRequests(numericId, { size: 10 });
           const hasPending = requests.content.some(
             (req) => req.status === 'PENDING' || req.status.toUpperCase() === 'PENDING'
           );

@@ -13,6 +13,8 @@
         "home": "Home",
         "jobs": "Jobs",
         "nonProfitJobs": "Volunteer",
+        "volunteering": "Volunteering",
+        "volunteerBrowse": "Volunteer Opportunities",
         "myApplications": "My Applications",
         "mentorship": "Mentorship",
         "myMentorships": "My Mentorships",
@@ -21,14 +23,18 @@
         "employerDashboard": "Employer Dashboard",
         "workplaces": "Workplaces",
         "myWorkplaces": "My Workplaces",
-        "browseWorkplaces": "Browse Workplaces"
+        "browseWorkplaces": "Browse Workplaces",
+        "profile": "Profile",
+        "settings": "Settings"
       },
       "auth": {
         "login": "Login",
         "signup": "Sign Up",
         "logout": "Logout",
         "profile": "Profile"
-      }
+      },
+      "theme": "Theme",
+      "language": "Language"
     },
     "footer": {
       "about": "About Us",
@@ -804,6 +810,13 @@
       "minRating": "Minimum Rating",
       "anyRating": "Any",
       "ratingWithValue": "{{rating}}★"
+    }
+  },
+  "forum": {
+    "tabs": {
+      "browse": "Browse Threads",
+      "create": "Create Thread",
+      "mine": "My Posts"
     }
   },
   "workplace": {
