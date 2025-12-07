@@ -11,7 +11,11 @@ import CenteredLoader from '@shared/components/common/CenteredLoader';
 import { cn } from '@shared/lib/utils';
 import type { JobPostResponse } from '@shared/types/api.types';
 import { getJobById } from '@modules/jobs/services/jobs.service';
-import { createApplication, uploadCv, getApplicationsByJobSeeker } from '@modules/jobs/applications/services/applications.service';
+import {
+  createVolunteerApplication,
+  getVolunteerApplicationsByJobSeeker,
+  uploadVolunteerCv,
+} from '@modules/volunteering/services/volunteer-applications.service';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -44,7 +48,7 @@ export default function NonProfitJobApplicationPage() {
         setIsLoading(true);
 
         // Check if user already applied to this specific job
-        const allApplications = await getApplicationsByJobSeeker(user.id);
+        const allApplications = await getVolunteerApplicationsByJobSeeker(user.id);
 
         const hasAppliedToThisJob = allApplications.some(
           (app) => app.jobPostId === parseInt(id, 10)
@@ -131,13 +135,13 @@ export default function NonProfitJobApplicationPage() {
     try {
       setIsSubmitting(true);
 
-      const application = await createApplication({
+      const application = await createVolunteerApplication({
         jobPostId: parseInt(id, 10),
         coverLetter: coverLetter.trim() || undefined,
         specialNeeds: specialNeeds.trim() || undefined,
       });
 
-      await uploadCv(application.id, cvFile);
+      await uploadVolunteerCv(application.id, cvFile);
 
       toast.success(t('applications.volunteer.success.message'));
       navigate('/applications');
