@@ -38,7 +38,7 @@ describe('WorkplaceSettingsPage Integration', () => {
         <Routes>
           <Route path="/employer/workplace/:workplaceId/settings" element={<WorkplaceSettingsPage />} />
           <Route path="/workplace/:id" element={<div>Workplace Profile</div>} />
-          <Route path="/workplaces" element={<div>Employer Workplaces</div>} />
+          <Route path="/workplaces/my" element={<div>Employer Workplaces</div>} />
         </Routes>
       </MemoryRouter>
     );
