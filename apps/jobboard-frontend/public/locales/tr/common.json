@@ -1,396 +1,59 @@
 {
-  "languageSwitcher": {
-    "label": "Dil",
-    "english": "İngilizce",
-    "turkish": "Türkçe",
-    "arabic": "Arapça"
-  },
-  "header": {
-    "brand": "Ethica Jobs",
-    "menu": "Menü",
-    "nav": {
-      "home": "Ana Sayfa",
-      "jobs": "İş İlanları",
-      "nonProfitJobs": "Gönüllülük",
-      "myApplications": "Başvurularım",
-      "mentorship": "Mentorluk",
-      "myMentorships": "Mentorluklarım",
-      "chat": "Sohbet",
-      "forum": "Forum",
-      "employerDashboard": "İşveren Paneli",
-      "workplaces": "İş Yerleri",
-      "myWorkplaces": "İş Yerlerim",
-      "browseWorkplaces": "İş Yerlerini Keşfet"
+  "layout": {
+    "languageSwitcher": {
+      "label": "Dil",
+      "english": "İngilizce",
+      "turkish": "Türkçe",
+      "arabic": "Arapça"
     },
-    "auth": {
-      "login": "Giriş Yap",
-      "signup": "Kayıt Ol",
-      "logout": "Çıkış Yap",
-      "profile": "Profil"
-    }
-  },
-  "footer": {
-    "about": "Hakkımızda",
-    "contact": "İletişim",
-    "privacy": "Gizlilik Politikası",
-    "terms": "Kullanım Şartları",
-    "brandSuffix": "Ethica Jobs"
-  },
-  "home": {
-    "hero": {
-      "title": "Amacınıza Uygun Kariyeri Keşfedin",
-      "subtitle": "Etik ve sürdürülebilirliği önceleyen şirketlerle bağlantı kurun. Değerlerinizle uyumlu fırsatları keşfedin ve dünyaya olumlu bir etki bırakın.",
-      "searchLabel": "İş ara",
-      "searchPlaceholderDesktop": "Örn. 'Yazılım Mühendisi' gibi işler ara",
-      "searchPlaceholderMobile": "İş ara",
-      "searchButton": "Ara",
-      "discoverNonProfit": "Kar Amacı Gütmeyen Fırsatları Keşfet"
-    },
-    "quote": {
-      "title": "Günün İlham Verici Sözü",
-      "text": "Gelecek, hayallerinin güzelliğine inananlara aittir.",
-      "author": "Eleanor Roosevelt"
-    },
-    "jobSeekers": {
-      "title": "İş Arayanlar İçin",
-      "description": "Kariyer Yolculuğunuzu Güçlendiriyoruz. Değerlerinizle örtüşen tatmin edici bir kariyer bulmanız için ihtiyaç duyduğunuz araçları ve kaynakları sunuyoruz.",
-      "cards": {
-        "ethical": {
-          "title": "Etik İş İlanları",
-          "description": "Etik uygulamalara ve sosyal sorumluluğa bağlı şirketlerden seçilmiş iş ilanlarına göz atın."
-        },
-        "resources": {
-          "title": "Kariyer Gelişim Kaynakları",
-          "description": "Özgeçmiş atölyeleri, mülakat ipuçları ve kariyer koçluğu dahil olmak üzere becerilerinizi geliştirecek kaynaklara erişin."
-        },
-        "community": {
-          "title": "Topluluk Forumu",
-          "description": "Benzer düşüncelere sahip profesyonellerle iletişim kurun, deneyimlerinizi paylaşın ve etik liderlerle ağ oluşturun."
-        }
-      }
-    },
-    "employers": {
-      "title": "İşverenler İçin",
-      "description": "Daha İyi Bir İş Gücü Oluşturun. Fark yaratmaya istekli yetenekli kişilerle bağlantı kurun.",
-      "cards": {
-        "talent": {
-          "title": "En İyi Yetenekleri Çekin",
-          "description": "Fark yaratmaya tutkuyla bağlı profesyonellerle bağlantı kurun."
-        },
-        "values": {
-          "title": "Değerlerinizi Sergileyin",
-          "description": "Şirketinizin etik, sürdürülebilirlik ve sosyal etkiye olan bağlılığını öne çıkarın."
-        },
-        "brand": {
-          "title": "Daha Güçlü Bir Marka Oluşturun",
-          "description": "İtibarınızı güçlendirin ve etik iş uygulamalarına değer veren müşterileri çekin."
-        }
-      }
-    },
-    "cta": {
-      "title": "Etik Kariyerler Topluluğuna Katılın",
-      "description": "Daha anlamlı ve etkili bir kariyer yolculuğuna başlamak için hemen kaydolun.",
-      "button": "Hemen Başla"
-    }
-  },
-  "jobs": {
-    "filtersHeading": "Filtreler",
-    "searchPlaceholder": "Yazılım Mühendisi",
-    "searchAria": "İş ara",
-    "clearSearch": "Aramayı temizle",
-    "error": "İlanlar yüklenemedi. Lütfen daha sonra tekrar deneyin.",
-    "retry": "Tekrar Dene",
-    "results": "{{count}} ilan bulundu",
-    "results_plural": "{{count}} ilan bulundu",
-    "resultsDescription": "Mevcut filtrelerinize uygun {{count}} fırsat var.",
-    "noResults": "Kriterlerinize uygun ilan bulunamadı.",
-    "resetFilters": "Filtreleri Sıfırla",
-    "authRequired": {
-      "title": "Hesap Gerekli",
-      "description": "İş ilanlarını görüntülemek ve pozisyonlara başvurmak için bir hesap oluşturmanız gerekiyor.",
-      "invitation": "Bugün Ethica Jobs'a katılın ve değerlerinize uygun, amaç odaklı kariyer fırsatlarını keşfedin!",
-      "signUp": "Hesap Oluştur",
-      "login": "Zaten hesabınız var mı? Giriş Yapın"
-    }
-  },
-  "nonProfitJobs": {
-    "pageTitle": "Toplumsal Fayda İçin Fırsatlar",
-    "pageDescription": "Her ödül parasal değildir. Bu gönüllü ve amaç odaklı roller, insanlar, gezegen ve gelecek için bir fark yaratmak amacıyla var. Ağaç dikmek, yerel topluluklara yardım etmek veya becerilerinizi sosyal amaçlar için kullanmak olsun, buradaki her eylem kendimizden daha büyük bir şeye katkı sağlar.",
-    "volunteerOpportunity": "Gönüllü",
-    "makingADifference": "Fark Yaratıyor",
-    "features": {
-      "meaningful": "Anlamlı İş",
-      "sustainable": "Sürdürülebilir Etki",
-      "community": "Toplum Odaklı"
-    },
-    "availableOpportunities": "{{count}} fırsat mevcut",
-    "availableOpportunities_plural": "{{count}} fırsat mevcut",
-    "opportunitiesDescription": "Topluluğunuzda ve ötesinde olumlu etki yaratmanın {{count}} yolu.",
-    "noOpportunities": "Şu anda gönüllü fırsatları bulunmuyor",
-    "checkBackSoon": "Topluluğunuzda fark yaratmanın yeni yolları için yakında tekrar kontrol edin.",
-    "browseRegularJobs": "Normal İşlere Göz At",
-    "volunteer": "Gönüllü",
-    "backToOpportunities": "Fırsatlara Geri Dön",
-    "volunteerNow": "Şimdi Gönüllü Ol",
-    "aboutOrganization": "Organizasyon Hakkında",
-    "opportunityDescription": "Fırsat Açıklaması",
-    "makeADifferenceDescription": "Önemsediğiniz topluluklar ve amaçlar için gerçek bir fark yaratan gönüllü çalışmalar yoluyla anlamlı değişim yaratmaya katılın.",
-    "defaultDescription": "Çevresel sürdürülebilirlik, toplum kalkınması ve sosyal adalet girişimlerine katkıda bulunan gönüllü çalışmalar yoluyla anlamlı bir etki yaratın.",
-    "whatYouGain": {
-      "title": "Ne Kazanacaksınız",
-      "experience": "İlgilendiğiniz alanda değerli pratik deneyim",
-      "networking": "Benzer düşünen bireylerle networking fırsatları",
-      "skills": "Yeni beceri ve yetkinliklerin geliştirilmesi",
-      "impact": "Anlamlı sosyal amaçlara doğrudan katkı",
-      "purpose": "Amaç duygusu ve kişisel tatmin"
-    },
-    "authRequired": {
-      "description": "Gönüllü fırsatlarını görüntülemek ve anlamlı organizasyonlarla bağlantı kurmak için bir hesap oluşturmanız gerekiyor."
-    }
-  },
-  "jobFilters": {
-    "ethicalTags": "Etik Etiketler",
-    "selectEthicalTags": "Etik etiketleri seçin",
-    "salary": "Maaş Aralığı",
-    "salaryRangeValue": "${{min}}k - ${{max}}k",
-    "jobType": "İş Türü",
-    "workArrangement": "Çalışma Düzeni",
-    "remoteOnly": "Sadece Uzaktan",
-    "inclusivity": "Kapsayıcılık",
-    "disabilityInclusive": "Engelli Dostu Fırsatlar",
-    "companyName": "Şirket Adı",
-    "companyNamePlaceholder": "Şirket adına göre ara",
-    "jobTypeOptions": {
-      "fullTime": "Tam zamanlı",
-      "partTime": "Yarı zamanlı",
-      "contract": "Sözleşmeli"
-    },
-    "salaryEndpoint": "${{value}}k"
-  },
-  "ethicalTags": {
-    "select": "Etik etiketleri seçin",
-    "selectEthicalTags": "Etik Etiketleri Seçin",
-    "selectedCount": "{{count}} etiket seçildi",
-    "selectedCount_plural": "{{count}} etiket seçildi",
-    "clearAll": "Tümünü temizle",
-    "removeTag": "{{tag}} kaldır",
-    "categories": {
-      "compensationAndBenefits": "Ücret ve Yan Haklar",
-      "workLifeBalance": "İş-Yaşam Dengesi",
-      "diversityAndInclusion": "Çeşitlilik ve Kapsayıcılık",
-      "careerDevelopment": "Kariyer Gelişimi",
-      "environmentalAndSocialImpact": "Çevresel ve Sosyal Etki"
-    },
-    "tags": {
-      "salaryTransparency": "Maaş Şeffaflığı",
-      "equalPayPolicy": "Eşit Ücret Politikası",
-      "livingWageEmployer": "Yaşanabilir Ücret İşvereni",
-      "comprehensiveHealthInsurance": "Kapsamlı Sağlık Sigortası",
-      "performanceBasedBonus": "Performansa Dayalı Bonus",
-      "retirementPlanSupport": "Emeklilik Planı Desteği",
-      "paidParentalLeave": "Ücretli Ebeveyn İzni",
-      "flexibleHours": "Esnek Çalışma Saatleri",
-      "remoteFriendly": "Uzaktan Çalışma Dostu",
-      "noAfterHoursWorkCulture": "Mesai Sonrası Çalışma Yok",
-      "mentalHealthSupport": "Ruh Sağlığı Desteği",
-      "generousPaidTimeOff": "Bol Ücretli İzin",
-      "inclusiveHiringPractices": "Kapsayıcı İşe Alım Uygulamaları",
-      "diverseLeadership": "Çeşitli Liderlik",
-      "lgbtqFriendlyWorkplace": "LGBTQ+ Dostu İşyeri",
-      "disabilityInclusiveWorkplace": "Engelli Dostu İşyeri",
-      "supportsWomenInLeadership": "Liderlikte Kadınları Destekler",
-      "mentorshipProgram": "Mentorluk Programı",
-      "learningDevelopmentBudget": "Öğrenme ve Gelişim Bütçesi",
-      "transparentPromotionPaths": "Şeffaf Terfi Yolları",
-      "internalMobility": "İç Mobilite",
-      "sustainabilityFocused": "Sürdürülebilirlik Odaklı",
-      "ethicalSupplyChain": "Etik Tedarik Zinciri",
-      "communityVolunteering": "Toplum Gönüllülüğü",
-      "certifiedBCorporation": "Sertifikalı B-Corporation"
-    }
-  },
-  "jobCard": {
-    "remote": "Uzaktan",
-    "inclusiveOpportunity": "Kapsayıcı Fırsat",
-    "notSpecified": "Konum belirtilmemiş"
-  },
-  "mobileFilters": {
-    "open": "Filtreleri aç",
-    "title": "Filtreler",
-    "reset": "Sıfırla",
-    "apply": "Uygula"
-  },
-  "jobDetail": {
-    "breadcrumb": {
-      "jobs": "İlanlar"
-    },
-    "error": {
-      "title": "İlan Yüklenemedi",
-      "missing": "İlan bulunamadı",
-      "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir.",
-      "fetch": "İlan detayları yüklenemedi. Lütfen daha sonra tekrar deneyin."
-    },
-    "backToJobs": "İlanlara Dön",
-    "applyNow": "Hemen Başvur",
-    "description": "İlan Açıklaması",
-    "ethicalPolicy": {
-      "title": "Etik Etiketler ve Uyumluluk"
-    },
-    "inclusiveOpportunity": "Kapsayıcı Fırsat",
-    "contact": {
-      "title": "İletişim Bilgileri"
-    }
-  },
-  "employerDashboard": {
-    "brand": "Ethical Careers",
-    "sidebar": {
-      "dashboard": "Panel",
-      "jobs": "İlanlar",
-      "profile": "Şirket Profili",
-      "settings": "Ayarlar",
-      "support": "Yardım ve Destek"
-    },
-    "title": "İşveren Paneli",
-    "currentPostings": "Mevcut İş İlanları",
-    "createJob": "Yeni İş İlanı Oluştur",
-    "loadingError": "İş ilanları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
-    "emptyState": "Henüz herhangi bir iş ilanı oluşturmadınız.",
-    "emptyCta": "İlk İlanınızı Oluşturun",
-    "table": {
-      "jobTitle": "İş Başlığı",
-      "status": "Durum",
-      "applications": "Başvurular",
-      "views": "Görüntülenme",
-      "actions": "İşlemler"
-    },
-    "actions": {
-      "manage": "Yönet",
-      "view": "Görüntüle"
-    },
-    "statusLabels": {
-      "open": "Açık",
-      "active": "Aktif",
-      "paused": "Durduruldu"
-    }
-  },
-  "employerJobPostDetails": {
-    "error": {
-      "load": "İş detayları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
-      "title": "İlan Yüklenemedi",
-      "notFound": "İlan bulunamadı",
-      "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir."
-    },
-    "applied": {
-      "today": "Bugün baÅŸvuruldu",
-      "yesterday": "1 gün önce başvuruldu",
-      "daysAgo": "{{count}} gün önce başvuruldu"
-    },
-    "backToDashboard": "Panele Geri Dön",
-    "breadcrumb": {
-      "jobs": "İlanlar"
-    },
-    "editJobPost": "İlanı Düzenle",
-    "jobDescription": "İş Tanımı",
-    "salaryRange": "Maaş Aralığı",
-    "location": "Konum",
-    "remote": "Uzaktan",
-    "contact": "İletişim Bilgileri",
-    "ethicalPolicies": "Etik Politikalar",
-    "inclusiveOpportunity": "Kapsayıcı Fırsat",
-    "inclusiveOpportunityDescription": "Bu pozisyon, farklı geçmişlerden gelen adayları memnuniyetle karşılayan kapsayıcı bir fırsat olarak belirlenmiştir.",
-    "applicationsReceived": "Alınan Başvurular ({{count}})",
-    "noApplications": "Henüz başvuru alınmadı.",
-    "viewApplication": "Başvuruyu Görüntüle"
-  },
-  "employerWorkplaces": {
-    "title": "İş Yerlerim",
-    "description": "İş yerlerinizi yönetin ve değerlendirmelere yanıt verin",
-    "viewApplications": "Başvuruları Görüntüle",
-    "newWorkplace": "Yeni İş Yeri",
-    "loadError": "İş yerleriniz yüklenemedi. Lütfen tekrar deneyin.",
-    "empty": {
-      "title": "Henüz İş Yeri Yok",
-      "description": "İlk iş yerinizi oluşturun veya mevcut birine katılma isteği gönderin"
-    },
-    "addNew": {
-      "title": "Yeni İş Yeri Ekle",
-      "description": "Yeni bir iş yeri oluşturun veya mevcut birine katılın"
-    },
-    "applicationsModal": {
-      "title": "İş Yeri Başvurularım",
-      "description": "İş yerlerini yönetme taleplerinizin durumunu görüntüleyin.",
-      "loadError": "Başvurularınız yüklenemedi.",
-      "noApplications": "Henüz hiçbir iş yerine başvurmadınız.",
-      "appliedOn": "{{date}} tarihinde başvuruldu",
-      "note": "Not: {{note}}",
-      "updatedOn": "{{date}} tarihinde güncellendi"
-    },
-    "workplaceLabel": "Ä°ÅŸ Yeri",
-    "page": {
-      "loadError": "Ä°ÅŸ yerleriniz yÃ¼klenemedi"
-    }
-  },
-  "status": {
-    "pending": "Beklemede",
-    "accepted": "Kabul Edildi",
-    "rejected": "Reddedildi",
-    "unknown": "Bilinmiyor"
-  },
-  "workplaces": {
-    "title": "İş Yerleri",
-    "description": "Şirketleri kültürleri ve değerlendirmeleri hakkında daha fazla bilgi edinmek için keşfedin ve inceleyin",
-    "searchTitle": "İş Yeri Ara",
-    "searchPlaceholder": "Şirket adı girin...",
-    "searching": "Aranıyor...",
-    "search": "Ara",
-    "loadError": "İş yerleri yüklenemedi. Lütfen tekrar deneyin.",
-    "loading": "YÃ¼kleniyor...",
-    "workplacesFound": "{{count}} iş yeri bulundu",
-    "workplacesFound_plural": "{{count}} iş yeri bulundu",
-    "empty": {
-      "title": "İş Yeri Bulunamadı",
-      "adjustFilters": "Filtrelerinizi veya arama sorgunuzu ayarlamayı deneyin",
-      "noWorkplaces": "Şu anda mevcut iş yeri yok"
-    },
-    "filters": {
-      "title": "Filtreler",
-      "clear": "Temizle",
-      "clearFilters": "Filtreleri Temizle",
-      "sector": "Sektör",
-      "allSectors": "Tüm Sektörler",
-      "location": "Konum",
-      "locationPlaceholder": "Konum girin...",
-      "sortBy": "Sırala",
-      "sortOptions": {
-        "default": "Varsayılan",
-        "nameDesc": "İsme göre (Z'den A'ya)",
-        "nameAsc": "İsme göre (A'dan Z'ye)",
-        "reviewCountDesc": "Yorum sayısı (Çoktan aza)",
-        "reviewCountAsc": "Yorum sayısı (Azdan çoğa)",
-        "ratingDesc": "Puana göre (Yüksekten aza)",
-        "ratingAsc": "Puana göre (Azdan yükseğe)"
+    "header": {
+      "brand": "Ethica Jobs",
+      "menu": "Menü",
+      "nav": {
+        "home": "Ana Sayfa",
+        "jobs": "İş İlanları",
+        "nonProfitJobs": "Gönüllülük",
+        "myApplications": "Başvurularım",
+        "mentorship": "Mentorluk",
+        "myMentorships": "Mentorluklarım",
+        "chat": "Sohbet",
+        "forum": "Forum",
+        "employerDashboard": "İşveren Paneli",
+        "workplaces": "İş Yerleri",
+        "myWorkplaces": "İş Yerlerim",
+        "browseWorkplaces": "İş Yerlerini Keşfet"
       },
-      "minRating": "Minimum Puan",
-      "anyRating": "Herhangi",
-      "ratingWithValue": "{{rating}}★"
+      "auth": {
+        "login": "Giriş Yap",
+        "signup": "Kayıt Ol",
+        "logout": "Çıkış Yap",
+        "profile": "Profil"
+      }
+    },
+    "footer": {
+      "about": "Hakkımızda",
+      "contact": "İletişim",
+      "privacy": "Gizlilik Politikası",
+      "terms": "Kullanım Şartları",
+      "brandSuffix": "Ethica Jobs"
     }
   },
-  "sectors": {
-    "technology": "Teknoloji",
-    "healthcare": "Sağlık",
-    "education": "Eğitim",
-    "finance": "Finans",
-    "creativearts": "Yaratıcı Sanatlar",
-    "manufacturing": "Ãœretim",
-    "retail": "Perakende",
-    "consulting": "Danışmanlık",
-    "nonprofit": "Kar Amacı Gütmeyen",
-    "other": "Diğer"
-  },
-  "pagination": {
-    "previous": "Önceki",
-    "next": "Sonraki",
-    "pageInfo": "Sayfa {{page}} / {{total}}"
+  "common": {
+    "loading": "Yükleniyor...",
+    "goHome": "Ana Sayfaya Git",
+    "edited": "Düzenlendi",
+    "search": "Ara",
+    "status": {
+      "pending": "Beklemede",
+      "accepted": "Kabul Edildi",
+      "rejected": "Reddedildi",
+      "unknown": "Bilinmiyor"
+    },
+    "pagination": {
+      "previous": "Önceki",
+      "next": "Sonraki",
+      "pageInfo": "Sayfa {{page}} / {{total}}"
+    }
   },
   "auth": {
     "login": {
@@ -501,6 +164,598 @@
       },
       "success": "OTP doğrulaması başarılı! Giriş yaptınız."
     }
+  },
+  "home": {
+    "hero": {
+      "title": "Amacınıza Uygun Kariyeri Keşfedin",
+      "subtitle": "Etik ve sürdürülebilirliği önceleyen şirketlerle bağlantı kurun. Değerlerinizle uyumlu fırsatları keşfedin ve dünyaya olumlu bir etki bırakın.",
+      "searchLabel": "İş ara",
+      "searchPlaceholderDesktop": "Örn. 'Yazılım Mühendisi' gibi işler ara",
+      "searchPlaceholderMobile": "İş ara",
+      "searchButton": "Ara",
+      "discoverNonProfit": "Kar Amacı Gütmeyen Fırsatları Keşfet"
+    },
+    "quote": {
+      "title": "Günün İlham Verici Sözü",
+      "text": "Gelecek, hayallerinin güzelliğine inananlara aittir.",
+      "author": "Eleanor Roosevelt"
+    },
+    "jobSeekers": {
+      "title": "İş Arayanlar İçin",
+      "description": "Kariyer Yolculuğunuzu Güçlendiriyoruz. Değerlerinizle örtüşen tatmin edici bir kariyer bulmanız için ihtiyaç duyduğunuz araçları ve kaynakları sunuyoruz.",
+      "cards": {
+        "ethical": {
+          "title": "Etik İş İlanları",
+          "description": "Etik uygulamalara ve sosyal sorumluluğa bağlı şirketlerden seçilmiş iş ilanlarına göz atın."
+        },
+        "resources": {
+          "title": "Kariyer Gelişim Kaynakları",
+          "description": "Özgeçmiş atölyeleri, mülakat ipuçları ve kariyer koçluğu dahil olmak üzere becerilerinizi geliştirecek kaynaklara erişin."
+        },
+        "community": {
+          "title": "Topluluk Forumu",
+          "description": "Benzer düşüncelere sahip profesyonellerle iletişim kurun, deneyimlerinizi paylaşın ve etik liderlerle ağ oluşturun."
+        }
+      }
+    },
+    "employers": {
+      "title": "İşverenler İçin",
+      "description": "Daha İyi Bir İş Gücü Oluşturun. Fark yaratmaya istekli yetenekli kişilerle bağlantı kurun.",
+      "cards": {
+        "talent": {
+          "title": "En İyi Yetenekleri Çekin",
+          "description": "Fark yaratmaya tutkuyla bağlı profesyonellerle bağlantı kurun."
+        },
+        "values": {
+          "title": "Değerlerinizi Sergileyin",
+          "description": "Şirketinizin etik, sürdürülebilirlik ve sosyal etkiye olan bağlılığını öne çıkarın."
+        },
+        "brand": {
+          "title": "Daha Güçlü Bir Marka Oluşturun",
+          "description": "İtibarınızı güçlendirin ve etik iş uygulamalarına değer veren müşterileri çekin."
+        }
+      }
+    },
+    "cta": {
+      "title": "Etik Kariyerler Topluluğuna Katılın",
+      "description": "Daha anlamlı ve etkili bir kariyer yolculuğuna başlamak için hemen kaydolun.",
+      "button": "Hemen Başla"
+    }
+  },
+  "jobs": {
+    "filtersHeading": "Filtreler",
+    "searchPlaceholder": "Yazılım Mühendisi",
+    "searchAria": "İş ara",
+    "clearSearch": "Aramayı temizle",
+    "error": "İlanlar yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "retry": "Tekrar Dene",
+    "results": "{{count}} ilan bulundu",
+    "results_plural": "{{count}} ilan bulundu",
+    "resultsDescription": "Mevcut filtrelerinize uygun {{count}} fırsat var.",
+    "noResults": "Kriterlerinize uygun ilan bulunamadı.",
+    "resetFilters": "Filtreleri Sıfırla",
+    "authRequired": {
+      "title": "Hesap Gerekli",
+      "description": "İş ilanlarını görüntülemek ve pozisyonlara başvurmak için bir hesap oluşturmanız gerekiyor.",
+      "invitation": "Bugün Ethica Jobs'a katılın ve değerlerinize uygun, amaç odaklı kariyer fırsatlarını keşfedin!",
+      "signUp": "Hesap Oluştur",
+      "login": "Zaten hesabınız var mı? Giriş Yapın"
+    },
+    "filters": {
+      "ethicalTags": "Etik Etiketler",
+      "selectEthicalTags": "Etik etiketleri seçin",
+      "salary": "Maaş Aralığı",
+      "salaryRangeValue": "${{min}}k - ${{max}}k",
+      "jobType": "İş Türü",
+      "workArrangement": "Çalışma Düzeni",
+      "remoteOnly": "Sadece Uzaktan",
+      "inclusivity": "Kapsayıcılık",
+      "disabilityInclusive": "Engelli Dostu Fırsatlar",
+      "companyName": "Şirket Adı",
+      "companyNamePlaceholder": "Şirket adına göre ara",
+      "jobTypeOptions": {
+        "fullTime": "Tam zamanlı",
+        "partTime": "Yarı zamanlı",
+        "contract": "Sözleşmeli"
+      },
+      "salaryEndpoint": "${{value}}k"
+    },
+    "tags": {
+      "select": "Etik etiketleri seçin",
+      "selectEthicalTags": "Etik Etiketleri Seçin",
+      "selectedCount": "{{count}} etiket seçildi",
+      "selectedCount_plural": "{{count}} etiket seçildi",
+      "clearAll": "Tümünü temizle",
+      "removeTag": "{{tag}} kaldır",
+      "categories": {
+        "compensationAndBenefits": "Ücret ve Yan Haklar",
+        "workLifeBalance": "İş-Yaşam Dengesi",
+        "diversityAndInclusion": "Çeşitlilik ve Kapsayıcılık",
+        "careerDevelopment": "Kariyer Gelişimi",
+        "environmentalAndSocialImpact": "Çevresel ve Sosyal Etki"
+      },
+      "tags": {
+        "salaryTransparency": "Maaş Şeffaflığı",
+        "equalPayPolicy": "Eşit Ücret Politikası",
+        "livingWageEmployer": "Yaşanabilir Ücret İşvereni",
+        "comprehensiveHealthInsurance": "Kapsamlı Sağlık Sigortası",
+        "performanceBasedBonus": "Performansa Dayalı Bonus",
+        "retirementPlanSupport": "Emeklilik Planı Desteği",
+        "paidParentalLeave": "Ücretli Ebeveyn İzni",
+        "flexibleHours": "Esnek Çalışma Saatleri",
+        "remoteFriendly": "Uzaktan Çalışma Dostu",
+        "noAfterHoursWorkCulture": "Mesai Sonrası Çalışma Yok",
+        "mentalHealthSupport": "Ruh Sağlığı Desteği",
+        "generousPaidTimeOff": "Bol Ücretli İzin",
+        "inclusiveHiringPractices": "Kapsayıcı İşe Alım Uygulamaları",
+        "diverseLeadership": "Çeşitli Liderlik",
+        "lgbtqFriendlyWorkplace": "LGBTQ+ Dostu İşyeri",
+        "disabilityInclusiveWorkplace": "Engelli Dostu İşyeri",
+        "supportsWomenInLeadership": "Liderlikte Kadınları Destekler",
+        "mentorshipProgram": "Mentorluk Programı",
+        "learningDevelopmentBudget": "Öğrenme ve Gelişim Bütçesi",
+        "transparentPromotionPaths": "Şeffaf Terfi Yolları",
+        "internalMobility": "İç Mobilite",
+        "sustainabilityFocused": "Sürdürülebilirlik Odaklı",
+        "ethicalSupplyChain": "Etik Tedarik Zinciri",
+        "communityVolunteering": "Toplum Gönüllülüğü",
+        "certifiedBCorporation": "Sertifikalı B-Corporation"
+      }
+    },
+    "card": {
+      "remote": "Uzaktan",
+      "inclusiveOpportunity": "Kapsayıcı Fırsat",
+      "notSpecified": "Konum belirtilmemiş"
+    },
+    "mobileFilters": {
+      "open": "Filtreleri aç",
+      "title": "Filtreler",
+      "reset": "Sıfırla",
+      "apply": "Uygula"
+    },
+    "detail": {
+      "breadcrumb": {
+        "jobs": "İlanlar"
+      },
+      "error": {
+        "title": "İlan Yüklenemedi",
+        "missing": "İlan bulunamadı",
+        "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir.",
+        "fetch": "İlan detayları yüklenemedi. Lütfen daha sonra tekrar deneyin."
+      },
+      "backToJobs": "İlanlara Dön",
+      "applyNow": "Hemen Başvur",
+      "description": "İlan Açıklaması",
+      "ethicalPolicy": {
+        "title": "Etik Etiketler ve Uyumluluk"
+      },
+      "inclusiveOpportunity": "Kapsayıcı Fırsat",
+      "contact": {
+        "title": "İletişim Bilgileri"
+      }
+    }
+  },
+  "volunteering": {
+    "pageTitle": "Toplumsal Fayda İçin Fırsatlar",
+    "pageDescription": "Her ödül parasal değildir. Bu gönüllü ve amaç odaklı roller, insanlar, gezegen ve gelecek için bir fark yaratmak amacıyla var. Ağaç dikmek, yerel topluluklara yardım etmek veya becerilerinizi sosyal amaçlar için kullanmak olsun, buradaki her eylem kendimizden daha büyük bir şeye katkı sağlar.",
+    "volunteerOpportunity": "Gönüllü",
+    "makingADifference": "Fark Yaratıyor",
+    "features": {
+      "meaningful": "Anlamlı İş",
+      "sustainable": "Sürdürülebilir Etki",
+      "community": "Toplum Odaklı"
+    },
+    "availableOpportunities": "{{count}} fırsat mevcut",
+    "availableOpportunities_plural": "{{count}} fırsat mevcut",
+    "opportunitiesDescription": "Topluluğunuzda ve ötesinde olumlu etki yaratmanın {{count}} yolu.",
+    "noOpportunities": "Şu anda gönüllü fırsatları bulunmuyor",
+    "checkBackSoon": "Topluluğunuzda fark yaratmanın yeni yolları için yakında tekrar kontrol edin.",
+    "browseRegularJobs": "Normal İşlere Göz At",
+    "volunteer": "Gönüllü",
+    "backToOpportunities": "Fırsatlara Geri Dön",
+    "volunteerNow": "Şimdi Gönüllü Ol",
+    "aboutOrganization": "Organizasyon Hakkında",
+    "opportunityDescription": "Fırsat Açıklaması",
+    "makeADifferenceDescription": "Önemsediğiniz topluluklar ve amaçlar için gerçek bir fark yaratan gönüllü çalışmalar yoluyla anlamlı değişim yaratmaya katılın.",
+    "defaultDescription": "Çevresel sürdürülebilirlik, toplum kalkınması ve sosyal adalet girişimlerine katkıda bulunan gönüllü çalışmalar yoluyla anlamlı bir etki yaratın.",
+    "whatYouGain": {
+      "title": "Ne Kazanacaksınız",
+      "experience": "İlgilendiğiniz alanda değerli pratik deneyim",
+      "networking": "Benzer düşünen bireylerle networking fırsatları",
+      "skills": "Yeni beceri ve yetkinliklerin geliştirilmesi",
+      "impact": "Anlamlı sosyal amaçlara doğrudan katkı",
+      "purpose": "Amaç duygusu ve kişisel tatmin"
+    },
+    "authRequired": {
+      "description": "Gönüllü fırsatlarını görüntülemek ve anlamlı organizasyonlarla bağlantı kurmak için bir hesap oluşturmanız gerekiyor."
+    }
+  },
+  "applications": {
+    "job": {
+      "title": "{{jobTitle}} için Başvur",
+      "breadcrumb": {
+        "jobs": "İş İlanları",
+        "apply": "Başvur"
+      },
+      "jobDetails": {
+        "title": "İş Detayları",
+        "company": "Şirket",
+        "location": "Konum",
+        "salary": "Maaş",
+        "remote": "Uzaktan",
+        "onSite": "Yerinde",
+        "postedOn": "{{date}} tarihinde yayınlandı"
+      },
+      "form": {
+        "title": "Başvuru Formu",
+        "coverLetter": {
+          "label": "Ön Yazı (İsteğe Bağlı)",
+          "placeholder": "Kendinizi tanıtın ve bu rol için neden harika bir aday olduğunuzu açıklayın...",
+          "characterCount": "{{count}} / 2000 karakter"
+        },
+        "specialNeeds": {
+          "label": "Özel İhtiyaçlar veya Konaklama (İsteğe Bağlı)",
+          "placeholder": "Özel bir konaklama ihtiyacınız varsa bize bildirin...",
+          "characterCount": "{{count}} / 500 karakter"
+        },
+        "cv": {
+          "label": "CV/Özgeçmiş Yükle",
+          "required": "CV gereklidir",
+          "dragDrop": "CV'nizi buraya sürükleyip bırakın veya dosya seçmek için tıklayın",
+          "chooseFile": "Dosya Seç",
+          "fileTypes": "PDF, DOC, DOCX 10MB'a kadar",
+          "selected": "Seçildi: {{fileName}}",
+          "change": "Dosyayı Değiştir",
+          "remove": "Dosyayı Kaldır"
+        },
+        "submit": "Başvuruyu Gönder",
+        "submitting": "Gönderiliyor...",
+        "cancel": "İptal"
+      },
+      "success": {
+        "title": "Başvuru Gönderildi!",
+        "message": "Başvurunuz başarıyla gönderildi. İşveren başvurunuzu inceledikten sonra sizi bilgilendireceğiz.",
+        "viewApplications": "Başvurularımı Görüntüle",
+        "backToJobs": "İş İlanlarına Dön"
+      },
+      "errors": {
+        "loadJob": "İş detayları yüklenemedi. Lütfen tekrar deneyin.",
+        "submitFailed": "Başvuru gönderilemedi. Lütfen tekrar deneyin.",
+        "uploadFailed": "CV yüklenemedi. Lütfen tekrar deneyin.",
+        "fileTooLarge": "Dosya boyutu 10MB'dan küçük olmalıdır",
+        "invalidFileType": "Geçersiz dosya türü. Lütfen PDF, DOC veya DOCX yükleyin",
+        "alreadyApplied": "Bu pozisyona zaten başvurdunuz."
+      },
+      "alreadyApplied": {
+        "title": "Zaten Başvuruldu",
+        "message": "Bu pozisyon için zaten bir başvuru gönderdiniz.",
+        "status": "Başvuru Durumu: {{status}}",
+        "viewApplication": "Başvuruyu Görüntüle",
+        "backToJobs": "İş İlanlarına Dön"
+      }
+    },
+    "volunteer": {
+      "title": "{{jobTitle}} için Gönüllü Ol",
+      "breadcrumb": {
+        "apply": "Başvur"
+      },
+      "opportunityDetails": {
+        "title": "Gönüllü Fırsat Detayları",
+        "organization": "Organizasyon",
+        "location": "Konum",
+        "type": "Tür",
+        "volunteer": "Gönüllü Fırsatı",
+        "postedOn": "{{date}} tarihinde yayınlandı"
+      },
+      "form": {
+        "title": "Gönüllü Başvurusu",
+        "subtitle": "Fark yaratma konusundaki tutkuyu paylaş ve bu organizasyonla neden gönüllü olmak istediğini anlat.",
+        "motivationLetter": {
+          "label": "Motivasyon Mektubu",
+          "placeholder": "Bu amaca neden tutkulu olduğunu ve nasıl katkıda bulunmak istediğini anlat...",
+          "characterCount": "{{count}}/2000 karakter"
+        },
+        "specialNeeds": {
+          "label": "Erişilebilirlik Gereksinimleri",
+          "placeholder": "İhtiyacınız olabilecek kolay erişim veya erişilebilirlik gereksinimlerini lütfen açıklayın...",
+          "characterCount": "{{count}}/500 karakter"
+        },
+        "cv": {
+          "label": "Özgeçmiş/CV",
+          "required": "Lütfen özgeçmişinizi yükleyin",
+          "dragDrop": "Özgeçmişinizi buraya sürükleyin veya göz atmak için tıklayın",
+          "chooseFile": "Dosya Seç",
+          "fileTypes": "10MB'a kadar PDF, DOC veya DOCX"
+        },
+        "cancel": "İptal",
+        "submit": "Gönüllü Başvurusu Gönder",
+        "submitting": "Gönderiliyor..."
+      },
+      "success": {
+        "message": "Gönüllü başvurunuz başarıyla gönderildi!"
+      },
+      "errors": {
+        "loadJob": "Gönüllü fırsat detayları yüklenemedi",
+        "submitFailed": "Gönüllü başvurusu gönderilemedi. Lütfen tekrar deneyin.",
+        "fileTooLarge": "Dosya boyutu 10MB'dan küçük olmalıdır",
+        "invalidFileType": "Geçersiz dosya türü. Lütfen PDF, DOC veya DOCX yükleyin",
+        "alreadyApplied": "Bu gönüllü fırsatına zaten başvurdunuz."
+      }
+    },
+    "review": {
+      "noCv": "Bu başvuru için CV bulunamadı",
+      "error": {
+        "load": "Başvuru detayları yüklenemedi. Lütfen tekrar deneyin.",
+        "approve": "Başvuru onaylanamadı. Lütfen tekrar deneyin.",
+        "reject": "Başvuru reddedilemedi. Lütfen tekrar deneyin.",
+        "title": "Başvuru Yüklenemedi"
+      },
+      "success": {
+        "approve": "Başvuru başarıyla onaylandı.",
+        "reject": "Başvuru başarıyla reddedildi."
+      },
+      "applied": {
+        "today": "bugün",
+        "yesterday": "1 gün önce",
+        "daysAgo": "{{count}} gün önce"
+      },
+      "backToJob": "İlana Dön",
+      "title": "{{jobTitle}} için Başvuru",
+      "atCompany": "{{company}} şirketinde",
+      "applicantInfo": "Başvuran Bilgileri",
+      "status": "Durum",
+      "coverLetter": "Ön Yazı",
+      "specialNeeds": "Özel İhtiyaçlar veya Konaklama",
+      "cv": "CV / Özgeçmiş",
+      "loadingCv": "CV Yükleniyor...",
+      "resumeOf": "{{name}}'nin Özgeçmişi",
+      "downloadToView": "CV'yi görüntülemek için indir'e tıklayın",
+      "download": "İndir",
+      "noCvAttached": "Bu başvuruya eklenmiş CV yok",
+      "existingFeedback": "Mevcut Geri Bildirim",
+      "decision": "Karar",
+      "feedback": "Geri Bildirim (isteğe bağlı)",
+      "feedbackPlaceholder": "Başvuran için geri bildirim sağlayın",
+      "processing": "İşleniyor...",
+      "reject": "Reddet",
+      "approve": "Onayla"
+    },
+    "mine": {
+      "title": "Başvurularım",
+      "subtitle": "İş başvurularınızı takip edin ve yönetin",
+      "filters": {
+        "all": "Tümü",
+        "pending": "Beklemede",
+        "approved": "Onaylandı",
+        "rejected": "Reddedildi"
+      },
+      "stats": {
+        "total": "Toplam Başvuru",
+        "pending": "Beklemede",
+        "approved": "Onaylandı",
+        "rejected": "Reddedildi"
+      },
+      "applicationCard": {
+        "appliedOn": "{{date}} tarihinde başvuruldu",
+        "status": {
+          "PENDING": "Beklemede",
+          "APPROVED": "Onaylandı",
+          "REJECTED": "Reddedildi"
+        },
+        "actions": {
+          "viewDetails": "Detayları Görüntüle",
+          "viewJob": "İlanı Görüntüle",
+          "downloadCV": "CV İndir",
+          "withdraw": "Başvuruyu Geri Çek"
+        },
+        "salary": "{{min}}k TL - {{max}}k TL",
+        "remote": "Uzaktan",
+        "onSite": "Yerinde"
+      },
+      "details": {
+        "title": "Başvuru Detayları",
+        "coverLetter": "Ön Yazı",
+        "specialNeeds": "Özel İhtiyaçlar",
+        "feedback": "İşveren Geri Bildirimi",
+        "noFeedback": "Henüz geri bildirim yok",
+        "cv": "CV/Özgeçmiş",
+        "downloadCV": "CV İndir",
+        "status": "Durum",
+        "appliedDate": "Başvuru Tarihi",
+        "close": "Kapat"
+      },
+      "empty": {
+        "title": "Henüz Başvuru Yok",
+        "message": "Henüz hiçbir işe başvurmadınız. Mevcut pozisyonlara göz atın ve başvurmaya başlayın!",
+        "browseJobs": "İş İlanlarına Göz At"
+      },
+      "withdraw": {
+        "title": "Başvuruyu Geri Çek",
+        "message": "Bu başvuruyu geri çekmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+        "confirm": "Evet, Geri Çek",
+        "cancel": "İptal",
+        "success": "Başvuru başarıyla geri çekildi",
+        "error": "Başvuru geri çekilemedi. Lütfen tekrar deneyin."
+      },
+      "errors": {
+        "loadFailed": "Başvurular yüklenemedi. Lütfen tekrar deneyin.",
+        "deleteFailed": "Başvuru silinemedi. Lütfen tekrar deneyin."
+      }
+    }
+  },
+  "employer": {
+    "dashboard": {
+      "brand": "Ethical Careers",
+      "sidebar": {
+        "dashboard": "Panel",
+        "jobs": "İlanlar",
+        "profile": "Şirket Profili",
+        "settings": "Ayarlar",
+        "support": "Yardım ve Destek"
+      },
+      "title": "İşveren Paneli",
+      "currentPostings": "Mevcut İş İlanları",
+      "createJob": "Yeni İş İlanı Oluştur",
+      "loadingError": "İş ilanları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+      "emptyState": "Henüz herhangi bir iş ilanı oluşturmadınız.",
+      "emptyCta": "İlk İlanınızı Oluşturun",
+      "table": {
+        "jobTitle": "İş Başlığı",
+        "status": "Durum",
+        "applications": "Başvurular",
+        "views": "Görüntülenme",
+        "actions": "İşlemler"
+      },
+      "actions": {
+        "manage": "Yönet",
+        "view": "Görüntüle"
+      },
+      "statusLabels": {
+        "open": "Açık",
+        "active": "Aktif",
+        "paused": "Durduruldu"
+      }
+    },
+    "jobPostDetails": {
+      "error": {
+        "load": "İş detayları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+        "title": "İlan Yüklenemedi",
+        "notFound": "İlan bulunamadı",
+        "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir."
+      },
+      "applied": {
+        "today": "Bugün baÅŸvuruldu",
+        "yesterday": "1 gün önce başvuruldu",
+        "daysAgo": "{{count}} gün önce başvuruldu"
+      },
+      "backToDashboard": "Panele Geri Dön",
+      "breadcrumb": {
+        "jobs": "İlanlar"
+      },
+      "editJobPost": "İlanı Düzenle",
+      "jobDescription": "İş Tanımı",
+      "salaryRange": "Maaş Aralığı",
+      "location": "Konum",
+      "remote": "Uzaktan",
+      "contact": "İletişim Bilgileri",
+      "ethicalPolicies": "Etik Politikalar",
+      "inclusiveOpportunity": "Kapsayıcı Fırsat",
+      "inclusiveOpportunityDescription": "Bu pozisyon, farklı geçmişlerden gelen adayları memnuniyetle karşılayan kapsayıcı bir fırsat olarak belirlenmiştir.",
+      "applicationsReceived": "Alınan Başvurular ({{count}})",
+      "noApplications": "Henüz başvuru alınmadı.",
+      "viewApplication": "Başvuruyu Görüntüle"
+    },
+    "createJob": {
+      "title": "İş İlanı Oluştur",
+      "subtitle": "Yeni bir iş fırsatı yayınlayın ve ideal adayı bulun",
+      "jobTitle": "İş Başlığı",
+      "jobTitlePlaceholder": "örn. Kıdemli Yazılım Mühendisi",
+      "jobDescription": "İş Açıklaması",
+      "jobDescriptionPlaceholder": "Rolü, sorumlulukları ve gereksinimleri açıklayın...",
+      "companyName": "Şirket Adı",
+      "companyNamePlaceholder": "Şirketinizin adı",
+      "location": "Konum",
+      "locationPlaceholder": "örn. İstanbul, Türkiye veya Uzaktan",
+      "remoteWork": "Uzaktan Çalışma Mevcut",
+      "remoteWorkDescription": "Bu pozisyon uzaktan çalışma seçeneği sunuyorsa işaretleyin",
+      "nonProfit": "Kar Amacı Gütmeyen Kuruluş",
+      "nonProfitDescription": "Bunu sosyal etki odaklı kar amacı gütmeyen bir kuruluştan gönüllü fırsatı olarak işaretleyin",
+      "salaryRange": "Maaş Aralığı",
+      "minimum": "Minimum",
+      "maximum": "Maksimum",
+      "minSalaryPlaceholder": "örn. 80000",
+      "maxSalaryPlaceholder": "örn. 120000",
+      "contactEmail": "İletişim E-postası",
+      "contactEmailPlaceholder": "ise-alim@sirket.com",
+      "ethicalTags": "Etik Etiketler",
+      "ethicalTagsDescription": "Şirketinizin değerlerini ve uygulamalarını temsil eden etiketleri seçin",
+      "ethicalTagsPlaceholder": "Etik etiketleri seçin",
+      "inclusiveOpportunity": "Engelliler için Kapsayıcı Fırsat",
+      "inclusiveOpportunityDescription": "Bu pozisyonu, farklı geçmişlere ve yeteneklere sahip adayları memnuniyetle karşılayan kapsayıcı bir fırsat olarak işaretleyin",
+      "submit": "İlanı Yayınla",
+      "submitting": "Yayınlanıyor...",
+      "submitError": "İş ilanı oluşturulamadı. Lütfen tekrar deneyin.",
+      "submitSuccess": "İş ilanı başarıyla oluşturuldu!"
+    },
+    "workplaces": {
+      "title": "İş Yerlerim",
+      "description": "İş yerlerinizi yönetin ve değerlendirmelere yanıt verin",
+      "viewApplications": "Başvuruları Görüntüle",
+      "newWorkplace": "Yeni İş Yeri",
+      "loadError": "İş yerleriniz yüklenemedi. Lütfen tekrar deneyin.",
+      "empty": {
+        "title": "Henüz İş Yeri Yok",
+        "description": "İlk iş yerinizi oluşturun veya mevcut birine katılma isteği gönderin"
+      },
+      "addNew": {
+        "title": "Yeni İş Yeri Ekle",
+        "description": "Yeni bir iş yeri oluşturun veya mevcut birine katılın"
+      },
+      "applicationsModal": {
+        "title": "İş Yeri Başvurularım",
+        "description": "İş yerlerini yönetme taleplerinizin durumunu görüntüleyin.",
+        "loadError": "Başvurularınız yüklenemedi.",
+        "noApplications": "Henüz hiçbir iş yerine başvurmadınız.",
+        "appliedOn": "{{date}} tarihinde başvuruldu",
+        "note": "Not: {{note}}",
+        "updatedOn": "{{date}} tarihinde güncellendi"
+      },
+      "workplaceLabel": "Ä°ÅŸ Yeri",
+      "page": {
+        "loadError": "Ä°ÅŸ yerleriniz yÃ¼klenemedi"
+      }
+    }
+  },
+  "workplaces": {
+    "title": "İş Yerleri",
+    "description": "Şirketleri kültürleri ve değerlendirmeleri hakkında daha fazla bilgi edinmek için keşfedin ve inceleyin",
+    "searchTitle": "İş Yeri Ara",
+    "searchPlaceholder": "Şirket adı girin...",
+    "searching": "Aranıyor...",
+    "search": "Ara",
+    "loadError": "İş yerleri yüklenemedi. Lütfen tekrar deneyin.",
+    "loading": "YÃ¼kleniyor...",
+    "workplacesFound": "{{count}} iş yeri bulundu",
+    "workplacesFound_plural": "{{count}} iş yeri bulundu",
+    "empty": {
+      "title": "İş Yeri Bulunamadı",
+      "adjustFilters": "Filtrelerinizi veya arama sorgunuzu ayarlamayı deneyin",
+      "noWorkplaces": "Şu anda mevcut iş yeri yok"
+    },
+    "filters": {
+      "title": "Filtreler",
+      "clear": "Temizle",
+      "clearFilters": "Filtreleri Temizle",
+      "sector": "Sektör",
+      "allSectors": "Tüm Sektörler",
+      "location": "Konum",
+      "locationPlaceholder": "Konum girin...",
+      "sortBy": "Sırala",
+      "sortOptions": {
+        "default": "Varsayılan",
+        "nameDesc": "İsme göre (Z'den A'ya)",
+        "nameAsc": "İsme göre (A'dan Z'ye)",
+        "reviewCountDesc": "Yorum sayısı (Çoktan aza)",
+        "reviewCountAsc": "Yorum sayısı (Azdan çoğa)",
+        "ratingDesc": "Puana göre (Yüksekten aza)",
+        "ratingAsc": "Puana göre (Azdan yükseğe)"
+      },
+      "minRating": "Minimum Puan",
+      "anyRating": "Herhangi",
+      "ratingWithValue": "{{rating}}★"
+    }
+  },
+  "sectors": {
+    "technology": "Teknoloji",
+    "healthcare": "Sağlık",
+    "education": "Eğitim",
+    "finance": "Finans",
+    "creativearts": "Yaratıcı Sanatlar",
+    "manufacturing": "Ãœretim",
+    "retail": "Perakende",
+    "consulting": "Danışmanlık",
+    "nonprofit": "Kar Amacı Gütmeyen",
+    "other": "Diğer"
   },
   "mentorship": {
     "title": "Mentor Bul",
@@ -885,282 +1140,6 @@
       "likesLabel": "{{value}} beğeni"
     }
   },
-  "jobApplication": {
-    "title": "{{jobTitle}} için Başvur",
-    "breadcrumb": {
-      "jobs": "İş İlanları",
-      "apply": "Başvur"
-    },
-    "jobDetails": {
-      "title": "İş Detayları",
-      "company": "Şirket",
-      "location": "Konum",
-      "salary": "Maaş",
-      "remote": "Uzaktan",
-      "onSite": "Yerinde",
-      "postedOn": "{{date}} tarihinde yayınlandı"
-    },
-    "form": {
-      "title": "Başvuru Formu",
-      "coverLetter": {
-        "label": "Ön Yazı (İsteğe Bağlı)",
-        "placeholder": "Kendinizi tanıtın ve bu rol için neden harika bir aday olduğunuzu açıklayın...",
-        "characterCount": "{{count}} / 2000 karakter"
-      },
-      "specialNeeds": {
-        "label": "Özel İhtiyaçlar veya Konaklama (İsteğe Bağlı)",
-        "placeholder": "Özel bir konaklama ihtiyacınız varsa bize bildirin...",
-        "characterCount": "{{count}} / 500 karakter"
-      },
-      "cv": {
-        "label": "CV/Özgeçmiş Yükle",
-        "required": "CV gereklidir",
-        "dragDrop": "CV'nizi buraya sürükleyip bırakın veya dosya seçmek için tıklayın",
-        "chooseFile": "Dosya Seç",
-        "fileTypes": "PDF, DOC, DOCX 10MB'a kadar",
-        "selected": "Seçildi: {{fileName}}",
-        "change": "Dosyayı Değiştir",
-        "remove": "Dosyayı Kaldır"
-      },
-      "submit": "Başvuruyu Gönder",
-      "submitting": "Gönderiliyor...",
-      "cancel": "İptal"
-    },
-    "success": {
-      "title": "Başvuru Gönderildi!",
-      "message": "Başvurunuz başarıyla gönderildi. İşveren başvurunuzu inceledikten sonra sizi bilgilendireceğiz.",
-      "viewApplications": "Başvurularımı Görüntüle",
-      "backToJobs": "İş İlanlarına Dön"
-    },
-    "errors": {
-      "loadJob": "İş detayları yüklenemedi. Lütfen tekrar deneyin.",
-      "submitFailed": "Başvuru gönderilemedi. Lütfen tekrar deneyin.",
-      "uploadFailed": "CV yüklenemedi. Lütfen tekrar deneyin.",
-      "fileTooLarge": "Dosya boyutu 10MB'dan küçük olmalıdır",
-      "invalidFileType": "Geçersiz dosya türü. Lütfen PDF, DOC veya DOCX yükleyin",
-      "alreadyApplied": "Bu pozisyona zaten başvurdunuz."
-    },
-    "alreadyApplied": {
-      "title": "Zaten Başvuruldu",
-      "message": "Bu pozisyon için zaten bir başvuru gönderdiniz.",
-      "status": "Başvuru Durumu: {{status}}",
-      "viewApplication": "Başvuruyu Görüntüle",
-      "backToJobs": "İş İlanlarına Dön"
-    }
-  },
-  "nonProfitApplication": {
-    "title": "{{jobTitle}} için Gönüllü Ol",
-    "breadcrumb": {
-      "apply": "Başvur"
-    },
-    "opportunityDetails": {
-      "title": "Gönüllü Fırsat Detayları",
-      "organization": "Organizasyon",
-      "location": "Konum",
-      "type": "Tür",
-      "volunteer": "Gönüllü Fırsatı",
-      "postedOn": "{{date}} tarihinde yayınlandı"
-    },
-    "form": {
-      "title": "Gönüllü Başvurusu",
-      "subtitle": "Fark yaratma konusundaki tutkuyu paylaş ve bu organizasyonla neden gönüllü olmak istediğini anlat.",
-      "motivationLetter": {
-        "label": "Motivasyon Mektubu",
-        "placeholder": "Bu amaca neden tutkulu olduğunu ve nasıl katkıda bulunmak istediğini anlat...",
-        "characterCount": "{{count}}/2000 karakter"
-      },
-      "specialNeeds": {
-        "label": "Erişilebilirlik Gereksinimleri",
-        "placeholder": "İhtiyacınız olabilecek kolay erişim veya erişilebilirlik gereksinimlerini lütfen açıklayın...",
-        "characterCount": "{{count}}/500 karakter"
-      },
-      "cv": {
-        "label": "Özgeçmiş/CV",
-        "required": "Lütfen özgeçmişinizi yükleyin",
-        "dragDrop": "Özgeçmişinizi buraya sürükleyin veya göz atmak için tıklayın",
-        "chooseFile": "Dosya Seç",
-        "fileTypes": "10MB'a kadar PDF, DOC veya DOCX"
-      },
-      "cancel": "İptal",
-      "submit": "Gönüllü Başvurusu Gönder",
-      "submitting": "Gönderiliyor..."
-    },
-    "success": {
-      "message": "Gönüllü başvurunuz başarıyla gönderildi!"
-    },
-    "errors": {
-      "loadJob": "Gönüllü fırsat detayları yüklenemedi",
-      "submitFailed": "Gönüllü başvurusu gönderilemedi. Lütfen tekrar deneyin.",
-      "fileTooLarge": "Dosya boyutu 10MB'dan küçük olmalıdır",
-      "invalidFileType": "Geçersiz dosya türü. Lütfen PDF, DOC veya DOCX yükleyin",
-      "alreadyApplied": "Bu gönüllü fırsatına zaten başvurdunuz."
-    }
-  },
-  "myMentorships": {
-    "title": "Mentorluklarım",
-    "subtitle": "Mentorluk taleplerinizi ve aktif mentorluklarınızı takip edin",
-    "successMessage": "{{mentorName}} için mentorluk talebi başarıyla gönderildi!",
-    "active": "Aktif",
-    "pending": "Beklemede",
-    "completed": "Tamamlandı",
-    "rejected": "Reddedildi",
-    "status": {
-      "active": "Aktif",
-      "pending": "Beklemede",
-      "completed": "Tamamlandı",
-      "rejected": "Reddedildi"
-    },
-    "noActive": "Aktif Mentorluk Yok",
-    "noActiveDesc": "Henüz aktif mentorluğunuz yok. Başlamak için bir mentor bulun!",
-    "noPending": "Bekleyen Talep Yok",
-    "noPendingDesc": "Bekleyen mentorluk talebiniz yok.",
-    "noCompleted": "Tamamlanan Mentorluk Yok",
-    "noCompletedDesc": "Henüz tamamlanan mentorluğunuz yok.",
-    "noRejected": "Reddedilen Talep Yok",
-    "noRejectedDesc": "Reddedilen mentorluk talebiniz yok.",
-    "findMentors": "Mentor Bul",
-    "started": "Başlangıç",
-    "accepted": "Kabul Edildi",
-    "completedDate": "Tamamlandı",
-    "duration": "Süre",
-    "learningGoals": "Öğrenme Hedefleri",
-    "openChat": "Sohbeti Aç",
-    "writeReview": "Değerlendirme Yaz",
-    "waitingForResponse": "Yanıt Bekleniyor",
-    "viewDetails": "Detayları Görüntüle"
-  },
-  "myApplications": {
-    "title": "Başvurularım",
-    "subtitle": "İş başvurularınızı takip edin ve yönetin",
-    "filters": {
-      "all": "Tümü",
-      "pending": "Beklemede",
-      "approved": "Onaylandı",
-      "rejected": "Reddedildi"
-    },
-    "stats": {
-      "total": "Toplam Başvuru",
-      "pending": "Beklemede",
-      "approved": "Onaylandı",
-      "rejected": "Reddedildi"
-    },
-    "applicationCard": {
-      "appliedOn": "{{date}} tarihinde başvuruldu",
-      "status": {
-        "PENDING": "Beklemede",
-        "APPROVED": "Onaylandı",
-        "REJECTED": "Reddedildi"
-      },
-      "actions": {
-        "viewDetails": "Detayları Görüntüle",
-        "viewJob": "İlanı Görüntüle",
-        "downloadCV": "CV İndir",
-        "withdraw": "Başvuruyu Geri Çek"
-      },
-      "salary": "{{min}}k TL - {{max}}k TL",
-      "remote": "Uzaktan",
-      "onSite": "Yerinde"
-    },
-    "details": {
-      "title": "Başvuru Detayları",
-      "coverLetter": "Ön Yazı",
-      "specialNeeds": "Özel İhtiyaçlar",
-      "feedback": "İşveren Geri Bildirimi",
-      "noFeedback": "Henüz geri bildirim yok",
-      "cv": "CV/Özgeçmiş",
-      "downloadCV": "CV İndir",
-      "status": "Durum",
-      "appliedDate": "Başvuru Tarihi",
-      "close": "Kapat"
-    },
-    "empty": {
-      "title": "Henüz Başvuru Yok",
-      "message": "Henüz hiçbir işe başvurmadınız. Mevcut pozisyonlara göz atın ve başvurmaya başlayın!",
-      "browseJobs": "İş İlanlarına Göz At"
-    },
-    "withdraw": {
-      "title": "Başvuruyu Geri Çek",
-      "message": "Bu başvuruyu geri çekmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-      "confirm": "Evet, Geri Çek",
-      "cancel": "İptal",
-      "success": "Başvuru başarıyla geri çekildi",
-      "error": "Başvuru geri çekilemedi. Lütfen tekrar deneyin."
-    },
-    "errors": {
-      "loadFailed": "Başvurular yüklenemedi. Lütfen tekrar deneyin.",
-      "deleteFailed": "Başvuru silinemedi. Lütfen tekrar deneyin."
-    }
-  },
-  "jobApplicationReview": {
-    "noCv": "Bu başvuru için CV bulunamadı",
-    "error": {
-      "load": "Başvuru detayları yüklenemedi. Lütfen tekrar deneyin.",
-      "approve": "Başvuru onaylanamadı. Lütfen tekrar deneyin.",
-      "reject": "Başvuru reddedilemedi. Lütfen tekrar deneyin.",
-      "title": "Başvuru Yüklenemedi"
-    },
-    "success": {
-      "approve": "Başvuru başarıyla onaylandı.",
-      "reject": "Başvuru başarıyla reddedildi."
-    },
-    "applied": {
-      "today": "bugün",
-      "yesterday": "1 gün önce",
-      "daysAgo": "{{count}} gün önce"
-    },
-    "backToJob": "İlana Dön",
-    "title": "{{jobTitle}} için Başvuru",
-    "atCompany": "{{company}} şirketinde",
-    "applicantInfo": "Başvuran Bilgileri",
-    "status": "Durum",
-    "coverLetter": "Ön Yazı",
-    "specialNeeds": "Özel İhtiyaçlar veya Konaklama",
-    "cv": "CV / Özgeçmiş",
-    "loadingCv": "CV Yükleniyor...",
-    "resumeOf": "{{name}}'nin Özgeçmişi",
-    "downloadToView": "CV'yi görüntülemek için indir'e tıklayın",
-    "download": "İndir",
-    "noCvAttached": "Bu başvuruya eklenmiş CV yok",
-    "existingFeedback": "Mevcut Geri Bildirim",
-    "decision": "Karar",
-    "feedback": "Geri Bildirim (isteğe bağlı)",
-    "feedbackPlaceholder": "Başvuran için geri bildirim sağlayın",
-    "processing": "İşleniyor...",
-    "reject": "Reddet",
-    "approve": "Onayla"
-  },
-  "createJob": {
-    "title": "İş İlanı Oluştur",
-    "subtitle": "Yeni bir iş fırsatı yayınlayın ve ideal adayı bulun",
-    "jobTitle": "İş Başlığı",
-    "jobTitlePlaceholder": "örn. Kıdemli Yazılım Mühendisi",
-    "jobDescription": "İş Açıklaması",
-    "jobDescriptionPlaceholder": "Rolü, sorumlulukları ve gereksinimleri açıklayın...",
-    "companyName": "Şirket Adı",
-    "companyNamePlaceholder": "Şirketinizin adı",
-    "location": "Konum",
-    "locationPlaceholder": "örn. İstanbul, Türkiye veya Uzaktan",
-    "remoteWork": "Uzaktan Çalışma Mevcut",
-    "remoteWorkDescription": "Bu pozisyon uzaktan çalışma seçeneği sunuyorsa işaretleyin",
-    "nonProfit": "Kar Amacı Gütmeyen Kuruluş",
-    "nonProfitDescription": "Bunu sosyal etki odaklı kar amacı gütmeyen bir kuruluştan gönüllü fırsatı olarak işaretleyin",
-    "salaryRange": "Maaş Aralığı",
-    "minimum": "Minimum",
-    "maximum": "Maksimum",
-    "minSalaryPlaceholder": "örn. 80000",
-    "maxSalaryPlaceholder": "örn. 120000",
-    "contactEmail": "İletişim E-postası",
-    "contactEmailPlaceholder": "ise-alim@sirket.com",
-    "ethicalTags": "Etik Etiketler",
-    "ethicalTagsDescription": "Şirketinizin değerlerini ve uygulamalarını temsil eden etiketleri seçin",
-    "ethicalTagsPlaceholder": "Etik etiketleri seçin",
-    "inclusiveOpportunity": "Engelliler için Kapsayıcı Fırsat",
-    "inclusiveOpportunityDescription": "Bu pozisyonu, farklı geçmişlere ve yeteneklere sahip adayları memnuniyetle karşılayan kapsayıcı bir fırsat olarak işaretleyin",
-    "submit": "İlanı Yayınla",
-    "submitting": "Yayınlanıyor...",
-    "submitError": "İş ilanı oluşturulamadı. Lütfen tekrar deneyin.",
-    "submitSuccess": "İş ilanı başarıyla oluşturuldu!"
-  },
   "reviews": {
     "workplaceReviews": "İşyeri Değerlendirmeleri",
     "writeReview": "Değerlendirme Yaz",
@@ -1243,12 +1222,6 @@
     "viewJob": "İlanı Görüntüle",
     "notFound": "Şirket Bulunamadı",
     "notFoundDescription": "Aradığınız şirket mevcut değil veya kaldırılmış."
-  },
-  "common": {
-    "loading": "Yükleniyor...",
-    "goHome": "Ana Sayfaya Git",
-    "edited": "Düzenlendi",
-    "search": "Ara"
   },
   "chat": {
     "conversations": "Sohbetler",

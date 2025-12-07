@@ -15,7 +15,7 @@ vi.mock('react-i18next', async () => await import('./__mocks__/react-i18next'));
  * Mock the app's i18n instance to prevent initialization
  * The mocked react-i18next will handle all translation calls
  */
-vi.mock('@/lib/i18n', () => ({
+vi.mock('@shared/lib/i18n', () => ({
   default: {
     t: (key: string) => key,
     language: 'en',

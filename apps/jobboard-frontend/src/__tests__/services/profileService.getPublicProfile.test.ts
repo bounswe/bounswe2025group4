@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { server } from '@/test/setup';
-import { profileService } from '@/services/profile.service';
+import { profileService } from '@modules/profile/services/profile.service';
 import { API_BASE_URL } from '@/test/handlers';
-import type { PublicProfile } from '@/types/profile.types';
+import type { PublicProfile } from '@shared/types/profile.types';
 
 describe('Profile Service - getPublicProfile', () => {
   const mockPublicProfile: PublicProfile = {

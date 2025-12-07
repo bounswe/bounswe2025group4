@@ -4,11 +4,11 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { server } from '@/test/setup';
 import { API_BASE_URL } from '@/test/handlers';
-import PublicProfilePage from '@/pages/PublicProfilePage';
-import type { PublicProfile } from '@/types/profile.types';
-import { I18nProvider } from '@/providers/I18nProvider';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { useAuthStore } from '@/stores/authStore';
+import PublicProfilePage from '@modules/profile/pages/PublicProfilePage';
+import type { PublicProfile } from '@shared/types/profile.types';
+import { I18nProvider } from '@shared/providers/I18nProvider';
+import { AuthProvider } from '@/modules/auth/contexts/AuthContext';
+import { useAuthStore } from '@shared/stores/authStore';
 import { ToastContainer } from 'react-toastify';
 
 // Mock react-toastify to prevent console errors in tests
@@ -21,7 +21,7 @@ vi.mock('react-toastify', () => ({
 }));
 
 // Mock CenteredLoader component
-vi.mock('@/components/CenteredLoader', () => ({
+vi.mock('@shared/components/common/CenteredLoader', () => ({
   default: () => <div data-testid="centered-loader">Loading...</div>,
 }));
 

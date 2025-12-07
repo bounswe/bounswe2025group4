@@ -7,7 +7,7 @@ import type {
   WorkplaceUpdateRequest,
   PaginatedWorkplaceResponse,
   EmployerWorkplaceBrief,
-} from '@/types/workplace.types';
+} from '@shared/types/workplace.types';
 
 // Mock Data
 const mockWorkplaces: WorkplaceBriefResponse[] = [
