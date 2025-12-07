@@ -14,17 +14,25 @@
         "jobs": "الوظائف",
         "nonProfitJobs": "التطوع",
         "myApplications": "طلباتي",
-        "myMentorships": "إرشاداتي",
         "mentorship": "الإرشاد",
+        "myMentorships": "إرشاداتي",
+        "chat": "الدردشة",
         "forum": "المنتدى",
-        "employerDashboard": "لوحة صاحب العمل"
+        "employerDashboard": "لوحة صاحب العمل",
+        "workplaces": "أماكن العمل",
+        "myWorkplaces": "أماكن عملي",
+        "browseWorkplaces": "تصفح أماكن العمل",
+        "profile": "الملف الشخصي",
+        "settings": "الإعدادات"
       },
       "auth": {
         "login": "تسجيل الدخول",
         "signup": "إنشاء حساب",
         "logout": "تسجيل الخروج",
         "profile": "الملف الشخصي"
-      }
+      },
+      "theme": "السمة",
+      "language": "اللغة"
     },
     "footer": {
       "about": "من نحن",
@@ -37,7 +45,22 @@
   "common": {
     "loading": "جارٍ التحميل...",
     "goHome": "الذهاب إلى الصفحة الرئيسية",
-    "edited": "تم التعديل"
+    "visitWebsite": "زيارة الموقع",
+    "edited": "تم التعديل",
+    "cancel": "إلغاء",
+    "optional": "اختياري",
+    "search": "بحث",
+    "status": {
+      "pending": "قيد الانتظار",
+      "accepted": "مقبول",
+      "rejected": "مرفوض",
+      "unknown": "غير معروف"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "pageInfo": "الصفحة {{page}} من {{total}}"
+    }
   },
   "auth": {
     "login": {
@@ -218,6 +241,14 @@
     "resultsDescription": "{{count}} فرصة تتوافق مع عوامل التصفية الحالية.",
     "noResults": "لا توجد وظائف تطابق معاييرك.",
     "resetFilters": "إعادة تعيين التصفية",
+    "tabs": {
+      "browse": "تصفح",
+      "myApplications": "طلباتي"
+    },
+    "myApplications": {
+      "authTitle": "سجّل الدخول لعرض طلباتك",
+      "authDescription": "سجّل الدخول كباحث عن عمل لعرض طلباتك وإدارتها."
+    },
     "authRequired": {
       "title": "يتطلب حساب",
       "description": "تحتاج إلى إنشاء حساب لعرض قوائم الوظائف والتقدم للوظائف.",
@@ -316,6 +347,9 @@
       "inclusiveOpportunity": "فرصة شاملة",
       "contact": {
         "title": "معلومات التواصل"
+      },
+      "workplace": {
+        "title": "عن الشركة"
       }
     }
   },
@@ -578,8 +612,22 @@
         "support": "المساعدة والدعم"
       },
       "title": "لوحة صاحب العمل",
+      "subtitle": "أدِر إعلانات الوظائف وأماكن العمل الخاصة بك",
       "currentPostings": "الوظائف الحالية",
       "createJob": "إنشاء وظيفة جديدة",
+      "addWorkplace": "إضافة مكان عمل",
+      "joinWorkplace": "الانضمام إلى مكان عمل",
+      "unassignedJobs": "وظائف غير مخصصة",
+      "jobCount": "وظائف",
+      "jobCount_one": "وظيفة",
+      "noJobsInWorkplace": "لا توجد وظائف بعد",
+      "createJobForWorkplace": "أنشئ أول وظيفة لك",
+      "noWorkplaces": {
+        "title": "لا توجد أماكن عمل بعد",
+        "description": "أنشئ مكان عمل أو انضم إلى مكان قائم لبدء نشر الوظائف.",
+        "createWorkplace": "إنشاء مكان عمل",
+        "joinWorkplace": "الانضمام إلى مكان عمل"
+      },
       "loadingError": "تعذّر تحميل الوظائف. يرجى المحاولة لاحقًا.",
       "emptyState": "لم تقم بإنشاء أي وظائف بعد.",
       "emptyCta": "أنشئ أول وظيفة لك",
@@ -600,9 +648,52 @@
         "paused": "موقوف"
       }
     },
+    "jobPostDetails": {
+      "error": {
+        "load": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة لاحقًا.",
+        "title": "خطأ في تحميل الوظيفة",
+        "notFound": "الوظيفة غير موجودة",
+        "description": "الوظيفة التي تبحث عنها غير موجودة أو تم إزالتها."
+      },
+      "loadError": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة لاحقًا.",
+      "applied": {
+        "today": "تم التقديم اليوم",
+        "yesterday": "تم التقديم أمس",
+        "daysAgo": "تم التقديم منذ {{count}} يوم"
+      },
+      "backToDashboard": "العودة للوحة التحكم",
+      "breadcrumb": {
+        "jobs": "الوظائف"
+      },
+      "editJobPost": "تعديل الوظيفة",
+      "save": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ...",
+      "submitError": "تعذر تحديث الوظيفة. يرجى المحاولة لاحقًا.",
+      "cancel": "إلغاء",
+      "jobDescription": "وصف الوظيفة",
+      "salaryRange": "نطاق الراتب",
+      "location": "الموقع",
+      "remote": "عن بُعد",
+      "contact": "معلومات التواصل",
+      "ethicalPolicies": "السياسات الأخلاقية",
+      "inclusiveOpportunity": "فرصة شاملة",
+      "inclusiveOpportunityDescription": "هذه الوظيفة ترحب بالمرشحين من خلفيات متنوعة.",
+      "applicationsReceived": "الطلبات المستلمة ({{count}})",
+      "noApplications": "لا توجد طلبات بعد.",
+      "viewApplication": "عرض الطلب"
+    },
     "createJob": {
       "title": "إنشاء إعلان وظيفة",
       "subtitle": "انشر فرصة عمل جديدة وابحث عن المرشح المثالي",
+      "workplace": "مكان العمل",
+      "workplaceDescription": "اختر مكان العمل الذي تنتمي إليه هذه الوظيفة",
+      "workplaceRequired": "يرجى اختيار مكان عمل لهذا الإعلان",
+      "noWorkplaces": {
+        "title": "لا توجد أماكن عمل متاحة",
+        "description": "تحتاج إلى الانضمام إلى مكان عمل لإنشاء إعلان. أنشئ مكانًا جديدًا أو اطلب الانضمام.",
+        "createWorkplace": "إنشاء مكان عمل",
+        "joinWorkplace": "الانضمام إلى مكان عمل"
+      },
       "jobTitle": "المسمى الوظيفي",
       "jobTitlePlaceholder": "مثال: مهندس برمجيات أول",
       "jobDescription": "وصف الوظيفة",
@@ -629,12 +720,182 @@
       "inclusiveOpportunityDescription": "حدد هذه الوظيفة كفرصة شاملة، ترحب بالمرشحين من خلفيات وقدرات متنوعة",
       "submit": "نشر الإعلان الوظيفي",
       "submitting": "جارٍ النشر...",
+      "saving": "جارٍ الحفظ...",
       "submitError": "فشل إنشاء إعلان الوظيفة. يرجى المحاولة مرة أخرى.",
       "submitSuccess": "تم إنشاء إعلان الوظيفة بنجاح!"
+    },
+    "workplaces": {
+      "title": "أماكن عملي",
+      "description": "أدر أماكن عملك واستجب للمراجعات",
+      "viewApplications": "عرض الطلبات",
+      "newWorkplace": "مكان عمل جديد",
+      "loadError": "تعذر تحميل أماكن العمل. يرجى المحاولة مرة أخرى.",
+      "empty": {
+        "title": "لا توجد أماكن عمل بعد",
+        "description": "أنشئ أول مكان عمل لك أو اطلب الانضمام إلى مكان قائم"
+      },
+      "addNew": {
+        "title": "إضافة مكان عمل جديد",
+        "description": "أنشئ مكان عمل جديد أو انضم إلى مكان موجود"
+      },
+      "applicationsModal": {
+        "title": "طلبات أماكن عملي",
+        "description": "اعرض حالة طلباتك لإدارة الأماكن.",
+        "loadError": "تعذر تحميل طلباتك.",
+        "noApplications": "لم تتقدم لأي مكان عمل بعد.",
+        "appliedOn": "تم التقديم في {{date}}",
+        "note": "ملاحظة: {{note}}",
+        "updatedOn": "تم التحديث في {{date}}"
+      },
+      "workplaceLabel": "مكان العمل",
+      "page": {
+        "loadError": "تعذر تحميل أماكن عملك"
+      }
     }
+  },
+  "workplaces": {
+    "title": "أماكن العمل",
+    "description": "استكشف أماكن العمل للتعرف على الثقافة والتقييمات",
+    "tabs": {
+      "browse": "استعراض",
+      "my": "أماكن عملي"
+    },
+    "searchTitle": "البحث عن أماكن العمل",
+    "searchPlaceholder": "أدخل اسم الشركة...",
+    "searching": "جاري البحث...",
+    "search": "بحث",
+    "loadError": "تعذر تحميل أماكن العمل. يرجى المحاولة مرة أخرى.",
+    "loading": "جارٍ التحميل...",
+    "workplacesFound": "{{count}} مكان عمل تم العثور عليه",
+    "workplacesFound_plural": "{{count}} أماكن عمل تم العثور عليها",
+    "empty": {
+      "title": "لم يتم العثور على أماكن عمل",
+      "adjustFilters": "جرّب تعديل الفلاتر أو البحث",
+      "noWorkplaces": "لا توجد أماكن عمل حالياً"
+    },
+    "filters": {
+      "title": "الفلاتر",
+      "clear": "مسح",
+      "clearFilters": "مسح الفلاتر",
+      "sector": "القطاع",
+      "allSectors": "جميع القطاعات",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع...",
+      "sortBy": "ترتيب حسب",
+      "sortOptions": {
+        "default": "افتراضي",
+        "nameDesc": "الاسم (من ي إلى أ)",
+        "nameAsc": "الاسم (من أ إلى ي)",
+        "reviewCountDesc": "عدد المراجعات (من الأعلى إلى الأدنى)",
+        "reviewCountAsc": "عدد المراجعات (من الأدنى إلى الأعلى)",
+        "ratingDesc": "التقييم (من الأعلى إلى الأدنى)",
+        "ratingAsc": "التقييم (من الأدنى إلى الأعلى)"
+      },
+      "minRating": "الحد الأدنى للتقييم",
+      "anyRating": "أي",
+      "ratingWithValue": "{{rating}}★"
+    }
+  },
+  "forum": {
+    "tabs": {
+      "browse": "تصفح المواضيع",
+      "create": "إنشاء موضوع",
+      "mine": "منشوراتي"
+    }
+  },
+  "workplace": {
+    "selector": {
+      "placeholder": "اختر مكان عمل",
+      "noWorkplaces": "لا توجد أماكن عمل متاحة",
+      "fetchError": "تعذر تحميل أماكن العمل"
+    },
+    "newModal": {
+      "title": "مكان عمل جديد",
+      "description": "اختر كيف تريد إضافة مكان عمل لحسابك",
+      "createWorkplace": "إنشاء مكان عمل",
+      "joinWorkplace": "الانضمام إلى مكان عمل",
+      "createWorkplaceDescription": "أنشئ وادِر مكان عملك",
+      "joinWorkplaceDescription": "اطلب الانضمام إلى مكان عمل موجود"
+    },
+    "createModal": {
+      "title": "إنشاء مكان عمل",
+      "description": "أضف شركتك إلى المنصة وابدأ بناء سمعتك",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "أدخل اسم الشركة",
+      "sector": "القطاع",
+      "sectorPlaceholder": "مثلاً: تقنية، صحة",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع",
+      "website": "الموقع الإلكتروني",
+      "shortDescription": "وصف قصير",
+      "detailedDescription": "وصف تفصيلي",
+      "websitePlaceholder": "https://www.example.com",
+      "submit": "إنشاء مكان العمل",
+      "workplaceCreated": "تم إنشاء مكان العمل!",
+      "workplaceCreatedMessage": "تم إنشاء مكان العمل بنجاح.",
+      "errors": {
+        "companyNameRequired": "اسم الشركة مطلوب",
+        "sectorRequired": "القطاع مطلوب",
+        "locationRequired": "الموقع مطلوب",
+        "ethicalTagsRequired": "مطلوب علامة أخلاقية واحدة على الأقل",
+        "websiteInvalid": "يجب أن يكون رابطًا صالحًا"
+      },
+      "creating": "جارٍ الإنشاء...",
+      "redirecting": "يتم تحويلك إلى مكان العمل الجديد..."
+    },
+    "joinModal": {
+      "title": "انضم إلى مكان عمل",
+      "searchPlaceholder": "البحث عن أماكن العمل...",
+      "requestTitle": "طلب الانضمام",
+      "noteLabel": "ملاحظة للمسؤولين",
+      "notePlaceholder": "رسالة اختيارية تشرح سبب رغبتك في الانضمام...",
+      "submitRequest": "إرسال الطلب",
+      "submittingRequest": "جارٍ الإرسال...",
+      "back": "رجوع",
+      "alreadyMember": "أنت بالفعل صاحب عمل في هذا المكان",
+      "requestSubmitted": "تم إرسال الطلب",
+      "requestSubmittedMessage": "تم إرسال طلب الانضمام إلى {{company}}. سيتم إعلامك بعد المراجعة.",
+      "close": "إغلاق"
+    },
+    "settings": "الإعدادات",
+    "profile": {
+      "title": "ملف مكان العمل",
+      "notFound": "مكان العمل غير موجود",
+      "notFoundDescription": "مكان العمل الذي تبحث عنه غير موجود أو تمت إزالته.",
+      "aboutCompany": "عن الشركة",
+      "ethicalCommitments": "الالتزامات الأخلاقية",
+      "employers": "أصحاب العمل",
+      "manageRequests": "إدارة الطلبات",
+      "currentJobOpenings": "الوظائف الحالية",
+      "noJobOpenings": "لا توجد وظائف حالياً",
+      "viewAllJobs": "عرض كل {{count}} وظيفة"
+    },
+    "manageRequests": "إدارة الطلبات"
+  },
+  "sectors": {
+    "technology": "التقنية",
+    "healthcare": "الرعاية الصحية",
+    "education": "التعليم",
+    "finance": "المالية",
+    "creativearts": "الفنون الإبداعية",
+    "manufacturing": "التصنيع",
+    "retail": "التجزئة",
+    "consulting": "الاستشارات",
+    "nonprofit": "غير ربحي",
+    "other": "أخرى"
   },
   "mentorship": {
     "title": "ابحث عن مرشد",
+    "subtitle": "اعثر على مرشدين ذوي خبرة لدعم مسارك",
+    "tabs": {
+      "browse": "تصفح",
+      "my": "إرشاداتي",
+      "chat": "الدردشة"
+    },
+    "searchPlaceholder": "ابحث عن مرشدين بالاسم أو الخبرة...",
+    "noResults": "لم يتم العثور على مرشدين. جرّب تعديل البحث.",
+    "becomeMentor": "كن مرشداً",
+    "viewMyProfile": "عرض ملفي",
     "authRequired": {
       "title": "يتطلب حساب",
       "description": "تحتاج إلى إنشاء حساب لعرض المرشدين وطلب الإرشاد. انضم إلى Ethica Jobs اليوم وتواصل مع المحترفين ذوي الخبرة!",
@@ -650,7 +911,87 @@
       "more": "المزيد",
       "viewProfile": "عرض الملف الشخصي",
       "request": "طلب",
+      "requested": "تم الطلب",
       "full": "ممتلئ"
+    },
+    "createMentorProfile": {
+      "title": "كن مرشدًا",
+      "subtitle": "أنشئ ملفك كمرشد لمساعدة الآخرين على التطور",
+      "expertise": "مجال الخبرة",
+      "expertiseHint": "أضف مجالات خبرتك (مثلاً: React، TypeScript، إدارة المنتج)",
+      "expertisePlaceholder": "أدخل مجال الخبرة",
+      "expertiseRequired": "يرجى إضافة مجال خبرة واحد على الأقل",
+      "profileIncompleteTitle": "أكمل ملفك أولاً",
+      "profileIncompleteMessage": "يرجى إكمال ملفك (إضافة نبذة) قبل أن تصبح مرشدًا.",
+      "completeProfile": "أكمل الملف",
+      "profileRequired": "يرجى إكمال ملفك أولاً",
+      "profileBioRequired": "يرجى إضافة نبذة إلى ملفك أولاً",
+      "add": "إضافة",
+      "bio": "حول",
+      "bioHint": "أخبر المتدربين المحتملين عن نفسك ونهجك في الإرشاد",
+      "bioPlaceholder": "لدي 10 سنوات خبرة في تطوير البرمجيات وأحب مساعدة المطورين الجدد...",
+      "bioRequired": "حقل حول مطلوب",
+      "experience": "الخبرة",
+      "experienceHint": "صف خبرتك المهنية وخلفيتك",
+      "experiencePlaceholder": "10+ سنوات في تطوير البرمجيات، عملت في...",
+      "education": "التعليم",
+      "educationHint": "خلفيتك التعليمية",
+      "educationPlaceholder": "مثال: ماجستير علوم الحاسب",
+      "languages": "اللغات",
+      "languagesHint": "اللغات التي تستطيع الإرشاد بها",
+      "languagesPlaceholder": "أدخل اللغة",
+      "achievements": "الإنجازات الرئيسية",
+      "achievementsHint": "أضف إنجازاتك ومساهماتك البارزة",
+      "achievementsPlaceholder": "مثال: قدت تطوير منتج كبير، نشرت مقالات",
+      "linkedinUrl": "رابط LinkedIn",
+      "linkedinUrlPlaceholder": "https://linkedin.com/in/yourprofile",
+      "githubUrl": "رابط GitHub",
+      "githubUrlPlaceholder": "https://github.com/yourusername",
+      "websiteUrl": "رابط الموقع",
+      "websiteUrlPlaceholder": "https://yourwebsite.com",
+      "hourlyRate": "الأجر بالساعة (اختياري)",
+      "hourlyRateHint": "إذا كنت تتقاضى مقابل الإرشاد، اذكر الأجر بالساعة",
+      "hourlyRatePlaceholder": "مثال: 150",
+      "availability": "التوفر",
+      "availabilityHint": "متى تكون متاحًا لجلسات الإرشاد؟",
+      "availabilityPlaceholder": "مثال: مساءات أيام الأسبوع، عطلات نهاية الأسبوع",
+      "selectDays": "اختر الأيام المتاحة",
+      "timeStart": "وقت البداية",
+      "timeEnd": "وقت النهاية",
+      "days": {
+        "monday": "الاثنين",
+        "tuesday": "الثلاثاء",
+        "wednesday": "الأربعاء",
+        "thursday": "الخميس",
+        "friday": "الجمعة",
+        "saturday": "السبت",
+        "sunday": "الأحد"
+      },
+      "maxMentees": "الحد الأقصى للمتدربين",
+      "maxMenteesHint": "كم متدربًا يمكنك الإشراف عليهم في نفس الوقت؟",
+      "maxMenteesPlaceholder": "مثال: 5",
+      "maxMenteesInvalid": "يرجى إدخال رقم صالح (بحد أدنى 1)",
+      "step1Title": "معلومات أساسية",
+      "step2Title": "تفاصيل إضافية",
+      "next": "التالي",
+      "back": "رجوع",
+      "submit": "إنشاء ملف المرشد",
+      "submitting": "جارٍ الإنشاء...",
+      "update": "تحديث الملف",
+      "updating": "جارٍ التحديث...",
+      "editTitle": "تعديل ملف المرشد",
+      "editSubtitle": "حدّث معلومات ملف المرشد",
+      "updateSuccess": "تم تحديث ملف المرشد بنجاح!",
+      "errorLoading": "فشل تحميل ملف المرشد",
+      "cancel": "إلغاء",
+      "success": "تم إنشاء ملف المرشد بنجاح!",
+      "error": "فشل إنشاء ملف المرشد",
+      "checking": "جارٍ التحقق من وجود ملف سابق...",
+      "alreadyExists": "لديك بالفعل ملف مرشد. يرجى تحديث الملف الحالي.",
+      "alreadyExistsTitle": "ملف المرشد موجود مسبقًا",
+      "alreadyExistsMessage": "لديك بالفعل ملف مرشد. للتحديث استخدم خيار التعديل.",
+      "viewProfile": "عرض ملفي",
+      "backToMentors": "العودة إلى المرشدين"
     },
     "profile": {
       "reviews": "تقييمات",
@@ -671,7 +1012,110 @@
       "currentMentees": "المتدربون الحاليون",
       "totalReviews": "إجمالي التقييمات",
       "averageRating": "متوسط التقييم",
-      "skillsTechnologies": "المهارات والتقنيات"
+      "skillsTechnologies": "المهارات والتقنيات",
+      "requests": "طلبات الإرشاد",
+      "mentorshipRequests": "طلبات الإرشاد",
+      "pendingRequests": "طلبات قيد الانتظار",
+      "viewAllRequests": "عرض كل الطلبات",
+      "noPendingRequests": "لا توجد طلبات قيد الانتظار",
+      "activeMentees": "متدربون نشطون",
+      "chat": "الدردشة",
+      "viewAllMentees": "عرض كل المتدربين",
+      "noActiveMentees": "لا يوجد متدربون نشطون بعد.",
+      "notFound": "ملف المرشد غير موجود.",
+      "viewMentorship": "عرض إرشادي",
+      "noSpecialties": "لا توجد تخصصات محددة",
+      "noLanguages": "لا توجد لغات محددة",
+      "complete": "إنهاء",
+      "completing": "جارٍ الإنهاء...",
+      "completeSuccess": "تم إنهاء الإرشاد بنجاح!",
+      "completedMentorships": "الإرشادات المكتملة",
+      "alreadyRequested": "لديك بالفعل طلب إرشاد معلّق أو نشط مع هذا المرشد.",
+      "requestSent": "تم إرسال طلب الإرشاد بنجاح!",
+      "requestError": "تعذر إرسال طلب الإرشاد",
+      "requesting": "جارٍ الإرسال...",
+      "reviewResume": "مراجعة السيرة الذاتية",
+      "editProfile": "تعديل الملف"
+    },
+    "resumeReview": {
+      "title": {
+        "mentee": "تحميل السيرة الذاتية",
+        "mentor": "مراجعة السيرة الذاتية"
+      },
+      "subtitle": {
+        "mentee": "حمّل سيرتك الذاتية لمراجعة المرشد",
+        "mentor": "راجع سيرة المتدرب وقدّم ملاحظات"
+      },
+      "breadcrumb": {
+        "myMentorships": "إرشاداتي",
+        "resumeReview": "مراجعة السيرة الذاتية"
+      },
+      "back": "رجوع",
+      "backToMentorships": "العودة إلى إرشاداتي",
+      "notFound": "مراجعة السيرة الذاتية غير موجودة",
+      "status": {
+        "active": "نشط",
+        "completed": "مكتمل",
+        "closed": "مغلق"
+      },
+      "openChat": "فتح المحادثة",
+      "resume": "السيرة الذاتية",
+      "downloadResume": "تحميل السيرة الذاتية",
+      "noResume": "لم يتم تحميل سيرة ذاتية بعد",
+      "selectFile": "اختر ملفًا",
+      "upload": "تحميل السيرة الذاتية",
+      "uploadNew": "تحميل سيرة جديدة",
+      "uploading": "جارٍ التحميل...",
+      "feedback": "ملاحظات",
+      "writeFeedback": "اكتب ملاحظاتك",
+      "feedbackPlaceholder": "قدّم ملاحظات بنّاءة حول السيرة الذاتية...",
+      "saveFeedback": "حفظ الملاحظات",
+      "saving": "جارٍ الحفظ...",
+      "currentFeedback": "الملاحظات الحالية:",
+      "feedbackFromMentor": "ملاحظات من مرشدك:",
+      "waitingForFeedback": "بانتظار ملاحظات المرشد...",
+      "feedbackNote": "ملاحظة: ميزة الملاحظات قادمة قريبًا. يرجى مشاركة الملاحظات عبر الدردشة في الوقت الحالي.",
+      "feedback.info": "ميزة الملاحظات قادمة قريبًا. يرجى مشاركة الملاحظات عبر الدردشة في الوقت الحالي.",
+      "noFeedback": "لا توجد ملاحظات بعد",
+      "actions": "الإجراءات",
+      "complete": "إنهاء الإرشاد",
+      "completing": "جارٍ الإنهاء...",
+      "close": "إغلاق الإرشاد",
+      "closing": "جارٍ الإغلاق...",
+      "success": {
+        "upload": "تم تحميل السيرة الذاتية بنجاح!",
+        "feedback": "تم حفظ الملاحظات بنجاح!",
+        "complete": "تم إنهاء الإرشاد بنجاح!",
+        "close": "تم إغلاق الإرشاد بنجاح!"
+      },
+      "error": {
+        "load": "فشل تحميل مراجعة السيرة الذاتية",
+        "upload": "فشل تحميل السيرة الذاتية",
+        "feedback": "فشل حفظ الملاحظات",
+        "invalidFileType": "نوع الملف غير صالح. يرجى تحميل ملفات PDF أو DOC أو DOCX.",
+        "fileTooLarge": "يجب أن يكون حجم الملف أقل من 10MB.",
+        "complete": "تعذر إنهاء الإرشاد",
+        "close": "تعذر إغلاق الإرشاد"
+      },
+      "info": {
+        "title": {
+          "mentee": "حول تحميل السيرة الذاتية",
+          "mentor": "حول مراجعة السيرة الذاتية"
+        },
+        "description": {
+          "mentee": "حمّل سيرتك الذاتية ليقوم المرشد بمراجعتها. يمكنك تحديثها في أي وقت.",
+          "mentor": "راجع سيرة المتدرب وقدّم ملاحظات. عند الانتهاء يمكنك إنهاء أو إغلاق الإرشاد."
+        }
+      }
+    },
+    "errors": {
+      "timeout": "انتهت مهلة الاتصال. يرجى التأكد من أن خادم الخلفية يعمل.",
+      "networkError": "لا يمكن الاتصال بالخادم. يرجى التأكد من أن الخلفية تعمل.",
+      "loadFailed": "تعذر تحميل المرشدين. يرجى المحاولة لاحقًا.",
+      "loadMentorshipsFailed": "تعذر تحميل الإرشادات. يرجى المحاولة لاحقًا.",
+      "completeFailed": "تعذر إنهاء الإرشاد. يرجى المحاولة لاحقًا.",
+      "reviewFailed": "تعذر إرسال التقييم. يرجى المحاولة لاحقًا.",
+      "genericError": "حدث خطأ. يرجى المحاولة لاحقًا."
     },
     "request": {
       "backToProfile": "العودة إلى ملف المرشد",
@@ -693,15 +1137,21 @@
       "durationPlaceholder": "مثلاً: 3 أشهر، 6 أشهر، سنة واحدة",
       "timeLabel": "وقت الاجتماع المفضل",
       "timePlaceholder": "مثلاً: عطلات نهاية الأسبوع، أمسيات أيام الأسبوع، مرن",
+      "resumeLabel": "رابط السيرة الذاتية (اختياري)",
+      "resumePlaceholder": "https://your-resume.com أو رابط Google Drive",
+      "resumeHint": "شارك سيرتك الذاتية لمساعدة المرشد على فهم خلفيتك بشكل أفضل.",
       "sendRequest": "إرسال طلب الإرشاد",
       "sendingRequest": "جارٍ الإرسال...",
       "cancel": "إلغاء",
       "successMessage": "تم إرسال طلب الإرشاد بنجاح!",
-      "errorMessage": "فشل إرسال طلب الإرشاد. يرجى المحاولة مرة أخرى."
+      "errorMessage": "فشل إرسال طلب الإرشاد. يرجى المحاولة مرة أخرى.",
+      "alreadyExists": "لديك بالفعل طلب قيد الانتظار أو مقبول لهذا المرشد.",
+      "userNotAuthenticated": "يجب تسجيل الدخول لإرسال طلب الإرشاد"
     },
     "myMentorships": {
       "title": "إرشاداتي",
       "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة الخاصة بك",
+      "successMessage": "تم إرسال طلب الإرشاد بنجاح إلى {{mentorName}}!",
       "active": "نشط",
       "pending": "قيد الانتظار",
       "completed": "مكتمل",
@@ -710,7 +1160,8 @@
         "active": "نشط",
         "pending": "قيد الانتظار",
         "completed": "مكتمل",
-        "rejected": "مرفوض"
+        "rejected": "مرفوض",
+        "accepted": "مقبول"
       },
       "noActive": "لا توجد إرشادات نشطة",
       "noActiveDesc": "ليس لديك إرشادات نشطة بعد. ابحث عن مرشد للبدء!",
@@ -728,8 +1179,37 @@
       "learningGoals": "أهداف التعلم",
       "openChat": "فتح المحادثة",
       "writeReview": "كتابة تقييم",
+      "viewProfile": "عرض الملف الشخصي",
+      "uploadResume": "تحميل السيرة الذاتية",
       "waitingForResponse": "في انتظار الرد",
-      "viewDetails": "عرض التفاصيل"
+      "viewDetails": "عرض التفاصيل",
+      "complete": "إنهاء الإرشاد",
+      "completing": "جارٍ الإنهاء...",
+      "completeSuccess": "تم إنهاء الإرشاد بنجاح! يمكنك الآن كتابة تقييم.",
+      "completeError": "لا يمكن إنهاء الإرشاد: لم يتم العثور على معرف التقييم"
+    },
+    "mentorRequests": {
+      "title": "طلبات الإرشاد",
+      "subtitle": "اعرض وأدر طلبات الإرشاد من المتدربين",
+      "pending": "قيد الانتظار",
+      "accepted": "مقبول",
+      "rejected": "مرفوض",
+      "mentee": "المتدرب",
+      "requested": "تم الطلب",
+      "accept": "قبول",
+      "reject": "رفض",
+      "processing": "جارٍ المعالجة...",
+      "acceptSuccess": "تم قبول الطلب بنجاح!",
+      "rejectSuccess": "تم رفض الطلب.",
+      "acceptedMessage": "لقد قبلت طلب الإرشاد هذا.",
+      "rejectedMessage": "لقد رفضت طلب الإرشاد هذا.",
+      "noPending": "لا توجد طلبات قيد الانتظار",
+      "noPendingDesc": "ليس لديك أي طلبات إرشاد قيد الانتظار.",
+      "noAccepted": "لا توجد طلبات مقبولة",
+      "noAcceptedDesc": "لم تقبل أي طلبات إرشاد بعد.",
+      "noRejected": "لا توجد طلبات مرفوضة",
+      "noRejectedDesc": "ليس لديك أي طلبات إرشاد مرفوضة.",
+      "viewProfile": "عرض الملف الشخصي"
     }
   },
   "profile": {
@@ -987,6 +1467,10 @@
     }
   },
   "reviews": {
+    "reviewTitle": "تقييم",
+    "rateEthicalPolicies": "قيّم السياسات الأخلاقية",
+    "rateAtLeastOne": "يرجى تقييم سياسة أخلاقية واحدة على الأقل",
+    "titlePlaceholder": "مثال: تجربتي في {{company}}",
     "workplaceReviews": "تقييمات مكان العمل",
     "writeReview": "اكتب تقييماً",
     "writeReviewFor": "اكتب تقييماً لـ {{company}}",
@@ -1013,6 +1497,7 @@
     "recentComments": "التعليقات الأخيرة",
     "recentReviews": "التقييمات الأخيرة",
     "sortBy": "ترتيب التقييمات",
+    "sortByRating": "ترتيب حسب التقييم",
     "sortOptions": {
       "ratingDesc": "التقييم (من الأعلى إلى الأدنى)",
       "ratingAsc": "التقييم (من الأدنى إلى الأعلى)"
@@ -1094,6 +1579,15 @@
     "roleMentor": "مرشد",
     "roleMentee": "مسترشد",
     "selectConversation": "اختر محادثة",
-    "selectConversationDesc": "اختر محادثة من القائمة للبدء في الدردشة"
+    "selectConversationDesc": "اختر محادثة من القائمة للبدء في الدردشة",
+    "connectionNotReady": "اتصال الدردشة غير جاهز. سيتم إرسال الرسالة عند الاتصال.",
+    "connectionError": "خطأ في اتصال الدردشة",
+    "sendError": "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.",
+    "connected": "تم الاتصال بالدردشة!",
+    "disconnected": "انقطع اتصال الدردشة.",
+    "loadError": "فشل تحميل الدردشة. يرجى المحاولة لاحقًا.",
+    "notReady": "الدردشة ليست جاهزة بعد. يرجى الانتظار قليلاً ثم المحاولة.",
+    "authRequired": "يجب تسجيل الدخول لاستخدام الدردشة",
+    "noConversationsDesc": "تحتاج إلى وجود إرشاد نشط لبدء الدردشة."
   }
 }

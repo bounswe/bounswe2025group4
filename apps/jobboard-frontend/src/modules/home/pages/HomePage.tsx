@@ -3,7 +3,6 @@ import heroBackground from '@/assets/hero-background.jpg';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/components/ui/card';
 import { Input } from '@shared/components/ui/input';
 import { useMediaQuery } from '@shared/hooks/useMediaQuery';
-import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import {
   Search,
   Users,
@@ -22,9 +21,6 @@ import { getDashboardStats, type DashboardStatsResponse } from '@modules/employe
 
 export default function HomePage() {
   const isMediumOrLarger = useMediaQuery('(min-width: 768px)');
-  const { user, isAuthenticated } = useAuth();
-  const isEmployer = user?.role === 'ROLE_EMPLOYER';
-  const isJobSeeker = user?.role === 'ROLE_JOBSEEKER';
   const navigate = useNavigate();
   const { t } = useTranslation('common');
   const [searchTerm, setSearchTerm] = useState('');
@@ -190,49 +186,6 @@ export default function HomePage() {
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* Role-aware quick links */}
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              {isEmployer ? (
-                <>
-                  <Button variant="secondary" onClick={() => navigate('/workplaces?tab=my')}>
-                    {t('layout.header.nav.myWorkplaces')}
-                  </Button>
-                  <Button variant="ghost" onClick={() => navigate('/nonprofit-jobs')}>
-                    {t('layout.header.nav.nonProfitJobs')}
-                  </Button>
-                  <Button variant="ghost" onClick={() => navigate('/mentorship')}>
-                    {t('layout.header.nav.mentorship')}
-                  </Button>
-                  <Button variant="ghost" onClick={() => navigate('/forum')}>
-                    {t('layout.header.nav.forum')}
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="secondary" onClick={() => navigate('/jobs')}>
-                    {t('layout.header.nav.jobs')}
-                  </Button>
-                  <Button variant="ghost" onClick={() => navigate('/nonprofit-jobs')}>
-                    {t('layout.header.nav.nonProfitJobs')}
-                  </Button>
-                  {isAuthenticated && isJobSeeker && (
-                    <Button variant="ghost" onClick={() => navigate('/applications')}>
-                      {t('layout.header.nav.myApplications')}
-                    </Button>
-                  )}
-                  <Button variant="ghost" onClick={() => navigate('/jobs?tab=workplaces')}>
-                    {t('layout.header.nav.workplaces')}
-                  </Button>
-                  <Button variant="ghost" onClick={() => navigate('/mentorship')}>
-                    {t('layout.header.nav.mentorship')}
-                  </Button>
-                  <Button variant="ghost" onClick={() => navigate('/forum')}>
-                    {t('layout.header.nav.forum')}
-                  </Button>
-                </>
-              )}
             </div>
           </div>
         </div>

@@ -18,7 +18,7 @@ export const applicationsRoutes: RouteObject[] = [
     path: 'applications',
     element: (
       <ProtectedRoute>
-        <Navigate to="/jobs?tab=applications" replace />
+        <Navigate to="/jobs/applications" replace />
       </ProtectedRoute>
     ),
   },

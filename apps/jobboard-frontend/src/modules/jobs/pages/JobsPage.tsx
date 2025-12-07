@@ -1,7 +1,8 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Search, X, AlertCircle } from 'lucide-react';
-import { useLocation, useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { AxiosError } from 'axios';
 import { JobCard } from '@modules/jobs/components/jobs/JobCard';
 import { JobFilters } from '@modules/jobs/components/jobs/JobFilters';
 import { MobileJobFilters } from '@modules/jobs/components/jobs/MobileJobFilters';
@@ -22,15 +23,9 @@ import { useFilters } from '@shared/hooks/useFilters';
 import { getJobs } from '@modules/jobs/services/jobs.service';
 import type { JobPostResponse } from '@shared/types/api.types';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
-import { AxiosError } from 'axios';
 import { Card, CardContent } from '@shared/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/components/ui/tabs';
-import MyApplicationsPage from '@modules/jobs/applications/pages/MyApplicationsPage';
-import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 const ITEMS_PER_PAGE = 10;
-const WorkplacesPage = lazy(() => import('@modules/workplace/pages/WorkplacesPage'));
-type JobTab = 'browse' | 'applications' | 'workplaces';
 
 /**
  * Convert API JobPostResponse to Job type for JobCard component
@@ -64,30 +59,7 @@ function convertJobPostToJob(jobPost: JobPostResponse): Job {
 
 export default function JobsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const location = useLocation();
-  const { isAuthenticated, user } = useAuth();
-  const isJobSeeker = user?.role === 'ROLE_JOBSEEKER';
-  const isEmployer = user?.role === 'ROLE_EMPLOYER';
-  const showWorkplacesTab = !isEmployer;
   const searchParamValue = searchParams.get('search') ?? '';
-  const tabParam = searchParams.get('tab');
-  const shouldOpenApplications = Boolean(location.state?.openApplications);
-  const shouldOpenWorkplaces = Boolean(location.state?.openWorkplaces);
-  const [activeTab, setActiveTab] = useState<JobTab>(() => {
-    if (tabParam === 'applications') {
-      return 'applications';
-    }
-    if (tabParam === 'workplaces' && showWorkplacesTab) {
-      return 'workplaces';
-    }
-    if (shouldOpenApplications) {
-      return 'applications';
-    }
-    if (shouldOpenWorkplaces && showWorkplacesTab) {
-      return 'workplaces';
-    }
-    return 'browse';
-  });
   const [searchInput, setSearchInput] = useState(searchParamValue);
   const [searchFilter, setSearchFilter] = useState(searchParamValue);
   const [currentPage, setCurrentPage] = useState(1);
@@ -112,26 +84,6 @@ export default function JobsPage() {
   // Create derived keys for useEffect dependencies (to prevent unnecessary re-renders)
   const ethicalTagsKey = selectedEthicalTags.join(',');
   const salaryKey = `${salaryRange[0]}-${salaryRange[1]}`;
-
-  useEffect(() => {
-    const nextTab: JobTab = (() => {
-      if (tabParam === 'applications') {
-        return 'applications';
-      }
-      if (tabParam === 'workplaces' && showWorkplacesTab) {
-        return 'workplaces';
-      }
-      if (shouldOpenApplications) {
-        return 'applications';
-      }
-      if (shouldOpenWorkplaces && showWorkplacesTab) {
-        return 'workplaces';
-      }
-      return 'browse';
-    })();
-
-    setActiveTab((prev) => (prev === nextTab ? prev : nextTab));
-  }, [tabParam, shouldOpenApplications, shouldOpenWorkplaces, showWorkplacesTab]);
 
   useEffect(() => {
     setSearchInput((prev) => (prev === searchParamValue ? prev : searchParamValue));
@@ -201,23 +153,6 @@ export default function JobsPage() {
     return filteredJobs.slice(start, end);
   }, [filteredJobs, currentPage]);
 
-  const handleTabChange = (value: string) => {
-    const nextTab: JobTab =
-      value === 'applications'
-        ? 'applications'
-        : value === 'workplaces' && showWorkplacesTab
-          ? 'workplaces'
-          : 'browse';
-    setActiveTab(nextTab);
-    const next = new URLSearchParams(searchParams);
-    if (nextTab === 'applications' || nextTab === 'workplaces') {
-      next.set('tab', nextTab);
-    } else {
-      next.delete('tab');
-    }
-    setSearchParams(next, { replace: true });
-  };
-
   const updateSearchParam = (value: string) => {
     const next = new URLSearchParams(searchParams);
     if (value) {
@@ -284,251 +219,195 @@ export default function JobsPage() {
   }, [currentPage, totalPages]);
 
   return (
-    <div className="container mx-auto px-4 py-6" dir={isRtl ? 'rtl' : 'ltr'}>
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full space-y-4">
-        <TabsList className={cn('grid w-full max-w-xl', showWorkplacesTab ? 'grid-cols-3' : 'grid-cols-2')}>
-          <TabsTrigger value="browse">{t('jobs.tabs.browse', 'Browse')}</TabsTrigger>
-          <TabsTrigger value="applications">
-            {t('jobs.tabs.myApplications', 'My Applications')}
-          </TabsTrigger>
-          {showWorkplacesTab && (
-            <TabsTrigger value="workplaces">{t('jobs.tabs.workplaces', 'Workplaces')}</TabsTrigger>
-          )}
-        </TabsList>
+    <div className="bg-background" dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-6 lg:flex-row lg:items-start lg:gap-10">
+        {/* Filters */}
+        <aside className="sticky top-[88px] hidden w-64 shrink-0 self-start lg:block">
+          <div className="space-y-6 p-5">
+            <h2 className="text-xl font-semibold">{t('jobs.filtersHeading')}</h2>
+            <JobFilters />
+            <Button type="button" variant="outline" className="w-full" onClick={handleResetFilters}>
+              {t('jobs.resetFilters')}
+            </Button>
+          </div>
+        </aside>
 
-        <TabsContent value="browse" className="mt-2">
-          <div className="flex w-full flex-row gap-8">
-            {/* Filters */}
-            <aside className="sticky top-[88px] hidden w-100 shrink-0 lg:block">
-              <div className="sticky top-[88px] space-y-6 p-6">
-                <h2 className="text-xl font-semibold">{t('jobs.filtersHeading')}</h2>
-                <JobFilters />
-                <Button type="button" variant="outline" className="w-full" onClick={handleResetFilters}>
-                  {t('jobs.resetFilters')}
-                </Button>
+        {/* Content */}
+        <div className="flex min-w-0 flex-1 flex-col gap-6">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+              {/* Search Input*/}
+              <div className="relative flex-1">
+                <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  <Search className="size-5" aria-hidden />
+                </span>
+                <Input
+                  value={searchInput}
+                  onChange={(event) => setSearchInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      handleSearchSubmit();
+                    }
+                  }}
+                  placeholder={t('jobs.searchPlaceholder')}
+                  id="search-input"
+                  className="h-14 rounded-lg border border-border bg-card pl-11 pr-12 text-lg"
+                  aria-label={t('jobs.searchAria')}
+                />
+                {searchInput && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleClearSearch}
+                    className="absolute right-2 top-1/2 size-9 -translate-y-1/2 rounded-md text-muted-foreground hover:bg-muted"
+                    aria-label={t('jobs.clearSearch')}
+                  >
+                    <X className="size-4" aria-hidden />
+                  </Button>
+                )}
               </div>
-            </aside>
-
-            {/* Content */}
-            <div className="flex flex-col gap-4 pt-2 min-w-6xl">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                  {/* Search Input*/}
-                  <div className="relative flex-1">
-                    <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      <Search className="size-5" aria-hidden />
-                    </span>
-                    <Input
-                      value={searchInput}
-                      onChange={(event) => setSearchInput(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          event.preventDefault();
-                          handleSearchSubmit();
-                        }
-                      }}
-                      placeholder={t('jobs.searchPlaceholder')}
-                      id="search-input"
-                      className="h-14 rounded-lg border border-border pl-11 pr-12 bg-card text-lg"
-                      aria-label={t('jobs.searchAria')}
-                    />
-                    {searchInput && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleClearSearch}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 size-9 rounded-md text-muted-foreground hover:bg-muted"
-                        aria-label={t('jobs.clearSearch')}
-                      >
-                        <X className="size-4" aria-hidden />
-                      </Button>
-                    )}
-                  </div>
-                  <MobileJobFilters
-                    isOpen={isMobileFiltersOpen}
-                    onOpenChange={setIsMobileFiltersOpen}
-                    onResetFilters={handleResetFilters}
-                    filtersContent={<JobFilters />}
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-6 lg:flex-row">
-                <section className="flex-1 space-y-6">
-                  {isLoading ? (
-                    <CenteredLoader />
-                  ) : error ? (
-                    isAuthError ? (
-                      <Card className="gap-4 py-4 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
-                        <CardContent className="px-4 space-y-4">
-                          <div className="flex items-start gap-3">
-                            <AlertCircle className="h-6 w-6 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                            <div className="space-y-2 flex-1">
-                              <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
-                                {t('jobs.authRequired.title')}
-                              </h3>
-                              <p className="text-sm text-amber-800 dark:text-amber-200">
-                                {t('jobs.authRequired.description')}
-                              </p>
-                              <p className="text-sm text-amber-700 dark:text-amber-300">
-                                {t('jobs.authRequired.invitation')}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex flex-col sm:flex-row gap-3">
-                            <Button asChild className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600">
-                              <Link to="/register">{t('jobs.authRequired.signUp')}</Link>
-                            </Button>
-                            <Button asChild variant="outline" className="border-amber-300 dark:border-amber-700">
-                              <Link to="/login">{t('jobs.authRequired.login')}</Link>
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center py-12 gap-4">
-                        <p className="text-lg text-destructive">{t('jobs.error')}</p>
-                        <Button onClick={() => window.location.reload()}>{t('jobs.retry')}</Button>
-                      </div>
-                    )
-                  ) : (
-                    <>
-                      <div className="flex flex-col gap-2">
-                        <h1 className="text-2xl font-semibold">
-                          {t('jobs.results', { count: jobCount })}
-                        </h1>
-                        <span className="text-sm text-muted-foreground">
-                          {t('jobs.resultsDescription', { count: jobCount })}
-                        </span>
-                      </div>
-
-                      {/* Job Cards */}
-                      {jobCount === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-12 gap-4">
-                          <p className="text-lg text-muted-foreground">
-                            {t('jobs.noResults')}
-                          </p>
-                          <Button variant="outline" onClick={handleResetFilters}>
-                            {t('jobs.resetFilters')}
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          {paginatedJobs.map((job) => (
-                            <JobCard key={job.id} job={job} />
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-
-                  {/* Pagination */}
-                  {!isLoading && !error && jobCount > 0 && (
-                  <Pagination className="pt-4">
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          href="#"
-                          onClick={(event) => {
-                            event.preventDefault();
-                            setCurrentPage((page) => Math.max(1, page - 1));
-                          }}
-                          aria-disabled={currentPage === 1}
-                          className={cn(
-                            currentPage === 1 && 'pointer-events-none opacity-50',
-                            isRtl && 'rotate-180'
-                          )}
-                        />
-                      </PaginationItem>
-                      {paginationNumbers.map((page, index) => {
-                        if (page < 0) {
-                          return (
-                            <PaginationItem key={`ellipsis-${page}-${index}`}>
-                              <PaginationEllipsis />
-                            </PaginationItem>
-                          );
-                        }
-                        return (
-                          <PaginationItem key={page}>
-                            <PaginationLink
-                              href="#"
-                              isActive={page === currentPage}
-                              onClick={(event) => {
-                                event.preventDefault();
-                                setCurrentPage(page);
-                              }}
-                              className={cn(
-                                'size-10 rounded-lg text-sm',
-                                page === currentPage
-                                  ? 'border-primary text-primary'
-                                  : 'text-muted-foreground hover:text-primary',
-                              )}
-                            >
-                              {page}
-                            </PaginationLink>
-                          </PaginationItem>
-                        );
-                      })}
-                      <PaginationItem>
-                        <PaginationNext
-                          href="#"
-                          onClick={(event) => {
-                            event.preventDefault();
-                            setCurrentPage((page) => Math.min(totalPages, page + 1));
-                          }}
-                          aria-disabled={currentPage === totalPages}
-                          className={cn(
-                            currentPage === totalPages && 'pointer-events-none opacity-50',
-                            isRtl && 'rotate-180'
-                          )}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                  )}
-                </section>
-              </div>
+              <MobileJobFilters
+                isOpen={isMobileFiltersOpen}
+                onOpenChange={setIsMobileFiltersOpen}
+                onResetFilters={handleResetFilters}
+                filtersContent={<JobFilters />}
+              />
             </div>
           </div>
-        </TabsContent>
 
-        <TabsContent value="applications" className="mt-2">
-          {isAuthenticated && isJobSeeker ? (
-            <MyApplicationsPage />
-          ) : (
-            <Card className="max-w-3xl">
-              <CardContent className="py-8 space-y-4 text-center">
-                <h2 className="text-2xl font-semibold">
-                  {t('jobs.myApplications.authTitle', 'Sign in to see your applications')}
-                </h2>
-                <p className="text-muted-foreground">
-                  {t(
-                    'jobs.myApplications.authDescription',
-                    'Log in as a job seeker to view and manage your applications.'
-                  )}
-                </p>
-                <div className="flex justify-center gap-3">
-                  <Button asChild>
-                    <Link to="/login">{t('layout.header.auth.login')}</Link>
-                  </Button>
-                  <Button variant="outline" asChild>
-                    <Link to="/register">{t('layout.header.auth.signup')}</Link>
-                  </Button>
+          <section className="flex-1 space-y-6">
+            {isLoading ? (
+              <CenteredLoader />
+            ) : error ? (
+              isAuthError ? (
+                <Card className="gap-4 border-amber-200 bg-amber-50 py-4 dark:border-amber-800 dark:bg-amber-950">
+                  <CardContent className="space-y-4 px-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="mt-0.5 h-6 w-6 shrink-0 text-amber-600 dark:text-amber-400" />
+                      <div className="flex-1 space-y-2">
+                        <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
+                          {t('jobs.authRequired.title')}
+                        </h3>
+                        <p className="text-sm text-amber-800 dark:text-amber-200">
+                          {t('jobs.authRequired.description')}
+                        </p>
+                        <p className="text-sm text-amber-700 dark:text-amber-300">
+                          {t('jobs.authRequired.invitation')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <Button asChild className="bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600">
+                        <Link to="/register">{t('jobs.authRequired.signUp')}</Link>
+                      </Button>
+                      <Button asChild variant="outline" className="border-amber-300 dark:border-amber-700">
+                        <Link to="/login">{t('jobs.authRequired.login')}</Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-4 py-12">
+                  <p className="text-lg text-destructive">{t('jobs.error')}</p>
+                  <Button onClick={() => window.location.reload()}>{t('jobs.retry')}</Button>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
+              )
+            ) : (
+              <>
+                <div className="flex flex-col gap-2">
+                  <h1 className="text-2xl font-semibold">{t('jobs.results', { count: jobCount })}</h1>
+                  <span className="text-sm text-muted-foreground">
+                    {t('jobs.resultsDescription', { count: jobCount })}
+                  </span>
+                </div>
 
-        {showWorkplacesTab && (
-          <TabsContent value="workplaces" className="mt-2">
-            <Suspense fallback={<CenteredLoader />}>
-              <WorkplacesPage />
-            </Suspense>
-          </TabsContent>
-        )}
-      </Tabs>
+                {/* Job Cards */}
+                {jobCount === 0 ? (
+                  <div className="flex flex-col items-center justify-center gap-4 py-12">
+                    <p className="text-lg text-muted-foreground">{t('jobs.noResults')}</p>
+                    <Button variant="outline" onClick={handleResetFilters}>
+                      {t('jobs.resetFilters')}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {paginatedJobs.map((job) => (
+                      <JobCard key={job.id} job={job} />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Pagination */}
+            {!isLoading && !error && jobCount > 0 && (
+              <Pagination className="pt-4">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setCurrentPage((page) => Math.max(1, page - 1));
+                      }}
+                      aria-disabled={currentPage === 1}
+                      className={cn(
+                        currentPage === 1 && 'pointer-events-none opacity-50',
+                        isRtl && 'rotate-180'
+                      )}
+                    />
+                  </PaginationItem>
+                  {paginationNumbers.map((page, index) => {
+                    if (page < 0) {
+                      return (
+                        <PaginationItem key={`ellipsis-${page}-${index}`}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    }
+                    return (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          href="#"
+                          isActive={page === currentPage}
+                          onClick={(event) => {
+                            event.preventDefault();
+                            setCurrentPage(page);
+                          }}
+                          className={cn(
+                            'size-10 rounded-lg text-sm',
+                            page === currentPage
+                              ? 'border-primary text-primary'
+                              : 'text-muted-foreground hover:text-primary'
+                          )}
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setCurrentPage((page) => Math.min(totalPages, page + 1));
+                      }}
+                      aria-disabled={currentPage === totalPages}
+                      className={cn(
+                        currentPage === totalPages && 'pointer-events-none opacity-50',
+                        isRtl && 'rotate-180'
+                      )}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
+          </section>
+        </div>
+      </div>
     </div>
   );
 }
