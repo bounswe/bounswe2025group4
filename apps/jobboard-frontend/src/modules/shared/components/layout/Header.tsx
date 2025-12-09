@@ -61,14 +61,8 @@ export default function Header() {
             allowedRoles: ['ROLE_JOBSEEKER'],
           },
           {
-            label: t('workplaces.tabs.my', 'My Workplaces'),
-            to: '/workplaces/my',
-            requiresAuth: true,
-            allowedRoles: ['ROLE_EMPLOYER'],
-          },
-          {
-            label: t('jobs.tabs.employer', 'Create Job (Employer)'),
-            to: '/jobs/employer',
+            label: t('jobs.tabs.employer', 'Employer Dashboard'),
+            to: '/employer/dashboard',
             requiresAuth: true,
             allowedRoles: ['ROLE_EMPLOYER'],
           },
@@ -95,7 +89,6 @@ export default function Header() {
             requiresAuth: true,
             allowedRoles: ['ROLE_EMPLOYER'],
           },
-          { label: t('workplaces.tabs.reviews', 'Reviews & Ratings'), to: '/workplaces/browse' },
         ],
       },
       {

@@ -33,6 +33,7 @@ import { workplaceKeys } from '@shared/lib/query-keys';
 export default function WorkplaceProfilePage() {
   const { id, workplaceId } = useParams<{ id?: string; workplaceId?: string }>();
   const resolvedWorkplaceId = workplaceId ?? id;
+  const numericWorkplaceId = resolvedWorkplaceId ? Number.parseInt(resolvedWorkplaceId, 10) : undefined;
   const { t } = useTranslation('common');
   const queryClient = useQueryClient();
   const { isAuthenticated, user } = useAuth();
@@ -52,14 +53,14 @@ export default function WorkplaceProfilePage() {
     isError: isWorkplaceError,
     refetch: refetchWorkplace,
   } = useWorkplaceQuery(
-    workplaceId ? parseInt(workplaceId, 10) : undefined as number | undefined,
+    numericWorkplaceId,
     { includeReviews: true, reviewsLimit: 5 },
-    Boolean(workplaceId),
+    Boolean(numericWorkplaceId),
   );
 
   const applyOptimisticReviewToCache = (review: ReviewResponse) => {
-    if (!workplaceId) return;
-    queryClient.setQueryData<WorkplaceDetailResponse>(workplaceKeys.detail(workplaceId), (prev) => {
+    if (!numericWorkplaceId) return;
+    queryClient.setQueryData<WorkplaceDetailResponse>(workplaceKeys.detail(numericWorkplaceId), (prev) => {
       if (!prev) return prev;
       const currentCount = prev.reviewCount ?? prev.recentReviews?.length ?? 0;
       const newCount = currentCount + 1;
@@ -98,8 +99,8 @@ export default function WorkplaceProfilePage() {
       setReviewsTotal((prev) => Math.max((prev ?? 0) - 1, 0));
     }
 
-    if (workplaceId) {
-      queryClient.invalidateQueries({ queryKey: workplaceKeys.detail(workplaceId) });
+    if (numericWorkplaceId) {
+      queryClient.invalidateQueries({ queryKey: workplaceKeys.detail(numericWorkplaceId) });
     }
   };
 
@@ -109,7 +110,7 @@ export default function WorkplaceProfilePage() {
   );
 
   const { data: jobs = [], isLoading: jobsLoading } = useQuery({
-    queryKey: ['workplace-jobs', workplaceId, employerIds],
+    queryKey: ['workplace-jobs', numericWorkplaceId, employerIds],
     queryFn: async () => {
       const allJobsArrays = await Promise.all(
         employerIds.map((employerId) =>
@@ -128,14 +129,14 @@ export default function WorkplaceProfilePage() {
         return key !== undefined && index === self.findIndex((j) => getJobKey(j) === key);
       });
     },
-    enabled: Boolean(workplaceId) && employerIds.length > 0,
+    enabled: Boolean(numericWorkplaceId) && employerIds.length > 0,
   });
 
   const isEmployerForWorkplace = workplace?.employers?.some((emp) => emp.userId === user?.id);
   const employerRequestsQuery = useEmployerRequestsQuery(
-    workplaceId ? parseInt(workplaceId, 10) : undefined,
+    numericWorkplaceId,
     { size: 10 },
-    Boolean(workplaceId && isEmployerForWorkplace),
+    Boolean(numericWorkplaceId && isEmployerForWorkplace),
   );
   const hasPendingRequests = Boolean(
     employerRequestsQuery.data?.content?.some(
