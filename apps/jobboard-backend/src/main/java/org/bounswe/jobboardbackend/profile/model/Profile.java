@@ -39,6 +39,8 @@ public class Profile {
     @Column(length = 1024)
     private String imageUrl;
 
+    private String gender;
+
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Education> educations = new ArrayList<>();
