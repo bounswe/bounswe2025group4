@@ -12,13 +12,17 @@ import { Label } from '@shared/components/ui/label';
 import { Clock, CheckCircle, XCircle, MessageCircle, Star, Calendar, FileText } from 'lucide-react';
 import type { Mentorship, MentorshipStatus } from '@shared/types/mentor';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
-import { getMenteeMentorships, rateMentor } from '@modules/mentorship/services/mentorship.service';
+import {
+  useMenteeMentorshipsQuery,
+  useRateMentorMutation,
+} from '@modules/mentorship/services/mentorship.service';
 import type { CreateRatingDTO } from '@shared/types/api.types';
 import { convertMentorshipDetailsToMentorship } from '@shared/utils/mentorship.utils';
 import { profileService } from '@modules/profile/services/profile.service';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
 import { toast } from 'react-toastify';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 const getStatusIcon = (status: MentorshipStatus) => {
   switch (status) {
@@ -57,7 +61,7 @@ const MyMentorshipsPage = () => {
   const location = useLocation();
   const { user } = useAuth();
   const [mentorships, setMentorships] = useState<Mentorship[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [selectedMentorshipForReview, setSelectedMentorshipForReview] = useState<Mentorship | null>(null);
@@ -65,6 +69,8 @@ const MyMentorshipsPage = () => {
   const [reviewComment, setReviewComment] = useState<string>('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [activeTab, setActiveTab] = useState<string>(location.state?.activeTab || 'active');
+  const mentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
+  const rateMutation = useRateMentorMutation();
   
   // Success message from request page
   const showSuccess = location.state?.showSuccess;
@@ -74,60 +80,51 @@ const MyMentorshipsPage = () => {
   );
 
   useEffect(() => {
-    const fetchMentorships = async () => {
-      if (!user?.id) {
-        setError(t('mentorship.errors.genericError') || 'User not authenticated');
-        setIsLoading(false);
-        return;
-      }
-
+    const hydrateMentorships = async () => {
+      if (!mentorshipsQuery.data) return;
       try {
-        setIsLoading(true);
-        setError(null);
-        const backendMentorships = await getMenteeMentorships(user.id);
-        
-        // Fetch mentor profiles to get avatars
+        setIsLoadingProfiles(true);
+        const backendMentorships = mentorshipsQuery.data;
+
         const mentorProfilesMap: Record<number, string | undefined> = {};
-        const uniqueMentorIds = [...new Set(backendMentorships.map(m => m.mentorId))];
+        const uniqueMentorIds = [...new Set(backendMentorships.map((m) => m.mentorId))];
         await Promise.all(
           uniqueMentorIds.map(async (mentorId) => {
             try {
               const profile = await profileService.getPublicProfile(mentorId);
               mentorProfilesMap[mentorId] = profile.imageUrl;
             } catch (err) {
-              // Profile might not exist, that's okay
               mentorProfilesMap[mentorId] = undefined;
             }
           })
         );
-        
-        const convertedMentorships = backendMentorships.map((m) => 
+
+        const convertedMentorships = backendMentorships.map((m) =>
           convertMentorshipDetailsToMentorship(m, mentorProfilesMap[m.mentorId])
         );
-        
-        // Remove duplicates by id and mentorId combination
+
         const uniqueMentorships = Array.from(
-          new Map(convertedMentorships.map(m => [`${m.id}-${m.mentorId}`, m])).values()
+          new Map(convertedMentorships.map((m) => [`${m.id}-${m.mentorId}`, m])).values()
         );
-        
+
         let allMentorships = uniqueMentorships;
         if (newMentorshipFromState) {
-          const exists = allMentorships.some(m => m.id === newMentorshipFromState.id);
+          const exists = allMentorships.some((m) => m.id === newMentorshipFromState.id);
           if (!exists) {
             allMentorships = [newMentorshipFromState, ...allMentorships];
           }
         }
         setMentorships(allMentorships);
       } catch (err) {
-        console.error('Error fetching mentorships:', err);
-        setError(t('mentorship.errors.loadMentorshipsFailed') || 'Failed to load mentorships. Please try again later.');
+        const normalized = normalizeApiError(err, t('mentorship.errors.loadMentorshipsFailed'));
+        setError(normalized.friendlyMessage);
       } finally {
-        setIsLoading(false);
+        setIsLoadingProfiles(false);
       }
     };
 
-    fetchMentorships();
-  }, [user?.id, location.pathname, newMentorshipFromState]); // Refetch when pathname changes or new mentorship is passed
+    hydrateMentorships();
+  }, [mentorshipsQuery.data, newMentorshipFromState, t]);
 
   const handleOpenReviewDialog = (mentorship: Mentorship) => {
     setSelectedMentorshipForReview(mentorship);
@@ -156,7 +153,7 @@ const MyMentorshipsPage = () => {
         comment: reviewComment.trim() || '',
       };
 
-      await rateMentor(reviewData);
+      await rateMutation.mutateAsync(reviewData);
       toast.success(t('mentorship.myMentorships.reviewSuccess') || 'Review submitted successfully!');
       
       setReviewDialogOpen(false);
@@ -165,36 +162,9 @@ const MyMentorshipsPage = () => {
       setReviewRating(0);
       setReviewComment('');
 
-      // Refetch mentorships to update data
-      if (user?.id) {
-        const updatedMentorships = await getMenteeMentorships(user.id);
-        
-        // Fetch mentor profiles to get avatars
-        const mentorProfilesMap: Record<number, string | undefined> = {};
-        const uniqueMentorIds = [...new Set(updatedMentorships.map(m => m.mentorId))];
-        await Promise.all(
-          uniqueMentorIds.map(async (mentorId) => {
-            try {
-              const profile = await profileService.getPublicProfile(mentorId);
-              mentorProfilesMap[mentorId] = profile.imageUrl;
-            } catch (err) {
-              mentorProfilesMap[mentorId] = undefined;
-            }
-          })
-        );
-        
-        const converted = updatedMentorships.map((m) => 
-          convertMentorshipDetailsToMentorship(m, mentorProfilesMap[m.mentorId])
-        );
-        // Remove duplicates by id and mentorId combination
-        const uniqueMentorships = Array.from(
-          new Map(converted.map(m => [`${m.id}-${m.mentorId}`, m])).values()
-        );
-        setMentorships(uniqueMentorships);
-        
-        // Keep on completed tab after review
-        setActiveTab('completed');
-      }
+      await mentorshipsQuery.refetch();
+      // Keep on completed tab after review
+      setActiveTab('completed');
       
       // Trigger a refresh of the mentor profile page if it's open
       // This will make the review appear on the mentor's profile
@@ -204,19 +174,22 @@ const MyMentorshipsPage = () => {
       }));
     } catch (err: any) {
       console.error('Error submitting review:', err);
-      const errorMessage = err?.response?.data?.message || err?.message || t('mentorship.errors.reviewFailed') || 'Failed to submit review. Please try again.';
-      toast.error(errorMessage);
+      const normalized = normalizeApiError(err, t('mentorship.errors.reviewFailed'));
+      toast.error(normalized.friendlyMessage);
     } finally {
       setIsSubmittingReview(false);
     }
   };
 
-  if (isLoading) {
+  if (mentorshipsQuery.isLoading || isLoadingProfiles) {
     return <CenteredLoader />;
   }
 
-  if (error) {
-    return <CenteredError message={error} />;
+  if (error || mentorshipsQuery.error) {
+    const normalized = mentorshipsQuery.error
+      ? normalizeApiError(mentorshipsQuery.error, t('mentorship.errors.loadMentorshipsFailed'))
+      : { friendlyMessage: error || '' };
+    return <CenteredError message={normalized.friendlyMessage || error || ''} />;
   }
 
   const activeMentorships = mentorships.filter(m => m.status === 'active');

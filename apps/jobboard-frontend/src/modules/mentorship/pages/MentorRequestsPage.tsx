@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@shared/components/ui/card';
@@ -9,12 +9,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared/components/ui/
 import { Clock, CheckCircle, XCircle, User, Calendar } from 'lucide-react';
 import type { MentorshipRequestDTO } from '@shared/types/api.types';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
-import { getMentorMentorshipRequests, respondToMentorshipRequest } from '@modules/mentorship/services/mentorship.service';
+import {
+  useMentorMentorshipRequestsQuery,
+  useRespondToMentorshipRequestMutation,
+} from '@modules/mentorship/services/mentorship.service';
 import { profileService } from '@modules/profile/services/profile.service';
 import type { PublicProfile } from '@shared/types/profile.types';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
 import { toast } from 'react-toastify';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 const getStatusIcon = (status: string) => {
   switch (status.toUpperCase()) {
@@ -49,56 +53,31 @@ const MentorRequestsPage = () => {
   const { user } = useAuth();
   const [requests, setRequests] = useState<MentorshipRequestDTO[]>([]);
   const [menteeProfiles, setMenteeProfiles] = useState<Record<string, PublicProfile>>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('pending');
+  const mentorRequestsQuery = useMentorMentorshipRequestsQuery(user?.id, Boolean(user?.id));
+  const respondMutation = useRespondToMentorshipRequestMutation();
 
-  useEffect(() => {
-    const fetchRequests = async () => {
-      if (!user?.id) {
-        setError('User not authenticated');
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        setError(null);
-        const mentorRequests = await getMentorMentorshipRequests(user.id);
-        console.log('Fetched mentor requests:', mentorRequests);
-        setRequests(mentorRequests);
-
-        // Fetch profile information for each mentee
-        const uniqueRequesterIds = [...new Set(mentorRequests.map(r => r.requesterId))];
-        const profiles: Record<string, PublicProfile> = {};
-        
-        await Promise.all(
-          uniqueRequesterIds.map(async (requesterId) => {
-            try {
-              const requesterIdNum = parseInt(requesterId, 10);
-              if (!isNaN(requesterIdNum)) {
-                const profile = await profileService.getPublicProfile(requesterIdNum);
-                profiles[requesterId] = profile;
-              }
-            } catch (err) {
-              console.error(`Error fetching profile for requester ${requesterId}:`, err);
-              // Continue even if one profile fails
+  useMemo(() => {
+    if (mentorRequestsQuery.data) {
+      setRequests(mentorRequestsQuery.data);
+      const uniqueRequesterIds = [...new Set(mentorRequestsQuery.data.map((r) => r.requesterId))];
+      const profiles: Record<string, PublicProfile> = {};
+      Promise.all(
+        uniqueRequesterIds.map(async (requesterId) => {
+          try {
+            const requesterIdNum = parseInt(requesterId, 10);
+            if (!isNaN(requesterIdNum)) {
+              const profile = await profileService.getPublicProfile(requesterIdNum);
+              profiles[requesterId] = profile;
             }
-          })
-        );
-        
-        setMenteeProfiles(profiles);
-      } catch (err) {
-        console.error('Error fetching mentor requests:', err);
-        setError('Failed to load mentorship requests. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRequests();
-  }, [user?.id]);
+          } catch (err) {
+            console.error(`Error fetching profile for requester ${requesterId}:`, err);
+          }
+        })
+      ).then(() => setMenteeProfiles(profiles));
+    }
+  }, [mentorRequestsQuery.data]);
 
   const handleRespond = async (requestId: string, accept: boolean) => {
     if (!user?.id) {
@@ -113,11 +92,12 @@ const MentorRequestsPage = () => {
       if (isNaN(requestIdNum)) {
         throw new Error('Invalid request ID');
       }
+      await respondMutation.mutateAsync({ requestId: requestIdNum, accept });
 
-      await respondToMentorshipRequest(requestIdNum, { accept });
-      
-      const updatedRequests = await getMentorMentorshipRequests(user.id);
-      setRequests(updatedRequests);
+      const refreshed = await mentorRequestsQuery.refetch();
+      if (refreshed.data) {
+        setRequests(refreshed.data);
+      }
       
       // Switch to appropriate tab after responding
       if (accept) {
@@ -127,7 +107,7 @@ const MentorRequestsPage = () => {
       }
 
       // Refresh mentee profiles for any new requesters
-      const uniqueRequesterIds = [...new Set(updatedRequests.map(r => r.requesterId))];
+      const uniqueRequesterIds = [...new Set((refreshed.data || []).map((r) => r.requesterId))];
       const newProfiles: Record<string, PublicProfile> = { ...menteeProfiles };
       
       await Promise.all(
@@ -147,27 +127,20 @@ const MentorRequestsPage = () => {
       );
       
       setMenteeProfiles(newProfiles);
-
-      toast.success(
-        accept
-          ? t('mentorship.mentorRequests.acceptSuccess') || 'Request accepted successfully!'
-          : t('mentorship.mentorRequests.rejectSuccess') || 'Request rejected.'
-      );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error responding to request:', err);
-      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to respond to request.';
-      toast.error(errorMessage);
     } finally {
       setRespondingTo(null);
     }
   };
 
-  if (isLoading) {
+  if (mentorRequestsQuery.isLoading) {
     return <CenteredLoader />;
   }
 
-  if (error) {
-    return <CenteredError message={error} />;
+  if (mentorRequestsQuery.error) {
+    const normalized = normalizeApiError(mentorRequestsQuery.error, t('mentorship.mentorRequests.loadError'));
+    return <CenteredError message={normalized.friendlyMessage} />;
   }
 
   const pendingRequests = requests.filter(r => {

@@ -7,7 +7,11 @@ import { Badge } from "@shared/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@shared/components/ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
 import type { Mentor } from "@shared/types/mentor";
-import { createMentorshipRequest } from "@modules/mentorship/services/mentorship.service";
+import type { MentorshipDetailsDTO } from "@shared/types/api.types";
+import {
+  useCreateMentorshipRequestMutation,
+  useMenteeMentorshipsQuery,
+} from "@modules/mentorship/services/mentorship.service";
 import { useAuth } from "@/modules/auth/contexts/AuthContext";
 import { toast } from "react-toastify";
 
@@ -21,6 +25,8 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isRequesting, setIsRequesting] = useState(false);
+  const createRequestMutation = useCreateMentorshipRequestMutation();
+  const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
   const isAvailable = mentor.mentees < mentor.capacity;
 
   const handleRequest = async () => {
@@ -29,32 +35,37 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
       return;
     }
 
-    // Check if user already has a pending/active request with this mentor
-    try {
-      const { getMenteeMentorships } = await import('@modules/mentorship/services/mentorship.service');
-      const mentorships = await getMenteeMentorships(user.id);
-      const mentorIdNum = parseInt(mentor.id, 10);
-      const existingRequest = mentorships.find(
-        (m: any) => 
-          m.mentorId === mentorIdNum && 
-          (m.requestStatus?.toUpperCase() === 'PENDING' || 
-           m.requestStatus?.toUpperCase() === 'ACCEPTED' || 
-           m.reviewStatus?.toUpperCase() === 'ACTIVE')
-      );
-      
-      if (existingRequest) {
-        toast.error(t('mentorship.card.alreadyRequested') || 'You already have a pending or active mentorship request with this mentor.');
-        return;
-      }
-    } catch (err) {
-      console.error('Error checking existing requests:', err);
-      // Continue with request if check fails
+    const mentorIdNum = parseInt(mentor.id, 10);
+    if (isNaN(mentorIdNum)) {
+      toast.error(t('mentorship.card.requestError') || 'Invalid mentor id');
+      return;
     }
 
     setIsRequesting(true);
     try {
-      await createMentorshipRequest({ mentorId: parseInt(mentor.id, 10) });
-      toast.success(t('mentorship.card.requestSent') || 'Mentorship request sent successfully!');
+      const menteeMentorships =
+        menteeMentorshipsQuery.data ??
+        (await menteeMentorshipsQuery.refetch()).data ??
+        [];
+
+      const existingRequest = menteeMentorships.find(
+        (m: MentorshipDetailsDTO) =>
+          m.mentorId === mentorIdNum &&
+          (m.requestStatus?.toUpperCase() === 'PENDING' ||
+            m.requestStatus?.toUpperCase() === 'ACCEPTED' ||
+            m.reviewStatus?.toUpperCase() === 'ACTIVE')
+      );
+
+      if (existingRequest) {
+        toast.error(
+          t('mentorship.card.alreadyRequested') ||
+            'You already have a pending or active mentorship request with this mentor.'
+        );
+        return;
+      }
+
+      await createRequestMutation.mutateAsync({ mentorId: mentorIdNum });
+      await menteeMentorshipsQuery.refetch();
       navigate('/mentorship/my', {
         state: { 
           showSuccess: true, 
@@ -62,10 +73,8 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
           activeTab: 'pending' // Switch to pending tab
         }
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error sending mentorship request:', err);
-      const errorMessage = err?.response?.data?.message || err?.message || t('mentorship.card.requestError') || 'Failed to send mentorship request';
-      toast.error(errorMessage);
     } finally {
       setIsRequesting(false);
     }

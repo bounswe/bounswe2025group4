@@ -1,4 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import { api } from '@shared/lib/api-client';
+import { mentorshipKeys } from '@shared/lib/query-keys';
+import { normalizeApiError } from '@shared/utils/error-handler';
+import { useQueryWithToast } from '@shared/hooks/useQueryWithToast';
 import type {
   CreateMentorProfileDTO,
   UpdateMentorProfileDTO,
@@ -18,11 +23,7 @@ import type {
  * Handles all API calls related to mentorship
  */
 
-/**
- * Get all mentor profiles
- * GET /api/mentorship
- */
-export async function getMentors(): Promise<MentorProfileDetailDTO[]> {
+async function fetchMentors(): Promise<MentorProfileDetailDTO[]> {
   const response = await api.get<MentorProfileDetailDTO[]>('/mentorship');
   return response.data;
 }
@@ -32,7 +33,7 @@ export async function getMentors(): Promise<MentorProfileDetailDTO[]> {
  * GET /api/mentorship/mentor/{userId}
  * Returns null if profile doesn't exist (404)
  */
-export async function getMentorProfile(userId: number): Promise<MentorProfileDetailDTO | null> {
+async function fetchMentorProfile(userId: number): Promise<MentorProfileDetailDTO | null> {
   try {
     // Use validateStatus to treat 404 as success (not an error) to prevent console logging
     const response = await api.get<MentorProfileDetailDTO>(`/mentorship/mentor/${userId}`, {
@@ -45,9 +46,9 @@ export async function getMentorProfile(userId: number): Promise<MentorProfileDet
     }
     
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // Fallback: if validateStatus didn't work, check for 404
-    if (error?.response?.status === 404) {
+    if ((error as { response?: { status?: number } })?.response?.status === 404) {
       return null;
     }
     // Re-throw other errors
@@ -59,7 +60,7 @@ export async function getMentorProfile(userId: number): Promise<MentorProfileDet
  * Create a mentor profile
  * POST /api/mentorship/mentor
  */
-export async function createMentorProfile(
+async function createMentorProfile(
   data: CreateMentorProfileDTO
 ): Promise<MentorProfileDTO> {
   const response = await api.post<MentorProfileDTO>('/mentorship/mentor', data);
@@ -70,7 +71,7 @@ export async function createMentorProfile(
  * Update a mentor profile
  * PUT /api/mentorship/mentor/{userId}
  */
-export async function updateMentorProfile(
+async function updateMentorProfile(
   userId: number,
   data: UpdateMentorProfileDTO
 ): Promise<MentorProfileDTO> {
@@ -82,22 +83,18 @@ export async function updateMentorProfile(
  * Create a mentorship request
  * POST /api/mentorship/requests
  */
-export async function createMentorshipRequest(
+async function createMentorshipRequest(
   data: CreateMentorshipRequestDTO
 ): Promise<MentorshipRequestDTO> {
-  try {
-    const response = await api.post<MentorshipRequestDTO>('/mentorship/requests', data);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.post<MentorshipRequestDTO>('/mentorship/requests', data);
+  return response.data;
 }
 
 /**
  * Get mentorship details for a mentee
  * GET /api/mentorship/mentee/{menteeId}/requests
  */
-export async function getMenteeMentorships(menteeId: number): Promise<MentorshipDetailsDTO[]> {
+async function fetchMenteeMentorships(menteeId: number): Promise<MentorshipDetailsDTO[]> {
   const response = await api.get<MentorshipDetailsDTO[]>(`/mentorship/mentee/${menteeId}/requests`);
   return response.data;
 }
@@ -106,7 +103,7 @@ export async function getMenteeMentorships(menteeId: number): Promise<Mentorship
  * Get mentorship requests for a mentor
  * GET /api/mentorship/mentor/{mentorId}/requests
  */
-export async function getMentorMentorshipRequests(mentorId: number): Promise<MentorshipRequestDTO[]> {
+async function fetchMentorMentorshipRequests(mentorId: number): Promise<MentorshipRequestDTO[]> {
   const response = await api.get<MentorshipRequestDTO[]>(`/mentorship/mentor/${mentorId}/requests`);
   return response.data;
 }
@@ -115,7 +112,7 @@ export async function getMentorMentorshipRequests(mentorId: number): Promise<Men
  * Respond to a mentorship request (accept/reject)
  * PATCH /api/mentorship/requests/{requestId}/respond
  */
-export async function respondToMentorshipRequest(
+async function respondToMentorshipRequest(
   requestId: number,
   data: RespondToRequestDTO
 ): Promise<MentorshipRequestDTO> {
@@ -127,7 +124,7 @@ export async function respondToMentorshipRequest(
  * Complete a mentorship
  * PATCH /api/mentorship/review/{resumeReviewId}/complete
  */
-export async function completeMentorship(resumeReviewId: number): Promise<void> {
+async function completeMentorship(resumeReviewId: number): Promise<void> {
   await api.patch(`/mentorship/review/${resumeReviewId}/complete`);
 }
 
@@ -135,7 +132,7 @@ export async function completeMentorship(resumeReviewId: number): Promise<void> 
  * Rate a mentor (write a review)
  * POST /api/mentorship/ratings
  */
-export async function rateMentor(data: CreateRatingDTO): Promise<void> {
+async function rateMentor(data: CreateRatingDTO): Promise<void> {
   await api.post('/mentorship/ratings', data);
 }
 
@@ -143,7 +140,7 @@ export async function rateMentor(data: CreateRatingDTO): Promise<void> {
  * Get resume review details
  * GET /api/mentorship/{resumeReviewId}
  */
-export async function getResumeReview(resumeReviewId: number): Promise<ResumeReviewDTO> {
+async function fetchResumeReview(resumeReviewId: number): Promise<ResumeReviewDTO> {
   const response = await api.get<ResumeReviewDTO>(`/mentorship/${resumeReviewId}`);
   return response.data;
 }
@@ -152,7 +149,7 @@ export async function getResumeReview(resumeReviewId: number): Promise<ResumeRev
  * Get resume file URL
  * GET /api/mentorship/{resumeReviewId}/file
  */
-export async function getResumeFileUrl(resumeReviewId: number): Promise<string> {
+async function fetchResumeFileUrl(resumeReviewId: number): Promise<string> {
   const response = await api.get<{ fileUrl: string }>(`/mentorship/${resumeReviewId}/file`);
   return response.data.fileUrl;
 }
@@ -161,7 +158,7 @@ export async function getResumeFileUrl(resumeReviewId: number): Promise<string> 
  * Upload resume file
  * POST /api/mentorship/{resumeReviewId}/file
  */
-export async function uploadResumeFile(resumeReviewId: number, file: File): Promise<ResumeFileResponseDTO> {
+async function uploadResumeFile(resumeReviewId: number, file: File): Promise<ResumeFileResponseDTO> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -177,7 +174,192 @@ export async function uploadResumeFile(resumeReviewId: number, file: File): Prom
  * Close mentorship
  * PATCH /api/mentorship/review/{resumeReviewId}/close
  */
-export async function closeMentorship(resumeReviewId: number): Promise<void> {
+async function closeMentorship(resumeReviewId: number): Promise<void> {
   await api.patch(`/mentorship/review/${resumeReviewId}/close`);
 }
+
+// Legacy exports
+export {
+  fetchMentors as getMentors,
+  fetchMentorProfile as getMentorProfile,
+  createMentorProfile,
+  updateMentorProfile,
+  createMentorshipRequest,
+  fetchMenteeMentorships as getMenteeMentorships,
+  fetchMentorMentorshipRequests as getMentorMentorshipRequests,
+  respondToMentorshipRequest,
+  completeMentorship,
+  rateMentor,
+  fetchResumeReview as getResumeReview,
+  fetchResumeFileUrl as getResumeFileUrl,
+  uploadResumeFile,
+  closeMentorship,
+};
+
+// Hooks
+export const useMentorsQuery = () =>
+  useQueryWithToast({
+    queryKey: mentorshipKeys.mentors,
+    queryFn: () => fetchMentors(),
+  });
+
+export const useMentorProfileQuery = (userId?: number, enabled = true) =>
+  useQueryWithToast({
+    queryKey: userId ? mentorshipKeys.mentorProfile(userId) : mentorshipKeys.mentorProfile('missing'),
+    queryFn: () => fetchMentorProfile(userId as number),
+    enabled: Boolean(userId) && enabled,
+  });
+
+export const useCreateMentorProfileMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createMentorProfile,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.mentors });
+      if (data.id) {
+        queryClient.invalidateQueries({ queryKey: mentorshipKeys.mentorProfile(data.id) });
+      }
+      toast.success('Mentor profile created');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useUpdateMentorProfileMutation = (userId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: UpdateMentorProfileDTO) => updateMentorProfile(userId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.mentorProfile(userId) });
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.mentors });
+      toast.success('Mentor profile updated');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useCreateMentorshipRequestMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createMentorshipRequest,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.menteeMentorships('me') });
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.mentorRequests('me') });
+      toast.success('Mentorship request sent');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useMenteeMentorshipsQuery = (menteeId?: number, enabled = true) =>
+  useQueryWithToast({
+    queryKey: mentorshipKeys.menteeMentorships(menteeId ?? 'me'),
+    queryFn: () => fetchMenteeMentorships(menteeId as number),
+    enabled: Boolean(menteeId) && enabled,
+  });
+
+export const useMentorMentorshipRequestsQuery = (mentorId?: number, enabled = true) =>
+  useQueryWithToast({
+    queryKey: mentorshipKeys.mentorRequests(mentorId ?? 'me'),
+    queryFn: () => fetchMentorMentorshipRequests(mentorId as number),
+    enabled: Boolean(mentorId) && enabled,
+  });
+
+export const useRespondToMentorshipRequestMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ requestId, accept }: { requestId: number; accept: boolean }) =>
+      respondToMentorshipRequest(requestId, { accept }),
+    onMutate: async ({ requestId, accept }) => {
+      await queryClient.cancelQueries({ queryKey: mentorshipKeys.mentorRequests('me') });
+      const previous = queryClient.getQueryData<MentorshipRequestDTO[]>(
+        mentorshipKeys.mentorRequests('me')
+      );
+
+      if (previous) {
+        const updated = previous.map((request) =>
+          request.id === requestId
+            ? { ...request, status: accept ? 'ACCEPTED' : 'REJECTED' }
+            : request
+        );
+        queryClient.setQueryData(mentorshipKeys.mentorRequests('me'), updated);
+      }
+
+      return { previous };
+    },
+    onError: (err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(mentorshipKeys.mentorRequests('me'), context.previous);
+      }
+      toast.error(normalizeApiError(err).friendlyMessage);
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.mentorRequests('me') });
+      toast.success(variables.accept ? 'Request accepted' : 'Request rejected');
+    },
+  });
+};
+
+export const useCompleteMentorshipMutation = (resumeReviewId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => completeMentorship(resumeReviewId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.menteeMentorships('me') });
+      toast.success('Mentorship completed');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useCloseMentorshipMutation = (resumeReviewId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => closeMentorship(resumeReviewId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.menteeMentorships('me') });
+      toast.success('Mentorship closed');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useRateMentorMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: rateMentor,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.menteeMentorships('me') });
+      toast.success('Review submitted');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useResumeReviewQuery = (resumeReviewId?: number, enabled = true) =>
+  useQueryWithToast({
+    queryKey: resumeReviewId ? ['resume-review', resumeReviewId] : ['resume-review', 'missing'],
+    queryFn: () => fetchResumeReview(resumeReviewId as number),
+    enabled: Boolean(resumeReviewId) && enabled,
+  });
+
+export const useResumeFileUrlQuery = (resumeReviewId?: number, enabled = true) =>
+  useQueryWithToast({
+    queryKey: resumeReviewId ? ['resume-review-file', resumeReviewId] : ['resume-review-file', 'missing'],
+    queryFn: () => fetchResumeFileUrl(resumeReviewId as number),
+    enabled: Boolean(resumeReviewId) && enabled,
+  });
+
+export const useUploadResumeFileMutation = (resumeReviewId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => uploadResumeFile(resumeReviewId, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['resume-review', resumeReviewId] });
+      queryClient.invalidateQueries({ queryKey: ['resume-review-file', resumeReviewId] });
+      toast.success('Resume file uploaded');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
 
