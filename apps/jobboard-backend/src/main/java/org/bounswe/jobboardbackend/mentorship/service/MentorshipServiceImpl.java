@@ -10,6 +10,8 @@ import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.bounswe.jobboardbackend.mentorship.model.*;
 import org.bounswe.jobboardbackend.mentorship.repository.*;
+import org.bounswe.jobboardbackend.notification.model.NotificationType;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
@@ -39,7 +41,7 @@ public class MentorshipServiceImpl implements MentorshipService {
     private final SimpMessagingTemplate messagingTemplate;
     private final ConversationRepository conversationRepository;
     private final Storage storage = StorageOptions.getDefaultInstance().getService();
-    // private final NotificationService notificationService; // (Future implementation)
+    private final NotificationService notificationService;
 
 
     @Value("${app.gcs.bucket}")
@@ -254,8 +256,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         newRequest.setMotivation(requestDTO.motivation());
         MentorshipRequest savedRequest = mentorshipRequestRepository.save(newRequest);
 
-        // Trigger notification
-        // notificationService.notifyMentor(mentor.getUser(), "New mentorship request");  // (Future implementation)
+        notificationService.notifyUser(mentor.getUser().getUsername(), "New Mentorship Request", NotificationType.MENTORSHIP_REQUEST, "New Mentorship Request from " + jobSeeker.getUsername(), newRequest.getId());
 
         return toMentorshipRequestDTO(savedRequest);
     }
@@ -288,20 +289,19 @@ public class MentorshipServiceImpl implements MentorshipService {
             review.setCreatedAt(LocalDateTime.now());
             ResumeReview savedReview = resumeReviewRepository.save(review);
 
-            chatService.createConversationForReview(savedReview);
+            Conversation conversation = chatService.createConversationForReview(savedReview);
 
             MentorProfile mentor = request.getMentor();
             mentor.setCurrentMentees(mentor.getCurrentMentees() + 1);
             mentorProfileRepository.save(mentor);
 
-            // Trigger notification
-            // notificationService.notifyUser(request.getRequester(), "Your request was accepted!"); // (Future implementation)
+            notificationService.notifyUser(request.getRequester().getUsername(), "Mentorship Approval", NotificationType.MENTORSHIP_APPROVED, "Your mentorship request is approved by " + mentor.getUser().getUsername(), conversation.getId());
 
         } else {
             request.decline(respondToRequestDTO.responseMessage());
 
-            // Trigger notification
-            // notificationService.notifyUser(request.getRequester(), "Your request was declined."); // (Future implementation)
+            notificationService.notifyUser(request.getRequester().getUsername(), "Mentorship Rejection", NotificationType.MENTORSHIP_REJECTED, "Your mentorship request is rejected by " + request.getMentor().getUser().getUsername(), null);
+
         }
 
         MentorshipRequest updatedRequest = mentorshipRequestRepository.save(request);
