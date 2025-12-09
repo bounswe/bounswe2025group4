@@ -34,6 +34,8 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@stomp/stompjs": "^7.2.1",
     "@tailwindcss/vite": "^4.1.14",
+    "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-query-devtools": "^5.91.1",
     "axios": "^1.12.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
