@@ -4,10 +4,11 @@
  */
 
 import { useState, useCallback } from 'react';
-import { markReviewHelpful } from '@modules/mentorship/services/reviews.service';
 import type { ReviewResponse } from '@shared/types/workplace.types';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import { useMarkReviewHelpfulMutation } from '@modules/mentorship/services/reviews.service';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 interface UseReviewHelpfulProps {
   workplaceId: number;
@@ -34,6 +35,7 @@ export function useReviewHelpful({
   const [userVoted, setUserVoted] = useState(initialUserVoted);
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation('common');
+  const helpfulMutation = useMarkReviewHelpfulMutation(workplaceId, reviewId);
 
   const canVote = true; // will be enhanced with auth checks when available
 
@@ -52,7 +54,7 @@ export function useReviewHelpful({
 
     try {
       // Backend toggles helpful status via single POST endpoint
-      const updatedReview = await markReviewHelpful(workplaceId, reviewId);
+      const updatedReview = await helpfulMutation.mutateAsync();
 
       const newUserVoted = !!updatedReview.helpfulByUser;
       setHelpfulCount(updatedReview.helpfulCount);
@@ -72,11 +74,14 @@ export function useReviewHelpful({
 
       console.error('Failed to toggle helpful vote:', error);
 
-      toast.error(t('reviews.helpfulError') || 'Failed to update helpful vote');
+      toast.error(
+        normalizeApiError(error, t('reviews.helpfulError') || 'Failed to update helpful vote')
+          .friendlyMessage
+      );
     } finally {
       setIsLoading(false);
     }
-  }, [workplaceId, reviewId, helpfulCount, isLoading, canVote, toast, t, userVoted]);
+  }, [workplaceId, reviewId, helpfulCount, isLoading, canVote, helpfulMutation, t, userVoted]);
 
   return {
     helpfulCount,
