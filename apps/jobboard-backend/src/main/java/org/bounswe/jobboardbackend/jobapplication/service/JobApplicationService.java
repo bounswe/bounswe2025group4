@@ -145,10 +145,10 @@ public class JobApplicationService {
                 .build();
 
         JobApplication savedApplication = applicationRepository.save(application);
-        
+
         // Publish event for badge system
         eventPublisher.publishEvent(new JobApplicationCreatedEvent(jobSeeker.getId(), savedApplication.getId()));
-        
+
         return toResponseDto(savedApplication);
     }
 
@@ -169,13 +169,10 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        JobApplication savedApplication = applicationRepository.save(application);
-        
-        // Publish event for badge system
-        eventPublisher.publishEvent(new JobApplicationApprovedEvent(
-            application.getJobSeeker().getId(), savedApplication.getId()));
-        
-        return toResponseDto(savedApplication);
+        notificationService.notifyUser(application.getJobSeeker().getUsername(), "Job Application Approval", NotificationType.JOB_APPLICATION_APPROVED, "Job Application is approved by" + employer.getUsername(), application.getId());
+
+
+        return toResponseDto(applicationRepository.save(application));
     }
 
     @Transactional
