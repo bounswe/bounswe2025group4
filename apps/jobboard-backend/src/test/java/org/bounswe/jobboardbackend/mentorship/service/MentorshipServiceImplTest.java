@@ -289,7 +289,6 @@ class MentorshipServiceImplTest {
         verifyNoMoreInteractions(mentorProfileRepository, userRepository, mentorshipRequestRepository);
     }
 
-
     // ---------------------------------------------------------------------
     // respondToMentorshipRequest
     // ---------------------------------------------------------------------
@@ -329,8 +328,12 @@ class MentorshipServiceImplTest {
                     return r;
                 });
 
-        when(mentorProfileRepository.save(any(MentorProfile.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+        Conversation conversation = new Conversation();
+        conversation.setId(555L);
+        when(chatService.createConversationForReview(any(ResumeReview.class)))
+                .thenReturn(conversation);
+
+        when(mentorshipRequestRepository.save(request)).thenReturn(request);
 
         when(mentorshipRequestRepository.save(any(MentorshipRequest.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -377,8 +380,6 @@ class MentorshipServiceImplTest {
                 chatService
         );
     }
-
-
 
     @Test
     void respondToMentorshipRequest_decline_success() {
@@ -443,8 +444,6 @@ class MentorshipServiceImplTest {
         );
     }
 
-
-
     @Test
     void respondToMentorshipRequest_unauthorizedMentor_throws() {
         Long requestId = 1L;
@@ -479,7 +478,6 @@ class MentorshipServiceImplTest {
         verify(chatService, never()).createConversationForReview(any());
         verify(mentorProfileRepository, never()).save(any());
     }
-
 
     // ---------------------------------------------------------------------
     // completeMentorship
