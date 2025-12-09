@@ -17,8 +17,6 @@ import { useCreateJobMutation } from '@modules/jobs/services/jobs.service';
 import { useMyWorkplacesQuery } from '@modules/employer/services/employer.service';
 import type { CreateJobPostRequest } from '@shared/types/api.types';
 import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';
-import { normalizeApiError } from '@shared/utils/error-handler';
-
 type JobPostFormData = {
   title: string;
   description: string;

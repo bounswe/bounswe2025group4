@@ -277,8 +277,9 @@ export const useRespondToMentorshipRequestMutation = () => {
       );
 
       if (previous) {
+        const requestIdString = String(requestId);
         const updated = previous.map((request) =>
-          request.id === requestId
+          request.id === requestIdString
             ? { ...request, status: accept ? 'ACCEPTED' : 'REJECTED' }
             : request
         );

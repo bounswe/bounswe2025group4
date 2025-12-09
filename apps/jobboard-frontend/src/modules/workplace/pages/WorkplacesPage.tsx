@@ -16,7 +16,7 @@ import type { WorkplaceBriefResponse } from '@shared/types/workplace.types';
 import CenteredError from '@shared/components/common/CenteredError';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { normalizeApiError } from '@shared/utils/error-handler';
 
 const SECTORS = [

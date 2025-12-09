@@ -9,9 +9,22 @@ const setCompanyName = vi.fn();
 const setIsRemote = vi.fn();
 const setIsDisabilityInclusive = vi.fn();
 
-const useFiltersMock = vi.fn(() => ({
+type UseFiltersMockReturn = {
+  selectedEthicalTags: EthicalTag[];
+  salaryRange: [number, number];
+  companyNameFilter: string;
+  isRemoteOnly: boolean;
+  isDisabilityInclusive: boolean;
+  setEthicalTags: typeof setEthicalTags;
+  setSalaryRange: typeof setSalaryRange;
+  setCompanyName: typeof setCompanyName;
+  setIsRemote: typeof setIsRemote;
+  setIsDisabilityInclusive: typeof setIsDisabilityInclusive;
+};
+
+const useFiltersMock = vi.fn((): UseFiltersMockReturn => ({
   selectedEthicalTags: [],
-  salaryRange: [40, 120] as [number, number],
+  salaryRange: [40, 120],
   companyNameFilter: '',
   isRemoteOnly: false,
   isDisabilityInclusive: false,
@@ -23,7 +36,7 @@ const useFiltersMock = vi.fn(() => ({
 }));
 
 vi.mock('@shared/hooks/useFilters', () => ({
-  useFilters: (...args: unknown[]) => useFiltersMock(...args),
+  useFilters: () => useFiltersMock(),
 }));
 
 vi.mock('@shared/components/ui/multi-select-dropdown', () => ({

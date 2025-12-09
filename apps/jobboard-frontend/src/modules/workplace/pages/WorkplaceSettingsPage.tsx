@@ -35,7 +35,6 @@ import {
   updateWorkplaceSchema,
   type UpdateWorkplaceFormData,
 } from '@modules/workplace/schemas/update-workplace.schema';
-import type { WorkplaceDetailResponse } from '@shared/types/workplace.types';
 import type { EthicalTag } from '@shared/types/job';
 import { getErrorMessage } from '@shared/utils/error-handler';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
