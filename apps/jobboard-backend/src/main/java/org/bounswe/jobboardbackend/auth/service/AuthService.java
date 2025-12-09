@@ -14,6 +14,8 @@ import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.security.JwtUtils;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
+import org.bounswe.jobboardbackend.profile.model.Profile;
+import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,6 +47,7 @@ public class AuthService {
     private final OtpService otpService;
     private final OtpRepository otpRepository;
     private final UserDetailsServiceImpl userDetailsService;
+    private final ProfileRepository profileRepository;
 
 
 
@@ -141,6 +144,19 @@ public class AuthService {
         newUser.setRole(role);
         newUser.setEmailVerified(!appEnv.equals("prod"));
         userRepository.save(newUser);
+
+        Profile profile = Profile.builder()
+                .user(newUser)
+                .firstName(registerRequest.getFirstName())
+                .lastName(registerRequest.getLastName())
+                .bio(registerRequest.getBio())
+                .gender(registerRequest.getGender())
+                .imageUrl(null)
+                .build();
+
+        profileRepository.save(profile);
+
+
         if (appEnv.equals("prod")) {
             sendEmailForRegister(newUser);
         }
