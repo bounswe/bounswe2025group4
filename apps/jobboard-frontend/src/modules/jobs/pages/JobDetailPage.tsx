@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight, MapPin, DollarSign, Accessibility } from 'lucide-react';
@@ -7,50 +6,31 @@ import { Card } from '@shared/components/ui/card';
 import { Badge } from '@shared/components/ui/badge';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import { WorkplaceCard } from '@/modules/workplace/components/WorkplaceCard';
-import type { JobPostResponse } from '@shared/types/api.types';
-import { getJobById } from '@modules/jobs/services/jobs.service';
+import { useJobQuery } from '@modules/jobs/services/jobs.service';
 import { cn } from '@shared/lib/utils';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [job, setJob] = useState<JobPostResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { t, i18n } = useTranslation('common');
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
 
-  useEffect(() => {
-    const fetchJob = async () => {
-      if (!id) return;
+  const jobId = id ? parseInt(id, 10) : undefined;
+  const jobQuery = useJobQuery(jobId);
+  const job = jobQuery.data ?? null;
+  const normalizedError = jobQuery.error ? normalizeApiError(jobQuery.error) : null;
+  const errorMessage = normalizedError?.friendlyMessage;
 
-      try {
-        setIsLoading(true);
-        setError(null);
-        const jobData = await getJobById(parseInt(id, 10));
-        setJob(jobData);
-      } catch (err) {
-        console.error('Error fetching job:', err);
-        setError('fetch_error');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchJob();
-  }, [id]);
-
-  if (isLoading) {
+  if (jobQuery.isLoading) {
     return <CenteredLoader />;
   }
 
-  if (error || !job) {
-    const errorTitle = error
+  if (jobQuery.error || !job) {
+    const errorTitle = jobQuery.error
       ? t('jobs.detail.error.title')
       : t('jobs.detail.error.missing');
-    const errorMessage = error
-      ? t('jobs.detail.error.fetch')
-      : t('jobs.detail.error.description');
+    const displayMessage = errorMessage || t('jobs.detail.error.fetch');
 
     return (
       <div className="container mx-auto px-4 py-12 text-center">
@@ -58,7 +38,7 @@ export default function JobDetailPage() {
           {errorTitle}
         </h1>
         <p className="mt-2 text-muted-foreground">
-          {errorMessage}
+          {displayMessage}
         </p>
         <Button asChild className="mt-6">
           <Link to="/jobs">{t('jobs.detail.backToJobs')}</Link>

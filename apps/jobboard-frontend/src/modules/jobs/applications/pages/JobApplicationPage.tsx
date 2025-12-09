@@ -1,16 +1,22 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { ChevronRight, Upload, X, FileText } from 'lucide-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Label } from '@shared/components/ui/label';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import { cn } from '@shared/lib/utils';
-import type { JobPostResponse } from '@shared/types/api.types';
-import { getJobById } from '@modules/jobs/services/jobs.service';
-import { createApplication, uploadCv, getApplicationsByJobSeeker } from '@modules/jobs/applications/services/applications.service';
+import { applicationsKeys, jobsKeys } from '@shared/lib/query-keys';
+import { normalizeApiError } from '@shared/utils/error-handler';
+import { useJobQuery } from '@modules/jobs/services/jobs.service';
+import {
+  createApplication,
+  uploadCv,
+  useApplicationsByJobSeekerQuery,
+} from '@modules/jobs/applications/services/applications.service';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -19,16 +25,26 @@ const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx'];
 
 export default function JobApplicationPage() {
   const { id } = useParams<{ id: string }>();
+  const jobId = id ? parseInt(id, 10) : undefined;
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const { t, i18n } = useTranslation('common');
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const hasRedirectedRef = useRef(false);
 
-  const [job, setJob] = useState<JobPostResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    data: job,
+    isLoading: isJobLoading,
+    isError: isJobError,
+  } = useJobQuery(jobId, Boolean(jobId));
+
+  const {
+    data: userApplications,
+    isLoading: isApplicationsLoading,
+  } = useApplicationsByJobSeekerQuery(user?.id, Boolean(user?.id));
 
   // Form fields
   const [coverLetter, setCoverLetter] = useState('');
@@ -36,39 +52,50 @@ export default function JobApplicationPage() {
   const [cvFile, setCvFile] = useState<File | null>(null);
 
   useEffect(() => {
-    const fetchJobAndCheckApplication = async () => {
-      if (!id || !user) return;
+    if (!jobId || !userApplications || hasRedirectedRef.current) return;
 
-      try {
-        setIsLoading(true);
+    const hasAppliedToThisJob = userApplications.some((app) => app.jobPostId === jobId);
 
-        // Check if user already applied to this specific job
-        const allApplications = await getApplicationsByJobSeeker(user.id);
+    if (hasAppliedToThisJob) {
+      hasRedirectedRef.current = true;
+      toast.info(t('applications.job.errors.alreadyApplied'));
+      navigate(`/jobs/${id}`);
+    }
+  }, [id, jobId, navigate, t, userApplications]);
 
-        const hasAppliedToThisJob = allApplications.some(
-          (app) => app.jobPostId === parseInt(id, 10)
-        );
-
-        if (hasAppliedToThisJob) {
-          toast.info(t('applications.job.errors.alreadyApplied'));
-          navigate(`/jobs/${id}`);
-          return;
-        }
-
-        // Fetch job details
-        const jobData = await getJobById(parseInt(id, 10));
-        setJob(jobData);
-      } catch (err) {
-        console.error('Error fetching job:', err);
-        toast.error(t('applications.job.errors.loadJob'));
-        navigate('/jobs');
-      } finally {
-        setIsLoading(false);
+  const submitApplicationMutation = useMutation({
+    mutationFn: async ({
+      coverLetter: coverLetterValue,
+      specialNeeds: specialNeedsValue,
+      file,
+    }: {
+      coverLetter?: string;
+      specialNeeds?: string;
+      file: File;
+    }) => {
+      if (!jobId) {
+        throw new Error('Missing job id');
       }
-    };
+      const application = await createApplication({
+        jobPostId: jobId,
+        coverLetter: coverLetterValue,
+        specialNeeds: specialNeedsValue,
+      });
 
-    fetchJobAndCheckApplication();
-  }, [id, user, t, navigate]);
+      await uploadCv(application.id, file);
+      return application;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: applicationsKeys.all });
+      if (jobId) {
+        await queryClient.invalidateQueries({ queryKey: jobsKeys.detail(jobId) });
+      }
+      toast.success(t('applications.job.success.message'));
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+
+  const isSubmitting = submitApplicationMutation.isPending;
 
   const validateFile = (file: File): boolean => {
     if (file.size > MAX_FILE_SIZE) {
@@ -122,29 +149,21 @@ export default function JobApplicationPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!id || !cvFile) {
+    if (!jobId || !cvFile) {
       toast.error(t('applications.job.form.cv.required'));
       return;
     }
 
     try {
-      setIsSubmitting(true);
-
-      const application = await createApplication({
-        jobPostId: parseInt(id, 10),
+      await submitApplicationMutation.mutateAsync({
         coverLetter: coverLetter.trim() || undefined,
         specialNeeds: specialNeeds.trim() || undefined,
+        file: cvFile,
       });
-
-      await uploadCv(application.id, cvFile);
-
-      toast.success(t('applications.job.success.message'));
       navigate('/applications');
     } catch (err) {
       console.error('Error submitting application:', err);
-      toast.error(t('applications.job.errors.submitFailed'));
-    } finally {
-      setIsSubmitting(false);
+      // Error toast is handled in the mutation
     }
   };
 
@@ -161,8 +180,21 @@ export default function JobApplicationPage() {
     });
   };
 
-  if (isLoading || !job) {
+  const isLoading = isJobLoading || isApplicationsLoading;
+
+  if (isLoading) {
     return <CenteredLoader />;
+  }
+
+  if (isJobError || !job) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <h1 className="text-2xl font-semibold">{t('applications.job.errors.loadJob')}</h1>
+        <Button asChild className="mt-6">
+          <Link to="/jobs">{t('applications.job.breadcrumb.jobs')}</Link>
+        </Button>
+      </div>
+    );
   }
 
   return (
