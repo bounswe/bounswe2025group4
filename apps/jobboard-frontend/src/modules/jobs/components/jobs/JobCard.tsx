@@ -28,7 +28,7 @@ export function JobCard({ job }: JobCardProps) {
   const handleCardClick = () => {
     // Prevent navigation if clicking on workplace link (if we add one inside)
     // For now, the whole card navigates to job detail
-    navigate(`/jobs/${job.id}`);
+    navigate(`/jobs/${job.id}`, { state: { from: 'jobs' } });
   };
 
   const handleWorkplaceClick = (e: React.MouseEvent) => {

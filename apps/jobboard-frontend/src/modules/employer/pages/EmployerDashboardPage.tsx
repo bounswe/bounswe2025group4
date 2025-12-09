@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -10,10 +10,10 @@ import { CreateJobPostModal } from '@modules/jobs/components/jobs/CreateJobPostM
 import { getJobsByEmployer } from '@modules/jobs/services/jobs.service';
 import { getApplications } from '@modules/jobs/applications/services/applications.service';
 import { getMyWorkplaces } from '@modules/employer/services/employer.service';
-import { CreateWorkplaceModal } from '@/modules/workplace/components/CreateWorkplaceModal';
-import { JoinWorkplaceModal } from '@/modules/workplace/components/JoinWorkplaceModal';
+import { useQueryWithToast } from '@shared/hooks/useQueryWithToast';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import { useAuthStore } from '@shared/stores/authStore';
+import { normalizeApiError } from '@shared/utils/error-handler';
 import type { JobPostResponse } from '@shared/types/api.types';
 import type { EmployerWorkplaceBrief, WorkplaceBriefResponse } from '@shared/types/workplace.types';
 
@@ -33,6 +33,11 @@ type WorkplaceWithJobs = {
   isExpanded: boolean;
 };
 
+type DashboardData = {
+  workplacesData: WorkplaceWithJobs[];
+  workplaces: EmployerWorkplaceBrief[];
+};
+
 export default function EmployerDashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
@@ -40,31 +45,22 @@ export default function EmployerDashboardPage() {
   const [employerWorkplaces, setEmployerWorkplaces] = useState<EmployerWorkplaceBrief[]>([]);
   const [showCreateJobModal, setShowCreateJobModal] = useState(false);
   const [selectedWorkplaceId, setSelectedWorkplaceId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showJoinModal, setShowJoinModal] = useState(false);
   const { t, i18n } = useTranslation('common');
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
 
-  const fetchData = useCallback(async () => {
-    if (!user) {
-      setError('auth');
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setError(null);
-
+  const dashboardQuery = useQueryWithToast<DashboardData>({
+    queryKey: ['employer-dashboard', user?.id],
+    enabled: Boolean(user),
+    queryFn: async () => {
+      if (!user) {
+        throw new Error('auth');
+      }
       const [workplaces, jobs] = await Promise.all([
         getMyWorkplaces(),
         getJobsByEmployer(user.id),
       ]);
-
-      setEmployerWorkplaces(workplaces);
 
       const getNormalizedJobId = (job: JobPostResponse) =>
         job.id ?? job.jobPostId ?? job.jobId;
@@ -99,25 +95,20 @@ export default function EmployerDashboardPage() {
         })
       );
 
-      const validJobs = jobsWithCounts.filter((job): job is JobPosting & { workplace: WorkplaceBriefResponse } => 
+      const validJobs = jobsWithCounts.filter((job): job is JobPosting & { workplace: WorkplaceBriefResponse } =>
         job !== null && job.workplace !== undefined
       );
-      
-      // Get all workplace IDs that the employer belongs to
+
       const employerWorkplaceIds = new Set(workplaces.map((wp) => wp.workplace.id));
-      
+
       const workplacesData: WorkplaceWithJobs[] = workplaces.map((wp: EmployerWorkplaceBrief) => ({
         workplace: wp.workplace,
         role: wp.role,
-        // Match by workplace.id (from the workplace object) as the primary source of truth
         jobs: validJobs.filter((job) => job.workplace.id === wp.workplace.id),
         isExpanded: true,
       }));
 
-      // Jobs are unassigned if their workplace.id doesn't match any employer workplace
-      const unassignedJobs = validJobs.filter((job) => 
-        !employerWorkplaceIds.has(job.workplace.id)
-      );
+      const unassignedJobs = validJobs.filter((job) => !employerWorkplaceIds.has(job.workplace.id));
       if (unassignedJobs.length > 0) {
         workplacesData.push({
           workplace: {
@@ -135,18 +126,25 @@ export default function EmployerDashboardPage() {
         });
       }
 
-      setWorkplacesWithJobs(workplacesData);
-    } catch (err) {
-      console.error('Error fetching dashboard data:', err);
-      setError('fetch_error');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user, t]);
+      return { workplacesData, workplaces };
+    },
+  });
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (dashboardQuery.data) {
+      setWorkplacesWithJobs(dashboardQuery.data.workplacesData);
+      setEmployerWorkplaces(dashboardQuery.data.workplaces);
+    }
+  }, [dashboardQuery.data]);
+
+  useEffect(() => {
+    if (dashboardQuery.error) {
+      const normalized = normalizeApiError(dashboardQuery.error, t('employer.dashboard.loadingError'));
+      setError(normalized.friendlyMessage);
+    } else {
+      setError(null);
+    }
+  }, [dashboardQuery.error, t]);
 
   const toggleWorkplaceExpand = (workplaceId: number) => {
     setWorkplacesWithJobs((prev) =>
@@ -181,18 +179,6 @@ export default function EmployerDashboardPage() {
     return t('employer.dashboard.loadingError');
   };
 
-  const handleWorkplaceCreated = () => {
-    toast.success(t('workplace.createModal.workplaceCreatedMessage'));
-  };
-
-  const handleJoinSuccess = () => {
-    setShowJoinModal(false);
-    toast.success(t('workplace.joinModal.requestSubmittedMessage', {
-      company: 'the workplace', // Generic message since we don't have the specific workplace name here
-    }));
-    window.location.reload();
-  };
-
   const handleCreateModalOpenChange = (open: boolean) => {
     setShowCreateJobModal(open);
     if (!open) {
@@ -208,7 +194,7 @@ export default function EmployerDashboardPage() {
   const handleJobCreated = async () => {
     handleCreateModalOpenChange(false);
     toast.success(t('employer.createJob.submitSuccess'));
-    await fetchData();
+    await dashboardQuery.refetch();
   };
 
   const selectedWorkplace =
@@ -219,7 +205,7 @@ export default function EmployerDashboardPage() {
   const totalJobs = workplacesWithJobs.reduce((sum, wp) => sum + wp.jobs.length, 0);
   const hasWorkplaces = employerWorkplaces.length > 0;
 
-  if (isLoading) {
+  if (dashboardQuery.isLoading) {
     return <CenteredLoader />;
   }
 
@@ -233,9 +219,7 @@ export default function EmployerDashboardPage() {
                 {t('employer.dashboard.title')}
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
-                {t('employer.dashboard.subtitle', {
-                  defaultValue: t('employer.dashboard.currentPostings'),
-                })}
+                {t('employer.dashboard.currentPostings')}
               </p>
             </div>
             <div className="flex gap-2">
@@ -255,7 +239,7 @@ export default function EmployerDashboardPage() {
           <Card className="border border-border bg-card shadow-sm">
             <div className="p-6 py-12 text-center">
               <p className="text-destructive mb-4">{getErrorMessage()}</p>
-              <Button onClick={() => fetchData()}>
+              <Button onClick={() => dashboardQuery.refetch()}>
                 {t('jobs.retry')}
               </Button>
             </div>
@@ -272,11 +256,11 @@ export default function EmployerDashboardPage() {
                 {t('employer.dashboard.noWorkplaces.description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={() => setShowCreateModal(true)}>
+                <Button onClick={() => navigate('/employer/workplaces')}>
                   <Plus className="h-4 w-4 mr-2" />
                   {t('employer.dashboard.noWorkplaces.createWorkplace')}
                 </Button>
-                <Button variant="outline" onClick={() => setShowJoinModal(true)}>
+                <Button variant="outline" onClick={() => navigate('/employer/workplaces')}>
                   <UserPlus className="h-4 w-4 mr-2" />
                   {t('employer.dashboard.noWorkplaces.joinWorkplace')}
                 </Button>
@@ -286,18 +270,6 @@ export default function EmployerDashboardPage() {
         ) : (
           // Grouped workplaces view
           <div className="space-y-6">
-            {/* Workplace action buttons */}
-            <div className="flex gap-2 justify-end">
-              <Button variant="outline" size="sm" onClick={() => setShowCreateModal(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                {t('employer.dashboard.addWorkplace')}
-              </Button>
-              <Button variant="outline" size="sm" onClick={() => setShowJoinModal(true)}>
-                <UserPlus className="h-4 w-4 mr-2" />
-                {t('employer.dashboard.joinWorkplace')}
-              </Button>
-            </div>
-
             {workplacesWithJobs.map((wp) => (
               <Card key={wp.workplace.id} className="border border-border bg-card shadow-sm overflow-hidden p-0 gap-0">
                 {/* Workplace Header */}
@@ -415,7 +387,9 @@ export default function EmployerDashboardPage() {
                                       variant="default"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(`/employer/jobs/${job.id}`);
+                                        navigate(`/employer/jobs/${job.id}`, {
+                                          state: { from: 'employer-dashboard' },
+                                        });
                                       }}
                                     >
                                       {t('employer.dashboard.actions.manage')}
@@ -457,16 +431,6 @@ export default function EmployerDashboardPage() {
         onOpenChange={handleCreateModalOpenChange}
         onSuccess={handleJobCreated}
         initialWorkplace={selectedWorkplace}
-      />
-      <CreateWorkplaceModal
-        open={showCreateModal}
-        onOpenChange={setShowCreateModal}
-        onSuccess={handleWorkplaceCreated}
-      />
-      <JoinWorkplaceModal
-        open={showJoinModal}
-        onOpenChange={setShowJoinModal}
-        onSuccess={handleJoinSuccess}
       />
     </div>
   );

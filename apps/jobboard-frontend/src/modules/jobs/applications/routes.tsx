@@ -3,6 +3,7 @@ import { lazy } from 'react';
 
 const JobApplicationPage = lazy(() => import('./pages/JobApplicationPage'));
 const JobApplicationReviewPage = lazy(() => import('./pages/JobApplicationReviewPage'));
+const JobApplicationsListPage = lazy(() => import('./pages/JobApplicationsListPage'));
 import ProtectedRoute from '@shared/components/common/ProtectedRoute';
 
 export const applicationsRoutes: RouteObject[] = [
@@ -27,6 +28,14 @@ export const applicationsRoutes: RouteObject[] = [
     element: (
       <ProtectedRoute>
         <JobApplicationReviewPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: 'employer/jobs/:jobId/applications',
+    element: (
+      <ProtectedRoute>
+        <JobApplicationsListPage />
       </ProtectedRoute>
     ),
   },

@@ -12,10 +12,12 @@ import { CreateWorkplaceModal } from '@/modules/workplace/components/CreateWorkp
 import { JoinWorkplaceModal } from '@/modules/workplace/components/JoinWorkplaceModal';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@shared/components/ui/dialog';
-import { createJob } from '@modules/jobs/services/jobs.service';
-import { getMyWorkplaces } from '@modules/employer/services/employer.service';
+import { RequiredMark } from '@shared/components/ui/required-mark';
+import { useCreateJobMutation } from '@modules/jobs/services/jobs.service';
+import { useMyWorkplacesQuery } from '@modules/employer/services/employer.service';
 import type { CreateJobPostRequest } from '@shared/types/api.types';
 import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 type JobPostFormData = {
   title: string;
@@ -24,7 +26,7 @@ type JobPostFormData = {
   remote: boolean;
   minSalary: string;
   maxSalary: string;
-  contactEmail: string;
+  contact: string;
   inclusiveOpportunity: boolean;
   nonProfit: boolean;
 };
@@ -36,7 +38,7 @@ const defaultFormState: JobPostFormData = {
   remote: false,
   minSalary: '',
   maxSalary: '',
-  contactEmail: '',
+  contact: '',
   inclusiveOpportunity: false,
   nonProfit: false,
 };
@@ -56,11 +58,17 @@ export function CreateJobPostModal({
 }: CreateJobPostModalProps) {
   const { t } = useTranslation('common');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [hasWorkplaces, setHasWorkplaces] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [formData, setFormData] = useState<JobPostFormData>(defaultFormState);
+  const workplacesQuery = useMyWorkplacesQuery();
+  const isLoadingWorkplaces = workplacesQuery.isLoading;
+  const workplaces = useMemo<EmployerWorkplaceBrief[]>(
+    () => (Array.isArray(workplacesQuery.data) ? workplacesQuery.data : []),
+    [workplacesQuery.data]
+  );
+  const createJobMutation = useCreateJobMutation();
 
   const selectedInitialWorkplace = useMemo(
     () => initialWorkplace ?? null,
@@ -79,29 +87,16 @@ export function CreateJobPostModal({
       workplaceId: selectedInitialWorkplace?.workplace.id ?? null,
     });
 
-    const checkWorkplaces = async () => {
-      setIsLoading(true);
-      try {
-        const workplaces = await getMyWorkplaces();
-        setHasWorkplaces(workplaces.length > 0);
+    setHasWorkplaces(workplaces.length > 0);
 
-        if (!selectedInitialWorkplace && workplaces.length > 0) {
-          const primary = workplaces[0];
-          setFormData((prev) => ({
-            ...prev,
-            workplaceId: prev.workplaceId ?? primary.workplace.id,
-          }));
-        }
-      } catch (err) {
-        console.error('Error checking workplaces:', err);
-        setHasWorkplaces(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkWorkplaces();
-  }, [open, selectedInitialWorkplace]);
+    if (!selectedInitialWorkplace && workplaces.length > 0) {
+      const primary = workplaces[0];
+      setFormData((prev) => ({
+        ...prev,
+        workplaceId: prev.workplaceId ?? primary.workplace.id,
+      }));
+    }
+  }, [open, selectedInitialWorkplace, workplaces]);
 
   const handleWorkplaceChange = (workplaceId: number, _workplace: EmployerWorkplaceBrief) => {
     setFormData((prev) => ({
@@ -128,9 +123,8 @@ export function CreateJobPostModal({
       return;
     }
 
-    setIsSubmitting(true);
-
     try {
+      setIsSubmitting(true);
       const requestData: CreateJobPostRequest = {
         title: formData.title,
         description: formData.description,
@@ -138,18 +132,19 @@ export function CreateJobPostModal({
         remote: formData.remote,
         minSalary: formData.nonProfit ? 0 : parseInt(formData.minSalary, 10),
         maxSalary: formData.nonProfit ? 0 : parseInt(formData.maxSalary, 10),
-        contact: formData.contactEmail,
+        contact: formData.contact,
         inclusiveOpportunity: formData.inclusiveOpportunity,
         nonProfit: formData.nonProfit,
       };
 
-      await createJob(requestData);
+      await createJobMutation.mutateAsync(requestData);
       toast.success(t('employer.createJob.submitSuccess'));
       onSuccess?.();
       onOpenChange(false);
     } catch (err) {
+      const normalized = normalizeApiError(err, t('employer.createJob.submitError'));
       console.error('Error creating job:', err);
-      toast.error(t('employer.createJob.submitError'));
+      toast.error(normalized.friendlyMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -199,7 +194,7 @@ export function CreateJobPostModal({
           <DialogTitle>{t('employer.createJob.title')}</DialogTitle>
         </DialogHeader>
 
-        {isLoading ? (
+        {isLoadingWorkplaces ? (
           <div className="py-8">
             <CenteredLoader />
           </div>
@@ -209,7 +204,10 @@ export function CreateJobPostModal({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label className="text-sm font-semibold">
-                {t('employer.createJob.workplace')}
+                <span className="inline-flex items-start gap-0.5">
+                  {t('employer.createJob.workplace')}
+                  <RequiredMark />
+                </span>
               </Label>
               <p className="text-xs text-muted-foreground mt-1 mb-2">
                 {t('employer.createJob.workplaceDescription')}
@@ -223,7 +221,10 @@ export function CreateJobPostModal({
 
             <div>
               <Label htmlFor="title" className="text-sm font-semibold">
-                {t('employer.createJob.jobTitle')}
+                <span className="inline-flex items-start gap-0.5">
+                  {t('employer.createJob.jobTitle')}
+                  <RequiredMark />
+                </span>
               </Label>
               <Input
                 id="title"
@@ -238,7 +239,10 @@ export function CreateJobPostModal({
 
             <div>
               <Label htmlFor="description" className="text-sm font-semibold">
-                {t('employer.createJob.jobDescription')}
+                <span className="inline-flex items-start gap-0.5">
+                  {t('employer.createJob.jobDescription')}
+                  <RequiredMark />
+                </span>
               </Label>
               <textarea
                 id="description"
@@ -294,7 +298,12 @@ export function CreateJobPostModal({
             {/* Salary Range - Hidden for nonprofit positions */}
             {!formData.nonProfit && (
               <div>
-                <Label className="text-sm font-semibold">{t('employer.createJob.salaryRange')}</Label>
+                <Label className="text-sm font-semibold">
+                  <span className="inline-flex items-start gap-0.5">
+                    {t('employer.createJob.salaryRange')}
+                    <RequiredMark />
+                  </span>
+                </Label>
                 <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <Label htmlFor="minSalary" className="text-xs text-muted-foreground">
@@ -330,13 +339,16 @@ export function CreateJobPostModal({
 
             <div>
               <Label htmlFor="contactEmail" className="text-sm font-semibold">
-                {t('employer.createJob.contactEmail')}
+                <span className="inline-flex items-start gap-0.5">
+                  {t('employer.createJob.contactEmail')}
+                  <RequiredMark />
+                </span>
               </Label>
               <Input
                 id="contactEmail"
                 type="email"
-                value={formData.contactEmail}
-                onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
+                value={formData.contact}
+                onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
                 placeholder={t('employer.createJob.contactEmailPlaceholder')}
                 className="mt-2"
                 required
@@ -369,11 +381,12 @@ export function CreateJobPostModal({
             <div className="flex justify-end gap-3">
               <Button
                 type="button"
+                size="lg"
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 disabled={isSubmitting}
               >
-                {t('common:cancel') ?? 'Cancel'}
+                {t('common.cancel') ?? 'Cancel'}
               </Button>
               <Button
                 type="submit"

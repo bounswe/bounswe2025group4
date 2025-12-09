@@ -199,7 +199,6 @@ export const useApproveApplicationMutation = (id: number) => {
     mutationFn: (feedback?: string) => approveApplication(id, feedback),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: applicationsKeys.detail(id) });
-      toast.success('Application approved');
     },
     onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
   });
