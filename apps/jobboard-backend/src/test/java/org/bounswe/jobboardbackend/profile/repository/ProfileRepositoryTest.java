@@ -36,6 +36,7 @@ class ProfileRepositoryTest {
                 .firstName("John")
                 .lastName("Doe")
                 .bio("Test bio")
+                .gender("Test gender")
                 .build();
         profileRepository.save(profile);
 
