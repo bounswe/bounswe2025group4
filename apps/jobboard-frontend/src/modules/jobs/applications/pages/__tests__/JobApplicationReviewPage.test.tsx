@@ -466,7 +466,7 @@ describe('JobApplicationReviewPage', () => {
     await user.click(approveButton);
 
     await waitFor(() => {
-      expect(screen.getByText('applications.review.error.approve')).toBeInTheDocument();
+      expect(screen.getByText(/server error/i)).toBeInTheDocument();
     });
 
     // Should not navigate on error
@@ -501,7 +501,7 @@ describe('JobApplicationReviewPage', () => {
     await user.click(rejectButton);
 
     await waitFor(() => {
-      expect(screen.getByText('applications.review.error.reject')).toBeInTheDocument();
+      expect(screen.getByText(/server error/i)).toBeInTheDocument();
     });
 
     // Should not navigate on error

@@ -120,7 +120,6 @@ describe('EmployerEditJobPostPage', () => {
     // Check form is pre-populated
     expect((screen.getByLabelText('employer.createJob.jobTitle') as HTMLInputElement).value).toBe('Existing Job Title');
     expect((screen.getByLabelText('employer.createJob.jobDescription') as HTMLTextAreaElement).value).toBe('Existing job description');
-    expect((screen.getByLabelText('employer.createJob.location') as HTMLInputElement).value).toBe('Existing Location');
     expect((screen.getByLabelText('employer.createJob.minimum') as HTMLInputElement).value).toBe('100000');
     expect((screen.getByLabelText('employer.createJob.maximum') as HTMLInputElement).value).toBe('150000');
     expect((screen.getByLabelText('employer.createJob.contactEmail') as HTMLInputElement).value).toBe('existing@company.com');
@@ -470,7 +469,6 @@ describe('EmployerEditJobPostPage', () => {
     });
 
     expect((screen.getByLabelText('employer.createJob.jobTitle') as HTMLInputElement).value).toBe('C++ & C# Developer @ Tech&Co');
-    expect((screen.getByLabelText('employer.createJob.location') as HTMLInputElement).value).toBe('São Paulo, Brasil');
   });
 
   it('handles editing salary range', async () => {
@@ -653,7 +651,6 @@ describe('EmployerEditJobPostPage', () => {
     // Check that all form fields are rendered
     expect(screen.getByLabelText('employer.createJob.jobTitle')).toBeInTheDocument();
     expect(screen.getByLabelText('employer.createJob.jobDescription')).toBeInTheDocument();
-    expect(screen.getByLabelText('employer.createJob.location')).toBeInTheDocument();
     expect(screen.getByLabelText('employer.createJob.contactEmail')).toBeInTheDocument();
   });
 

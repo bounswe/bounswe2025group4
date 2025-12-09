@@ -7,6 +7,18 @@ import { http, HttpResponse } from 'msw';
 import { API_BASE_URL } from '@/test/handlers';
 import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';
 
+vi.mock('@shared/components/ui/dialog', () => {
+  const Dialog = ({ children, open, onOpenChange }: { children: React.ReactNode; open?: boolean; onOpenChange?: (open: boolean) => void }) => (
+    <div data-testid="dialog" data-open={open} onClick={() => onOpenChange?.(open ?? false)}>
+      {children}
+    </div>
+  );
+  const DialogContent = ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-content">{children}</div>;
+  const DialogHeader = ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-header">{children}</div>;
+  const DialogTitle = ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-title">{children}</div>;
+  return { Dialog, DialogContent, DialogHeader, DialogTitle };
+});
+
 // Mock WorkplaceSelector to avoid complex setup
 vi.mock('@/modules/workplace/components/WorkplaceSelector', () => ({
   default: ({ onChange, value }: { onChange: (id: number, workplace: EmployerWorkplaceBrief) => void; value?: number }) => (

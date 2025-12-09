@@ -53,6 +53,8 @@ export default function JobApplicationReviewPage() {
 
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
+  const hasCoverLetter = Boolean(application?.coverLetter?.trim());
+  const hasSpecialNeeds = Boolean(application?.specialNeeds?.trim());
 
   const handleApprove = async () => {
     if (!applicationIdNumber) return;
@@ -191,37 +193,31 @@ export default function JobApplicationReviewPage() {
             </div>
           </Card>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card className="border border-border bg-card shadow-sm">
-              <div className="p-6 space-y-3">
-                <h2 className="text-xl font-semibold">{t('applications.review.coverLetter')}</h2>
-                {application.coverLetter ? (
-                  <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                    {application.coverLetter}
-                  </p>
-                ) : (
-                  <div className="rounded-md border border-dashed border-muted-foreground/40 bg-muted/30 p-4 text-base text-muted-foreground">
-                    {t('applications.review.noCoverLetter', { defaultValue: 'No cover letter provided.' })}
+          {(hasCoverLetter || hasSpecialNeeds) && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {hasCoverLetter && (
+                <Card className="border border-border bg-card shadow-sm">
+                  <div className="p-6 space-y-3">
+                    <h2 className="text-xl font-semibold">{t('applications.review.coverLetter')}</h2>
+                    <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                      {application.coverLetter}
+                    </p>
                   </div>
-                )}
-              </div>
-            </Card>
+                </Card>
+              )}
 
-            <Card className="border border-border bg-card shadow-sm">
-              <div className="p-6 space-y-3">
-                <h2 className="text-xl font-semibold">{t('applications.review.specialNeeds')}</h2>
-                {application.specialNeeds ? (
-                  <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                    {application.specialNeeds}
-                  </p>
-                ) : (
-                  <div className="rounded-md border border-dashed border-muted-foreground/40 bg-muted/30 p-4 text-base text-muted-foreground">
-                    {t('applications.review.noSpecialNeeds', { defaultValue: 'No special needs noted.' })}
+              {hasSpecialNeeds && (
+                <Card className="border border-border bg-card shadow-sm">
+                  <div className="p-6 space-y-3">
+                    <h2 className="text-xl font-semibold">{t('applications.review.specialNeeds')}</h2>
+                    <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                      {application.specialNeeds}
+                    </p>
                   </div>
-                )}
-              </div>
-            </Card>
-          </div>
+                </Card>
+              )}
+            </div>
+          )}
 
           <Card className="border border-border bg-card shadow-sm">
             <div className="p-6">
