@@ -12,11 +12,12 @@ import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.notification.model.NotificationType;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +44,7 @@ public class JobApplicationService {
     private final WorkplaceService workplaceService;
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final WorkplaceRepository workplaceRepository;
+    private final NotificationService notificationService;
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -65,13 +67,15 @@ public class JobApplicationService {
                                  JobPostRepository jobPostRepository,
                                  WorkplaceService workplaceService,
                                  EmployerWorkplaceRepository employerWorkplaceRepository,
-                                 WorkplaceRepository workplaceRepository) {
+                                 WorkplaceRepository workplaceRepository,
+                                 NotificationService notificationService) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
         this.jobPostRepository = jobPostRepository;
         this.workplaceService = workplaceService;
         this.employerWorkplaceRepository = employerWorkplaceRepository;
         this.workplaceRepository = workplaceRepository;
+        this.notificationService = notificationService;
     }
 
     @Transactional(readOnly = true)
@@ -138,6 +142,8 @@ public class JobApplicationService {
                 .appliedDate(LocalDateTime.now())
                 .build();
 
+        notificationService.notifyUser(jobPost.getEmployer().getUsername(), "New Job Application Request", NotificationType.JOB_APPLICATION_REQUEST, "New Job Application Request from " + jobSeeker.getUsername(), application.getId());
+
         return toResponseDto(applicationRepository.save(application));
     }
 
@@ -158,6 +164,9 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
+        notificationService.notifyUser(application.getJobSeeker().getUsername(), "Job Application Approval", NotificationType.JOB_APPLICATION_APPROVED, "Job Application is approved by" + employer.getUsername(), application.getId());
+
+
         return toResponseDto(applicationRepository.save(application));
     }
 
@@ -177,6 +186,9 @@ public class JobApplicationService {
         if (feedback != null && !feedback.isEmpty()) {
             application.setFeedback(feedback);
         }
+
+        notificationService.notifyUser(application.getJobSeeker().getUsername(), "Job Application Rejection", NotificationType.JOB_APPLICATION_REJECTED, "Job Application is rejected by" + employer.getUsername(), application.getId());
+
 
         return toResponseDto(applicationRepository.save(application));
     }
