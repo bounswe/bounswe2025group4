@@ -1,6 +1,7 @@
 package org.bounswe.jobboardbackend.profile.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Data
@@ -15,4 +16,7 @@ public class CreateProfileRequestDto {
     private String lastName;
 
     private String bio; // optional
+
+    @Pattern(regexp = "^(?i)(MALE|FEMALE|OTHER)$")
+    private String gender;
 }
