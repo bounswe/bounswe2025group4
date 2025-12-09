@@ -14,6 +14,8 @@ import org.bounswe.jobboardbackend.forum.repository.ForumCommentDownvoteReposito
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentUpvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
+import org.bounswe.jobboardbackend.notification.model.NotificationType;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ public class ForumService {
     private final ForumCommentRepository commentRepository;
     private final ForumCommentUpvoteRepository upvoteRepository;
     private final ForumCommentDownvoteRepository downvoteRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public PostResponse createPost(User author, CreatePostRequest request) {
@@ -114,6 +117,9 @@ public class ForumService {
                 .build();
 
         ForumComment savedComment = commentRepository.save(comment);
+
+        notificationService.notifyUser(post.getAuthor().getUsername(), "NEW COMMENT from " + author.getUsername(), NotificationType.FORUM_COMMENT, request.getContent(), postId);
+
         return CommentResponse.from(savedComment, 0, 0);
     }
 
