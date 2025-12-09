@@ -11,6 +11,7 @@ import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.bounswe.jobboardbackend.workplace.dto.WorkplaceBriefResponse;
 import org.bounswe.jobboardbackend.workplace.model.Workplace;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
@@ -46,6 +47,7 @@ class JobApplicationServiceTest {
     @Mock private WorkplaceService workplaceService;
     @Mock private EmployerWorkplaceRepository employerWorkplaceRepository;
     @Mock private WorkplaceRepository workplaceRepository;
+    @Mock private NotificationService notificationService;
 
     @InjectMocks
     private JobApplicationService jobApplicationService;
