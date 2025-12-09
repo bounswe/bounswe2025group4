@@ -90,6 +90,7 @@ public class ProfileService {
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .bio(dto.getBio())
+                .gender(dto.getGender())
                 .imageUrl(null)
                 .build();
 
@@ -120,6 +121,7 @@ public class ProfileService {
         if (dto.getFirstName() != null) profile.setFirstName(dto.getFirstName());
         if (dto.getLastName()  != null) profile.setLastName(dto.getLastName());
         if (dto.getBio()       != null) profile.setBio(dto.getBio());
+        if (dto.getGender()       != null) profile.setGender(dto.getGender());
 
         return toProfileDto(profile);
     }
@@ -134,6 +136,7 @@ public class ProfileService {
                 .firstName(p.getFirstName())
                 .lastName(p.getLastName())
                 .bio(p.getBio())
+                .gender(p.getGender())
                 .imageUrl(p.getImageUrl())
                 .educations(p.getEducations().stream().map(this::toEducationDto).collect(Collectors.toList()))
                 .experiences(p.getExperiences().stream().map(this::toExperienceDto).collect(Collectors.toList()))
@@ -502,6 +505,7 @@ public class ProfileService {
                 .firstName(p.getFirstName())
                 .lastName(p.getLastName())
                 .bio(p.getBio())
+                .gender(p.getGender())
                 .imageUrl(p.getImageUrl())
                 .educations(p.getEducations().stream().map(this::toEducationDto).collect(java.util.stream.Collectors.toList()))
                 .experiences(p.getExperiences().stream().map(this::toExperienceDto).collect(java.util.stream.Collectors.toList()))
