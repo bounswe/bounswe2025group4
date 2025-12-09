@@ -19,9 +19,9 @@ import {
 import { Button } from '@shared/components/ui/button';
 import { Textarea } from '@shared/components/ui/textarea';
 import { Label } from '@shared/components/ui/label';
-import { createReply, updateReply } from '@modules/mentorship/services/reviews.service';
+import { useCreateReplyMutation, useUpdateReplyMutation } from '@modules/mentorship/services/reviews.service';
 import type { ReplyResponse } from '@shared/types/workplace.types';
-import { getErrorMessage } from '@shared/utils/error-handler';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 const replySchema = z.object({
   content: z
@@ -52,6 +52,8 @@ export function ReplyFormDialog({
   const { t } = useTranslation('common');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const createReplyMutation = useCreateReplyMutation(workplaceId, reviewId);
+  const updateReplyMutation = useUpdateReplyMutation(workplaceId, reviewId);
 
   const {
     register,
@@ -68,14 +70,14 @@ export function ReplyFormDialog({
   const isEditMode = !!existingReply;
 
   const onSubmit = async (data: ReplyFormData) => {
-    setIsSubmitting(true);
     setError(null);
+    setIsSubmitting(true);
 
     try {
       if (isEditMode) {
-        await updateReply(workplaceId, reviewId, data);
+        await updateReplyMutation.mutateAsync(data);
       } else {
-        await createReply(workplaceId, reviewId, data);
+        await createReplyMutation.mutateAsync(data);
       }
 
       reset();
@@ -84,10 +86,10 @@ export function ReplyFormDialog({
     } catch (err: unknown) {
       console.error('Failed to submit reply:', err);
       setError(
-        getErrorMessage(
+        normalizeApiError(
           err,
           t(isEditMode ? 'reviews.reply.updateError' : 'reviews.reply.submitError')
-        )
+        ).friendlyMessage
       );
     } finally {
       setIsSubmitting(false);

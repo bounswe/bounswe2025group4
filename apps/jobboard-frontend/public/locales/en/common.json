@@ -48,6 +48,9 @@
     "loading": "Loading...",
     "goHome": "Go to Homepage",
     "visitWebsite": "Visit Website",
+    "settings": "Settings",
+    "employer": "Employer",
+    "employers": "Employers",
     "edited": "Edited",
     "cancel": "Cancel",
     "optional": "Optional",
@@ -359,14 +362,24 @@
       "applyNow": "Apply Now",
       "description": "Job Description",
       "ethicalPolicy": {
-        "title": "Ethical Tags & Compliance"
+        "title": "Ethical Tags & Compliance",
+        "sourceNote": "Ethical information for this job comes from the company profile.",
+        "overallScore": "Company ethical score",
+        "ratingsTitle": "Ethical policy ratings",
+        "tagCount": "{{count}} ethical policy",
+        "tagCount_plural": "{{count}} ethical policies",
+        "noPolicies": "The company has not shared its ethical policies yet.",
+        "inclusiveNote": "This company marks this role as an inclusive opportunity."
       },
       "inclusiveOpportunity": "Inclusive Opportunity",
       "contact": {
         "title": "Contact Information"
       },
       "workplace": {
-        "title": "About the Company"
+        "title": "About the Company",
+        "sector": "Sector",
+        "location": "Location",
+        "overallRating": "Company ethical score"
       }
     }
   },
@@ -468,6 +481,58 @@
         "backToJobs": "Back to Jobs"
       }
     },
+    "list": {
+      "back": "Back to job post",
+      "title": "Applications for {{title}}",
+      "subtitle": "Review and manage every application in one place.",
+      "postedOn": "Posted",
+      "stats": {
+        "total": "Total",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "breadcrumbPrefix": "Applications for",
+      "backToJob": "Back to job",
+      "filters": "Filters",
+      "searchPlaceholder": "Search by name, cover letter, or needs",
+      "status": {
+        "all": "All statuses",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "sort": {
+        "newest": "Newest first",
+        "oldest": "Oldest first",
+        "nameAsc": "Name A-Z",
+        "nameDesc": "Name Z-A",
+        "title": "Sort applications",
+        "recent": "Most recent",
+        "nameAz": "Name A-Z",
+        "nameZa": "Name Z-A"
+      },
+      "jobErrorTitle": "Job not found",
+      "jobErrorMessage": "We could not load this job post.",
+      "backToDashboard": "Back to dashboard",
+      "permissionDenied": "You cannot view these applications",
+      "permissionHint": "Only employers of this workplace can see applications for this job.",
+      "count": "{{count}} applications",
+      "emptyTitle": "No applications yet",
+      "emptySubtitle": "Share your job post to start receiving applications.",
+      "emptyDescription": "Try adjusting your search or status filters.",
+      "errorTitle": "Unable to load applications",
+      "errorDescription": "Please go back to the job page and try again.",
+      "jobTitleFallback": "Job",
+      "viewApplication": "View application",
+      "viewAll": "View applications",
+      "loading": "Loading applications...",
+      "summary": "{{count}} applications received",
+      "hasNeeds": "Special needs noted",
+      "hasCoverLetter": "Cover letter",
+      "appliedOn": "Applied on {{date}}",
+      "review": "Review application"
+    },
     "volunteer": {
       "title": "Volunteer for {{jobTitle}}",
       "breadcrumb": {
@@ -528,26 +593,30 @@
         "reject": "Application rejected successfully."
       },
       "applied": "Applied",
-      "appliedToday": "Today",
-      "appliedYesterday": "Yesterday",
-      "appliedDaysAgo": "{{count}} days ago",
+      "appliedToday": "Applied today",
+      "appliedYesterday": "Applied yesterday",
+      "appliedDaysAgo": "Applied {{count}} days ago",
       "backToJob": "Back to Job",
-      "title": "Application for {{jobTitle}}",
+      "backToApplications": "Back to applications",
+      "title": "Review application for {{jobTitle}}",
       "atCompany": "at {{company}}",
       "applicantInfo": "Applicant Information",
       "status": "Status",
       "coverLetter": "Cover Letter",
+      "noCoverLetter": "No cover letter provided.",
       "specialNeeds": "Special Needs or Accommodations",
+      "noSpecialNeeds": "No special needs noted.",
       "cv": "CV / Resume",
       "loadingCv": "Loading CV...",
-      "resumeOf": "{{name}}'s Resume",
-      "downloadToView": "Click download to view the CV",
+      "resumeOf": "Resume of {{name}}",
+      "downloadToView": "Download to view",
       "download": "Download",
       "noCvAttached": "No CV attached to this application",
       "existingFeedback": "Existing Feedback",
       "decision": "Decision",
       "feedback": "Feedback (optional)",
       "feedbackPlaceholder": "Provide feedback for the applicant",
+      "feedbackHelper": "Add a note for the candidate before making your decision.",
       "processing": "Processing...",
       "reject": "Reject",
       "approve": "Approve"
@@ -612,6 +681,39 @@
         "loadFailed": "Failed to load applications. Please try again.",
         "deleteFailed": "Failed to delete application. Please try again."
       }
+    },
+    "list": {
+      "back": "Back to job post",
+      "jobErrorTitle": "Job not found",
+      "jobErrorMessage": "We could not load this job post.",
+      "backToDashboard": "Back to dashboard",
+      "permissionDenied": "You cannot view these applications",
+      "permissionHint": "Only employers of this workplace can see applications for this job.",
+      "backToJob": "Back to job post",
+      "title": "Applications for {{title}}",
+      "subtitle": "Review and manage every application in one place.",
+      "postedOn": "Posted",
+      "viewJob": "View job post",
+      "stats": {
+        "total": "Total",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "searchPlaceholder": "Search by name, cover letter, or needs",
+      "sort": {
+        "title": "Sort applications",
+        "newest": "Newest first",
+        "oldest": "Oldest first",
+        "nameAsc": "Name A-Z",
+        "nameDesc": "Name Z-A"
+      },
+      "emptyTitle": "No applications yet",
+      "emptySubtitle": "Share your job post to start receiving applications.",
+      "hasNeeds": "Special needs noted",
+      "hasCoverLetter": "Cover letter",
+      "appliedOn": "Applied on {{date}}",
+      "review": "Review application"
     }
   },
   "employer": {
@@ -689,7 +791,7 @@
       "contact": "Contact Information",
       "ethicalPolicies": "Ethical Policies",
       "inclusiveOpportunity": "Inclusive Opportunity",
-      "inclusiveOpportunityDescription": "This position welcomes candidates from diverse backgrounds.",
+      "inclusiveOpportunityDescription": "This position is an inclusive opportunity that warmly welcomes candidates with diverse backgrounds, experiences, and abilities, including individuals with disabilities.",
       "applicationsReceived": "Applications Received ({{count}})",
       "noApplications": "No applications yet.",
       "viewApplication": "View Application"
@@ -729,7 +831,7 @@
       "ethicalTagsDescription": "Select tags that represent your company's values and practices",
       "ethicalTagsPlaceholder": "Select ethical tags",
       "inclusiveOpportunity": "Inclusive Opportunity for People with Disabilities",
-      "inclusiveOpportunityDescription": "Mark this position as an inclusive opportunity, welcoming candidates from diverse backgrounds and abilities",
+      "inclusiveOpportunityDescription": "Mark this position as an inclusive opportunity that warmly welcomes candidates with diverse backgrounds, experiences, and abilities, including individuals with disabilities.",
       "submit": "Publish Job Posting",
       "submitting": "Publishing...",
       "saving": "Saving...",
@@ -842,6 +944,12 @@
       "shortDescription": "Short Description",
       "detailedDescription": "Detailed Description",
       "websitePlaceholder": "https://www.example.com",
+      "ethicalTagsLabel": "Ethical Tags",
+      "ethicalTagsHelper": "Select tags that represent your company's ethical commitments",
+      "shortDescriptionHint": "(max 300 characters)",
+      "shortDescriptionPlaceholder": "A brief tagline or summary",
+      "detailedDescriptionHint": "(max 4000 characters)",
+      "detailedDescriptionPlaceholder": "Tell us about your company's mission, values, and culture",
       "submit": "Create Workplace",
       "workplaceCreated": "Workplace Created!",
       "workplaceCreatedMessage": "Your workplace has been created successfully.",
@@ -866,8 +974,19 @@
       "sector": "Sector",
       "allSectors": "All Sectors",
       "location": "Location",
+      "locationPlaceholder": "Enter location...",
       "sortBy": "Sort By",
+      "sortOptions": {
+        "default": "Default",
+        "ratingDesc": "Rating (High to Low)",
+        "ratingAsc": "Rating (Low to High)",
+        "nameAsc": "Name (A to Z)",
+        "nameDesc": "Name (Z to A)"
+      },
       "minimumRating": "Minimum Rating",
+      "anyRating": "Any",
+      "ratingMinLabel": "0★",
+      "ratingMaxLabel": "5★",
       "searchResults": "Workplaces found: {{count}}",
       "noWorkplacesFound": "No workplaces match your filters.",
       "clearFiltersAndShowAll": "Clear filters and show all",
@@ -886,7 +1005,61 @@
       "closing": "Closing shortly...",
       "close": "Close"
     },
-    "settings": "Settings",
+    "settings": {
+      "label": "Settings",
+      "failedToLoad": "Failed to load workplace settings.",
+      "notFound": {
+        "title": "Workplace not found",
+        "description": "The workplace you're looking for doesn't exist or has been removed.",
+        "goToWorkplaces": "Go to workplaces"
+      },
+      "backToWorkplace": "Back to Workplace",
+      "title": "Workplace Settings",
+      "subtitle": "Update workplace information and manage details",
+      "updateSuccess": "Workplace updated successfully.",
+      "companyLogo": "Company Logo",
+      "imagePreviewAlt": "Workplace image preview",
+      "changeImage": "Change Image",
+      "uploadImage": "Upload Image",
+      "uploading": "Uploading...",
+      "saveImage": "Save Image",
+      "imageGuidelines": "Recommended: Square image, at least 200x200 pixels",
+      "basicInformation": "Basic Information",
+      "companyName": "Company Name",
+      "companyNamePlaceholder": "Enter company name",
+      "sector": "Sector",
+      "sectorPlaceholder": "e.g., Technology, Healthcare",
+      "location": "Location",
+      "locationPlaceholder": "Enter location",
+      "website": "Website",
+      "websitePlaceholder": "https://www.example.com",
+      "description": "Description",
+      "shortDescription": "Short Description",
+      "shortDescriptionPlaceholder": "A brief tagline or summary",
+      "shortDescriptionHint": "(max 300 characters)",
+      "detailedDescription": "Detailed Description",
+      "detailedDescriptionPlaceholder": "Tell us about your company's mission, values, and culture",
+      "detailedDescriptionHint": "(max 4000 characters)",
+      "ethicalTags": "Ethical Tags",
+      "ethicalTagsHelper": "Select tags that represent your company's ethical commitments",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "dangerZone": {
+        "title": "Danger Zone",
+        "deleteDescription": "Deleting a workplace is permanent and cannot be undone.",
+        "deleteButton": "Delete Workplace",
+        "deleteFailed": "Failed to delete workplace. Please try again.",
+        "confirmTitle": "Confirm Deletion",
+        "confirmDescription": "This action cannot be undone. Please confirm by typing the workplace name.",
+        "confirmWarning": "Type the exact workplace name to confirm.",
+        "confirmPlaceholder": "Type workplace name to confirm",
+        "confirmCancel": "Cancel",
+        "confirmButton": "Yes, delete workplace",
+        "confirmHelper": "Please type the exact workplace name to confirm",
+        "deleting": "Deleting..."
+      }
+    },
     "profile": {
       "title": "Workplace Profile",
       "notFound": "Workplace not found",
@@ -897,9 +1070,14 @@
       "manageRequests": "Manage Requests",
       "currentJobOpenings": "Current Job Openings",
       "noJobOpenings": "No job openings at the moment",
-      "viewAllJobs": "View all {{count}} jobs"
+      "viewAllJobs": "View all {{count}} jobs",
+      "reportWorkplace": "Report Workplace"
     },
-    "manageRequests": "Manage Requests"
+    "manageRequests": "Manage Requests",
+    "roles": {
+      "owner": "Owner",
+      "manager": "Manager"
+    }
   },
   "sectors": {
     "technology": "Technology",

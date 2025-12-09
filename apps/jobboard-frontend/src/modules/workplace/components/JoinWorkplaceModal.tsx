@@ -3,7 +3,7 @@
  * Modal for searching and requesting to join an existing workplace
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,36 +23,41 @@ import {
 import { Search, Building2, Filter, X, CheckCircle2, ArrowLeft, Loader2 } from 'lucide-react';
 import { WorkplaceCard } from '@/modules/workplace/components/WorkplaceCard';
 import { getWorkplaces } from '@modules/workplace/services/workplace.service';
-import { createEmployerRequest, getMyWorkplaces } from '@modules/employer/services/employer.service';
+import { useCreateEmployerRequestMutation, useMyWorkplacesQuery } from '@modules/employer/services/employer.service';
 import {
   employerRequestSchema,
   type EmployerRequestFormData,
 } from '@modules/employer/schemas/employer-request.schema';
-import type { WorkplaceBriefResponse } from '@shared/types/workplace.types';
+import type {
+  EmployerWorkplaceBrief,
+  PaginatedWorkplaceResponse,
+  WorkplaceBriefResponse,
+} from '@shared/types/workplace.types';
 import { getErrorMessage } from '@shared/utils/error-handler';
+import { useQueryWithToast } from '@shared/hooks/useQueryWithToast';
 
-// Common sectors
+// Common sectors (translation keys)
 const SECTORS = [
-  'Technology',
-  'Healthcare',
-  'Education',
-  'Finance',
-  'Creative Arts',
-  'Manufacturing',
-  'Retail',
-  'Consulting',
-  'Non-profit',
-  'Other',
-];
+  'technology',
+  'healthcare',
+  'education',
+  'finance',
+  'creativearts',
+  'manufacturing',
+  'retail',
+  'consulting',
+  'nonprofit',
+  'other',
+] as const;
 
 // Sort options
 const SORT_OPTIONS = [
-  { value: '', label: 'Default' },
-  { value: 'rating', label: 'Rating (High to Low)' },
-  { value: 'rating,asc', label: 'Rating (Low to High)' },
-  { value: 'companyName', label: 'Name (A to Z)' },
-  { value: 'companyName,desc', label: 'Name (Z to A)' },
-];
+  { value: '', labelKey: 'default' },
+  { value: 'rating', labelKey: 'ratingDesc' },
+  { value: 'rating,asc', labelKey: 'ratingAsc' },
+  { value: 'companyName', labelKey: 'nameAsc' },
+  { value: 'companyName,desc', labelKey: 'nameDesc' },
+] as const;
 
 interface Filters {
   searchQuery: string;
@@ -77,13 +82,10 @@ interface JoinWorkplaceModalProps {
 }
 
 export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkplaceModalProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   const [step, setStep] = useState<'search' | 'request'>('search');
   const [filters, setFilters] = useState<Filters>(initialFilters);
-  const [searchResults, setSearchResults] = useState<WorkplaceBriefResponse[]>([]);
   const [selectedWorkplace, setSelectedWorkplace] = useState<WorkplaceBriefResponse | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -100,6 +102,61 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
   } = useForm<EmployerRequestFormData>({
     resolver: zodResolver(employerRequestSchema),
   });
+  const searchParams = useMemo<Parameters<typeof getWorkplaces>[0]>(() => {
+    const params: Parameters<typeof getWorkplaces>[0] = {
+      page: 0,
+      size: 20,
+    };
+
+    if (filters.searchQuery.trim()) {
+      params.search = filters.searchQuery.trim();
+    }
+    if (filters.sector) {
+      params.sector = filters.sector;
+    }
+    if (filters.location.trim()) {
+      params.location = filters.location.trim();
+    }
+    if (filters.minRating > 0) {
+      params.minRating = filters.minRating;
+    }
+    if (filters.sortBy) {
+      params.sortBy = filters.sortBy;
+    }
+
+    return params;
+  }, [filters]);
+  const searchQuery = useQueryWithToast<PaginatedWorkplaceResponse>({
+    queryKey: ['join-workplace-search', searchParams] as const,
+    queryFn: () => getWorkplaces(searchParams),
+    // Keep disabled by default; we fetch manually when modal is opened
+    enabled: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+  const {
+    data: searchResultsData,
+    isFetching: isSearching,
+    refetch: refetchSearch,
+    isError: isSearchError,
+    error: searchError,
+  } = searchQuery;
+  const searchResults = searchResultsData?.content ?? [];
+  const createRequestMutation = useCreateEmployerRequestMutation(selectedWorkplace?.id ?? 0);
+  const isSubmitting = createRequestMutation.isPending;
+  const myWorkplacesQuery = useMyWorkplacesQuery();
+  const performSearch = useCallback(() => {
+    if (!open || step !== 'search') return;
+    setError(null);
+    refetchSearch();
+  }, [open, step, refetchSearch]);
+
+  useEffect(() => {
+    if (isSearchError && searchError) {
+      setError(getErrorMessage(searchError, 'Failed to search workplaces'));
+    }
+  }, [isSearchError, searchError]);
 
   // Reset state when modal opens/closes
   useEffect(() => {
@@ -110,60 +167,25 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
       setError(null);
       reset();
       performSearch();
-      loadMyWorkplaces();
     }
-  }, [open]);
+  }, [open, performSearch, reset]);
 
-  const loadMyWorkplaces = async () => {
-    try {
-      const myWorkplaces = await getMyWorkplaces();
-      const ids = new Set(myWorkplaces.map(({ workplace }) => workplace.id));
+  useEffect(() => {
+    if (Array.isArray(myWorkplacesQuery.data) && myWorkplacesQuery.data.length > 0) {
+      const ids = new Set<number>(
+        (myWorkplacesQuery.data as EmployerWorkplaceBrief[]).map(({ workplace }) => workplace.id)
+      );
       setMyWorkplaceIds(ids);
-    } catch (err) {
-      console.warn('Failed to load user workplaces:', err);
+    } else {
+      setMyWorkplaceIds(new Set());
     }
-  };
-
-  const performSearch = useCallback(async () => {
-    setIsSearching(true);
-    setError(null);
-    try {
-      const params: Parameters<typeof getWorkplaces>[0] = {
-        page: 0,
-        size: 20,
-      };
-
-      if (filters.searchQuery.trim()) {
-        params.search = filters.searchQuery.trim();
-      }
-      if (filters.sector) {
-        params.sector = filters.sector;
-      }
-      if (filters.location.trim()) {
-        params.location = filters.location.trim();
-      }
-      if (filters.minRating > 0) {
-        params.minRating = filters.minRating;
-      }
-      if (filters.sortBy) {
-        params.sortBy = filters.sortBy;
-      }
-
-      const results = await getWorkplaces(params);
-      setSearchResults(results.content);
-    } catch (err) {
-      console.error('Search failed:', err);
-      setError('Failed to search workplaces');
-    } finally {
-      setIsSearching(false);
-    }
-  }, [filters]);
+  }, [myWorkplacesQuery.data]);
 
   useEffect(() => {
     if (open && step === 'search') {
       performSearch();
     }
-  }, [filters.sector, filters.sortBy, filters.minRating]);
+  }, [filters.sector, filters.sortBy, filters.minRating, open, step, performSearch]);
 
   const handleSearch = () => {
     performSearch();
@@ -200,11 +222,10 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
   const onSubmit = async (data: EmployerRequestFormData) => {
     if (!selectedWorkplace) return;
 
-    setIsSubmitting(true);
     setError(null);
 
     try {
-      await createEmployerRequest(selectedWorkplace.id, {
+      await createRequestMutation.mutateAsync({
         note: data.note,
       });
       setSuccess(true);
@@ -215,8 +236,6 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
     } catch (err: unknown) {
       console.error('Failed to submit request:', err);
       setError(getErrorMessage(err, 'Failed to submit request. Please try again.'));
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -298,7 +317,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                   value={filters.searchQuery}
                   onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  placeholder="Enter company name..."
+                  placeholder={t('workplace.joinModal.searchPlaceholder', { defaultValue: 'Search workplaces...' })}
                   className="flex-1"
                 />
                 <Button onClick={handleSearch} disabled={isSearching}>
@@ -325,7 +344,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                         <option value="">{t('workplace.joinModal.allSectors')}</option>
                         {SECTORS.map((s) => (
                           <option key={s} value={s}>
-                            {s}
+                            {t(`sectors.${s}`, { defaultValue: s })}
                           </option>
                         ))}
                       </select>
@@ -338,7 +357,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                         id="modal-location"
                         value={filters.location}
                         onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-                        placeholder="Enter location..."
+                        placeholder={t('workplace.joinModal.locationPlaceholder', { defaultValue: 'Enter location...' })}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                       />
                     </div>
@@ -354,7 +373,7 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                       >
                         {SORT_OPTIONS.map((option) => (
                           <option key={option.value} value={option.value}>
-                            {option.label}
+                            {t(`workplace.joinModal.sortOptions.${option.labelKey}`, { defaultValue: option.labelKey })}
                           </option>
                         ))}
                       </select>
@@ -366,9 +385,11 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                         <Label htmlFor="modal-minRating">
                           {t('workplace.joinModal.minimumRating')}
                         </Label>
-                        <span className="text-sm text-muted-foreground">
-                          {filters.minRating > 0 ? `${filters.minRating.toFixed(1)}★` : 'Any'}
-                        </span>
+                          <span className="text-sm text-muted-foreground">
+                            {filters.minRating > 0
+                              ? `${filters.minRating.toFixed(1)}★`
+                              : t('workplace.joinModal.anyRating', { defaultValue: 'Any' })}
+                          </span>
                       </div>
                       <Slider
                         value={[filters.minRating]}
@@ -382,8 +403,8 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
                         aria-label="Minimum rating"
                       />
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>0★</span>
-                        <span>5★</span>
+                        <span>{t('workplace.joinModal.ratingMinLabel', { defaultValue: '0★' })}</span>
+                        <span>{t('workplace.joinModal.ratingMaxLabel', { defaultValue: '5★' })}</span>
                       </div>
                     </div>
                   </div>

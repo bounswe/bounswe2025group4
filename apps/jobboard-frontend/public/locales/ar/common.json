@@ -45,7 +45,10 @@
   "common": {
     "loading": "جارٍ التحميل...",
     "goHome": "الذهاب إلى الصفحة الرئيسية",
-    "visitWebsite": "زيارة الموقع",
+    "visitWebsite": "زيارة الموقع الإلكتروني",
+    "settings": "الإعدادات",
+    "employer": "صاحب عمل",
+    "employers": "أصحاب العمل",
     "edited": "تم التعديل",
     "cancel": "إلغاء",
     "optional": "اختياري",
@@ -342,14 +345,24 @@
       "applyNow": "قدّم الآن",
       "description": "وصف الوظيفة",
       "ethicalPolicy": {
-        "title": "العلامات الأخلاقية والامتثال"
+        "title": "العلامات الأخلاقية والامتثال",
+        "sourceNote": "المعلومات الأخلاقية لهذه الوظيفة تأتي من ملف الشركة.",
+        "overallScore": "تقييم الشركة الأخلاقي",
+        "ratingsTitle": "تقييمات السياسات الأخلاقية",
+        "tagCount": "{{count}} سياسة أخلاقية",
+        "tagCount_plural": "{{count}} سياسة أخلاقية",
+        "noPolicies": "لم تشارك الشركة سياساتها الأخلاقية بعد.",
+        "inclusiveNote": "تعتبر الشركة هذا الدور فرصة شاملة."
       },
       "inclusiveOpportunity": "فرصة شاملة",
       "contact": {
         "title": "معلومات التواصل"
       },
       "workplace": {
-        "title": "عن الشركة"
+        "title": "عن الشركة",
+        "sector": "القطاع",
+        "location": "الموقع",
+        "overallRating": "تقييم الشركة الأخلاقي"
       }
     }
   },
@@ -450,6 +463,34 @@
         "viewApplication": "عرض الطلب",
         "backToJobs": "العودة إلى الوظائف"
       }
+    },
+    "list": {
+      "breadcrumbPrefix": "الطلبات لـ",
+      "backToJob": "العودة إلى الوظيفة",
+      "filters": "عوامل التصفية",
+      "searchPlaceholder": "ابحث بالاسم أو المسمى",
+      "status": {
+        "all": "كل الحالات",
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "sort": {
+        "recent": "الأحدث أولاً",
+        "oldest": "الأقدم أولاً",
+        "nameAz": "الاسم أ-ي",
+        "nameZa": "الاسم ي-أ"
+      },
+      "count": "{{count}} طلب",
+      "emptyTitle": "لا توجد طلبات تطابق عوامل التصفية",
+      "emptyDescription": "جرّب تعديل البحث أو حالة الطلب.",
+      "errorTitle": "تعذر تحميل الطلبات",
+      "errorDescription": "ارجع لصفحة الوظيفة وحاول مجددًا.",
+      "jobTitleFallback": "وظيفة",
+      "viewApplication": "عرض الطلب",
+      "viewAll": "عرض الطلبات",
+      "loading": "جارٍ تحميل الطلبات...",
+      "summary": "تم استلام {{count}} طلب"
     },
     "volunteer": {
       "title": "تطوع في {{jobTitle}}",
@@ -596,6 +637,39 @@
         "loadFailed": "فشل تحميل الطلبات. يرجى المحاولة مرة أخرى.",
         "deleteFailed": "فشل حذف الطلب. يرجى المحاولة مرة أخرى."
       }
+    },
+    "list": {
+      "back": "العودة إلى صفحة الوظيفة",
+      "jobErrorTitle": "لم يتم العثور على الوظيفة",
+      "jobErrorMessage": "تعذر تحميل هذه الوظيفة.",
+      "backToDashboard": "العودة للوحة التحكم",
+      "permissionDenied": "لا يمكنك عرض هذه الطلبات",
+      "permissionHint": "فقط أصحاب العمل في هذا مكان العمل يمكنهم رؤية الطلبات.",
+      "backToJob": "العودة إلى إعلان الوظيفة",
+      "title": "الطلبات لـ {{title}}",
+      "subtitle": "راجع وأدر كل الطلبات في مكان واحد.",
+      "postedOn": "تاريخ النشر",
+      "viewJob": "عرض الوظيفة",
+      "stats": {
+        "total": "الإجمالي",
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "searchPlaceholder": "ابحث بالاسم أو خطاب التغطية أو الاحتياجات",
+      "sort": {
+        "title": "ترتيب الطلبات",
+        "newest": "الأحدث أولاً",
+        "oldest": "الأقدم أولاً",
+        "nameAsc": "الاسم أ-ي",
+        "nameDesc": "الاسم ي-أ"
+      },
+      "emptyTitle": "لا توجد طلبات بعد",
+      "emptySubtitle": "شارك إعلانك لبدء تلقي الطلبات.",
+      "hasNeeds": "احتياجات خاصة مذكورة",
+      "hasCoverLetter": "خطاب تغطية",
+      "appliedOn": "تم التقديم في {{date}}",
+      "review": "مراجعة الطلب"
     }
   },
   "employer": {
@@ -882,6 +956,38 @@
     "other": "أخرى"
   },
   "workplace": {
+    "createModal": {
+      "title": "إنشاء مكان عمل",
+      "description": "أضف شركتك وابدأ بناء سمعتها",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "أدخل اسم الشركة",
+      "sector": "القطاع",
+      "sectorPlaceholder": "مثال: تقنية، رعاية صحية",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع",
+      "website": "الموقع الإلكتروني",
+      "shortDescription": "وصف مختصر",
+      "detailedDescription": "وصف تفصيلي",
+      "websitePlaceholder": "https://www.example.com",
+      "ethicalTagsLabel": "العلامات الأخلاقية",
+      "ethicalTagsHelper": "اختر العلامات التي تمثل التزامات شركتك الأخلاقية",
+      "shortDescriptionHint": "(بحد أقصى 300 حرف)",
+      "shortDescriptionPlaceholder": "سطر قصير أو ملخص",
+      "detailedDescriptionHint": "(بحد أقصى 4000 حرف)",
+      "detailedDescriptionPlaceholder": "أخبرنا عن رسالة شركتك وقيمها وثقافتها",
+      "submit": "إنشاء مكان العمل",
+      "workplaceCreated": "تم إنشاء مكان العمل!",
+      "workplaceCreatedMessage": "تم إنشاء مكان عملك بنجاح.",
+      "creating": "جارٍ الإنشاء...",
+      "redirecting": "يتم تحويلك إلى مكان العمل الجديد...",
+      "errors": {
+        "companyNameRequired": "اسم الشركة مطلوب",
+        "sectorRequired": "القطاع مطلوب",
+        "locationRequired": "الموقع مطلوب",
+        "ethicalTagsRequired": "يجب اختيار علامة أخلاقية واحدة على الأقل",
+        "websiteInvalid": "يجب أن يكون رابطاً صالحاً"
+      }
+    },
     "joinModal": {
       "title": "الانضمام إلى مكان عمل",
       "searchDescription": "ابحث عن أماكن العمل وأرسل طلب انضمام.",
@@ -893,8 +999,19 @@
       "sector": "القطاع",
       "allSectors": "جميع القطاعات",
       "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع...",
       "sortBy": "ترتيب حسب",
+      "sortOptions": {
+        "default": "افتراضي",
+        "ratingDesc": "التقييم (من الأعلى للأدنى)",
+        "ratingAsc": "التقييم (من الأدنى للأعلى)",
+        "nameAsc": "الاسم (أ إلى ي)",
+        "nameDesc": "الاسم (ي إلى أ)"
+      },
       "minimumRating": "أدنى تقييم",
+      "anyRating": "أي قيمة",
+      "ratingMinLabel": "0★",
+      "ratingMaxLabel": "5★",
       "searchResults": "تم العثور على {{count}} مكان عمل",
       "noWorkplacesFound": "لا توجد أماكن عمل تطابق عوامل التصفية.",
       "clearFiltersAndShowAll": "مسح عوامل التصفية وإظهار الكل",
@@ -912,6 +1029,79 @@
       "requestSubmittedMessage": "تم إرسال طلب الانضمام إلى {{company}} بنجاح. سيتم إعلامك عند المراجعة.",
       "closing": "سيتم الإغلاق خلال لحظات...",
       "close": "إغلاق"
+    },
+    "settings": {
+      "label": "الإعدادات",
+      "failedToLoad": "تعذر تحميل إعدادات مكان العمل.",
+      "notFound": {
+        "title": "مكان العمل غير موجود",
+        "description": "مكان العمل الذي تبحث عنه غير موجود أو تم حذفه.",
+        "goToWorkplaces": "الذهاب إلى أماكن العمل"
+      },
+      "backToWorkplace": "العودة إلى مكان العمل",
+      "title": "إعدادات مكان العمل",
+      "subtitle": "حدّث معلومات مكان العمل وقم بإدارتها",
+      "updateSuccess": "تم تحديث مكان العمل بنجاح.",
+      "companyLogo": "شعار الشركة",
+      "imagePreviewAlt": "معاينة صورة مكان العمل",
+      "changeImage": "تغيير الصورة",
+      "uploadImage": "رفع صورة",
+      "uploading": "جارٍ الرفع...",
+      "saveImage": "حفظ الصورة",
+      "imageGuidelines": "مستحسن: صورة مربعة لا تقل عن 200×200 بكسل",
+      "basicInformation": "المعلومات الأساسية",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "أدخل اسم الشركة",
+      "sector": "القطاع",
+      "sectorPlaceholder": "مثال: تقنية، رعاية صحية",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع",
+      "website": "الموقع الإلكتروني",
+      "websitePlaceholder": "https://www.example.com",
+      "description": "الوصف",
+      "shortDescription": "وصف مختصر",
+      "shortDescriptionPlaceholder": "سطر قصير أو ملخص",
+      "shortDescriptionHint": "(بحد أقصى 300 حرف)",
+      "detailedDescription": "وصف تفصيلي",
+      "detailedDescriptionPlaceholder": "أخبرنا عن رسالة شركتك وقيمها وثقافتها",
+      "detailedDescriptionHint": "(بحد أقصى 4000 حرف)",
+      "ethicalTags": "العلامات الأخلاقية",
+      "ethicalTagsHelper": "اختر العلامات التي تمثل التزامات شركتك الأخلاقية",
+      "cancel": "إلغاء",
+      "saving": "جارٍ الحفظ...",
+      "saveChanges": "حفظ التغييرات",
+      "dangerZone": {
+        "title": "منطقة الخطر",
+        "deleteDescription": "حذف مكان العمل إجراء نهائي ولا يمكن التراجع عنه.",
+        "deleteButton": "حذف مكان العمل",
+        "deleteFailed": "فشل حذف مكان العمل. يرجى المحاولة مرة أخرى.",
+        "confirmTitle": "تأكيد الحذف",
+        "confirmDescription": "هذا الإجراء لا يمكن التراجع عنه. يرجى التأكيد بكتابة اسم مكان العمل.",
+        "confirmWarning": "اكتب اسم مكان العمل بالضبط للتأكيد.",
+        "confirmPlaceholder": "اكتب اسم مكان العمل للتأكيد",
+        "confirmCancel": "إلغاء",
+        "confirmButton": "نعم، احذف مكان العمل",
+        "confirmHelper": "يرجى كتابة اسم مكان العمل بالضبط للتأكيد",
+        "deleting": "جارٍ الحذف..."
+      }
+    },
+    "profile": {
+      "title": "ملف مكان العمل",
+      "notFound": "لم يتم العثور على مكان العمل",
+      "notFoundDescription": "مكان العمل الذي تبحث عنه غير موجود أو تم حذفه.",
+      "aboutCompany": "عن الشركة",
+      "ethicalCommitments": "الالتزامات الأخلاقية",
+      "employers": "أصحاب العمل",
+      "manageRequests": "إدارة الطلبات",
+      "currentJobOpenings": "الوظائف المتاحة حالياً",
+      "noJobOpenings": "لا توجد وظائف حالياً",
+      "viewAllJobs": "عرض جميع {{count}} وظيفة",
+      "reportWorkplace": "الإبلاغ عن مكان العمل"
+    },
+    "manageRequests": "إدارة الطلبات",
+    "roles": {
+      "owner": "المالك",
+      "manager": "المدير"
     }
   },
   "mentorship": {

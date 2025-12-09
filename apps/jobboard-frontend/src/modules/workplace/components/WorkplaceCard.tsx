@@ -9,6 +9,8 @@ import { StarRating } from '@shared/components/ui/star-rating';
 import { Badge } from '@shared/components/ui/badge';
 import { MapPin, Building2 } from 'lucide-react';
 import type { WorkplaceBriefResponse } from '@shared/types/workplace.types';
+import { useTranslation } from 'react-i18next';
+import { translateEthicalTag } from '@shared/utils/ethical-tag-translator';
 
 interface WorkplaceCardProps {
   workplace: WorkplaceBriefResponse;
@@ -16,6 +18,9 @@ interface WorkplaceCardProps {
 }
 
 export function WorkplaceCard({ workplace, onClick }: WorkplaceCardProps) {
+  const { t } = useTranslation('common');
+  const translateTag = (tag: string) => translateEthicalTag(t, tag);
+
   const cardContent = (
     <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer" onClick={onClick}>
       <CardContent>
@@ -64,7 +69,7 @@ export function WorkplaceCard({ workplace, onClick }: WorkplaceCardProps) {
               <div className="flex flex-wrap gap-2">
                 {workplace.ethicalTags.slice(0, 3).map((tag) => (
                   <Badge key={tag} variant="secondary" className="text-xs">
-                    {tag}
+                    {translateTag(tag)}
                   </Badge>
                 ))}
                 {workplace.ethicalTags.length > 3 && (

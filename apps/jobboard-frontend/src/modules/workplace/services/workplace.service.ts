@@ -3,7 +3,12 @@
  * Handles all workplace-related API calls
  */
 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import { api } from '@shared/lib/api-client';
+import { workplaceKeys } from '@shared/lib/query-keys';
+import { normalizeApiError } from '@shared/utils/error-handler';
+import { useQueryWithToast } from '@shared/hooks/useQueryWithToast';
 import type {
   WorkplaceCreateRequest,
   WorkplaceUpdateRequest,
@@ -31,7 +36,7 @@ const BASE_PATH = '/workplace';
  * @param params.sortBy - Sort field (e.g., 'rating', 'name', etc.)
  * @returns Paginated list of workplaces
  */
-export async function getWorkplaces(
+async function fetchWorkplaces(
   params: WorkplaceListParams = {}
 ): Promise<PaginatedWorkplaceResponse> {
   // Build query parameters, filtering out undefined values
@@ -72,7 +77,7 @@ export async function getWorkplaces(
  * @param includeReviews Whether to include recent reviews
  * @param reviewsLimit Number of reviews to include (default: 3)
  */
-export async function getWorkplaceById(
+async function fetchWorkplaceById(
   id: number,
   includeReviews: boolean = false,
   reviewsLimit: number = 3
@@ -89,7 +94,7 @@ export async function getWorkplaceById(
 /**
  * Create a new workplace (requires employer role)
  */
-export async function createWorkplace(
+async function createWorkplace(
   request: WorkplaceCreateRequest
 ): Promise<WorkplaceDetailResponse> {
   const response = await api.post<WorkplaceDetailResponse>(BASE_PATH, request);
@@ -99,7 +104,7 @@ export async function createWorkplace(
 /**
  * Update an existing workplace (requires employer role and permissions)
  */
-export async function updateWorkplace(
+async function updateWorkplace(
   id: number,
   request: WorkplaceUpdateRequest
 ): Promise<WorkplaceDetailResponse> {
@@ -113,7 +118,7 @@ export async function updateWorkplace(
 /**
  * Get rating information for a workplace
  */
-export async function getWorkplaceRating(
+async function fetchWorkplaceRating(
   id: number
 ): Promise<WorkplaceRatingResponse> {
   const response = await api.get<WorkplaceRatingResponse>(
@@ -127,7 +132,7 @@ export async function getWorkplaceRating(
  * @param id Workplace ID
  * @param file Image file
  */
-export async function uploadWorkplaceImage(
+async function uploadWorkplaceImage(
   id: number,
   file: File
 ): Promise<WorkplaceImageResponseDto> {
@@ -149,7 +154,7 @@ export async function uploadWorkplaceImage(
 /**
  * Delete the image of a workplace
  */
-export async function deleteWorkplaceImage(id: number): Promise<ApiMessage> {
+async function deleteWorkplaceImage(id: number): Promise<ApiMessage> {
   const response = await api.delete<ApiMessage>(`${BASE_PATH}/${id}/image`);
   return response.data;
 }
@@ -157,7 +162,106 @@ export async function deleteWorkplaceImage(id: number): Promise<ApiMessage> {
 /**
  * Delete a workplace (requires employer role and permissions)
  */
-export async function deleteWorkplace(id: number): Promise<ApiMessage> {
+async function deleteWorkplace(id: number): Promise<ApiMessage> {
   const response = await api.delete<ApiMessage>(`${BASE_PATH}/${id}`);
   return response.data;
 }
+
+// Legacy exports
+export {
+  fetchWorkplaces as getWorkplaces,
+  fetchWorkplaceById as getWorkplaceById,
+  fetchWorkplaceRating as getWorkplaceRating,
+  createWorkplace,
+  updateWorkplace,
+  uploadWorkplaceImage,
+  deleteWorkplaceImage,
+  deleteWorkplace,
+};
+
+// Hooks
+export const useWorkplacesQuery = (params?: WorkplaceListParams) =>
+  useQueryWithToast<PaginatedWorkplaceResponse>({
+    queryKey: [...workplaceKeys.list, params ?? {}] as const,
+    queryFn: () => fetchWorkplaces(params),
+  });
+
+export const useWorkplaceQuery = (
+  id?: number,
+  options?: { includeReviews?: boolean; reviewsLimit?: number },
+  enabled = true
+) =>
+  useQueryWithToast<WorkplaceDetailResponse>({
+    queryKey: id ? workplaceKeys.detail(id) : workplaceKeys.detail('missing'),
+    queryFn: () =>
+      fetchWorkplaceById(id as number, options?.includeReviews ?? false, options?.reviewsLimit ?? 3),
+    enabled: Boolean(id) && enabled,
+  });
+
+export const useWorkplaceRatingQuery = (id?: number, enabled = true) =>
+  useQueryWithToast<WorkplaceRatingResponse>({
+    queryKey: id ? workplaceKeys.reports(id) : workplaceKeys.reports('missing'),
+    queryFn: () => fetchWorkplaceRating(id as number),
+    enabled: Boolean(id) && enabled,
+  });
+
+export const useCreateWorkplaceMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (request: WorkplaceCreateRequest) => createWorkplace(request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workplaceKeys.list });
+      toast.success('Workplace created');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useUpdateWorkplaceMutation = (id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (request: WorkplaceUpdateRequest) => updateWorkplace(id, request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workplaceKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: workplaceKeys.list });
+      toast.success('Workplace updated');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useUploadWorkplaceImageMutation = (id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => uploadWorkplaceImage(id, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workplaceKeys.detail(id) });
+      toast.success('Image uploaded');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useDeleteWorkplaceImageMutation = (id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => deleteWorkplaceImage(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workplaceKeys.detail(id) });
+      toast.success('Image deleted');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useDeleteWorkplaceMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteWorkplace(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: workplaceKeys.list });
+      toast.success('Workplace deleted');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};

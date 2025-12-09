@@ -3,9 +3,10 @@
  * Displays workplace details with reviews and allows employers to manage
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Badge } from '@shared/components/ui/badge';
@@ -16,31 +17,81 @@ import { ReviewStats } from '@modules/mentorship/components/reviews/ReviewStats'
 import { ReviewList } from '@modules/mentorship/components/reviews/ReviewList';
 import { ReviewFormDialog } from '@modules/mentorship/components/reviews/ReviewFormDialog';
 import { MapPin, Building2, ExternalLink, Users, Settings, CheckCircle2, ArrowDown, ArrowUp } from 'lucide-react';
-import { getWorkplaceById } from '@modules/workplace/services/workplace.service';
+import { useWorkplaceQuery } from '@modules/workplace/services/workplace.service';
 import { getJobsByEmployer } from '@modules/jobs/services/jobs.service';
-import { getEmployerRequests } from '@modules/employer/services/employer.service';
+import { useEmployerRequestsQuery } from '@modules/employer/services/employer.service';
 import { useReportModal } from '@shared/hooks/useReportModal';
 import { reportWorkplace } from '@modules/workplace/services/workplace-report.service';
 import { Flag } from 'lucide-react';
-import type { ReviewListParams, WorkplaceDetailResponse } from '@shared/types/workplace.types';
-import type { JobPostResponse } from '@shared/types/api.types';
+import type { ReviewListParams } from '@shared/types/workplace.types';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
+import type { JobPostResponse } from '@shared/types/api.types';
+import { translateEthicalTag } from '@shared/utils/ethical-tag-translator';
 
 export default function WorkplaceProfilePage() {
   const { id, workplaceId } = useParams<{ id?: string; workplaceId?: string }>();
   const resolvedId = workplaceId ?? id;
   const { t } = useTranslation('common');
+  const resolvedWorkplaceId = resolvedId ? parseInt(resolvedId, 10) : undefined;
   const { isAuthenticated, user } = useAuth();
-  const [workplace, setWorkplace] = useState<WorkplaceDetailResponse | null>(null);
-  const [jobs, setJobs] = useState<JobPostResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [jobsLoading, setJobsLoading] = useState(false);
+  const translateRole = (roleLabel: string) =>
+    t(`workplace.roles.${roleLabel.toLowerCase()}`, { defaultValue: roleLabel });
   const [refreshKey, setRefreshKey] = useState(0);
-  const [hasPendingRequests, setHasPendingRequests] = useState(false);
   const [reviewSortBy, setReviewSortBy] = useState('ratingDesc');
   const [ratingRange, setRatingRange] = useState<{ min?: number; max?: number }>({});
   const [reviewsTotal, setReviewsTotal] = useState<number>(0);
   const { openReport, ReportModalElement } = useReportModal();
+
+  const {
+    data: workplace,
+    isLoading: isWorkplaceLoading,
+    isError: isWorkplaceError,
+    refetch: refetchWorkplace,
+  } = useWorkplaceQuery(
+    resolvedWorkplaceId,
+    { includeReviews: true, reviewsLimit: 5 },
+    Boolean(workplaceId),
+  );
+
+  const employerIds = useMemo(
+    () => workplace?.employers?.map((emp) => emp.userId) ?? [],
+    [workplace],
+  );
+
+  const { data: jobs = [], isLoading: jobsLoading } = useQuery({
+    queryKey: ['workplace-jobs', workplaceId, employerIds],
+    queryFn: async () => {
+      const allJobsArrays = await Promise.all(
+        employerIds.map((employerId) =>
+          getJobsByEmployer(employerId).catch((err): JobPostResponse[] => {
+            console.error(`Failed to load jobs for employer ${employerId}:`, err);
+            return [];
+          }),
+        ),
+      );
+
+      const combinedJobs = allJobsArrays.flat();
+      const getJobKey = (job: JobPostResponse) => job.id ?? job.jobId ?? job.jobPostId;
+
+      return combinedJobs.filter((job, index, self) => {
+        const key = getJobKey(job);
+        return key !== undefined && index === self.findIndex((j) => getJobKey(j) === key);
+      });
+    },
+    enabled: Boolean(workplaceId) && employerIds.length > 0,
+  });
+
+  const isEmployerForWorkplace = workplace?.employers?.some((emp) => emp.userId === user?.id);
+  const employerRequestsQuery = useEmployerRequestsQuery(
+    resolvedWorkplaceId,
+    { size: 10 },
+    Boolean(resolvedWorkplaceId && isEmployerForWorkplace),
+  );
+  const hasPendingRequests = Boolean(
+    employerRequestsQuery.data?.content?.some(
+      (req) => req.status === 'PENDING' || req.status?.toUpperCase() === 'PENDING',
+    ),
+  );
 
   const reviewFilters = useMemo(() => {
     const filterParams: Omit<ReviewListParams, 'page' | 'size'> = {};
@@ -60,97 +111,21 @@ export default function WorkplaceProfilePage() {
     return filterParams;
   }, [ratingRange, reviewSortBy]);
 
-  useEffect(() => {
-    loadWorkplaceData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resolvedId, refreshKey]);
-
-  const loadWorkplaceData = async () => {
-    if (!resolvedId) return;
-
-    setLoading(true);
-    try {
-      const numericId = parseInt(resolvedId, 10);
-      if (Number.isNaN(numericId)) {
-        setLoading(false);
-        return;
-      }
-      const data = await getWorkplaceById(numericId, true, 5);
-      setWorkplace(data);
-      setReviewsTotal(data.reviewCount ?? data.recentReviews?.length ?? 0);
-
-      // Load jobs for all employers in the workplace
-      if (data.employers && data.employers.length > 0) {
-        loadWorkplaceJobs(data.employers.map((emp) => emp.userId));
-      }
-
-      // Check for pending employer requests if user is an employer
-      const isEmployer = data.employers?.some((emp) => emp.userId === user?.id);
-      if (isEmployer) {
-        try {
-          const requests = await getEmployerRequests(numericId, { size: 10 });
-          const hasPending = requests.content.some(
-            (req) => req.status === 'PENDING' || req.status.toUpperCase() === 'PENDING'
-          );
-          setHasPendingRequests(hasPending);
-        } catch (err) {
-          // Silently fail - user might not have permission to view requests
-          console.warn('Failed to fetch employer requests:', err);
-          setHasPendingRequests(false);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load workplace data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadWorkplaceJobs = async (employerIds: number[]) => {
-    setJobsLoading(true);
-    try {
-      // Fetch jobs for all employers and combine them
-      const allJobsPromises = employerIds.map((employerId) =>
-        getJobsByEmployer(employerId).catch((err) => {
-          console.error(`Failed to load jobs for employer ${employerId}:`, err);
-          return [];
-        }),
-      );
-
-      const allJobsArrays = await Promise.all(allJobsPromises);
-      const combinedJobs = allJobsArrays.flat();
-
-      // Remove duplicates based on job ID
-      const uniqueJobs = combinedJobs.filter(
-        (job, index, self) =>
-          index ===
-          self.findIndex(
-            (j) => (j.id || j.jobId || j.jobPostId) === (job.id || job.jobId || job.jobPostId),
-          ),
-      );
-
-      setJobs(uniqueJobs);
-    } catch (error) {
-      console.error('Failed to load workplace jobs:', error);
-      setJobs([]);
-    } finally {
-      setJobsLoading(false);
-    }
-  };
-
   const handleReviewSubmitted = () => {
     setRefreshKey((prev) => prev + 1);
+    refetchWorkplace();
   };
 
   const toggleSortDirection = () => {
     setReviewSortBy((prev) => (prev === 'ratingDesc' ? 'ratingAsc' : 'ratingDesc'));
   };
 
-  const isEmployer = workplace?.employers?.some((emp) => emp.userId === user?.id);
   const employerRole = workplace?.employers?.find((emp) => emp.userId === user?.id)?.role;
   const isOwner = employerRole === 'OWNER';
   // Employers can write reviews for workplaces they don't manage
-  const canWriteReview = isAuthenticated && (user?.role === 'ROLE_JOBSEEKER' || (user?.role === 'ROLE_EMPLOYER' && !isEmployer));
+  const canWriteReview =
+    isAuthenticated &&
+    (user?.role === 'ROLE_JOBSEEKER' || (user?.role === 'ROLE_EMPLOYER' && !isEmployerForWorkplace));
   const hasRatingFilter = ratingRange.min !== undefined || ratingRange.max !== undefined;
 
   const handleRatingRangeChange = (bound: 'min' | 'max', value: string) => {
@@ -175,7 +150,7 @@ export default function WorkplaceProfilePage() {
   const handleWorkplaceReport = () => {
     if (!workplace) return;
     openReport({
-      title: 'Report Workplace',
+      title: t('workplace.profile.reportWorkplace'),
       subtitle: workplace.companyName,
       onSubmit: async (message, reason) => {
         await reportWorkplace(workplace.id, message, reason);
@@ -184,7 +159,7 @@ export default function WorkplaceProfilePage() {
   };
 
 
-  if (loading) {
+  if (isWorkplaceLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-muted-foreground">{t('common.loading')}</p>
@@ -192,7 +167,7 @@ export default function WorkplaceProfilePage() {
     );
   }
 
-  if (!workplace) {
+  if (isWorkplaceError || !workplace) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -229,7 +204,7 @@ export default function WorkplaceProfilePage() {
                     <p className="text-lg text-muted-foreground">{workplace.shortDescription}</p>
                   )}
                 </div>
-                {isEmployer ? (
+                {isEmployerForWorkplace ? (
                   <Link to={`/employer/workplace/${workplace.id}/settings`}>
                     <Button variant="outline" size="sm">
                       <Settings className="h-4 w-4" />
@@ -237,14 +212,14 @@ export default function WorkplaceProfilePage() {
                     </Button>
                   </Link>
                 ) : (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="text-muted-foreground hover:text-destructive"
                     onClick={handleWorkplaceReport}
                   >
                     <Flag className="h-4 w-4 mr-2" />
-                    Report
+                    {t('reviews.report')}
                   </Button>
                 )}
               </div>
@@ -308,7 +283,7 @@ export default function WorkplaceProfilePage() {
                   {workplace.ethicalTags.map((tag) => (
                     <div key={tag} className="flex items-center gap-2">
                       <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0" />
-                      <span className="text-foreground">{tag}</span>
+                      <span className="text-foreground">{translateEthicalTag(t, tag)}</span>
                     </div>
                   ))}
                 </div>
@@ -352,7 +327,7 @@ export default function WorkplaceProfilePage() {
                               </p>
                               <p className="text-xs text-muted-foreground truncate">{employer.email}</p>
                               <Badge variant="outline" className="mt-1 text-xs">
-                                {t(`common.${employer.role}`)}
+                                {translateRole(employer.role)}
                               </Badge>
                             </div>
                           </div>
@@ -390,7 +365,7 @@ export default function WorkplaceProfilePage() {
 
               <ReviewList
                 workplaceId={workplace.id}
-                canReply={isEmployer}
+                canReply={isEmployerForWorkplace}
                 filters={reviewFilters}
                 actions={
                   <>
@@ -471,32 +446,34 @@ export default function WorkplaceProfilePage() {
                     return (
                       <Link key={jobId} to={`/jobs/${jobId}`} className="block group">
                         <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                          <div className="p-4">
-                            <Badge className="mb-2 bg-green-100 text-green-800 hover:bg-green-100">
-                              {job.workplace.companyName}
-                            </Badge>
-                            <h4 className="font-semibold group-hover:text-primary transition-colors mb-1">
-                              {job.title}
-                            </h4>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                              <MapPin className="h-3 w-3" />
-                              <span>{job.location}</span>
-                              {job.remote && (
-                                <>
-                                  <span>•</span>
-                                  <span>Remote</span>
-                                </>
+                          <div className="flex items-start gap-4 p-4">
+                            <Avatar className="h-12 w-12 rounded-md flex-shrink-0">
+                              <AvatarImage
+                                src={job.workplace?.imageUrl}
+                                alt={`${job.workplace?.companyName ?? ''} logo`}
+                              />
+                              <AvatarFallback className="rounded-md bg-primary/10 text-primary text-sm font-semibold">
+                                {job.workplace?.companyName
+                                  ?.split(' ')
+                                  .map((part) => part[0])
+                                  .join('')
+                                  .slice(0, 3)}
+                              </AvatarFallback>
+                            </Avatar>
+
+                            <div className="flex-1">
+                              <h4 className="font-semibold group-hover:text-primary transition-colors mb-1">
+                                {job.title}
+                              </h4>
+                              <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                                {job.description}
+                              </p>
+                              {job.minSalary && job.maxSalary && (
+                                <p className="text-sm text-muted-foreground">
+                                  ${job.minSalary.toLocaleString()} - ${job.maxSalary.toLocaleString()}
+                                </p>
                               )}
                             </div>
-                            {job.minSalary && job.maxSalary && (
-                              <p className="text-sm text-muted-foreground mb-2">
-                                ${job.minSalary.toLocaleString()} - $
-                                {job.maxSalary.toLocaleString()}
-                              </p>
-                            )}
-                            <Button className="w-full mt-3" size="sm" variant="outline">
-                              {t('common.viewJob')}
-                            </Button>
                           </div>
                         </div>
                       </Link>

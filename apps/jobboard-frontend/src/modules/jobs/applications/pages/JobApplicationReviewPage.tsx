@@ -166,9 +166,6 @@ export default function JobApplicationReviewPage() {
                 <div className="space-y-2">
                   <p className="text-lg font-semibold text-foreground">{application.applicantName}</p>
                   <p className="text-base text-muted-foreground">
-                    {t('applications.review.status')}: {statusLabel(application.status)}
-                  </p>
-                  <p className="text-base text-muted-foreground">
                     {t('applications.review.applied')} {formatRelativeDate(application.appliedDate)}
                   </p>
                 </div>

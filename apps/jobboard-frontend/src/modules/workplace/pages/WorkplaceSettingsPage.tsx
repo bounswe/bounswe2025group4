@@ -3,7 +3,7 @@
  * Allows employers to edit workplace information and manage settings
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -25,11 +25,11 @@ import {
 } from '@shared/components/ui/dialog';
 import { Building2, Upload, ArrowLeft, Save, Trash2, AlertTriangle } from 'lucide-react';
 import {
-  getWorkplaceById,
-  updateWorkplace,
-  uploadWorkplaceImage,
-  deleteWorkplaceImage,
-  deleteWorkplace,
+  useWorkplaceQuery,
+  useUpdateWorkplaceMutation,
+  useUploadWorkplaceImageMutation,
+  useDeleteWorkplaceImageMutation,
+  useDeleteWorkplaceMutation,
 } from '@modules/workplace/services/workplace.service';
 import {
   updateWorkplaceSchema,
@@ -42,13 +42,22 @@ import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 export default function WorkplaceSettingsPage() {
   const { workplaceId } = useParams<{ workplaceId: string }>();
+  const workplaceIdNumber = workplaceId ? parseInt(workplaceId, 10) : undefined;
   const navigate = useNavigate();
   const { t } = useTranslation('common');
   const { user } = useAuth();
-  const [workplace, setWorkplace] = useState<WorkplaceDetailResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const {
+    data: workplace,
+    isLoading: isWorkplaceLoading,
+    isError: isWorkplaceError,
+    refetch: refetchWorkplace,
+  } = useWorkplaceQuery(workplaceIdNumber, { includeReviews: false, reviewsLimit: 0 }, Boolean(workplaceIdNumber));
+  const updateWorkplaceMutation = useUpdateWorkplaceMutation(workplaceIdNumber ?? 0);
+  const uploadWorkplaceImageMutation = useUploadWorkplaceImageMutation(workplaceIdNumber ?? 0);
+  const deleteWorkplaceImageMutation = useDeleteWorkplaceImageMutation(workplaceIdNumber ?? 0);
+  const deleteWorkplaceMutation = useDeleteWorkplaceMutation();
+  const isUploadingImage = uploadWorkplaceImageMutation.isPending || deleteWorkplaceImageMutation.isPending;
+  const isSubmitting = updateWorkplaceMutation.isPending;
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [selectedTags, setSelectedTags] = useState<EthicalTag[]>([]);
@@ -56,7 +65,7 @@ export default function WorkplaceSettingsPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
+  const isDeleting = deleteWorkplaceMutation.isPending;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -69,54 +78,41 @@ export default function WorkplaceSettingsPage() {
     resolver: zodResolver(updateWorkplaceSchema),
   });
 
-  const loadWorkplaceData = useCallback(async () => {
-    if (!workplaceId) return;
+  useEffect(() => {
+    if (!workplace) return;
 
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getWorkplaceById(parseInt(workplaceId, 10), false, 0);
-      setWorkplace(data);
-      setSelectedTags((data.ethicalTags || []) as EthicalTag[]);
+    setSelectedTags((workplace.ethicalTags || []) as EthicalTag[]);
 
-      // Populate form with existing data
-      reset({
-        companyName: data.companyName,
-        sector: data.sector,
-        location: data.location,
-        shortDescription: data.shortDescription || '',
-        detailedDescription: data.detailedDescription || '',
-        website: data.website || '',
-        ethicalTags: data.ethicalTags || [],
-      });
-    } catch (err) {
-      console.error('Failed to load workplace data:', err);
-      setError(t('workplace.settings.failedToLoad'));
-    } finally {
-      setLoading(false);
-    }
-  }, [workplaceId, reset]);
+    reset({
+      companyName: workplace.companyName,
+      sector: workplace.sector,
+      location: workplace.location,
+      shortDescription: workplace.shortDescription || '',
+      detailedDescription: workplace.detailedDescription || '',
+      website: workplace.website || '',
+      ethicalTags: workplace.ethicalTags || [],
+    });
+  }, [workplace, reset]);
 
   useEffect(() => {
-    if (workplaceId) {
-      loadWorkplaceData();
+    if (isWorkplaceError) {
+      setError(t('workplace.settings.failedToLoad'));
     }
-  }, [workplaceId, loadWorkplaceData]);
+  }, [isWorkplaceError, t]);
 
   // Check if user is an employer of this workplace
   const isEmployer = workplace?.employers?.some((emp) => emp.userId === user?.id);
 
   useEffect(() => {
-    if (!loading && workplace && !isEmployer) {
+    if (!isWorkplaceLoading && workplace && !isEmployer) {
       // Redirect if user is not an employer
       navigate(`/workplace/${workplaceId}`);
     }
-  }, [loading, workplace, isEmployer, navigate, workplaceId]);
+  }, [isWorkplaceLoading, workplace, isEmployer, navigate, workplaceId]);
 
   const onSubmit = async (data: UpdateWorkplaceFormData) => {
-    if (!workplaceId) return;
+    if (!workplaceIdNumber) return;
 
-    setIsSubmitting(true);
     setError(null);
     setSuccess(false);
 
@@ -142,34 +138,24 @@ export default function WorkplaceSettingsPage() {
         updateData.ethicalTags = [];
       }
 
-      const updatedWorkplace = await updateWorkplace(parseInt(workplaceId, 10), updateData);
-      setWorkplace(updatedWorkplace);
+      await updateWorkplaceMutation.mutateAsync(updateData);
+      refetchWorkplace();
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: unknown) {
       console.error('Failed to update workplace:', err);
       setError(getErrorMessage(err, 'Failed to update workplace. Please try again.'));
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleImageUpload = async (file: File) => {
-    if (!workplaceId) return;
+    if (!workplaceIdNumber) return;
 
-    setIsUploadingImage(true);
     setError(null);
 
     try {
-      const result = await uploadWorkplaceImage(parseInt(workplaceId, 10), file);
-
-      if (workplace) {
-        setWorkplace({
-          ...workplace,
-          imageUrl: result.imageUrl,
-          updatedAt: result.updatedAt,
-        });
-      }
+      await uploadWorkplaceImageMutation.mutateAsync(file);
+      await refetchWorkplace();
       setImagePreview(null);
       setSelectedFile(null);
       if (fileInputRef.current) {
@@ -178,32 +164,21 @@ export default function WorkplaceSettingsPage() {
     } catch (err: unknown) {
       console.error('Failed to upload image:', err);
       setError(getErrorMessage(err, 'Failed to upload image. Please try again.'));
-    } finally {
-      setIsUploadingImage(false);
     }
   };
 
   const handleImageDelete = async () => {
-    if (!workplaceId) return;
+    if (!workplaceIdNumber) return;
 
-    setIsUploadingImage(true);
     setError(null);
 
     try {
-      await deleteWorkplaceImage(parseInt(workplaceId, 10));
-
-      if (workplace) {
-        setWorkplace({
-          ...workplace,
-          imageUrl: undefined,
-        });
-      }
+      await deleteWorkplaceImageMutation.mutateAsync();
+      await refetchWorkplace();
       setImagePreview(null);
     } catch (err: unknown) {
       console.error('Failed to delete image:', err);
       setError(getErrorMessage(err, 'Failed to delete image. Please try again.'));
-    } finally {
-      setIsUploadingImage(false);
     }
   };
 
@@ -225,25 +200,22 @@ export default function WorkplaceSettingsPage() {
   };
 
   const handleDeleteWorkplace = async () => {
-    if (!workplaceId || !workplace) return;
+    if (!workplaceIdNumber || !workplace) return;
     if (deleteConfirmation !== workplace.companyName) return;
 
-    setIsDeleting(true);
     setError(null);
 
     try {
-      await deleteWorkplace(parseInt(workplaceId, 10));
+      await deleteWorkplaceMutation.mutateAsync(workplaceIdNumber);
       navigate('/workplaces/my');
     } catch (err: unknown) {
       console.error('Failed to delete workplace:', err);
       setError(getErrorMessage(err, t('workplace.settings.dangerZone.deleteFailed')));
       setShowDeleteDialog(false);
-    } finally {
-      setIsDeleting(false);
     }
   };
 
-  if (loading) {
+  if (isWorkplaceLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-muted-foreground">{t('common.loading')}</p>
@@ -251,11 +223,13 @@ export default function WorkplaceSettingsPage() {
     );
   }
 
-  if (!workplace) {
+  if (isWorkplaceError || !workplace) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">{t('workplace.settings.notFound.title')}</h2>
+          <h2 className="text-2xl font-bold mb-2">
+            {error || t('workplace.settings.notFound.title')}
+          </h2>
           <p className="text-muted-foreground mb-4">
             {t('workplace.settings.notFound.description')}
           </p>
@@ -268,7 +242,7 @@ export default function WorkplaceSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-lg">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -384,12 +358,14 @@ export default function WorkplaceSettingsPage() {
                         }
                       }}
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                   </div>
                 )}
-                <p className="text-xs text-muted-foreground">
-                  Recommended: Square image, at least 200x200 pixels
+                <p className="text-base text-muted-foreground">
+                  {t('workplace.settings.imageGuidelines', {
+                    defaultValue: 'Recommended: Square image, at least 200x200 pixels',
+                  })}
                 </p>
               </div>
             </div>
@@ -411,7 +387,7 @@ export default function WorkplaceSettingsPage() {
                   className={errors.companyName ? 'border-destructive' : ''}
                 />
                 {errors.companyName && (
-                  <p className="text-sm text-destructive">{errors.companyName.message}</p>
+                  <p className="text-base text-destructive">{errors.companyName.message}</p>
                 )}
               </div>
 
@@ -427,7 +403,7 @@ export default function WorkplaceSettingsPage() {
                   className={errors.sector ? 'border-destructive' : ''}
                 />
                 {errors.sector && (
-                  <p className="text-sm text-destructive">{errors.sector.message}</p>
+                  <p className="text-base text-destructive">{errors.sector.message}</p>
                 )}
               </div>
 
@@ -443,7 +419,7 @@ export default function WorkplaceSettingsPage() {
                   className={errors.location ? 'border-destructive' : ''}
                 />
                 {errors.location && (
-                  <p className="text-sm text-destructive">{errors.location.message}</p>
+                  <p className="text-base text-destructive">{errors.location.message}</p>
                 )}
               </div>
 
@@ -454,11 +430,13 @@ export default function WorkplaceSettingsPage() {
                   id="website"
                   type="url"
                   {...register('website')}
-                  placeholder="https://www.example.com"
+                  placeholder={t('workplace.settings.websitePlaceholder', {
+                    defaultValue: 'https://www.example.com',
+                  })}
                   className={errors.website ? 'border-destructive' : ''}
                 />
                 {errors.website && (
-                  <p className="text-sm text-destructive">{errors.website.message}</p>
+                  <p className="text-base text-destructive">{errors.website.message}</p>
                 )}
               </div>
             </div>
@@ -472,7 +450,9 @@ export default function WorkplaceSettingsPage() {
               <div className="space-y-2">
                 <Label htmlFor="shortDescription">
                   {t('workplace.settings.shortDescription')}
-                  <span className="text-muted-foreground text-xs ml-2">(max 300 characters)</span>
+                  <span className="text-muted-foreground text-base ml-2">
+                    {t('workplace.settings.shortDescriptionHint', { defaultValue: '(max 300 characters)' })}
+                  </span>
                 </Label>
                 <Textarea
                   id="shortDescription"
@@ -482,7 +462,7 @@ export default function WorkplaceSettingsPage() {
                   className={errors.shortDescription ? 'border-destructive' : ''}
                 />
                 {errors.shortDescription && (
-                  <p className="text-sm text-destructive">{errors.shortDescription.message}</p>
+                  <p className="text-base text-destructive">{errors.shortDescription.message}</p>
                 )}
               </div>
 
@@ -490,17 +470,21 @@ export default function WorkplaceSettingsPage() {
               <div className="space-y-2">
                 <Label htmlFor="detailedDescription">
                   {t('workplace.settings.detailedDescription')}
-                  <span className="text-muted-foreground text-xs ml-2">(max 4000 characters)</span>
+                  <span className="text-muted-foreground text-base ml-2">
+                    {t('workplace.settings.detailedDescriptionHint', { defaultValue: '(max 4000 characters)' })}
+                  </span>
                 </Label>
                 <Textarea
                   id="detailedDescription"
                   {...register('detailedDescription')}
-                  placeholder="Tell us about your company's mission, values, and culture"
+                  placeholder={t('workplace.settings.detailedDescriptionPlaceholder', {
+                    defaultValue: "Tell us about your company's mission, values, and culture",
+                  })}
                   rows={6}
                   className={errors.detailedDescription ? 'border-destructive' : ''}
                 />
                 {errors.detailedDescription && (
-                  <p className="text-sm text-destructive">{errors.detailedDescription.message}</p>
+                  <p className="text-base text-destructive">{errors.detailedDescription.message}</p>
                 )}
               </div>
             </div>
@@ -510,8 +494,10 @@ export default function WorkplaceSettingsPage() {
           <Card className="p-6">
             <h2 className="text-xl font-bold">{t('workplace.settings.ethicalTags')}</h2>
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">
-                Select tags that represent your company's ethical commitments
+              <p className="text-base text-muted-foreground">
+                {t('workplace.settings.ethicalTagsHelper', {
+                  defaultValue: "Select tags that represent your company's ethical commitments",
+                })}
               </p>
               <MultiSelectDropdown
                 selectedTags={selectedTags}
@@ -555,7 +541,7 @@ export default function WorkplaceSettingsPage() {
               <h2 className="text-xl font-bold text-destructive mb-1">
                 {t('workplace.settings.dangerZone.title')}
               </h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 {t('workplace.settings.dangerZone.deleteDescription')}
               </p>
             </div>
@@ -581,8 +567,10 @@ export default function WorkplaceSettingsPage() {
               </DialogTitle>
               <DialogDescription asChild>
                 <div className="space-y-3 pt-2">
-                  <p className="text-sm">{t('workplace.settings.dangerZone.confirmDescription')}</p>
-                  <p className="font-semibold text-sm">
+                  <p className="text-base">
+                    {t('workplace.settings.dangerZone.confirmDescription')}
+                  </p>
+                  <p className="font-semibold text-base">
                     {t('workplace.settings.dangerZone.confirmWarning')}
                   </p>
                 </div>
@@ -590,7 +578,7 @@ export default function WorkplaceSettingsPage() {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="delete-confirmation" className="text-sm font-medium">
+                <Label htmlFor="delete-confirmation" className="text-base font-medium">
                   {t('workplace.settings.dangerZone.confirmPlaceholder')}
                 </Label>
                 <Input
@@ -602,8 +590,10 @@ export default function WorkplaceSettingsPage() {
                   autoComplete="off"
                 />
                 {deleteConfirmation && deleteConfirmation !== workplace?.companyName && (
-                  <p className="text-xs text-destructive">
-                    Please type the exact workplace name to confirm
+                  <p className="text-base text-destructive">
+                    {t('workplace.settings.dangerZone.confirmHelper', {
+                      defaultValue: 'Please type the exact workplace name to confirm',
+                    })}
                   </p>
                 )}
               </div>

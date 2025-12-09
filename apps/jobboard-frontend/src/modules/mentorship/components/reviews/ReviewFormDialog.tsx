@@ -15,9 +15,9 @@ import { Textarea } from '@shared/components/ui/textarea';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { StarRating } from '@shared/components/ui/star-rating';
 import { useTranslation } from 'react-i18next';
-import { createReview } from '@modules/mentorship/services/reviews.service';
 import type { ReviewCreateRequest } from '@shared/types/workplace.types';
-import { getErrorMessage } from '@shared/utils/error-handler';
+import { useCreateReviewMutation } from '@modules/mentorship/services/reviews.service';
+import { normalizeApiError } from '@shared/utils/error-handler';
 import { TAG_TO_KEY_MAP } from '@shared/constants/ethical-tags';
 
 interface ReviewFormDialogProps {
@@ -39,6 +39,7 @@ export function ReviewFormDialog({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const createReviewMutation = useCreateReviewMutation(workplaceId);
 
   const policyOptions = useMemo(
     () => (ethicalTags && ethicalTags.length > 0 ? ethicalTags : []),
@@ -88,8 +89,6 @@ export function ReviewFormDialog({
       }
     }
 
-    setLoading(true);
-
     try {
       const request: ReviewCreateRequest = {
         title: formData.title || undefined,
@@ -98,12 +97,14 @@ export function ReviewFormDialog({
         anonymous: formData.anonymous,
       };
 
-      await createReview(workplaceId, request);
+      setLoading(true);
+      await createReviewMutation.mutateAsync(request);
       setOpen(false);
       resetForm();
       onReviewSubmitted?.();
     } catch (err: unknown) {
-      setError(getErrorMessage(err, t('reviews.errors.submissionFailed')));
+      const normalized = normalizeApiError(err, t('reviews.errors.submissionFailed'));
+      setError(normalized.friendlyMessage);
       console.error('Failed to submit review:', err);
     } finally {
       setLoading(false);
