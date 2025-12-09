@@ -150,7 +150,7 @@ export function EditBioModal({ isOpen, onClose, initialBio = '', onSave }: EditB
         </div>
         <div className="flex justify-end gap-3 pt-4">
           <Button variant="outline" onClick={onClose}>
-            {t('profile.actions.cancel')}
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSave}>{t('profile.actions.saveChanges')}</Button>
         </div>
@@ -299,7 +299,7 @@ export function ExperienceModal({ isOpen, onClose, experience, onSave }: Experie
 
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button variant="outline" onClick={onClose}>
-            {t('profile.actions.cancel')}
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!isFormValid()}>
             {experience
@@ -468,7 +468,7 @@ export function EducationModal({ isOpen, onClose, education, onSave }: Education
 
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button variant="outline" onClick={onClose}>
-            {t('profile.actions.cancel')}
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!isFormValid()}>
             {education
@@ -543,7 +543,7 @@ export function SkillModal({ isOpen, onClose, skill, onSave, onDelete }: SkillMo
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={onClose}>
-              {t('profile.actions.cancel')}
+              {t('common.cancel')}
             </Button>
             <Button onClick={handleSave} disabled={!name}>
               {skill ? t('profile.skills.modal.submitEdit') : t('profile.skills.modal.submitAdd')}
@@ -620,7 +620,7 @@ export function InterestModal({ isOpen, onClose, interest, onSave, onDelete }: I
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={onClose}>
-              {t('profile.actions.cancel')}
+              {t('common.cancel')}
             </Button>
             <Button onClick={handleSave} disabled={!name}>
               {interest ? t('profile.interests.modal.submitEdit') : t('profile.interests.modal.submitAdd')}
@@ -711,7 +711,7 @@ export function CreateProfileModal({ isOpen, onClose, onSave }: CreateProfileMod
 
         <div className="flex justify-end gap-3 pt-4 border-t">
           <Button variant="outline" onClick={handleClose}>
-            {t('profile.actions.cancel')}
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!firstName.trim() || !lastName.trim()}>
             {t('profile.create.submit')}
@@ -874,7 +874,7 @@ export function ImageUploadModal({
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={handleClose} disabled={isUploading}>
-              {t('profile.actions.cancel')}
+              {t('common.cancel')}
             </Button>
             <Button 
               onClick={handleUpload} 

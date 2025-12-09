@@ -99,7 +99,7 @@ export function DeleteAccountModal({
 
           <div className="flex gap-3 pt-4">
             <Button variant="outline" onClick={handleClose} className="flex-1">
-              {t('profile.deleteModal.buttons.cancel')}
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"
