@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notifications Demo</title>
+
+    <!-- WebSocket libs -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            background: #ffffff;
+        }
+
+        /* top bar */
+        .topbar {
+            height: 48px;
+            border-bottom: 1px solid #d3d7dd;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 16px;
+            position: relative;
+        }
+
+        /* bell button */
+        .bell-btn {
+            position: relative;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            border: none;
+            background: transparent;
+        }
+
+        .bell-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .bell-icon {
+            font-size: 18px;
+            color: #555;
+        }
+
+        .bell-dot {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #e11d48;
+            display: none;
+        }
+
+        /* dropdown panel */
+        .notif-panel {
+            position: absolute;
+            top: 48px;
+            right: 16px;
+            width: 360px;
+            max-height: 400px;
+            border: 1px solid #d3d7dd;
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .notif-header {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .notif-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /*.notif-item {*/
+        /*    padding: 8px 12px;*/
+        /*    border-bottom: 1px solid #f3f4f6;*/
+        /*    cursor: pointer;*/
+        /*}*/
+
+        /*.notif-item:last-child {*/
+        /*    border-bottom: none;*/
+        /*}*/
+
+        /*.notif-item:hover {*/
+        /*    background: #f9fafb;*/
+        /*}*/
+
+        /*.notif-item.unread .notif-title {*/
+        /*    font-weight: 600;*/
+        /*}*/
+
+        /*.notif-title {*/
+        /*    font-size: 13px;*/
+        /*    margin-bottom: 2px;*/
+        /*}*/
+
+        /*.notif-time {*/
+        /*    font-size: 11px;*/
+        /*    color: #6b7280;*/
+        /*    margin-top: 2px;*/
+        /*}*/
+
+        .notif-footer {
+            padding: 8px 12px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 13px;
+            color: #2563eb;
+            cursor: pointer;
+        }
+
+        .notif-footer:hover {
+            background: #f3f4f6;
+        }
+
+        /* simple config bar for JWT/connect */
+        .config-bar {
+            padding: 8px 16px;
+            font-size: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .config-bar input {
+            flex: 1;
+            padding: 4px 6px;
+            font-size: 12px;
+        }
+
+        .config-bar button {
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .content-placeholder {
+            padding: 16px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <button class="bell-btn" id="bellBtn" type="button">
+        <span class="bell-icon">🔔</span>
+        <span class="bell-dot" id="bellDot"></span>
+    </button>
+
+    <div class="notif-panel" id="notifPanel">
+        <div class="notif-header">Notifications</div>
+        <div class="notif-list" id="notifList"></div>
+        <div class="notif-footer">See all</div>
+    </div>
+</div>
+
+<div class="config-bar">
+    <span>JWT (without “Bearer”):</span>
+    <input id="jwtInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." />
+    <button type="button" onclick="connect()">Connect</button>
+</div>
+
+<div class="content-placeholder">
+    Use Postman to send:
+    <pre>POST /api/notifications/broadcast
+POST /api/notifications/user/{username}</pre>
+    New notifications will appear when you click the bell.
+</div>
+
+<script>
+    let stompClient = null;
+    let authToken = null; // raw JWT (no Bearer)
+    const notifications = []; // newest first: {id,title,message,timestamp,read}
+
+    function authHeaderObj() {
+        return authToken ? { "Authorization": "Bearer " + authToken } : {};
+    }
+
+    // toggle panel
+    document.getElementById("bellBtn").addEventListener("click", () => {
+        const panel = document.getElementById("notifPanel");
+        const isOpen = panel.style.display === "flex";
+        panel.style.display = isOpen ? "none" : "flex";
+    });
+
+    async function connect() {
+        authToken = document.getElementById("jwtInput").value.trim();
+        const socket = new SockJS("/ws-chat");
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect(
+            authToken ? { Authorization: "Bearer " + authToken } : {},
+            function () {
+                // WebSocket subscriptions
+                stompClient.subscribe("/topic/notifications", function (msg) {
+                    const n = JSON.parse(msg.body);
+                    addNotification({ ...n, id: n.id ?? null, read: false });
+                });
+
+                stompClient.subscribe("/user/queue/notifications", function (msg) {
+                    const n = JSON.parse(msg.body);
+                    addNotification({ ...n, id: n.id ?? null, read: false });
+                });
+
+                // load unread from REST
+                loadUnread();
+            },
+            function (error) {
+                console.error("STOMP error:", error);
+            }
+        );
+    }
+
+    async function loadUnread() {
+        if (!authToken) return;
+        try {
+            const res = await fetch("/api/notifications/me", {
+                headers: authHeaderObj()
+            });
+            if (!res.ok) {
+                console.error("Unread fetch failed:", res.status);
+                return;
+            }
+            const list = await res.json();
+            list.forEach(n => {
+                addNotification({
+                    id: n.id,
+                    title: n.title,
+                    message: n.message,
+                    timestamp: n.timestamp,
+                    read: n.read === true
+                });
+            });
+        } catch (e) {
+            console.error("Unread fetch error:", e);
+        }
+    }
+
+    function addNotification(n) {
+        notifications.unshift({
+            id: n.id ?? null,
+            title: n.title || "Notification",
+            message: n.message || "",
+            timestamp: n.timestamp || Date.now(),
+            read: n.read === true
+        });
+        renderNotifications();
+    }
+
+    function renderNotifications() {
+        const listEl = document.getElementById("notifList");
+        listEl.innerHTML = "";
+
+        let hasUnread = false;
+
+        notifications.forEach((n, idx) => {
+            if (!n.read) hasUnread = true;
+
+            const item = document.createElement("div");
+            item.className = "notif-item" + (n.read ? "" : " unread");
+
+            const title = document.createElement("div");
+            title.className = "notif-title";
+            title.textContent = n.title;
+
+            const msg = document.createElement("div");
+            msg.className = "notif-msg";
+            msg.textContent = n.message;
+
+            const time = document.createElement("div");
+            time.className = "notif-time";
+            time.textContent = new Date(n.timestamp).toLocaleString();
+
+            item.appendChild(title);
+            item.appendChild(msg);
+            item.appendChild(time);
+
+            item.onclick = () => onNotificationClick(idx);
+
+            listEl.appendChild(item);
+        });
+
+        document.getElementById("bellDot").style.display = hasUnread ? "block" : "none";
+    }
+
+    async function onNotificationClick(index) {
+        const n = notifications[index];
+        if (!n || n.read) return;
+
+        n.read = true;
+        renderNotifications();
+
+        if (n.id != null && authToken) {
+            try {
+                await fetch(`/api/notifications/${n.id}/read`, {
+                    method: "POST",
+                    headers: authHeaderObj()
+                });
+            } catch (e) {
+                console.error("mark-as-read failed:", e);
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
