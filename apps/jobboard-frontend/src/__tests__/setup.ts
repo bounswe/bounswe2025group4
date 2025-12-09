@@ -4,6 +4,7 @@ import { cleanup } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 import { authHandlers, profileHandlers, API_BASE_URL, jobHandlers, applicationHandlers } from './handlers';
 import { workplaceHandlers } from './workplace-handlers';
+import { mentorshipHandlers } from './mentorship-handlers';
 
 /**
  * Mock react-i18next to return keys instead of translations
@@ -27,7 +28,14 @@ vi.mock('@shared/lib/i18n', () => ({
   },
 }));
 
-export const server = setupServer(...authHandlers, ...profileHandlers, ...workplaceHandlers, ...jobHandlers, ...applicationHandlers);
+export const server = setupServer(
+  ...authHandlers,
+  ...profileHandlers,
+  ...workplaceHandlers,
+  ...jobHandlers,
+  ...applicationHandlers,
+  ...mentorshipHandlers,
+);
 
 vi.stubEnv('VITE_API_URL', API_BASE_URL);
 

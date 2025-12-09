@@ -1,10 +1,10 @@
 import { screen, waitFor } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import { vi } from 'vitest';
-import LoginPage from '../LoginPage';
-import { renderWithProviders, setupUserEvent } from '@/test/utils';
-import { server } from '@/test/setup';
-import { API_BASE_URL } from '@/test/handlers';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import LoginPage from '@modules/auth/pages/LoginPage';
+import { renderWithProviders, setupUserEvent } from '@/__tests__/utils';
+import { server } from '@/__tests__/setup';
+import { API_BASE_URL } from '@/__tests__/handlers';
 
 const mockNavigate = vi.fn();
 

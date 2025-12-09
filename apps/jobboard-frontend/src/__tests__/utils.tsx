@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import type { InitialEntry } from 'react-router';
 import userEvent from '@testing-library/user-event';
 import { ToastContainer } from 'react-toastify';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { I18nProvider } from '@shared/providers/I18nProvider';
 import { AuthProvider } from '@/modules/auth/contexts/AuthContext';
 import { useAuthStore } from '@shared/stores/authStore';
@@ -17,16 +19,40 @@ type RenderOptions = {
  * Wrapper component that provides all required providers for testing
  * Includes ToastContainer for displaying toast notifications in tests
  */
-const Providers = ({ children, initialEntries = ['/'] }: { children: ReactNode; initialEntries?: InitialEntry[] }) => (
-  <I18nProvider>
-    <AuthProvider>
-      <MemoryRouter initialEntries={initialEntries}>
-        {children}
-        <ToastContainer />
-      </MemoryRouter>
-    </AuthProvider>
-  </I18nProvider>
-);
+const Providers = ({
+  children,
+  initialEntries = ['/'],
+}: {
+  children: ReactNode;
+  initialEntries?: InitialEntry[];
+}) => {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+          mutations: {
+            retry: false,
+          },
+        },
+      })
+  );
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <I18nProvider>
+        <AuthProvider>
+          <MemoryRouter initialEntries={initialEntries}>
+            {children}
+            <ToastContainer />
+          </MemoryRouter>
+        </AuthProvider>
+      </I18nProvider>
+    </QueryClientProvider>
+  );
+};
 
 /**
  * Custom render function that wraps components with all necessary providers

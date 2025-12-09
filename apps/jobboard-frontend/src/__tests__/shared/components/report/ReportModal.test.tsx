@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { ReportModal } from '../ReportModal';
+import { ReportModal } from '@shared/components/report/ReportModal';
 import userEvent from '@testing-library/user-event';
 
 // Mock react-toastify

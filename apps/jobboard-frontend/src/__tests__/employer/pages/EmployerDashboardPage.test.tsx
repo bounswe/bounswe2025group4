@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
-import { renderWithProviders, setupUserEvent } from '@/test/utils';
-import { useAuthStore } from '@/modules/shared/stores/authStore';
-import { createMockJWT, createMockJob, createMockApplication } from '@/test/handlers';
-import { server } from '@/test/setup';
+import { renderWithProviders, setupUserEvent } from '@/__tests__/utils';
+import { useAuthStore } from '@shared/stores/authStore';
+import { createMockJWT, createMockJob, createMockApplication } from '@/__tests__/handlers';
+import { server } from '@/__tests__/setup';
 import { http, HttpResponse } from 'msw';
-import { API_BASE_URL } from '@/test/handlers';
-import EmployerDashboardPage from '../EmployerDashboardPage';
+import { API_BASE_URL } from '@/__tests__/handlers';
+import EmployerDashboardPage from '@modules/employer/pages/EmployerDashboardPage';
 
 const mockNavigate = vi.fn();
 
@@ -49,10 +49,7 @@ describe('EmployerDashboardPage', () => {
       initialEntries: ['/employer/dashboard']
     });
 
-    // Wait for component to process auth state
-    await waitFor(() => {
-      expect(screen.getByText('auth.login.errors.generic')).toBeInTheDocument();
-    });
+    expect(await screen.findByText('auth.login.errors.generic')).toBeInTheDocument();
   });
 
   it.skip('shows loading state during data fetch', async () => {
@@ -79,12 +76,10 @@ describe('EmployerDashboardPage', () => {
     });
     setupAuthState();
 
-    await waitFor(() => {
-      expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    });
-
-    // Check for empty state message
-    expect(screen.getByText('employer.dashboard.noWorkplaces.title')).toBeInTheDocument();
+    // Wait for empty state message after data load
+    expect(
+      await screen.findByText('employer.dashboard.noWorkplaces.title')
+    ).toBeInTheDocument();
     expect(screen.getByText('employer.dashboard.noWorkplaces.description')).toBeInTheDocument();
   });
 
@@ -140,7 +135,7 @@ describe('EmployerDashboardPage', () => {
       http.get(`${API_BASE_URL}/jobs/employer/:employerId`, async () => {
         return HttpResponse.json([]);
       }),
-      http.get(`${API_BASE_URL}/workplaces/my-workplaces`, async () => {
+      http.get(`${API_BASE_URL}/workplace/employers/me`, async () => {
         return HttpResponse.json([]);
       })
     );
@@ -150,12 +145,9 @@ describe('EmployerDashboardPage', () => {
     });
     setupAuthState();
 
-    await waitFor(() => {
-      expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    });
-
-    // Find and click the "Create Workplace" button (since there are no workplaces)
-    const createButtons = screen.getAllByRole('button');
+    // Wait for empty state to render
+    await screen.findByText('employer.dashboard.noWorkplaces.title');
+    const createButtons = await screen.findAllByRole('button');
     // Should have create workplace and join workplace buttons in the empty state
     expect(createButtons.length).toBeGreaterThan(0);
   });
@@ -189,7 +181,7 @@ describe('EmployerDashboardPage', () => {
     const manageButton = screen.getByRole('button', { name: 'employer.dashboard.actions.manage' });
     await user.click(manageButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/1');
+    expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/1', { state: { from: 'employer-dashboard' } });
   });
 
   it('handles API errors gracefully with error message', async () => {
@@ -507,7 +499,7 @@ describe('EmployerDashboardPage', () => {
     });
 
     // In the empty state, there should be create and join workplace buttons
-    const createButton = screen.getByRole('button', { name: 'employer.dashboard.noWorkplaces.createWorkplace' });
+    const createButton = await screen.findByRole('button', { name: 'employer.dashboard.noWorkplaces.createWorkplace' });
     expect(createButton).toBeInTheDocument();
   });
 
@@ -644,7 +636,7 @@ describe('EmployerDashboardPage', () => {
     // Click first manage button
     await user.click(manageButtons[0]);
 
-    expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/5');
+    expect(mockNavigate).toHaveBeenCalledWith('/employer/jobs/5', { state: { from: 'employer-dashboard' } });
   });
 });
 

@@ -1435,7 +1435,7 @@
     "page": {
       "loadErrorTitle": "Profil yüklenemedi",
       "emptyTitle": "Profil bulunamadı",
-      "emptyDescription": "Devam etmek için lütfen profilinizi oluşturun",
+      "emptyDescription": "Kullanıcı ya da profili mevcut değil veya kaldırılmış olabilir.",
       "dangerZone": {
         "title": "Hesap Verilerini Silme",
         "description": "Tüm profil verilerinizi kalıcı olarak silin (GDPR/KVKK uyumlu). Bu işlem geri alınamaz.",

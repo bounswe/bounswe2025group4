@@ -1,9 +1,10 @@
 import { screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
-import RegisterPage from '../RegisterPage';
-import { renderWithProviders, setupUserEvent } from '@/test/utils';
-import { server } from '@/test/setup';
-import { API_BASE_URL } from '@/test/handlers';
+import { describe, it, expect } from 'vitest';
+import RegisterPage from '@modules/auth/pages/RegisterPage';
+import { renderWithProviders, setupUserEvent } from '@/__tests__/utils';
+import { server } from '@/__tests__/setup';
+import { API_BASE_URL } from '@/__tests__/handlers';
 
 describe('RegisterPage', () => {
   async function completeRequiredFields() {

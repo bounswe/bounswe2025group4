@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
-import { renderWithProviders, setupUserEvent } from '@/test/utils';
+import { renderWithProviders, setupUserEvent } from '@/__tests__/utils';
 import { useAuthStore } from '@/modules/shared/stores/authStore';
-import { createMockJWT, createMockApplication } from '@/test/handlers';
-import { server } from '@/test/setup';
+import { createMockJWT, createMockApplication } from '@/__tests__/handlers';
+import { server } from '@/__tests__/setup';
 import { http, HttpResponse } from 'msw';
-import { API_BASE_URL } from '@/test/handlers';
+import { API_BASE_URL } from '@/__tests__/handlers';
 import JobApplicationReviewPage from '../JobApplicationReviewPage';
 import type { UpdateJobApplicationRequest } from '@/modules/shared/types/api.types';
 

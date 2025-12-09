@@ -142,9 +142,8 @@ export function CreateJobPostModal({
       onSuccess?.();
       onOpenChange(false);
     } catch (err) {
-      const normalized = normalizeApiError(err, t('employer.createJob.submitError'));
       console.error('Error creating job:', err);
-      toast.error(normalized.friendlyMessage);
+      toast.error(t('employer.createJob.submitError'));
     } finally {
       setIsSubmitting(false);
     }

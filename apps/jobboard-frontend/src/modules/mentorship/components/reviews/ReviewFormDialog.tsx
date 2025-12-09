@@ -15,7 +15,7 @@ import { Textarea } from '@shared/components/ui/textarea';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { StarRating } from '@shared/components/ui/star-rating';
 import { useTranslation } from 'react-i18next';
-import type { ReviewCreateRequest } from '@shared/types/workplace.types';
+import type { ReviewCreateRequest, ReviewResponse } from '@shared/types/workplace.types';
 import { useCreateReviewMutation } from '@modules/mentorship/services/reviews.service';
 import { normalizeApiError } from '@shared/utils/error-handler';
 import { TAG_TO_KEY_MAP } from '@shared/constants/ethical-tags';
@@ -25,6 +25,8 @@ interface ReviewFormDialogProps {
   workplaceName: string;
   ethicalTags?: string[];
   onReviewSubmitted?: () => void;
+  onOptimisticReview?: (review: ReviewResponse) => void;
+  onReviewSettled?: (optimisticId: number, actual?: ReviewResponse) => void;
   trigger?: React.ReactNode;
 }
 
@@ -33,6 +35,8 @@ export function ReviewFormDialog({
   workplaceName,
   ethicalTags,
   onReviewSubmitted,
+  onOptimisticReview,
+  onReviewSettled,
   trigger,
 }: ReviewFormDialogProps) {
   const { t } = useTranslation('common');
@@ -65,9 +69,17 @@ export function ReviewFormDialog({
     }));
   }, [policyOptions, createEmptyPolicyRatings]);
 
+  const calculateOverallRating = (ratings: Record<string, number>) => {
+    const entries = Object.values(ratings ?? {});
+    if (entries.length === 0) return 0;
+    const sum = entries.reduce((acc, val) => acc + val, 0);
+    return sum / entries.length;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    const optimisticId = Date.now();
 
     // Validation - at least one rating required
     const hasRating =
@@ -96,13 +108,31 @@ export function ReviewFormDialog({
         ethicalPolicyRatings: formData.policyRatings,
         anonymous: formData.anonymous,
       };
+      const optimisticReview: ReviewResponse = {
+        id: optimisticId,
+        workplaceId,
+        userId: 0,
+        title: request.title,
+        content: request.content,
+        anonymous: Boolean(request.anonymous),
+        helpfulCount: 0,
+        helpfulByUser: false,
+        overallRating: calculateOverallRating(request.ethicalPolicyRatings),
+        ethicalPolicyRatings: request.ethicalPolicyRatings,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      onOptimisticReview?.(optimisticReview);
 
       setLoading(true);
-      await createReviewMutation.mutateAsync(request);
+      const created = await createReviewMutation.mutateAsync(request);
+      onReviewSettled?.(optimisticId, created);
       setOpen(false);
       resetForm();
       onReviewSubmitted?.();
     } catch (err: unknown) {
+      onReviewSettled?.(optimisticId);
       const normalized = normalizeApiError(err, t('reviews.errors.submissionFailed'));
       setError(normalized.friendlyMessage);
       console.error('Failed to submit review:', err);

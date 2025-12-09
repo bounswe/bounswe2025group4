@@ -1,14 +1,15 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 import WorkplaceProfilePage from '@modules/workplace/pages/WorkplaceProfilePage';
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { server } from '@/test/setup';
+import { server } from '@/__tests__/setup';
 import { http, HttpResponse } from 'msw';
-import { API_BASE_URL } from '@/test/handlers';
+import { API_BASE_URL } from '@/__tests__/handlers';
 import { AuthProvider } from '@/modules/auth/contexts/AuthContext';
 
-vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
+vi.mock('react-i18next', async () => await import('@/__tests__/__mocks__/react-i18next'));
 
 // Mock jobs service to avoid errors
 vi.mock('@modules/jobs/services/jobs.service', () => ({
@@ -17,14 +18,19 @@ vi.mock('@modules/jobs/services/jobs.service', () => ({
 
 describe('WorkplaceProfilePage Integration', () => {
   const renderPage = (id = '1') => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
     return render(
-      <AuthProvider>
-        <MemoryRouter initialEntries={[`/workplace/${id}`]}>
-          <Routes>
-            <Route path="/workplace/:id" element={<WorkplaceProfilePage />} />
-          </Routes>
-        </MemoryRouter>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <MemoryRouter initialEntries={[`/workplace/${id}`]}>
+            <Routes>
+              <Route path="/workplace/:id" element={<WorkplaceProfilePage />} />
+            </Routes>
+          </MemoryRouter>
+        </AuthProvider>
+      </QueryClientProvider>
     );
   };
 

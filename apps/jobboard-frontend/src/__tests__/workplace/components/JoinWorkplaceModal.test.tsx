@@ -1,18 +1,66 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { JoinWorkplaceModal } from '@/modules/workplace/components/JoinWorkplaceModal';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import * as workplaceService from '@modules/workplace/services/workplace.service';
 import * as employerService from '@modules/employer/services/employer.service';
 import type { PaginatedWorkplaceResponse, EmployerWorkplaceBrief } from '@shared/types/workplace.types';
+import type { ReactNode } from 'react';
 
 // Mock services
 vi.mock('@modules/workplace/services/workplace.service', () => ({
   getWorkplaces: vi.fn(),
 }));
+const createEmployerRequestMock = vi.hoisted(() => vi.fn());
+
 vi.mock('@modules/employer/services/employer.service', () => ({
-  createEmployerRequest: vi.fn(),
+  createEmployerRequest: createEmployerRequestMock,
   getMyWorkplaces: vi.fn(),
+  useCreateEmployerRequestMutation: () => ({
+    mutateAsync: (...args: unknown[]) => createEmployerRequestMock(...args),
+    isPending: false,
+  }),
+  useMyWorkplacesQuery: () => ({
+    data: [],
+    isLoading: false,
+    isError: false,
+    refetch: vi.fn(),
+    error: null,
+  }),
+}));
+
+// Simplify Radix dialog components to avoid portal/presence complexity in tests
+vi.mock('@shared/components/ui/dialog', () => ({
+  Dialog: ({ children }: { children: ReactNode }) => <div data-testid="dialog-root">{children}</div>,
+  DialogContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  DialogDescription: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+}));
+
+// Mock slider to avoid Radix internals causing render loops in jsdom
+vi.mock('@shared/components/ui/slider', () => ({
+  Slider: ({
+    value = [0],
+    min = 0,
+    max = 5,
+    onValueChange,
+  }: {
+    value?: number[];
+    min?: number;
+    max?: number;
+    onValueChange?: (v: number[]) => void;
+  }) => (
+    <input
+      type="range"
+      aria-label="Minimum rating"
+      min={min}
+      max={max}
+      value={value[0] ?? 0}
+      onChange={(e) => onValueChange?.([Number(e.target.value)])}
+    />
+  ),
 }));
 
 const mockWorkplaces = [
@@ -40,10 +88,15 @@ describe('JoinWorkplaceModal', () => {
   };
 
   const renderComponent = (props = {}) => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
     return render(
-      <BrowserRouter>
-        <JoinWorkplaceModal {...defaultProps} {...props} />
-      </BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <JoinWorkplaceModal {...defaultProps} {...props} />
+        </BrowserRouter>
+      </QueryClientProvider>
     );
   };
 

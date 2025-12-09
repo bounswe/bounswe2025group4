@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { http, HttpResponse } from 'msw';
-import { server } from '@/test/setup';
+import { server } from '@/__tests__/setup';
 import { profileService } from '@modules/profile/services/profile.service';
-import { API_BASE_URL } from '@/test/handlers';
+import { API_BASE_URL } from '@/__tests__/handlers';
 import type { PublicProfile } from '@shared/types/profile.types';
 
 describe('Profile Service - getPublicProfile', () => {

@@ -1446,7 +1446,7 @@
     "page": {
       "loadErrorTitle": "Failed to load profile",
       "emptyTitle": "No profile found",
-      "emptyDescription": "Please create your profile to continue",
+      "emptyDescription": "This user or profile is unavailable or may have been removed.",
       "dangerZone": {
         "title": "Account Data Deletion",
         "description": "Permanently delete all profile data (GDPR/KVKK compliant). This cannot be undone.",

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
-import { renderWithProviders, setupUserEvent } from '@/test/utils';
+import { renderWithProviders, setupUserEvent } from '@/__tests__/utils';
 import { CreateJobPostModal } from '@modules/jobs/components/jobs/CreateJobPostModal';
-import { server } from '@/test/setup';
+import { server } from '@/__tests__/setup';
 import { http, HttpResponse } from 'msw';
-import { API_BASE_URL } from '@/test/handlers';
+import { API_BASE_URL } from '@/__tests__/handlers';
 import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';
 
 vi.mock('@shared/components/ui/dialog', () => {
@@ -16,7 +16,8 @@ vi.mock('@shared/components/ui/dialog', () => {
   const DialogContent = ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-content">{children}</div>;
   const DialogHeader = ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-header">{children}</div>;
   const DialogTitle = ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-title">{children}</div>;
-  return { Dialog, DialogContent, DialogHeader, DialogTitle };
+  const DialogDescription = ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-description">{children}</div>;
+  return { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription };
 });
 
 // Mock WorkplaceSelector to avoid complex setup
@@ -94,7 +95,7 @@ describe('CreateJobPostModal', () => {
     });
 
     expect(screen.getByText('employer.createJob.title')).toBeInTheDocument();
-    expect(screen.getByLabelText('employer.createJob.jobTitle')).toBeInTheDocument();
+    expect(screen.getByLabelText(/employer\.createJob\.jobTitle/i, { exact: false })).toBeInTheDocument();
     expect(screen.getByTestId('workplace-selector')).toBeInTheDocument();
   });
 
@@ -121,15 +122,15 @@ describe('CreateJobPostModal', () => {
     });
 
     // Fill form
-    await user.type(screen.getByLabelText('employer.createJob.jobTitle'), 'Software Engineer');
-    await user.type(screen.getByLabelText('employer.createJob.jobDescription'), 'Great job');
+    await user.type(screen.getByLabelText(/employer\.createJob\.jobTitle/i, { exact: false }), 'Software Engineer');
+    await user.type(screen.getByLabelText(/employer\.createJob\.jobDescription/i, { exact: false }), 'Great job');
 
     // Select workplace
     await user.selectOptions(screen.getByTestId('workplace-select'), '1');
 
-    await user.type(screen.getByLabelText('employer.createJob.minimum'), '100000');
-    await user.type(screen.getByLabelText('employer.createJob.maximum'), '150000');
-    await user.type(screen.getByLabelText('employer.createJob.contactEmail'), 'hr@tech.com');
+    await user.type(screen.getByLabelText(/employer\.createJob\.minimum/i, { exact: false }), '100000');
+    await user.type(screen.getByLabelText(/employer\.createJob\.maximum/i, { exact: false }), '150000');
+    await user.type(screen.getByLabelText(/employer\.createJob\.contactEmail/i, { exact: false }), 'hr@tech.com');
 
     // Submit
     await user.click(screen.getByRole('button', { name: 'employer.createJob.submit' }));
@@ -163,12 +164,12 @@ describe('CreateJobPostModal', () => {
     });
 
     // Fill form
-    await user.type(screen.getByLabelText('employer.createJob.jobTitle'), 'Software Engineer');
-    await user.type(screen.getByLabelText('employer.createJob.jobDescription'), 'Great job');
+    await user.type(screen.getByLabelText(/employer\.createJob\.jobTitle/i, { exact: false }), 'Software Engineer');
+    await user.type(screen.getByLabelText(/employer\.createJob\.jobDescription/i, { exact: false }), 'Great job');
     await user.selectOptions(screen.getByTestId('workplace-select'), '1');
-    await user.type(screen.getByLabelText('employer.createJob.minimum'), '100000');
-    await user.type(screen.getByLabelText('employer.createJob.maximum'), '150000');
-    await user.type(screen.getByLabelText('employer.createJob.contactEmail'), 'hr@tech.com');
+    await user.type(screen.getByLabelText(/employer\.createJob\.minimum/i, { exact: false }), '100000');
+    await user.type(screen.getByLabelText(/employer\.createJob\.maximum/i, { exact: false }), '150000');
+    await user.type(screen.getByLabelText(/employer\.createJob\.contactEmail/i, { exact: false }), 'hr@tech.com');
 
     // Submit
     await user.click(screen.getByRole('button', { name: 'employer.createJob.submit' }));

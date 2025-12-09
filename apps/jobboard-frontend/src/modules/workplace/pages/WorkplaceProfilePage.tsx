@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Badge } from '@shared/components/ui/badge';
@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avata
 import { ReviewStats } from '@modules/mentorship/components/reviews/ReviewStats';
 import { ReviewList } from '@modules/mentorship/components/reviews/ReviewList';
 import { ReviewFormDialog } from '@modules/mentorship/components/reviews/ReviewFormDialog';
+import { ReviewCard } from '@modules/mentorship/components/reviews/ReviewCard';
 import { MapPin, Building2, ExternalLink, Users, Settings, CheckCircle2, ArrowDown, ArrowUp } from 'lucide-react';
 import { useWorkplaceQuery } from '@modules/workplace/services/workplace.service';
 import { getJobsByEmployer } from '@modules/jobs/services/jobs.service';
@@ -23,16 +24,17 @@ import { useEmployerRequestsQuery } from '@modules/employer/services/employer.se
 import { useReportModal } from '@shared/hooks/useReportModal';
 import { reportWorkplace } from '@modules/workplace/services/workplace-report.service';
 import { Flag } from 'lucide-react';
-import type { ReviewListParams } from '@shared/types/workplace.types';
+import type { ReviewListParams, ReviewResponse, WorkplaceDetailResponse } from '@shared/types/workplace.types';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import type { JobPostResponse } from '@shared/types/api.types';
 import { translateEthicalTag } from '@shared/utils/ethical-tag-translator';
+import { workplaceKeys } from '@shared/lib/query-keys';
 
 export default function WorkplaceProfilePage() {
   const { id, workplaceId } = useParams<{ id?: string; workplaceId?: string }>();
-  const resolvedId = workplaceId ?? id;
+  const resolvedWorkplaceId = workplaceId ?? id;
   const { t } = useTranslation('common');
-  const resolvedWorkplaceId = resolvedId ? parseInt(resolvedId, 10) : undefined;
+  const queryClient = useQueryClient();
   const { isAuthenticated, user } = useAuth();
   const translateRole = (roleLabel: string) =>
     t(`workplace.roles.${roleLabel.toLowerCase()}`, { defaultValue: roleLabel });
@@ -40,7 +42,9 @@ export default function WorkplaceProfilePage() {
   const [reviewSortBy, setReviewSortBy] = useState('ratingDesc');
   const [ratingRange, setRatingRange] = useState<{ min?: number; max?: number }>({});
   const [reviewsTotal, setReviewsTotal] = useState<number>(0);
+  const [optimisticReviews, setOptimisticReviews] = useState<ReviewResponse[]>([]);
   const { openReport, ReportModalElement } = useReportModal();
+  const RECENT_REVIEWS_LIMIT = 5;
 
   const {
     data: workplace,
@@ -48,10 +52,56 @@ export default function WorkplaceProfilePage() {
     isError: isWorkplaceError,
     refetch: refetchWorkplace,
   } = useWorkplaceQuery(
-    resolvedWorkplaceId,
+    workplaceId ? parseInt(workplaceId, 10) : undefined as number | undefined,
     { includeReviews: true, reviewsLimit: 5 },
     Boolean(workplaceId),
   );
+
+  const applyOptimisticReviewToCache = (review: ReviewResponse) => {
+    if (!workplaceId) return;
+    queryClient.setQueryData<WorkplaceDetailResponse>(workplaceKeys.detail(workplaceId), (prev) => {
+      if (!prev) return prev;
+      const currentCount = prev.reviewCount ?? prev.recentReviews?.length ?? 0;
+      const newCount = currentCount + 1;
+      const newOverall =
+        currentCount > 0
+          ? ((prev.overallAvg ?? 0) * currentCount + review.overallRating) / newCount
+          : review.overallRating;
+      const updatedEthical = { ...prev.ethicalAverages };
+      Object.entries(review.ethicalPolicyRatings || {}).forEach(([policy, rating]) => {
+        const prevAvg = updatedEthical[policy] ?? 0;
+        updatedEthical[policy] =
+          currentCount > 0 ? (prevAvg * currentCount + rating) / newCount : rating;
+      });
+      const recentReviews = [review, ...(prev.recentReviews ?? [])].slice(0, RECENT_REVIEWS_LIMIT);
+
+      return {
+        ...prev,
+        reviewCount: newCount,
+        overallAvg: Number(newOverall.toFixed(2)),
+        ethicalAverages: updatedEthical,
+        recentReviews,
+      };
+    });
+  };
+
+  const handleOptimisticReview = (review: ReviewResponse) => {
+    setOptimisticReviews((prev) => [review, ...prev]);
+    setReviewsTotal((prev) => (prev ?? 0) + 1);
+    applyOptimisticReviewToCache(review);
+  };
+
+  const handleReviewSettled = (optimisticId: number, actual?: ReviewResponse) => {
+    setOptimisticReviews((prev) => prev.filter((rev) => rev.id !== optimisticId));
+
+    if (!actual) {
+      setReviewsTotal((prev) => Math.max((prev ?? 0) - 1, 0));
+    }
+
+    if (workplaceId) {
+      queryClient.invalidateQueries({ queryKey: workplaceKeys.detail(workplaceId) });
+    }
+  };
 
   const employerIds = useMemo(
     () => workplace?.employers?.map((emp) => emp.userId) ?? [],
@@ -83,9 +133,9 @@ export default function WorkplaceProfilePage() {
 
   const isEmployerForWorkplace = workplace?.employers?.some((emp) => emp.userId === user?.id);
   const employerRequestsQuery = useEmployerRequestsQuery(
-    resolvedWorkplaceId,
+    workplaceId ? parseInt(workplaceId, 10) : undefined,
     { size: 10 },
-    Boolean(resolvedWorkplaceId && isEmployerForWorkplace),
+    Boolean(workplaceId && isEmployerForWorkplace),
   );
   const hasPendingRequests = Boolean(
     employerRequestsQuery.data?.content?.some(
@@ -348,6 +398,8 @@ export default function WorkplaceProfilePage() {
                     workplaceId={workplace.id}
                     workplaceName={workplace.companyName}
                     ethicalTags={workplace.ethicalTags}
+                    onOptimisticReview={handleOptimisticReview}
+                    onReviewSettled={handleReviewSettled}
                     onReviewSubmitted={handleReviewSubmitted}
                   />
                 )}
@@ -362,6 +414,19 @@ export default function WorkplaceProfilePage() {
               />
 
               <Separator />
+
+              {optimisticReviews.length > 0 && (
+                <div className="space-y-4" aria-live="polite">
+                  {optimisticReviews.map((review) => (
+                    <div key={`optimistic-${review.id}`} className="relative">
+                      <div className="absolute right-4 top-4 text-xs text-muted-foreground">
+                        {t('common.submitting')}
+                      </div>
+                      <ReviewCard workplaceId={workplace.id} review={review} canReply={false} />
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <ReviewList
                 workplaceId={workplace.id}

@@ -1,10 +1,11 @@
 import { renderHook, act, screen, render } from '@testing-library/react';
 import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { useReportModal } from '../useReportModal';
+import { useReportModal } from '@shared/hooks/useReportModal';
+import type { ReportModalProps } from '@shared/components/report/ReportModal';
 
 // Mock ReportModal component
-vi.mock('@modules/workplace/components/report/ReportModal', () => ({
-  ReportModal: ({ open, title, subtitle, contextSnippet }: any) =>
+vi.mock('@shared/components/report/ReportModal', () => ({
+  ReportModal: ({ open, title, subtitle, contextSnippet }: ReportModalProps) =>
     open ? (
       <div data-testid="mock-report-modal">
         <h1>{title}</h1>
@@ -18,7 +19,7 @@ describe('useReportModal', () => {
   beforeAll(() => {
     // Ensure requestAnimationFrame exists in the test environment
     if (!globalThis.requestAnimationFrame) {
-      vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
+      vi.stubGlobal('requestAnimationFrame', (cb: (time: number) => void) => {
         cb(performance.now());
         return 0;
       });

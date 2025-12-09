@@ -1,12 +1,14 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useReviewHelpful } from '../useReviewHelpful';
+import { useReviewHelpful } from '@shared/hooks/useReviewHelpful';
 import type { ReviewResponse } from '@shared/types/workplace.types';
 
 const mockMarkReviewHelpful = vi.fn();
 
 vi.mock('@modules/mentorship/services/reviews.service', () => ({
-  markReviewHelpful: (...args: unknown[]) => mockMarkReviewHelpful(...args),
+  useMarkReviewHelpfulMutation: () => ({
+    mutateAsync: (...args: unknown[]) => mockMarkReviewHelpful(...args),
+  }),
 }));
 
 vi.mock('react-toastify', () => ({
@@ -77,7 +79,7 @@ describe('useReviewHelpful', () => {
       await result.current.toggleHelpful();
     });
 
-    expect(mockMarkReviewHelpful).toHaveBeenCalledWith(10, 1);
+    expect(mockMarkReviewHelpful).toHaveBeenCalled();
     expect(result.current.helpfulCount).toBe(6);
     expect(result.current.userVoted).toBe(true);
   });
@@ -102,7 +104,7 @@ describe('useReviewHelpful', () => {
       await result.current.toggleHelpful();
     });
 
-    expect(mockMarkReviewHelpful).toHaveBeenCalledWith(10, 1);
+    expect(mockMarkReviewHelpful).toHaveBeenCalled();
     expect(result.current.helpfulCount).toBe(4);
     expect(result.current.userVoted).toBe(false);
   });

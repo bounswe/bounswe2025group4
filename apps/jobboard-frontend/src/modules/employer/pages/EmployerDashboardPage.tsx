@@ -205,6 +205,19 @@ export default function EmployerDashboardPage() {
   const totalJobs = workplacesWithJobs.reduce((sum, wp) => sum + wp.jobs.length, 0);
   const hasWorkplaces = employerWorkplaces.length > 0;
 
+  // Guard unauthenticated access with a friendly message
+  if (!user) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card className="border border-border bg-card shadow-sm">
+          <div className="p-6 py-12 text-center">
+            <p className="text-destructive mb-4">{t('auth.login.errors.generic')}</p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   if (dashboardQuery.isLoading) {
     return <CenteredLoader />;
   }

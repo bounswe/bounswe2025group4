@@ -39,6 +39,8 @@ interface ReplyFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  onOptimisticReply?: (reply: ReplyResponse) => void;
+  onReplySettled?: (reviewId: number, optimisticId: number, actual?: ReplyResponse) => void;
 }
 
 export function ReplyFormDialog({
@@ -48,6 +50,8 @@ export function ReplyFormDialog({
   open,
   onOpenChange,
   onSuccess,
+  onOptimisticReply,
+  onReplySettled,
 }: ReplyFormDialogProps) {
   const { t } = useTranslation('common');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,18 +76,32 @@ export function ReplyFormDialog({
   const onSubmit = async (data: ReplyFormData) => {
     setError(null);
     setIsSubmitting(true);
+    const optimisticId = existingReply?.id ?? Date.now();
 
     try {
+      const optimisticReply: ReplyResponse = {
+        id: optimisticId,
+        reviewId,
+        employerUserId: 0,
+        content: data.content,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      onOptimisticReply?.(optimisticReply);
+
       if (isEditMode) {
-        await updateReplyMutation.mutateAsync(data);
+        const updated = await updateReplyMutation.mutateAsync(data);
+        onReplySettled?.(reviewId, optimisticId, updated);
       } else {
-        await createReplyMutation.mutateAsync(data);
+        const created = await createReplyMutation.mutateAsync(data);
+        onReplySettled?.(reviewId, optimisticId, created);
       }
 
       reset();
       onSuccess?.();
       onOpenChange(false);
     } catch (err: unknown) {
+      onReplySettled?.(reviewId, optimisticId);
       console.error('Failed to submit reply:', err);
       setError(
         normalizeApiError(

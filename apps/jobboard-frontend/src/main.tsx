@@ -23,6 +23,8 @@ const queryClient = new QueryClient({
   },
 });
 
+const showReactQueryDevtools = import.meta.env.VITE_ENV !== 'prod';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <I18nProvider>
@@ -30,7 +32,9 @@ createRoot(document.getElementById('root')!).render(
         <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
           <QueryClientProvider client={queryClient}>
             <Router />
-            <ReactQueryDevtools initialIsOpen={false} />
+            {showReactQueryDevtools && (
+              <ReactQueryDevtools initialIsOpen={false} />
+            )}
           </QueryClientProvider>
         </ThemeProvider>
       </AuthProvider>

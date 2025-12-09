@@ -1,10 +1,11 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { server } from '@/test/setup';
-import { API_BASE_URL } from '@/test/handlers';
-import PublicProfilePage from '@modules/profile/pages/PublicProfilePage';
+import { server } from '@/__tests__/setup';
+import { API_BASE_URL } from '@/__tests__/handlers';
+import ProfilePage from '@modules/profile/pages/ProfilePage';
 import type { PublicProfile } from '@shared/types/profile.types';
 import { I18nProvider } from '@shared/providers/I18nProvider';
 import { AuthProvider } from '@/modules/auth/contexts/AuthContext';
@@ -66,7 +67,7 @@ describe('Public Profile Route Integration', () => {
       [
         {
           path: '/profile/:userId',
-          element: <PublicProfilePage />,
+          element: <ProfilePage />,
         },
         {
           path: '/profile',
@@ -87,17 +88,25 @@ describe('Public Profile Route Integration', () => {
     );
   };
 
-  const renderWithRouter = (router: any) => {
+  const renderWithRouter = (router: ReturnType<typeof createRouterWithProfile>) => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
     // Clear auth store state before rendering to ensure clean test environment
     useAuthStore.getState().clearSession();
     
     return render(
-      <I18nProvider>
-        <AuthProvider>
-          <RouterProvider router={router} />
-          <ToastContainer />
-        </AuthProvider>
-      </I18nProvider>
+      <QueryClientProvider client={queryClient}>
+        <I18nProvider>
+          <AuthProvider>
+            <RouterProvider router={router} />
+            <ToastContainer />
+          </AuthProvider>
+        </I18nProvider>
+      </QueryClientProvider>
     );
   };
 
@@ -202,7 +211,7 @@ describe('Public Profile Route Integration', () => {
         [
           {
             path: '/profile/:userId',
-            element: <PublicProfilePage />,
+            element: <ProfilePage />,
           },
           {
             path: '/profile',
@@ -264,7 +273,7 @@ describe('Public Profile Route Integration', () => {
         [
           {
             path: '/profile/:userId',
-            element: <PublicProfilePage />,
+            element: <ProfilePage />,
           },
           {
             path: '/',
@@ -303,7 +312,7 @@ describe('Public Profile Route Integration', () => {
         [
           {
             path: '/profile/:userId',
-            element: <PublicProfilePage />,
+            element: <ProfilePage />,
           },
         ],
         {
