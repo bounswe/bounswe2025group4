@@ -45,6 +45,7 @@ class ProfileServiceTest {
                 .firstName("John")
                 .lastName("Doe")
                 .bio("Test bio")
+                .gender("Test gender")
                 .build();
 
         Profile profile = Profile.builder()
@@ -53,6 +54,7 @@ class ProfileServiceTest {
                 .firstName("John")
                 .lastName("Doe")
                 .bio("Test bio")
+                .gender("Test gender")
                 .build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -65,5 +67,6 @@ class ProfileServiceTest {
         assertThat(result.getFirstName()).isEqualTo("John");
         assertThat(result.getLastName()).isEqualTo("Doe");
         assertThat(result.getBio()).isEqualTo("Test bio");
+        assertThat(result.getGender()).isEqualTo("Test gender");
     }
 }
