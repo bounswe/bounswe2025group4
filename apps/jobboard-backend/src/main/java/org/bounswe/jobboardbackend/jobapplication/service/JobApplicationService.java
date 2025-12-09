@@ -142,9 +142,12 @@ public class JobApplicationService {
                 .appliedDate(LocalDateTime.now())
                 .build();
 
-        notificationService.notifyUser(jobPost.getEmployer().getUsername(), "New Job Application Request", NotificationType.JOB_APPLICATION_REQUEST, "New Job Application Request from " + jobSeeker.getUsername(), application.getId());
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        notificationService.notifyUser(jobPost.getEmployer().getUsername(), "New Job Application Request", NotificationType.JOB_APPLICATION_REQUEST, "New Job Application Request from " + jobSeeker.getUsername(), savedApplication.getId());
+
+        return toResponseDto(savedApplication);
     }
 
     @Transactional
