@@ -207,7 +207,7 @@ export default function WorkplaceSettingsPage() {
 
     try {
       await deleteWorkplaceMutation.mutateAsync(workplaceIdNumber);
-      navigate('/workplaces/my');
+      navigate('/workplaces');
     } catch (err: unknown) {
       console.error('Failed to delete workplace:', err);
       setError(getErrorMessage(err, t('workplace.settings.dangerZone.deleteFailed')));

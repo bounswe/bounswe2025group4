@@ -204,7 +204,7 @@ export default function Header() {
             </>
           ) : (
             <>
-              <Button variant="ghost" asChild aria-label={t('layout.header.auth.profile', 'My Profile')}>
+              <Button className="size-12" variant="ghost" asChild aria-label={t('layout.header.auth.profile', 'My Profile')}>
                 <Link to="/profile">
                   <Avatar className="size-8">
                     {/* Future: use user.avatarUrl when available */}

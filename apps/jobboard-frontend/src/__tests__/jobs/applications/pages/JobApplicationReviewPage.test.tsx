@@ -6,7 +6,7 @@ import { createMockJWT, createMockApplication } from '@/__tests__/handlers';
 import { server } from '@/__tests__/setup';
 import { http, HttpResponse } from 'msw';
 import { API_BASE_URL } from '@/__tests__/handlers';
-import JobApplicationReviewPage from '../JobApplicationReviewPage';
+import JobApplicationReviewPage from '@modules/jobs/applications/pages/JobApplicationReviewPage';
 import type { UpdateJobApplicationRequest } from '@/modules/shared/types/api.types';
 
 const mockNavigate = vi.fn();
