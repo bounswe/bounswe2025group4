@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { Building2, Plus, UserPlus } from 'lucide-react';
@@ -7,9 +7,6 @@ import { Input } from '@shared/components/ui/input';
 import { Label } from '@shared/components/ui/label';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { Card } from '@shared/components/ui/card';
-import WorkplaceSelector from '@/modules/workplace/components/WorkplaceSelector';
-import { CreateWorkplaceModal } from '@/modules/workplace/components/CreateWorkplaceModal';
-import { JoinWorkplaceModal } from '@/modules/workplace/components/JoinWorkplaceModal';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@shared/components/ui/dialog';
 import { RequiredMark } from '@shared/components/ui/required-mark';
@@ -17,6 +14,17 @@ import { useCreateJobMutation } from '@modules/jobs/services/jobs.service';
 import { useMyWorkplacesQuery } from '@modules/employer/services/employer.service';
 import type { CreateJobPostRequest } from '@shared/types/api.types';
 import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';
+const WorkplaceSelector = lazy(() => import('@/modules/workplace/components/WorkplaceSelector'));
+const CreateWorkplaceModal = lazy(() =>
+  import('@modules/workplace/components/CreateWorkplaceModal').then((m) => ({
+    default: m.CreateWorkplaceModal,
+  })),
+);
+const JoinWorkplaceModal = lazy(() =>
+  import('@modules/workplace/components/JoinWorkplaceModal').then((m) => ({
+    default: m.JoinWorkplaceModal,
+  })),
+);
 type JobPostFormData = {
   title: string;
   description: string;
@@ -171,16 +179,20 @@ export function CreateJobPostModal({
         </div>
       </Card>
 
-      <CreateWorkplaceModal
-        open={showCreateModal}
-        onOpenChange={setShowCreateModal}
-        onSuccess={handleWorkplaceCreated}
-      />
-      <JoinWorkplaceModal
-        open={showJoinModal}
-        onOpenChange={setShowJoinModal}
-        onSuccess={handleJoinSuccess}
-      />
+      <Suspense>
+        <CreateWorkplaceModal
+          open={showCreateModal}
+          onOpenChange={setShowCreateModal}
+          onSuccess={handleWorkplaceCreated}
+        />
+      </Suspense>
+      <Suspense>
+        <JoinWorkplaceModal
+          open={showJoinModal}
+          onOpenChange={setShowJoinModal}
+          onSuccess={handleJoinSuccess}
+        />
+      </Suspense>
     </div>
   );
 
@@ -209,11 +221,13 @@ export function CreateJobPostModal({
               <p className="text-xs text-muted-foreground mt-1 mb-2">
                 {t('employer.createJob.workplaceDescription')}
               </p>
-              <WorkplaceSelector
-                value={formData.workplaceId ?? undefined}
-                onChange={handleWorkplaceChange}
-                className="mt-2"
-              />
+              <Suspense fallback={<div className="mt-2 h-10 rounded-md bg-muted animate-pulse" />}>
+                <WorkplaceSelector
+                  value={formData.workplaceId ?? undefined}
+                  onChange={handleWorkplaceChange}
+                  className="mt-2"
+                />
+              </Suspense>
             </div>
 
             <div>

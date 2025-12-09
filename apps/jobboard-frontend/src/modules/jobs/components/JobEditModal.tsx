@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@shared/components/ui/button';
 import { Input } from '@shared/components/ui/input';
@@ -5,7 +6,8 @@ import { Label } from '@shared/components/ui/label';
 import { Checkbox } from '@shared/components/ui/checkbox';
 import { RequiredMark } from '@shared/components/ui/required-mark';
 import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';
-import WorkplaceSelector from '@/modules/workplace/components/WorkplaceSelector';
+
+const WorkplaceSelector = lazy(() => import('@/modules/workplace/components/WorkplaceSelector'));
 
 export type JobPostFormData = {
   title: string;
@@ -100,11 +102,13 @@ export default function JobEditModal({
             defaultValue: 'Select the workplace this job belongs to',
           })}
         </p>
-        <WorkplaceSelector
-          value={formData.workplaceId ?? undefined}
-          onChange={handleWorkplaceChange}
-          className="mt-2"
-        />
+        <Suspense fallback={<div className="mt-2 h-10 rounded-md bg-muted animate-pulse" />}>
+          <WorkplaceSelector
+            value={formData.workplaceId ?? undefined}
+            onChange={handleWorkplaceChange}
+            className="mt-2"
+          />
+        </Suspense>
       </div>
 
       <div>

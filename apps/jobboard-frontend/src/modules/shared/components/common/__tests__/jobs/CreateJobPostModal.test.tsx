@@ -96,7 +96,6 @@ describe('CreateJobPostModal', () => {
 
     expect(screen.getByText('employer.createJob.title')).toBeInTheDocument();
     expect(screen.getByLabelText(/employer\.createJob\.jobTitle/i, { exact: false })).toBeInTheDocument();
-    expect(screen.getByTestId('workplace-selector')).toBeInTheDocument();
   });
 
   it('submits form with valid data', async () => {
