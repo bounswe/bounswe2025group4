@@ -1,0 +1,15 @@
+package org.bounswe.jobboardbackend.notification.model;
+
+public enum NotificationType {
+    NEW_MESSAGE,
+    MENTORSHIP_REQUEST,
+    MENTORSHIP_APPROVED,
+    MENTORSHIP_REJECTED,
+    JOB_APPLICATION_REQUEST,
+    JOB_APPLICATION_APPROVED,
+    JOB_APPLICATION_REJECTED,
+    FORUM_COMMENT,
+    FORUM_REPORT,
+    AWARDED_BADGE
+
+}
