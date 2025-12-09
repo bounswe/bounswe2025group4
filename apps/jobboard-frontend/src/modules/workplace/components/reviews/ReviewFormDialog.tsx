@@ -16,7 +16,7 @@ import { Checkbox } from '@shared/components/ui/checkbox';
 import { StarRating } from '@shared/components/ui/star-rating';
 import { useTranslation } from 'react-i18next';
 import type { ReviewCreateRequest, ReviewResponse } from '@shared/types/workplace.types';
-import { useCreateReviewMutation } from '@modules/mentorship/services/reviews.service';
+import { useCreateReviewMutation } from '@modules/workplace/services/reviews.service';
 import { normalizeApiError } from '@shared/utils/error-handler';
 import { TAG_TO_KEY_MAP } from '@shared/constants/ethical-tags';
 
@@ -47,12 +47,12 @@ export function ReviewFormDialog({
 
   const policyOptions = useMemo(
     () => (ethicalTags && ethicalTags.length > 0 ? ethicalTags : []),
-    [ethicalTags]
+    [ethicalTags],
   );
 
   const createEmptyPolicyRatings = useCallback(
     (policies: string[]) => Object.fromEntries(policies.map((policy) => [policy, 0])),
-    []
+    [],
   );
 
   const [formData, setFormData] = useState({
@@ -83,7 +83,7 @@ export function ReviewFormDialog({
 
     // Validation - at least one rating required
     const hasRating =
-      policyOptions.length === 0 || Object.values(formData.policyRatings).some(r => r > 0);
+      policyOptions.length === 0 || Object.values(formData.policyRatings).some((r) => r > 0);
     if (!hasRating) {
       setError(t('reviews.errors.atLeastOneRating'));
       return;
@@ -187,7 +187,9 @@ export function ReviewFormDialog({
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <div className="space-y-2">
-            <Label htmlFor="title">{t('reviews.reviewTitle')} ({t('common.optional')})</Label>
+            <Label htmlFor="title">
+              {t('reviews.reviewTitle')} ({t('common.optional')})
+            </Label>
             <Input
               id="title"
               placeholder={t('reviews.titlePlaceholder')}
@@ -241,14 +243,9 @@ export function ReviewFormDialog({
             <Checkbox
               id="anonymous"
               checked={formData.anonymous}
-              onCheckedChange={(checked) =>
-                setFormData({ ...formData, anonymous: checked as boolean })
-              }
+              onCheckedChange={(checked) => setFormData({ ...formData, anonymous: checked as boolean })}
             />
-            <Label
-              htmlFor="anonymous"
-              className="text-sm font-normal cursor-pointer"
-            >
+            <Label htmlFor="anonymous" className="text-sm font-normal cursor-pointer">
               {t('reviews.postAnonymously')}
             </Label>
           </div>

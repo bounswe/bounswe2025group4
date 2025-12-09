@@ -19,7 +19,10 @@ import {
 import { Button } from '@shared/components/ui/button';
 import { Textarea } from '@shared/components/ui/textarea';
 import { Label } from '@shared/components/ui/label';
-import { useCreateReplyMutation, useUpdateReplyMutation } from '@modules/mentorship/services/reviews.service';
+import {
+  useCreateReplyMutation,
+  useUpdateReplyMutation,
+} from '@modules/workplace/services/reviews.service';
 import type { ReplyResponse } from '@shared/types/workplace.types';
 import { normalizeApiError } from '@shared/utils/error-handler';
 
@@ -106,8 +109,8 @@ export function ReplyFormDialog({
       setError(
         normalizeApiError(
           err,
-          t(isEditMode ? 'reviews.reply.updateError' : 'reviews.reply.submitError')
-        ).friendlyMessage
+          t(isEditMode ? 'reviews.reply.updateError' : 'reviews.reply.submitError'),
+        ).friendlyMessage,
       );
     } finally {
       setIsSubmitting(false);
@@ -126,13 +129,9 @@ export function ReplyFormDialog({
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
             <DialogTitle>
-              {isEditMode
-                ? t('reviews.reply.editReply')
-                : t('reviews.reply.replyToReview')}
+              {isEditMode ? t('reviews.reply.editReply') : t('reviews.reply.replyToReview')}
             </DialogTitle>
-            <DialogDescription>
-              {t('reviews.reply.replyDescription')}
-            </DialogDescription>
+            <DialogDescription>{t('reviews.reply.replyDescription')}</DialogDescription>
           </DialogHeader>
 
           <div className="py-4 space-y-4">
@@ -194,3 +193,4 @@ export function ReplyFormDialog({
     </Dialog>
   );
 }
+

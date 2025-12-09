@@ -169,7 +169,7 @@ async function updateReply(
  */
 async function deleteReply(
   workplaceId: number,
-  reviewId: number
+  reviewId: number,
 ): Promise<ApiMessage> {
   const response = await api.delete<ApiMessage>(
     `${BASE_PATH}/${workplaceId}/review/${reviewId}/reply`,
@@ -194,7 +194,7 @@ export {
 export const useWorkplaceReviewsQuery = (
   workplaceId?: number,
   params?: ReviewListParams,
-  enabled = true
+  enabled = true,
 ) =>
   useQueryWithToast({
     queryKey: workplaceId ? reviewKeys.workplace(workplaceId) : reviewKeys.workplace('missing'),
@@ -209,7 +209,7 @@ export const useCreateReviewMutation = (workplaceId: number) => {
     onMutate: async (request) => {
       await queryClient.cancelQueries({ queryKey: reviewKeys.workplace(workplaceId) });
       const previous = queryClient.getQueryData<PaginatedReviewResponse>(
-        reviewKeys.workplace(workplaceId)
+        reviewKeys.workplace(workplaceId),
       );
       if (previous) {
         const optimistic: ReviewResponse = {
@@ -221,10 +221,9 @@ export const useCreateReviewMutation = (workplaceId: number) => {
           anonymous: Boolean(request.anonymous),
           helpfulCount: 0,
           helpfulByUser: false,
-          overallRating: Object.values(request.ethicalPolicyRatings ?? {}).reduce(
-            (sum, val) => sum + val,
-            0
-          ) / Math.max(Object.keys(request.ethicalPolicyRatings ?? {}).length, 1),
+          overallRating:
+            Object.values(request.ethicalPolicyRatings ?? {}).reduce((sum, val) => sum + val, 0) /
+            Math.max(Object.keys(request.ethicalPolicyRatings ?? {}).length, 1),
           ethicalPolicyRatings: request.ethicalPolicyRatings,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -269,23 +268,8 @@ export const useMarkReviewHelpfulMutation = (workplaceId: number, reviewId: numb
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: reviewKeys.workplace(workplaceId) });
       const previous = queryClient.getQueryData<PaginatedReviewResponse>(
-        reviewKeys.workplace(workplaceId)
+        reviewKeys.workplace(workplaceId),
       );
-      if (previous) {
-        const updated = previous.content.map((review) =>
-          review.id === reviewId
-            ? {
-                ...review,
-                helpfulCount: review.helpfulCount + 1,
-                helpfulByUser: true,
-              }
-            : review
-        );
-        queryClient.setQueryData<PaginatedReviewResponse>(reviewKeys.workplace(workplaceId), {
-          ...previous,
-          content: updated,
-        });
-      }
       return { previous };
     },
     onError: (err, _vars, context) => {
@@ -300,51 +284,15 @@ export const useMarkReviewHelpfulMutation = (workplaceId: number, reviewId: numb
   });
 };
 
-export const useReportReviewMutation = (workplaceId: number, reviewId: number) =>
-  useMutation({
-    mutationFn: (request: ReviewReportCreate) => reportReview(workplaceId, reviewId, request),
-    onSuccess: () => toast.success('Review reported'),
-    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
-  });
-
 export const useCreateReplyMutation = (workplaceId: number, reviewId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (request: ReplyCreateRequest) => createReply(workplaceId, reviewId, request),
-    onMutate: async (request) => {
-      await queryClient.cancelQueries({ queryKey: reviewKeys.workplace(workplaceId) });
-      const previous = queryClient.getQueryData<PaginatedReviewResponse>(
-        reviewKeys.workplace(workplaceId)
-      );
-      if (previous) {
-        const optimisticReply: ReplyResponse = {
-          id: Date.now(),
-          reviewId,
-          employerUserId: 0,
-          content: request.content,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        const updated = previous.content.map((review) =>
-          review.id === reviewId ? { ...review, reply: optimisticReply } : review
-        );
-        queryClient.setQueryData<PaginatedReviewResponse>(reviewKeys.workplace(workplaceId), {
-          ...previous,
-          content: updated,
-        });
-      }
-      return { previous };
-    },
-    onError: (err, _req, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(reviewKeys.workplace(workplaceId), context.previous);
-      }
-      toast.error(normalizeApiError(err).friendlyMessage);
-    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: reviewKeys.workplace(workplaceId) });
-      toast.success('Reply added');
+      toast.success('Reply posted');
     },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
   });
 };
 
@@ -360,35 +308,3 @@ export const useUpdateReplyMutation = (workplaceId: number, reviewId: number) =>
   });
 };
 
-export const useDeleteReplyMutation = (workplaceId: number, reviewId: number) => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => deleteReply(workplaceId, reviewId),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: reviewKeys.workplace(workplaceId) });
-      const previous = queryClient.getQueryData<PaginatedReviewResponse>(
-        reviewKeys.workplace(workplaceId)
-      );
-      if (previous) {
-        const updated = previous.content.map((review) =>
-          review.id === reviewId ? { ...review, reply: undefined } : review
-        );
-        queryClient.setQueryData<PaginatedReviewResponse>(reviewKeys.workplace(workplaceId), {
-          ...previous,
-          content: updated,
-        });
-      }
-      return { previous };
-    },
-    onError: (err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(reviewKeys.workplace(workplaceId), context.previous);
-      }
-      toast.error(normalizeApiError(err).friendlyMessage);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: reviewKeys.workplace(workplaceId) });
-      toast.success('Reply deleted');
-    },
-  });
-};

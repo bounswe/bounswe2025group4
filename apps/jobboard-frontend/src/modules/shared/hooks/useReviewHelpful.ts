@@ -7,7 +7,7 @@ import { useState, useCallback } from 'react';
 import type { ReviewResponse } from '@shared/types/workplace.types';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-import { useMarkReviewHelpfulMutation } from '@modules/mentorship/services/reviews.service';
+import { useMarkReviewHelpfulMutation } from '@modules/workplace/services/reviews.service';
 import { normalizeApiError } from '@shared/utils/error-handler';
 
 interface UseReviewHelpfulProps {

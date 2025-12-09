@@ -33,18 +33,15 @@ export function ReviewStats({
   const roundedOverall = Math.min(5, Math.max(1, Math.round(safeOverallAvg || 0)));
 
   // Build distribution from props (preferred)
-  const seedDistribution: Record<number, number> = [1, 2, 3, 4, 5].reduce(
-    (acc, rating) => {
-      const raw = ratingDistribution?.[rating as keyof typeof ratingDistribution] ?? 0;
-      acc[rating] = Number.isFinite(raw as number) ? Number(raw) : 0;
-      return acc;
-    },
-    {} as Record<number, number>
-  );
+  const seedDistribution: Record<number, number> = [1, 2, 3, 4, 5].reduce((acc, rating) => {
+    const raw = ratingDistribution?.[rating as keyof typeof ratingDistribution] ?? 0;
+    acc[rating] = Number.isFinite(raw as number) ? Number(raw) : 0;
+    return acc;
+  }, {} as Record<number, number>);
 
   const countFromDistribution = Object.values(seedDistribution).reduce(
     (sum, count) => sum + count,
-    0
+    0,
   );
 
   // Build distribution from subcategory ratings
@@ -56,12 +53,12 @@ export function ReviewStats({
       });
       return acc;
     },
-    { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } as Record<number, number>
+    { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } as Record<number, number>,
   );
 
   const countFromPolicies = Object.values(distributionFromPolicies).reduce(
     (sum, count) => sum + count,
-    0
+    0,
   );
 
   const distributionFromReviews: Record<number, number> = recentReviews.reduce(
@@ -70,12 +67,12 @@ export function ReviewStats({
       acc[bucket] = (acc[bucket] || 0) + 1;
       return acc;
     },
-    { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } as Record<number, number>
+    { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } as Record<number, number>,
   );
 
   const countFromRecent = Object.values(distributionFromReviews).reduce(
     (sum, count) => sum + count,
-    0
+    0,
   );
 
   // Final distribution preference: provided > derived from reviews > fallback from average
@@ -96,7 +93,7 @@ export function ReviewStats({
 
   const distributionTotal = Object.values(normalizedDistribution).reduce(
     (sum, count) => sum + count,
-    0
+    0,
   );
 
   const distributionDenominator =
@@ -108,11 +105,12 @@ export function ReviewStats({
   };
 
   // Get all categories - use keys from ethicalAverages if available, otherwise use ethicalTags
-  const allCategories = Object.keys(ethicalAverages).length > 0 
-    ? Object.keys(ethicalAverages)
-    : ethicalTags.length > 0
-    ? ethicalTags
-    : [];
+  const allCategories =
+    Object.keys(ethicalAverages).length > 0
+      ? Object.keys(ethicalAverages)
+      : ethicalTags.length > 0
+      ? ethicalTags
+      : [];
 
   // Create policy entries with values from ethicalAverages or 0 if not present
   const policyEntries: [string, number][] = allCategories.map((policy) => {
@@ -148,7 +146,7 @@ export function ReviewStats({
               </p>
             )}
           </div>
-          
+
           {/* Rating Distribution */}
           <div className="mt-6">
             <div className="space-y-2">
@@ -161,11 +159,15 @@ export function ReviewStats({
                     <span className="text-sm text-muted-foreground w-4 text-right">{rating}</span>
                     <div className="flex-1 h-4 bg-muted rounded-full overflow-hidden">
                       <div
-                        className={`h-full transition-all ${hasReviews ? 'bg-yellow-500' : 'bg-muted'}`}
+                        className={`h-full transition-all ${
+                          hasReviews ? 'bg-yellow-500' : 'bg-muted'
+                        }`}
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
-                    <span className="text-sm text-muted-foreground w-10 text-left">{percentage}%</span>
+                    <span className="text-sm text-muted-foreground w-10 text-left">
+                      {percentage}%
+                    </span>
                   </div>
                 );
               })}
@@ -183,14 +185,8 @@ export function ReviewStats({
                   {formatPolicyName(policy)}
                 </span>
                 <div className="flex items-center gap-2">
-                  <StarRating
-                    value={average}
-                    readonly
-                    size="sm"
-                  />
-                  <span className="text-sm font-medium w-8 text-right">
-                    {average.toFixed(1)}
-                  </span>
+                  <StarRating value={average} readonly size="sm" />
+                  <span className="text-sm font-medium w-8 text-right">{average.toFixed(1)}</span>
                 </div>
               </div>
             ))}
