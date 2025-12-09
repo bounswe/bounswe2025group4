@@ -11,23 +11,22 @@ const resolveNotificationLink = (notification: NotificationItem): string => {
   const type = notification.notificationType?.toUpperCase() || '';
   const linkId = notification.linkId;
 
-  if (type.includes('CHAT') || type === 'NEW_MESSAGE') {
-    return linkId ? `/mentorship/chat/${linkId}` : '/mentorship/chat';
-  }
+  // links must be finalized TODO
+  const NOTIFICATION_TYPE_TO_LINK = {
+    'NEW_MESSAGE': '/mentorship/chat',
+    'MENTORSHIP_REQUEST': '/mentorship/mentor/requests',
+    'MENTORSHIP_APPROVED': '/mentorship/my',
+    'MENTORSHIP_REJECTED': '/mentorship/my',
+    'JOB_APPLICATION_CREATED': '/employer/jobs/{linkId}/applications',
+    'JOB_APPLICATION_APPROVED': '/jobs/applications',
+    'JOB_APPLICATION_REJECTED': '/jobs/applications',
+    'FORUM_COMMENT': '/forum',
+    'SYSTEM_BROADCAST': '/',
+    'BROADCAST': '/',
+    'GLOBAL': '/',
+  };
 
-  if (type.includes('JOB_APPLICATION')) {
-    return '/jobs/applications';
-  }
-
-  if (type.includes('MENTORSHIP')) {
-    return '/mentorship/my';
-  }
-
-  if (type.includes('FORUM')) {
-    return '/forum';
-  }
-
-  return '/';
+  return NOTIFICATION_TYPE_TO_LINK[type as keyof typeof NOTIFICATION_TYPE_TO_LINK]?.replace('{linkId}', linkId?.toString() ?? '');
 };
 
 export const useNotifications = () => {
@@ -79,13 +78,17 @@ export const useNotifications = () => {
     [sortNotifications]
   );
 
-  const { isLoading: isLoadingInitial } = useQuery({
+  const { data: initialNotifications, isLoading: isLoadingInitial } = useQuery({
     queryKey: notificationKeys.me,
     queryFn: fetchMyNotifications,
     enabled: isAuthenticated,
     staleTime: 30_000,
-    onSuccess: (data) => mergeInitialNotifications(data),
   });
+
+  useEffect(() => {
+    if (!initialNotifications || !isAuthenticated) return;
+    mergeInitialNotifications(initialNotifications);
+  }, [initialNotifications, isAuthenticated, mergeInitialNotifications]);
 
   const markReadMutation = useMutation({
     mutationFn: (id: number) => markNotificationAsRead(id),

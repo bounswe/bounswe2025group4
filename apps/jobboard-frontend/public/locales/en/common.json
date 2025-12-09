@@ -1914,7 +1914,16 @@
     "authRequired": "You must be logged in to use chat",
     "noConversationsDesc": "You need to have an active mentorship to start chatting."
     },
-    "errors": {
+    "notifications": {
+    "title": "Notifications",
+    "ariaLabel": "Notifications",
+    "loading": "Loading notifications...",
+    "empty": "You're all caught up. No notifications yet.",
+    "unread": "{{count}} unread",
+    "upToDate": "Up to date",
+    "footer": "Newest notifications appear first."
+  },
+  "errors": {
     "DEFAULT": "Something went wrong. Please try again.",
     "VALIDATION_FAILED": "Some fields need your attention.",
     "MALFORMED_JSON": "Request format is invalid.",
