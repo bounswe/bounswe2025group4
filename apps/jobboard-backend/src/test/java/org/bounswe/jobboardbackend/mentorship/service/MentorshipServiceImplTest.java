@@ -13,10 +13,12 @@ import org.bounswe.jobboardbackend.mentorship.dto.CreateMentorshipRequestDTO;
 import org.bounswe.jobboardbackend.mentorship.dto.ResumeFileResponseDTO;
 import org.bounswe.jobboardbackend.mentorship.model.*;
 import org.bounswe.jobboardbackend.mentorship.repository.*;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -31,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
+@ExtendWith(MockitoExtension.class)
 class MentorshipServiceImplTest {
 
     @Mock
@@ -60,6 +62,10 @@ class MentorshipServiceImplTest {
 
     @InjectMocks
     private MentorshipServiceImpl mentorshipService;
+
+    @Mock
+    private NotificationService notificationService;
+
 
     @BeforeEach
     void setUp() {
@@ -250,6 +256,10 @@ class MentorshipServiceImplTest {
         when(mentor.getId()).thenReturn(mentorId);
         when(mentor.canAccept()).thenReturn(true);
 
+        User mentorUser = new User();
+        mentorUser.setUsername("mentorUser");
+        when(mentor.getUser()).thenReturn(mentorUser);
+
         User jobSeeker = new User();
         jobSeeker.setId(jobSeekerId);
 
@@ -277,6 +287,7 @@ class MentorshipServiceImplTest {
         verify(mentorshipRequestRepository).save(any(MentorshipRequest.class));
     }
 
+
     // ---------------------------------------------------------------------
     // respondToMentorshipRequest
     // ---------------------------------------------------------------------
@@ -286,13 +297,18 @@ class MentorshipServiceImplTest {
         Long requestId = 1L;
         Long mentorUserId = 10L;
 
+        User mentorUser = new User();
+        mentorUser.setId(mentorUserId);
+        mentorUser.setUsername("mentorUser");
+
         MentorProfile mentorProfile = new MentorProfile();
         mentorProfile.setId(mentorUserId);
         mentorProfile.setCurrentMentees(0);
-        mentorProfile.setUser(new User());
+        mentorProfile.setUser(mentorUser);
 
         User requester = new User();
         requester.setId(20L);
+        requester.setUsername("requesterUser");
 
         MentorshipRequest request = new MentorshipRequest();
         request.setId(requestId);
@@ -300,13 +316,21 @@ class MentorshipServiceImplTest {
         request.setRequester(requester);
         request.setStatus(RequestStatus.PENDING);
 
-        when(mentorshipRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
+        when(mentorshipRequestRepository.findById(requestId))
+                .thenReturn(Optional.of(request));
+
         when(resumeReviewRepository.save(any(ResumeReview.class)))
                 .thenAnswer(invocation -> {
                     ResumeReview r = invocation.getArgument(0);
                     r.setId(100L);
                     return r;
                 });
+
+        Conversation conversation = new Conversation();
+        conversation.setId(555L);
+        when(chatService.createConversationForReview(any(ResumeReview.class)))
+                .thenReturn(conversation);
+
         when(mentorshipRequestRepository.save(request)).thenReturn(request);
 
         var result = mentorshipService.respondToMentorshipRequest(requestId, true, mentorUserId);
@@ -315,6 +339,8 @@ class MentorshipServiceImplTest {
         verify(chatService).createConversationForReview(any(ResumeReview.class));
         verify(mentorProfileRepository).save(mentorProfile);
     }
+
+
 
     @Test
     void respondToMentorshipRequest_decline_success() {
