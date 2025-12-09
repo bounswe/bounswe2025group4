@@ -444,8 +444,7 @@
           "remove": "Remove File"
         },
         "submit": "Submit Application",
-        "submitting": "Submitting...",
-        "cancel": "Cancel"
+        "submitting": "Submitting..."
       },
       "success": {
         "title": "Application Submitted!",
@@ -502,7 +501,6 @@
           "chooseFile": "Choose File",
           "fileTypes": "PDF, DOC, or DOCX up to 10MB"
         },
-        "cancel": "Cancel",
         "submit": "Submit Volunteer Application",
         "submitting": "Submitting..."
       },
@@ -607,7 +605,6 @@
         "title": "Withdraw Application",
         "message": "Are you sure you want to withdraw this application? This action cannot be undone.",
         "confirm": "Yes, Withdraw",
-        "cancel": "Cancel",
         "success": "Application withdrawn successfully",
         "error": "Failed to withdraw application. Please try again."
       },
@@ -685,7 +682,6 @@
       "save": "Save Changes",
       "saving": "Saving...",
       "submitError": "Failed to update job posting. Please try again.",
-      "cancel": "Cancel",
       "jobDescription": "Job Description",
       "salaryRange": "Salary Range",
       "location": "Location",
@@ -861,9 +857,25 @@
     },
     "joinModal": {
       "title": "Join a Workplace",
+      "searchDescription": "Search workplaces and send a join request.",
       "searchPlaceholder": "Search workplaces...",
+      "filters": "Filters",
+      "clear": "Clear",
+      "searching": "Searching...",
+      "search": "Search",
+      "sector": "Sector",
+      "allSectors": "All Sectors",
+      "location": "Location",
+      "sortBy": "Sort By",
+      "minimumRating": "Minimum Rating",
+      "searchResults": "Workplaces found: {{count}}",
+      "noWorkplacesFound": "No workplaces match your filters.",
+      "clearFiltersAndShowAll": "Clear filters and show all",
       "requestTitle": "Request to Join",
+      "requestDescription": "Add a short note to request access to this workplace.",
+      "selectedWorkplace": "Selected Workplace",
       "noteLabel": "Note to Administrators",
+      "noteMaxLength": "Max 500 characters",
       "notePlaceholder": "Optional message explaining why you'd like to join this workplace...",
       "submitRequest": "Submit Request",
       "submittingRequest": "Submitting...",
@@ -871,6 +883,7 @@
       "alreadyMember": "You are already an employer of this workplace",
       "requestSubmitted": "Request Submitted",
       "requestSubmittedMessage": "Your request to join {{company}} has been submitted successfully. You will be notified once it's reviewed.",
+      "closing": "Closing shortly...",
       "close": "Close"
     },
     "settings": "Settings",
@@ -999,7 +1012,6 @@
       "editSubtitle": "Update your mentor profile information",
       "updateSuccess": "Mentor profile updated successfully!",
       "errorLoading": "Failed to load mentor profile",
-      "cancel": "Cancel",
       "success": "Mentor profile created successfully!",
       "error": "Failed to create mentor profile",
       "checking": "Checking for existing profile...",
@@ -1159,7 +1171,6 @@
       "resumeHint": "Share your resume to help the mentor understand your background better.",
       "sendRequest": "Send Mentorship Request",
       "sendingRequest": "Sending Request...",
-      "cancel": "Cancel",
       "successMessage": "Mentorship request sent successfully!",
       "errorMessage": "Failed to send mentorship request. Please try again.",
       "alreadyExists": "You already have a pending or accepted request for this mentor.",
@@ -1283,7 +1294,6 @@
     },
     "actions": {
       "add": "Add",
-      "cancel": "Cancel",
       "saveChanges": "Save Changes",
       "continue": "Continue",
       "back": "Back"
@@ -1437,7 +1447,6 @@
       },
       "compliance": "This action is performed in compliance with GDPR/KVKK data protection regulations.",
       "buttons": {
-        "cancel": "Cancel",
         "continue": "Continue",
         "back": "Back",
         "delete": "Delete All Data",
@@ -1531,7 +1540,6 @@
     "postAnonymously": "Post anonymously",
     "submitReview": "Submit Review",
     "submitting": "Submitting...",
-    "cancel": "Cancel",
     "categories": {
       "culture": "Culture",
       "benefits": "Benefits",

@@ -431,7 +431,7 @@ const checkIfNonprofitJob = useCallback(
               onClick={() => setApplicationToWithdraw(null)}
               disabled={isWithdrawing}
             >
-              {t('applications.mine.withdraw.cancel')}
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"

@@ -427,8 +427,7 @@
           "remove": "إزالة الملف"
         },
         "submit": "إرسال الطلب",
-        "submitting": "جارٍ الإرسال...",
-        "cancel": "إلغاء"
+        "submitting": "جارٍ الإرسال..."
       },
       "success": {
         "title": "تم إرسال الطلب!",
@@ -485,7 +484,6 @@
           "chooseFile": "اختر ملف",
           "fileTypes": "PDF أو DOC أو DOCX حتى 10MB"
         },
-        "cancel": "إلغاء",
         "submit": "إرسال طلب التطوع",
         "submitting": "جاري الإرسال..."
       },
@@ -591,7 +589,6 @@
         "title": "سحب الطلب",
         "message": "هل أنت متأكد من أنك تريد سحب هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.",
         "confirm": "نعم، سحب",
-        "cancel": "إلغاء",
         "success": "تم سحب الطلب بنجاح",
         "error": "فشل سحب الطلب. يرجى المحاولة مرة أخرى."
       },
@@ -884,6 +881,39 @@
     "nonprofit": "غير ربحي",
     "other": "أخرى"
   },
+  "workplace": {
+    "joinModal": {
+      "title": "الانضمام إلى مكان عمل",
+      "searchDescription": "ابحث عن أماكن العمل وأرسل طلب انضمام.",
+      "searchPlaceholder": "ابحث عن أماكن العمل...",
+      "filters": "عوامل التصفية",
+      "clear": "مسح",
+      "searching": "جارٍ البحث...",
+      "search": "بحث",
+      "sector": "القطاع",
+      "allSectors": "جميع القطاعات",
+      "location": "الموقع",
+      "sortBy": "ترتيب حسب",
+      "minimumRating": "أدنى تقييم",
+      "searchResults": "تم العثور على {{count}} مكان عمل",
+      "noWorkplacesFound": "لا توجد أماكن عمل تطابق عوامل التصفية.",
+      "clearFiltersAndShowAll": "مسح عوامل التصفية وإظهار الكل",
+      "requestTitle": "طلب انضمام",
+      "requestDescription": "أضف ملاحظة قصيرة لطلب الانضمام إلى هذا المكان.",
+      "selectedWorkplace": "مكان العمل المختار",
+      "noteLabel": "ملاحظة للمسؤولين",
+      "noteMaxLength": "بحد أقصى 500 حرف",
+      "notePlaceholder": "رسالة اختيارية تشرح سبب رغبتك في الانضمام إلى هذا المكان...",
+      "submitRequest": "إرسال الطلب",
+      "submittingRequest": "جارٍ الإرسال...",
+      "back": "رجوع",
+      "alreadyMember": "أنت بالفعل صاحب عمل في هذا المكان",
+      "requestSubmitted": "تم إرسال الطلب",
+      "requestSubmittedMessage": "تم إرسال طلب الانضمام إلى {{company}} بنجاح. سيتم إعلامك عند المراجعة.",
+      "closing": "سيتم الإغلاق خلال لحظات...",
+      "close": "إغلاق"
+    }
+  },
   "mentorship": {
     "title": "ابحث عن مرشد",
     "subtitle": "اعثر على مرشدين ذوي خبرة لدعم مسارك",
@@ -1142,7 +1172,6 @@
       "resumeHint": "شارك سيرتك الذاتية لمساعدة المرشد على فهم خلفيتك بشكل أفضل.",
       "sendRequest": "إرسال طلب الإرشاد",
       "sendingRequest": "جارٍ الإرسال...",
-      "cancel": "إلغاء",
       "successMessage": "تم إرسال طلب الإرشاد بنجاح!",
       "errorMessage": "فشل إرسال طلب الإرشاد. يرجى المحاولة مرة أخرى.",
       "alreadyExists": "لديك بالفعل طلب قيد الانتظار أو مقبول لهذا المرشد.",
@@ -1247,7 +1276,6 @@
     },
     "actions": {
       "add": "إضافة",
-      "cancel": "إلغاء",
       "saveChanges": "حفظ التغييرات",
       "continue": "متابعة",
       "back": "رجوع"
@@ -1421,7 +1449,6 @@
       },
       "compliance": "يتم هذا الإجراء بما يتوافق مع لوائح حماية البيانات GDPR/KVKK.",
       "buttons": {
-        "cancel": "إلغاء",
         "continue": "متابعة",
         "back": "رجوع",
         "delete": "حذف كل البيانات",
@@ -1483,7 +1510,6 @@
     "postAnonymously": "انشر بشكل مجهول",
     "submitReview": "إرسال التقييم",
     "submitting": "جارٍ الإرسال...",
-    "cancel": "إلغاء",
     "categories": {
       "culture": "الثقافة",
       "benefits": "المزايا",

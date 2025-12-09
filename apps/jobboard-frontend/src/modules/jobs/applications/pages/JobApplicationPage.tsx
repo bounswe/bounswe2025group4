@@ -362,7 +362,7 @@ export default function JobApplicationPage() {
                   disabled={isSubmitting}
                   className="w-full sm:w-auto"
                 >
-                  {t('applications.job.form.cancel')}
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"

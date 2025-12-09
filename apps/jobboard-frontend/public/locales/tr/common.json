@@ -490,8 +490,7 @@
           "remove": "Dosyayı Kaldır"
         },
         "submit": "Başvuruyu Gönder",
-        "submitting": "Gönderiliyor...",
-        "cancel": "İptal"
+        "submitting": "Gönderiliyor..."
       },
       "success": {
         "title": "Başvuru Gönderildi!",
@@ -548,7 +547,6 @@
           "chooseFile": "Dosya Seç",
           "fileTypes": "10MB'a kadar PDF, DOC veya DOCX"
         },
-        "cancel": "İptal",
         "submit": "Gönüllü Başvurusu Gönder",
         "submitting": "Gönderiliyor..."
       },
@@ -654,7 +652,6 @@
         "title": "Başvuruyu Geri Çek",
         "message": "Bu başvuruyu geri çekmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
         "confirm": "Evet, Geri Çek",
-        "cancel": "İptal",
         "success": "Başvuru başarıyla geri çekildi",
         "error": "Başvuru geri çekilemedi. Lütfen tekrar deneyin."
       },
@@ -908,16 +905,33 @@
     },
     "joinModal": {
       "title": "Bir İş Yerine Katıl",
-      "searchPlaceholder": "İş yerleri ara...",
+      "searchDescription": "Katılmak istediğiniz iş yerini arayın ve talep gönderin.",
+      "searchPlaceholder": "İş yerlerini ara...",
+      "filters": "Filtreler",
+      "clear": "Temizle",
+      "searching": "Aranıyor...",
+      "search": "Ara",
+      "sector": "Sektör",
+      "allSectors": "Tüm Sektörler",
+      "location": "Konum",
+      "sortBy": "Sırala",
+      "minimumRating": "Minimum Puan",
+      "searchResults": "{{count}} iş yeri bulundu",
+      "noWorkplacesFound": "Filtrelerinize uyan iş yeri bulunamadı.",
+      "clearFiltersAndShowAll": "Filtreleri temizle ve tümünü göster",
       "requestTitle": "Katılma Talebi",
+      "requestDescription": "Bu iş yerine katılmak için kısa bir not ekleyin.",
+      "selectedWorkplace": "Seçilen İş Yeri",
       "noteLabel": "Yöneticilere Not",
-      "notePlaceholder": "Bu iş yerine neden katılmak istediğinizi açıklayan opsiyonel mesaj...",
+      "noteMaxLength": "En fazla 500 karakter",
+      "notePlaceholder": "Bu iş yerine neden katılmak istediğinizi kısaca anlatan isteğe bağlı mesaj...",
       "submitRequest": "Talebi Gönder",
       "submittingRequest": "Gönderiliyor...",
       "back": "Geri",
       "alreadyMember": "Zaten bu iş yerinin işverenisiniz",
       "requestSubmitted": "Talep Gönderildi",
-      "requestSubmittedMessage": "{{company}} için katılma talebiniz gönderildi. İncelendiğinde bilgilendirileceksiniz.",
+      "requestSubmittedMessage": "{{company}} iş yerine katılma talebiniz başarıyla gönderildi. İncelendiğinde bilgilendirileceksiniz.",
+      "closing": "Pencere kısa süre içinde kapanacak...",
       "close": "Kapat"
     },
     "settings": "Ayarlar",
@@ -1205,7 +1219,6 @@
       "resumeHint": "Özgeçmişinizi paylaşarak mentorun geçmişinizi daha iyi anlamasına yardımcı olun.",
       "sendRequest": "Mentorluk Talebi Gönder",
       "sendingRequest": "Talep Gönderiliyor...",
-      "cancel": "İptal",
       "successMessage": "Mentorluk talebi başarıyla gönderildi!",
       "errorMessage": "Mentorluk talebi gönderilemedi. Lütfen tekrar deneyin.",
       "alreadyExists": "Bu mentor için zaten bekleyen veya kabul edilmiş bir talebiniz var.",
@@ -1310,7 +1323,6 @@
     },
     "actions": {
       "add": "Ekle",
-      "cancel": "İptal",
       "saveChanges": "Değişiklikleri Kaydet",
       "continue": "Devam Et",
       "back": "Geri"
@@ -1484,7 +1496,6 @@
       },
       "compliance": "Bu işlem GDPR/KVKK veri koruma düzenlemeleriyle uyumludur.",
       "buttons": {
-        "cancel": "İptal",
         "continue": "Devam Et",
         "back": "Geri",
         "delete": "Tüm Verileri Sil",
@@ -1578,7 +1589,6 @@
     "postAnonymously": "Anonim olarak yayınla",
     "submitReview": "Değerlendirmeyi Gönder",
     "submitting": "Gönderiliyor...",
-    "cancel": "İptal",
     "categories": {
       "culture": "Kültür",
       "benefits": "Yan Haklar",
