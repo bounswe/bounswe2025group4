@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import ChatRoomList from '@modules/mentorship/components/chat/ChatRoomList';
 import ChatInterface from '@modules/mentorship/components/chat/ChatInterface';
 import type { ChatRoom, ChatRoomForUser, ChatMessage } from '@shared/types/chat';
@@ -17,7 +17,8 @@ import { toast } from 'react-toastify';
 const ChatPage = () => {
   const { t } = useTranslation('common');
   const [searchParams] = useSearchParams();
-  const mentorshipIdFromUrl = searchParams.get('mentorshipId');
+  const { threadId } = useParams<{ threadId?: string }>();
+  const mentorshipIdFromUrl = threadId || searchParams.get('mentorshipId');
   const { user, isAuthenticated } = useAuth();
 
   const [rooms, setRooms] = useState<ChatRoomForUser[]>([]);

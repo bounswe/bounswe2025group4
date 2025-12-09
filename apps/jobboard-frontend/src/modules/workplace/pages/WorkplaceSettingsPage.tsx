@@ -233,7 +233,7 @@ export default function WorkplaceSettingsPage() {
 
     try {
       await deleteWorkplace(parseInt(workplaceId, 10));
-      navigate('/workplaces?tab=my');
+      navigate('/workplaces/my');
     } catch (err: unknown) {
       console.error('Failed to delete workplace:', err);
       setError(getErrorMessage(err, t('workplace.settings.dangerZone.deleteFailed')));
@@ -259,7 +259,7 @@ export default function WorkplaceSettingsPage() {
           <p className="text-muted-foreground mb-4">
             {t('workplace.settings.notFound.description')}
           </p>
-          <Link to="/workplaces?tab=my">
+          <Link to="/workplaces/my">
             <Button>{t('workplace.settings.notFound.goToWorkplaces')}</Button>
           </Link>
         </div>
@@ -273,7 +273,7 @@ export default function WorkplaceSettingsPage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
-            <Link to={`/workplace/${workplaceId}`}>
+            <Link to={`/workplaces/details/${workplaceId}`}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {t('workplace.settings.backToWorkplace')}
