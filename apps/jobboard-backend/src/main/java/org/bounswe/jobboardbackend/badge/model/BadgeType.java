@@ -144,6 +144,54 @@ public enum BadgeType {
         "🏆",
         "Get accepted for 5 jobs",
         5
+    ),
+
+    // ==================== MENTOR BADGES ====================
+    
+    GUIDE(
+        "Guide",
+        "Created your mentor profile",
+        "🧭",
+        "Create a mentor profile",
+        1
+    ),
+    FIRST_MENTEE(
+        "First Mentee",
+        "Accepted your first mentee",
+        "🤝",
+        "Accept your first mentorship request",
+        1
+    ),
+    DEDICATED_MENTOR(
+        "Dedicated Mentor",
+        "Accepted 5 mentees",
+        "🎓",
+        "Accept 5 mentorship requests",
+        5
+    ),
+
+    // ==================== MENTEE BADGES ====================
+    
+    SEEKING_GUIDANCE(
+        "Seeking Guidance",
+        "Requested your first mentorship",
+        "🙋",
+        "Send your first mentorship request",
+        1
+    ),
+    MENTORED(
+        "Mentored",
+        "Got accepted by a mentor",
+        "📚",
+        "Get accepted by a mentor",
+        1
+    ),
+    FEEDBACK_GIVER(
+        "Feedback Giver",
+        "Left your first mentor review",
+        "✍️",
+        "Review a mentor",
+        1
     );
 
     private final String displayName;

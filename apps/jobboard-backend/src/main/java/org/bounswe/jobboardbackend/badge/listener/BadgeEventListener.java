@@ -8,6 +8,10 @@ import org.bounswe.jobboardbackend.badge.event.ForumPostCreatedEvent;
 import org.bounswe.jobboardbackend.badge.event.JobPostCreatedEvent;
 import org.bounswe.jobboardbackend.badge.event.JobApplicationCreatedEvent;
 import org.bounswe.jobboardbackend.badge.event.JobApplicationApprovedEvent;
+import org.bounswe.jobboardbackend.badge.event.MentorProfileCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.MentorshipRequestCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.MentorshipRequestAcceptedEvent;
+import org.bounswe.jobboardbackend.badge.event.MentorReviewCreatedEvent;
 import org.bounswe.jobboardbackend.badge.service.BadgeService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -112,6 +116,68 @@ public class BadgeEventListener {
             badgeService.checkJobAcceptanceBadges(event.getJobSeekerId());
         } catch (Exception e) {
             log.error("Badge check failed for job application approval for job seeker {}: {}", event.getJobSeekerId(), e.getMessage());
+        }
+    }
+
+    // ==================== MENTORSHIP EVENTS ====================
+
+    /**
+     * Handle mentor profile creation - award GUIDE badge.
+     * Only executes after the transaction commits successfully.
+     */
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onMentorProfileCreated(MentorProfileCreatedEvent event) {
+        try {
+            log.debug("Mentor profile created by user {}, checking badges...", event.getMentorUserId());
+            badgeService.checkMentorProfileBadge(event.getMentorUserId());
+        } catch (Exception e) {
+            log.error("Badge check failed for mentor profile creation by user {}: {}", event.getMentorUserId(), e.getMessage());
+        }
+    }
+
+    /**
+     * Handle mentorship request creation - check for mentee request badges.
+     * Only executes after the transaction commits successfully.
+     */
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onMentorshipRequestCreated(MentorshipRequestCreatedEvent event) {
+        try {
+            log.debug("Mentorship request created by mentee {}, checking badges...", event.getMenteeUserId());
+            badgeService.checkMenteeRequestBadges(event.getMenteeUserId());
+        } catch (Exception e) {
+            log.error("Badge check failed for mentorship request by mentee {}: {}", event.getMenteeUserId(), e.getMessage());
+        }
+    }
+
+    /**
+     * Handle mentorship request acceptance - check badges for both mentor and mentee.
+     * Only executes after the transaction commits successfully.
+     */
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onMentorshipRequestAccepted(MentorshipRequestAcceptedEvent event) {
+        try {
+            log.debug("Mentorship request accepted by mentor {}, checking badges...", event.getMentorUserId());
+            // Check mentor badges
+            badgeService.checkMentorAcceptanceBadges(event.getMentorUserId());
+            // Check mentee badges
+            badgeService.checkMenteeAcceptanceBadges(event.getMenteeUserId());
+        } catch (Exception e) {
+            log.error("Badge check failed for mentorship acceptance: mentor {}, mentee {}: {}", 
+                event.getMentorUserId(), event.getMenteeUserId(), e.getMessage());
+        }
+    }
+
+    /**
+     * Handle mentor review creation - check for feedback giver badges.
+     * Only executes after the transaction commits successfully.
+     */
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onMentorReviewCreated(MentorReviewCreatedEvent event) {
+        try {
+            log.debug("Mentor review created by user {}, checking badges...", event.getReviewerUserId());
+            badgeService.checkFeedbackGiverBadges(event.getReviewerUserId());
+        } catch (Exception e) {
+            log.error("Badge check failed for mentor review by user {}: {}", event.getReviewerUserId(), e.getMessage());
         }
     }
 }

@@ -11,6 +11,10 @@ import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
 import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.mentorship.model.RequestStatus;
+import org.bounswe.jobboardbackend.mentorship.repository.MentorProfileRepository;
+import org.bounswe.jobboardbackend.mentorship.repository.MentorReviewRepository;
+import org.bounswe.jobboardbackend.mentorship.repository.MentorshipRequestRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +34,9 @@ public class BadgeService {
     private final ForumCommentUpvoteRepository forumCommentUpvoteRepository;
     private final JobPostRepository jobPostRepository;
     private final JobApplicationRepository jobApplicationRepository;
+    private final MentorProfileRepository mentorProfileRepository;
+    private final MentorshipRequestRepository mentorshipRequestRepository;
+    private final MentorReviewRepository mentorReviewRepository;
 
     /**
      * Award a badge to a user if they don't already have it.
@@ -188,6 +195,89 @@ public class BadgeService {
         }
         if (acceptedCount >= BadgeType.CAREER_STAR.getThreshold()) {
             awardBadge(jobSeekerId, BadgeType.CAREER_STAR);
+        }
+    }
+
+    // ==================== MENTOR BADGES ====================
+
+    /**
+     * Award GUIDE badge when a user creates a mentor profile.
+     * Called after a user creates their mentor profile.
+     *
+     * @param mentorUserId The mentor's user ID
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void checkMentorProfileBadge(Long mentorUserId) {
+        // If mentor profile exists, award GUIDE badge
+        if (mentorProfileRepository.existsById(mentorUserId)) {
+            awardBadge(mentorUserId, BadgeType.GUIDE);
+        }
+    }
+
+    /**
+     * Check if mentor qualifies for any mentee acceptance badges and award them.
+     * Called after a mentor accepts a mentorship request.
+     *
+     * @param mentorUserId The mentor's user ID
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void checkMentorAcceptanceBadges(Long mentorUserId) {
+        long acceptedCount = mentorshipRequestRepository.countByMentorIdAndStatus(
+            mentorUserId, RequestStatus.ACCEPTED);
+        
+        if (acceptedCount >= BadgeType.FIRST_MENTEE.getThreshold()) {
+            awardBadge(mentorUserId, BadgeType.FIRST_MENTEE);
+        }
+        if (acceptedCount >= BadgeType.DEDICATED_MENTOR.getThreshold()) {
+            awardBadge(mentorUserId, BadgeType.DEDICATED_MENTOR);
+        }
+    }
+
+    // ==================== MENTEE BADGES ====================
+
+    /**
+     * Check if mentee qualifies for mentorship request badges and award them.
+     * Called after a mentee sends a mentorship request.
+     *
+     * @param menteeUserId The mentee's user ID
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void checkMenteeRequestBadges(Long menteeUserId) {
+        long requestCount = mentorshipRequestRepository.countByRequesterId(menteeUserId);
+        
+        if (requestCount >= BadgeType.SEEKING_GUIDANCE.getThreshold()) {
+            awardBadge(menteeUserId, BadgeType.SEEKING_GUIDANCE);
+        }
+    }
+
+    /**
+     * Check if mentee qualifies for mentorship acceptance badges and award them.
+     * Called after a mentee's request is accepted by a mentor.
+     *
+     * @param menteeUserId The mentee's user ID
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void checkMenteeAcceptanceBadges(Long menteeUserId) {
+        long acceptedCount = mentorshipRequestRepository.countByRequesterIdAndStatus(
+            menteeUserId, RequestStatus.ACCEPTED);
+        
+        if (acceptedCount >= BadgeType.MENTORED.getThreshold()) {
+            awardBadge(menteeUserId, BadgeType.MENTORED);
+        }
+    }
+
+    /**
+     * Check if mentee qualifies for feedback giver badges and award them.
+     * Called after a mentee leaves a review for a mentor.
+     *
+     * @param reviewerUserId The reviewer's (mentee's) user ID
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void checkFeedbackGiverBadges(Long reviewerUserId) {
+        long reviewCount = mentorReviewRepository.countByReviewerId(reviewerUserId);
+        
+        if (reviewCount >= BadgeType.FEEDBACK_GIVER.getThreshold()) {
+            awardBadge(reviewerUserId, BadgeType.FEEDBACK_GIVER);
         }
     }
 }

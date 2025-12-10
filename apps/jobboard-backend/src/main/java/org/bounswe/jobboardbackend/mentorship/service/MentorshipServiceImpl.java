@@ -3,6 +3,10 @@ package org.bounswe.jobboardbackend.mentorship.service;
 import com.google.cloud.storage.*;
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.auth.model.User;
+import org.bounswe.jobboardbackend.badge.event.MentorProfileCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.MentorshipRequestCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.MentorshipRequestAcceptedEvent;
+import org.bounswe.jobboardbackend.badge.event.MentorReviewCreatedEvent;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
@@ -11,6 +15,7 @@ import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.bounswe.jobboardbackend.mentorship.model.*;
 import org.bounswe.jobboardbackend.mentorship.repository.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -38,6 +43,7 @@ public class MentorshipServiceImpl implements MentorshipService {
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
     private final ConversationRepository conversationRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final Storage storage = StorageOptions.getDefaultInstance().getService();
     // private final NotificationService notificationService; // (Future implementation)
 
@@ -192,6 +198,10 @@ public class MentorshipServiceImpl implements MentorshipService {
         mentorProfile.setReviewCount(0);
 
         MentorProfile savedProfile = mentorProfileRepository.save(mentorProfile);
+        
+        // Publish event for badge system
+        eventPublisher.publishEvent(new MentorProfileCreatedEvent(userId));
+        
         return toMentorProfileDTO(savedProfile);
     }
 
@@ -257,6 +267,9 @@ public class MentorshipServiceImpl implements MentorshipService {
         // Trigger notification
         // notificationService.notifyMentor(mentor.getUser(), "New mentorship request");  // (Future implementation)
 
+        // Publish event for badge system
+        eventPublisher.publishEvent(new MentorshipRequestCreatedEvent(jobSeekerId, savedRequest.getId()));
+
         return toMentorshipRequestDTO(savedRequest);
     }
 
@@ -297,6 +310,13 @@ public class MentorshipServiceImpl implements MentorshipService {
             // Trigger notification
             // notificationService.notifyUser(request.getRequester(), "Your request was accepted!"); // (Future implementation)
 
+            // Publish event for badge system (both mentor and mentee get badges)
+            eventPublisher.publishEvent(new MentorshipRequestAcceptedEvent(
+                mentor.getUser().getId(),
+                request.getRequester().getId(),
+                request.getId()
+            ));
+
         } else {
             request.decline(respondToRequestDTO.responseMessage());
 
@@ -334,10 +354,13 @@ public class MentorshipServiceImpl implements MentorshipService {
         mentorReview.setRating(ratingDTO.rating());
         mentorReview.setComment(ratingDTO.comment());
         mentorReview.setCreatedAt(LocalDateTime.now());
-        mentorReviewRepository.save(mentorReview);
+        MentorReview savedReview = mentorReviewRepository.save(mentorReview);
 
         mentor.recalcRating(ratingDTO.rating());
         mentorProfileRepository.save(mentor);
+
+        // Publish event for badge system
+        eventPublisher.publishEvent(new MentorReviewCreatedEvent(jobSeekerId, savedReview.getId()));
     }
 
     @Override

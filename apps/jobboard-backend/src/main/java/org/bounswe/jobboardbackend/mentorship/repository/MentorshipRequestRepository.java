@@ -31,4 +31,11 @@ public interface MentorshipRequestRepository extends JpaRepository<MentorshipReq
 
     // Dashboard stats methods
     long countByStatus(RequestStatus status);
+
+    // Badge methods
+    long countByMentorIdAndStatus(Long mentorId, RequestStatus status);
+    
+    long countByRequesterId(Long requesterId);
+    
+    long countByRequesterIdAndStatus(Long requesterId, RequestStatus status);
 }
