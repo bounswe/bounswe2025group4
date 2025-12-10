@@ -342,7 +342,7 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     @Override
     @Transactional(readOnly = true)
-    public MentorshipRequestDTO getMentorshipRequest(Long requestId, Long userId) {
+    public MentorshipRequestResponseDTO getMentorshipRequest(Long requestId, Long userId) {
 
 
 
@@ -355,7 +355,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         if (!userId.equals(mentorId) && !userId.equals(requesterId)) {
             throw new HandleException(ErrorCode.UNAUTHORIZED_REVIEW_ACCESS, "User is not authorized to see this request");
         }
-        return toMentorshipRequestDTO(request);
+        return toMentorshipRequestResponseDTO(request);
     }
 
     @Override

@@ -139,12 +139,12 @@ public class MentorshipController {
 
 
     @GetMapping("/requests/{requestId}")
-    public ResponseEntity<MentorshipRequestDTO> getMentorshipRequest(
+    public ResponseEntity<MentorshipRequestResponseDTO> getMentorshipRequest(
             @PathVariable Long requestId,
             Authentication auth
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
-        MentorshipRequestDTO request = mentorshipService.getMentorshipRequest(requestId, userDetails.getId());
+        MentorshipRequestResponseDTO request = mentorshipService.getMentorshipRequest(requestId, userDetails.getId());
         return new ResponseEntity<>(request, HttpStatus.OK);
     }
 
