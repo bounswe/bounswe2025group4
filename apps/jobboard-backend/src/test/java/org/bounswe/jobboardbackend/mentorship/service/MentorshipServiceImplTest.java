@@ -7,10 +7,7 @@ import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
 import org.bounswe.jobboardbackend.exception.HandleException;
-import org.bounswe.jobboardbackend.mentorship.dto.ChatMessageDTO;
-import org.bounswe.jobboardbackend.mentorship.dto.CreateMentorProfileDTO;
-import org.bounswe.jobboardbackend.mentorship.dto.CreateMentorshipRequestDTO;
-import org.bounswe.jobboardbackend.mentorship.dto.ResumeFileResponseDTO;
+import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.bounswe.jobboardbackend.mentorship.model.*;
 import org.bounswe.jobboardbackend.mentorship.repository.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -245,6 +242,7 @@ class MentorshipServiceImplTest {
     void createMentorshipRequest_success() {
         Long mentorId = 5L;
         Long jobSeekerId = 7L;
+        String motivation = "I want to learn backend engineering.";
 
         MentorProfile mentor = mock(MentorProfile.class);
         when(mentor.getId()).thenReturn(mentorId);
@@ -262,20 +260,35 @@ class MentorshipServiceImplTest {
         saved.setRequester(jobSeeker);
         saved.setStatus(RequestStatus.PENDING);
         saved.setCreatedAt(LocalDateTime.now());
+        saved.setMotivation(motivation);
 
         when(mentorshipRequestRepository.save(any(MentorshipRequest.class))).thenReturn(saved);
 
-        CreateMentorshipRequestDTO dto = new CreateMentorshipRequestDTO(mentorId);
+        CreateMentorshipRequestDTO dto = new CreateMentorshipRequestDTO(mentorId, motivation);
 
         var result = mentorshipService.createMentorshipRequest(dto, jobSeekerId);
 
         assertEquals("1", result.id());
-        assertEquals(mentorId.toString(), result.mentorId());
         assertEquals(jobSeekerId.toString(), result.requesterId());
+        assertEquals(mentorId.toString(), result.mentorId());
         assertEquals(RequestStatus.PENDING.name(), result.status());
+        assertEquals(motivation, result.motivation());
 
-        verify(mentorshipRequestRepository).save(any(MentorshipRequest.class));
+        ArgumentCaptor<MentorshipRequest> captor = ArgumentCaptor.forClass(MentorshipRequest.class);
+        verify(mentorshipRequestRepository).save(captor.capture());
+
+        MentorshipRequest toSave = captor.getValue();
+        assertEquals(mentor, toSave.getMentor());
+        assertEquals(jobSeeker, toSave.getRequester());
+        assertEquals(RequestStatus.PENDING, toSave.getStatus());
+        assertEquals(motivation, toSave.getMotivation());
+        assertNotNull(toSave.getCreatedAt());
+
+        verify(mentorProfileRepository).findById(mentorId);
+        verify(userRepository).findById(jobSeekerId);
+        verifyNoMoreInteractions(mentorProfileRepository, userRepository, mentorshipRequestRepository);
     }
+
 
     // ---------------------------------------------------------------------
     // respondToMentorshipRequest
@@ -286,10 +299,14 @@ class MentorshipServiceImplTest {
         Long requestId = 1L;
         Long mentorUserId = 10L;
 
+        User mentorUser = new User();
+        mentorUser.setId(mentorUserId);
+
         MentorProfile mentorProfile = new MentorProfile();
         mentorProfile.setId(mentorUserId);
+        mentorProfile.setUser(mentorUser);
         mentorProfile.setCurrentMentees(0);
-        mentorProfile.setUser(new User());
+        mentorProfile.setMaxMentees(5);
 
         User requester = new User();
         requester.setId(20L);
@@ -299,31 +316,83 @@ class MentorshipServiceImplTest {
         request.setMentor(mentorProfile);
         request.setRequester(requester);
         request.setStatus(RequestStatus.PENDING);
+        request.setMotivation("Please mentor me");
+        request.setCreatedAt(LocalDateTime.now());
 
-        when(mentorshipRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
+        when(mentorshipRequestRepository.findById(requestId))
+                .thenReturn(Optional.of(request));
+
         when(resumeReviewRepository.save(any(ResumeReview.class)))
                 .thenAnswer(invocation -> {
                     ResumeReview r = invocation.getArgument(0);
                     r.setId(100L);
                     return r;
                 });
-        when(mentorshipRequestRepository.save(request)).thenReturn(request);
 
-        var result = mentorshipService.respondToMentorshipRequest(requestId, true, mentorUserId);
+        when(mentorProfileRepository.save(any(MentorProfile.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        when(mentorshipRequestRepository.save(any(MentorshipRequest.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        RespondToRequestDTO dto = new RespondToRequestDTO(true, "Happy to mentor you!");
+
+        MentorshipRequestResponseDTO result =
+                mentorshipService.respondToMentorshipRequest(requestId, dto, mentorUserId);
 
         assertEquals(RequestStatus.ACCEPTED.name(), result.status());
-        verify(chatService).createConversationForReview(any(ResumeReview.class));
-        verify(mentorProfileRepository).save(mentorProfile);
+        assertEquals(requestId.toString(), result.id());
+        assertEquals(requester.getId().toString(), result.requesterId());
+        assertEquals(mentorProfile.getId().toString(), result.mentorId());
+
+        ArgumentCaptor<MentorshipRequest> requestCaptor = ArgumentCaptor.forClass(MentorshipRequest.class);
+        verify(mentorshipRequestRepository).save(requestCaptor.capture());
+
+        MentorshipRequest savedRequest = requestCaptor.getValue();
+        assertEquals(RequestStatus.ACCEPTED, savedRequest.getStatus());
+        assertEquals("Happy to mentor you!", savedRequest.getResponseMessage());
+        assertSame(mentorProfile, savedRequest.getMentor());
+        assertSame(requester, savedRequest.getRequester());
+
+        ArgumentCaptor<ResumeReview> reviewCaptor = ArgumentCaptor.forClass(ResumeReview.class);
+        verify(resumeReviewRepository).save(reviewCaptor.capture());
+        ResumeReview savedReview = reviewCaptor.getValue();
+
+
+        assertSame(mentorProfile, savedReview.getMentor());
+        assertSame(requester, savedReview.getJobSeeker());
+
+        verify(chatService).createConversationForReview(savedReview);
+
+        ArgumentCaptor<MentorProfile> mentorCaptor = ArgumentCaptor.forClass(MentorProfile.class);
+        verify(mentorProfileRepository).save(mentorCaptor.capture());
+        MentorProfile updatedMentor = mentorCaptor.getValue();
+        assertEquals(1, updatedMentor.getCurrentMentees());
+
+        verify(mentorshipRequestRepository).findById(requestId);
+        verifyNoMoreInteractions(
+                mentorshipRequestRepository,
+                resumeReviewRepository,
+                mentorProfileRepository,
+                chatService
+        );
     }
+
+
 
     @Test
     void respondToMentorshipRequest_decline_success() {
         Long requestId = 1L;
         Long mentorUserId = 10L;
 
+        User mentorUser = new User();
+        mentorUser.setId(mentorUserId);
+
         MentorProfile mentorProfile = new MentorProfile();
         mentorProfile.setId(mentorUserId);
-        mentorProfile.setUser(new User());
+        mentorProfile.setUser(mentorUser);
+        mentorProfile.setMaxMentees(5);
+        mentorProfile.setCurrentMentees(0);
 
         User requester = new User();
         requester.setId(20L);
@@ -333,33 +402,84 @@ class MentorshipServiceImplTest {
         request.setMentor(mentorProfile);
         request.setRequester(requester);
         request.setStatus(RequestStatus.PENDING);
+        request.setMotivation("Please mentor me");
+        request.setCreatedAt(LocalDateTime.now());
 
-        when(mentorshipRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
-        when(mentorshipRequestRepository.save(request)).thenReturn(request);
+        when(mentorshipRequestRepository.findById(requestId))
+                .thenReturn(Optional.of(request));
+        when(mentorshipRequestRepository.save(any(MentorshipRequest.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        var result = mentorshipService.respondToMentorshipRequest(requestId, false, mentorUserId);
+        RespondToRequestDTO dto =
+                new RespondToRequestDTO(false, "Sorry, I don't have capacity right now.");
+
+        MentorshipRequestResponseDTO result =
+                mentorshipService.respondToMentorshipRequest(requestId, dto, mentorUserId);
 
         assertEquals(RequestStatus.DECLINED.name(), result.status());
+        assertEquals(requestId.toString(), result.id());
+        assertEquals(requester.getId().toString(), result.requesterId());
+        assertEquals(mentorProfile.getId().toString(), result.mentorId());
+
+        ArgumentCaptor<MentorshipRequest> requestCaptor = ArgumentCaptor.forClass(MentorshipRequest.class);
+        verify(mentorshipRequestRepository).save(requestCaptor.capture());
+
+        MentorshipRequest savedRequest = requestCaptor.getValue();
+        assertEquals(RequestStatus.DECLINED, savedRequest.getStatus());
+        assertEquals("Sorry, I don't have capacity right now.", savedRequest.getResponseMessage());
+        assertSame(mentorProfile, savedRequest.getMentor());
+        assertSame(requester, savedRequest.getRequester());
+
         verify(resumeReviewRepository, never()).save(any());
         verify(chatService, never()).createConversationForReview(any());
+        verify(mentorProfileRepository, never()).save(any());
+
+        verify(mentorshipRequestRepository).findById(requestId);
+        verifyNoMoreInteractions(
+                mentorshipRequestRepository,
+                resumeReviewRepository,
+                chatService,
+                mentorProfileRepository
+        );
     }
+
+
 
     @Test
     void respondToMentorshipRequest_unauthorizedMentor_throws() {
-        MentorshipRequest request = new MentorshipRequest();
+        Long requestId = 1L;
+        Long realMentorUserId = 10L;
+        Long otherUserId = 99L;
+
+        User mentorUser = new User();
+        mentorUser.setId(realMentorUserId);
+
         MentorProfile mentor = new MentorProfile();
-        mentor.setId(10L);
-        mentor.setUser(new User());
+        mentor.setId(5L);
+        mentor.setUser(mentorUser);
+
+        MentorshipRequest request = new MentorshipRequest();
+        request.setId(requestId);
         request.setMentor(mentor);
         request.setStatus(RequestStatus.PENDING);
 
-        when(mentorshipRequestRepository.findById(1L)).thenReturn(Optional.of(request));
+        when(mentorshipRequestRepository.findById(requestId)).thenReturn(Optional.of(request));
 
-        assertThrows(
+        RespondToRequestDTO dto =
+                new RespondToRequestDTO(true, "Some message");
+
+        HandleException ex = assertThrows(
                 HandleException.class,
-                () -> mentorshipService.respondToMentorshipRequest(1L, true, 99L)
+                () -> mentorshipService.respondToMentorshipRequest(requestId, dto, otherUserId)
         );
+
+        verify(mentorshipRequestRepository).findById(requestId);
+        verify(mentorshipRequestRepository, never()).save(any());
+        verify(resumeReviewRepository, never()).save(any());
+        verify(chatService, never()).createConversationForReview(any());
+        verify(mentorProfileRepository, never()).save(any());
     }
+
 
     // ---------------------------------------------------------------------
     // completeMentorship

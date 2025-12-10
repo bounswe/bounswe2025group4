@@ -69,11 +69,13 @@ class MentorshipRepositoriesTest {
         request.setRequester(mentee);
         request.setStatus(RequestStatus.PENDING);
         request.setCreatedAt(LocalDateTime.now());
+        request.setMotivation("Test motivation");
 
         entityManager.persist(mentee);
         entityManager.persist(request);
         return request;
     }
+
 
     private ResumeReview buildAndPersistResumeReview(MentorshipRequest request,
                                                      MentorProfile mentor,

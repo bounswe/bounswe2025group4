@@ -251,6 +251,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         newRequest.setRequester(jobSeeker);
         newRequest.setStatus(RequestStatus.PENDING);
         newRequest.setCreatedAt(LocalDateTime.now());
+        newRequest.setMotivation(requestDTO.motivation());
         MentorshipRequest savedRequest = mentorshipRequestRepository.save(newRequest);
 
         // Trigger notification
@@ -261,7 +262,7 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     @Override
     @Transactional
-    public MentorshipRequestDTO respondToMentorshipRequest(Long requestId, boolean accept, Long mentorId) {
+    public MentorshipRequestResponseDTO respondToMentorshipRequest(Long requestId, RespondToRequestDTO respondToRequestDTO, Long mentorId) {
         MentorshipRequest request = mentorshipRequestRepository.findById(requestId)
                 .orElseThrow(() -> new HandleException(ErrorCode.REQUEST_NOT_FOUND, "Request not found"));
 
@@ -273,9 +274,11 @@ public class MentorshipServiceImpl implements MentorshipService {
             throw new HandleException(ErrorCode.REQUEST_ALREADY_PROCESSED, "This request has already been responded to.");
         }
 
-        if (accept) {
 
-            request.accept();
+
+        if (respondToRequestDTO.accept()) {
+
+            request.accept(respondToRequestDTO.responseMessage());
 
             ResumeReview review = new ResumeReview();
             review.setJobSeeker(request.getRequester());
@@ -295,14 +298,14 @@ public class MentorshipServiceImpl implements MentorshipService {
             // notificationService.notifyUser(request.getRequester(), "Your request was accepted!"); // (Future implementation)
 
         } else {
-            request.decline();
+            request.decline(respondToRequestDTO.responseMessage());
 
             // Trigger notification
             // notificationService.notifyUser(request.getRequester(), "Your request was declined."); // (Future implementation)
         }
 
         MentorshipRequest updatedRequest = mentorshipRequestRepository.save(request);
-        return toMentorshipRequestDTO(updatedRequest);
+        return toMentorshipRequestResponseDTO(updatedRequest);
     }
 
     @Override
@@ -500,7 +503,20 @@ public class MentorshipServiceImpl implements MentorshipService {
                 request.getRequester().getId().toString(),
                 request.getMentor().getId().toString(),
                 request.getStatus().name(),
-                request.getCreatedAt()
+                request.getCreatedAt(),
+                request.getMotivation()
+        );
+    }
+
+    private MentorshipRequestResponseDTO toMentorshipRequestResponseDTO(MentorshipRequest request) {
+        return new MentorshipRequestResponseDTO(
+                request.getId().toString(),
+                request.getRequester().getId().toString(),
+                request.getMentor().getId().toString(),
+                request.getStatus().name(),
+                request.getCreatedAt(),
+                request.getMotivation(),
+                request.getResponseMessage()
         );
     }
 
