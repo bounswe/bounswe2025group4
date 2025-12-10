@@ -28,11 +28,6 @@ public class BadgeTypeResponseDto {
     private String description;
     
     /**
-     * Badge icon (emoji or URL)
-     */
-    private String icon;
-    
-    /**
      * Human-readable criteria
      */
     private String criteria;

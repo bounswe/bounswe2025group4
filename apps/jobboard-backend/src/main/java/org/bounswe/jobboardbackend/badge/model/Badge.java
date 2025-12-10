@@ -43,8 +43,6 @@ public class Badge {
     @Column(length = 1000)
     private String description;
 
-    private String icon;
-
     @Column(length = 255)
     private String criteria;
 

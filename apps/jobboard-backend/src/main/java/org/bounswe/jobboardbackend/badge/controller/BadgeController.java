@@ -92,9 +92,9 @@ public class BadgeController {
         return BadgeResponseDto.builder()
                 .id(badge.getId())
                 .userId(badge.getUserId())
+                .badgeType(badge.getBadgeType().name())
                 .name(badge.getName())
                 .description(badge.getDescription())
-                .icon(badge.getIcon())
                 .criteria(badge.getCriteria())
                 .earnedAt(badge.getEarnedAt())
                 .build();
@@ -105,7 +105,6 @@ public class BadgeController {
                 .type(badgeType.name())
                 .name(badgeType.getDisplayName())
                 .description(badgeType.getDescription())
-                .icon(badgeType.getIcon())
                 .criteria(badgeType.getCriteria())
                 .threshold(badgeType.getThreshold())
                 .build();

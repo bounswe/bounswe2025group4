@@ -61,7 +61,6 @@ public class BadgeService {
                 .badgeType(badgeType)
                 .name(badgeType.getDisplayName())
                 .description(badgeType.getDescription())
-                .icon(badgeType.getIcon())
                 .criteria(badgeType.getCriteria())
                 .build();
         

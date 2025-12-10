@@ -13,9 +13,9 @@ import java.time.Instant;
 public class BadgeResponseDto {
     private Long id;
     private Long userId;
+    private String badgeType;
     private String name;
     private String description;
-    private String icon;
     private String criteria;
     private Instant earnedAt;
 }
