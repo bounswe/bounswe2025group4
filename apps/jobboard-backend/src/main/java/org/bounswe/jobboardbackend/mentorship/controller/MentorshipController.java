@@ -139,26 +139,26 @@ public class MentorshipController {
 
 
     @GetMapping("/requests/{requestId}")
-    public ResponseEntity<MentorshipRequestDTO> getMentorshipRequest(
+    public ResponseEntity<MentorshipRequestResponseDTO> getMentorshipRequest(
             @PathVariable Long requestId,
             Authentication auth
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
-        MentorshipRequestDTO request = mentorshipService.getMentorshipRequest(requestId, userDetails.getId());
+        MentorshipRequestResponseDTO request = mentorshipService.getMentorshipRequest(requestId, userDetails.getId());
         return new ResponseEntity<>(request, HttpStatus.OK);
     }
 
 
     @PatchMapping("/requests/{requestId}/respond")
-    public ResponseEntity<MentorshipRequestDTO> respondToMentorshipRequest(
+    public ResponseEntity<MentorshipRequestResponseDTO> respondToMentorshipRequest(
             @PathVariable Long requestId,
             @Valid @RequestBody RespondToRequestDTO responseDTO,
             Authentication auth
     ) {
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
-        MentorshipRequestDTO updatedRequest = mentorshipService.respondToMentorshipRequest(
+        MentorshipRequestResponseDTO updatedRequest = mentorshipService.respondToMentorshipRequest(
                 requestId,
-                responseDTO.accept(),
+                responseDTO,
                 userDetails.getId()
         );
         return new ResponseEntity<>(updatedRequest, HttpStatus.OK);

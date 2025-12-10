@@ -22,9 +22,9 @@ public interface MentorshipService {
     MentorProfileDTO updateMentorProfile(Long userId, UpdateMentorProfileDTO updateDTO);
     void deleteMentorProfile(Long userId);
     MentorshipRequestDTO createMentorshipRequest(CreateMentorshipRequestDTO requestDTO, Long jobSeekerId);
-    MentorshipRequestDTO respondToMentorshipRequest(Long requestId, boolean accept, Long mentorId);
+    MentorshipRequestResponseDTO respondToMentorshipRequest(Long requestId, RespondToRequestDTO respondToRequestDTO, Long mentorId);
     void rateMentor(CreateRatingDTO ratingDTO, Long jobSeekerId);
-    MentorshipRequestDTO getMentorshipRequest(Long requestId, Long userId);
+    MentorshipRequestResponseDTO getMentorshipRequest(Long requestId, Long userId);
     void completeMentorship(Long resumeReviewId, Authentication auth);
     void closeMentorship(Long resumeReviewId, Authentication auth);
     List<MentorshipRequestDTO> getMentorshipRequestsOfMentor(Long mentorId, Long userId);

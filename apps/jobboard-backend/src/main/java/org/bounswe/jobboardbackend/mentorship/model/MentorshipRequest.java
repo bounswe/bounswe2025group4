@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "mentorship_request")
 public class MentorshipRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +28,20 @@ public class MentorshipRequest {
 
     private LocalDateTime createdAt;
 
-    public void accept() {
+    @Column(nullable = false, columnDefinition = "TEXT DEFAULT 'Not provided'")
+    private String motivation;
+
+    @Column
+    private String responseMessage;
+
+    public void accept(String message) {
         this.status = RequestStatus.ACCEPTED;
+        this.responseMessage = message;
     }
 
-    public void decline() {
+    public void decline(String message) {
         this.status = RequestStatus.DECLINED;
+        this.responseMessage = message;
     }
 
 
