@@ -157,7 +157,7 @@ public class JobApplicationService {
         );
 
         notificationService.notifyUser(
-                jobSeeker.getUsername(),
+                jobPost.getEmployer().getUsername(),
                 "New Job Application Request",
                 NotificationType.JOB_APPLICATION_APPROVED,
                 message,
