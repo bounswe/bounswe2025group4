@@ -264,19 +264,20 @@ class MentorshipControllerTest {
         when(auth.getPrincipal()).thenReturn(principal);
         when(principal.getId()).thenReturn(99L);
 
-        MentorshipRequestDTO dto = new MentorshipRequestDTO(
+        MentorshipRequestResponseDTO dto = new MentorshipRequestResponseDTO(
                 "50",
                 "10",
                 "99",
                 "PENDING",
                 LocalDateTime.now(),
-                "Because I want to learn"
+                "Because I want to learn",
+                ""
         );
 
         when(mentorshipService.getMentorshipRequest(requestId, 99L))
                 .thenReturn(dto);
 
-        ResponseEntity<MentorshipRequestDTO> response =
+        ResponseEntity<MentorshipRequestResponseDTO> response =
                 mentorshipController.getMentorshipRequest(requestId, auth);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
