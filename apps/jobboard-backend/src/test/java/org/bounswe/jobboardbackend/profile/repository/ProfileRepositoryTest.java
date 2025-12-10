@@ -1,5 +1,6 @@
 package org.bounswe.jobboardbackend.profile.repository;
 
+import org.bounswe.jobboardbackend.auth.model.PronounSet;
 import org.bounswe.jobboardbackend.auth.model.Role;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
@@ -36,7 +37,7 @@ class ProfileRepositoryTest {
                 .firstName("John")
                 .lastName("Doe")
                 .bio("Test bio")
-                .gender("Test gender")
+                .pronounSet(PronounSet.HE_THEY)
                 .build();
         profileRepository.save(profile);
 
