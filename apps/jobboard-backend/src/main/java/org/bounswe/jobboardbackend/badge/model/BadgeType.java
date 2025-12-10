@@ -18,13 +18,6 @@ public enum BadgeType {
         "Create your first forum post",
         1
     ),
-    THOUGHT_LEADER(
-        "Thought Leader",
-        "Published 10 forum posts",
-        "💡",
-        "Create 10 forum posts",
-        10
-    ),
     COMMUNITY_PILLAR(
         "Community Pillar",
         "A foundational voice with 25 posts",
@@ -41,13 +34,6 @@ public enum BadgeType {
         "💬",
         "Comment on a forum post",
         1
-    ),
-    ACTIVE_VOICE(
-        "Active Voice",
-        "Contributed 10 comments to discussions",
-        "🗣️",
-        "Make 10 comments",
-        10
     ),
     DISCUSSION_DRIVER(
         "Discussion Driver",
@@ -83,13 +69,6 @@ public enum BadgeType {
         "Create your first job post",
         1
     ),
-    ACTIVE_RECRUITER(
-        "Active Recruiter",
-        "Posted 5 job listings",
-        "🎯",
-        "Create 5 job posts",
-        5
-    ),
     HIRING_MACHINE(
         "Hiring Machine",
         "Posted 15 job listings",
@@ -107,13 +86,6 @@ public enum BadgeType {
         "Apply to your first job",
         1
     ),
-    ACTIVE_SEEKER(
-        "Active Seeker",
-        "Submitted 5 job applications",
-        "🔍",
-        "Apply to 5 jobs",
-        5
-    ),
     PERSISTENT(
         "Persistent",
         "Submitted 15 job applications",
@@ -130,13 +102,6 @@ public enum BadgeType {
         "🎉",
         "Get accepted for a job",
         1
-    ),
-    IN_DEMAND(
-        "In Demand",
-        "Received 3 job offers",
-        "🌟",
-        "Get accepted for 3 jobs",
-        3
     ),
     CAREER_STAR(
         "Career Star",

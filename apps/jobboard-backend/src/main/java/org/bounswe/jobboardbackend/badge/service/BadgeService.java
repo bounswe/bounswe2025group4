@@ -83,9 +83,6 @@ public class BadgeService {
         if (postCount >= BadgeType.FIRST_VOICE.getThreshold()) {
             awardBadge(userId, BadgeType.FIRST_VOICE);
         }
-        if (postCount >= BadgeType.THOUGHT_LEADER.getThreshold()) {
-            awardBadge(userId, BadgeType.THOUGHT_LEADER);
-        }
         if (postCount >= BadgeType.COMMUNITY_PILLAR.getThreshold()) {
             awardBadge(userId, BadgeType.COMMUNITY_PILLAR);
         }
@@ -103,9 +100,6 @@ public class BadgeService {
         
         if (commentCount >= BadgeType.CONVERSATION_STARTER.getThreshold()) {
             awardBadge(userId, BadgeType.CONVERSATION_STARTER);
-        }
-        if (commentCount >= BadgeType.ACTIVE_VOICE.getThreshold()) {
-            awardBadge(userId, BadgeType.ACTIVE_VOICE);
         }
         if (commentCount >= BadgeType.DISCUSSION_DRIVER.getThreshold()) {
             awardBadge(userId, BadgeType.DISCUSSION_DRIVER);
@@ -145,9 +139,6 @@ public class BadgeService {
         if (jobPostCount >= BadgeType.FIRST_LISTING.getThreshold()) {
             awardBadge(employerId, BadgeType.FIRST_LISTING);
         }
-        if (jobPostCount >= BadgeType.ACTIVE_RECRUITER.getThreshold()) {
-            awardBadge(employerId, BadgeType.ACTIVE_RECRUITER);
-        }
         if (jobPostCount >= BadgeType.HIRING_MACHINE.getThreshold()) {
             awardBadge(employerId, BadgeType.HIRING_MACHINE);
         }
@@ -168,9 +159,6 @@ public class BadgeService {
         if (applicationCount >= BadgeType.FIRST_STEP.getThreshold()) {
             awardBadge(jobSeekerId, BadgeType.FIRST_STEP);
         }
-        if (applicationCount >= BadgeType.ACTIVE_SEEKER.getThreshold()) {
-            awardBadge(jobSeekerId, BadgeType.ACTIVE_SEEKER);
-        }
         if (applicationCount >= BadgeType.PERSISTENT.getThreshold()) {
             awardBadge(jobSeekerId, BadgeType.PERSISTENT);
         }
@@ -189,9 +177,6 @@ public class BadgeService {
         
         if (acceptedCount >= BadgeType.HIRED.getThreshold()) {
             awardBadge(jobSeekerId, BadgeType.HIRED);
-        }
-        if (acceptedCount >= BadgeType.IN_DEMAND.getThreshold()) {
-            awardBadge(jobSeekerId, BadgeType.IN_DEMAND);
         }
         if (acceptedCount >= BadgeType.CAREER_STAR.getThreshold()) {
             awardBadge(jobSeekerId, BadgeType.CAREER_STAR);
