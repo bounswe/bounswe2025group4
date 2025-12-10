@@ -23,7 +23,7 @@ public record NotificationResponse(
                 n.getTitle(),
                 n.getNotificationType(),
                 n.getMessage(),
-                n.getTimestamp(),
+                n.getCreatedAt(),
                 n.isReadFlag(),
                 n.getUsername(),
                 n.getLinkId()

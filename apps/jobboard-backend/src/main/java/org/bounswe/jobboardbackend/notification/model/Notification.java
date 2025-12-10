@@ -27,7 +27,9 @@ public class Notification {
     @Column(length = 500)
     private String message;
 
-    private Long timestamp;
+    private Long createdAt;
+
+    private Long updatedAt;
 
     private boolean readFlag;
     private Long linkId;
