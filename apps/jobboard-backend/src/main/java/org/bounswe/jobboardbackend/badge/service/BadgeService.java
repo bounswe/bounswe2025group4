@@ -154,10 +154,10 @@ public class BadgeService {
     // ==================== JOB APPLICATION BADGES (Job Seeker) ====================
 
     /**
-     * Check if job seeker qualifies for any job application badges and award them.
-     * Called after a job seeker submits a new application.
+     * Check if jobseeker qualifies for any job application badges and award them.
+     * Called after a jobseeker submits a new application.
      *
-     * @param jobSeekerId The job seeker's user ID
+     * @param jobSeekerId The jobseeker's user ID
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void checkJobApplicationBadges(Long jobSeekerId) {
@@ -172,10 +172,10 @@ public class BadgeService {
     }
 
     /**
-     * Check if job seeker qualifies for any job acceptance badges and award them.
+     * Check if jobseeker qualifies for any job acceptance badges and award them.
      * Called after a job application is approved by an employer.
      *
-     * @param jobSeekerId The job seeker's user ID
+     * @param jobSeekerId The jobseeker's user ID
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void checkJobAcceptanceBadges(Long jobSeekerId) {

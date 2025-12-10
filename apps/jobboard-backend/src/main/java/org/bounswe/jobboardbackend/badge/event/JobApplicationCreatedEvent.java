@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Event published when a job seeker submits a new job application.
+ * Event published when a jobseeker submits a new job application.
  * Used to trigger badge checks for job application badges.
  */
 @Getter

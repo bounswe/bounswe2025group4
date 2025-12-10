@@ -20,7 +20,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 /**
  * Listens to application events and triggers badge checks accordingly.
  * This keeps badge logic decoupled from the main business services.
- * 
  * Uses @TransactionalEventListener to ensure badges are only awarded
  * after the main transaction commits successfully.
  */
