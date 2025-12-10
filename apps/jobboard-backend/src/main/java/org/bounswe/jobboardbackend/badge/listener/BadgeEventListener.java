@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.bounswe.jobboardbackend.badge.event.CommentCreatedEvent;
 import org.bounswe.jobboardbackend.badge.event.CommentUpvotedEvent;
 import org.bounswe.jobboardbackend.badge.event.ForumPostCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.JobPostCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.JobApplicationCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.JobApplicationApprovedEvent;
 import org.bounswe.jobboardbackend.badge.service.BadgeService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -63,6 +66,52 @@ public class BadgeEventListener {
             badgeService.checkUpvoteBadges(event.getCommentAuthorId());
         } catch (Exception e) {
             log.error("Badge check failed for upvote on comment by user {}: {}", event.getCommentAuthorId(), e.getMessage());
+        }
+    }
+
+    // ==================== JOB POST EVENTS ====================
+
+    /**
+     * Handle job post creation - check for job posting badges.
+     * Only executes after the transaction commits successfully.
+     */
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onJobPostCreated(JobPostCreatedEvent event) {
+        try {
+            log.debug("Job post created by employer {}, checking badges...", event.getEmployerId());
+            badgeService.checkJobPostBadges(event.getEmployerId());
+        } catch (Exception e) {
+            log.error("Badge check failed for job post by employer {}: {}", event.getEmployerId(), e.getMessage());
+        }
+    }
+
+    // ==================== JOB APPLICATION EVENTS ====================
+
+    /**
+     * Handle job application creation - check for job application badges.
+     * Only executes after the transaction commits successfully.
+     */
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onJobApplicationCreated(JobApplicationCreatedEvent event) {
+        try {
+            log.debug("Job application created by job seeker {}, checking badges...", event.getJobSeekerId());
+            badgeService.checkJobApplicationBadges(event.getJobSeekerId());
+        } catch (Exception e) {
+            log.error("Badge check failed for job application by job seeker {}: {}", event.getJobSeekerId(), e.getMessage());
+        }
+    }
+
+    /**
+     * Handle job application approval - check for job acceptance badges.
+     * Only executes after the transaction commits successfully.
+     */
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onJobApplicationApproved(JobApplicationApprovedEvent event) {
+        try {
+            log.debug("Job application approved for job seeker {}, checking badges...", event.getJobSeekerId());
+            badgeService.checkJobAcceptanceBadges(event.getJobSeekerId());
+        } catch (Exception e) {
+            log.error("Badge check failed for job application approval for job seeker {}: {}", event.getJobSeekerId(), e.getMessage());
         }
     }
 }

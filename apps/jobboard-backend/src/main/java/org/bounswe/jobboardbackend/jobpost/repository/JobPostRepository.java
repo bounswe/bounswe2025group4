@@ -45,4 +45,7 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long> {
 
     long countByPostedDateAfter(java.time.LocalDateTime date);
 
+    // needed for badges
+    long countByEmployerId(Long employerId);
+
 }

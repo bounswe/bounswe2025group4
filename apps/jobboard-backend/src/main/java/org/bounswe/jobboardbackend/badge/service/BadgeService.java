@@ -8,6 +8,9 @@ import org.bounswe.jobboardbackend.badge.repository.BadgeRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentUpvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
+import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
+import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
+import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +28,8 @@ public class BadgeService {
     private final ForumPostRepository forumPostRepository;
     private final ForumCommentRepository forumCommentRepository;
     private final ForumCommentUpvoteRepository forumCommentUpvoteRepository;
+    private final JobPostRepository jobPostRepository;
+    private final JobApplicationRepository jobApplicationRepository;
 
     /**
      * Award a badge to a user if they don't already have it.
@@ -115,6 +120,74 @@ public class BadgeService {
         }
         if (upvoteCount >= BadgeType.VALUABLE_CONTRIBUTOR.getThreshold()) {
             awardBadge(userId, BadgeType.VALUABLE_CONTRIBUTOR);
+        }
+    }
+
+    // ==================== JOB POST BADGES (Employer) ====================
+
+    /**
+     * Check if employer qualifies for any job posting badges and award them.
+     * Called after an employer creates a new job post.
+     *
+     * @param employerId The employer's user ID
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void checkJobPostBadges(Long employerId) {
+        long jobPostCount = jobPostRepository.countByEmployerId(employerId);
+        
+        if (jobPostCount >= BadgeType.FIRST_LISTING.getThreshold()) {
+            awardBadge(employerId, BadgeType.FIRST_LISTING);
+        }
+        if (jobPostCount >= BadgeType.ACTIVE_RECRUITER.getThreshold()) {
+            awardBadge(employerId, BadgeType.ACTIVE_RECRUITER);
+        }
+        if (jobPostCount >= BadgeType.HIRING_MACHINE.getThreshold()) {
+            awardBadge(employerId, BadgeType.HIRING_MACHINE);
+        }
+    }
+
+    // ==================== JOB APPLICATION BADGES (Job Seeker) ====================
+
+    /**
+     * Check if job seeker qualifies for any job application badges and award them.
+     * Called after a job seeker submits a new application.
+     *
+     * @param jobSeekerId The job seeker's user ID
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void checkJobApplicationBadges(Long jobSeekerId) {
+        long applicationCount = jobApplicationRepository.countByJobSeekerId(jobSeekerId);
+        
+        if (applicationCount >= BadgeType.FIRST_STEP.getThreshold()) {
+            awardBadge(jobSeekerId, BadgeType.FIRST_STEP);
+        }
+        if (applicationCount >= BadgeType.ACTIVE_SEEKER.getThreshold()) {
+            awardBadge(jobSeekerId, BadgeType.ACTIVE_SEEKER);
+        }
+        if (applicationCount >= BadgeType.PERSISTENT.getThreshold()) {
+            awardBadge(jobSeekerId, BadgeType.PERSISTENT);
+        }
+    }
+
+    /**
+     * Check if job seeker qualifies for any job acceptance badges and award them.
+     * Called after a job application is approved by an employer.
+     *
+     * @param jobSeekerId The job seeker's user ID
+     */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void checkJobAcceptanceBadges(Long jobSeekerId) {
+        long acceptedCount = jobApplicationRepository.countByJobSeekerIdAndStatus(
+            jobSeekerId, JobApplicationStatus.APPROVED);
+        
+        if (acceptedCount >= BadgeType.HIRED.getThreshold()) {
+            awardBadge(jobSeekerId, BadgeType.HIRED);
+        }
+        if (acceptedCount >= BadgeType.IN_DEMAND.getThreshold()) {
+            awardBadge(jobSeekerId, BadgeType.IN_DEMAND);
+        }
+        if (acceptedCount >= BadgeType.CAREER_STAR.getThreshold()) {
+            awardBadge(jobSeekerId, BadgeType.CAREER_STAR);
         }
     }
 }

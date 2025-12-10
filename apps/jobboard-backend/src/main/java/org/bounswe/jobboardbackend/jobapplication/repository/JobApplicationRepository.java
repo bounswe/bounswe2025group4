@@ -19,4 +19,9 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
 
     // needed for stats
     long countByStatus(org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus status);
+
+    // needed for badges
+    long countByJobSeekerId(Long jobSeekerId);
+    
+    long countByJobSeekerIdAndStatus(Long jobSeekerId, org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus status);
 }

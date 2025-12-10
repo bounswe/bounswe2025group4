@@ -72,6 +72,78 @@ public enum BadgeType {
         "⭐",
         "Receive 50 upvotes on your comments",
         50
+    ),
+
+    // ==================== JOB POST BADGES (Employer) ====================
+    
+    FIRST_LISTING(
+        "First Listing",
+        "Posted your first job listing",
+        "📋",
+        "Create your first job post",
+        1
+    ),
+    ACTIVE_RECRUITER(
+        "Active Recruiter",
+        "Posted 5 job listings",
+        "🎯",
+        "Create 5 job posts",
+        5
+    ),
+    HIRING_MACHINE(
+        "Hiring Machine",
+        "Posted 15 job listings",
+        "🏭",
+        "Create 15 job posts",
+        15
+    ),
+
+    // ==================== JOB APPLICATION BADGES (Job Seeker) ====================
+    
+    FIRST_STEP(
+        "First Step",
+        "Submitted your first job application",
+        "👣",
+        "Apply to your first job",
+        1
+    ),
+    ACTIVE_SEEKER(
+        "Active Seeker",
+        "Submitted 5 job applications",
+        "🔍",
+        "Apply to 5 jobs",
+        5
+    ),
+    PERSISTENT(
+        "Persistent",
+        "Submitted 15 job applications",
+        "💪",
+        "Apply to 15 jobs",
+        15
+    ),
+
+    // ==================== JOB ACCEPTANCE BADGES (Job Seeker) ====================
+    
+    HIRED(
+        "Hired!",
+        "Got your first job offer",
+        "🎉",
+        "Get accepted for a job",
+        1
+    ),
+    IN_DEMAND(
+        "In Demand",
+        "Received 3 job offers",
+        "🌟",
+        "Get accepted for 3 jobs",
+        3
+    ),
+    CAREER_STAR(
+        "Career Star",
+        "Received 5 job offers",
+        "🏆",
+        "Get accepted for 5 jobs",
+        5
     );
 
     private final String displayName;

@@ -15,6 +15,9 @@ import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
 import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
+import org.bounswe.jobboardbackend.badge.event.JobApplicationCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.JobApplicationApprovedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,6 +46,7 @@ public class JobApplicationService {
     private final WorkplaceService workplaceService;
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final WorkplaceRepository workplaceRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -65,13 +69,15 @@ public class JobApplicationService {
                                  JobPostRepository jobPostRepository,
                                  WorkplaceService workplaceService,
                                  EmployerWorkplaceRepository employerWorkplaceRepository,
-                                 WorkplaceRepository workplaceRepository) {
+                                 WorkplaceRepository workplaceRepository,
+                                 ApplicationEventPublisher eventPublisher) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
         this.jobPostRepository = jobPostRepository;
         this.workplaceService = workplaceService;
         this.employerWorkplaceRepository = employerWorkplaceRepository;
         this.workplaceRepository = workplaceRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -138,7 +144,12 @@ public class JobApplicationService {
                 .appliedDate(LocalDateTime.now())
                 .build();
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+        
+        // Publish event for badge system
+        eventPublisher.publishEvent(new JobApplicationCreatedEvent(jobSeeker.getId(), savedApplication.getId()));
+        
+        return toResponseDto(savedApplication);
     }
 
     @Transactional
@@ -158,7 +169,13 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+        
+        // Publish event for badge system
+        eventPublisher.publishEvent(new JobApplicationApprovedEvent(
+            application.getJobSeeker().getId(), savedApplication.getId()));
+        
+        return toResponseDto(savedApplication);
     }
 
     @Transactional
