@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service responsible for awarding badges to users based on their activities.
- * Badges are independent ofProfile - linked directly to User.
+ * Badges are independent of Profile - linked directly to User.
  */
 @Service
 @RequiredArgsConstructor
