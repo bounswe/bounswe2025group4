@@ -15,7 +15,7 @@ public class ProfileResponseDto {
     private String firstName;
     private String lastName;
     private String bio;
-    private String gender;
+    private String pronounSet;
     private String imageUrl;
 
     private List<EducationResponseDto> educations;

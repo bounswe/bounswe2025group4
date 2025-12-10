@@ -34,8 +34,11 @@ public class RegisterRequest {
     @Size(min = 2, max = 30)
     private String lastName;
 
-    @Pattern(regexp = "^(?i)(MALE|FEMALE|OTHER)$")
-    private String gender;
+    @Pattern(
+            regexp = "^(?i)(HE_HIM|SHE_HER|THEY_THEM|SHE_THEY|HE_THEY|OTHER|NONE)$",
+            message = "Invalid pronoun set"
+    )
+    private String pronounSet;
 
     @Size(max = 250)
     private String bio;

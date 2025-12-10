@@ -150,7 +150,7 @@ public class AuthService {
                 .firstName(registerRequest.getFirstName())
                 .lastName(registerRequest.getLastName())
                 .bio(registerRequest.getBio())
-                .gender(registerRequest.getGender())
+                .pronounSet(PronounSet.valueOf(registerRequest.getPronounSet().toUpperCase()))
                 .imageUrl(null)
                 .build();
 
