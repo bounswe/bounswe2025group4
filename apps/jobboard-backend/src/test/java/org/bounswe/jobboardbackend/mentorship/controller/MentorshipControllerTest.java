@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -263,7 +264,14 @@ class MentorshipControllerTest {
         when(auth.getPrincipal()).thenReturn(principal);
         when(principal.getId()).thenReturn(99L);
 
-        MentorshipRequestDTO dto = mock(MentorshipRequestDTO.class);
+        MentorshipRequestDTO dto = new MentorshipRequestDTO(
+                "50",
+                "10",
+                "99",
+                "PENDING",
+                LocalDateTime.now(),
+                "Because I want to learn"
+        );
 
         when(mentorshipService.getMentorshipRequest(requestId, 99L))
                 .thenReturn(dto);
@@ -273,32 +281,38 @@ class MentorshipControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertSame(dto, response.getBody());
+
         verify(mentorshipService).getMentorshipRequest(requestId, 99L);
+        verifyNoMoreInteractions(mentorshipService);
     }
 
+
     @Test
-    void respondToMentorshipRequest_usesAcceptFlagAndUserId() {
+    void respondToMentorshipRequest_usesAuthenticatedUserIdAndDelegatesToService() {
         Long requestId = 60L;
+
         Authentication auth = mock(Authentication.class);
         UserDetailsImpl principal = mock(UserDetailsImpl.class);
         when(auth.getPrincipal()).thenReturn(principal);
         when(principal.getId()).thenReturn(11L);
 
-        RespondToRequestDTO responseDTO = mock(RespondToRequestDTO.class);
-        when(responseDTO.accept()).thenReturn(true);
+        RespondToRequestDTO dto =
+                new RespondToRequestDTO(true, "Happy to mentor you.");
 
-        MentorshipRequestDTO returned = mock(MentorshipRequestDTO.class);
+        MentorshipRequestResponseDTO serviceResult = mock(MentorshipRequestResponseDTO.class);
+        when(mentorshipService.respondToMentorshipRequest(requestId, dto, 11L))
+                .thenReturn(serviceResult);
 
-        when(mentorshipService.respondToMentorshipRequest(requestId, true, 11L))
-                .thenReturn(returned);
-
-        ResponseEntity<MentorshipRequestDTO> response =
-                mentorshipController.respondToMentorshipRequest(requestId, responseDTO, auth);
+        ResponseEntity<MentorshipRequestResponseDTO> response =
+                mentorshipController.respondToMentorshipRequest(requestId, dto, auth);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertSame(returned, response.getBody());
-        verify(mentorshipService).respondToMentorshipRequest(requestId, true, 11L);
+        assertSame(serviceResult, response.getBody());
+
+        verify(mentorshipService).respondToMentorshipRequest(requestId, dto, 11L);
+        verifyNoMoreInteractions(mentorshipService);
     }
+
 
     // ----------------------------------------------------------------------
     // Rating endpoint
