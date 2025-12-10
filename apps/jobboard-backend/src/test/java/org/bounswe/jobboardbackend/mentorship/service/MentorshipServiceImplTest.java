@@ -10,11 +10,12 @@ import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.bounswe.jobboardbackend.mentorship.model.*;
 import org.bounswe.jobboardbackend.mentorship.repository.*;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.springframework.context.ApplicationEventPublisher;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -29,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
+@ExtendWith(MockitoExtension.class)
 class MentorshipServiceImplTest {
 
     @Mock
@@ -56,11 +57,12 @@ class MentorshipServiceImplTest {
     @Mock
     private Storage storage;
 
-    @Mock
-    private ApplicationEventPublisher eventPublisher;
-
     @InjectMocks
     private MentorshipServiceImpl mentorshipService;
+
+    @Mock
+    private NotificationService notificationService;
+
 
     @BeforeEach
     void setUp() {
@@ -293,6 +295,7 @@ class MentorshipServiceImplTest {
         verifyNoMoreInteractions(mentorProfileRepository, userRepository, mentorshipRequestRepository);
     }
 
+
     // ---------------------------------------------------------------------
     // respondToMentorshipRequest
     // ---------------------------------------------------------------------
@@ -332,12 +335,8 @@ class MentorshipServiceImplTest {
                     return r;
                 });
 
-        Conversation conversation = new Conversation();
-        conversation.setId(555L);
-        when(chatService.createConversationForReview(any(ResumeReview.class)))
-                .thenReturn(conversation);
-
-        when(mentorshipRequestRepository.save(request)).thenReturn(request);
+        when(mentorProfileRepository.save(any(MentorProfile.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         when(mentorshipRequestRepository.save(any(MentorshipRequest.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -384,6 +383,8 @@ class MentorshipServiceImplTest {
                 chatService
         );
     }
+
+
 
     @Test
     void respondToMentorshipRequest_decline_success() {
@@ -448,6 +449,8 @@ class MentorshipServiceImplTest {
         );
     }
 
+
+
     @Test
     void respondToMentorshipRequest_unauthorizedMentor_throws() {
         Long requestId = 1L;
@@ -482,6 +485,7 @@ class MentorshipServiceImplTest {
         verify(chatService, never()).createConversationForReview(any());
         verify(mentorProfileRepository, never()).save(any());
     }
+
 
     // ---------------------------------------------------------------------
     // completeMentorship
