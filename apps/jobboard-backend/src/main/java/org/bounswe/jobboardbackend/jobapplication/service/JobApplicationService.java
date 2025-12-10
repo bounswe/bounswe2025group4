@@ -145,7 +145,24 @@ public class JobApplicationService {
 
         JobApplication savedApplication = applicationRepository.save(application);
 
-        notificationService.notifyUser(jobPost.getEmployer().getUsername(), "New Job Application Request", NotificationType.JOB_APPLICATION_REQUEST, "New Job Application Request from " + jobSeeker.getUsername(), savedApplication.getId());
+
+
+
+        String message = String.format(
+                "You received a new job application from %s for the position '%s' (Application ID: %d).",
+                jobSeeker.getUsername(),
+                jobPost.getTitle(),
+                application.getId()
+        );
+
+        notificationService.notifyUser(
+                jobSeeker.getUsername(),
+                "New Job Application Request",
+                NotificationType.JOB_APPLICATION_APPROVED,
+                message,
+                savedApplication.getId()
+        );
+
 
         return toResponseDto(savedApplication);
     }
@@ -167,10 +184,28 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        notificationService.notifyUser(application.getJobSeeker().getUsername(), "Job Application Approval", NotificationType.JOB_APPLICATION_APPROVED, "Job Application is approved by" + employer.getUsername(), application.getId());
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        User jobSeeker = savedApplication.getJobSeeker();
+        JobPost jobPost = savedApplication.getJobPost();
+
+        String message = String.format(
+                "Your application for '%s' (ID: %d) has been approved by %s.",
+                jobPost.getTitle(),
+                savedApplication.getId(),
+                employer.getUsername()
+        );
+
+        notificationService.notifyUser(
+                jobSeeker.getUsername(),
+                "Job Application Approved",
+                NotificationType.JOB_APPLICATION_APPROVED,
+                message,
+                savedApplication.getId()
+        );
 
 
-        return toResponseDto(applicationRepository.save(application));
+        return toResponseDto(savedApplication);
     }
 
     @Transactional
@@ -190,10 +225,28 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        notificationService.notifyUser(application.getJobSeeker().getUsername(), "Job Application Rejection", NotificationType.JOB_APPLICATION_REJECTED, "Job Application is rejected by" + employer.getUsername(), application.getId());
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        User jobSeeker = savedApplication.getJobSeeker();
+        JobPost jobPost = savedApplication.getJobPost();
+
+        String message = String.format(
+                "Your application for '%s' (ID: %d) has been rejected by %s.",
+                jobPost.getTitle(),
+                savedApplication.getId(),
+                employer.getUsername()
+        );
+
+        notificationService.notifyUser(
+                jobSeeker.getUsername(),
+                "Job Application Rejection",
+                NotificationType.JOB_APPLICATION_REJECTED,
+                message,
+                savedApplication.getId()
+        );
 
 
-        return toResponseDto(applicationRepository.save(application));
+        return toResponseDto(savedApplication);
     }
 
     @Transactional

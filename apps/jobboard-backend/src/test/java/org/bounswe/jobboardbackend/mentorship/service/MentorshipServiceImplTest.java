@@ -250,9 +250,16 @@ class MentorshipServiceImplTest {
         Long jobSeekerId = 7L;
         String motivation = "I want to learn backend engineering.";
 
-        MentorProfile mentor = mock(MentorProfile.class);
-        when(mentor.getId()).thenReturn(mentorId);
-        when(mentor.canAccept()).thenReturn(true);
+        User mentorUser = new User();
+        mentorUser.setId(100L);
+        mentorUser.setUsername("mentor-username");
+
+        MentorProfile mentor = new MentorProfile();
+        mentor.setId(mentorId);
+        mentor.setUser(mentorUser);
+        mentor.setCurrentMentees(0);
+        mentor.setMaxMentees(5);
+
 
         User jobSeeker = new User();
         jobSeeker.setId(jobSeekerId);
@@ -260,15 +267,12 @@ class MentorshipServiceImplTest {
         when(mentorProfileRepository.findById(mentorId)).thenReturn(Optional.of(mentor));
         when(userRepository.findById(jobSeekerId)).thenReturn(Optional.of(jobSeeker));
 
-        MentorshipRequest saved = new MentorshipRequest();
-        saved.setId(1L);
-        saved.setMentor(mentor);
-        saved.setRequester(jobSeeker);
-        saved.setStatus(RequestStatus.PENDING);
-        saved.setCreatedAt(LocalDateTime.now());
-        saved.setMotivation(motivation);
-
-        when(mentorshipRequestRepository.save(any(MentorshipRequest.class))).thenReturn(saved);
+        when(mentorshipRequestRepository.save(any(MentorshipRequest.class)))
+                .thenAnswer(invocation -> {
+                    MentorshipRequest mr = invocation.getArgument(0);
+                    mr.setId(1L);
+                    return mr;
+                });
 
         CreateMentorshipRequestDTO dto = new CreateMentorshipRequestDTO(mentorId, motivation);
 
@@ -294,6 +298,7 @@ class MentorshipServiceImplTest {
         verify(userRepository).findById(jobSeekerId);
         verifyNoMoreInteractions(mentorProfileRepository, userRepository, mentorshipRequestRepository);
     }
+
 
     // ---------------------------------------------------------------------
     // respondToMentorshipRequest
@@ -339,8 +344,6 @@ class MentorshipServiceImplTest {
         when(chatService.createConversationForReview(any(ResumeReview.class)))
                 .thenReturn(conversation);
 
-        when(mentorshipRequestRepository.save(request)).thenReturn(request);
-
         when(mentorshipRequestRepository.save(any(MentorshipRequest.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -366,8 +369,6 @@ class MentorshipServiceImplTest {
         ArgumentCaptor<ResumeReview> reviewCaptor = ArgumentCaptor.forClass(ResumeReview.class);
         verify(resumeReviewRepository).save(reviewCaptor.capture());
         ResumeReview savedReview = reviewCaptor.getValue();
-
-
         assertSame(mentorProfile, savedReview.getMentor());
         assertSame(requester, savedReview.getJobSeeker());
 
@@ -386,6 +387,8 @@ class MentorshipServiceImplTest {
                 chatService
         );
     }
+
+
 
     @Test
     void respondToMentorshipRequest_decline_success() {

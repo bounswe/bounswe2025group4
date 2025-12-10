@@ -256,7 +256,22 @@ public class MentorshipServiceImpl implements MentorshipService {
         newRequest.setMotivation(requestDTO.motivation());
         MentorshipRequest savedRequest = mentorshipRequestRepository.save(newRequest);
 
-        notificationService.notifyUser(mentor.getUser().getUsername(), "New Mentorship Request", NotificationType.MENTORSHIP_REQUEST, "New Mentorship Request from " + jobSeeker.getUsername(), newRequest.getId());
+
+        String message = String.format(
+                "You received a new mentorship request from %s for your mentor profile. (Request ID: %d). "
+                        + "Motivation: \"%s\"",
+                jobSeeker.getUsername(),
+                newRequest.getId(),
+                newRequest.getMotivation()
+        );
+
+        notificationService.notifyUser(
+                mentor.getUser().getUsername(),
+                "New Mentorship Request",
+                NotificationType.MENTORSHIP_REQUEST,
+                message,
+                newRequest.getId()
+        );
 
         return toMentorshipRequestDTO(savedRequest);
     }
@@ -295,12 +310,26 @@ public class MentorshipServiceImpl implements MentorshipService {
             mentor.setCurrentMentees(mentor.getCurrentMentees() + 1);
             mentorProfileRepository.save(mentor);
 
-            notificationService.notifyUser(request.getRequester().getUsername(), "Mentorship Approval", NotificationType.MENTORSHIP_APPROVED, "Your mentorship request is approved by " + mentor.getUser().getUsername(), conversation.getId());
+            String message = String.format(
+                    "Your mentorship request (ID: %d) for mentor '%s' has been approved. Mentor's message: '%s'. A conversation has been created so you can start your mentorship.",
+                    request.getId(),
+                    mentor.getUser().getUsername(),
+                    respondToRequestDTO.responseMessage()
+            );
+
+
+            notificationService.notifyUser(request.getRequester().getUsername(), "Mentorship Approval", NotificationType.MENTORSHIP_APPROVED, message, conversation.getId());
 
         } else {
+            String message = String.format(
+                    "Your mentorship request (ID: %d) for mentor '%s' has been rejected. Mentor's message: '%s'.",
+                    request.getId(),
+                    request.getMentor().getUser().getUsername(),
+                    respondToRequestDTO.responseMessage()
+            );
             request.decline(respondToRequestDTO.responseMessage());
 
-            notificationService.notifyUser(request.getRequester().getUsername(), "Mentorship Rejection", NotificationType.MENTORSHIP_REJECTED, "Your mentorship request is rejected by " + request.getMentor().getUser().getUsername(), null);
+            notificationService.notifyUser(request.getRequester().getUsername(), "Mentorship Rejection", NotificationType.MENTORSHIP_REJECTED, message, null);
 
         }
 
