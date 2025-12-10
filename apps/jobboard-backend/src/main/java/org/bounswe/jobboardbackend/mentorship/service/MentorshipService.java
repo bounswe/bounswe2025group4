@@ -24,7 +24,7 @@ public interface MentorshipService {
     MentorshipRequestDTO createMentorshipRequest(CreateMentorshipRequestDTO requestDTO, Long jobSeekerId);
     MentorshipRequestResponseDTO respondToMentorshipRequest(Long requestId, RespondToRequestDTO respondToRequestDTO, Long mentorId);
     void rateMentor(CreateRatingDTO ratingDTO, Long jobSeekerId);
-    MentorshipRequestDTO getMentorshipRequest(Long requestId, Long userId);
+    MentorshipRequestResponseDTO getMentorshipRequest(Long requestId, Long userId);
     void completeMentorship(Long resumeReviewId, Authentication auth);
     void closeMentorship(Long resumeReviewId, Authentication auth);
     List<MentorshipRequestDTO> getMentorshipRequestsOfMentor(Long mentorId, Long userId);
