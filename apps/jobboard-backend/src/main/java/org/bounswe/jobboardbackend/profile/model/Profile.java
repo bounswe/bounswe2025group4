@@ -2,6 +2,7 @@ package org.bounswe.jobboardbackend.profile.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.bounswe.jobboardbackend.auth.model.PronounSet;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -38,6 +39,9 @@ public class Profile {
 
     @Column(length = 1024)
     private String imageUrl;
+
+    @Enumerated(EnumType.STRING)
+    private PronounSet pronounSet;
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

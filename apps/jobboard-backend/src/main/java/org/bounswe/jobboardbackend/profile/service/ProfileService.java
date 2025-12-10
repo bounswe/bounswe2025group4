@@ -1,6 +1,7 @@
 package org.bounswe.jobboardbackend.profile.service;
 
 import lombok.RequiredArgsConstructor;
+import org.bounswe.jobboardbackend.auth.model.PronounSet;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
@@ -90,6 +91,7 @@ public class ProfileService {
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .bio(dto.getBio())
+                .pronounSet(PronounSet.valueOf(dto.getPronounSet().toUpperCase()))
                 .imageUrl(null)
                 .build();
 
@@ -120,6 +122,7 @@ public class ProfileService {
         if (dto.getFirstName() != null) profile.setFirstName(dto.getFirstName());
         if (dto.getLastName()  != null) profile.setLastName(dto.getLastName());
         if (dto.getBio()       != null) profile.setBio(dto.getBio());
+        if (dto.getPronounSet()       != null) profile.setPronounSet(PronounSet.valueOf(dto.getPronounSet().toUpperCase()));
 
         return toProfileDto(profile);
     }
@@ -134,6 +137,7 @@ public class ProfileService {
                 .firstName(p.getFirstName())
                 .lastName(p.getLastName())
                 .bio(p.getBio())
+                .pronounSet(String.valueOf(p.getPronounSet()))
                 .imageUrl(p.getImageUrl())
                 .educations(p.getEducations().stream().map(this::toEducationDto).collect(Collectors.toList()))
                 .experiences(p.getExperiences().stream().map(this::toExperienceDto).collect(Collectors.toList()))
@@ -502,6 +506,7 @@ public class ProfileService {
                 .firstName(p.getFirstName())
                 .lastName(p.getLastName())
                 .bio(p.getBio())
+                .pronounSet(String.valueOf(p.getPronounSet()))
                 .imageUrl(p.getImageUrl())
                 .educations(p.getEducations().stream().map(this::toEducationDto).collect(java.util.stream.Collectors.toList()))
                 .experiences(p.getExperiences().stream().map(this::toExperienceDto).collect(java.util.stream.Collectors.toList()))
