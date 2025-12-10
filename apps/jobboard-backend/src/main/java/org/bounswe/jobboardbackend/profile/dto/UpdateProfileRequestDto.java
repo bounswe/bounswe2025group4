@@ -10,5 +10,5 @@ public class UpdateProfileRequestDto {
     private String firstName; // optional (partial update)
     private String lastName;  // optional
     private String bio;       // optional
-    private String gender;
+    private String pronounSet;
 }

@@ -18,5 +18,5 @@ public class CreateProfileRequestDto {
     private String bio; // optional
 
     @Pattern(regexp = "^(?i)(MALE|FEMALE|OTHER)$")
-    private String gender;
+    private String pronounSet;
 }
