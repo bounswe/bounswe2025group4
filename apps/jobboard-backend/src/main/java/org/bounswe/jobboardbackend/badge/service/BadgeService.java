@@ -66,6 +66,14 @@ public class BadgeService {
         
         badgeRepository.save(badge);
         log.info("Awarded badge {} to user {}", badgeType, userId);
+        
+        // TODO: Send notification to user about earned badge
+        // notificationService.sendBadgeNotification(userId, badgeType);
+        // Notification should include:
+        // - Badge name: badgeType.getDisplayName()
+        // - Badge description: badgeType.getDescription()
+        // - Message: "Congratulations! You earned the '{badgeName}' badge!"
+        
         return true;
     }
 
