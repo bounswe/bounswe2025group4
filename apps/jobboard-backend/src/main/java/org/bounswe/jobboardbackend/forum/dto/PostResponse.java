@@ -19,8 +19,12 @@ public class PostResponse {
     private Instant createdAt;
     private Instant updatedAt;
     private int commentCount;
+    private long upvoteCount;
+    private long downvoteCount;
+    private List<CommentResponse> comments;
 
-    public static PostResponse from(ForumPost post) {
+    public static PostResponse from(ForumPost post, long upvoteCount, long downvoteCount,
+            List<CommentResponse> comments) {
         return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -31,6 +35,9 @@ public class PostResponse {
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .commentCount(post.getComments() != null ? post.getComments().size() : 0)
+                .upvoteCount(upvoteCount)
+                .downvoteCount(downvoteCount)
+                .comments(comments)
                 .build();
     }
 }
