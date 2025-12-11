@@ -4,9 +4,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
-import org.bounswe.jobboardbackend.profile.model.Badge;
+import org.bounswe.jobboardbackend.badge.model.Badge;
 import org.bounswe.jobboardbackend.profile.model.Profile;
-import org.bounswe.jobboardbackend.profile.repository.BadgeRepository;
+import org.bounswe.jobboardbackend.badge.repository.BadgeRepository;
 import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class AdminProfileService {
     }
 
     @Transactional
-    public void deleteBadge(Long badgeId) {
+    public void deleteBadge(Long badgeId, String reason) {
         Badge badge = badgeRepository.findById(badgeId)
                 .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Badge not found"));
 
