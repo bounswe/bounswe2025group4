@@ -21,11 +21,12 @@ public class CommentResponse {
     private long downvoteCount;
 
     public static CommentResponse from(ForumComment comment, long upvoteCount, long downvoteCount) {
+        boolean isBanned = Boolean.TRUE.equals(comment.getAuthor().getIsBanned());
         return CommentResponse.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
-                .authorId(comment.getAuthor().getId())
-                .authorUsername(comment.getAuthor().getUsername())
+                .authorId(isBanned ? null : comment.getAuthor().getId())
+                .authorUsername(isBanned ? "Banned User" : comment.getAuthor().getUsername())
                 .postId(comment.getPost().getId())
                 .parentCommentId(comment.getParentComment() != null ? comment.getParentComment().getId() : null)
                 .createdAt(comment.getCreatedAt())

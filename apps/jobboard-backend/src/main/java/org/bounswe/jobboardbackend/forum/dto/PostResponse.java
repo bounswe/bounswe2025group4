@@ -21,12 +21,13 @@ public class PostResponse {
     private int commentCount;
 
     public static PostResponse from(ForumPost post) {
+        boolean isBanned = Boolean.TRUE.equals(post.getAuthor().getIsBanned());
         return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .authorId(post.getAuthor().getId())
-                .authorUsername(post.getAuthor().getUsername())
+                .authorId(isBanned ? null : post.getAuthor().getId())
+                .authorUsername(isBanned ? "Banned User" : post.getAuthor().getUsername())
                 .tags(post.getTags())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())

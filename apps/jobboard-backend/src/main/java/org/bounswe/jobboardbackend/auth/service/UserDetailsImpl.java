@@ -28,28 +28,30 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
+    private Boolean isBanned;
+
     public UserDetailsImpl(Long id, String username, String email, String password,
-                           Collection<? extends GrantedAuthority> authorities) {
+            Collection<? extends GrantedAuthority> authorities, Boolean isBanned) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.isBanned = isBanned;
     }
 
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = List.of(
-                new SimpleGrantedAuthority(user.getRole().name())
-        );
+                new SimpleGrantedAuthority(user.getRole().name()));
 
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities);
+                authorities,
+                user.getIsBanned());
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -73,7 +75,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !Boolean.TRUE.equals(isBanned);
     }
 
     @Override
