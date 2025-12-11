@@ -19,7 +19,6 @@ public class CommentResponse {
     private Instant updatedAt;
     private long upvoteCount;
     private long downvoteCount;
-    private boolean reported;
 
     public static CommentResponse from(ForumComment comment, long upvoteCount, long downvoteCount) {
         return CommentResponse.builder()
@@ -33,7 +32,6 @@ public class CommentResponse {
                 .updatedAt(comment.getUpdatedAt())
                 .upvoteCount(upvoteCount)
                 .downvoteCount(downvoteCount)
-                .reported(comment.isReported())
                 .build();
     }
 }

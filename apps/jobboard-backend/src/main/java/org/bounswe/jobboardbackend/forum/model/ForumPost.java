@@ -51,10 +51,6 @@ public class ForumPost {
     @Builder.Default
     private List<ForumPostDownvote> downvotes = new ArrayList<>();
 
-    @Column(nullable = false)
-    @Builder.Default
-    private boolean reported = false;
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

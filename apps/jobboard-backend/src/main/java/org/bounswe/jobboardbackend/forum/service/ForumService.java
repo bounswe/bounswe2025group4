@@ -276,20 +276,4 @@ public class ForumService {
         postDownvoteRepository.findByUserIdAndPostId(user.getId(), postId)
                 .ifPresent(postDownvoteRepository::delete);
     }
-
-    @Transactional
-    public void reportPost(Long postId) {
-        ForumPost post = postRepository.findById(postId)
-                .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Post not found"));
-        post.setReported(true);
-        postRepository.save(post);
-    }
-
-    @Transactional
-    public void reportComment(Long commentId) {
-        ForumComment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Comment not found"));
-        comment.setReported(true);
-        commentRepository.save(comment);
-    }
 }

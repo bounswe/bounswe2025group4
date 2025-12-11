@@ -89,12 +89,6 @@ public class ForumController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/posts/{id}/report")
-    public ResponseEntity<Void> reportPost(@PathVariable Long id) {
-        forumService.reportPost(id);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/posts/{id}/comments")
     public ResponseEntity<CommentResponse> createComment(@PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails,
@@ -147,12 +141,6 @@ public class ForumController {
             @AuthenticationPrincipal UserDetails userDetails) {
         User user = getUser(userDetails);
         forumService.removeDownvote(commentId, user);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/comments/{commentId}/report")
-    public ResponseEntity<Void> reportComment(@PathVariable Long commentId) {
-        forumService.reportComment(commentId);
         return ResponseEntity.ok().build();
     }
 }

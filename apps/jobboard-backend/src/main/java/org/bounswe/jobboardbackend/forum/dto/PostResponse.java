@@ -21,7 +21,6 @@ public class PostResponse {
     private int commentCount;
     private long upvoteCount;
     private long downvoteCount;
-    private boolean reported;
     private List<CommentResponse> comments;
 
     public static PostResponse from(ForumPost post, long upvoteCount, long downvoteCount,
@@ -38,7 +37,6 @@ public class PostResponse {
                 .commentCount(post.getComments() != null ? post.getComments().size() : 0)
                 .upvoteCount(upvoteCount)
                 .downvoteCount(downvoteCount)
-                .reported(post.isReported())
                 .comments(comments)
                 .build();
     }
