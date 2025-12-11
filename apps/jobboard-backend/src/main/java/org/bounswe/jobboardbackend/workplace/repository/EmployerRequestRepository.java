@@ -13,11 +13,13 @@ public interface EmployerRequestRepository extends JpaRepository<EmployerRequest
     boolean existsByWorkplace_IdAndCreatedBy_IdAndStatus(
             Long workplaceId,
             Long createdById,
-            EmployerRequestStatus status
-    );
+            EmployerRequestStatus status);
 
     Optional<EmployerRequest> findByIdAndWorkplace_Id(Long id, Long workplaceId);
 
     Page<EmployerRequest> findByWorkplace_Id(Long workplaceId, Pageable pageable);
+
     Page<EmployerRequest> findByCreatedBy_Id(Long userId, Pageable pageable);
+
+    void deleteAllByWorkplace_Id(Long workplaceId);
 }

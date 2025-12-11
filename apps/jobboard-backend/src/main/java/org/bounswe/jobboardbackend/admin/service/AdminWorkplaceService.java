@@ -1,0 +1,92 @@
+package org.bounswe.jobboardbackend.admin.service;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.exception.HandleException;
+import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
+import java.util.List;
+import org.bounswe.jobboardbackend.workplace.model.Review;
+import org.bounswe.jobboardbackend.workplace.model.ReviewReply;
+import org.bounswe.jobboardbackend.workplace.model.Workplace;
+import org.bounswe.jobboardbackend.workplace.repository.ReviewReplyRepository;
+import org.bounswe.jobboardbackend.workplace.repository.ReviewRepository;
+import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
+import org.bounswe.jobboardbackend.workplace.repository.EmployerRequestRepository;
+import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
+import org.bounswe.jobboardbackend.workplace.service.ReviewService;
+import org.bounswe.jobboardbackend.workplace.service.ReplyService;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AdminWorkplaceService {
+
+    private final WorkplaceRepository workplaceRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewService reviewService;
+    private final ReplyService replyService;
+    private final JobPostRepository jobPostRepository;
+    private final ReviewReplyRepository reviewReplyRepository;
+    private final EmployerWorkplaceRepository employerWorkplaceRepository;
+    private final EmployerRequestRepository employerRequestRepository;
+    private final JobApplicationRepository jobApplicationRepository;
+
+    @Transactional
+    public void deleteWorkplace(Long workplaceId, String reason) {
+        Workplace workplace = workplaceRepository.findById(workplaceId)
+                .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
+
+        // 2. Delete job applications first (they reference job posts)
+        jobApplicationRepository.deleteAllByJobPost_Workplace_Id(workplaceId);
+
+        // 3. Now delete all related job posts
+        jobPostRepository.deleteAllByWorkplaceId(workplaceId);
+
+        // 4. Delete employer requests (pending join requests)
+        employerRequestRepository.deleteAllByWorkplace_Id(workplaceId);
+
+        // 5. Delete employer-workplace relationships
+        employerWorkplaceRepository.deleteAllByWorkplace_Id(workplaceId);
+
+        // 6. Delete review replies first (they reference reviews from this workplace)
+        reviewReplyRepository.deleteAllByReview_Workplace_Id(workplaceId);
+
+        // 7. Now delete all reviews
+        reviewRepository.deleteAllByWorkplace_Id(workplaceId);
+
+        // 8. Finally delete the workplace
+        workplaceRepository.delete(workplace);
+
+        // TODO: Log deletion with reason for audit
+    }
+
+    @Transactional
+    public void deleteReview(Long reviewId, String reason) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new HandleException(ErrorCode.REVIEW_NOT_FOUND, "Review not found"));
+
+        // Use ReviewService's deleteReview which handles cascade properly
+        // Pass admin flag = true to bypass ownership check
+        reviewService.deleteReview(review.getWorkplace().getId(), reviewId, null, true);
+
+        // TODO: Log deletion with reason for audit
+    }
+
+    @Transactional
+    public void deleteReviewReply(Long replyId, String reason) {
+        // Get reply to extract workplaceId and reviewId
+        ReviewReply reply = reviewReplyRepository.findById(replyId)
+                .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Review reply not found"));
+
+        Long workplaceId = reply.getReview().getWorkplace().getId();
+        Long reviewId = reply.getReview().getId();
+
+        // Use ReplyService's deleteReply with admin flag (actingUserId=null,
+        // isAdmin=true)
+        replyService.deleteReply(workplaceId, reviewId, null, true);
+
+        // TODO: Log deletion with reason for audit
+    }
+}

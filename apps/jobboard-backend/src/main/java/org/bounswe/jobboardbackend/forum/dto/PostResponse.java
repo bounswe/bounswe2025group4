@@ -19,25 +19,19 @@ public class PostResponse {
     private Instant createdAt;
     private Instant updatedAt;
     private int commentCount;
-    private long upvoteCount;
-    private long downvoteCount;
-    private List<CommentResponse> comments;
 
-    public static PostResponse from(ForumPost post, long upvoteCount, long downvoteCount,
-            List<CommentResponse> comments) {
+    public static PostResponse from(ForumPost post) {
+        boolean isBanned = Boolean.TRUE.equals(post.getAuthor().getIsBanned());
         return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .authorId(post.getAuthor().getId())
-                .authorUsername(post.getAuthor().getUsername())
+                .authorId(isBanned ? null : post.getAuthor().getId())
+                .authorUsername(isBanned ? "Banned User" : post.getAuthor().getUsername())
                 .tags(post.getTags())
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .commentCount(post.getComments() != null ? post.getComments().size() : 0)
-                .upvoteCount(upvoteCount)
-                .downvoteCount(downvoteCount)
-                .comments(comments)
                 .build();
     }
 }

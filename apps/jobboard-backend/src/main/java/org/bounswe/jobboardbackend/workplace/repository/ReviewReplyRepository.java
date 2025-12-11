@@ -9,4 +9,6 @@ public interface ReviewReplyRepository extends JpaRepository<ReviewReply, Long> 
     Optional<ReviewReply> findByReview_Id(Long reviewId);
 
     boolean existsByReview_Id(Long reviewId);
+
+    void deleteAllByReview_Workplace_Id(Long workplaceId);
 }

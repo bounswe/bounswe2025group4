@@ -31,7 +31,6 @@ public class ReviewService {
         private final EmployerWorkplaceRepository employerWorkplaceRepository;
         private final UserRepository userRepository;
         private final ProfileRepository profileRepository;
-        private final ReviewReactionRepository reviewReactionRepository;
 
         // === CREATE REVIEW ===
         @Transactional
@@ -132,15 +131,15 @@ public class ReviewService {
                 wp.setReviewCount(wp.getReviewCount() + 1);
                 workplaceRepository.save(wp);
 
-                return toResponse(review, true, currentUser);
+                return toResponse(review, true);
         }
 
         // === LIST REVIEWS ===
         @Transactional(readOnly = true)
         public PaginatedResponse<ReviewResponse> listReviews(Long workplaceId, Integer page, Integer size,
                         String ratingFilter, String sortBy, Boolean hasComment,
-                        String policy, Integer policyMin, User currentUser) {
-                workplaceRepository.findById(workplaceId)
+                        String policy, Integer policyMin) {
+                Workplace wp = workplaceRepository.findById(workplaceId)
                                 .orElseThrow(() -> new HandleException(
                                                 ErrorCode.WORKPLACE_NOT_FOUND,
                                                 "Workplace not found"));
@@ -173,22 +172,8 @@ public class ReviewService {
                         pg = reviewRepository.findByWorkplace_Id(workplaceId, pageable);
                 }
 
-                List<Review> reviews = pg.getContent();
-                Set<Long> likedReviewIds = new HashSet<>();
-                if (currentUser != null) {
-                        List<Long> reviewIds = reviews.stream().map(Review::getId).toList();
-                        if (!reviewIds.isEmpty()) {
-                                likedReviewIds = reviewReactionRepository
-                                                .findByUser_IdAndReview_IdIn(currentUser.getId(), reviewIds)
-                                                .stream()
-                                                .map(rr -> rr.getReview().getId())
-                                                .collect(Collectors.toSet());
-                        }
-                }
-
-                Set<Long> finalLikedReviewIds = likedReviewIds;
-                List<ReviewResponse> content = reviews.stream()
-                                .map(r -> toResponse(r, true, finalLikedReviewIds.contains(r.getId())))
+                List<ReviewResponse> content = pg.getContent().stream()
+                                .map(r -> toResponse(r, true))
                                 .collect(Collectors.toList());
 
                 return PaginatedResponse.of(content, pg.getNumber(), pg.getSize(), pg.getTotalElements());
@@ -196,7 +181,7 @@ public class ReviewService {
 
         // === GET ONE ===
         @Transactional(readOnly = true)
-        public ReviewResponse getOne(Long workplaceId, Long reviewId, User currentUser) {
+        public ReviewResponse getOne(Long workplaceId, Long reviewId) {
                 Review r = reviewRepository.findById(reviewId)
                                 .orElseThrow(() -> new HandleException(
                                                 ErrorCode.REVIEW_NOT_FOUND,
@@ -206,7 +191,7 @@ public class ReviewService {
                                         ErrorCode.REVIEW_NOT_FOUND,
                                         "Review does not belong to workplace");
                 }
-                return toResponse(r, true, currentUser);
+                return toResponse(r, true);
         }
 
         // === UPDATE REVIEW ===
@@ -299,51 +284,7 @@ public class ReviewService {
                         reviewRepository.save(r);
                 }
 
-                return toResponse(r, true, currentUser);
-        }
-
-        // === TOGGLE HELPFUL ===
-        @Transactional
-        public ReviewResponse toggleHelpful(Long workplaceId, Long reviewId, User currentUser) {
-                Review r = reviewRepository.findById(reviewId)
-                                .orElseThrow(() -> new HandleException(
-                                                ErrorCode.REVIEW_NOT_FOUND,
-                                                "Review not found"));
-
-                if (!Objects.equals(r.getWorkplace().getId(), workplaceId)) {
-                        throw new HandleException(
-                                        ErrorCode.REVIEW_NOT_FOUND,
-                                        "Review does not belong to workplace");
-                }
-
-                if (Objects.equals(r.getUser().getId(), currentUser.getId())) {
-                        throw new HandleException(
-                                        ErrorCode.VALIDATION_ERROR,
-                                        "You cannot mark your own review as helpful.");
-                }
-
-                Optional<ReviewReaction> reaction = reviewReactionRepository.findByReview_IdAndUser_Id(reviewId,
-                                currentUser.getId());
-                boolean isHelpful;
-
-                if (reaction.isPresent()) {
-                        // Unlike
-                        reviewReactionRepository.delete(reaction.get());
-                        r.setHelpfulCount(Math.max(0, r.getHelpfulCount() - 1));
-                        isHelpful = false;
-                } else {
-                        // Like
-                        ReviewReaction newReaction = ReviewReaction.builder()
-                                        .review(r)
-                                        .user(currentUser)
-                                        .build();
-                        reviewReactionRepository.save(newReaction);
-                        r.setHelpfulCount(r.getHelpfulCount() + 1);
-                        isHelpful = true;
-                }
-
-                reviewRepository.save(r);
-                return toResponse(r, true, isHelpful);
+                return toResponse(r, true);
         }
 
         // === DELETE REVIEW ===
@@ -358,11 +299,18 @@ public class ReviewService {
                                         ErrorCode.REVIEW_NOT_FOUND,
                                         "Review does not belong to workplace");
                 }
-                boolean reviewOwner = Objects.equals(r.getUser().getId(), currentUser.getId());
-                if (!(reviewOwner || isAdmin)) {
-                        throw new HandleException(
-                                        ErrorCode.ACCESS_DENIED,
-                                        "Only review owner or admin can delete the review");
+
+                // Skip ownership check if admin (currentUser may be null for admin operations)
+                if (!isAdmin) {
+                        if (currentUser == null) {
+                                throw new HandleException(ErrorCode.ACCESS_DENIED, "Authentication required");
+                        }
+                        boolean reviewOwner = Objects.equals(r.getUser().getId(), currentUser.getId());
+                        if (!reviewOwner) {
+                                throw new HandleException(
+                                                ErrorCode.ACCESS_DENIED,
+                                                "Only review owner or admin can delete the review");
+                        }
                 }
 
                 reviewReplyRepository.findByReview_Id(reviewId).ifPresent(reviewReplyRepository::delete);
@@ -391,16 +339,7 @@ public class ReviewService {
                 };
         }
 
-        private ReviewResponse toResponse(Review r, boolean withExtras, User currentUser) {
-                boolean isHelpful = false;
-                if (currentUser != null) {
-                        isHelpful = reviewReactionRepository.existsByReview_IdAndUser_Id(r.getId(),
-                                        currentUser.getId());
-                }
-                return toResponse(r, withExtras, isHelpful);
-        }
-
-        private ReviewResponse toResponse(Review r, boolean withExtras, boolean isHelpfulByUser) {
+        public ReviewResponse toResponse(Review r, boolean withExtras) {
                 Map<String, Integer> policies = Collections.emptyMap();
                 ReplyResponse replyDto = null;
                 if (withExtras) {
@@ -417,18 +356,20 @@ public class ReviewService {
                                 .map(p -> p.getFirstName() + " " + p.getLastName())
                                 .orElse("");
 
+                boolean isBanned = Boolean.TRUE.equals(r.getUser().getIsBanned());
+                boolean hideAuthor = r.isAnonymous() || isBanned;
+
                 return ReviewResponse.builder()
                                 .id(r.getId())
                                 .workplaceId(r.getWorkplace().getId())
-                                .userId(r.isAnonymous() ? null : r.getUser().getId())
-                                .username(r.isAnonymous() ? "" : r.getUser().getUsername())
-                                .nameSurname(r.isAnonymous() ? "anonymousUser" : nameSurname)
+                                .userId(hideAuthor ? null : r.getUser().getId())
+                                .username(hideAuthor ? "" : r.getUser().getUsername())
+                                .nameSurname(hideAuthor ? (isBanned ? "Banned User" : "anonymousUser") : nameSurname)
                                 .title(r.getTitle())
                                 .content(r.getContent())
                                 .overallRating(r.getOverallRating())
                                 .anonymous(r.isAnonymous())
                                 .helpfulCount(r.getHelpfulCount())
-                                .isHelpfulByUser(isHelpfulByUser)
                                 .ethicalPolicyRatings(policies)
                                 .reply(replyDto)
                                 .createdAt(r.getCreatedAt())
