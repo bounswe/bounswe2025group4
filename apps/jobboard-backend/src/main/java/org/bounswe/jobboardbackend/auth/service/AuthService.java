@@ -53,16 +53,9 @@ public class AuthService {
         User user = userRepository.findByUsername(loginRequest.getUsername())
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND,
                         "User not found. Please check your username."));
-                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND,
-                        "User not found. Please check your username."));
 
         if (!Boolean.TRUE.equals(user.getEmailVerified())) {
             throw new HandleException(ErrorCode.EMAIL_NOT_VERIFIED, "Email not verified. Please verify your email.");
-        }
-
-        if (Boolean.TRUE.equals(user.getIsBanned())) {
-            String reason = user.getBanReason() != null ? user.getBanReason() : "Your account has been banned.";
-            throw new HandleException(ErrorCode.ACCOUNT_BANNED, reason);
         }
 
         if (Boolean.TRUE.equals(user.getIsBanned())) {
@@ -98,22 +91,14 @@ public class AuthService {
             throw new HandleException(ErrorCode.ACCOUNT_BANNED, reason);
         }
 
-        if (Boolean.TRUE.equals(user.getIsBanned())) {
-            String reason = user.getBanReason() != null ? user.getBanReason() : "Your account has been banned.";
-            throw new HandleException(ErrorCode.ACCOUNT_BANNED, reason);
-        }
-
         Otp otp = otpService.validateOtpAndToken(
                 otpRequest.getUsername(),
                 otpRequest.getOtpCode(),
-                otpRequest.getTemporaryToken());
                 otpRequest.getTemporaryToken());
 
         otpRepository.delete(otp);
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
-                userDetails.getAuthorities());
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
                 userDetails.getAuthorities());
 
@@ -136,13 +121,9 @@ public class AuthService {
 
         if (user.isPresent()) {
             if (user.get().getEmailVerified()) {
-        if (user.isPresent()) {
-            if (user.get().getEmailVerified()) {
                 throw new HandleException(ErrorCode.USER_ALREADY_EXISTS, "User already exists with verified email");
             }
             sendEmailForRegister(user.get());
-            return new MessageResponse(
-                    "Registration is already exists, verification link is sent again. Please verify your email.");
             return new MessageResponse(
                     "Registration is already exists, verification link is sent again. Please verify your email.");
         }
@@ -151,13 +132,10 @@ public class AuthService {
                 registerRequest.getUsername(),
                 registerRequest.getEmail(),
                 encoder.encode(registerRequest.getPassword()));
-                encoder.encode(registerRequest.getPassword()));
 
         String strRole = registerRequest.getRole();
 
-
         Role role = switch (strRole) {
-            case "ROLE_ADMIN" -> Role.ROLE_ADMIN; // TODO: Disabled for security
             case "ROLE_ADMIN" -> Role.ROLE_ADMIN; // TODO: Disabled for security
             case "ROLE_EMPLOYER" -> Role.ROLE_EMPLOYER;
             case "ROLE_JOBSEEKER" -> Role.ROLE_JOBSEEKER;
@@ -178,7 +156,6 @@ public class AuthService {
                 .build();
 
         profileRepository.save(profile);
-
 
         if (appEnv.equals("prod")) {
             sendEmailForRegister(newUser);
@@ -211,8 +188,6 @@ public class AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, email + " not found"));
 
-        if (!Boolean.TRUE.equals(user.getEmailVerified()))
-            throw new HandleException(ErrorCode.EMAIL_NOT_VERIFIED, "Email not verified.");
         if (!Boolean.TRUE.equals(user.getEmailVerified()))
             throw new HandleException(ErrorCode.EMAIL_NOT_VERIFIED, "Email not verified.");
 
@@ -248,9 +223,6 @@ public class AuthService {
     @Transactional
     public void changePassword(Authentication auth, @NotBlank String currentPassword,
             @Size(min = 8, max = 128) String newPassword) {
-
-    public void changePassword(Authentication auth, @NotBlank String currentPassword,
-            @Size(min = 8, max = 128) String newPassword) {
         UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
         User user = userRepository.findById(userDetails.getId())
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
@@ -264,8 +236,6 @@ public class AuthService {
         }
 
         if (encoder.matches(newPassword, user.getPassword())) {
-            throw new HandleException(ErrorCode.PASSWORD_SAME_AS_OLD,
-                    "New password must be different from the current one.");
             throw new HandleException(ErrorCode.PASSWORD_SAME_AS_OLD,
                     "New password must be different from the current one.");
         }
