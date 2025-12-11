@@ -30,14 +30,10 @@ export const registerSchema = z
     role: z.enum(['ROLE_JOBSEEKER', 'ROLE_EMPLOYER'], {
       message: 'Please select a role',
     }),
-    pronounSet: z
-      .union([
-        z.enum(['HE_HIM', 'SHE_HER', 'THEY_THEM', 'SHE_THEY', 'HE_THEY', 'OTHER', 'NONE']),
-        z.literal(''),
-        z.undefined(),
-      ])
-      .optional()
-      .transform((val) => (val === '' ? undefined : val)),
+    pronounSet: z.preprocess(
+      (val) => (val === '' || val === undefined ? undefined : val),
+      z.enum(['HE_HIM', 'SHE_HER', 'THEY_THEM', 'SHE_THEY', 'HE_THEY', 'OTHER', 'NONE']).optional(),
+    ),
     bio: z.string().max(250, 'Bio must be at most 250 characters').optional(),
     gender: z.string().optional(),
     pronouns: z.string().optional(),
