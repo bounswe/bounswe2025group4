@@ -369,10 +369,8 @@ public class WorkplaceService {
         if (includeReviews) {
             Page<Review> page = reviewRepository.findByWorkplace_Id(
                     wp.getId(), PageRequest.of(0, Math.max(1, reviewsLimit == 0 ? 3 : reviewsLimit)));
-            // Use ReviewService.toResponse for consistent mapping (includes banned user
-            // handling, policies, etc.)
             reviews = page.getContent().stream()
-                    .map(r -> reviewService.toResponse(r, false)) // false = without extras (policies/reply)
+                    .map(r -> reviewService.toResponse(r, false))
                     .toList();
         }
 
