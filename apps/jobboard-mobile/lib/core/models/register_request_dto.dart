@@ -11,7 +11,10 @@ class RegisterRequestDto with _$RegisterRequestDto {
     required String username,
     required String email,
     required String password,
-    //String? bio,
+    required String firstName,
+    required String lastName,
+    String? pronounSet,
+    String? bio,
     required UserType role, // Ensure UserType enum is imported
     //MentorshipStatus? mentorshipStatus,
     //int? maxMenteeCount,

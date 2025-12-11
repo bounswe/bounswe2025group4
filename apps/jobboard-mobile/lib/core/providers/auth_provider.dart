@@ -262,6 +262,10 @@ class AuthProvider with ChangeNotifier {
         email: email,
         password: password,
         role: userType,
+        firstName: username.split('_')[0],
+        lastName: username.split('_')[1],
+        bio: bio ?? '',
+        pronounSet: "SHE_HER"
       );
 
       print('RegisterRequestDto: ' + requestDto.toJson().toString());
