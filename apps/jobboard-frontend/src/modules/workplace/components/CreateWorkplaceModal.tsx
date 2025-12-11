@@ -210,12 +210,16 @@ export function CreateWorkplaceModal({
               <div className="space-y-2">
                 <Label htmlFor="modal-shortDescription">
                   {t('workplace.createModal.shortDescription')}
-                  <span className="text-muted-foreground text-xs ml-2">(max 300 characters)</span>
+                  <span className="text-muted-foreground text-xs ml-2">
+                    {t('workplace.createModal.shortDescriptionHint', { defaultValue: '(max 300 characters)' })}
+                  </span>
                 </Label>
                 <Textarea
                   id="modal-shortDescription"
                   {...register('shortDescription')}
-                  placeholder="A brief tagline or summary"
+                  placeholder={t('workplace.createModal.shortDescriptionPlaceholder', {
+                    defaultValue: 'A brief tagline or summary',
+                  })}
                   rows={2}
                   className={errors.shortDescription ? 'border-destructive' : ''}
                   disabled={isSubmitting}
@@ -229,12 +233,16 @@ export function CreateWorkplaceModal({
               <div className="space-y-2">
                 <Label htmlFor="modal-detailedDescription">
                   {t('workplace.createModal.detailedDescription')}
-                  <span className="text-muted-foreground text-xs ml-2">(max 4000 characters)</span>
+                  <span className="text-muted-foreground text-xs ml-2">
+                    {t('workplace.createModal.detailedDescriptionHint', { defaultValue: '(max 4000 characters)' })}
+                  </span>
                 </Label>
                 <Textarea
                   id="modal-detailedDescription"
                   {...register('detailedDescription')}
-                  placeholder="Tell us about your company's mission, values, and culture"
+                  placeholder={t('workplace.createModal.detailedDescriptionPlaceholder', {
+                    defaultValue: "Tell us about your company's mission, values, and culture",
+                  })}
                   rows={4}
                   className={errors.detailedDescription ? 'border-destructive' : ''}
                   disabled={isSubmitting}
@@ -246,9 +254,11 @@ export function CreateWorkplaceModal({
 
               {/* Ethical Tags */}
               <div className="space-y-2">
-                <Label>Ethical Tags</Label>
+                <Label>{t('workplace.createModal.ethicalTagsLabel', { defaultValue: 'Ethical Tags' })}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Select tags that represent your company's ethical commitments
+                  {t('workplace.createModal.ethicalTagsHelper', {
+                    defaultValue: "Select tags that represent your company's ethical commitments",
+                  })}
                 </p>
                 <MultiSelectDropdown
                   selectedTags={selectedTags}

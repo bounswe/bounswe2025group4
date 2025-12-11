@@ -1,17 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import ChatRoomList from '@modules/mentorship/components/chat/ChatRoomList';
 import ChatInterface from '@modules/mentorship/components/chat/ChatInterface';
 import type { ChatRoom, ChatRoomForUser, ChatMessage } from '@shared/types/chat';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import { useAuthStore } from '@shared/stores/authStore';
-import { getMenteeMentorships, getMentorMentorshipRequests } from '@modules/mentorship/services/mentorship.service';
+import {
+  useMenteeMentorshipsQuery,
+  useMentorMentorshipRequestsQuery,
+  getMenteeMentorships,
+} from '@modules/mentorship/services/mentorship.service';
+import { mentorshipKeys } from '@shared/lib/query-keys';
 import { getChatHistory, ChatWebSocket } from '@modules/mentorship/services/chat.service';
 import { profileService } from '@modules/profile/services/profile.service';
 import type { PublicProfile } from '@shared/types/profile.types';
 import type { MentorshipDetailsDTO, MentorshipRequestDTO } from '@shared/types/api.types';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
+import { normalizeApiError } from '@shared/utils/error-handler';
 import { toast } from 'react-toastify';
 
 const ChatPage = () => {
@@ -20,6 +27,9 @@ const ChatPage = () => {
   const { threadId } = useParams<{ threadId?: string }>();
   const mentorshipIdFromUrl = threadId || searchParams.get('mentorshipId');
   const { user, isAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
+  const mentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id && isAuthenticated));
+  const mentorRequestsQuery = useMentorMentorshipRequestsQuery(user?.id, Boolean(user?.id && isAuthenticated));
 
   const [rooms, setRooms] = useState<ChatRoomForUser[]>([]);
   const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
@@ -37,7 +47,26 @@ const ChatPage = () => {
         return;
       }
 
+      if (mentorshipsQuery.isLoading || mentorRequestsQuery.isLoading) {
+        setIsLoading(true);
+        return;
+      }
+
+      if (mentorshipsQuery.error || mentorRequestsQuery.error) {
+        const normalized = normalizeApiError(
+          mentorshipsQuery.error || mentorRequestsQuery.error,
+          t('chat.loadError') || 'Failed to load chat rooms.'
+        );
+        setError(normalized.friendlyMessage);
+        setIsLoading(false);
+        return;
+      }
+
+      const menteeMentorships = mentorshipsQuery.data ?? [];
+      const mentorRequests = mentorRequestsQuery.data ?? [];
+
       if (mentorshipIdFromUrl && roomsRef.current.length === 0) {
+        // Let the dedicated effect handle direct navigation to a specific mentorship chat
         setIsLoading(false);
         return;
       }
@@ -46,34 +75,23 @@ const ChatPage = () => {
         setIsLoading(true);
         setError(null);
 
-        const [menteeMentorships, mentorRequests] = await Promise.all([
-          getMenteeMentorships(user.id).catch((err) => {
-            console.error('[ChatPage] Error fetching mentee mentorships:', err);
-            return [] as MentorshipDetailsDTO[];
-          }),
-          getMentorMentorshipRequests(user.id).catch((err) => {
-            console.error('[ChatPage] Error fetching mentor requests:', err);
-            return [] as MentorshipRequestDTO[];
-          }),
-        ]);
-
-        // Include both active and completed mentorships for chat
         const activeMenteeMentorships = menteeMentorships.filter(
-          m => (m.requestStatus?.toUpperCase() === 'ACCEPTED' || 
-                m.reviewStatus?.toUpperCase() === 'ACTIVE' ||
-                m.reviewStatus?.toUpperCase() === 'COMPLETED')
+          (m) =>
+            m.requestStatus?.toUpperCase() === 'ACCEPTED' ||
+            m.reviewStatus?.toUpperCase() === 'ACTIVE' ||
+            m.reviewStatus?.toUpperCase() === 'COMPLETED'
         );
 
         const activeMentorRequests = mentorRequests.filter(
-          r => r.status.toUpperCase() === 'ACCEPTED'
+          (r) => r.status?.toUpperCase() === 'ACCEPTED'
         );
 
         const userIds = new Set<number>();
-        activeMenteeMentorships.forEach(m => {
+        activeMenteeMentorships.forEach((m) => {
           userIds.add(m.mentorId);
           if (user.id) userIds.add(user.id);
         });
-        activeMentorRequests.forEach(r => {
+        activeMentorRequests.forEach((r) => {
           if (user.id) userIds.add(user.id);
           const requesterId = typeof r.requesterId === 'string' ? parseInt(r.requesterId, 10) : r.requesterId;
           if (!isNaN(requesterId)) userIds.add(requesterId);
@@ -90,22 +108,29 @@ const ChatPage = () => {
             }
           })
         );
+
         const chatRooms: ChatRoom[] = [];
         for (const mentorship of activeMenteeMentorships) {
           const mentorProfile = profilesMap[mentorship.mentorId];
           const menteeProfile = profilesMap[user.id];
 
-          const mentorName = mentorProfile 
-            ? `${mentorProfile.firstName} ${mentorProfile.lastName}`.trim() || mentorProfile.firstName || mentorship.mentorUsername || 'Mentor'
+          const mentorName = mentorProfile
+            ? `${mentorProfile.firstName} ${mentorProfile.lastName}`.trim() ||
+              mentorProfile.firstName ||
+              mentorship.mentorUsername ||
+              'Mentor'
             : mentorship.mentorUsername || 'Mentor';
-          const menteeName = menteeProfile 
-            ? `${menteeProfile.firstName} ${menteeProfile.lastName}`.trim() || menteeProfile.firstName || user?.username || 'You'
+          const menteeName = menteeProfile
+            ? `${menteeProfile.firstName} ${menteeProfile.lastName}`.trim() ||
+              menteeProfile.firstName ||
+              user?.username ||
+              'You'
             : user?.username || 'You';
           const mentorAvatar = mentorProfile?.imageUrl;
           const menteeAvatar = menteeProfile?.imageUrl;
 
-          const roomId = mentorship.conversationId 
-            ? mentorship.conversationId.toString() 
+          const roomId = mentorship.conversationId
+            ? mentorship.conversationId.toString()
             : `review-${mentorship.resumeReviewId || mentorship.mentorshipRequestId}`;
 
           chatRooms.push({
@@ -127,35 +152,48 @@ const ChatPage = () => {
           });
         }
 
-        // From mentor perspective - need to get conversationId from mentee's mentorship
         for (const request of activeMentorRequests) {
-          const requesterId = typeof request.requesterId === 'string' ? parseInt(request.requesterId, 10) : request.requesterId;
+          const requesterId =
+            typeof request.requesterId === 'string'
+              ? parseInt(request.requesterId, 10)
+              : request.requesterId;
           if (isNaN(requesterId)) continue;
 
-          // Find the corresponding mentee mentorship to get conversationId
           try {
-            const menteeMentorships = await getMenteeMentorships(requesterId);
-            const matchingMentorship = menteeMentorships.find(
-              m => m.mentorId === user.id && 
-                   (m.requestStatus?.toUpperCase() === 'ACCEPTED' || m.reviewStatus?.toUpperCase() === 'ACTIVE') &&
-                   m.conversationId
+            const menteeMentorshipsForRequester =
+              await queryClient.fetchQuery<MentorshipDetailsDTO[]>({
+                queryKey: mentorshipKeys.menteeMentorships(requesterId),
+                queryFn: () => getMenteeMentorships(requesterId),
+              });
+
+            const matchingMentorship = menteeMentorshipsForRequester.find(
+              (m) =>
+                m.mentorId === user.id &&
+                (m.requestStatus?.toUpperCase() === 'ACCEPTED' ||
+                  m.reviewStatus?.toUpperCase() === 'ACTIVE') &&
+                m.conversationId
             );
 
             if (!matchingMentorship || !matchingMentorship.conversationId) continue;
 
-            const existingRoom = chatRooms.find(r => r.id === matchingMentorship.conversationId.toString());
+            const existingRoom = chatRooms.find(
+              (r) => r.id === matchingMentorship.conversationId.toString()
+            );
             if (existingRoom) continue;
 
             const mentorProfile = profilesMap[user.id];
             const menteeProfile = profilesMap[requesterId];
 
-            // Use profiles if available, otherwise use usernames
-            const mentorName = mentorProfile 
-              ? `${mentorProfile.firstName} ${mentorProfile.lastName}`.trim() || mentorProfile.firstName || user?.username || 'Mentor'
+            const mentorName = mentorProfile
+              ? `${mentorProfile.firstName} ${mentorProfile.lastName}`.trim() ||
+                mentorProfile.firstName ||
+                user?.username ||
+                'Mentor'
               : user?.username || 'Mentor';
-            // For mentee, we don't have username in request, so use profile or placeholder
-            const menteeName = menteeProfile 
-              ? `${menteeProfile.firstName} ${menteeProfile.lastName}`.trim() || menteeProfile.firstName || 'Mentee'
+            const menteeName = menteeProfile
+              ? `${menteeProfile.firstName} ${menteeProfile.lastName}`.trim() ||
+                menteeProfile.firstName ||
+                'Mentee'
               : 'Mentee';
             const mentorAvatar = mentorProfile?.imageUrl;
             const menteeAvatar = menteeProfile?.imageUrl;
@@ -178,22 +216,22 @@ const ChatPage = () => {
               lastMessageTime: undefined,
             });
           } catch (err) {
-            console.error(`Error fetching mentee mentorships for requester ${requesterId}:`, err);
+            console.error(
+              `Error fetching mentee mentorships for requester ${requesterId}:`,
+              err
+            );
           }
         }
 
-        // Remove duplicates by id before mapping
         const uniqueChatRooms = Array.from(
-          new Map(chatRooms.map(room => [room.id, room])).values()
+          new Map(chatRooms.map((room) => [room.id, room])).values()
         );
 
         const mappedRooms: ChatRoomForUser[] = uniqueChatRooms.map((room): ChatRoomForUser => {
-          // Determine the other participant (not the current user)
           const isCurrentUserMentor = room.mentorProfileId === user.id?.toString();
           const participantName = isCurrentUserMentor ? room.menteeProfileName : room.mentorProfileName;
           const participantAvatar = isCurrentUserMentor ? room.menteeProfileAvatar : room.mentorProfileAvatar;
           const participantId = isCurrentUserMentor ? room.menteeProfileId : room.mentorProfileId;
-          // participantRole is kept for type compatibility but not used in logic
           const participantRole: ChatRoomForUser['participantRole'] = isCurrentUserMentor ? 'mentee' : 'mentor';
           const unreadCount = isCurrentUserMentor ? room.mentorUnreadCount : room.menteeUnreadCount;
           const isOnline = isCurrentUserMentor ? room.menteeOnline : room.mentorOnline;
@@ -234,15 +272,12 @@ const ChatPage = () => {
             }
           })
         );
-        
+
         setMessagesByRoom(messagesMap);
 
-        // Update rooms with last message and unread count
-        // Note: activeRoomId will be set later, so we'll calculate unread count for all rooms
-        // and then mark active room messages as read in a separate effect
         const currentUserIdStr = user.id?.toString();
-        setRooms(prevRooms => {
-          const updated = prevRooms.map(room => {
+        setRooms((prevRooms) => {
+          const updated = prevRooms.map((room) => {
             const messages = messagesMap[room.id] || [];
             if (messages.length === 0) {
               return {
@@ -251,11 +286,9 @@ const ChatPage = () => {
               };
             }
 
-            // Get last message
             const lastMessage = messages[messages.length - 1];
-            
-            // Calculate unread count (messages not read and not sent by current user)
-            const unreadCount = messages.filter(m => {
+
+            const unreadCount = messages.filter((m) => {
               const isOwnMessage = m.senderId === currentUserIdStr;
               return !m.read && !isOwnMessage;
             }).length;
@@ -272,7 +305,8 @@ const ChatPage = () => {
         });
       } catch (err) {
         console.error('[ChatPage] Error fetching chat rooms:', err);
-        setError('Failed to load chat rooms. Please try again later.');
+        const normalized = normalizeApiError(err, t('chat.loadError') || 'Failed to load chat rooms.');
+        setError(normalized.friendlyMessage);
         setIsLoading(false);
       } finally {
         setIsLoading(false);
@@ -282,7 +316,19 @@ const ChatPage = () => {
     if (!mentorshipIdFromUrl) {
       fetchChatRooms();
     }
-  }, [isAuthenticated, user?.id, mentorshipIdFromUrl]);
+  }, [
+    isAuthenticated,
+    user?.id,
+    mentorshipIdFromUrl,
+    mentorshipsQuery.data,
+    mentorRequestsQuery.data,
+    mentorshipsQuery.isLoading,
+    mentorRequestsQuery.isLoading,
+    mentorshipsQuery.error,
+    mentorRequestsQuery.error,
+    t,
+    queryClient,
+  ]);
 
   useEffect(() => {
     const createRoomFromMentorshipId = async () => {
@@ -305,14 +351,20 @@ const ChatPage = () => {
       setError(null);
 
       try {
-        let menteeMentorships: MentorshipDetailsDTO[] = [];
-        try {
-          menteeMentorships = await getMenteeMentorships(user.id);
-        } catch (err) {
-          console.error('[ChatPage] Error fetching mentee mentorships for URL mentorshipId:', err);
-          setError('Unable to load mentorship. Please check your connection and try again.');
+        if (mentorshipsQuery.error || mentorRequestsQuery.error) {
+          const normalized = normalizeApiError(
+            mentorshipsQuery.error || mentorRequestsQuery.error,
+            t('chat.loadError') || 'Unable to load mentorship.'
+          );
+          setError(normalized.friendlyMessage);
           setIsLoading(false);
           return;
+        }
+
+        let menteeMentorships: MentorshipDetailsDTO[] = mentorshipsQuery.data ?? [];
+        if (!menteeMentorships.length && mentorshipsQuery.refetch) {
+          const refreshed = await mentorshipsQuery.refetch();
+          menteeMentorships = refreshed.data ?? [];
         }
         
         const mentorship = menteeMentorships.find(
@@ -393,16 +445,19 @@ const ChatPage = () => {
         }
 
         // Try to find in mentor requests
-        let mentorRequests: MentorshipRequestDTO[] = [];
-        try {
-          mentorRequests = await getMentorMentorshipRequests(user.id);
-        } catch (err) {
-          console.error('[ChatPage] Error fetching mentor requests for URL mentorshipId:', err);
-          // If already found in mentee mentorships, continue
-          if (!mentorship) {
-            setError('Unable to load mentorship. Please check your connection and try again.');
-            setIsLoading(false);
-            return;
+        let mentorRequests: MentorshipRequestDTO[] = mentorRequestsQuery.data ?? [];
+        if (!mentorRequests.length && mentorRequestsQuery.refetch) {
+          try {
+            const refreshed = await mentorRequestsQuery.refetch();
+            mentorRequests = refreshed.data ?? [];
+          } catch (err) {
+            console.error('[ChatPage] Error fetching mentor requests for URL mentorshipId:', err);
+            if (!mentorship) {
+              const normalized = normalizeApiError(err, t('chat.loadError') || 'Unable to load mentorship.');
+              setError(normalized.friendlyMessage);
+              setIsLoading(false);
+              return;
+            }
           }
         }
         
@@ -416,7 +471,10 @@ const ChatPage = () => {
           if (!isNaN(requesterId)) {
             // Get mentee's mentorships to find conversationId
             try {
-              const menteeMentorships = await getMenteeMentorships(requesterId);
+              const menteeMentorships = await queryClient.fetchQuery<MentorshipDetailsDTO[]>({
+                queryKey: mentorshipKeys.menteeMentorships(requesterId),
+                queryFn: () => getMenteeMentorships(requesterId),
+              });
               const matchingMentorship = menteeMentorships.find(
                 m => m.mentorId === user.id && 
                      (m.requestStatus?.toUpperCase() === 'ACCEPTED' || m.reviewStatus?.toUpperCase() === 'ACTIVE')
@@ -505,17 +563,11 @@ const ChatPage = () => {
         }
       } catch (err) {
         console.error('[ChatPage] Error creating room from mentorshipId:', err);
-        // Show user-friendly error
-        if (err && typeof err === 'object' && 'code' in err) {
-          const axiosError = err as { code?: string; message?: string };
-          if (axiosError.code === 'ECONNABORTED' || axiosError.message?.includes('timeout')) {
-            setError('Connection timeout. Please check if the backend server is running and try again.');
-          } else {
-            setError('Unable to load mentorship. Please try again later.');
-          }
-        } else {
-          setError('Unable to load mentorship. Please try again later.');
-        }
+        const normalized = normalizeApiError(
+          err,
+          t('chat.loadError') || 'Unable to load mentorship. Please try again later.'
+        );
+        setError(normalized.friendlyMessage);
         setIsLoading(false);
       }
     };
@@ -530,7 +582,19 @@ const ChatPage = () => {
       // If no mentorshipId in URL, ensure loading is false (fetchChatRooms will handle it)
       setIsLoading(false);
     }
-  }, [mentorshipIdFromUrl, user?.id, isAuthenticated]);
+  }, [
+    mentorshipIdFromUrl,
+    user?.id,
+    isAuthenticated,
+    mentorshipsQuery.data,
+    mentorRequestsQuery.data,
+    mentorshipsQuery.refetch,
+    mentorRequestsQuery.refetch,
+    mentorshipsQuery.error,
+    mentorRequestsQuery.error,
+    queryClient,
+    t,
+  ]);
 
   // Set active room from URL parameter
   useEffect(() => {

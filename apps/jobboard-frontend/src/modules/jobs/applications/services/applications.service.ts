@@ -1,4 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import { api } from '@shared/lib/api-client';
+import { applicationsKeys, jobsKeys } from '@shared/lib/query-keys';
+import { normalizeApiError } from '@shared/utils/error-handler';
+import { useQueryWithToast } from '@shared/hooks/useQueryWithToast';
 import type {
   JobApplicationResponse,
   CreateJobApplicationRequest,
@@ -16,7 +21,7 @@ import type {
  * Get filtered list of applications
  * GET /api/applications
  */
-export async function getApplications(
+async function fetchApplications(
   filters?: ApplicationsFilterParams
 ): Promise<JobApplicationResponse[]> {
   const params = new URLSearchParams();
@@ -41,7 +46,7 @@ export async function getApplications(
  * Get applications by job seeker ID
  * GET /api/applications/job-seeker/{jobSeekerId}
  */
-export async function getApplicationsByJobSeeker(jobSeekerId: number): Promise<JobApplicationResponse[]> {
+async function fetchApplicationsByJobSeeker(jobSeekerId: number): Promise<JobApplicationResponse[]> {
   const response = await api.get<JobApplicationResponse[]>(`/applications/job-seeker/${jobSeekerId}`);
   return response.data;
 }
@@ -50,7 +55,7 @@ export async function getApplicationsByJobSeeker(jobSeekerId: number): Promise<J
  * Get a single application by ID
  * GET /api/applications/{id}
  */
-export async function getApplicationById(id: number): Promise<JobApplicationResponse> {
+async function fetchApplicationById(id: number): Promise<JobApplicationResponse> {
   const response = await api.get<JobApplicationResponse>(`/applications/${id}`);
   return response.data;
 }
@@ -59,7 +64,7 @@ export async function getApplicationById(id: number): Promise<JobApplicationResp
  * Create a new job application
  * POST /api/applications
  */
-export async function createApplication(
+async function createApplication(
   data: CreateJobApplicationRequest
 ): Promise<JobApplicationResponse> {
   const response = await api.post<JobApplicationResponse>('/applications', data);
@@ -70,7 +75,7 @@ export async function createApplication(
  * Approve an application (with optional feedback)
  * PUT /api/applications/{id}/approve
  */
-export async function approveApplication(
+async function approveApplication(
   id: number,
   feedback?: string
 ): Promise<JobApplicationResponse> {
@@ -83,7 +88,7 @@ export async function approveApplication(
  * Reject an application (with optional feedback)
  * PUT /api/applications/{id}/reject
  */
-export async function rejectApplication(
+async function rejectApplication(
   id: number,
   feedback?: string
 ): Promise<JobApplicationResponse> {
@@ -96,7 +101,7 @@ export async function rejectApplication(
  * Delete an application
  * DELETE /api/applications/{id}
  */
-export async function deleteApplication(id: number): Promise<void> {
+async function deleteApplication(id: number): Promise<void> {
   await api.delete(`/applications/${id}`);
 }
 
@@ -104,7 +109,7 @@ export async function deleteApplication(id: number): Promise<void> {
  * Upload CV for an application
  * POST /api/applications/{id}/cv
  */
-export async function uploadCv(id: number, file: File): Promise<CvUploadResponse> {
+async function uploadCv(id: number, file: File): Promise<CvUploadResponse> {
   const formData = new FormData();
   formData.append('file', file);
 
@@ -120,7 +125,7 @@ export async function uploadCv(id: number, file: File): Promise<CvUploadResponse
  * Get CV URL for an application
  * GET /api/applications/{id}/cv
  */
-export async function getCvUrl(id: number): Promise<string> {
+async function fetchCvUrl(id: number): Promise<string> {
   const response = await api.get<string>(`/applications/${id}/cv`);
   return response.data;
 }
@@ -129,6 +134,115 @@ export async function getCvUrl(id: number): Promise<string> {
  * Delete CV from an application
  * DELETE /api/applications/{id}/cv
  */
-export async function deleteCv(id: number): Promise<void> {
+async function deleteCv(id: number): Promise<void> {
   await api.delete(`/applications/${id}/cv`);
 }
+
+// Legacy exports for direct calls
+export {
+  fetchApplications as getApplications,
+  fetchApplicationsByJobSeeker as getApplicationsByJobSeeker,
+  fetchApplicationById as getApplicationById,
+  createApplication,
+  approveApplication,
+  rejectApplication,
+  deleteApplication,
+  uploadCv,
+  fetchCvUrl as getCvUrl,
+  deleteCv,
+};
+
+// Hooks
+export const useApplicationsQuery = (filters?: ApplicationsFilterParams) =>
+  useQueryWithToast<JobApplicationResponse[]>({
+    queryKey: [...applicationsKeys.all, 'list', filters ?? {}],
+    queryFn: () => fetchApplications(filters),
+  });
+
+export const useApplicationsByJobSeekerQuery = (jobSeekerId?: number, enabled = true) =>
+  useQueryWithToast<JobApplicationResponse[]>({
+    queryKey: applicationsKeys.listByUser(jobSeekerId ?? 'me'),
+    queryFn: () => fetchApplicationsByJobSeeker(jobSeekerId as number),
+    enabled: Boolean(jobSeekerId) && enabled,
+  });
+
+export const useApplicationsByJobQuery = (jobPostId?: number, enabled = true) =>
+  useQueryWithToast<JobApplicationResponse[]>({
+    queryKey: applicationsKeys.listByJob(jobPostId ?? 'missing'),
+    queryFn: () => fetchApplications({ jobPostId: jobPostId as number }),
+    enabled: Boolean(jobPostId) && enabled,
+  });
+
+export const useApplicationQuery = (id?: number, enabled = true) =>
+  useQueryWithToast<JobApplicationResponse>({
+    queryKey: id ? applicationsKeys.detail(id) : applicationsKeys.detail('missing'),
+    queryFn: () => fetchApplicationById(id as number),
+    enabled: Boolean(id) && enabled,
+  });
+
+export const useCreateApplicationMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateJobApplicationRequest) => createApplication(data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: applicationsKeys.all });
+      queryClient.invalidateQueries({ queryKey: jobsKeys.detail(data.jobPostId) });
+      toast.success('Application submitted successfully');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useApproveApplicationMutation = (id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (feedback?: string) => approveApplication(id, feedback),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: applicationsKeys.detail(id) });
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useRejectApplicationMutation = (id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (feedback?: string) => rejectApplication(id, feedback),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: applicationsKeys.detail(id) });
+      toast.success('Application rejected');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useDeleteApplicationMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteApplication(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: applicationsKeys.all });
+      toast.success('Application deleted');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useUploadCvMutation = (id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => uploadCv(id, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: applicationsKeys.detail(id) });
+      toast.success('CV uploaded');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
+export const useApplicationCvUrlQuery = (id?: number, enabled = true) =>
+  useQueryWithToast<string>({
+    queryKey: id ? applicationsKeys.cv(id) : applicationsKeys.cv('missing'),
+    queryFn: () => fetchCvUrl(id as number),
+    enabled: Boolean(id) && enabled,
+  });

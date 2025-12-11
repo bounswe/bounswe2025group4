@@ -48,7 +48,7 @@ describe('EmployerWorkplaceCard', () => {
 
   it('renders role badge', () => {
     renderComponent();
-    expect(screen.getByText('ADMIN')).toBeInTheDocument();
+    expect(screen.getByText(/admin/i)).toBeInTheDocument();
   });
 
   it('renders action buttons', () => {

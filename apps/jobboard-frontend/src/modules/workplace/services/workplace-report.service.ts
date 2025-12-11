@@ -1,5 +1,5 @@
 import { apiClient } from '@shared/lib/api-client';
-import type { ReportReasonType } from '@modules/workplace/components/report/ReportModal';
+import type { ReportReasonType } from '@/modules/shared/components/report/ReportModal';
 
 export async function reportWorkplace(workplaceId: number, message: string, reason: ReportReasonType = 'OTHER') {
     return apiClient.post(`/workplace/${workplaceId}/report`, {

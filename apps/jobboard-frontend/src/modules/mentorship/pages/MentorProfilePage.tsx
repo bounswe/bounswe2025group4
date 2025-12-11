@@ -8,7 +8,14 @@ import { Star, MapPin, Award, GraduationCap, Briefcase, Edit, MessageCircle } fr
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
 import { Separator } from '@shared/components/ui/separator';
 import type { Mentor, MentorshipReview } from '@shared/types/mentor';
-import { getMentorProfile, getMentorMentorshipRequests, getMenteeMentorships, createMentorshipRequest, completeMentorship } from '@modules/mentorship/services/mentorship.service';
+import {
+  getMentorProfile,
+  getMentorMentorshipRequests,
+  getMenteeMentorships,
+  completeMentorship,
+  useCreateMentorshipRequestMutation,
+  useMenteeMentorshipsQuery,
+} from '@modules/mentorship/services/mentorship.service';
 import type { MentorshipDetailsDTO } from '@shared/types/api.types';
 import { convertMentorProfileToMentor, convertMentorReviewToMentorshipReview } from '@shared/utils/mentorship.utils';
 import { profileService } from '@modules/profile/services/profile.service';
@@ -37,8 +44,18 @@ const MentorProfilePage = () => {
   const [completingRequestId, setCompletingRequestId] = useState<string | null>(null);
   const [activeMentorships, setActiveMentorships] = useState<MentorshipDetailsDTO[]>([]);
   const [completedMentorships, setCompletedMentorships] = useState<MentorshipDetailsDTO[]>([]);
+  const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
+  const createRequestMutation = useCreateMentorshipRequestMutation();
   
   const isOwnProfile = user?.id && id && parseInt(id, 10) === user.id;
+
+  const getCachedMenteeMentorships = async () => {
+    if (menteeMentorshipsQuery.data) {
+      return menteeMentorshipsQuery.data;
+    }
+    const refreshed = await menteeMentorshipsQuery.refetch();
+    return refreshed.data ?? [];
+  };
 
   const fetchMentorProfile = async () => {
     if (!id) {
@@ -150,27 +167,13 @@ const MentorProfilePage = () => {
         }
       }
 
-      if (!isOwnProfile && user?.id) {
-        try {
-          const mentorships = await getMenteeMentorships(user.id);
-          const mentorIdNum = parseInt(id || '0', 10);
-          
-          const existingRequest = mentorships.find(
-            (m: MentorshipDetailsDTO) => 
-              m.mentorId === mentorIdNum && 
-              (m.requestStatus?.toUpperCase() === 'PENDING' || 
-               m.requestStatus?.toUpperCase() === 'ACCEPTED' || 
-               m.reviewStatus?.toUpperCase() === 'ACTIVE')
-          );
-          
-          setHasActiveMentorship(!!existingRequest);
-        } catch (err) {
-          console.error('Error checking active mentorship:', err);
-        }
-      }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching mentor profile:', err);
-      setError(err?.response?.data?.message || err?.message || 'Failed to load mentor profile');
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        (err as { message?: string })?.message ||
+        'Failed to load mentor profile';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -179,6 +182,23 @@ const MentorProfilePage = () => {
   useEffect(() => {
     fetchMentorProfile();
   }, [id, user?.id, isOwnProfile]);
+
+  useEffect(() => {
+    if (isOwnProfile || !user?.id || !id) return;
+    const mentorIdNum = parseInt(id, 10);
+    if (isNaN(mentorIdNum)) return;
+
+    const menteeMentorships = menteeMentorshipsQuery.data ?? [];
+    const existingRequest = menteeMentorships.find(
+      (m: MentorshipDetailsDTO) =>
+        m.mentorId === mentorIdNum &&
+        (m.requestStatus?.toUpperCase() === 'PENDING' ||
+          m.requestStatus?.toUpperCase() === 'ACCEPTED' ||
+          m.reviewStatus?.toUpperCase() === 'ACTIVE')
+    );
+
+    setHasActiveMentorship(Boolean(existingRequest));
+  }, [isOwnProfile, user?.id, id, menteeMentorshipsQuery.data]);
 
   useEffect(() => {
     const handleRefresh = () => {
@@ -266,9 +286,14 @@ const MentorProfilePage = () => {
                 onClick={async () => {
                   if (!id || !user?.id) return;
                   
+                  const mentorIdNum = parseInt(id, 10);
+                  if (isNaN(mentorIdNum)) {
+                    toast.error(t('mentorship.profile.requestError') || 'Invalid mentor id');
+                    return;
+                  }
+
                   try {
-                    const mentorships = await getMenteeMentorships(user.id);
-                    const mentorIdNum = parseInt(id, 10);
+                    const mentorships = await getCachedMenteeMentorships();
                     const existingRequest = mentorships.find(
                       (m: MentorshipDetailsDTO) => 
                         m.mentorId === mentorIdNum && 
@@ -288,9 +313,9 @@ const MentorProfilePage = () => {
                   
                   setIsRequesting(true);
                   try {
-                    await createMentorshipRequest({ mentorId: parseInt(id, 10) });
-                    toast.success(t('mentorship.profile.requestSent') || 'Mentorship request sent successfully!');
+                    await createRequestMutation.mutateAsync({ mentorId: mentorIdNum });
                     setHasActiveMentorship(true); // Disable button after successful request
+                    await menteeMentorshipsQuery.refetch();
                     navigate('/mentorship/my', {
                       state: { 
                         showSuccess: true, 
@@ -298,10 +323,8 @@ const MentorProfilePage = () => {
                         activeTab: 'pending' // Switch to pending tab
                       }
                     });
-                  } catch (err: any) {
+                  } catch (err: unknown) {
                     console.error('Error sending mentorship request:', err);
-                    const errorMessage = err?.response?.data?.message || err?.message || t('mentorship.profile.requestError') || 'Failed to send mentorship request';
-                    toast.error(errorMessage);
                   } finally {
                     setIsRequesting(false);
                   }
@@ -732,9 +755,13 @@ const MentorProfilePage = () => {
                                       toast.success(t('mentorship.myMentorships.completeSuccess') || 'Mentorship completed successfully!');
                                       // Refresh data
                                       fetchMentorProfile();
-                                    } catch (err: any) {
+                                    } catch (err: unknown) {
                                       console.error('Error completing mentorship:', err);
-                                      const errorMessage = err?.response?.data?.message || err?.message || t('mentorship.myMentorships.completeError') || 'Failed to complete mentorship';
+                                      const errorMessage =
+                                        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+                                        (err as { message?: string })?.message ||
+                                        t('mentorship.myMentorships.completeError') ||
+                                        'Failed to complete mentorship';
                                       toast.error(errorMessage);
                                     } finally {
                                       setCompletingRequestId(null);

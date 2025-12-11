@@ -1,14 +1,15 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import WorkplaceSettingsPage from '@modules/workplace/pages/WorkplaceSettingsPage';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { server } from '@/test/setup';
+import { server } from '@/__tests__/setup';
 import { http, HttpResponse } from 'msw';
-import { API_BASE_URL } from '@/test/handlers';
+import { API_BASE_URL } from '@/__tests__/handlers';
 import * as workplaceService from '@modules/workplace/services/workplace.service';
 import type { WorkplaceDetailResponse, WorkplaceImageResponseDto } from '@shared/types/workplace.types';
 
-vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
+vi.mock('react-i18next', async () => await import('@/__tests__/__mocks__/react-i18next'));
 
 // Mock useAuth hook
 vi.mock('@/modules/auth/contexts/AuthContext', () => ({
@@ -19,28 +20,54 @@ vi.mock('@/modules/auth/contexts/AuthContext', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => children
 }));
 
-// Mock update service
+// Mock workplace service mutations
+const updateWorkplaceMock = vi.hoisted(() => vi.fn());
+const uploadImageMock = vi.hoisted(() => vi.fn());
+const deleteImageMock = vi.hoisted(() => vi.fn());
+const deleteWorkplaceMock = vi.hoisted(() => vi.fn());
+
 vi.mock('@modules/workplace/services/workplace.service', async () => {
   const actual = await vi.importActual('@modules/workplace/services/workplace.service');
   return {
     ...actual,
-    updateWorkplace: vi.fn(),
-    uploadWorkplaceImage: vi.fn(),
-    deleteWorkplaceImage: vi.fn(),
-    deleteWorkplace: vi.fn(),
+    updateWorkplace: updateWorkplaceMock,
+    uploadWorkplaceImage: uploadImageMock,
+    deleteWorkplaceImage: deleteImageMock,
+    deleteWorkplace: deleteWorkplaceMock,
+    useUpdateWorkplaceMutation: () => ({
+      mutateAsync: (...args: unknown[]) => updateWorkplaceMock(...args),
+      isPending: false,
+    }),
+    useUploadWorkplaceImageMutation: () => ({
+      mutateAsync: (...args: unknown[]) => uploadImageMock(...args),
+      isPending: false,
+    }),
+    useDeleteWorkplaceImageMutation: () => ({
+      mutateAsync: (...args: unknown[]) => deleteImageMock(...args),
+      isPending: false,
+    }),
+    useDeleteWorkplaceMutation: () => ({
+      mutateAsync: (...args: unknown[]) => deleteWorkplaceMock(...args),
+      isPending: false,
+    }),
   };
 });
 
 describe('WorkplaceSettingsPage Integration', () => {
   const renderPage = (id = '1') => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
     return render(
-      <MemoryRouter initialEntries={[`/employer/workplace/${id}/settings`]}>
-        <Routes>
-          <Route path="/employer/workplace/:workplaceId/settings" element={<WorkplaceSettingsPage />} />
-          <Route path="/workplace/:id" element={<div>Workplace Profile</div>} />
-          <Route path="/workplaces/my" element={<div>Employer Workplaces</div>} />
-        </Routes>
-      </MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={[`/employer/workplace/${id}/settings`]}>
+          <Routes>
+            <Route path="/employer/workplace/:workplaceId/settings" element={<WorkplaceSettingsPage />} />
+            <Route path="/workplace/:id" element={<div>Workplace Profile</div>} />
+            <Route path="/workplaces" element={<div>Employer Workplaces</div>} />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
     );
   };
 
@@ -118,7 +145,7 @@ describe('WorkplaceSettingsPage Integration', () => {
 
     // Just verify the service was called with correct data
     await waitFor(() => {
-      expect(workplaceService.updateWorkplace).toHaveBeenCalledWith(1, expect.objectContaining({
+      expect(workplaceService.updateWorkplace).toHaveBeenCalledWith(expect.objectContaining({
         companyName: 'Tech Corp Updated'
       }));
     });

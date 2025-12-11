@@ -6,7 +6,7 @@ import * as workplaceService from '@modules/workplace/services/workplace.service
 import type { WorkplaceDetailResponse } from '@shared/types/workplace.types';
 import type { EthicalTag } from '@shared/types/job';
 
-vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
+vi.mock('react-i18next', async () => await import('@/__tests__/__mocks__/react-i18next'));
 
 // Mock the service
 vi.mock('@modules/workplace/services/workplace.service', () => ({

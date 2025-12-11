@@ -1,0 +1,103 @@
+import { screen, waitFor } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import LoginPage from '@modules/auth/pages/LoginPage';
+import { renderWithProviders, setupUserEvent } from '@/__tests__/utils';
+import { server } from '@/__tests__/setup';
+import { API_BASE_URL } from '@/__tests__/handlers';
+
+const mockNavigate = vi.fn();
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
+
+describe('LoginPage', () => {
+  beforeEach(() => {
+    mockNavigate.mockReset();
+  });
+
+  it('signs in successfully and navigates home', async () => {
+    renderWithProviders(<LoginPage />, { initialEntries: ['/login'] });
+    const user = setupUserEvent();
+
+    await user.type(screen.getByLabelText('auth.login.username'), 'tester');
+    await user.type(screen.getByLabelText('auth.login.password'), 'password123!');
+    await user.click(screen.getByRole('button', { name: 'auth.login.submit' }));
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+  });
+
+  it('redirects to OTP verification when temporary token is returned', async () => {
+    server.use(
+      http.post(`${API_BASE_URL}/auth/login`, async () =>
+        HttpResponse.json(
+          { temporaryToken: 'tmp-token', token: null },
+          { status: 200 },
+        ),
+      ),
+    );
+
+    renderWithProviders(<LoginPage />, { initialEntries: ['/login'] });
+    const user = setupUserEvent();
+
+    await user.type(screen.getByLabelText('auth.login.username'), 'otp-user');
+    await user.type(screen.getByLabelText('auth.login.password'), 'password123!');
+    await user.click(screen.getByRole('button', { name: 'auth.login.submit' }));
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/verify-otp',
+        expect.objectContaining({
+          state: expect.objectContaining({
+            temporaryToken: 'tmp-token',
+            username: 'otp-user',
+          }),
+        }),
+      );
+    });
+  });
+
+  it('surfaces invalid credential errors from the API', async () => {
+    server.use(
+      http.post(`${API_BASE_URL}/auth/login`, async () =>
+        HttpResponse.json(
+          { message: 'Invalid credentials' },
+          { status: 401 },
+        ),
+      ),
+    );
+
+    renderWithProviders(<LoginPage />, { initialEntries: ['/login'] });
+    const user = setupUserEvent();
+
+    await user.type(screen.getByLabelText('auth.login.username'), 'wrong');
+    await user.type(screen.getByLabelText('auth.login.password'), 'nope');
+    await user.click(screen.getByRole('button', { name: 'auth.login.submit' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('auth.login.errors.invalidCredentials');
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it('shows success message when provided via navigation state', async () => {
+    const successMessage = 'Password reset successful! You can now log in with your new password.';
+
+    renderWithProviders(<LoginPage />, {
+      initialEntries: [
+        {
+          pathname: '/login',
+          state: { message: successMessage },
+        },
+      ],
+    });
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(successMessage);
+  });
+});
+

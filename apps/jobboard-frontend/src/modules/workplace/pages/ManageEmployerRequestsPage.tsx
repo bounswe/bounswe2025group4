@@ -3,26 +3,22 @@
  * Allows workplace administrators to view and manage employer join requests
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { useMutation } from '@tanstack/react-query';
 import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Badge } from '@shared/components/ui/badge';
 import { Separator } from '@shared/components/ui/separator';
 import { Check, X, Users, Trash2 } from 'lucide-react';
 import {
-  getEmployerRequests,
   resolveEmployerRequest,
-  getWorkplaceEmployers,
-  removeEmployer,
+  useEmployerRequestsQuery,
+  useWorkplaceEmployersQuery,
+  useRemoveEmployerMutation,
 } from '@modules/employer/services/employer.service';
-import { getWorkplaceById } from '@modules/workplace/services/workplace.service';
-import type {
-  EmployerRequestResponse,
-  EmployerListItem,
-  WorkplaceDetailResponse,
-} from '@shared/types/workplace.types';
+import { useWorkplaceQuery } from '@modules/workplace/services/workplace.service';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import { getErrorMessage } from '@shared/utils/error-handler';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
@@ -30,81 +26,84 @@ import CenteredError from '@shared/components/common/CenteredError';
 
 export default function ManageEmployerRequestsPage() {
   const { workplaceId } = useParams<{ workplaceId: string }>();
+  const workplaceIdNumber = workplaceId ? parseInt(workplaceId, 10) : undefined;
   const { user } = useAuth();
-  const [workplace, setWorkplace] = useState<WorkplaceDetailResponse | null>(null);
-  const [requests, setRequests] = useState<EmployerRequestResponse[]>([]);
-  const [employers, setEmployers] = useState<EmployerListItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: workplace,
+    isLoading: workplaceLoading,
+    refetch: refetchWorkplace,
+    isError: workplaceError,
+  } = useWorkplaceQuery(workplaceIdNumber, undefined, Boolean(workplaceIdNumber));
+  const {
+    data: requestsData,
+    isLoading: requestsLoading,
+    isError: requestsError,
+    refetch: refetchRequests,
+  } = useEmployerRequestsQuery(workplaceIdNumber, undefined, Boolean(workplaceIdNumber));
+  const {
+    data: employersData,
+    isLoading: employersLoading,
+    isError: employersError,
+    refetch: refetchEmployers,
+  } = useWorkplaceEmployersQuery(workplaceIdNumber, Boolean(workplaceIdNumber));
+  const requests = requestsData?.content ?? [];
+  const employers = employersData ?? [];
+  const loading = workplaceLoading || requestsLoading || employersLoading;
   const [processingId, setProcessingId] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workplaceId]);
-
-  const loadData = async () => {
-    if (!workplaceId) return;
-
-    setLoading(true);
-    setError(null);
-    try {
-      const id = parseInt(workplaceId, 10);
-      const [workplaceData, requestsData, employersData] = await Promise.all([
-        getWorkplaceById(id),
-        getEmployerRequests(id),
-        getWorkplaceEmployers(id),
-      ]);
-
-      setWorkplace(workplaceData);
-      setRequests(requestsData.content);
-      setEmployers(employersData);
-    } catch (err) {
-      console.error('Failed to load data:', err);
-      setError('Failed to load workplace data');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const error = workplaceError || requestsError || employersError ? 'Failed to load workplace data' : null;
+  const resolveRequestMutation = useMutation({
+    mutationFn: ({ requestId, action }: { requestId: number; action: 'APPROVE' | 'REJECT' }) => {
+      if (!workplaceIdNumber) throw new Error('Missing workplace id');
+      return resolveEmployerRequest(workplaceIdNumber, requestId, action);
+    },
+    onSuccess: async () => {
+      await Promise.all([refetchRequests(), refetchEmployers(), refetchWorkplace()]);
+    },
+    onError: (err: unknown) => {
+      alert(getErrorMessage(err, 'Failed to process request'));
+    },
+  });
+  const removeEmployerMutation = useRemoveEmployerMutation(workplaceIdNumber ?? 0);
 
   const handleResolveRequest = async (requestId: number, action: 'APPROVE' | 'REJECT') => {
-    if (!workplaceId) return;
+    if (!workplaceIdNumber) return;
 
     setProcessingId(requestId);
     try {
-      await resolveEmployerRequest(parseInt(workplaceId, 10), requestId, action);
-      await loadData(); // Reload all data
+      await resolveRequestMutation.mutateAsync({ requestId, action });
     } catch (err: unknown) {
       console.error('Failed to resolve request:', err);
-      alert(getErrorMessage(err, 'Failed to process request'));
     } finally {
       setProcessingId(null);
     }
   };
 
   const handleRemoveEmployer = async (employerId: number) => {
-    if (!workplaceId) return;
+    if (!workplaceIdNumber) return;
     if (!confirm('Are you sure you want to remove this employer?')) return;
 
     try {
-      await removeEmployer(parseInt(workplaceId, 10), employerId);
-      await loadData(); // Reload all data
+      await removeEmployerMutation.mutateAsync(employerId);
+      await Promise.all([refetchEmployers(), refetchRequests(), refetchWorkplace()]);
     } catch (err: unknown) {
       console.error('Failed to remove employer:', err);
-      alert(getErrorMessage(err, 'Failed to remove employer'));
     }
   };
 
 
   if (loading) {
-    return <CenteredLoader />
+    return <CenteredLoader />;
   }
 
   if (error || !workplace) {
     return (
       <CenteredError
         message={error || 'Workplace not found'}
-        onRetry={loadData}
+        onRetry={() => {
+          refetchWorkplace();
+          refetchRequests();
+          refetchEmployers();
+        }}
       />
     );
   }

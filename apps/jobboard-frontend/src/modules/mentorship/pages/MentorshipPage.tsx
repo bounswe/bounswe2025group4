@@ -6,76 +6,66 @@ import { Button } from '@shared/components/ui/button';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { Input } from '@shared/components/ui/input';
 import { cn } from '@shared/lib/utils';
+import {
+  useMentorsQuery,
+  useMentorProfileQuery,
+  useMenteeMentorshipsQuery,
+} from '@modules/mentorship/services/mentorship.service';
+import { convertMentorProfileToMentor } from '@shared/utils/mentorship.utils';
+import { profileService } from '@modules/profile/services/profile.service';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
-import MentorCard from '@modules/mentorship/components/mentorship/MentorCard';
+import { normalizeApiError } from '@shared/utils/error-handler';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
-import { getMentorProfile, getMentors, getMenteeMentorships } from '@modules/mentorship/services/mentorship.service';
-import { profileService } from '@modules/profile/services/profile.service';
-import { convertMentorProfileToMentor } from '@shared/utils/mentorship.utils';
 import type { Mentor } from '@shared/types/mentor';
+import type { MentorProfileDetailDTO } from '@/modules/shared/types/api.types';
+import type { PublicProfile } from '@shared/types/profile.types';
+import MentorCard from '../components/mentorship/MentorCard';
 
-/**
- * Mentor directory browse page (was the Browse tab).
- */
 const MentorshipPage = () => {
   const { t } = useTranslation('common');
   const { isAuthenticated, user } = useAuth();
   const [searchInput, setSearchInput] = useState('');
   const [mentors, setMentors] = useState<Mentor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const mentorsQuery = useMentorsQuery();
+  const mentorProfileQuery = useMentorProfileQuery(user?.id, Boolean(user?.id));
+  const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
   const [hasMentorProfile, setHasMentorProfile] = useState(false);
   const [requestedMentorIds, setRequestedMentorIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    const checkMentorProfile = async () => {
-      if (!isAuthenticated || !user?.id) {
-        setHasMentorProfile(false);
-        return;
-      }
+    setHasMentorProfile(Boolean(mentorProfileQuery.data));
+  }, [mentorProfileQuery.data]);
 
-      try {
-        const profile = await getMentorProfile(user.id);
-        setHasMentorProfile(!!profile);
-      } catch (err: any) {
-        if (err?.code !== 'ERR_NETWORK') {
-          console.error('Error checking mentor profile:', err);
-        }
-        setHasMentorProfile(false);
-      }
-
-      try {
-        const mentorships = await getMenteeMentorships(user.id);
-        const mentorIds = new Set(
-          mentorships
-            .filter(
-              (m) =>
-                m.requestStatus === 'PENDING' ||
-                m.requestStatus === 'ACCEPTED' ||
-                m.reviewStatus === 'ACTIVE'
-            )
-            .map((m) => m.mentorId)
-        );
-        setRequestedMentorIds(mentorIds);
-      } catch (err) {
-        console.error('Error fetching existing mentorships:', err);
-      }
-    };
-
-    checkMentorProfile();
-  }, [isAuthenticated, user?.id]);
+  useEffect(() => {
+    if (menteeMentorshipsQuery.data) {
+      const mentorIds = new Set(
+        menteeMentorshipsQuery.data
+          .filter(
+            (m) =>
+              m.requestStatus === 'PENDING' ||
+              m.requestStatus === 'ACCEPTED' ||
+              m.reviewStatus === 'ACTIVE'
+          )
+          .map((m) => m.mentorId)
+      );
+      setRequestedMentorIds(mentorIds);
+    }
+  }, [menteeMentorshipsQuery.data]);
 
   useEffect(() => {
     const fetchMentors = async () => {
+      if (!mentorsQuery.data) return;
       try {
-        setIsLoading(true);
+        setIsProfileLoading(true);
         setError(null);
-        const backendMentors = await getMentors();
+        const backendMentors = mentorsQuery.data;
 
-        const mentorProfilesMap: Record<string, { imageUrl?: string; profile?: any }> = {};
+        const mentorProfilesMap: Record<string, { imageUrl?: string; profile?: PublicProfile }> = {};
         await Promise.all(
-          backendMentors.map(async (mentor) => {
+          backendMentors.map(async (mentor: MentorProfileDetailDTO) => {
             try {
               const mentorId = parseInt(mentor.id, 10);
               if (!isNaN(mentorId)) {
@@ -83,6 +73,9 @@ const MentorshipPage = () => {
                 mentorProfilesMap[mentor.id] = {
                   imageUrl: profile.imageUrl,
                   profile: {
+                    userId: profile.userId,
+                    firstName: profile.firstName,
+                    lastName: profile.lastName,
                     bio: profile.bio,
                     experiences: profile.experiences,
                     educations: profile.educations,
@@ -110,35 +103,26 @@ const MentorshipPage = () => {
           ? convertedMentors.filter((mentor) => mentor.id !== user.id.toString())
           : convertedMentors;
 
+
         setMentors(filteredMentors);
       } catch (err) {
-        console.error('Error fetching mentors:', err);
-        if (err && typeof err === 'object' && 'code' in err) {
-          const axiosError = err as { code?: string; message?: string };
-          if (axiosError.code === 'ECONNABORTED' || axiosError.message?.includes('timeout')) {
-            setError(
-              t('mentorship.errors.timeout') ||
-                'Connection timeout. Please check if the backend server is running.'
-            );
-          } else if (axiosError.code === 'ERR_NETWORK' || axiosError.message?.includes('Network Error')) {
-            setError(
-              t('mentorship.errors.networkError') ||
-                'Cannot connect to server. Please check if the backend is running.'
-            );
-          } else {
-            setError(t('mentorship.errors.loadFailed') || 'Failed to load mentors. Please try again later.');
-          }
-        } else {
-          setError(t('mentorship.errors.loadFailed') || 'Failed to load mentors. Please try again later.');
-        }
+        const normalized = normalizeApiError(err, t('mentorship.errors.loadFailed'));
+        setError(normalized.friendlyMessage);
       } finally {
-        setIsLoading(false);
+        setIsProfileLoading(false);
       }
     };
 
     fetchMentors();
-  }, [user?.id, t]);
+  }, [mentorsQuery.data, user?.id, t]);
 
+  useEffect(() => {
+    if (mentorsQuery.error) {
+      const normalized = normalizeApiError(mentorsQuery.error, t('mentorship.errors.loadFailed'));
+      setError(normalized.friendlyMessage);
+    }
+  }, [mentorsQuery.error, t]);
+  
   const filteredMentors = useMemo(() => {
     if (!searchInput.trim()) {
       return mentors;
@@ -152,6 +136,8 @@ const MentorshipPage = () => {
         mentor.specialties.some((spec) => spec.toLowerCase().includes(searchLower))
     );
   }, [searchInput, mentors]);
+
+  const isLoading = mentorsQuery.isLoading || isProfileLoading;
 
   if (isLoading) {
     return <CenteredLoader />;

@@ -3,8 +3,7 @@
  * Displays all workplaces for employees to browse, search, and visit.
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Input } from '@shared/components/ui/input';
@@ -12,11 +11,13 @@ import { Label } from '@shared/components/ui/label';
 import { Slider } from '@shared/components/ui/slider';
 import { Search, Building2, Filter, X, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { WorkplaceCard } from '@/modules/workplace/components/WorkplaceCard';
-import { getWorkplaces } from '@modules/workplace/services/workplace.service';
+import { useWorkplacesQuery } from '@modules/workplace/services/workplace.service';
 import type { WorkplaceBriefResponse } from '@shared/types/workplace.types';
 import CenteredError from '@shared/components/common/CenteredError';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
+import { Link } from 'react-router-dom';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 const SECTORS = [
   'Technology',
@@ -62,61 +63,48 @@ export default function WorkplacesPage() {
   const { user } = useAuth();
   const isEmployer = user?.role === 'ROLE_EMPLOYER';
   const [filters, setFilters] = useState<Filters>(initialFilters);
-  const [workplaces, setWorkplaces] = useState<WorkplaceBriefResponse[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
-  const performSearch = useCallback(
-    async (pageNum: number = 0) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const params: Parameters<typeof getWorkplaces>[0] = {
-          page: pageNum,
-          size: 12,
-        };
-
-        if (filters.searchQuery.trim()) {
-          params.search = filters.searchQuery.trim();
-        }
-        if (filters.sector) {
-          params.sector = filters.sector;
-        }
-        if (filters.location.trim()) {
-          params.location = filters.location.trim();
-        }
-        if (filters.minRating > 0) {
-          params.minRating = filters.minRating;
-        }
-        if (filters.sortBy) {
-          params.sortBy = filters.sortBy;
-        }
-
-        const results = await getWorkplaces(params);
-        setWorkplaces(results.content);
-        setTotalPages(results.totalPages);
-        setTotalElements(results.totalElements);
-        setPage(pageNum);
-      } catch (err) {
-        console.error('Failed to load workplaces:', err);
-        setError(t('workplaces.loadError'));
-      } finally {
-        setLoading(false);
-      }
+  const queryParams = useMemo(
+    () => {
+      const params: any = { page, size: 12 };
+      if (filters.searchQuery.trim()) params.search = filters.searchQuery.trim();
+      if (filters.sector) params.sector = filters.sector;
+      if (filters.location.trim()) params.location = filters.location.trim();
+      if (filters.minRating > 0) params.minRating = filters.minRating;
+      if (filters.sortBy) params.sortBy = filters.sortBy;
+      return params;
     },
-    [filters, t]
+    [filters, page]
   );
 
+  const workplacesQuery = useWorkplacesQuery(queryParams);
+  const workplaces: WorkplaceBriefResponse[] = workplacesQuery.data?.content ?? [];
+  const normalizedError = workplacesQuery.error ? normalizeApiError(workplacesQuery.error) : null;
+  const loading = workplacesQuery.isLoading;
+
   useEffect(() => {
-    performSearch(0);
-  }, [performSearch]);
+    if (workplacesQuery.data) {
+      setTotalPages(workplacesQuery.data.totalPages);
+      setTotalElements(workplacesQuery.data.totalElements);
+    }
+  }, [workplacesQuery.data]);
+
+  useEffect(() => {
+    if (normalizedError) {
+      setError(normalizedError.friendlyMessage);
+    } else {
+      setError(null);
+    }
+  }, [normalizedError]);
+
 
   const handleSearch = () => {
-    performSearch(0);
+    setPage(0);
   };
 
   const handleClearFilters = () => {
@@ -277,7 +265,12 @@ export default function WorkplacesPage() {
           )}
         </Card>
 
-        {error && <CenteredError message={t('workplaces.loadError')} onRetry={() => performSearch(page)} />}
+            {error && (
+              <CenteredError
+                message={error}
+                onRetry={() => workplacesQuery.refetch()}
+              />
+            )}
 
         {!error && (
           <p className="text-sm text-muted-foreground">
@@ -308,31 +301,33 @@ export default function WorkplacesPage() {
           </div>
         )}
 
-        {!error && totalPages > 1 && (
-          <div className="flex items-center justify-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => performSearch(page - 1)}
-              disabled={page === 0 || loading}
-            >
-              <ChevronLeft className="mr-1 h-4 w-4" />
-              {t('common.pagination.previous')}
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              {t('common.pagination.pageInfo', { page: page + 1, total: totalPages })}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => performSearch(page + 1)}
-              disabled={page >= totalPages - 1 || loading}
-            >
-              {t('common.pagination.next')}
-              <ChevronRight className="ml-1 h-4 w-4" />
-            </Button>
-          </div>
-        )}
+            {/* Pagination */}
+            {!error && totalPages > 1 && (
+              <div className="flex items-center justify-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
+                  disabled={page === 0 || loading}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  {t('common.pagination.previous')}
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  {t('common.pagination.pageInfo', { page: page + 1, total: totalPages })}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
+                  disabled={page >= totalPages - 1 || loading}
+                >
+                  {t('common.pagination.next')}
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            )}
+      
       </div>
     </div>
   );
