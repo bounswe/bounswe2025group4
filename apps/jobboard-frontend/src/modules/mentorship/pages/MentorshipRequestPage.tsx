@@ -121,6 +121,13 @@ const MentorshipRequestPage = () => {
       return;
     }
 
+    // Validate motivation field
+    const motivation = formData.message.trim();
+    if (!motivation) {
+      toast.error(t('mentorship.request.motivationRequired') || 'Please provide a motivation message for your mentorship request.');
+      return;
+    }
+
     try {
       if (!user?.id) {
         toast.error(
@@ -135,7 +142,10 @@ const MentorshipRequestPage = () => {
         throw new Error('Invalid mentor ID');
       }
 
-      const response = await createRequestMutation.mutateAsync({ mentorId: mentorIdParsed });
+      const response = await createRequestMutation.mutateAsync({ 
+        mentorId: mentorIdParsed,
+        motivation: motivation
+      });
 
       if (!response || !response.id) {
         throw new Error('Invalid response from server');

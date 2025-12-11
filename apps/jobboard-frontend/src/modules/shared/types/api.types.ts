@@ -278,6 +278,7 @@ export interface MentorProfileDetailDTO {
  */
 export interface CreateMentorshipRequestDTO {
   mentorId: number;
+  motivation: string;
 }
 
 /**
