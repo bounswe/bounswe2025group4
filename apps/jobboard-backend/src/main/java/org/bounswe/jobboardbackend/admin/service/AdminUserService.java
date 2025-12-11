@@ -13,6 +13,7 @@ import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepos
 import org.bounswe.jobboardbackend.mentorship.repository.MentorProfileRepository;
 import org.bounswe.jobboardbackend.mentorship.repository.MentorshipRequestRepository;
 import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
+import org.bounswe.jobboardbackend.badge.repository.BadgeRepository;
 import org.bounswe.jobboardbackend.workplace.model.enums.EmployerRole;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
@@ -35,6 +36,7 @@ public class AdminUserService {
     @Lazy
     private final AdminWorkplaceService adminWorkplaceService;
     private final WorkplaceRepository workplaceRepository;
+    private final BadgeRepository badgeRepository;
 
     public Page<UserListResponse> listUsers(Pageable pageable, Role role, Boolean isBanned) {
         Page<User> users;
@@ -72,6 +74,8 @@ public class AdminUserService {
             profileRepository.delete(profile);
             profileRepository.flush(); // Force immediate deletion
         });
+
+        badgeRepository.deleteAllByUserId(userId);
 
         // 2. Delete mentorships if user is a mentor
         mentorProfileRepository.findByUserId(userId).ifPresent(mentor -> {

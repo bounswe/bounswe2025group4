@@ -17,7 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/reports")
+@RequestMapping("/api/report")
 @RequiredArgsConstructor
 public class ReportController {
 
