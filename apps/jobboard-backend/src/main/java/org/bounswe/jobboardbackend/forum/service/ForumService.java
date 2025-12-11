@@ -18,6 +18,10 @@ import org.bounswe.jobboardbackend.forum.repository.ForumCommentUpvoteRepository
 import org.bounswe.jobboardbackend.forum.repository.ForumPostDownvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumPostUpvoteRepository;
+import org.bounswe.jobboardbackend.badge.event.CommentCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.CommentUpvotedEvent;
+import org.bounswe.jobboardbackend.badge.event.ForumPostCreatedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +37,7 @@ public class ForumService {
     private final ForumCommentRepository commentRepository;
     private final ForumCommentUpvoteRepository upvoteRepository;
     private final ForumCommentDownvoteRepository downvoteRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final ForumPostUpvoteRepository postUpvoteRepository;
     private final ForumPostDownvoteRepository postDownvoteRepository;
 
@@ -46,6 +51,11 @@ public class ForumService {
                 .build();
 
         ForumPost savedPost = postRepository.save(post);
+
+        // Publish event for badge checking
+        eventPublisher.publishEvent(new ForumPostCreatedEvent(author.getId(), savedPost.getId()));
+
+
         return toPostResponse(savedPost);
     }
 
@@ -120,6 +130,10 @@ public class ForumService {
                 .build();
 
         ForumComment savedComment = commentRepository.save(comment);
+
+        // Publish event for badge checking
+        eventPublisher.publishEvent(new CommentCreatedEvent(author.getId(), savedComment.getId(), postId));
+
         return CommentResponse.from(savedComment, 0, 0);
     }
 
@@ -178,6 +192,9 @@ public class ForumService {
                 .comment(comment)
                 .build();
         upvoteRepository.save(upvote);
+
+        // Publish event for badge checking (for the comment author, not the voter)
+        eventPublisher.publishEvent(new CommentUpvotedEvent(comment.getAuthor().getId(), commentId));
     }
 
     @Transactional
