@@ -26,7 +26,6 @@ import org.bounswe.jobboardbackend.report.repository.ReportRepository;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.repository.ReviewReplyRepository;
 import org.bounswe.jobboardbackend.workplace.repository.ReviewRepository;
-import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.model.enums.EmployerRole;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +43,6 @@ public class AdminReportService {
     private final AdminUserService adminUserService;
 
     // Repositories for finding content creators
-    private final WorkplaceRepository workplaceRepository;
     private final ReviewRepository reviewRepository;
     private final ForumPostRepository forumPostRepository;
     private final ForumCommentRepository forumCommentRepository;
@@ -91,19 +89,6 @@ public class AdminReportService {
         reportRepository.save(report);
     }
 
-    private void banContentCreator(Report report, String reason) {
-        Long creatorId = getContentCreatorId(report.getEntityType(), report.getEntityId());
-
-        if (creatorId == null) {
-            // Skip banning if creator not found (e.g., Workplace has no owner)
-            return;
-        }
-
-        BanUserRequest banRequest = new BanUserRequest();
-        banRequest.setReason(reason != null ? reason : "Banned via report resolution");
-        adminUserService.banUser(creatorId, banRequest);
-    }
-
     private Long getContentCreatorId(ReportableEntityType entityType, Long entityId) {
         return switch (entityType) {
             case WORKPLACE -> employerWorkplaceRepository.findByWorkplace_IdAndRole(entityId, EmployerRole.OWNER)
@@ -145,11 +130,13 @@ public class AdminReportService {
             case FORUM_POST -> adminForumService.deletePost(entityId, "Deleted via report resolution");
             case FORUM_COMMENT -> adminForumService.deleteComment(entityId, "Deleted via report resolution");
             case JOB_POST -> adminJobPostService.deleteJobPost(entityId, "Deleted via report resolution");
-            case JOB_APPLICATION -> adminJobApplicationService.deleteJobApplication(entityId, "Deleted via report resolution");
+            case JOB_APPLICATION ->
+                adminJobApplicationService.deleteJobApplication(entityId, "Deleted via report resolution");
             case REVIEW_REPLY -> adminWorkplaceService.deleteReviewReply(entityId, "Deleted via report resolution");
             case PROFILE -> adminProfileService.deleteProfile(entityId, "Deleted via report resolution");
             case MENTOR -> adminMentorService.deleteMentor(entityId, "Deleted via report resolution");
-            default -> throw new HandleException(ErrorCode.BAD_REQUEST, "Unsupported entity type for deletion: " + entityType);
-        }  
+            default ->
+                throw new HandleException(ErrorCode.BAD_REQUEST, "Unsupported entity type for deletion: " + entityType);
+        }
     }
 }
