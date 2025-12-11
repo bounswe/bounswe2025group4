@@ -54,7 +54,8 @@ export default function RegisterPage() {
       };
 
       // Only add optional fields if they have values
-      if (data.pronounSet && typeof data.pronounSet === 'string' && data.pronounSet.trim() !== '') {
+      const validPronouns = ['HE_HIM', 'SHE_HER', 'THEY_THEM', 'SHE_THEY', 'HE_THEY', 'OTHER', 'NONE'] as const;
+      if (data.pronounSet && validPronouns.includes(data.pronounSet as typeof validPronouns[number])) {
         requestBody.pronounSet = data.pronounSet;
       }
       if (data.bio && typeof data.bio === 'string' && data.bio.trim() !== '') {
