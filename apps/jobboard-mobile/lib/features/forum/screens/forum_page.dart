@@ -200,23 +200,33 @@ class _ForumPageState extends State<ForumPage> {
 
   List<ForumPost> get _filteredPosts {
     var filtered = _posts;
-    
+
     // Filter by search query
     if (_searchQuery.isNotEmpty) {
-      filtered = filtered.where((post) {
-        return post.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-               post.content.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-               post.authorUsername.toLowerCase().contains(_searchQuery.toLowerCase());
-      }).toList();
+      filtered =
+          filtered.where((post) {
+            return post.title.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ) ||
+                post.content.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ) ||
+                post.authorUsername.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                );
+          }).toList();
     }
-    
+
     // Filter by tags
     if (_selectedTags.isNotEmpty) {
-      filtered = filtered.where((post) => 
-        post.tags.any((tag) => _selectedTags.contains(tag))
-      ).toList();
+      filtered =
+          filtered
+              .where(
+                (post) => post.tags.any((tag) => _selectedTags.contains(tag)),
+              )
+              .toList();
     }
-    
+
     return filtered;
   }
 
@@ -240,7 +250,7 @@ class _ForumPageState extends State<ForumPage> {
   @override
   Widget build(BuildContext ctx) {
     final isDark = Theme.of(ctx).brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: isDark ? Colors.black : Colors.grey[50],
       appBar: AppBar(
@@ -266,9 +276,10 @@ class _ForumPageState extends State<ForumPage> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _selectedTags.isNotEmpty
-                        ? Colors.blue.withOpacity(0.1)
-                        : Colors.transparent,
+                    color:
+                        _selectedTags.isNotEmpty
+                            ? Colors.blue.withOpacity(0.1)
+                            : Colors.transparent,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Badge(
@@ -276,9 +287,10 @@ class _ForumPageState extends State<ForumPage> {
                     label: Text('${_selectedTags.length}'),
                     child: Icon(
                       Icons.filter_list_rounded,
-                      color: _selectedTags.isNotEmpty
-                          ? Colors.blue
-                          : (isDark ? Colors.grey[400] : Colors.grey[700]),
+                      color:
+                          _selectedTags.isNotEmpty
+                              ? Colors.blue
+                              : (isDark ? Colors.grey[400] : Colors.grey[700]),
                     ),
                   ),
                 ),
@@ -287,232 +299,254 @@ class _ForumPageState extends State<ForumPage> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage != null
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _errorMessage != null
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline_rounded,
-                        size: 64,
-                        color: Colors.red[300],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline_rounded,
+                      size: 64,
+                      color: Colors.red[300],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      AppLocalizations.of(context)!.forumPage_loadError,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        AppLocalizations.of(context)!.forumPage_loadError,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: _loadPosts,
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: Text(AppLocalizations.of(context)!.common_retry),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: _loadPosts,
-                        icon: const Icon(Icons.refresh_rounded),
-                        label: Text(AppLocalizations.of(context)!.common_retry),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+                    ),
+                  ],
+                ),
+              )
               : _posts.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.forum_outlined,
-                            size: 64,
-                            color: isDark ? Colors.grey[700] : Colors.grey[300],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            AppLocalizations.of(context)!.forumPage_noDiscussions,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: isDark ? Colors.grey[400] : Colors.grey[600],
-                            ),
-                          ),
-                        ],
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.forum_outlined,
+                      size: 64,
+                      color: isDark ? Colors.grey[700] : Colors.grey[300],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      AppLocalizations.of(context)!.forumPage_noDiscussions,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
                       ),
-                    )
-                  : Column(
-                      children: [
-                        // Search bar
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                          color: isDark ? Colors.grey[900] : Colors.white,
-                          child: TextField(
-                            controller: _searchController,
-                            onChanged: (value) {
-                              setState(() {
-                                _searchQuery = value;
-                              });
-                            },
-                            style: TextStyle(
-                              color: isDark ? Colors.white : Colors.black87,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Search posts...',
-                              hintStyle: TextStyle(
-                                color: isDark ? Colors.grey[600] : Colors.grey[400],
-                              ),
-                              prefixIcon: Icon(
-                                Icons.search_rounded,
-                                color: isDark ? Colors.grey[500] : Colors.grey[600],
-                              ),
-                              suffixIcon: _searchQuery.isNotEmpty
-                                  ? IconButton(
-                                      icon: Icon(
-                                        Icons.clear_rounded,
-                                        color: isDark ? Colors.grey[500] : Colors.grey[600],
-                                      ),
-                                      onPressed: () {
-                                        _searchController.clear();
-                                        setState(() {
-                                          _searchQuery = '';
-                                        });
-                                      },
-                                    )
-                                  : null,
-                              filled: true,
-                              fillColor: isDark ? Colors.grey[850] : Colors.grey[100],
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                            ),
-                          ),
+                    ),
+                  ],
+                ),
+              )
+              : Column(
+                children: [
+                  // Search bar
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                    color: isDark ? Colors.grey[900] : Colors.white,
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (value) {
+                        setState(() {
+                          _searchQuery = value;
+                        });
+                      },
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Search posts...',
+                        hintStyle: TextStyle(
+                          color: isDark ? Colors.grey[600] : Colors.grey[400],
                         ),
-                        
-                        // Posts list
-                        Expanded(
-                          child: Stack(
-                            children: [
-                              RefreshIndicator(
-                                onRefresh: _loadPosts,
-                                child: _filteredPosts.isEmpty
-                                    ? Center(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.search_off_rounded,
-                                              size: 64,
-                                              color: isDark ? Colors.grey[700] : Colors.grey[300],
-                                            ),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              _searchQuery.isNotEmpty
-                                                  ? 'No posts found matching "$_searchQuery"'
-                                                  : 'No posts match your filters',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: isDark ? Colors.grey[400] : Colors.grey[600],
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    : ListView.builder(
-                                        padding: const EdgeInsets.only(top: 8, bottom: 100),
-                                        itemCount: _filteredPosts.length,
-                                        itemBuilder: (_, i) {
-                                          final post = _filteredPosts[i];
-                                          return ThreadTile(
-                                post: post,
-                                onTap: () async {
-                                  final result = await Navigator.push(
-                                    ctx,
-                                    MaterialPageRoute(
-                                      builder: (_) => ThreadDetailScreen(post: post),
+                        prefixIcon: Icon(
+                          Icons.search_rounded,
+                          color: isDark ? Colors.grey[500] : Colors.grey[600],
+                        ),
+                        suffixIcon:
+                            _searchQuery.isNotEmpty
+                                ? IconButton(
+                                  icon: Icon(
+                                    Icons.clear_rounded,
+                                    color:
+                                        isDark
+                                            ? Colors.grey[500]
+                                            : Colors.grey[600],
+                                  ),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {
+                                      _searchQuery = '';
+                                    });
+                                  },
+                                )
+                                : null,
+                        filled: true,
+                        fillColor: isDark ? Colors.grey[850] : Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Posts list
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        _filteredPosts.isEmpty
+                            ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.search_off_rounded,
+                                    size: 64,
+                                    color:
+                                        isDark
+                                            ? Colors.grey[700]
+                                            : Colors.grey[300],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    _searchQuery.isNotEmpty
+                                        ? 'No posts found matching "$_searchQuery"'
+                                        : 'No posts match your filters',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color:
+                                          isDark
+                                              ? Colors.grey[400]
+                                              : Colors.grey[600],
                                     ),
-                                  );
-                                  if (result is ForumPost) {
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            )
+                            : ListView.builder(
+                              padding: const EdgeInsets.only(
+                                top: 8,
+                                bottom: 100,
+                              ),
+                              itemCount: _filteredPosts.length,
+                              itemBuilder: (_, i) {
+                                final post = _filteredPosts[i];
+                                return ThreadTile(
+                                  post: post,
+                                  onTap: () async {
+                                    final result = await Navigator.push(
+                                      ctx,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) =>
+                                                ThreadDetailScreen(post: post),
+                                      ),
+                                    );
+                                    if (result is ForumPost) {
+                                      setState(() {
+                                        final index = _posts.indexWhere(
+                                          (p) => p.id == result.id,
+                                        );
+                                        if (index != -1) {
+                                          _posts[index] = result;
+                                        }
+                                      });
+                                    } else if (result == 'deleted') {
+                                      setState(() {
+                                        _posts.removeWhere(
+                                          (p) => p.id == post.id,
+                                        );
+                                      });
+                                    } else if (result == 'refresh') {
+                                      _loadPosts();
+                                    }
+                                  },
+                                  onPostUpdated: (updatedPost) {
                                     setState(() {
                                       final index = _posts.indexWhere(
-                                        (p) => p.id == result.id,
+                                        (p) => p.id == updatedPost.id,
                                       );
                                       if (index != -1) {
-                                        _posts[index] = result;
+                                        _posts[index] = updatedPost;
                                       }
                                     });
-                                  } else if (result == 'deleted') {
+                                  },
+                                  onDelete: () {
                                     setState(() {
-                                      _posts.removeWhere((p) => p.id == post.id);
+                                      _posts.removeWhere(
+                                        (p) => p.id == post.id,
+                                      );
                                     });
-                                  } else if (result == 'refresh') {
-                                    _loadPosts();
-                                  }
-                                },
-                                onPostUpdated: (updatedPost) {
-                                  setState(() {
-                                    final index = _posts.indexWhere(
-                                      (p) => p.id == updatedPost.id,
-                                    );
-                                    if (index != -1) {
-                                      _posts[index] = updatedPost;
-                                    }
-                                  });
-                                },
-                                onDelete: () {
-                                  setState(() {
-                                    _posts.removeWhere((p) => p.id == post.id);
-                                  });
-                                },
+                                  },
+                                );
+                              },
+                            ),
+                        Positioned(
+                          bottom: 20,
+                          right: 20,
+                          child: FloatingActionButton.extended(
+                            onPressed: () async {
+                              final created = await Navigator.push<ForumPost>(
+                                ctx,
+                                MaterialPageRoute(
+                                  builder: (_) => const CreateThreadScreen(),
+                                ),
                               );
-                                        },
-                                      ),
+                              if (created != null) {
+                                setState(() {
+                                  _posts.insert(0, created);
+                                });
+                              }
+                            },
+                            backgroundColor: Colors.blue,
+                            elevation: 4,
+                            icon: const Icon(
+                              Icons.edit_rounded,
+                              color: Colors.white,
+                            ),
+                            label: const Text(
+                              'New Post',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
                               ),
-                              Positioned(
-                                        bottom: 20,
-                                        right: 20,
-                                        child: FloatingActionButton.extended(
-                                          onPressed: () async {
-                                            final created = await Navigator.push<ForumPost>(
-                                              ctx,
-                                              MaterialPageRoute(builder: (_) => const CreateThreadScreen()),
-                                            );
-                                            if (created != null) {
-                                              setState(() {
-                                                _posts.insert(0, created);
-                                              });
-                                            }
-                                          },
-                                          backgroundColor: Colors.blue,
-                                          elevation: 4,
-                                          icon: const Icon(Icons.edit_rounded, color: Colors.white),
-                                          label: const Text(
-                                            'New Post',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                            ],
+                            ),
                           ),
                         ),
                       ],
                     ),
+                  ),
+                ],
+              ),
     );
   }
 }

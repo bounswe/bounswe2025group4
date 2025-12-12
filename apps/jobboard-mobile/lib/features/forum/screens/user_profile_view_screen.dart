@@ -81,186 +81,175 @@ class _UserProfileViewScreenState extends State<UserProfileViewScreen> {
               )
               : _profile == null
               ? const Center(child: Text('Profile not found'))
-              : RefreshIndicator(
-                onRefresh: _loadProfile,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Profile Header
-                      Center(
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundImage:
-                                  _profile!.profile.profilePicture != null
-                                      ? NetworkImage(
-                                        _profile!.profile.profilePicture!,
-                                      )
-                                      : null,
-                              child:
-                                  _profile!.profile.profilePicture == null
-                                      ? const Icon(Icons.person, size: 50)
-                                      : null,
-                            ),
-                            const SizedBox(height: 16),
+              : SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Profile Header
+                    Center(
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage:
+                                _profile!.profile.profilePicture != null
+                                    ? NetworkImage(
+                                      _profile!.profile.profilePicture!,
+                                    )
+                                    : null,
+                            child:
+                                _profile!.profile.profilePicture == null
+                                    ? const Icon(Icons.person, size: 50)
+                                    : null,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _profile!.profile.fullName,
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          if (_profile!.profile.occupation != null &&
+                              _profile!.profile.occupation!.isNotEmpty)
                             Text(
-                              _profile!.profile.fullName,
-                              style: Theme.of(context).textTheme.headlineSmall
-                                  ?.copyWith(fontWeight: FontWeight.bold),
+                              _profile!.profile.occupation!,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: Colors.grey[600]),
                             ),
-                            if (_profile!.profile.occupation != null &&
-                                _profile!.profile.occupation!.isNotEmpty)
-                              Text(
-                                _profile!.profile.occupation!,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(color: Colors.grey[600]),
-                              ),
-                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Bio Section
+                    if (_profile!.profile.bio != null &&
+                        _profile!.profile.bio!.isNotEmpty) ...[
+                      Text(
+                        'About',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(_profile!.profile.bio!),
                         ),
                       ),
                       const SizedBox(height: 24),
+                    ],
 
-                      // Bio Section
-                      if (_profile!.profile.bio != null &&
-                          _profile!.profile.bio!.isNotEmpty) ...[
-                        Text(
-                          'About',
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                    // Experience Section
+                    if (_profile!.experience.isNotEmpty) ...[
+                      Text(
+                        'Experience',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 8),
-                        Card(
+                      ),
+                      const SizedBox(height: 8),
+                      ..._profile!.experience.map(
+                        (exp) => Card(
+                          margin: const EdgeInsets.only(bottom: 12),
                           child: Padding(
                             padding: const EdgeInsets.all(16),
-                            child: Text(_profile!.profile.bio!),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                      ],
-
-                      // Experience Section
-                      if (_profile!.experience.isNotEmpty) ...[
-                        Text(
-                          'Experience',
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        ..._profile!.experience.map(
-                          (exp) => Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    exp.position,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    exp.company,
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      const A11y(
-                                        label: 'Date range',
-                                        child: Icon(
-                                          Icons.calendar_today,
-                                          size: 16,
-                                        ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  exp.position,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  exp.company,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const A11y(
+                                      label: 'Date range',
+                                      child: Icon(
+                                        Icons.calendar_today,
+                                        size: 16,
                                       ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        '${exp.startDate} - ${exp.endDate ?? 'Present'}',
-                                        style:
-                                            Theme.of(
-                                              context,
-                                            ).textTheme.bodySmall,
-                                      ),
-                                    ],
-                                  ),
-                                  if (exp.description != null &&
-                                      exp.description!.isNotEmpty) ...[
-                                    const SizedBox(height: 8),
-                                    Text(exp.description!),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${exp.startDate} - ${exp.endDate ?? 'Present'}',
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    ),
                                   ],
+                                ),
+                                if (exp.description != null &&
+                                    exp.description!.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  Text(exp.description!),
                                 ],
-                              ),
+                              ],
                             ),
                           ),
                         ),
-                        const SizedBox(height: 24),
-                      ],
-
-                      // Education Section
-                      if (_profile!.education.isNotEmpty) ...[
-                        Text(
-                          'Education',
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        ..._profile!.education.map(
-                          (edu) => Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    edu.school,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${edu.degree} in ${edu.field}',
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      const A11y(
-                                        label: 'Date range',
-                                        child: Icon(
-                                          Icons.calendar_today,
-                                          size: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        '${edu.startDate} - ${edu.endDate ?? 'Present'}',
-                                        style:
-                                            Theme.of(
-                                              context,
-                                            ).textTheme.bodySmall,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
+                      const SizedBox(height: 24),
                     ],
-                  ),
+
+                    // Education Section
+                    if (_profile!.education.isNotEmpty) ...[
+                      Text(
+                        'Education',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ..._profile!.education.map(
+                        (edu) => Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  edu.school,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${edu.degree} in ${edu.field}',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const A11y(
+                                      label: 'Date range',
+                                      child: Icon(
+                                        Icons.calendar_today,
+                                        size: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${edu.startDate} - ${edu.endDate ?? 'Present'}',
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
     );
