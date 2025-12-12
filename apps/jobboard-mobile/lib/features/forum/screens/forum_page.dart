@@ -22,6 +22,8 @@ class _ForumPageState extends State<ForumPage> {
   String? _errorMessage;
   List<String> _selectedTags = [];
   List<String> _allTags = [];
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
   late final ApiService _api;
 
   @override
@@ -30,6 +32,12 @@ class _ForumPageState extends State<ForumPage> {
     _api = ApiService(authProvider: context.read<AuthProvider>());
     _loadPosts();
     _loadTags();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadTags() async {
@@ -191,10 +199,25 @@ class _ForumPageState extends State<ForumPage> {
   }
 
   List<ForumPost> get _filteredPosts {
-    if (_selectedTags.isEmpty) return _posts;
-    return _posts
-        .where((post) => post.tags.any((tag) => _selectedTags.contains(tag)))
-        .toList();
+    var filtered = _posts;
+    
+    // Filter by search query
+    if (_searchQuery.isNotEmpty) {
+      filtered = filtered.where((post) {
+        return post.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+               post.content.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+               post.authorUsername.toLowerCase().contains(_searchQuery.toLowerCase());
+      }).toList();
+    }
+    
+    // Filter by tags
+    if (_selectedTags.isNotEmpty) {
+      filtered = filtered.where((post) => 
+        post.tags.any((tag) => _selectedTags.contains(tag))
+      ).toList();
+    }
+    
+    return filtered;
   }
 
   Future<void> _loadPosts() async {
@@ -325,16 +348,95 @@ class _ForumPageState extends State<ForumPage> {
                         ],
                       ),
                     )
-                  : Stack(
+                  : Column(
                       children: [
-                        RefreshIndicator(
-                          onRefresh: _loadPosts,
-                          child: ListView.builder(
-                            padding: const EdgeInsets.only(top: 8, bottom: 100),
-                            itemCount: _filteredPosts.length,
-                            itemBuilder: (_, i) {
-                              final post = _filteredPosts[i];
-                              return ThreadTile(
+                        // Search bar
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                          color: isDark ? Colors.grey[900] : Colors.white,
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (value) {
+                              setState(() {
+                                _searchQuery = value;
+                              });
+                            },
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'Search posts...',
+                              hintStyle: TextStyle(
+                                color: isDark ? Colors.grey[600] : Colors.grey[400],
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search_rounded,
+                                color: isDark ? Colors.grey[500] : Colors.grey[600],
+                              ),
+                              suffixIcon: _searchQuery.isNotEmpty
+                                  ? IconButton(
+                                      icon: Icon(
+                                        Icons.clear_rounded,
+                                        color: isDark ? Colors.grey[500] : Colors.grey[600],
+                                      ),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        setState(() {
+                                          _searchQuery = '';
+                                        });
+                                      },
+                                    )
+                                  : null,
+                              filled: true,
+                              fillColor: isDark ? Colors.grey[850] : Colors.grey[100],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                        
+                        // Posts list
+                        Expanded(
+                          child: Stack(
+                            children: [
+                              RefreshIndicator(
+                                onRefresh: _loadPosts,
+                                child: _filteredPosts.isEmpty
+                                    ? Center(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.search_off_rounded,
+                                              size: 64,
+                                              color: isDark ? Colors.grey[700] : Colors.grey[300],
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              _searchQuery.isNotEmpty
+                                                  ? 'No posts found matching "$_searchQuery"'
+                                                  : 'No posts match your filters',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: isDark ? Colors.grey[400] : Colors.grey[600],
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : ListView.builder(
+                                        padding: const EdgeInsets.only(top: 8, bottom: 100),
+                                        itemCount: _filteredPosts.length,
+                                        itemBuilder: (_, i) {
+                                          final post = _filteredPosts[i];
+                                          return ThreadTile(
                                 post: post,
                                 onTap: () async {
                                   final result = await Navigator.push(
@@ -376,34 +478,37 @@ class _ForumPageState extends State<ForumPage> {
                                   });
                                 },
                               );
-                            },
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 20,
-                          right: 20,
-                          child: FloatingActionButton.extended(
-                            onPressed: () async {
-                              final created = await Navigator.push<ForumPost>(
-                                ctx,
-                                MaterialPageRoute(builder: (_) => const CreateThreadScreen()),
-                              );
-                              if (created != null) {
-                                setState(() {
-                                  _posts.insert(0, created);
-                                });
-                              }
-                            },
-                            backgroundColor: Colors.blue,
-                            elevation: 4,
-                            icon: const Icon(Icons.edit_rounded, color: Colors.white),
-                            label: const Text(
-                              'New Post',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                                        },
+                                      ),
                               ),
-                            ),
+                              Positioned(
+                                        bottom: 20,
+                                        right: 20,
+                                        child: FloatingActionButton.extended(
+                                          onPressed: () async {
+                                            final created = await Navigator.push<ForumPost>(
+                                              ctx,
+                                              MaterialPageRoute(builder: (_) => const CreateThreadScreen()),
+                                            );
+                                            if (created != null) {
+                                              setState(() {
+                                                _posts.insert(0, created);
+                                              });
+                                            }
+                                          },
+                                          backgroundColor: Colors.blue,
+                                          elevation: 4,
+                                          icon: const Icon(Icons.edit_rounded, color: Colors.white),
+                                          label: const Text(
+                                            'New Post',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                            ],
                           ),
                         ),
                       ],
