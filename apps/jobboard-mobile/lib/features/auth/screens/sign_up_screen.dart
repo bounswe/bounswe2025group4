@@ -5,7 +5,6 @@ import 'package:mobile/features/auth/screens/sign_in_screen.dart';
 import 'package:mobile/generated/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile/core/providers/auth_provider.dart';
-import 'package:mobile/core/providers/profile_provider.dart';
 import 'package:mobile/features/auth/screens/welcome_screen.dart';
 import '../../../core/widgets/a11y.dart';
 import 'package:mobile/core/models/register_outcome.dart';
@@ -23,11 +22,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _bioController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-  String? _selectedGender;
-
+  String? _selectedPronounSet;
 
   @override
   void dispose() {
@@ -35,6 +35,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _bioController.dispose();
     super.dispose();
   }
@@ -46,6 +48,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final username = _usernameController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
+      final firstName = _firstNameController.text.trim();
+      final lastName = _lastNameController.text.trim();
+      final pronounSet = _selectedPronounSet ?? 'other';
       final bio = _bioController.text.trim();
 
       final userType = authProvider.onboardingUserType;
@@ -54,7 +59,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         HapticFeedback.vibrate();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.signUpScreen_userTypeMissing),
+            content: Text(
+              AppLocalizations.of(context)!.signUpScreen_userTypeMissing,
+            ),
             backgroundColor: Colors.orange,
           ),
         );
@@ -62,14 +69,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
 
       try {
-
-
         final outcome = await context.read<AuthProvider>().register(
           username,
           email,
           password,
           userType,
-          bio.isNotEmpty ? bio : null,
+          firstName,
+          lastName,
+          pronounSet,
+          bio,
         );
 
         if (!mounted) return;
@@ -90,29 +98,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
               builder: (_) => MainScaffold(), // the screen we wrote earlier
             ),
           );
-        }
-        else if (outcome == RegisterOutcome.needsVerification) {
+        } else if (outcome == RegisterOutcome.needsVerification) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Please check your email for the verification token."),
+              content: Text(
+                "Please check your email for the verification token.",
+              ),
               backgroundColor: Colors.orange,
             ),
           );
 
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-              builder: (_) => const WelcomeScreen(),
-            ),
+            MaterialPageRoute(builder: (_) => const WelcomeScreen()),
           );
-        }
-        else {
+        } else {
           // This branch might not be reached since errors now throw exceptions,
           // but keeping it for robustness
           HapticFeedback.vibrate();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context)!.signUpScreen_signUpFailed),
+              content: Text(
+                AppLocalizations.of(context)!.signUpScreen_signUpFailed,
+              ),
               backgroundColor: Colors.red,
             ),
           );
@@ -124,9 +132,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         // Display specific error message
         String errorMessage;
         if (e.toString().contains('already exist')) {
-          errorMessage = AppLocalizations.of(context)!.signUpScreen_alreadyExists;
+          errorMessage =
+              AppLocalizations.of(context)!.signUpScreen_alreadyExists;
         } else {
-          errorMessage = AppLocalizations.of(context)!.signUpScreen_registrationFailed(e.toString());
+          errorMessage = AppLocalizations.of(
+            context,
+          )!.signUpScreen_registrationFailed(e.toString());
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -166,18 +177,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 Text(
                   AppLocalizations.of(context)!.signUpScreen_createAccount,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.signUpScreen_username,
+                    labelText:
+                        AppLocalizations.of(context)!.signUpScreen_username,
                     border: const OutlineInputBorder(),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.signUpScreen_usernameRequired;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_usernameRequired;
                     }
                     return null;
                   },
@@ -192,10 +209,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.signUpScreen_emailRequired;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_emailRequired;
                     }
                     if (!value.contains('@')) {
-                      return AppLocalizations.of(context)!.signUpScreen_emailInvalid;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_emailInvalid;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _firstNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'First Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your first name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _lastNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Last Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your last name';
                     }
                     return null;
                   },
@@ -205,17 +254,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.signUpScreen_password,
+                    labelText:
+                        AppLocalizations.of(context)!.signUpScreen_password,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: A11y(
-                        label: _obscurePassword
-                            ? AppLocalizations.of(context)!.common_showPassword
-                            : AppLocalizations.of(context)!.common_hidePassword,
+                        label:
+                            _obscurePassword
+                                ? AppLocalizations.of(
+                                  context,
+                                )!.common_showPassword
+                                : AppLocalizations.of(
+                                  context,
+                                )!.common_hidePassword,
                         child: Icon(
-                        _obscurePassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                       ),
                       onPressed: () {
@@ -228,22 +283,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.signUpScreen_passwordRequired;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_passwordRequired;
                     }
                     if (value.length < 8) {
-                      return AppLocalizations.of(context)!.signUpScreen_passwordTooShort;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_passwordTooShort;
                     }
                     if (!value.contains(RegExp(r'[A-Z]'))) {
-                      return AppLocalizations.of(context)!.signUpScreen_passwordNoUppercase;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_passwordNoUppercase;
                     }
                     if (!value.contains(RegExp(r'[a-z]'))) {
-                      return AppLocalizations.of(context)!.signUpScreen_passwordNoLowercase;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_passwordNoLowercase;
                     }
                     if (!value.contains(RegExp(r'[0-9]'))) {
-                      return AppLocalizations.of(context)!.signUpScreen_passwordNoNumber;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_passwordNoNumber;
                     }
                     if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-                      return AppLocalizations.of(context)!.signUpScreen_passwordNoSpecialChar;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_passwordNoSpecialChar;
                     }
                     return null;
                   },
@@ -253,17 +320,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
                   decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.signUpScreen_confirmPassword,
+                    labelText:
+                        AppLocalizations.of(
+                          context,
+                        )!.signUpScreen_confirmPassword,
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: A11y(
-                        label: _obscureConfirmPassword
-                            ? AppLocalizations.of(context)!.common_showPassword
-                            : AppLocalizations.of(context)!.common_hidePassword,
+                        label:
+                            _obscureConfirmPassword
+                                ? AppLocalizations.of(
+                                  context,
+                                )!.common_showPassword
+                                : AppLocalizations.of(
+                                  context,
+                                )!.common_hidePassword,
                         child: Icon(
-                        _obscureConfirmPassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                          _obscureConfirmPassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                       ),
                       onPressed: () {
@@ -276,36 +351,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.signUpScreen_confirmPasswordRequired;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_confirmPasswordRequired;
                     }
                     if (value != _passwordController.text) {
-                      return AppLocalizations.of(context)!.signUpScreen_passwordsDoNotMatch;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_passwordsDoNotMatch;
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: _selectedGender,
-                  items: [
+                  value: _selectedPronounSet,
+                  items: const [
+                    DropdownMenuItem(value: 'HE_HIM', child: Text('He/Him')),
+                    DropdownMenuItem(value: 'SHE_HER', child: Text('She/Her')),
                     DropdownMenuItem(
-                      value: 'female',
-                      child: Text(AppLocalizations.of(context)!.signUpScreen_female),
+                      value: 'THEY_THEM',
+                      child: Text('They/Them'),
                     ),
                     DropdownMenuItem(
-                      value: 'male',
-                      child: Text(AppLocalizations.of(context)!.signUpScreen_male),
+                      value: 'SHE_THEY',
+                      child: Text('She/They'),
                     ),
-                    DropdownMenuItem(
-                      value: 'other',
-                      child: Text(AppLocalizations.of(context)!.signUpScreen_other),
-                    ),
+                    DropdownMenuItem(value: 'HE_THEY', child: Text('He/They')),
+                    DropdownMenuItem(value: 'OTHER', child: Text('Other')),
+                    DropdownMenuItem(value: 'NONE', child: Text('None')),
                   ],
-                  onChanged: (val) => setState(() => _selectedGender = val),
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.signUpScreen_gender,
-                    border: const OutlineInputBorder(),
+                  onChanged: (val) => setState(() => _selectedPronounSet = val),
+                  decoration: const InputDecoration(
+                    labelText: 'Pronouns',
+                    border: OutlineInputBorder(),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select your pronouns';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -316,7 +402,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return AppLocalizations.of(context)!.signUpScreen_bioRequired;
+                      return AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_bioRequired;
                     }
                     return null;
                   },
@@ -343,7 +431,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             )
                             : Text(
-                              AppLocalizations.of(context)!.signUpScreen_signUpButton,
+                              AppLocalizations.of(
+                                context,
+                              )!.signUpScreen_signUpButton,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -355,7 +445,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(AppLocalizations.of(context)!.signUpScreen_alreadyHaveAccount),
+                    Text(
+                      AppLocalizations.of(
+                        context,
+                      )!.signUpScreen_alreadyHaveAccount,
+                    ),
                     TextButton(
                       onPressed: () {
                         HapticFeedback.lightImpact();
@@ -366,7 +460,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         );
                       },
-                      child: Text(AppLocalizations.of(context)!.signUpScreen_signInLink),
+                      child: Text(
+                        AppLocalizations.of(context)!.signUpScreen_signInLink,
+                      ),
                     ),
                   ],
                 ),
