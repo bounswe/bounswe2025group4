@@ -103,6 +103,23 @@ export const useNotifications = () => {
     },
   });
 
+  const markAllReadMutation = useMutation({
+    mutationFn: async () => {
+      const unreadNotifications = notifications.filter(n => !n.read && n.id !== null);
+      await Promise.all(unreadNotifications.map(n => markNotificationAsRead(n.id!)));
+    },
+    onSuccess: () => {
+      queryClient.setQueryData<NotificationItem[]>(notificationKeys.me, (existing) => {
+        if (!existing) return existing;
+        return existing.map((n) => ({ ...n, read: true }));
+      });
+    },
+    onError: () => {
+      // Revert local state on error - refresh from server
+      queryClient.invalidateQueries({ queryKey: notificationKeys.me });
+    },
+  });
+
   const markLocalRead = useCallback((notification: NotificationItem) => {
     setNotifications((prev) =>
       prev.map((n) => {
@@ -133,6 +150,13 @@ export const useNotifications = () => {
     },
     [markLocalRead, markReadMutation, navigate]
   );
+
+  const markAllAsRead = useCallback(() => {
+    // Update local state immediately for better UX
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    // Mark all unread notifications as read on server using the dedicated mutation
+    markAllReadMutation.mutate();
+  }, [markAllReadMutation]);
 
   useEffect(() => {
     if (!isAuthenticated || !accessToken) {
@@ -210,6 +234,7 @@ export const useNotifications = () => {
     setIsOpen,
     toggleOpen,
     handleNotificationClick,
+    markAllAsRead,
   };
 };
 

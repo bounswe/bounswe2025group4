@@ -1921,6 +1921,7 @@
     "empty": "You're all caught up. No notifications yet.",
     "unread": "{{count}} unread",
     "upToDate": "Up to date",
+    "markAllAsRead": "Mark all as read",
     "footer": "Newest notifications appear first."
   },
   "errors": {

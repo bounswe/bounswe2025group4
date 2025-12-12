@@ -1930,6 +1930,7 @@
     "empty": "Harika! Hiç bildirimin yok.",
     "unread": "{{count}} okunmamış",
     "upToDate": "Güncel",
+    "markAllAsRead": "Tümünü okundu olarak işaretle",
     "footer": "En yeni bildirimler önce görünür."
   },
   "errors": {

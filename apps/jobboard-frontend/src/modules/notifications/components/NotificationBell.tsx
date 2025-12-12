@@ -42,16 +42,15 @@ const NotificationListItem = ({
         isUnread ? 'bg-muted/60' : ''
       }`}
     >
-      <span
-        className={`mt-1 h-2 w-2 rounded-full ${isUnread ? 'bg-red-500' : 'bg-transparent'}`}
-        aria-hidden
-      />
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-start justify-between gap-2">
           <span className="font-medium line-clamp-1">{notification.title}</span>
-          <span className="text-xs text-muted-foreground whitespace-nowrap px-3">
-            {formatTimestamp(Number(notification.timestamp))}
-          </span>
+          <div className="flex flex-col items-end gap-1">
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              {formatTimestamp(Number(notification.timestamp))}
+            </span>
+            {isUnread && <span className="h-1.5 w-1.5 rounded-full bg-red-500" aria-hidden />}
+          </div>
         </div>
         <p className="text-sm text-muted-foreground line-clamp-2">{notification.message}</p>
       </div>
@@ -69,6 +68,7 @@ export const NotificationBell = () => {
     setIsOpen,
     isLoading,
     handleNotificationClick,
+    markAllAsRead,
   } = useNotifications();
 
   const renderList = () => {
@@ -118,26 +118,43 @@ export const NotificationBell = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-100 p-0">
-        <DropdownMenuLabel className="flex items-center justify-between px-3 py-2">
-          <span className="font-semibold">{t('notifications.title', 'Notifications')}</span>
-          {hasUnread ? (
-            <span className="text-xs text-destructive">
-              {t('notifications.unread', {
-                count: unreadCount,
-                defaultValue: `${unreadCount} unread`,
-              })}
-            </span>
-          ) : (
-            <span className="text-xs text-muted-foreground">
-              {t('notifications.upToDate', 'Up to date')}
-            </span>
-          )}
+        <DropdownMenuLabel className="px-3 py-2 mt-1">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold">{t('notifications.title', 'Notifications')}</span>
+            {hasUnread ? (
+              <span className="text-xs text-destructive">
+                {t('notifications.unread', {
+                  count: unreadCount,
+                  defaultValue: `${unreadCount} unread`,
+                })}
+              </span>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                {t('notifications.upToDate', 'Up to date')}
+              </span>
+            )}
+          </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {renderList()}
         <Separator />
-        <div className="px-3 py-2 text-xs text-muted-foreground">
-          {t('notifications.footer', 'Newest notifications appear first.')}
+        <div className="px-3 py-2 text-xs text-muted-foreground flex justify-between">
+          <span className="py-1">
+            {t('notifications.footer', 'Newest notifications appear first.')}
+          </span>
+          {hasUnread && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 px-2 text-xs"
+              onClick={(e) => {
+                e.preventDefault();
+                markAllAsRead();
+              }}
+            >
+              {t('notifications.markAllAsRead', 'Mark all as read')}
+            </Button>
+          )}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -145,4 +162,3 @@ export const NotificationBell = () => {
 };
 
 export default NotificationBell;
-
