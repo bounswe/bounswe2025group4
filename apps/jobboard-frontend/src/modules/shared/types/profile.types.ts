@@ -30,10 +30,11 @@ export interface Interest {
 
 export interface Badge {
   id: number;
+  userId: number;
+  badgeType: string;
   name: string;
-  description?: string;
-  icon?: string;
-  criteria?: string;
+  description: string;
+  criteria: string;
   earnedAt: string;
 }
 
