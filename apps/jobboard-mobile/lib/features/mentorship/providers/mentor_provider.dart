@@ -109,10 +109,12 @@ class MentorProvider with ChangeNotifier {
   // CREATE MENTORSHIP REQUEST
   Future<bool> createMentorshipRequest({
     required int mentorId,
+    required String motivation
   }) async {
     try {
       final request = await _apiService.createMentorshipRequest(
         mentorId: mentorId,
+        motivation: motivation
       );
 
       // Add the new request to the mentee requests list (current user is mentee)

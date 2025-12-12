@@ -93,6 +93,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   }
 
   void _showRequestMentorshipDialog(String mentorId, String mentorName) {
+    final TextEditingController motivationController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -101,9 +102,14 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
             mentorName,
           ),
         ),
-        //content: Text(
-        //  AppLocalizations.of(context)!.menteeScreen_provideMessage,
-        //),
+        content: TextField(
+          controller: motivationController,
+          maxLines: 4,
+          decoration: const InputDecoration(
+            hintText: "Why do you want this mentorship?",
+            border: OutlineInputBorder(),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -112,9 +118,27 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
           ),
           TextButton(
             onPressed: () {
-              _handleRequestMentorship(mentorId, mentorName);
+              final motivation = motivationController.text.trim();
+
+              if (motivation.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        "Please write your motivation to continue."
+                    ),
+                  ),
+                );
+                return;
+              }
+
+              _handleRequestMentorship(
+                mentorId,
+                mentorName,
+                motivation,
+              );
               Navigator.pop(context);
             },
+
             style: TextButton.styleFrom(foregroundColor: Colors.blue),
             child: Text(AppLocalizations.of(context)!.menteeScreen_sendRequest),
           ),
@@ -126,6 +150,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   Future<void> _handleRequestMentorship(
       String mentorId,
       String mentorName,
+      String motivation,
       ) async {
     final mentorProvider = Provider.of<MentorProvider>(
       context,
@@ -144,6 +169,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
 
       final success = await mentorProvider.createMentorshipRequest(
         mentorId: numericMentorId,
+        motivation: motivation,
       );
 
       if (success && mounted) {

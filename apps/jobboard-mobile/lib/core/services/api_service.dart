@@ -979,11 +979,13 @@ class ApiService {
   /// Creates a mentorship request.
   Future<MentorshipRequest> createMentorshipRequest({
     required int mentorId,
+    required String motivation,
   }) async {
     final uri = _buildUri('/mentorship/requests');
 
     final requestData = {
       'mentorId': mentorId,
+      'motivation': motivation
     };
 
     try {
