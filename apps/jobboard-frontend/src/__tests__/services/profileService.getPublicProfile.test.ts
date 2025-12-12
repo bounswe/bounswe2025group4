@@ -38,8 +38,11 @@ describe('Profile Service - getPublicProfile', () => {
     badges: [
       {
         id: 1,
-        name: 'Code Contributor',
-        description: 'Made significant contributions to open source projects',
+        userId: 123,
+        badgeType: 'FIRST_VOICE',
+        name: 'First Voice',
+        description: 'Published your first forum post',
+        criteria: 'Create your first forum post',
         earnedAt: '2024-01-15T00:00:00Z'
       }
     ]

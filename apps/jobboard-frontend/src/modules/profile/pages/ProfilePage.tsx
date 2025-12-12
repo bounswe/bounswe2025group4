@@ -15,6 +15,7 @@ import { SkillsSection } from '@modules/profile/components/profile/SkillsSection
 import { InterestsSection } from '@modules/profile/components/profile/InterestsSection';
 import { ActivityTab } from '@modules/profile/components/profile/ActivityTab';
 import { PostsTab } from '@modules/profile/components/profile/PostsTab';
+import { BadgesSection } from '@modules/profile/components/badges/BadgesSection';
 import {
   EditBioModal,
   ExperienceModal,
@@ -493,7 +494,7 @@ export default function ProfilePage() {
                 <span>•</span>
                 <span>42 {t('profile.header.posts')}</span>
                 <span>•</span>
-                <span>5 {t('profile.header.badges')}</span>
+                <span>{publicProfile?.badges?.length || 0} {t('profile.header.badges')}</span>
               </div>
             </div>
           </div>
@@ -611,11 +612,17 @@ export default function ProfilePage() {
                       openModal('interest', interest);
                     }}
                   />
+
+                  <BadgesSection badges={ownerProfile?.badges} />
                 </>
               ) : (
-                <div className="text-muted-foreground text-sm">
-                  {t('profile.public.note')}
-                </div>
+                <>
+                  <BadgesSection
+                    badges={publicProfile?.badges}
+                    userId={viewedUserId}
+                    isPublicView
+                  />
+                </>
               )}
             </div>
           </div>
