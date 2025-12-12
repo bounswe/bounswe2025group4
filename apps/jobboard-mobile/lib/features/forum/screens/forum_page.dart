@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../core/models/discussion_thread.dart';
+import 'package:provider/provider.dart';
+import '../../../core/models/forum_post.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/services/api_service.dart';
 import '../widgets/thread_tile.dart';
 import 'create_thread_screen.dart';
 import 'thread_detail_screen.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
-import '../services/forum_mock_data.dart';
 
 class ForumPage extends StatefulWidget {
   const ForumPage({super.key});
@@ -15,25 +17,31 @@ class ForumPage extends StatefulWidget {
 }
 
 class _ForumPageState extends State<ForumPage> {
-  List<DiscussionThread> _threads = [];
+  List<ForumPost> _posts = [];
   bool _isLoading = true;
   String? _errorMessage;
   List<String> _selectedTags = [];
   List<String> _allTags = [];
+  late final ApiService _api;
 
   @override
   void initState() {
     super.initState();
-    _loadThreads();
+    _api = ApiService(authProvider: context.read<AuthProvider>());
+    _loadPosts();
     _loadTags();
   }
 
   Future<void> _loadTags() async {
     try {
-      // Using mock data instead of API
-      final tags = await ForumMockData.fetchTags();
+      // Extract unique tags from all posts
+      final posts = await _api.fetchForumPosts();
+      final tagsSet = <String>{};
+      for (var post in posts) {
+        tagsSet.addAll(post.tags);
+      }
       setState(() {
-        _allTags = tags;
+        _allTags = tagsSet.toList()..sort();
       });
     } catch (e) {
       debugPrint('Failed to load tags: $e');
@@ -182,22 +190,21 @@ class _ForumPageState extends State<ForumPage> {
     );
   }
 
-  List<DiscussionThread> get _filteredThreads {
-    if (_selectedTags.isEmpty) return _threads;
-    return _threads
+  List<ForumPost> get _filteredPosts {
+    if (_selectedTags.isEmpty) return _posts;
+    return _posts
         .where(
-          (thread) => thread.tags.any((tag) => _selectedTags.contains(tag)),
+          (post) => post.tags.any((tag) => _selectedTags.contains(tag)),
         )
         .toList();
   }
 
-  Future<void> _loadThreads() async {
+  Future<void> _loadPosts() async {
     setState(() => _isLoading = true);
     try {
-      // Using mock data instead of API
-      final threads = await ForumMockData.fetchThreads();
+      final posts = await _api.fetchForumPosts();
       setState(() {
-        _threads = threads;
+        _posts = posts;
         _errorMessage = null;
       });
     } catch (e) {
@@ -231,13 +238,13 @@ class _ForumPageState extends State<ForumPage> {
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
-                    onPressed: _loadThreads,
+                    onPressed: _loadPosts,
                     child: Text(AppLocalizations.of(context)!.common_retry),
                   ),
                 ],
               ),
             )
-          else if (_threads.isEmpty)
+          else if (_posts.isEmpty)
             Center(
               child: Text(
                 AppLocalizations.of(context)!.forumPage_noDiscussions,
@@ -268,59 +275,51 @@ class _ForumPageState extends State<ForumPage> {
                 ),
                 Expanded(
                   child: RefreshIndicator(
-                    onRefresh: _loadThreads,
+                    onRefresh: _loadPosts,
                     child: Scrollbar(
                       thumbVisibility: true,
                       child: ListView.builder(
                         padding: const EdgeInsets.only(bottom: 100),
-                        itemCount: _filteredThreads.length,
+                        itemCount: _filteredPosts.length,
                         itemBuilder: (_, i) {
-                          final t = _filteredThreads[i];
+                          final post = _filteredPosts[i];
                           return Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,
                               vertical: 6,
                             ),
                             child: ThreadTile(
-                              thread: t,
+                              post: post,
                               onTap: () async {
                                 final result = await Navigator.push(
                                   ctx,
                                   MaterialPageRoute(
                                     builder:
-                                        (_) => ThreadDetailScreen(thread: t),
+                                        (_) => ThreadDetailScreen(post: post),
                                   ),
                                 );
-                                if (result is DiscussionThread) {
+                                if (result is ForumPost) {
                                   setState(() {
-                                    final index = _threads.indexWhere(
-                                      (thread) => thread.id == result.id,
+                                    final index = _posts.indexWhere(
+                                      (p) => p.id == result.id,
                                     );
                                     if (index != -1) {
-                                      _threads[index] = result;
+                                      _posts[index] = result;
                                     }
                                   });
                                 } else if (result == 'deleted') {
                                   setState(() {
-                                    _threads.removeWhere(
-                                      (thread) => thread.id == t.id,
+                                    _posts.removeWhere(
+                                      (p) => p.id == post.id,
                                     );
                                   });
+                                } else if (result == 'refresh') {
+                                  _loadPosts();
                                 }
-                              },
-                              onEdit: (updatedThread) {
-                                setState(() {
-                                  final index = _threads.indexWhere(
-                                    (th) => th.id == updatedThread.id,
-                                  );
-                                  if (index != -1) {
-                                    _threads[index] = updatedThread;
-                                  }
-                                });
                               },
                               onDelete: () {
                                 setState(() {
-                                  _threads.removeWhere((th) => th.id == t.id);
+                                  _posts.removeWhere((p) => p.id == post.id);
                                 });
                               },
                             ),
@@ -343,13 +342,13 @@ class _ForumPageState extends State<ForumPage> {
                 child: const Icon(Icons.add),
               ),
               onPressed: () async {
-                final created = await Navigator.push<DiscussionThread>(
+                final created = await Navigator.push<ForumPost>(
                   ctx,
                   MaterialPageRoute(builder: (_) => const CreateThreadScreen()),
                 );
                 if (created != null) {
                   setState(() {
-                    _threads.insert(0, created);
+                    _posts.insert(0, created);
                   });
                 }
               },

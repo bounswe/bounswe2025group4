@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
-import '../../../core/models/discussion_thread.dart';
-import '../../../core/models/comment.dart';
+import '../../../core/models/forum_post.dart';
+import '../../../core/models/forum_comment.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import 'create_thread_screen.dart';
@@ -10,11 +10,10 @@ import '../widgets/comment_tile.dart';
 import 'package:flutter/gestures.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
-import '../services/forum_mock_data.dart';
 
 class ThreadDetailScreen extends StatefulWidget {
-  final DiscussionThread thread;
-  const ThreadDetailScreen({super.key, required this.thread});
+  final ForumPost post;
+  const ThreadDetailScreen({super.key, required this.post});
 
   @override
   State<ThreadDetailScreen> createState() => _ThreadDetailScreenState();
@@ -24,25 +23,26 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
   final _commentCtrl = TextEditingController();
   final _commentKey = GlobalKey<FormState>();
   late final ApiService _api;
-  List<Comment> _comments = [];
-  late DiscussionThread _currentThread;
+  List<ForumComment> _comments = [];
+  late ForumPost _currentPost;
 
   @override
   void initState() {
     super.initState();
     _api = ApiService(authProvider: context.read<AuthProvider>());
-    _currentThread = widget.thread;
-    _loadComments();
+    _currentPost = widget.post;
+    _loadPost();
   }
 
-  Future<void> _loadComments() async {
+  Future<void> _loadPost() async {
     try {
-      // Using mock data instead of API
-      final updated = await ForumMockData.fetchComments(_currentThread.id);
+      final updated = await _api.getForumPost(_currentPost.id);
       setState(() {
-        _comments = updated;
+        _currentPost = updated;
+        _comments = updated.comments;
       });
     } on SocketException {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -52,6 +52,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -67,30 +68,25 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
   Future<void> _postComment() async {
     if (!_commentKey.currentState!.validate()) return;
     try {
-      // Using mock data - simulate posting a comment
-      final currentUser = context.read<AuthProvider>().currentUser;
-      if (currentUser != null) {
-        final newComment = Comment(
-          id: DateTime.now().millisecondsSinceEpoch, // Generate unique ID
-          body: _commentCtrl.text.trim(),
-          author: currentUser,
-          reported: false,
-          createdAt: DateTime.now(),
-        );
-        setState(() {
-          _comments.add(newComment);
-        });
-        _commentCtrl.clear();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Comment added successfully!',
-              style: TextStyle(color: Colors.green),
-            ),
+      final newComment = await _api.createForumComment(
+        postId: _currentPost.id,
+        content: _commentCtrl.text.trim(),
+      );
+      setState(() {
+        _comments.add(newComment);
+      });
+      _commentCtrl.clear();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Comment added successfully!',
+            style: TextStyle(color: Colors.green),
           ),
-        );
-      }
+        ),
+      );
     } on SocketException {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -100,6 +96,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -120,12 +117,12 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final currentUser = context.read<AuthProvider>().currentUser?.id;
-    final isOwner = _currentThread.creatorId.toString() == currentUser;
+    final isOwner = _currentPost.authorId.toString() == currentUser;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _currentThread.title,
+          _currentPost.title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
@@ -157,14 +154,14 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                 );
               } else if (action == 'Edit' && isOwner) {
                 try {
-                  final updated = await navigator.push<DiscussionThread>(
+                  final updated = await navigator.push<ForumPost>(
                     MaterialPageRoute(
                       builder:
-                          (_) => CreateThreadScreen(thread: _currentThread),
+                          (_) => CreateThreadScreen(post: _currentPost),
                     ),
                   );
                   if (updated != null) {
-                    setState(() => _currentThread = updated);
+                    setState(() => _currentPost = updated);
                     navigator.pop(updated);
                   }
                 } on SocketException {
@@ -190,7 +187,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                 }
               } else if (action == 'Delete' && isOwner) {
                 try {
-                  await _api.deleteDiscussion(_currentThread.id);
+                  await _api.deleteForumPost(_currentPost.id);
                   navigator.pop('deleted');
                 } on SocketException {
                   messenger.showSnackBar(
@@ -245,7 +242,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
         children: [
           Expanded(
             child: RefreshIndicator(
-              onRefresh: _loadComments,
+              onRefresh: _loadPost,
               child: Scrollbar(
                 thumbVisibility: true,
                 child: ListView.builder(
@@ -292,7 +289,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: _currentThread.creatorUsername,
+                                        text: _currentPost.authorUsername,
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -343,7 +340,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  _currentThread.body,
+                                  _currentPost.content,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
@@ -376,7 +373,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 Wrap(
                                   spacing: 6,
                                   children:
-                                      _currentThread.tags
+                                      _currentPost.tags
                                           .map(
                                             (tag) => Chip(
                                               label: Text(
@@ -420,24 +417,23 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                       ),
                                     ),
                                     const SizedBox(width: 4),
-                                    Text(
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.threadDetail_created(
-                                        _currentThread.createdAt
-                                            .toLocal()
-                                            .toString()
-                                            .split(".")
-                                            .first,
+                                      Text(
+                                        AppLocalizations.of(
+                                          context,
+                                        )!.threadDetail_created(
+                                          _currentPost.createdAt
+                                              .toLocal()
+                                              .toString()
+                                              .split(".")
+                                              .first,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                if (_currentThread.editedAt != null)
+                                    ],
+                                  ),
                                   Row(
                                     children: [
                                       const A11y(
-                                        label: 'Edited at',
+                                        label: 'Updated at',
                                         child: Icon(Icons.edit, size: 16),
                                       ),
                                       const SizedBox(width: 4),
@@ -445,7 +441,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                         AppLocalizations.of(
                                           context,
                                         )!.threadDetail_edited(
-                                          _currentThread.editedAt!
+                                          _currentPost.updatedAt
                                               .toLocal()
                                               .toString()
                                               .split(".")
@@ -481,42 +477,24 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                         CommentTile(
                           key: ValueKey("comment-${comment.id}"),
                           comment: comment,
-                          onUpdate: (id, newBody) {
+                          onUpdate: (updatedComment) {
                             setState(() {
                               final index = _comments.indexWhere(
-                                (c) => c.id == id,
+                                (c) => c.id == updatedComment.id,
                               );
                               if (index != -1) {
-                                _comments[index] = Comment(
-                                  id: id,
-                                  body: newBody,
-                                  author: _comments[index].author,
-                                  reported: _comments[index].reported,
-                                  createdAt: _comments[index].createdAt,
-                                );
+                                _comments[index] = updatedComment;
                               }
                             });
                           },
                           onDelete: (id) async {
                             try {
-                              final success = await _api.deleteComment(id);
-                              if (success) {
-                                setState(() {
-                                  _comments.removeWhere((c) => c.id == id);
-                                });
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      AppLocalizations.of(
-                                        context,
-                                      )!.threadDetail_deleteCommentError,
-                                      style: const TextStyle(color: Colors.red),
-                                    ),
-                                  ),
-                                );
-                              }
+                              await _api.deleteForumComment(id);
+                              setState(() {
+                                _comments.removeWhere((c) => c.id == id);
+                              });
                             } on SocketException {
+                              if (!mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
@@ -528,6 +506,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                 ),
                               );
                             } catch (e) {
+                              if (!mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(

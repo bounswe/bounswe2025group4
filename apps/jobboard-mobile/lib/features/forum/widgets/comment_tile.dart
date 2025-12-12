@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
-import '../../../core/models/comment.dart';
+import '../../../core/models/forum_comment.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/widgets/a11y.dart';
 
 class CommentTile extends StatefulWidget {
-  final Comment comment;
-  final void Function(int commentId, String newBody)? onUpdate;
+  final ForumComment comment;
+  final void Function(ForumComment updatedComment)? onUpdate;
   final void Function(int commentId)? onDelete;
 
   const CommentTile({
@@ -28,7 +28,7 @@ class _CommentTileState extends State<CommentTile> {
   Widget build(BuildContext ctx) {
     final api = ApiService(authProvider: ctx.read<AuthProvider>());
     final currentUser = ctx.read<AuthProvider>().currentUser?.id;
-    final isOwner = widget.comment.author.id == currentUser;
+    final isOwner = widget.comment.authorId.toString() == currentUser;
 
     return ListTile(
       key: ValueKey(widget.comment.id),
@@ -44,7 +44,7 @@ class _CommentTileState extends State<CommentTile> {
               ),
             ),
             TextSpan(
-              text: widget.comment.author.username,
+              text: widget.comment.authorUsername,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -77,7 +77,7 @@ class _CommentTileState extends State<CommentTile> {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.comment.body),
+          Text(widget.comment.content),
           const SizedBox(height: 4),
           Wrap(
             spacing: 12,
@@ -98,21 +98,48 @@ class _CommentTileState extends State<CommentTile> {
                   ),
                 ],
               ),
-              if (widget.comment.editedAt != null)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const A11y(
-                      label: 'Edited at',
-                      child: Icon(Icons.edit, size: 14),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Edited: ${widget.comment.editedAt!.toLocal().toString().split(".").first}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const A11y(
+                    label: 'Updated at',
+                    child: Icon(Icons.edit, size: 14),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Updated: ${widget.comment.updatedAt.toLocal().toString().split(".").first}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const A11y(
+                    label: 'Upvotes',
+                    child: Icon(Icons.arrow_upward, size: 14),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${widget.comment.upvoteCount}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const A11y(
+                    label: 'Downvotes',
+                    child: Icon(Icons.arrow_downward, size: 14),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${widget.comment.downvoteCount}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
             ],
           ),
         ],
@@ -140,7 +167,9 @@ class _CommentTileState extends State<CommentTile> {
               },
             );
           } else if (action == 'Edit' && isOwner) {
-            final controller = TextEditingController(text: widget.comment.body);
+            final controller = TextEditingController(
+              text: widget.comment.content,
+            );
             final edited = await showDialog<String>(
               context: ctx,
               builder:
@@ -168,8 +197,11 @@ class _CommentTileState extends State<CommentTile> {
             );
             if (edited != null && edited.isNotEmpty) {
               try {
-                await api.editComment(widget.comment.id, edited);
-                widget.onUpdate?.call(widget.comment.id, edited);
+                final updated = await api.updateForumComment(
+                  commentId: widget.comment.id,
+                  content: edited,
+                );
+                widget.onUpdate?.call(updated);
               } on SocketException {
                 messenger.showSnackBar(
                   const SnackBar(
@@ -183,7 +215,7 @@ class _CommentTileState extends State<CommentTile> {
                 messenger.showSnackBar(
                   const SnackBar(
                     content: Text(
-                      "Failed: This discussion is no longer available.",
+                      "Failed: This comment is no longer available.",
                       style: TextStyle(color: Colors.red),
                     ),
                   ),

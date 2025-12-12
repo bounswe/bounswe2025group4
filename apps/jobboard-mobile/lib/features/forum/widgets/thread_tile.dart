@@ -1,24 +1,19 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import '../../../core/models/discussion_thread.dart';
-import '../../../core/providers/auth_provider.dart';
-import '../../../core/services/api_service.dart';
+import '../../../core/models/forum_post.dart';
 import '../../../core/widgets/a11y.dart';
 
 class ThreadTile extends StatefulWidget {
-  final DiscussionThread thread;
+  final ForumPost post;
   final VoidCallback onTap;
   final VoidCallback? onDelete;
-  final ValueChanged<DiscussionThread>? onEdit;
 
   const ThreadTile({
     super.key,
-    required this.thread,
+    required this.post,
     required this.onTap,
     this.onDelete,
-    this.onEdit,
   });
 
   @override
@@ -28,9 +23,6 @@ class ThreadTile extends StatefulWidget {
 class _ThreadTileState extends State<ThreadTile> {
   @override
   Widget build(BuildContext ctx) {
-    final api = ApiService(authProvider: ctx.read<AuthProvider>());
-    final currentUser = ctx.read<AuthProvider>().currentUser?.id;
-    final isOwner = widget.thread.creatorId.toString() == currentUser;
 
     return GestureDetector(
       onTap: () {
@@ -70,7 +62,7 @@ class _ThreadTileState extends State<ThreadTile> {
                         ),
                       ),
                       TextSpan(
-                        text: widget.thread.creatorUsername,
+                        text: widget.post.authorUsername,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -96,12 +88,12 @@ class _ThreadTileState extends State<ThreadTile> {
                             TapGestureRecognizer()
                               ..onTap = () {
                                 HapticFeedback.lightImpact();
-                                // Disabled for mock data - will be enabled when API is ready
+                                // TODO: Navigate to user profile when implemented
                                 // Navigator.push(
                                 //   context,
                                 //   MaterialPageRoute(
                                 //     builder: (_) => UserProfileView(
-                                //       userId: int.parse(widget.thread.creatorId),
+                                //       userId: widget.post.authorId,
                                 //     ),
                                 //   ),
                                 // );
@@ -124,7 +116,7 @@ class _ThreadTileState extends State<ThreadTile> {
                 ),
               ),
               Text(
-                widget.thread.title,
+                widget.post.title,
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -141,7 +133,7 @@ class _ThreadTileState extends State<ThreadTile> {
                 ),
               ),
               Text(
-                widget.thread.body,
+                widget.post.content,
                 style: TextStyle(
                   fontSize: 15.5,
                   fontWeight: FontWeight.w500,
@@ -170,7 +162,7 @@ class _ThreadTileState extends State<ThreadTile> {
               Wrap(
                 spacing: 6,
                 children:
-                    widget.thread.tags
+                    widget.post.tags
                         .map(
                           (tag) => Chip(
                             label: Text(
@@ -206,32 +198,30 @@ class _ThreadTileState extends State<ThreadTile> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Created: ${widget.thread.createdAt.toLocal().toString().split(".").first}',
+                        'Created: ${widget.post.createdAt.toLocal().toString().split(".").first}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),
-                  if (widget.thread.editedAt != null) ...[
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const A11y(
-                          label: 'Edited at',
-                          child: Icon(Icons.edit, size: 16),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Edited: ${widget.thread.editedAt!.toLocal().toString().split(".").first}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ],
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const A11y(
+                        label: 'Updated at',
+                        child: Icon(Icons.edit, size: 16),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Updated: ${widget.post.updatedAt.toLocal().toString().split(".").first}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
 
-              // Comments count
+              // Stats row
               Row(
                 children: [
                   const A11y(
@@ -240,7 +230,27 @@ class _ThreadTileState extends State<ThreadTile> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${widget.thread.commentCount} comments',
+                    '${widget.post.commentCount} comments',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(width: 16),
+                  const A11y(
+                    label: 'Upvotes',
+                    child: Icon(Icons.arrow_upward, size: 20),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${widget.post.upvoteCount}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(width: 16),
+                  const A11y(
+                    label: 'Downvotes',
+                    child: Icon(Icons.arrow_downward, size: 20),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${widget.post.downvoteCount}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

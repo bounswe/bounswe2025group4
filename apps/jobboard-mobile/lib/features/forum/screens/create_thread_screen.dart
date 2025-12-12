@@ -4,13 +4,13 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
-import '../../../core/models/discussion_thread.dart';
+import '../../../core/models/forum_post.dart';
 import '../../../core/services/tag_recommendation_service.dart';
 import '../../../generated/l10n/app_localizations.dart';
 
 class CreateThreadScreen extends StatefulWidget {
-  final DiscussionThread? thread;
-  const CreateThreadScreen({super.key, this.thread});
+  final ForumPost? post;
+  const CreateThreadScreen({super.key, this.post});
 
   @override
   State<CreateThreadScreen> createState() => _CreateThreadScreenState();
@@ -24,21 +24,34 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
   List<String> _selectedTags = [];
   List<String> _availableTags = [];
   String? _tagError;
+  late final ApiService _api;
 
   @override
   void initState() {
     super.initState();
-    _titleCtrl = TextEditingController(text: widget.thread?.title ?? '');
-    _bodyCtrl = TextEditingController(text: widget.thread?.body ?? '');
-    if (widget.thread != null) {
-      _selectedTags = List<String>.from(widget.thread!.tags);
+    _api = ApiService(authProvider: context.read<AuthProvider>());
+    _titleCtrl = TextEditingController(text: widget.post?.title ?? '');
+    _bodyCtrl = TextEditingController(text: widget.post?.content ?? '');
+    if (widget.post != null) {
+      _selectedTags = List<String>.from(widget.post!.tags);
     }
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    ApiService(authProvider: authProvider).fetchDiscussionTags().then((tags) {
+    _loadTags();
+  }
+
+  Future<void> _loadTags() async {
+    try {
+      // Extract unique tags from all posts
+      final posts = await _api.fetchForumPosts();
+      final tagsSet = <String>{};
+      for (var post in posts) {
+        tagsSet.addAll(post.tags);
+      }
       setState(() {
-        _availableTags = tags;
+        _availableTags = tagsSet.toList()..sort();
       });
-    });
+    } catch (e) {
+      debugPrint('Failed to load tags: $e');
+    }
   }
 
   @override
@@ -301,7 +314,7 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = widget.thread != null;
+    final isEditing = widget.post != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -444,21 +457,19 @@ class _CreateThreadScreenState extends State<CreateThreadScreen> {
                     final valid = _formKey.currentState!.validate();
                     if (!valid) return;
 
-                    final authProvider = context.read<AuthProvider>();
-                    final api = ApiService(authProvider: authProvider);
                     try {
-                      final DiscussionThread saved =
+                      final ForumPost saved =
                           isEditing
-                              ? await api.editDiscussion(
-                                widget.thread!.id,
-                                _titleCtrl.text.trim(),
-                                _bodyCtrl.text.trim(),
-                                _selectedTags,
+                              ? await _api.updateForumPost(
+                                postId: widget.post!.id,
+                                title: _titleCtrl.text.trim(),
+                                content: _bodyCtrl.text.trim(),
+                                tags: _selectedTags,
                               )
-                              : await api.createDiscussionThread(
-                                _titleCtrl.text.trim(),
-                                _bodyCtrl.text.trim(),
-                                _selectedTags,
+                              : await _api.createForumPost(
+                                title: _titleCtrl.text.trim(),
+                                content: _bodyCtrl.text.trim(),
+                                tags: _selectedTags,
                               );
                       if (!mounted) return;
                       HapticFeedback.heavyImpact();
