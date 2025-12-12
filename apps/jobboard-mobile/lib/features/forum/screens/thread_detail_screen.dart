@@ -34,6 +34,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
     super.initState();
     _api = ApiService(authProvider: context.read<AuthProvider>());
     _currentPost = widget.post;
+    _comments = widget.post.comments; // Initialize with existing comments
     _loadPost();
   }
 
@@ -87,10 +88,12 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
   Future<void> _loadPost() async {
     try {
       final updated = await _api.getForumPost(_currentPost.id);
-      setState(() {
-        _currentPost = updated;
-        _comments = updated.comments;
-      });
+      if (mounted) {
+        setState(() {
+          _currentPost = updated;
+          _comments = updated.comments;
+        });
+      }
     } on SocketException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -287,395 +290,446 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
           ),
         ],
       ),
+      backgroundColor:
+          Theme.of(context).brightness == Brightness.dark
+              ? Colors.black
+              : Colors.grey[50],
       body: Column(
         children: [
           Expanded(
             child: RefreshIndicator(
               onRefresh: _loadPost,
-              child: Scrollbar(
-                thumbVisibility: true,
-                child: ListView.builder(
-                  itemCount: _comments.length + 2,
-                  itemBuilder: (ctx, i) {
-                    if (i == 0) {
-                      return Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Card(
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+              child: ListView.builder(
+                itemCount: _comments.length + 2,
+                padding: const EdgeInsets.only(bottom: 80),
+                itemBuilder: (ctx, i) {
+                  final isDark = Theme.of(ctx).brightness == Brightness.dark;
+
+                  if (i == 0) {
+                    return Container(
+                      margin: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.grey[850] : Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                isDark
+                                    ? Colors.black26
+                                    : Colors.grey.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Author header
+                            Row(
                               children: [
-                                Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.threadDetail_threadDetails,
-                                  style: Theme.of(context).textTheme.titleLarge,
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor:
+                                      isDark
+                                          ? Colors.blue[700]
+                                          : Colors.blue[100],
+                                  child: Text(
+                                    _currentPost.authorUsername[0]
+                                        .toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          isDark
+                                              ? Colors.white
+                                              : Colors.blue[900],
+                                    ),
+                                  ),
                                 ),
-                                const SizedBox(height: 12),
-
-                                // Creator
-                                RichText(
-                                  text: TextSpan(
-                                    style: const TextStyle(fontSize: 16),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      TextSpan(
-                                        text:
-                                            AppLocalizations.of(
-                                              context,
-                                            )!.threadDetail_creator,
-                                        style: TextStyle(
-                                          color:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.grey.shade300
-                                                  : Colors.black87,
-                                          fontWeight: FontWeight.w500,
+                                      GestureDetector(
+                                        onTap:
+                                            () => _navigateToUserProfile(
+                                              _currentPost.authorId,
+                                            ),
+                                        child: Text(
+                                          _currentPost.authorUsername,
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color:
+                                                isDark
+                                                    ? Colors.blue[300]
+                                                    : Colors.blue[700],
+                                          ),
                                         ),
                                       ),
-                                      TextSpan(
-                                        text: _currentPost.authorUsername,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              Theme.of(context).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.blue.shade300
-                                                  : Color(0xFF1565C0),
-                                          decoration: TextDecoration.underline,
-                                        ),
-                                        recognizer:
-                                            TapGestureRecognizer()
-                                              ..onTap = () {
-                                                _navigateToUserProfile(
-                                                  _currentPost.authorId,
-                                                );
-                                              },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                // Content
-                                Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.threadDetail_content,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.grey.shade400
-                                            : Colors.grey[700],
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _currentPost.content,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color:
-                                        Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.grey.shade300
-                                            : Colors.black87,
-                                    height: 1.4,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                // Tags
-                                Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.threadDetail_tags,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.grey.shade400
-                                            : Colors.grey[700],
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Wrap(
-                                  spacing: 6,
-                                  children:
-                                      _currentPost.tags
-                                          .map(
-                                            (tag) => Chip(
-                                              label: Text(
-                                                tag,
-                                                style: TextStyle(
-                                                  color:
-                                                      Theme.of(
-                                                                context,
-                                                              ).brightness ==
-                                                              Brightness.dark
-                                                          ? Colors.blue.shade200
-                                                          : Colors
-                                                              .blue
-                                                              .shade900,
-                                                ),
+                                      const SizedBox(height: 2),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            DateFormatter.formatRelativeTime(
+                                              _currentPost.createdAt,
+                                            ),
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color:
+                                                  isDark
+                                                      ? Colors.grey[400]
+                                                      : Colors.grey[600],
+                                            ),
+                                          ),
+                                          if (_currentPost.createdAt
+                                                  .difference(
+                                                    _currentPost.updatedAt,
+                                                  )
+                                                  .abs()
+                                                  .inSeconds >
+                                              1) ...[
+                                            Text(
+                                              ' • edited',
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color:
+                                                    isDark
+                                                        ? Colors.grey[500]
+                                                        : Colors.grey[500],
+                                                fontStyle: FontStyle.italic,
                                               ),
-                                              backgroundColor:
-                                                  Theme.of(
-                                                            context,
-                                                          ).brightness ==
-                                                          Brightness.dark
-                                                      ? Colors.blue.shade900
-                                                          .withOpacity(0.3)
-                                                      : Colors.blue.shade50,
-                                              side: BorderSide.none,
                                             ),
-                                          )
-                                          .toList(),
-                                ),
-
-                                const SizedBox(height: 12),
-
-                                // Timestamps
-                                Row(
-                                  children: [
-                                    const A11y(
-                                      label: 'Created at',
-                                      child: Icon(Icons.access_time, size: 16),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      DateFormatter.formatRelativeTime(
-                                        _currentPost.createdAt,
-                                      ),
-                                      style: TextStyle(color: Colors.grey[600]),
-                                    ),
-                                    if (_currentPost.createdAt !=
-                                        _currentPost.updatedAt) ...[
-                                      const SizedBox(width: 12),
-                                      const A11y(
-                                        label: 'Edited',
-                                        child: Icon(Icons.edit, size: 16),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        '(edited ${DateFormatter.formatRelativeTime(_currentPost.updatedAt)})',
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontStyle: FontStyle.italic,
-                                        ),
+                                          ],
+                                        ],
                                       ),
                                     ],
-                                  ],
-                                ),
-
-                                const SizedBox(height: 16),
-
-                                // Voting and stats
-                                Row(
-                                  children: [
-                                    // Upvote button
-                                    A11y(
-                                      label: 'Upvote',
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          onTap:
-                                              _isVoting ? null : _handleUpvote,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 8,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.arrow_upward,
-                                                  size: 24,
-                                                  color: Colors.green[700],
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  '${_currentPost.upvoteCount}',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.green[700],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-
-                                    // Downvote button
-                                    A11y(
-                                      label: 'Downvote',
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        child: InkWell(
-                                          onTap:
-                                              _isVoting
-                                                  ? null
-                                                  : _handleDownvote,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 8,
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.arrow_downward,
-                                                  size: 24,
-                                                  color: Colors.red[700],
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  '${_currentPost.downvoteCount}',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.red[700],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 16),
-
-                                    // Comments count
-                                    const A11y(
-                                      label: 'Comments',
-                                      child: Icon(
-                                        Icons.comment,
-                                        size: 20,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '${_currentPost.commentCount}',
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium,
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
-                      );
-                    }
+                            const SizedBox(height: 20),
 
-                    if (i == 1) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context)!.threadDetail_comments,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                      );
-                    }
+                            // Content
+                            Text(
+                              _currentPost.content,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color:
+                                    isDark
+                                        ? Colors.grey[200]
+                                        : Colors.grey[800],
+                                height: 1.5,
+                              ),
+                            ),
 
-                    final comment = _comments[i - 2];
-                    return Column(
-                      key: ValueKey("comment-block-${comment.id}"),
-                      children: [
-                        CommentTile(
-                          key: ValueKey("comment-${comment.id}"),
-                          comment: comment,
-                          onUpdate: (updatedComment) {
-                            setState(() {
-                              final index = _comments.indexWhere(
-                                (c) => c.id == updatedComment.id,
-                              );
-                              if (index != -1) {
-                                _comments[index] = updatedComment;
-                              }
-                            });
-                          },
-                          onDelete: (id) async {
-                            try {
-                              await _api.deleteForumComment(id);
-                              setState(() {
-                                _comments.removeWhere((c) => c.id == id);
-                              });
-                            } on SocketException {
-                              if (!mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.threadDetail_connectionError,
-                                    style: const TextStyle(color: Colors.red),
+                            // Tags
+                            if (_currentPost.tags.isNotEmpty) ...[
+                              const SizedBox(height: 16),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children:
+                                    _currentPost.tags
+                                        .map(
+                                          (tag) => Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 6,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  isDark
+                                                      ? Colors.blue[900]!
+                                                          .withOpacity(0.3)
+                                                      : Colors.blue[50],
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                            child: Text(
+                                              tag,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color:
+                                                    isDark
+                                                        ? Colors.blue[200]
+                                                        : Colors.blue[700],
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                              ),
+                            ],
+
+                            const SizedBox(height: 16),
+
+                            // Divider
+                            Divider(
+                              height: 1,
+                              color:
+                                  isDark ? Colors.grey[800] : Colors.grey[200],
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            // Voting and stats
+                            Row(
+                              children: [
+                                // Upvote
+                                Expanded(
+                                  child: A11y(
+                                    label: 'Upvote',
+                                    child: InkWell(
+                                      onTap: _isVoting ? null : _handleUpvote,
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.arrow_upward_rounded,
+                                              size: 20,
+                                              color: Colors.green[600],
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              '${_currentPost.upvoteCount}',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.green[600],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              );
-                            } catch (e) {
-                              if (!mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.threadDetail_deleteCommentError,
-                                    style: const TextStyle(color: Colors.red),
+
+                                // Downvote
+                                Expanded(
+                                  child: A11y(
+                                    label: 'Downvote',
+                                    child: InkWell(
+                                      onTap: _isVoting ? null : _handleDownvote,
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.arrow_downward_rounded,
+                                              size: 20,
+                                              color: Colors.red[600],
+                                            ),
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              '${_currentPost.downvoteCount}',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.red[600],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              );
-                            }
-                          },
+
+                                // Comments
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.chat_bubble_outline_rounded,
+                                          size: 20,
+                                          color:
+                                              isDark
+                                                  ? Colors.grey[400]
+                                                  : Colors.grey[600],
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          '${_currentPost.commentCount}',
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color:
+                                                isDark
+                                                    ? Colors.grey[400]
+                                                    : Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        const Divider(),
-                      ],
+                      ),
                     );
-                  },
-                ),
+                  }
+
+                  if (i == 1) {
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+                      child: Row(
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.threadDetail_comments,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color:
+                                  isDark ? Colors.grey[800] : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${_comments.length}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color:
+                                    isDark
+                                        ? Colors.grey[400]
+                                        : Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final comment = _comments[i - 2];
+                  return CommentTile(
+                    key: ValueKey("comment-${comment.id}"),
+                    comment: comment,
+                    onUpdate: (updatedComment) {
+                      // Reload the entire post to get updated vote counts for all comments
+                      _loadPost();
+                    },
+                    onDelete: (id) async {
+                      try {
+                        await _api.deleteForumComment(id);
+                        setState(() {
+                          _comments.removeWhere((c) => c.id == id);
+                        });
+                      } on SocketException {
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.threadDetail_connectionError,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.threadDetail_deleteCommentError,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                },
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          Container(
+            decoration: BoxDecoration(
+              color:
+                  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[900]
+                      : Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 12,
+              bottom: MediaQuery.of(context).padding.bottom + 12,
+            ),
             child: Form(
               key: _commentKey,
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
                     child: TextFormField(
                       controller: _commentCtrl,
+                      maxLines: null,
+                      textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(
                         hintText:
                             AppLocalizations.of(
                               context,
                             )!.threadDetail_addComment,
+                        filled: true,
+                        fillColor:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey[850]
+                                : Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                       ),
                       validator:
                           (v) =>
@@ -686,12 +740,23 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                   : null,
                     ),
                   ),
-                  IconButton(
-                    icon: const A11y(
-                      label: 'Send comment',
-                      child: Icon(Icons.send),
+                  const SizedBox(width: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      shape: BoxShape.circle,
                     ),
-                    onPressed: _postComment,
+                    child: IconButton(
+                      icon: const A11y(
+                        label: 'Send comment',
+                        child: Icon(
+                          Icons.send_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                      onPressed: _postComment,
+                    ),
                   ),
                 ],
               ),

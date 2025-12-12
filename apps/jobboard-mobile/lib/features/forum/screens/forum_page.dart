@@ -216,152 +216,198 @@ class _ForumPageState extends State<ForumPage> {
 
   @override
   Widget build(BuildContext ctx) {
+    final isDark = Theme.of(ctx).brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? Colors.black : Colors.grey[50],
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(AppLocalizations.of(context)!.forumPage_title),
-      ),
-      body: Stack(
-        children: [
-          if (_isLoading)
-            const Center(child: CircularProgressIndicator())
-          else if (_errorMessage != null)
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.forumPage_loadError,
-                    style: const TextStyle(color: Colors.red),
+        elevation: 0,
+        backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+        title: Text(
+          AppLocalizations.of(context)!.forumPage_title,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 28,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
+        actions: [
+          // Filter button
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: IconButton(
+              onPressed: _showFilterModal,
+              icon: A11y(
+                label: AppLocalizations.of(context)!.forumPage_filter,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: _selectedTags.isNotEmpty
+                        ? Colors.blue.withOpacity(0.1)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: _loadPosts,
-                    child: Text(AppLocalizations.of(context)!.common_retry),
-                  ),
-                ],
-              ),
-            )
-          else if (_posts.isEmpty)
-            Center(
-              child: Text(
-                AppLocalizations.of(context)!.forumPage_noDiscussions,
-              ),
-            )
-          else ...[
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: ElevatedButton.icon(
-                      onPressed: _showFilterModal,
-                      icon: A11y(
-                        label: AppLocalizations.of(context)!.forumPage_filter,
-                        child: const Icon(Icons.filter_list),
-                      ),
-                      label: Text(
-                        AppLocalizations.of(context)!.forumPage_filter,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
+                  child: Badge(
+                    isLabelVisible: _selectedTags.isNotEmpty,
+                    label: Text('${_selectedTags.length}'),
+                    child: Icon(
+                      Icons.filter_list_rounded,
+                      color: _selectedTags.isNotEmpty
+                          ? Colors.blue
+                          : (isDark ? Colors.grey[400] : Colors.grey[700]),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: _loadPosts,
-                    child: Scrollbar(
-                      thumbVisibility: true,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.only(bottom: 100),
-                        itemCount: _filteredPosts.length,
-                        itemBuilder: (_, i) {
-                          final post = _filteredPosts[i];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            child: ThreadTile(
-                              post: post,
-                              onTap: () async {
-                                final result = await Navigator.push(
-                                  ctx,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => ThreadDetailScreen(post: post),
-                                  ),
-                                );
-                                if (result is ForumPost) {
-                                  setState(() {
-                                    final index = _posts.indexWhere(
-                                      (p) => p.id == result.id,
-                                    );
-                                    if (index != -1) {
-                                      _posts[index] = result;
-                                    }
-                                  });
-                                } else if (result == 'deleted') {
-                                  setState(() {
-                                    _posts.removeWhere((p) => p.id == post.id);
-                                  });
-                                } else if (result == 'refresh') {
-                                  _loadPosts();
-                                }
-                              },
-                              onPostUpdated: (updatedPost) {
-                                setState(() {
-                                  final index = _posts.indexWhere(
-                                    (p) => p.id == updatedPost.id,
-                                  );
-                                  if (index != -1) {
-                                    _posts[index] = updatedPost;
-                                  }
-                                });
-                              },
-                              onDelete: () {
-                                setState(() {
-                                  _posts.removeWhere((p) => p.id == post.id);
-                                });
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-          // Always show FAB
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatingActionButton(
-              child: A11y(
-                label: AppLocalizations.of(context)!.createThread_newTitle,
-                child: const Icon(Icons.add),
               ),
-              onPressed: () async {
-                final created = await Navigator.push<ForumPost>(
-                  ctx,
-                  MaterialPageRoute(builder: (_) => const CreateThreadScreen()),
-                );
-                if (created != null) {
-                  setState(() {
-                    _posts.insert(0, created);
-                  });
-                }
-              },
             ),
           ),
         ],
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline_rounded,
+                        size: 64,
+                        color: Colors.red[300],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)!.forumPage_loadError,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton.icon(
+                        onPressed: _loadPosts,
+                        icon: const Icon(Icons.refresh_rounded),
+                        label: Text(AppLocalizations.of(context)!.common_retry),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : _posts.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.forum_outlined,
+                            size: 64,
+                            color: isDark ? Colors.grey[700] : Colors.grey[300],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            AppLocalizations.of(context)!.forumPage_noDiscussions,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Stack(
+                      children: [
+                        RefreshIndicator(
+                          onRefresh: _loadPosts,
+                          child: ListView.builder(
+                            padding: const EdgeInsets.only(top: 8, bottom: 100),
+                            itemCount: _filteredPosts.length,
+                            itemBuilder: (_, i) {
+                              final post = _filteredPosts[i];
+                              return ThreadTile(
+                                post: post,
+                                onTap: () async {
+                                  final result = await Navigator.push(
+                                    ctx,
+                                    MaterialPageRoute(
+                                      builder: (_) => ThreadDetailScreen(post: post),
+                                    ),
+                                  );
+                                  if (result is ForumPost) {
+                                    setState(() {
+                                      final index = _posts.indexWhere(
+                                        (p) => p.id == result.id,
+                                      );
+                                      if (index != -1) {
+                                        _posts[index] = result;
+                                      }
+                                    });
+                                  } else if (result == 'deleted') {
+                                    setState(() {
+                                      _posts.removeWhere((p) => p.id == post.id);
+                                    });
+                                  } else if (result == 'refresh') {
+                                    _loadPosts();
+                                  }
+                                },
+                                onPostUpdated: (updatedPost) {
+                                  setState(() {
+                                    final index = _posts.indexWhere(
+                                      (p) => p.id == updatedPost.id,
+                                    );
+                                    if (index != -1) {
+                                      _posts[index] = updatedPost;
+                                    }
+                                  });
+                                },
+                                onDelete: () {
+                                  setState(() {
+                                    _posts.removeWhere((p) => p.id == post.id);
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 20,
+                          right: 20,
+                          child: FloatingActionButton.extended(
+                            onPressed: () async {
+                              final created = await Navigator.push<ForumPost>(
+                                ctx,
+                                MaterialPageRoute(builder: (_) => const CreateThreadScreen()),
+                              );
+                              if (created != null) {
+                                setState(() {
+                                  _posts.insert(0, created);
+                                });
+                              }
+                            },
+                            backgroundColor: Colors.blue,
+                            elevation: 4,
+                            icon: const Icon(Icons.edit_rounded, color: Colors.white),
+                            label: const Text(
+                              'New Post',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
     );
   }
 }
