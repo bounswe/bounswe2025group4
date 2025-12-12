@@ -10,6 +10,8 @@ import '../widgets/comment_tile.dart';
 import 'package:flutter/gestures.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
+import '../../../core/utils/date_formatter.dart';
+import 'user_profile_view_screen.dart';
 
 class ThreadDetailScreen extends StatefulWidget {
   final ForumPost post;
@@ -25,6 +27,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
   late final ApiService _api;
   List<ForumComment> _comments = [];
   late ForumPost _currentPost;
+  bool _isVoting = false;
 
   @override
   void initState() {
@@ -32,6 +35,53 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
     _api = ApiService(authProvider: context.read<AuthProvider>());
     _currentPost = widget.post;
     _loadPost();
+  }
+
+  Future<void> _handleUpvote() async {
+    if (_isVoting) return;
+    setState(() => _isVoting = true);
+
+    try {
+      await _api.upvoteForumPost(_currentPost.id);
+      await _loadPost();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to upvote: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isVoting = false);
+      }
+    }
+  }
+
+  Future<void> _handleDownvote() async {
+    if (_isVoting) return;
+    setState(() => _isVoting = true);
+
+    try {
+      await _api.downvoteForumPost(_currentPost.id);
+      await _loadPost();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to downvote: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isVoting = false);
+      }
+    }
+  }
+
+  void _navigateToUserProfile(int userId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => UserProfileViewScreen(userId: userId)),
+    );
   }
 
   Future<void> _loadPost() async {
@@ -156,8 +206,7 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                 try {
                   final updated = await navigator.push<ForumPost>(
                     MaterialPageRoute(
-                      builder:
-                          (_) => CreateThreadScreen(post: _currentPost),
+                      builder: (_) => CreateThreadScreen(post: _currentPost),
                     ),
                   );
                   if (updated != null) {
@@ -303,19 +352,9 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                         recognizer:
                                             TapGestureRecognizer()
                                               ..onTap = () {
-                                                // Disabled for mock data - will be enabled when API is ready
-                                                // Navigator.push(
-                                                //   context,
-                                                //   MaterialPageRoute(
-                                                //     builder:
-                                                //         (_) => UserProfileView(
-                                                //           userId: int.parse(
-                                                //             _currentThread
-                                                //                 .creatorId,
-                                                //           ),
-                                                //         ),
-                                                //   ),
-                                                // );
+                                                _navigateToUserProfile(
+                                                  _currentPost.authorId,
+                                                );
                                               },
                                       ),
                                     ],
@@ -411,45 +450,140 @@ class _ThreadDetailScreenState extends State<ThreadDetailScreen> {
                                   children: [
                                     const A11y(
                                       label: 'Created at',
-                                      child: Icon(
-                                        Icons.calendar_today,
-                                        size: 16,
-                                      ),
+                                      child: Icon(Icons.access_time, size: 16),
                                     ),
                                     const SizedBox(width: 4),
-                                      Text(
-                                        AppLocalizations.of(
-                                          context,
-                                        )!.threadDetail_created(
-                                          _currentPost.createdAt
-                                              .toLocal()
-                                              .toString()
-                                              .split(".")
-                                              .first,
-                                        ),
+                                    Text(
+                                      DateFormatter.formatRelativeTime(
+                                        _currentPost.createdAt,
                                       ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
+                                      style: TextStyle(color: Colors.grey[600]),
+                                    ),
+                                    if (_currentPost.createdAt !=
+                                        _currentPost.updatedAt) ...[
+                                      const SizedBox(width: 12),
                                       const A11y(
-                                        label: 'Updated at',
+                                        label: 'Edited',
                                         child: Icon(Icons.edit, size: 16),
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        AppLocalizations.of(
-                                          context,
-                                        )!.threadDetail_edited(
-                                          _currentPost.updatedAt
-                                              .toLocal()
-                                              .toString()
-                                              .split(".")
-                                              .first,
+                                        '(edited ${DateFormatter.formatRelativeTime(_currentPost.updatedAt)})',
+                                        style: TextStyle(
+                                          color: Colors.grey[600],
+                                          fontStyle: FontStyle.italic,
                                         ),
                                       ),
                                     ],
-                                  ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 16),
+
+                                // Voting and stats
+                                Row(
+                                  children: [
+                                    // Upvote button
+                                    A11y(
+                                      label: 'Upvote',
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap:
+                                              _isVoting ? null : _handleUpvote,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 8,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.arrow_upward,
+                                                  size: 24,
+                                                  color: Colors.green[700],
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  '${_currentPost.upvoteCount}',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.green[700],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+
+                                    // Downvote button
+                                    A11y(
+                                      label: 'Downvote',
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          onTap:
+                                              _isVoting
+                                                  ? null
+                                                  : _handleDownvote,
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 8,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.arrow_downward,
+                                                  size: 24,
+                                                  color: Colors.red[700],
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  '${_currentPost.downvoteCount}',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.red[700],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+
+                                    // Comments count
+                                    const A11y(
+                                      label: 'Comments',
+                                      child: Icon(
+                                        Icons.comment,
+                                        size: 20,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${_currentPost.commentCount}',
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium,
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),

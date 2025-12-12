@@ -193,9 +193,7 @@ class _ForumPageState extends State<ForumPage> {
   List<ForumPost> get _filteredPosts {
     if (_selectedTags.isEmpty) return _posts;
     return _posts
-        .where(
-          (post) => post.tags.any((tag) => _selectedTags.contains(tag)),
-        )
+        .where((post) => post.tags.any((tag) => _selectedTags.contains(tag)))
         .toList();
   }
 
@@ -309,13 +307,21 @@ class _ForumPageState extends State<ForumPage> {
                                   });
                                 } else if (result == 'deleted') {
                                   setState(() {
-                                    _posts.removeWhere(
-                                      (p) => p.id == post.id,
-                                    );
+                                    _posts.removeWhere((p) => p.id == post.id);
                                   });
                                 } else if (result == 'refresh') {
                                   _loadPosts();
                                 }
+                              },
+                              onPostUpdated: (updatedPost) {
+                                setState(() {
+                                  final index = _posts.indexWhere(
+                                    (p) => p.id == updatedPost.id,
+                                  );
+                                  if (index != -1) {
+                                    _posts[index] = updatedPost;
+                                  }
+                                });
                               },
                               onDelete: () {
                                 setState(() {

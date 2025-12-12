@@ -1,19 +1,26 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../core/models/forum_post.dart';
 import '../../../core/widgets/a11y.dart';
+import '../../../core/utils/date_formatter.dart';
+import '../../../core/services/api_service.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../screens/user_profile_view_screen.dart';
 
 class ThreadTile extends StatefulWidget {
   final ForumPost post;
   final VoidCallback onTap;
   final VoidCallback? onDelete;
+  final Function(ForumPost)? onPostUpdated;
 
   const ThreadTile({
     super.key,
     required this.post,
     required this.onTap,
     this.onDelete,
+    this.onPostUpdated,
   });
 
   @override
@@ -21,9 +28,88 @@ class ThreadTile extends StatefulWidget {
 }
 
 class _ThreadTileState extends State<ThreadTile> {
+  late ForumPost _currentPost;
+  bool _isVoting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPost = widget.post;
+  }
+
+  @override
+  void didUpdateWidget(ThreadTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.post != widget.post) {
+      _currentPost = widget.post;
+    }
+  }
+
+  Future<void> _handleUpvote() async {
+    if (_isVoting) return;
+    setState(() => _isVoting = true);
+
+    try {
+      final api = ApiService(authProvider: context.read<AuthProvider>());
+      await api.upvoteForumPost(_currentPost.id);
+
+      // Refresh the post to get updated vote counts
+      final updatedPost = await api.getForumPost(_currentPost.id);
+      setState(() {
+        _currentPost = updatedPost;
+      });
+      widget.onPostUpdated?.call(updatedPost);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to upvote: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isVoting = false);
+      }
+    }
+  }
+
+  Future<void> _handleDownvote() async {
+    if (_isVoting) return;
+    setState(() => _isVoting = true);
+
+    try {
+      final api = ApiService(authProvider: context.read<AuthProvider>());
+      await api.downvoteForumPost(_currentPost.id);
+
+      // Refresh the post to get updated vote counts
+      final updatedPost = await api.getForumPost(_currentPost.id);
+      setState(() {
+        _currentPost = updatedPost;
+      });
+      widget.onPostUpdated?.call(updatedPost);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to downvote: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isVoting = false);
+      }
+    }
+  }
+
+  void _navigateToUserProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => UserProfileViewScreen(userId: _currentPost.authorId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext ctx) {
-
     return GestureDetector(
       onTap: () {
         HapticFeedback.lightImpact();
@@ -62,7 +148,7 @@ class _ThreadTileState extends State<ThreadTile> {
                         ),
                       ),
                       TextSpan(
-                        text: widget.post.authorUsername,
+                        text: _currentPost.authorUsername,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -88,15 +174,7 @@ class _ThreadTileState extends State<ThreadTile> {
                             TapGestureRecognizer()
                               ..onTap = () {
                                 HapticFeedback.lightImpact();
-                                // TODO: Navigate to user profile when implemented
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (_) => UserProfileView(
-                                //       userId: widget.post.authorId,
-                                //     ),
-                                //   ),
-                                // );
+                                _navigateToUserProfile();
                               },
                       ),
                     ],
@@ -116,7 +194,7 @@ class _ThreadTileState extends State<ThreadTile> {
                 ),
               ),
               Text(
-                widget.post.title,
+                _currentPost.title,
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -133,7 +211,7 @@ class _ThreadTileState extends State<ThreadTile> {
                 ),
               ),
               Text(
-                widget.post.content,
+                _currentPost.content,
                 style: TextStyle(
                   fontSize: 15.5,
                   fontWeight: FontWeight.w500,
@@ -162,7 +240,7 @@ class _ThreadTileState extends State<ThreadTile> {
               Wrap(
                 spacing: 6,
                 children:
-                    widget.post.tags
+                    _currentPost.tags
                         .map(
                           (tag) => Chip(
                             label: Text(
@@ -187,70 +265,113 @@ class _ThreadTileState extends State<ThreadTile> {
               const SizedBox(height: 12),
 
               // Timestamp Section
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      const A11y(
-                        label: 'Created at',
-                        child: Icon(Icons.calendar_today, size: 16),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Created: ${widget.post.createdAt.toLocal().toString().split(".").first}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
+                  const A11y(
+                    label: 'Created at',
+                    child: Icon(Icons.access_time, size: 16),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const A11y(
-                        label: 'Updated at',
-                        child: Icon(Icons.edit, size: 16),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Updated: ${widget.post.updatedAt.toLocal().toString().split(".").first}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
+                  const SizedBox(width: 4),
+                  Text(
+                    DateFormatter.formatRelativeTime(_currentPost.createdAt),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                   ),
+                  if (_currentPost.createdAt != _currentPost.updatedAt) ...[
+                    const SizedBox(width: 12),
+                    const A11y(
+                      label: 'Edited',
+                      child: Icon(Icons.edit, size: 16),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '(edited ${DateFormatter.formatRelativeTime(_currentPost.updatedAt)})',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                 ],
               ),
               const SizedBox(height: 12),
 
-              // Stats row
+              // Stats and voting row
               Row(
                 children: [
+                  // Upvote button
+                  A11y(
+                    label: 'Upvote',
+                    child: InkWell(
+                      onTap: _isVoting ? null : _handleUpvote,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.arrow_upward,
+                              size: 20,
+                              color: Colors.green[700],
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              '${_currentPost.upvoteCount}',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // Downvote button
+                  A11y(
+                    label: 'Downvote',
+                    child: InkWell(
+                      onTap: _isVoting ? null : _handleDownvote,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.arrow_downward,
+                              size: 20,
+                              color: Colors.red[700],
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              '${_currentPost.downvoteCount}',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+
+                  // Comments count
                   const A11y(
                     label: 'Comments',
-                    child: Icon(Icons.comment, size: 20),
+                    child: Icon(Icons.comment, size: 20, color: Colors.grey),
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${widget.post.commentCount} comments',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(width: 16),
-                  const A11y(
-                    label: 'Upvotes',
-                    child: Icon(Icons.arrow_upward, size: 20),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${widget.post.upvoteCount}',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  const SizedBox(width: 16),
-                  const A11y(
-                    label: 'Downvotes',
-                    child: Icon(Icons.arrow_downward, size: 20),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${widget.post.downvoteCount}',
+                    '${_currentPost.commentCount}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
