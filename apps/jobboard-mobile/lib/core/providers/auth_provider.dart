@@ -12,6 +12,7 @@ import '../models/auth_errors.dart'; // Import the custom exception
 import 'package:mobile/core/models/login_result.dart';
 import 'package:mobile/core/models/pass_reset_req_result.dart';
 import 'package:mobile/features/mentorship/providers/mentor_provider.dart';
+
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
   User? _currentUser;
@@ -99,8 +100,7 @@ class AuthProvider with ChangeNotifier {
           } catch (e) {
             print("Error parsing stored mentorshipStatus: $e");
           }
-        }
-        else {
+        } else {
           mentorshipStatus = MentorshipStatus.MENTEE;
         }
 
@@ -250,7 +250,10 @@ class AuthProvider with ChangeNotifier {
     String email,
     String password,
     UserType userType,
-    String? bio,
+    String firstName,
+    String lastName,
+    String pronounSet,
+    String bio,
   ) async {
     _isLoading = true;
     notifyListeners();
@@ -260,8 +263,12 @@ class AuthProvider with ChangeNotifier {
       final requestDto = RegisterRequestDto(
         username: username,
         email: email,
-        password: password,
         role: userType,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        pronounSet: pronounSet,
+        bio: bio,
       );
 
       print('RegisterRequestDto: ' + requestDto.toJson().toString());
@@ -309,8 +316,6 @@ class AuthProvider with ChangeNotifier {
               'lastName': 'Your name',
               'bio': bio ?? '',
             });
-
-
           } catch (e) {
             // Profile creation failed, user can create manually later
             print('Error creating initial profile after registration: $e');
@@ -567,12 +572,10 @@ class AuthProvider with ChangeNotifier {
           await prefs.remove('expertise');
         }
 
-
         print("Persisted updated user details including mentorship data.");
       } catch (e) {
         print("Error saving updated user details: $e");
       }
-
     } else {
       print("User changed during detail fetch, aborting update.");
     }
@@ -616,13 +619,12 @@ class AuthProvider with ChangeNotifier {
         // User is a mentor
         _currentUser = _currentUser!.copyWith(
           mentorshipStatus: MentorshipStatus.MENTOR,
-          expertise: profile.expertise,             // this is List<String>
+          expertise: profile.expertise, // this is List<String>
           maxMenteeCount: profile.maxMentees,
         );
 
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString(
-            'mentorshipStatus', MentorshipStatus.MENTOR.name);
+        await prefs.setString('mentorshipStatus', MentorshipStatus.MENTOR.name);
         await prefs.setStringList('expertise', profile.expertise);
         await prefs.setInt('maxMenteeCount', profile.maxMentees);
 
@@ -660,5 +662,4 @@ class AuthProvider with ChangeNotifier {
 
     notifyListeners();
   }
-
 }
