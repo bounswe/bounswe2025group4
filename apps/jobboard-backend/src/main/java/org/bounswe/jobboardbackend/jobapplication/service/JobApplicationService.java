@@ -12,14 +12,14 @@ import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.notification.model.NotificationType;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
 import org.bounswe.jobboardbackend.badge.event.JobApplicationCreatedEvent;
-import org.bounswe.jobboardbackend.badge.event.JobApplicationApprovedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,6 +47,7 @@ public class JobApplicationService {
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final WorkplaceRepository workplaceRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final NotificationService notificationService;
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -70,7 +71,8 @@ public class JobApplicationService {
                                  WorkplaceService workplaceService,
                                  EmployerWorkplaceRepository employerWorkplaceRepository,
                                  WorkplaceRepository workplaceRepository,
-                                 ApplicationEventPublisher eventPublisher) {
+                                 ApplicationEventPublisher eventPublisher,
+                                 NotificationService notificationService) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
         this.jobPostRepository = jobPostRepository;
@@ -78,6 +80,7 @@ public class JobApplicationService {
         this.employerWorkplaceRepository = employerWorkplaceRepository;
         this.workplaceRepository = workplaceRepository;
         this.eventPublisher = eventPublisher;
+        this.notificationService = notificationService;
     }
 
     @Transactional(readOnly = true)
@@ -146,6 +149,21 @@ public class JobApplicationService {
 
         JobApplication savedApplication = applicationRepository.save(application);
 
+        String message = String.format(
+                "You received a new job application from %s for the position '%s' (Application ID: %d).",
+                jobSeeker.getUsername(),
+                jobPost.getTitle(),
+                application.getId()
+        );
+
+        notificationService.notifyUser(
+                jobSeeker.getUsername(),
+                "New Job Application Request",
+                NotificationType.JOB_APPLICATION_APPROVED,
+                message,
+                savedApplication.getId()
+        );
+
         // Publish event for badge system
         eventPublisher.publishEvent(new JobApplicationCreatedEvent(jobSeeker.getId(), savedApplication.getId()));
 
@@ -169,10 +187,28 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        notificationService.notifyUser(application.getJobSeeker().getUsername(), "Job Application Approval", NotificationType.JOB_APPLICATION_APPROVED, "Job Application is approved by" + employer.getUsername(), application.getId());
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        User jobSeeker = savedApplication.getJobSeeker();
+        JobPost jobPost = savedApplication.getJobPost();
+
+        String message = String.format(
+                "Your application for '%s' (ID: %d) has been approved by %s.",
+                jobPost.getTitle(),
+                savedApplication.getId(),
+                employer.getUsername()
+        );
+
+        notificationService.notifyUser(
+                jobSeeker.getUsername(),
+                "Job Application Approved",
+                NotificationType.JOB_APPLICATION_APPROVED,
+                message,
+                savedApplication.getId()
+        );
 
 
-        return toResponseDto(applicationRepository.save(application));
+        return toResponseDto(savedApplication);
     }
 
     @Transactional
@@ -192,7 +228,28 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        User jobSeeker = savedApplication.getJobSeeker();
+        JobPost jobPost = savedApplication.getJobPost();
+
+        String message = String.format(
+                "Your application for '%s' (ID: %d) has been rejected by %s.",
+                jobPost.getTitle(),
+                savedApplication.getId(),
+                employer.getUsername()
+        );
+
+        notificationService.notifyUser(
+                jobSeeker.getUsername(),
+                "Job Application Rejection",
+                NotificationType.JOB_APPLICATION_REJECTED,
+                message,
+                savedApplication.getId()
+        );
+
+
+        return toResponseDto(savedApplication);
     }
 
     @Transactional

@@ -21,6 +21,8 @@ import org.bounswe.jobboardbackend.forum.repository.ForumPostUpvoteRepository;
 import org.bounswe.jobboardbackend.badge.event.CommentCreatedEvent;
 import org.bounswe.jobboardbackend.badge.event.CommentUpvotedEvent;
 import org.bounswe.jobboardbackend.badge.event.ForumPostCreatedEvent;
+import org.bounswe.jobboardbackend.notification.model.NotificationType;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,7 @@ public class ForumService {
     private final ApplicationEventPublisher eventPublisher;
     private final ForumPostUpvoteRepository postUpvoteRepository;
     private final ForumPostDownvoteRepository postDownvoteRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public PostResponse createPost(User author, CreatePostRequest request) {
@@ -130,6 +133,8 @@ public class ForumService {
                 .build();
 
         ForumComment savedComment = commentRepository.save(comment);
+
+        notificationService.notifyUser(post.getAuthor().getUsername(), "NEW COMMENT from " + author.getUsername(), NotificationType.FORUM_COMMENT, request.getContent(), postId);
 
         // Publish event for badge checking
         eventPublisher.publishEvent(new CommentCreatedEvent(author.getId(), savedComment.getId(), postId));

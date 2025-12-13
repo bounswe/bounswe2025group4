@@ -2,6 +2,7 @@ package org.bounswe.jobboardbackend.badge.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.badge.model.Badge;
 import org.bounswe.jobboardbackend.badge.model.BadgeType;
 import org.bounswe.jobboardbackend.badge.repository.BadgeRepository;
@@ -15,6 +16,8 @@ import org.bounswe.jobboardbackend.mentorship.model.RequestStatus;
 import org.bounswe.jobboardbackend.mentorship.repository.MentorProfileRepository;
 import org.bounswe.jobboardbackend.mentorship.repository.MentorReviewRepository;
 import org.bounswe.jobboardbackend.mentorship.repository.MentorshipRequestRepository;
+import org.bounswe.jobboardbackend.notification.model.NotificationType;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,7 @@ public class BadgeService {
     private final MentorProfileRepository mentorProfileRepository;
     private final MentorshipRequestRepository mentorshipRequestRepository;
     private final MentorReviewRepository mentorReviewRepository;
+    private final NotificationService notificationService;
 
     /**
      * Award a badge to a user if they don't already have it.
@@ -65,14 +69,21 @@ public class BadgeService {
                 .build();
         
         badgeRepository.save(badge);
-        log.info("Awarded badge {} to user {}", badgeType, userId);
-        
-        // TODO: Send notification to user about earned badge
-        // notificationService.sendBadgeNotification(userId, badgeType);
-        // Notification should include:
-        // - Badge name: badgeType.getDisplayName()
-        // - Badge description: badgeType.getDescription()
-        // - Message: "Congratulations! You earned the '{badgeName}' badge!"
+
+        User user = User.builder().id(userId).build();
+        String message = String.format(
+                "Congratulations! You earned the '%s' badge!",
+                badgeType.getDisplayName()
+        );
+
+        notificationService.notifyUser(
+                user.getUsername(),
+                "Awarded Badge",
+                NotificationType.AWARDED_BADGE,
+                message,
+                badge.getId()
+        );
+
         
         return true;
     }

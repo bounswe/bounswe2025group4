@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -62,6 +63,9 @@ class MentorshipServiceImplTest {
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
 
     @BeforeEach
