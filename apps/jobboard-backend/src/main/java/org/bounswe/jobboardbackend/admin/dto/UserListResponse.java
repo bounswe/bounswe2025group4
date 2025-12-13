@@ -13,7 +13,6 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserListResponse {
-
     private Long id;
     private String username;
     private String email;

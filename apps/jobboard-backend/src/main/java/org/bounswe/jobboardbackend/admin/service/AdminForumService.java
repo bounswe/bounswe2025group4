@@ -21,8 +21,6 @@ public class AdminForumService {
     public void deletePost(Long postId, String reason) {
         ForumPost post = forumPostRepository.findById(postId)
                 .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Forum post not found"));
-
-        // Cascade delete will handle comments
         forumPostRepository.delete(post);
 
         // TODO: Log deletion with reason for audit

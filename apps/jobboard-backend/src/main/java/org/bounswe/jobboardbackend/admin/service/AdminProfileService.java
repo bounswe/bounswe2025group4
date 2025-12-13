@@ -23,7 +23,7 @@ public class AdminProfileService {
                 .orElseThrow(() -> new HandleException(ErrorCode.PROFILE_NOT_FOUND, "Profile not found"));
 
         profileRepository.delete(profile);
-        profileRepository.flush(); // Force immediate deletion
+        profileRepository.flush();
     }
 
     @Transactional

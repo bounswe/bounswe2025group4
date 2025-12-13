@@ -46,10 +46,8 @@ public class ReportService {
 
     @Transactional
     public ReportResponse createReport(CreateReportRequest request, User reporter) {
-        // Validate entity exists
         validateEntityExists(request.getEntityType(), request.getEntityId());
 
-        // Check if THIS user already reported this entity
         reportRepository.findByEntityTypeAndEntityIdAndCreatedBy(
                 request.getEntityType(),
                 request.getEntityId(),
@@ -57,7 +55,6 @@ public class ReportService {
                     throw new HandleException(ErrorCode.BAD_REQUEST, "You have already reported this content");
                 });
 
-        // Create report
         Report report = Report.builder()
                 .entityType(request.getEntityType())
                 .entityId(request.getEntityId())
@@ -98,9 +95,6 @@ public class ReportService {
         return ReportResponse.from(report, entityName);
     }
 
-    /**
-     * Resolve entity name based on type and ID
-     */
     private String getEntityName(ReportableEntityType entityType, Long entityId) {
         return switch (entityType) {
             case WORKPLACE -> workplaceRepository.findById(entityId)
@@ -129,9 +123,6 @@ public class ReportService {
         };
     }
 
-    /**
-     * Validate that the reported entity exists
-     */
     private void validateEntityExists(ReportableEntityType entityType, Long entityId) {
         boolean exists = switch (entityType) {
             case WORKPLACE -> workplaceRepository.existsById(entityId);

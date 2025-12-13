@@ -15,7 +15,7 @@ public class ReportResponse {
     private Long id;
     private ReportableEntityType entityType;
     private Long entityId;
-    private String entityName; // Dynamic: workplace name, review title, post title, etc.
+    private String entityName;
     private Long createdByUserId;
     private String createdByUsername;
     private ReportReasonType reasonType;

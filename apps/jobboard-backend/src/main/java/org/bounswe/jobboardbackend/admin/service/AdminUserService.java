@@ -66,33 +66,28 @@ public class AdminUserService {
         user.setIsBanned(true);
         user.setBanReason(request.getReason());
         userRepository.save(user);
-        userRepository.flush(); // Force immediate ban status update
+        userRepository.flush();
 
         // CASCADE DELETIONS
         // 1. Delete profile
         profileRepository.findByUserId(userId).ifPresent(profile -> {
             profileRepository.delete(profile);
-            profileRepository.flush(); // Force immediate deletion
+            profileRepository.flush();
         });
 
         badgeRepository.deleteAllByUserId(userId);
 
-        // 2. Delete mentorships if user is a mentor
         mentorProfileRepository.findByUserId(userId).ifPresent(mentor -> {
             mentorshipRequestRepository.deleteAllByMentorId(mentor.getId());
             mentorProfileRepository.delete(mentor);
         });
 
-        // 3. Delete job applications
         jobApplicationRepository.deleteAllByJobSeekerId(userId);
 
-        // 4. Delete owned workplaces (where user is OWNER) using proper cascade
         employerWorkplaceRepository.findByUser_IdAndRole(userId, EmployerRole.OWNER)
                 .forEach(ew -> adminWorkplaceService.deleteWorkplace(ew.getWorkplace().getId(),
                         "Owner banned: " + request.getReason()));
 
-        // NOTE: Forum posts/comments and workplace reviews/replies are PRESERVED
-        // They will be displayed as content from "banned user"
     }
 
     @Transactional
@@ -115,7 +110,6 @@ public class AdminUserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
 
-        // Cascade delete will be handled by database constraints
         userRepository.delete(user);
     }
 

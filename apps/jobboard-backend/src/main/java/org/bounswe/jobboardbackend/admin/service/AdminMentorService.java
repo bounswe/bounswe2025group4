@@ -22,20 +22,17 @@ public class AdminMentorService {
 
     @Transactional
     public void deleteMentor(Long mentorProfileId, String reason) {
-        // Get mentor to extract userId
         MentorProfile mentorProfile = mentorProfileRepository.findById(mentorProfileId)
                 .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Mentor profile not found"));
         Long userId = mentorProfile.getUser().getId();
 
-        // Ban user as mentor
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
         user.setIsMentorBanned(true);
         user.setMentorBanReason(reason);
         userRepository.save(user);
-        userRepository.flush(); // Ensure immediate database update
+        userRepository.flush();
 
-        // Delete mentor profile
         mentorshipService.deleteMentorProfile(userId);
 
         // TODO: Log deletion with reason for audit

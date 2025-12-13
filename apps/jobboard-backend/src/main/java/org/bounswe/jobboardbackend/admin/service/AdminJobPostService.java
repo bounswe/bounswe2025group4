@@ -21,7 +21,6 @@ public class AdminJobPostService {
         JobPost jobPost = jobPostRepository.findById(jobPostId)
                 .orElseThrow(() -> new HandleException(ErrorCode.JOB_POST_NOT_FOUND, "Job post not found"));
 
-        // Delete related job applications first (cascade)
         jobApplicationRepository.deleteAllByJobPostId(jobPostId);
 
         jobPostRepository.delete(jobPost);
