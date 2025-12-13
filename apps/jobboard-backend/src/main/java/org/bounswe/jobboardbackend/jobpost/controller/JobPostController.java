@@ -34,9 +34,9 @@ public class JobPostController {
             @RequestParam(required = false) Integer maxSalary,
             @RequestParam(required = false) Boolean isRemote,
             @RequestParam(required = false) Boolean inclusiveOpportunity,
-            @RequestParam(required = false) Boolean nonProfit
-    ) {
-        return ResponseEntity.ok(service.getFiltered(title, companyName, location, sector, ethicalTags, minSalary, maxSalary, isRemote, inclusiveOpportunity, nonProfit));
+            @RequestParam(required = false) Boolean nonProfit) {
+        return ResponseEntity.ok(service.getFiltered(title, companyName, location, sector, ethicalTags, minSalary,
+                maxSalary, isRemote, inclusiveOpportunity, nonProfit));
     }
 
     @PreAuthorize("isAuthenticated()")

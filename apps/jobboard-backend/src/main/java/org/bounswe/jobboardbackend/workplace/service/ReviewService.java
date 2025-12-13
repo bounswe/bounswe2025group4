@@ -379,6 +379,11 @@ public class ReviewService {
         }
 
         // === HELPERS ===
+
+        public ReviewResponse toResponse(Review r, boolean withExtras) {
+                return toResponse(r, withExtras, false);
+        }
+
         private Pageable makeSort(int page, int size, String sortBy) {
                 if (sortBy == null) {
                         return PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
