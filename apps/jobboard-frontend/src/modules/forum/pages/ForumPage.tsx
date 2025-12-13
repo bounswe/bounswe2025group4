@@ -40,6 +40,19 @@ const ForumPage = () => {
       queryClient.invalidateQueries({ queryKey: forumKeys.posts });
     },
   });
+  
+  // Track per-post vote state minimally so we can show filled icons after server confirms
+  const [postVotes, setPostVotes] = useState<Record<number, 'none' | 'like' | 'dislike'>>({});
+  const [upvotingIds, setUpvotingIds] = useState<number[]>([]);
+  const [downvotingIds, setDownvotingIds] = useState<number[]>([]);
+
+  const setPostVote = (postId: number, vote: 'none' | 'like' | 'dislike') => {
+    setPostVotes((prev) => ({ ...prev, [postId]: vote }));
+  };
+
+  const setLoadingId = (setter: React.Dispatch<React.SetStateAction<number[]>>, id: number, add: boolean) => {
+    setter((prev) => (add ? [...prev, id] : prev.filter((x) => x !== id)));
+  };
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -140,8 +153,28 @@ const ForumPage = () => {
                     <LikeDislikeButtons
                       likes={post.upvoteCount}
                       dislikes={post.downvoteCount}
-                      onLike={() => upvoteMutation.mutate(post.id)}
-                      onDislike={() => downvoteMutation.mutate(post.id)}
+                      onLike={async () => {
+                        try {
+                          setLoadingId(setUpvotingIds, post.id, true);
+                          await upvoteMutation.mutateAsync(post.id);
+                          setPostVote(post.id, 'like');
+                        } finally {
+                          setLoadingId(setUpvotingIds, post.id, false);
+                        }
+                      }}
+                      onDislike={async () => {
+                        try {
+                          setLoadingId(setDownvotingIds, post.id, true);
+                          await downvoteMutation.mutateAsync(post.id);
+                          setPostVote(post.id, 'dislike');
+                        } finally {
+                          setLoadingId(setDownvotingIds, post.id, false);
+                        }
+                      }}
+                      likeLoading={upvotingIds.includes(post.id)}
+                      dislikeLoading={downvotingIds.includes(post.id)}
+                      activeLike={postVotes[post.id] === 'like'}
+                      activeDislike={postVotes[post.id] === 'dislike'}
                     />
                   </div>
                   <div className="flex items-center gap-2">

@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import { useState } from 'react';
 import { useForumPostQuery, createComment as createCommentFn, updateComment as updateCommentFn, deleteComment as deleteCommentFn, upvoteComment as upvoteCommentFn, downvoteComment as downvoteCommentFn, upvotePost as upvotePostFn, downvotePost as downvotePostFn } from '@modules/forum/services/forum.service';
 import Comment from '@modules/forum/components/forum/Comment';
 import CommentForm from '@modules/forum/components/forum/CommentForm';
@@ -51,6 +52,20 @@ const ForumPostDetail = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: forumKeys.post(id) }),
   });
 
+  // Local maps to show active state until backend provides per-user flags
+  const [postVote, setPostVote] = useState<'none' | 'like' | 'dislike'>('none');
+  const [commentVotes, setCommentVotes] = useState<Record<number, 'none' | 'like' | 'dislike'>>({});
+  const [upvotingComments, setUpvotingComments] = useState<number[]>([]);
+  const [downvotingComments, setDownvotingComments] = useState<number[]>([]);
+
+  const setCommentVote = (commentId: number, vote: 'none' | 'like' | 'dislike') => {
+    setCommentVotes((prev) => ({ ...prev, [commentId]: vote }));
+  };
+
+  const setCommentLoading = (setter: React.Dispatch<React.SetStateAction<number[]>>, id: number, add: boolean) => {
+    setter((prev) => (add ? [...prev, id] : prev.filter((x) => x !== id)));
+  };
+
   if (isLoading) return <div className="container mx-auto p-6">Loading...</div>;
   if (isError || !post) return <div className="container mx-auto p-6">Post not found</div>;
 
@@ -76,8 +91,24 @@ const ForumPostDetail = () => {
             <LikeDislikeButtons
               likes={post.upvoteCount}
               dislikes={post.downvoteCount}
-              onLike={() => upvotePostMutation.mutate()}
-              onDislike={() => downvotePostMutation.mutate()}
+              onLike={async () => {
+                try {
+                  await upvotePostMutation.mutateAsync();
+                  setPostVote('like');
+                } catch (err) {
+                  // error handled by mutation toast
+                }
+              }}
+              onDislike={async () => {
+                try {
+                  await downvotePostMutation.mutateAsync();
+                  setPostVote('dislike');
+                } catch (err) {}
+              }}
+              likeLoading={(upvotePostMutation as any).isLoading}
+              dislikeLoading={(downvotePostMutation as any).isLoading}
+              activeLike={postVote === 'like'}
+              activeDislike={postVote === 'dislike'}
             />
           </div>
         </CardContent>
@@ -93,8 +124,26 @@ const ForumPostDetail = () => {
               comment={{ id: String(c.id), author: c.authorUsername, content: c.content, likes: c.upvoteCount, dislikes: c.downvoteCount }}
               onEdit={(commentId, newContent) => updateCommentMutation.mutate({ commentId: Number(commentId), content: newContent })}
               onDelete={(commentId) => deleteCommentMutation.mutate(Number(commentId))}
-              onLike={(commentId) => upvoteCommentMutation.mutate(Number(commentId))}
-              onDislike={(commentId) => downvoteCommentMutation.mutate(Number(commentId))}
+              onLike={async (commentId) => {
+                try {
+                  setCommentLoading(setUpvotingComments, c.id, true);
+                  await upvoteCommentMutation.mutateAsync(Number(commentId));
+                  setCommentVote(c.id, 'like');
+                } finally {
+                  setCommentLoading(setUpvotingComments, c.id, false);
+                }
+              }}
+              onDislike={async (commentId) => {
+                try {
+                  setCommentLoading(setDownvotingComments, c.id, true);
+                  await downvoteCommentMutation.mutateAsync(Number(commentId));
+                  setCommentVote(c.id, 'dislike');
+                } finally {
+                  setCommentLoading(setDownvotingComments, c.id, false);
+                }
+              }}
+              activeLike={commentVotes[c.id] === 'like'}
+              activeDislike={commentVotes[c.id] === 'dislike'}
             />
           ))}
         </div>

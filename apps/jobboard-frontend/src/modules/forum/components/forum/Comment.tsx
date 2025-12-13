@@ -4,7 +4,9 @@ import { Button } from "@shared/components/ui/button";
 import { Card, CardContent } from "@shared/components/ui/card";
 import { Input } from '@shared/components/ui/input';
 import LikeDislikeButtons from "./LikeDislikeButtons";
-import ReportDialog from "./ReportDialog";
+import { ShieldAlert } from 'lucide-react';
+import { useReportModal } from '@shared/hooks/useReportModal';
+import { reportForumComment } from '@modules/workplace/services/workplace-report.service';
 
 interface CommentProps {
   comment: {
@@ -18,13 +20,18 @@ interface CommentProps {
   onDelete: (commentId: string) => void;
   onLike?: (commentId: string) => void;
   onDislike?: (commentId: string) => void;
+  activeLike?: boolean;
+  activeDislike?: boolean;
 }
 
-const Comment = ({ comment, onEdit, onDelete, onLike, onDislike }: CommentProps) => {
+const Comment = ({ comment, onEdit, onDelete, onLike, onDislike, activeLike, activeDislike }: CommentProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
-  const [likes, setLikes] = useState(comment.likes);
-  const [dislikes, setDislikes] = useState(comment.dislikes);
+  const likes = comment.likes;
+  const dislikes = comment.dislikes;
+  const { openReport, ReportModalElement } = useReportModal();
+  const [likeLoading, setLikeLoading] = useState(false);
+  const [dislikeLoading, setDislikeLoading] = useState(false);
 
   const handleEdit = () => {
     onEdit(comment.id, editedContent);
@@ -35,7 +42,25 @@ const Comment = ({ comment, onEdit, onDelete, onLike, onDislike }: CommentProps)
     <Card className="relative gap-3 py-3">
       <CardContent className="px-3 space-y-2">
         <div className="absolute top-2 right-2 z-10">
-          <ReportDialog content={comment.content} />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              openReport({
+                title: 'Report Comment',
+                subtitle: `Reporting comment by ${comment.author}`,
+                contextSnippet: comment.content,
+                reportType: 'Comment',
+                reportedName: comment.author,
+                onSubmit: async (message) => {
+                  await reportForumComment(Number(comment.id), message);
+                },
+              })
+            }
+          >
+            <ShieldAlert className="h-5 w-5 text-red-500" />
+          </Button>
+          {ReportModalElement}
         </div>
         <div className="flex items-center justify-between pr-6">
           <span className="font-semibold text-sm">{comment.author}</span>
@@ -63,14 +88,32 @@ const Comment = ({ comment, onEdit, onDelete, onLike, onDislike }: CommentProps)
           <LikeDislikeButtons
             likes={likes}
             dislikes={dislikes}
-            onLike={() => {
-              setLikes(likes + 1);
-              onLike?.(comment.id);
+            onLike={async () => {
+              try {
+                setLikeLoading(true);
+                const res = onLike?.(comment.id);
+                if (res && typeof (res as Promise<any>).then === 'function') {
+                  await res;
+                }
+              } finally {
+                setLikeLoading(false);
+              }
             }}
-            onDislike={() => {
-              setDislikes(dislikes + 1);
-              onDislike?.(comment.id);
+            onDislike={async () => {
+              try {
+                setDislikeLoading(true);
+                const res = onDislike?.(comment.id);
+                if (res && typeof (res as Promise<any>).then === 'function') {
+                  await res;
+                }
+              } finally {
+                setDislikeLoading(false);
+              }
             }}
+            likeLoading={likeLoading}
+            dislikeLoading={dislikeLoading}
+            activeLike={activeLike}
+            activeDislike={activeDislike}
           />
         </div>
       </CardContent>

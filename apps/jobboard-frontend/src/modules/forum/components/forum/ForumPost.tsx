@@ -5,7 +5,9 @@ import Comment from "./Comment";
 import CommentForm from "./CommentForm";
 import LikeDislikeButtons from "./LikeDislikeButtons";
 import { useState } from "react";
-import ReportDialog from "./ReportDialog";
+import { ShieldAlert } from 'lucide-react';
+import { useReportModal } from '@shared/hooks/useReportModal';
+import { reportForumComment } from '@modules/workplace/services/workplace-report.service';
 
 interface ForumPostProps {
   post: {
@@ -27,6 +29,10 @@ interface ForumPostProps {
   onCommentSubmit: (content: string) => void;
   onCommentEdit: (commentId: string, newContent: string) => void;
   onCommentDelete: (commentId: string) => void;
+  onLike?: (postId: string) => void;
+  onDislike?: (postId: string) => void;
+  activeLike?: boolean;
+  activeDislike?: boolean;
 }
 
 const ForumPost = ({
@@ -35,14 +41,40 @@ const ForumPost = ({
   onCommentSubmit,
   onCommentEdit,
   onCommentDelete,
+  onLike,
+  onDislike,
+  activeLike,
+  activeDislike,
 }: ForumPostProps) => {
-  const [likes, setLikes] = useState(post.likes);
-  const [dislikes, setDislikes] = useState(post.dislikes);
+  const likes = post.likes;
+  const dislikes = post.dislikes;
+  const [likeLoading, setLikeLoading] = useState(false);
+  const [dislikeLoading, setDislikeLoading] = useState(false);
+
+  const { openReport, ReportModalElement } = useReportModal();
 
   return (
     <Card className="relative gap-4 py-4">
       <div className="absolute top-3 right-3 z-10">
-        <ReportDialog content={post.content} />
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() =>
+            openReport({
+              title: 'Report Post',
+              subtitle: `Reporting post by ${post.author}`,
+              contextSnippet: post.content,
+              reportType: 'Post',
+              reportedName: post.author,
+              onSubmit: async (message) => {
+                await reportForumComment(Number(post.id), message);
+              },
+            })
+          }
+        >
+          <ShieldAlert className="h-5 w-5 text-red-500" />
+        </Button>
+        {ReportModalElement}
       </div>
       <CardHeader className="px-4">
         <CardTitle className="text-xl pr-8">{post.title}</CardTitle>
@@ -63,8 +95,28 @@ const ForumPost = ({
           <LikeDislikeButtons
             likes={likes}
             dislikes={dislikes}
-            onLike={() => setLikes(likes + 1)}
-            onDislike={() => setDislikes(dislikes + 1)}
+            onLike={async () => {
+              try {
+                setLikeLoading(true);
+                const res = onLike?.(post.id);
+                if (res && typeof (res as Promise<any>).then === 'function') await res;
+              } finally {
+                setLikeLoading(false);
+              }
+            }}
+            onDislike={async () => {
+              try {
+                setDislikeLoading(true);
+                const res = onDislike?.(post.id);
+                if (res && typeof (res as Promise<any>).then === 'function') await res;
+              } finally {
+                setDislikeLoading(false);
+              }
+            }}
+            likeLoading={likeLoading}
+            dislikeLoading={dislikeLoading}
+            activeLike={activeLike}
+            activeDislike={activeDislike}
           />
           <Button variant="outline" size="sm">Edit</Button>
           <Button variant="destructive" size="sm">Delete</Button>
