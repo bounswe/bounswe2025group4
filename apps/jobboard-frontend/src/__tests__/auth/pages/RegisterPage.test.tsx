@@ -11,6 +11,8 @@ describe('RegisterPage', () => {
     const user = setupUserEvent();
     await user.type(screen.getByLabelText('auth.register.username'), 'newuser');
     await user.type(screen.getByLabelText('auth.register.email'), 'newuser@example.com');
+    await user.type(screen.getByLabelText('First Name'), 'John');
+    await user.type(screen.getByLabelText('Last Name'), 'Doe');
     await user.type(screen.getByLabelText('auth.register.password'), 'StrongPass1!');
     await user.type(screen.getByLabelText('auth.register.confirmPassword'), 'StrongPass1!');
     await user.selectOptions(screen.getByLabelText('auth.register.role'), 'ROLE_JOBSEEKER');
