@@ -8,21 +8,29 @@ interface LikeDislikeButtonsProps {
   onDislike: () => void;
 }
 
-const LikeDislikeButtons = ({
-  likes,
-  dislikes,
-  onLike,
-  onDislike,
-}: LikeDislikeButtonsProps) => {
+const LikeDislikeButtons = ({ likes, dislikes, onLike, onDislike }: LikeDislikeButtonsProps) => {
   return (
     <div className="flex items-center space-x-2">
-      <Button variant="ghost" size="sm" onClick={onLike}>
-        <ThumbsUp className="h-4 w-4 mr-1" />
-        {likes}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onLike}
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+        aria-label="Like"
+      >
+        <ThumbsUp className="h-4 w-4" />
+        <span className="text-xs font-medium">{likes}</span>
       </Button>
-      <Button variant="ghost" size="sm" onClick={onDislike}>
-        <ThumbsDown className="h-4 w-4 mr-1" />
-        {dislikes}
+
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={onDislike}
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-destructive transition-colors"
+        aria-label="Dislike"
+      >
+        <ThumbsDown className="h-4 w-4" />
+        <span className="text-xs font-medium">{dislikes}</span>
       </Button>
     </div>
   );

@@ -16,9 +16,11 @@ interface CommentProps {
   };
   onEdit: (commentId: string, newContent: string) => void;
   onDelete: (commentId: string) => void;
+  onLike?: (commentId: string) => void;
+  onDislike?: (commentId: string) => void;
 }
 
-const Comment = ({ comment, onEdit, onDelete }: CommentProps) => {
+const Comment = ({ comment, onEdit, onDelete, onLike, onDislike }: CommentProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
   const [likes, setLikes] = useState(comment.likes);
@@ -61,8 +63,14 @@ const Comment = ({ comment, onEdit, onDelete }: CommentProps) => {
           <LikeDislikeButtons
             likes={likes}
             dislikes={dislikes}
-            onLike={() => setLikes(likes + 1)}
-            onDislike={() => setDislikes(dislikes + 1)}
+            onLike={() => {
+              setLikes(likes + 1);
+              onLike?.(comment.id);
+            }}
+            onDislike={() => {
+              setDislikes(dislikes + 1);
+              onDislike?.(comment.id);
+            }}
           />
         </div>
       </CardContent>

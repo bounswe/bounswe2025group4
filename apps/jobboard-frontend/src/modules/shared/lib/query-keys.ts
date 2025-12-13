@@ -70,3 +70,11 @@ export const dashboardKeys = {
   all: ['dashboard'] as const,
   stats: ['dashboard', 'stats'] as const,
 };
+
+export const forumKeys = {
+  all: ['forum'] as const,
+  posts: ['forum', 'posts'] as const,
+  postsList: (filters?: unknown) => [...forumKeys.posts, 'list', filters || {}] as const,
+  post: (postId: number | string) => [...forumKeys.all, 'post', postId] as const,
+  comment: (commentId: number | string) => [...forumKeys.all, 'comment', commentId] as const,
+};
