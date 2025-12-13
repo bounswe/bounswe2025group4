@@ -55,8 +55,8 @@ const ForumPostDetail = () => {
   // Local maps to show active state until backend provides per-user flags
   const [postVote, setPostVote] = useState<'none' | 'like' | 'dislike'>('none');
   const [commentVotes, setCommentVotes] = useState<Record<number, 'none' | 'like' | 'dislike'>>({});
-  const [upvotingComments, setUpvotingComments] = useState<number[]>([]);
-  const [downvotingComments, setDownvotingComments] = useState<number[]>([]);
+  const [, setUpvotingComments] = useState<number[]>([]);
+  const [, setDownvotingComments] = useState<number[]>([]);
 
   const setCommentVote = (commentId: number, vote: 'none' | 'like' | 'dislike') => {
     setCommentVotes((prev) => ({ ...prev, [commentId]: vote }));
