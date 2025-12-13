@@ -234,7 +234,7 @@ public class JobApplicationService {
         JobPost jobPost = savedApplication.getJobPost();
 
         String message = String.format(
-                "Your application for '%s' (ID: %d) has been rejected by %s.",
+                "Your application for '%s' (ID: %d) has been rejected by %s. ",
                 jobPost.getTitle(),
                 savedApplication.getId(),
                 employer.getUsername()
