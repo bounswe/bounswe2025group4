@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@shared/components/ui/card';
 import { Button } from '@shared/components/ui/button';
 import { Badge } from '@shared/components/ui/badge';
@@ -12,6 +12,7 @@ import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import {
   useMentorMentorshipRequestsQuery,
   useRespondToMentorshipRequestMutation,
+  getMenteeMentorships,
 } from '@modules/mentorship/services/mentorship.service';
 import { profileService } from '@modules/profile/services/profile.service';
 import type { PublicProfile } from '@shared/types/profile.types';
@@ -19,6 +20,9 @@ import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
 import { toast } from 'react-toastify';
 import { normalizeApiError } from '@shared/utils/error-handler';
+import { useQueryClient } from '@tanstack/react-query';
+import { mentorshipKeys } from '@shared/lib/query-keys';
+import type { MentorshipDetailsDTO } from '@shared/types/api.types';
 
 const getStatusIcon = (status: string) => {
   switch (status.toUpperCase()) {
@@ -51,6 +55,8 @@ const getStatusColor = (status: string) => {
 const MentorRequestsPage = () => {
   const { t } = useTranslation('common');
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [requests, setRequests] = useState<MentorshipRequestDTO[]>([]);
   const [menteeProfiles, setMenteeProfiles] = useState<Record<string, PublicProfile>>({});
   const [respondingTo, setRespondingTo] = useState<string | null>(null);
@@ -92,6 +98,13 @@ const MentorRequestsPage = () => {
       if (isNaN(requestIdNum)) {
         throw new Error('Invalid request ID');
       }
+      
+      // Find the request to get requesterId
+      const currentRequest = requests.find((r) => r.id === requestId);
+      if (!currentRequest) {
+        throw new Error('Request not found');
+      }
+
       await respondMutation.mutateAsync({ requestId: requestIdNum, accept });
 
       const refreshed = await mentorRequestsQuery.refetch();
@@ -99,8 +112,33 @@ const MentorRequestsPage = () => {
         setRequests(refreshed.data);
       }
       
-      // Switch to appropriate tab after responding
+      // If accepted, fetch mentee's mentorships to get resumeReviewId and redirect
       if (accept) {
+        const requesterIdNum = parseInt(currentRequest.requesterId, 10);
+        if (!isNaN(requesterIdNum)) {
+          try {
+            // Fetch mentee's mentorships to find the resumeReviewId
+            const menteeMentorships = await queryClient.fetchQuery<MentorshipDetailsDTO[]>({
+              queryKey: mentorshipKeys.menteeMentorships(requesterIdNum),
+              queryFn: () => getMenteeMentorships(requesterIdNum),
+            });
+
+            // Find the mentorship that matches this mentor and has a resumeReviewId
+            const matchingMentorship = menteeMentorships.find(
+              (m) => m.mentorId === user.id && m.resumeReviewId
+            );
+
+            if (matchingMentorship?.resumeReviewId) {
+              // Redirect to resume review page
+              navigate(`/mentorship/resume-review/${matchingMentorship.resumeReviewId}`);
+              // Toast is already shown in mutation's onSuccess callback
+              return; // Exit early to prevent tab switch
+            }
+          } catch (err) {
+            console.error('Error fetching mentee mentorships for redirect:', err);
+            // Continue with normal flow if redirect fails
+          }
+        }
         setActiveTab('accepted');
       } else {
         setActiveTab('rejected');
@@ -129,6 +167,8 @@ const MentorRequestsPage = () => {
       setMenteeProfiles(newProfiles);
     } catch (err: unknown) {
       console.error('Error responding to request:', err);
+      const normalized = normalizeApiError(err, 'Failed to respond to request');
+      toast.error(normalized.friendlyMessage);
     } finally {
       setRespondingTo(null);
     }
@@ -213,6 +253,14 @@ const MentorRequestsPage = () => {
         </CardHeader>
 
         <CardContent>
+          {/* Motivation */}
+          {request.motivation && (
+            <div className="mb-4 p-3 bg-muted rounded-lg">
+              <p className="text-xs font-semibold text-muted-foreground mb-1">Motivation:</p>
+              <p className="text-sm">{request.motivation}</p>
+            </div>
+          )}
+
           {/* Profile Info */}
           {menteeProfile && (
             <div className="mb-4 space-y-2">

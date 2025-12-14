@@ -99,7 +99,10 @@ const MessageBubble = ({ message, isOwnMessage }: MessageBubbleProps) => {
             'rounded-2xl px-4 py-2 break-words',
             isOwnMessage
               ? 'bg-primary text-primary-foreground rounded-br-sm'
-              : 'bg-muted text-foreground rounded-bl-sm'
+              : cn(
+                  'bg-muted text-foreground rounded-bl-sm',
+                  !message.read && 'bg-primary/10 border border-primary/20 font-medium'
+                )
           )}
         >
           {fileInfo.isFile ? (

@@ -17,8 +17,8 @@ export async function getChatHistory(conversationId: number): Promise<ChatMessag
   const response = await api.get<ChatMessageDTO[]>(`/chat/history/${conversationId}`);
   
   return response.data.map((dto): ChatMessage => ({
-    id: dto.id,
-    senderId: dto.senderId,
+    id: String(dto.id),
+    senderId: String(dto.senderId),
     senderName: dto.senderUsername || 'Unknown',
     senderAvatar: dto.senderAvatar,
     content: dto.content,
@@ -27,8 +27,12 @@ export async function getChatHistory(conversationId: number): Promise<ChatMessag
   }));
 }
 
+
 /**
  * WebSocket connection for real-time chat using STOMP over SockJS
+ * 
+ * WebSocket sadece "real-time mesaj push" için kullanılacak.
+ * Unread sayısı WS'den gelen event'e göre yönetilecek ama aktif ekranda unread artmayacak.
  */
 export class ChatWebSocket {
   private client: Client | null = null;
@@ -107,8 +111,8 @@ export class ChatWebSocket {
             try {
               const chatMessageDTO: ChatMessageDTO = JSON.parse(message.body);
               const chatMessage: ChatMessage = {
-                id: chatMessageDTO.id,
-                senderId: chatMessageDTO.senderId,
+                id: String(chatMessageDTO.id),
+                senderId: String(chatMessageDTO.senderId),
                 senderName: chatMessageDTO.senderUsername || 'Unknown',
                 senderAvatar: chatMessageDTO.senderAvatar,
                 content: chatMessageDTO.content,
@@ -159,6 +163,7 @@ export class ChatWebSocket {
     // Activate the client
     this.client.activate();
   }
+
 
   /**
    * Send a message via WebSocket

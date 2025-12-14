@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader } from '@shared/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@shared/components/ui/card';
 import { Button } from '@shared/components/ui/button';
 import { Badge } from '@shared/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
@@ -10,11 +10,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Textarea } from '@shared/components/ui/textarea';
 import { Label } from '@shared/components/ui/label';
 import { Clock, CheckCircle, XCircle, MessageCircle, Star, Calendar, FileText } from 'lucide-react';
-import type { Mentorship, MentorshipStatus } from '@shared/types/mentor';
+import type { Mentorship } from '@shared/types/mentor';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import {
   useMenteeMentorshipsQuery,
   useRateMentorMutation,
+  useCompleteMentorshipMutation,
 } from '@modules/mentorship/services/mentorship.service';
 import type { CreateRatingDTO } from '@shared/types/api.types';
 import { convertMentorshipDetailsToMentorship } from '@shared/utils/mentorship.utils';
@@ -24,37 +25,7 @@ import CenteredError from '@shared/components/common/CenteredError';
 import { toast } from 'react-toastify';
 import { normalizeApiError } from '@shared/utils/error-handler';
 
-const getStatusIcon = (status: MentorshipStatus) => {
-  switch (status) {
-    case 'pending':
-      return <Clock className="h-4 w-4 text-yellow-500" />;
-    case 'accepted':
-    case 'active':
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
-    case 'rejected':
-      return <XCircle className="h-4 w-4 text-red-500" />;
-    case 'completed':
-      return <Star className="h-4 w-4 text-blue-500" />;
-    default:
-      return <Clock className="h-4 w-4 text-gray-500" />;
-  }
-};
-
-const getStatusColor = (status: MentorshipStatus) => {
-  switch (status) {
-    case 'pending':
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case 'accepted':
-    case 'active':
-      return 'bg-green-100 text-green-800 border-green-200';
-    case 'rejected':
-      return 'bg-red-100 text-red-800 border-red-200';
-    case 'completed':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
-};
+// Helper functions moved to component level to avoid unused warnings
 
 const MyMentorshipsPage = () => {
   const { t } = useTranslation('common');
@@ -68,13 +39,34 @@ const MyMentorshipsPage = () => {
   const [reviewRating, setReviewRating] = useState<number>(0);
   const [reviewComment, setReviewComment] = useState<string>('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>(location.state?.activeTab || 'active');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    if (location.state?.activeTab) return location.state.activeTab;
+    // Default tab based on whether user is mentor
+    return 'active'; // Default, will be updated in useEffect
+  });
   const mentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
   const rateMutation = useRateMentorMutation();
   
-  // Success message from request page
-  const showSuccess = location.state?.showSuccess;
-  const mentorName = location.state?.mentorName;
+  // Success message from request page - auto-dismiss after 5 seconds
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [mentorName, setMentorName] = useState<string>('');
+  
+  useEffect(() => {
+    // Only show success message if coming from request page (location.state)
+    // Clear location.state after reading to prevent showing on refresh
+    if (location.state?.showSuccess) {
+      setShowSuccess(true);
+      setMentorName(location.state?.mentorName || '');
+      
+      // Clear location.state to prevent showing on refresh
+      window.history.replaceState({}, document.title);
+      
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
   const [newMentorshipFromState] = useState<Mentorship | undefined>(
     location.state?.newMentorship as Mentorship | undefined
   );
@@ -154,7 +146,7 @@ const MyMentorshipsPage = () => {
       };
 
       await rateMutation.mutateAsync(reviewData);
-      toast.success(t('mentorship.myMentorships.reviewSuccess') || 'Review submitted successfully!');
+      // Toast is already shown in mutation's onSuccess callback
       
       setReviewDialogOpen(false);
       const mentorIdForRefresh = selectedMentorshipForReview.mentorId; // Store before clearing
@@ -192,12 +184,36 @@ const MyMentorshipsPage = () => {
     return <CenteredError message={normalized.friendlyMessage || error || ''} />;
   }
 
-  const activeMentorships = mentorships.filter(m => m.status === 'active');
-  const pendingMentorships = mentorships.filter(m => m.status === 'pending');
-  const completedMentorships = mentorships.filter(m => m.status === 'completed');
-  const rejectedMentorships = mentorships.filter(m => m.status === 'rejected');
+  // Filter mentorships for mentee's view
+  const menteeActiveMentorships = mentorships.filter(m => m.status === 'active');
+  const menteePendingMentorships = mentorships.filter(m => m.status === 'pending');
+  const menteeCompletedMentorships = mentorships.filter(m => m.status === 'completed');
+  const menteeRejectedMentorships = mentorships.filter(m => m.status === 'rejected');
 
-  const MentorshipCard = ({ mentorship }: { mentorship: Mentorship }) => (
+  // For backward compatibility (used in non-mentor view)
+  const activeMentorships = menteeActiveMentorships;
+  const pendingMentorships = menteePendingMentorships;
+  const completedMentorships = menteeCompletedMentorships;
+  const rejectedMentorships = menteeRejectedMentorships;
+
+  // My Mentorships is only for mentees - mentors should use /mentorship/dashboard
+
+  const MentorshipCard = ({ mentorship }: { mentorship: Mentorship }) => {
+    const completeMutation = mentorship.resumeReviewId ? useCompleteMentorshipMutation(mentorship.resumeReviewId) : null;
+    
+    const handleComplete = async () => {
+      if (!mentorship.resumeReviewId || !completeMutation) return;
+      try {
+        await completeMutation.mutateAsync();
+        // Toast is already shown in mutation's onSuccess callback
+        mentorshipsQuery.refetch();
+      } catch (err) {
+        const normalized = normalizeApiError(err, t('mentorship.errors.completeFailed'));
+        toast.error(normalized.friendlyMessage);
+      }
+    };
+    
+    return (
     <Card className="border-l-4 border-l-blue-500">
       <CardHeader>
         <div className="flex items-start gap-4">
@@ -216,9 +232,8 @@ const MyMentorshipsPage = () => {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-semibold">{mentorship.mentorName}</h3>
-              <Badge className={`text-xs ${getStatusColor(mentorship.status)}`}>
-                {getStatusIcon(mentorship.status)}
-                <span className="ml-1 capitalize">{t(`mentorship.myMentorships.status.${mentorship.status}`)}</span>
+              <Badge variant={mentorship.status === 'active' ? 'default' : mentorship.status === 'pending' ? 'secondary' : mentorship.status === 'completed' ? 'default' : 'destructive'}>
+                <span className="ml-1 capitalize">{mentorship.status}</span>
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">{mentorship.mentorTitle}</p>
@@ -255,43 +270,50 @@ const MyMentorshipsPage = () => {
         <div className="flex gap-2 pt-2">
           {mentorship.status === 'active' && (
             <>
+              {mentorship.resumeReviewId ? (
               <Button size="sm" className="flex-1" asChild>
-                <Link to={`/mentorship/chat?mentorshipId=${mentorship.id}`}>
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  {t('mentorship.myMentorships.openChat')}
+                  <Link to={`/mentorship/resume-review/${mentorship.resumeReviewId}`}>
+                    <FileText className="h-4 w-4 mr-2" />
+                    {t('mentorship.myMentorships.resumeReview', 'Resume Review')}
                 </Link>
               </Button>
+              ) : (
+                <Button size="sm" className="flex-1" disabled>
+                  <FileText className="h-4 w-4 mr-2" />
+                  {t('mentorship.myMentorships.resumeReview', 'Resume Review')}
+              </Button>
+              )}
+              {mentorship.resumeReviewId && completeMutation && (
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                  onClick={handleComplete}
+                  disabled={completeMutation.isPending}
+                >
+                  {completeMutation.isPending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                      {t('mentorship.myMentorships.completing', 'Completing...')}
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      {t('mentorship.myMentorships.complete', 'Complete')}
+                    </>
+                  )}
+                </Button>
+              )}
               <Button size="sm" variant="outline" className="flex-1" asChild>
                 <Link to={`/mentorship/${mentorship.mentorId}`}>
                   {t('mentorship.myMentorships.viewProfile') || 'View Profile'}
                 </Link>
               </Button>
-              {mentorship.resumeReviewId && (
-                <>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="flex-1"
-                    asChild
-                  >
-                    <Link to={`/resume-review/${mentorship.resumeReviewId}`}>
-                      <FileText className="h-4 w-4 mr-2" />
-                      {t('mentorship.myMentorships.uploadResume') || 'Upload Resume'}
-                    </Link>
-                  </Button>
-                </>
-              )}
             </>
           )}
           
           {mentorship.status === 'completed' && (
             <>
-              <Button size="sm" className="flex-1" asChild>
-                <Link to={`/mentorship/chat?mentorshipId=${mentorship.id}`}>
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  {t('mentorship.myMentorships.openChat')}
-                </Link>
-              </Button>
               <Button size="sm" variant="outline" className="flex-1" asChild>
                 <Link to={`/mentorship/${mentorship.mentorId}`}>
                   {t('mentorship.myMentorships.viewProfile') || 'View Profile'}
@@ -334,6 +356,7 @@ const MyMentorshipsPage = () => {
       </CardContent>
     </Card>
   );
+  };
 
   return (
     <div className="container mx-auto px-4 py-6 lg:py-8">
@@ -355,9 +378,9 @@ const MyMentorshipsPage = () => {
           </div>
         
         {showSuccess && (
-          <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-green-700">
-              {t('mentorship.myMentorships.successMessage', { mentorName })}
+          <div className="mt-4 p-3 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg">
+            <p className="text-sm text-green-700 dark:text-green-200">
+              {t('mentorship.myMentorships.successMessage', { mentorName }) || `Mentorship request sent successfully to ${mentorName}!`}
             </p>
           </div>
         )}

@@ -1,14 +1,12 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/components/ui/card';
 import { Button } from '@shared/components/ui/button';
-import { Input } from '@shared/components/ui/input';
 import { Textarea } from '@shared/components/ui/textarea';
 import { Label } from '@shared/components/ui/label';
 import { Badge } from '@shared/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
-import { Checkbox } from '@shared/components/ui/checkbox';
 import { Star, ArrowLeft, Send, Clock, Users, AlertCircle } from 'lucide-react';
 import type { Mentor, Mentorship } from '@shared/types/mentor';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
@@ -30,12 +28,8 @@ const MentorshipRequestPage = () => {
   const { user } = useAuth();
   
   const [formData, setFormData] = useState({
-    message: '',
-    goals: '',
-    preferredTime: ''
+    motivation: ''
   });
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
-  const [timeRange, setTimeRange] = useState({ start: '', end: '' });
   const [mentor, setMentor] = useState<Mentor | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hasExistingRequest, setHasExistingRequest] = useState(false);
@@ -47,39 +41,6 @@ const MentorshipRequestPage = () => {
     mentorProfileQuery.isLoading ||
     menteeMentorshipsQuery.isLoading;
 
-  const daysOfWeek = useMemo(() => [
-    { value: 'monday', label: 'Monday' },
-    { value: 'tuesday', label: 'Tuesday' },
-    { value: 'wednesday', label: 'Wednesday' },
-    { value: 'thursday', label: 'Thursday' },
-    { value: 'friday', label: 'Friday' },
-    { value: 'saturday', label: 'Saturday' },
-    { value: 'sunday', label: 'Sunday' },
-  ], []);
-
-  // Update preferredTime string when days or time changes
-  useEffect(() => {
-    const daysText = selectedDays.length > 0 
-      ? selectedDays.map(d => {
-          const day = daysOfWeek.find(day => day.value === d);
-          return day ? day.label : d;
-        }).join(', ')
-      : '';
-    const timeText = timeRange.start && timeRange.end
-      ? `${timeRange.start} - ${timeRange.end}`
-      : timeRange.start || timeRange.end || '';
-    
-    const preferredTimeText = [daysText, timeText].filter(Boolean).join(' | ');
-    setFormData(prev => ({ ...prev, preferredTime: preferredTimeText || '' }));
-  }, [selectedDays, timeRange, daysOfWeek]);
-
-  const handleDayToggle = (day: string) => {
-    setSelectedDays(prev => 
-      prev.includes(day) 
-        ? prev.filter(d => d !== day)
-        : [...prev, day]
-    );
-  };
 
   useEffect(() => {
     if (mentorProfileQuery.data) {
@@ -117,12 +78,11 @@ const MentorshipRequestPage = () => {
     }
 
     if (hasExistingRequest) {
-      toast.error(t('mentorship.request.alreadyExists') || 'You already have a pending or accepted request for this mentor.');
       return;
     }
 
     // Validate motivation field
-    const motivation = formData.message.trim();
+    const motivation = formData.motivation.trim();
     if (!motivation) {
       toast.error(t('mentorship.request.motivationRequired') || 'Please provide a motivation message for your mentorship request.');
       return;
@@ -139,7 +99,8 @@ const MentorshipRequestPage = () => {
 
       const mentorIdParsed = parseInt(id, 10);
       if (isNaN(mentorIdParsed)) {
-        throw new Error('Invalid mentor ID');
+        navigate('/mentorship/browse');
+        return;
       }
 
       const response = await createRequestMutation.mutateAsync({ 
@@ -170,9 +131,9 @@ const MentorshipRequestPage = () => {
         createdAt: new Date().toISOString(),
         acceptedAt: undefined,
         completedAt: undefined,
-        goals: formData.goals ? formData.goals.split('\n').filter((g) => g.trim()) : [],
-        message: formData.message || 'No message provided',
-        preferredTime: formData.preferredTime || 'Flexible',
+        goals: [],
+        message: formData.motivation || 'No motivation provided',
+        preferredTime: 'Flexible',
         expectedDuration: 'Flexible',
         conversationId: undefined,
       };
@@ -367,128 +328,26 @@ const MentorshipRequestPage = () => {
               </p>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Message */}
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                {/* Motivation */}
                 <div className="space-y-2">
-                  <Label htmlFor="message" className="text-sm font-semibold">
-                    {t('mentorship.request.messageLabel')} *
+                  <Label htmlFor="motivation" className="text-sm font-semibold">
+                    {t('mentorship.request.motivationLabel') || 'Motivation'} *
                   </Label>
                   <Textarea
-                    id="message"
-                    placeholder={t('mentorship.request.messagePlaceholder')}
-                    value={formData.message}
-                    onChange={(e) => handleInputChange('message', e.target.value)}
-                    rows={6}
-                    required
+                    id="motivation"
+                    placeholder={t('mentorship.request.motivationPlaceholder') || 'Please explain why you want to be mentored by this mentor and what you hope to achieve...'}
+                    value={formData.motivation}
+                    onChange={(e) => handleInputChange('motivation', e.target.value)}
+                    rows={8}
                     disabled={!isAvailable || hasExistingRequest}
                     className="resize-y"
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t('mentorship.request.messageHint')}
+                    {t('mentorship.request.motivationHint') || 'Share your goals, expectations, and what you hope to learn from this mentorship.'}
                   </p>
                 </div>
 
-                {/* Goals */}
-                <div className="space-y-2">
-                  <Label htmlFor="goals" className="text-sm font-semibold">
-                    {t('mentorship.request.goalsLabel')} *
-                  </Label>
-                  <Textarea
-                    id="goals"
-                    placeholder={t('mentorship.request.goalsPlaceholder')}
-                    value={formData.goals}
-                    onChange={(e) => handleInputChange('goals', e.target.value)}
-                    rows={5}
-                    required
-                    disabled={!isAvailable || hasExistingRequest}
-                    className="resize-y font-mono text-sm"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {t('mentorship.request.goalsHint')}
-                  </p>
-                </div>
-
-                {/* Preferred Meeting Time (like availability) */}
-                <div className="space-y-4">
-                  <Label className="text-sm font-semibold">
-                    {t('mentorship.request.timeLabel')}
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    {t('mentorship.request.timeHint') || 'Select your preferred days and time for mentorship sessions'}
-                  </p>
-                  
-                  {/* Select Available Days */}
-                  <div>
-                    <Label className="text-xs font-medium mb-2 block">
-                      {t('mentorship.createMentorProfile.selectDays') || 'Select Available Days'}
-                    </Label>
-                    <div className="flex flex-wrap gap-3">
-                      {daysOfWeek.map((day) => (
-                        <div key={day.value} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`day-${day.value}`}
-                            checked={selectedDays.includes(day.value)}
-                            onCheckedChange={() => handleDayToggle(day.value)}
-                            disabled={!isAvailable || hasExistingRequest}
-                          />
-                          <Label
-                            htmlFor={`day-${day.value}`}
-                            className="text-sm font-normal cursor-pointer"
-                          >
-                            {day.label}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Time Range */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="timeStart" className="text-xs font-medium mb-1 block">
-                        {t('mentorship.createMentorProfile.timeStart') || 'Start Time'}
-                      </Label>
-                      <Input
-                        id="timeStart"
-                        type="time"
-                        value={timeRange.start}
-                        onChange={(e) => setTimeRange(prev => ({ ...prev, start: e.target.value }))}
-                        disabled={!isAvailable || hasExistingRequest}
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="timeEnd" className="text-xs font-medium mb-1 block">
-                        {t('mentorship.createMentorProfile.timeEnd') || 'End Time'}
-                      </Label>
-                      <Input
-                        id="timeEnd"
-                        type="time"
-                        value={timeRange.end}
-                        onChange={(e) => setTimeRange(prev => ({ ...prev, end: e.target.value }))}
-                        disabled={!isAvailable || hasExistingRequest}
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Warning if already has request */}
-                {hasExistingRequest && (
-                  <div className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-amber-900 dark:text-amber-100 mb-1">
-                          {t('mentorship.request.alreadyExists')}
-                        </p>
-                        <p className="text-xs text-amber-800 dark:text-amber-200">
-                          You already have a pending or active mentorship request with this mentor. Please check your mentorships page.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
 
                 {/* Submit Button */}
                 <div className="flex gap-4 pt-4 border-t">

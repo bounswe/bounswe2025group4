@@ -51,6 +51,33 @@ export function convertMentorProfileToMentor(
   // Achievements placeholder (not in normal profile)
   const placeholderAchievements: string[] = [];
 
+  // Extract skills from normal profile
+  const skills = normalProfile?.skills?.map(skill => skill.name) || [];
+
+  // Extract interests from normal profile
+  const interests = normalProfile?.interests?.map(interest => interest.name) || [];
+
+  // Calculate years of experience from experiences
+  let yearsOfExperience = 0;
+  if (normalProfile?.experiences && normalProfile.experiences.length > 0) {
+    const now = new Date();
+    let totalMonths = 0;
+    
+    normalProfile.experiences.forEach((exp) => {
+      const startDate = new Date(exp.startDate);
+      const endDate = exp.endDate ? new Date(exp.endDate) : now;
+      
+      if (startDate && !isNaN(startDate.getTime()) && endDate && !isNaN(endDate.getTime())) {
+        const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
+                      (endDate.getMonth() - startDate.getMonth());
+        totalMonths += Math.max(0, months);
+      }
+    });
+    
+    // Convert months to years (rounded down)
+    yearsOfExperience = Math.floor(totalMonths / 12);
+  }
+
   return {
     id: dto.id,
     name: dto.username, // Use username for mentor name
@@ -72,6 +99,9 @@ export function convertMentorProfileToMentor(
     specialties: dto.expertise, // Mentor-specific expertise
     achievements: placeholderAchievements,
     profileImage: profileImageUrl, // Use profile image URL if provided, otherwise undefined (AvatarFallback will show initials)
+    skills: skills, // Skills from profile
+    interests: interests, // Interests from profile
+    yearsOfExperience: yearsOfExperience, // Calculated from experiences
   };
 }
 
