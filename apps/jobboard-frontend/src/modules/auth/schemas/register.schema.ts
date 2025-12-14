@@ -27,7 +27,7 @@ export const registerSchema = z
       .string()
       .min(2, 'Last name must be at least 2 characters')
       .max(30, 'Last name must be at most 30 characters'),
-    role: z.enum(['ROLE_JOBSEEKER', 'ROLE_EMPLOYER', 'ROLE_ADMIN'], {
+    role: z.enum(['ROLE_JOBSEEKER', 'ROLE_EMPLOYER'], {
       message: 'Please select a role',
     }),
     pronounSet: z
