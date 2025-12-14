@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +34,7 @@ public class ReviewService {
         private final UserRepository userRepository;
         private final ProfileRepository profileRepository;
         private final ReviewReactionRepository reviewReactionRepository;
+        private final ActivityService activityService;
 
         // === CREATE REVIEW ===
         @Transactional
@@ -131,6 +134,8 @@ public class ReviewService {
 
                 wp.setReviewCount(wp.getReviewCount() + 1);
                 workplaceRepository.save(wp);
+
+                activityService.logActivity(currentUser, ActivityType.CREATE_REVIEW, review.getId(), "Review");
 
                 return toResponse(review, true, currentUser);
         }

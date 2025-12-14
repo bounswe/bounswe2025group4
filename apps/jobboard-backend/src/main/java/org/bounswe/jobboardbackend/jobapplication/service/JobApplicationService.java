@@ -18,6 +18,8 @@ import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceReposit
 import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
 import org.bounswe.jobboardbackend.badge.event.JobApplicationCreatedEvent;
 import org.bounswe.jobboardbackend.badge.event.JobApplicationApprovedEvent;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,6 +50,7 @@ public class JobApplicationService {
     private final WorkplaceRepository workplaceRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final JobApplicationNotifier notifier;
+    private final ActivityService activityService;
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -65,14 +68,17 @@ public class JobApplicationService {
     // Google Cloud Storage client
     private final Storage storage = StorageOptions.getDefaultInstance().getService();
 
-    public JobApplicationService(JobApplicationRepository applicationRepository,
-                                 UserRepository userRepository,
-                                 JobPostRepository jobPostRepository,
-                                 WorkplaceService workplaceService,
-                                 EmployerWorkplaceRepository employerWorkplaceRepository,
-                                 WorkplaceRepository workplaceRepository,
-                                 ApplicationEventPublisher eventPublisher,
-                                 JobApplicationNotifier notifier) {
+    public JobApplicationService(
+        JobApplicationRepository applicationRepository,
+        UserRepository userRepository,
+        JobPostRepository jobPostRepository,
+        WorkplaceService workplaceService,
+        EmployerWorkplaceRepository employerWorkplaceRepository,
+        WorkplaceRepository workplaceRepository,
+        ApplicationEventPublisher eventPublisher,
+        JobApplicationNotifier notifier,
+        ActivityService activityService
+    ) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
         this.jobPostRepository = jobPostRepository;
@@ -81,6 +87,7 @@ public class JobApplicationService {
         this.workplaceRepository = workplaceRepository;
         this.eventPublisher = eventPublisher;
         this.notifier = notifier;
+        this.activityService = activityService;
     }
 
     @Transactional(readOnly = true)
@@ -153,7 +160,9 @@ public class JobApplicationService {
 
         // Publish event for badge system
         eventPublisher.publishEvent(new JobApplicationCreatedEvent(jobSeeker.getId(), savedApplication.getId()));
-        
+
+        activityService.logActivity(jobSeeker, ActivityType.APPLY_JOB, savedApplication.getId(), "JobApplication");
+
         return toResponseDto(savedApplication);
     }
 
@@ -179,9 +188,12 @@ public class JobApplicationService {
         notifier.notifyApplicationApproved(savedApplication, employer);
         
         // Publish event for badge system
-        eventPublisher.publishEvent(new JobApplicationApprovedEvent(
-            application.getJobSeeker().getId(), savedApplication.getId()));
-        
+        eventPublisher.publishEvent(
+            new JobApplicationApprovedEvent(application.getJobSeeker().getId(), savedApplication.getId())
+        );
+
+        activityService.logActivity(employer, ActivityType.APPROVE_APPLICATION, savedApplication.getId(), "JobApplication");
+
         return toResponseDto(savedApplication);
     }
 
@@ -205,6 +217,8 @@ public class JobApplicationService {
         JobApplication savedApplication = applicationRepository.save(application);
 
         notifier.notifyApplicationRejected(savedApplication, employer);
+
+        activityService.logActivity(employer, ActivityType.REJECT_APPLICATION, savedApplication.getId(), "JobApplication");
 
         return toResponseDto(savedApplication);
 
