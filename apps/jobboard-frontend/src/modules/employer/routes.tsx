@@ -2,8 +2,7 @@ import type { RouteObject } from 'react-router-dom';
 import { lazy } from 'react';
 
 const EmployerDashboardPage = lazy(() => import('./pages/EmployerDashboardPage'));
-const EmployerJobPostDetailsPage = lazy(() => import('./pages/EmployerJobPostDetailsPage'));
-const EmployerEditJobPostPage = lazy(() => import('./pages/EmployerEditJobPostPage'));
+const JobDetailPage = lazy(() => import('@modules/jobs/pages/JobDetailPage'));
 import ProtectedRoute from '@shared/components/common/ProtectedRoute';
 
 export const employerRoutes: RouteObject[] = [
@@ -19,15 +18,7 @@ export const employerRoutes: RouteObject[] = [
     path: 'employer/jobs/:jobId',
     element: (
       <ProtectedRoute>
-        <EmployerJobPostDetailsPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: 'employer/jobs/:jobId/edit',
-    element: (
-      <ProtectedRoute>
-        <EmployerEditJobPostPage />
+        <JobDetailPage />
       </ProtectedRoute>
     ),
   },

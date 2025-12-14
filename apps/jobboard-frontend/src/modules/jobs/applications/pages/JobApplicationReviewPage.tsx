@@ -1,96 +1,88 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, CalendarClock, Download, FileText } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { Download, FileText } from 'lucide-react';
+import { Badge } from '@shared/components/ui/badge';
 import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Avatar, AvatarFallback } from '@shared/components/ui/avatar';
 import { Label } from '@shared/components/ui/label';
-import { getApplicationById, approveApplication, rejectApplication, getCvUrl } from '@modules/jobs/applications/services/applications.service';
-import type { JobApplicationResponse } from '@shared/types/api.types';
+import {
+  useApplicationQuery,
+  useApproveApplicationMutation,
+  useRejectApplicationMutation,
+  useApplicationCvUrlQuery,
+} from '@modules/jobs/applications/services/applications.service';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
+import type { JobApplicationStatus } from '@shared/types/api.types';
 
-import { useTranslation } from 'react-i18next';
+const statusVariants: Record<JobApplicationStatus, 'default' | 'success' | 'destructive'> = {
+  PENDING: 'default',
+  APPROVED: 'success',
+  REJECTED: 'destructive',
+};
+
+const getInitials = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 3)
+    .toUpperCase() || '?';
 
 export default function JobApplicationReviewPage() {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const { jobId, applicationId } = useParams<{ jobId: string; applicationId: string }>();
   const navigate = useNavigate();
-  const [application, setApplication] = useState<JobApplicationResponse | null>(null);
-  const [cvUrl, setCvUrl] = useState<string | null>(null);
-  const [isCvLoading, setIsCvLoading] = useState(false);
+  const applicationIdNumber = applicationId ? parseInt(applicationId, 10) : undefined;
   const [feedback, setFeedback] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    data: application,
+    isLoading,
+  } = useApplicationQuery(applicationIdNumber, Boolean(applicationIdNumber));
+  const { data: cvUrl, isLoading: isCvLoading } = useApplicationCvUrlQuery(
+    applicationIdNumber,
+    Boolean(applicationIdNumber),
+  );
 
-  useEffect(() => {
-    const fetchApplication = async () => {
-      if (!applicationId) return;
+  const approveMutation = useApproveApplicationMutation(applicationIdNumber ?? 0);
+  const rejectMutation = useRejectApplicationMutation(applicationIdNumber ?? 0);
+  const isSubmitting = approveMutation.isPending || rejectMutation.isPending;
 
-      try {
-        setIsLoading(true);
-        const appData = await getApplicationById(parseInt(applicationId, 10));
-        setApplication(appData);
-        setIsLoading(false);
-
-        // Fetch CV URL
-        setIsCvLoading(true);
-        try {
-          const url = await getCvUrl(parseInt(applicationId, 10));
-          setCvUrl(url);
-        } catch (_cvErr) {
-          // CV not found or error fetching - this is okay, not all applications may have CVs
-          console.log(t('applications.review.noCv'));
-          setCvUrl(null);
-        } finally {
-          setIsCvLoading(false);
-        }
-      } catch (err) {
-        console.error('Error fetching application:', err);
-        toast.error(t('applications.review.error.load'));
-        setIsLoading(false);
-        setIsCvLoading(false);
-      }
-    };
-
-    fetchApplication();
-  }, [applicationId, t]);
+  const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
+  const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
+  const hasCoverLetter = Boolean(application?.coverLetter?.trim());
+  const hasSpecialNeeds = Boolean(application?.specialNeeds?.trim());
 
   const handleApprove = async () => {
-    if (!applicationId) return;
-
+    if (!applicationIdNumber) return;
     try {
-      setIsSubmitting(true);
-      await approveApplication(parseInt(applicationId, 10), feedback || undefined);
-      toast.success(t('applications.review.success.approve'));
+      await approveMutation.mutateAsync(feedback || undefined);
+      toast.success(
+        t('applications.review.success.approve', {
+          defaultValue: 'Application approved successfully.',
+        }),
+      );
       navigate(`/employer/jobs/${jobId}`);
     } catch (err) {
       console.error('Error approving application:', err);
-      toast.error(t('applications.review.error.approve'));
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleReject = async () => {
-    if (!applicationId) return;
+    if (!applicationIdNumber) return;
 
     try {
-      setIsSubmitting(true);
-      await rejectApplication(parseInt(applicationId, 10), feedback || undefined);
-      toast.success(t('applications.review.success.reject'));
+      await rejectMutation.mutateAsync(feedback || undefined);
       navigate(`/employer/jobs/${jobId}`);
     } catch (err) {
       console.error('Error rejecting application:', err);
-      toast.error(t('applications.review.error.reject'));
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-
-  // Format date
-  const formatDate = (isoDate: string) => {
+  const formatRelativeDate = (isoDate: string) => {
     const date = new Date(isoDate);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -100,6 +92,18 @@ export default function JobApplicationReviewPage() {
     if (diffDays === 1) return t('applications.review.appliedYesterday');
     return t('applications.review.appliedDaysAgo', { count: diffDays });
   };
+
+  const formatAbsoluteDate = (isoDate: string) =>
+    new Date(isoDate).toLocaleDateString(resolvedLanguage, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+
+  const statusLabel = (status: JobApplicationStatus) =>
+    t(`applications.mine.applicationCard.status.${status}`, {
+      defaultValue: status.toLowerCase(),
+    });
 
   if (isLoading) {
     return <CenteredLoader />;
@@ -117,98 +121,122 @@ export default function JobApplicationReviewPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 lg:py-8">
-      <div className="mx-auto max-w-4xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
-            {t('applications.review.title', { jobTitle: application.title })}
-          </h1>
-          <p className="mt-2 text-muted-foreground">
-            {t('applications.review.atCompany', { company: application.company })}
-          </p>
+    <div className="container mx-auto px-4 py-6 lg:py-8" dir={isRtl ? 'rtl' : 'ltr'}>
+      <div className="mx-auto max-w-5xl space-y-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-base text-muted-foreground">
+              <Button variant="ghost" size="sm" asChild className="gap-2 px-0">
+                <Link to={`/employer/jobs/${jobId}/applications`}>
+                  <ArrowLeft className="size-4" aria-hidden />
+                  {t('applications.review.backToApplications')}
+                </Link>
+              </Button>
+            </div>
+            <h1 className="text-3xl font-bold text-foreground lg:text-4xl">
+              {t('applications.review.title', { jobTitle: application.title })}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2 text-base text-muted-foreground">
+              <Badge variant={statusVariants[application.status]} className="capitalize">
+                {statusLabel(application.status)}
+              </Badge>
+              <Badge variant="secondary" className="gap-2">
+                <CalendarClock className="size-4" aria-hidden />
+                {t('applications.list.appliedOn', {
+                  defaultValue: 'Applied on {{date}}',
+                  date: formatAbsoluteDate(application.appliedDate),
+                })}
+              </Badge>
+              <Badge variant="outline">
+                {t('applications.review.applied')} {formatRelativeDate(application.appliedDate)}
+              </Badge>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-6">
-          {/* Applicant Information */}
           <Card className="border border-border bg-card shadow-sm">
-            <div className="p-6">
-              <h2 className="mb-4 text-xl font-semibold">{t('applications.review.applicantInfo')}</h2>
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-                <Avatar className="size-20 self-center rounded-md sm:self-start">
-                  <AvatarFallback className="rounded-md text-lg font-semibold">
-                    {application.applicantName
-                      .split(' ')
-                      .map((n) => n[0])
-                      .join('')}
+            <div className="flex flex-col gap-6 p-6 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-1 gap-4">
+                <Avatar className="size-16 rounded-lg border border-border bg-muted">
+                  <AvatarFallback className="rounded-lg text-lg font-semibold">
+                    {getInitials(application.applicantName)}
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex-1 space-y-3">
-                  <div>
-                    <p className="text-lg font-semibold text-foreground">
-                      {application.applicantName}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{t('applications.review.status')}: {application.status}</p>
-                  </div>
+                <div className="space-y-2">
+                  <p className="text-lg font-semibold text-foreground">{application.applicantName}</p>
+                  <p className="text-base text-muted-foreground">
+                    {t('applications.review.applied')} {formatRelativeDate(application.appliedDate)}
+                  </p>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {t('applications.review.applied')} {formatDate(application.appliedDate)}
-                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 sm:justify-end">
+                {application.coverLetter && (
+                  <Badge variant="secondary">
+                    {t('applications.list.hasCoverLetter', { defaultValue: 'Cover letter' })}
+                  </Badge>
+                )}
+                {application.specialNeeds && (
+                  <Badge variant="warning" className="gap-1">
+                    {t('applications.list.hasNeeds', { defaultValue: 'Special needs noted' })}
+                  </Badge>
+                )}
+                {cvUrl && (
+                  <Badge variant="secondary" className="gap-1">
+                    {t('applications.review.cv')}
+                  </Badge>
+                )}
               </div>
             </div>
           </Card>
 
-          {/* Cover Letter */}
-          {application.coverLetter && (
-            <Card className="border border-border bg-card shadow-sm">
-              <div className="p-6">
-                <h2 className="mb-4 text-xl font-semibold">{t('applications.review.coverLetter')}</h2>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                  {application.coverLetter}
-                </p>
-              </div>
-            </Card>
+          {(hasCoverLetter || hasSpecialNeeds) && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {hasCoverLetter && (
+                <Card className="border border-border bg-card shadow-sm">
+                  <div className="p-6 space-y-3">
+                    <h2 className="text-xl font-semibold">{t('applications.review.coverLetter')}</h2>
+                    <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                      {application.coverLetter}
+                    </p>
+                  </div>
+                </Card>
+              )}
+
+              {hasSpecialNeeds && (
+                <Card className="border border-border bg-card shadow-sm">
+                  <div className="p-6 space-y-3">
+                    <h2 className="text-xl font-semibold">{t('applications.review.specialNeeds')}</h2>
+                    <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                      {application.specialNeeds}
+                    </p>
+                  </div>
+                </Card>
+              )}
+            </div>
           )}
 
-          {/* Special Needs */}
-          {application.specialNeeds && (
-            <Card className="border border-border bg-card shadow-sm">
-              <div className="p-6">
-                <h2 className="mb-4 text-xl font-semibold">{t('applications.review.specialNeeds')}</h2>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
-                  {application.specialNeeds}
-                </p>
-              </div>
-            </Card>
-          )}
-
-          {/* CV / Resume */}
           <Card className="border border-border bg-card shadow-sm">
             <div className="p-6">
               <h2 className="mb-4 text-xl font-semibold">{t('applications.review.cv')}</h2>
               {isCvLoading ? (
-                <p className="text-sm text-muted-foreground">{t('applications.review.loadingCv')}</p>
+                <p className="text-base text-muted-foreground">{t('applications.review.loadingCv')}</p>
               ) : cvUrl ? (
-                <div className="flex items-center gap-4 p-4 rounded-lg border border-border bg-muted/50">
+                <div className="flex items-center gap-4 rounded-lg border border-border bg-muted/50 p-4">
                   <div className="flex-shrink-0">
-                    <div className="p-3 rounded-lg bg-primary/10">
+                    <div className="rounded-lg bg-primary/10 p-3">
                       <FileText className="size-6 text-primary" />
                     </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground">
-                      {t('applications.review.resumeOf', { name: application?.applicantName })}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-base font-medium text-foreground">
+                      {t('applications.review.resumeOf', { name: application.applicantName })}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
+                    <p className="mt-0.5 text-sm text-muted-foreground">
                       {t('applications.review.downloadToView')}
                     </p>
                   </div>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="flex-shrink-0"
-                  >
+                  <Button asChild variant="outline" size="sm" className="flex-shrink-0">
                     <a
                       href={cvUrl}
                       target="_blank"
@@ -216,38 +244,41 @@ export default function JobApplicationReviewPage() {
                       download
                       className="flex items-center gap-2"
                     >
-                      <Download className="size-4" />
+                      <Download className="size-4" aria-hidden />
                       {t('applications.review.download')}
                     </a>
                   </Button>
                 </div>
               ) : (
-                <div className="p-4 rounded-lg border border-dashed border-muted-foreground/30 bg-muted/30">
-                  <p className="text-sm text-muted-foreground text-center">
-                    {t('applications.review.noCvAttached')}
-                  </p>
+                <div className="rounded-lg border border-dashed border-muted-foreground/30 bg-muted/30 p-4 text-center text-base text-muted-foreground">
+                  {t('applications.review.noCvAttached')}
                 </div>
               )}
             </div>
           </Card>
 
-          {/* Existing Feedback */}
-          {application.feedback && (
+          {application.feedback ? (
             <Card className="border border-border bg-card shadow-sm">
-              <div className="p-6">
-                <h2 className="mb-4 text-xl font-semibold">{t('applications.review.existingFeedback')}</h2>
-                <p className="text-sm text-muted-foreground">{application.feedback}</p>
+              <div className="px-6">
+                <h2 className="mb-3 text-xl font-semibold">{t('applications.review.existingFeedback')}</h2>
+                <p className="text-base text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                  {application.feedback}
+                </p>
               </div>
             </Card>
-          )}
-
-          {/* Decision */}
-          <Card className="border border-border bg-card shadow-sm">
-            <div className="p-6">
-              <h2 className="mb-4 text-xl font-semibold">{t('applications.review.decision')}</h2>
-              <div className="space-y-4">
+          ) : ( // can we change the feedback again ??? TODO
+            <Card className="border border-border bg-card shadow-sm">
+              <div className="px-6 space-y-4">
                 <div>
-                  <Label htmlFor="feedback" className="text-sm font-medium">
+                  <h2 className="text-xl font-semibold">{t('applications.review.decision')}</h2>
+                  <p className="text-base text-muted-foreground">
+                    {t('applications.review.feedbackHelper', {
+                      defaultValue: 'Add a note for the candidate before making your decision.',
+                    })}
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <Label htmlFor="feedback" className="text-base font-medium">
                     {t('applications.review.feedback')}
                   </Label>
                   <textarea
@@ -256,31 +287,31 @@ export default function JobApplicationReviewPage() {
                     onChange={(e) => setFeedback(e.target.value)}
                     placeholder={t('applications.review.feedbackPlaceholder')}
                     disabled={isSubmitting}
-                    className="mt-2 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px] resize-y"
+                    className="mt-1 w-full min-h-[120px] resize-y rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </div>
-                <div className="flex justify-end gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
                   <Button
-                    variant="outline"
+                    variant="destructive"
                     onClick={handleReject}
                     disabled={isSubmitting}
+                    className="sm:min-w-[140px]"
                   >
                     {isSubmitting ? t('applications.review.processing') : t('applications.review.reject')}
                   </Button>
                   <Button
                     onClick={handleApprove}
                     disabled={isSubmitting}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 sm:min-w-[140px]"
                   >
                     {isSubmitting ? t('applications.review.processing') : t('applications.review.approve')}
                   </Button>
                 </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          )}
         </div>
       </div>
     </div>
   );
 }
-

@@ -1,8 +1,8 @@
 package org.bounswe.jobboardbackend.exception;
+
 import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
-
 
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST),
     MALFORMED_JSON(HttpStatus.BAD_REQUEST),
@@ -86,9 +86,15 @@ public enum ErrorCode {
     RESUME_FILE_REQUIRED(HttpStatus.BAD_REQUEST),
     RESUME_FILE_CONTENT_TYPE_INVALID(HttpStatus.UNSUPPORTED_MEDIA_TYPE),
     RESUME_FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR),
-    RESUME_FILE_NOT_FOUND(HttpStatus.NOT_FOUND);
+    RESUME_FILE_NOT_FOUND(HttpStatus.NOT_FOUND),
+    ACCOUNT_BANNED(HttpStatus.FORBIDDEN),
+    MENTOR_BANNED(HttpStatus.FORBIDDEN),
 
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND);
 
     public final HttpStatus status;
-    ErrorCode(HttpStatus status) { this.status = status; }
+
+    ErrorCode(HttpStatus status) {
+        this.status = status;
+    }
 }

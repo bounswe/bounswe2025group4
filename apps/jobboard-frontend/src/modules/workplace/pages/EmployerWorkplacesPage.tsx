@@ -3,7 +3,7 @@
  * Lists all workplaces the current employer manages
  */
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
@@ -17,7 +17,11 @@ import {
 } from '@shared/components/ui/dialog';
 import { useTranslation } from 'react-i18next';
 import { Plus, Building2, ListChecks, Loader2 } from 'lucide-react';
-import { getMyWorkplaces, getEmployerRequests, getMyEmployerRequests } from '@modules/employer/services/employer.service';
+import {
+  useMyWorkplacesQuery,
+  getEmployerRequests,
+  getMyEmployerRequests,
+} from '@modules/employer/services/employer.service';
 import type { EmployerWorkplaceBrief, EmployerRequestResponse } from '@shared/types/workplace.types';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
@@ -25,12 +29,11 @@ import { NewWorkplaceModal } from '@/modules/workplace/components/NewWorkplaceMo
 import { JoinWorkplaceModal } from '@/modules/workplace/components/JoinWorkplaceModal';
 import { CreateWorkplaceModal } from '@/modules/workplace/components/CreateWorkplaceModal';
 import { EmployerWorkplaceCard } from '@/modules/workplace/components/EmployerWorkplaceCard';
-import { getErrorMessage } from '@shared/utils/error-handler';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 export default function EmployerWorkplacesPage() {
   const { t } = useTranslation('common');
   const [workplaces, setWorkplaces] = useState<EmployerWorkplaceBrief[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isNewWorkplaceModalOpen, setIsNewWorkplaceModalOpen] = useState(false);
   const [isCreateWorkplaceModalOpen, setIsCreateWorkplaceModalOpen] = useState(false);
@@ -41,52 +44,9 @@ export default function EmployerWorkplacesPage() {
   const [requestsError, setRequestsError] = useState<string | null>(null);
   const [workplacesWithRequests, setWorkplacesWithRequests] = useState<Set<number>>(new Set());
 
-  useEffect(() => {
-    loadWorkplaces();
-  }, []);
+  const workplacesQuery = useMyWorkplacesQuery();
 
-  useEffect(() => {
-    if (isApplicationsModalOpen) {
-      loadMyRequests();
-    }
-  }, [isApplicationsModalOpen]);
-
-  const loadWorkplaces = async () => {
-    try {
-      setError(null);
-      setLoading(true);
-      const data = await getMyWorkplaces();
-      setWorkplaces(data);
-
-      // Fetch employer requests for each workplace
-      const workplacesWithPendingRequests = new Set<number>();
-      await Promise.all(
-        data.map(async ({ workplace }) => {
-          try {
-            const requests = await getEmployerRequests(workplace.id, { size: 10 });
-            // Check if there are any pending requests
-            const hasPendingRequests = requests.content.some(
-              (req) => req.status === 'PENDING' || req.status.toUpperCase() === 'PENDING'
-            );
-            if (hasPendingRequests) {
-              workplacesWithPendingRequests.add(workplace.id);
-            }
-          } catch (err) {
-            // Silently fail - user might not have permission to view requests
-            console.warn(`Failed to fetch requests for workplace ${workplace.id}:`, err);
-          }
-        })
-      );
-      setWorkplacesWithRequests(workplacesWithPendingRequests);
-    } catch (err) {
-      console.error('Failed to load workplaces:', err);
-      setError(getErrorMessage(err, t('employer.workplaces.loadError')));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadMyRequests = async () => {
+  const loadMyRequests = useCallback(async () => {
     try {
       setRequestsError(null);
       setRequestsLoading(true);
@@ -94,11 +54,67 @@ export default function EmployerWorkplacesPage() {
       setMyRequests(response.content);
     } catch (err) {
       console.error('Failed to load employer requests:', err);
-      setRequestsError(
-        getErrorMessage(err, t('employer.workplaces.applicationsModal.loadError'))
-      );
+      const normalized = normalizeApiError(err, t('employer.workplaces.applicationsModal.loadError'));
+      setRequestsError(normalized.friendlyMessage);
     } finally {
       setRequestsLoading(false);
+    }
+  }, [t]);
+
+  useEffect(() => {
+    if (workplacesQuery.data) {
+      setWorkplaces(workplacesQuery.data);
+    }
+    if (workplacesQuery.error) {
+      const normalized = normalizeApiError(workplacesQuery.error, t('employer.workplaces.loadError'));
+      setError(normalized.friendlyMessage);
+    } else {
+      setError(null);
+    }
+  }, [workplacesQuery.data, workplacesQuery.error, t]);
+
+  useEffect(() => {
+    if (isApplicationsModalOpen) {
+      void loadMyRequests();
+    }
+  }, [isApplicationsModalOpen, loadMyRequests]);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      if (!workplacesQuery.data) return;
+      const data = workplacesQuery.data;
+      const workplacesWithPendingRequests = new Set<number>();
+      await Promise.all(
+        data.map(async ({ workplace }) => {
+          try {
+            const requests = await getEmployerRequests(workplace.id, { size: 10 });
+            const hasPendingRequests = requests.content.some(
+              (req) => req.status === 'PENDING' || req.status.toUpperCase() === 'PENDING'
+            );
+            if (hasPendingRequests) {
+              workplacesWithPendingRequests.add(workplace.id);
+            }
+          } catch (err) {
+            console.warn(`Failed to fetch requests for workplace ${workplace.id}:`, err);
+          }
+        })
+      );
+      setWorkplacesWithRequests(workplacesWithPendingRequests);
+    };
+    fetchRequests();
+  }, [workplacesQuery.data]);
+
+  const loadWorkplaces = async () => {
+    try {
+      setError(null);
+      const result = await workplacesQuery.refetch({ throwOnError: true });
+      if (result.data) {
+        setWorkplaces(result.data);
+      }
+    } catch (err) {
+      console.error('Failed to load workplaces:', err);
+      const normalized = normalizeApiError(err, t('employer.workplaces.loadError'));
+      setError(normalized.friendlyMessage);
     }
   };
 
@@ -121,7 +137,7 @@ export default function EmployerWorkplacesPage() {
     return 'bg-secondary text-secondary-foreground';
   };
 
-  if (loading) {
+  if (workplacesQuery.isLoading) {
     return <CenteredLoader />; 
   }
 
@@ -151,7 +167,7 @@ export default function EmployerWorkplacesPage() {
         {error && (
           <CenteredError
             message={error ?? t('employer.workplaces.loadError')}
-            onRetry={loadWorkplaces}
+            onRetry={() => workplacesQuery.refetch()}
           />
         )}
 

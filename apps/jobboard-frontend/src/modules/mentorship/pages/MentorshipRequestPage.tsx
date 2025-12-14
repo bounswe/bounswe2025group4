@@ -12,11 +12,16 @@ import { Checkbox } from '@shared/components/ui/checkbox';
 import { Star, ArrowLeft, Send, Clock, Users, AlertCircle } from 'lucide-react';
 import type { Mentor, Mentorship } from '@shared/types/mentor';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
-import { getMentorProfile, createMentorshipRequest, getMenteeMentorships } from '@modules/mentorship/services/mentorship.service';
+import {
+  useMentorProfileQuery,
+  useCreateMentorshipRequestMutation,
+  useMenteeMentorshipsQuery,
+} from '@modules/mentorship/services/mentorship.service';
 import { convertMentorProfileToMentor } from '@shared/utils/mentorship.utils';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
 import { toast } from 'react-toastify';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 const MentorshipRequestPage = () => {
   const { t } = useTranslation('common');
@@ -31,12 +36,16 @@ const MentorshipRequestPage = () => {
   });
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [timeRange, setTimeRange] = useState({ start: '', end: '' });
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [mentor, setMentor] = useState<Mentor | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasExistingRequest, setHasExistingRequest] = useState(false);
+  const mentorId = id ? parseInt(id, 10) : undefined;
+  const mentorProfileQuery = useMentorProfileQuery(mentorId, Boolean(mentorId));
+  const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
+  const createRequestMutation = useCreateMentorshipRequestMutation();
+  const isLoading =
+    mentorProfileQuery.isLoading ||
+    menteeMentorshipsQuery.isLoading;
 
   const daysOfWeek = useMemo(() => [
     { value: 'monday', label: 'Monday' },
@@ -73,54 +82,29 @@ const MentorshipRequestPage = () => {
   };
 
   useEffect(() => {
-    const fetchMentorProfile = async () => {
-      if (!id) {
-        setError('Mentor ID is missing');
-        setIsLoading(false);
-        return;
-      }
+    if (mentorProfileQuery.data) {
+      setMentor(convertMentorProfileToMentor(mentorProfileQuery.data));
+    }
+    if (mentorProfileQuery.error) {
+      const normalized = normalizeApiError(mentorProfileQuery.error, 'Failed to load mentor profile.');
+      setError(normalized.friendlyMessage);
+    } else {
+      setError(null);
+    }
+  }, [mentorProfileQuery.data, mentorProfileQuery.error]);
 
-      try {
-        setIsLoading(true);
-        setError(null);
-        const mentorId = parseInt(id, 10);
-        if (isNaN(mentorId)) {
-          throw new Error('Invalid mentor ID');
-        }
-
-        const backendMentor = await getMentorProfile(mentorId);
-        if (!backendMentor) {
-          throw new Error('Mentor profile not found');
-        }
-        const convertedMentor = convertMentorProfileToMentor(backendMentor);
-        setMentor(convertedMentor);
-
-        // Check if user already has a pending/active request for this mentor
-        if (user?.id) {
-          try {
-            const existingMentorships = await getMenteeMentorships(user.id);
-            const hasExisting = existingMentorships.some(
-              m => m.mentorId === mentorId && 
-                   (m.requestStatus === 'PENDING' || 
-                    m.requestStatus === 'ACCEPTED' ||
-                    m.reviewStatus === 'ACTIVE') // Active mentorship means you already have an active relationship
-            );
-            setHasExistingRequest(hasExisting);
-          } catch (err) {
-            console.error('Error checking existing requests:', err);
-            // Don't block the page if this check fails
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching mentor profile:', err);
-        setError('Failed to load mentor profile. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchMentorProfile();
-  }, [id, user?.id]);
+  useEffect(() => {
+    if (menteeMentorshipsQuery.data && mentorId) {
+      const hasExisting = menteeMentorshipsQuery.data.some(
+        (m) =>
+          m.mentorId === mentorId &&
+          (m.requestStatus === 'PENDING' ||
+            m.requestStatus === 'ACCEPTED' ||
+            m.reviewStatus === 'ACTIVE')
+      );
+      setHasExistingRequest(hasExisting);
+    }
+  }, [menteeMentorshipsQuery.data, mentorId]);
 
   const isAvailable = mentor ? mentor.mentees < mentor.capacity : false;
   
@@ -137,48 +121,26 @@ const MentorshipRequestPage = () => {
       return;
     }
 
-    setIsSubmitting(true);
-    
     try {
       if (!user?.id) {
-        toast.error(t('mentorship.request.userNotAuthenticated') || 'You must be logged in to send a mentorship request');
-        setIsSubmitting(false);
+        toast.error(
+          t('mentorship.request.userNotAuthenticated') ||
+            'You must be logged in to send a mentorship request'
+        );
         return;
       }
 
-      const mentorId = parseInt(id, 10);
-      if (isNaN(mentorId)) {
+      const mentorIdParsed = parseInt(id, 10);
+      if (isNaN(mentorIdParsed)) {
         throw new Error('Invalid mentor ID');
       }
 
-      // Double-check before sending (in case state wasn't updated)
-      try {
-        const existingMentorships = await getMenteeMentorships(user.id);
-        const hasExisting = existingMentorships.some(
-          m => m.mentorId === mentorId && 
-               (m.requestStatus === 'PENDING' || 
-                m.requestStatus === 'ACCEPTED' ||
-                m.reviewStatus === 'ACTIVE') // Active mentorship means you already have an active relationship
-        );
-        if (hasExisting) {
-          toast.error(t('mentorship.request.alreadyExists') || 'You already have a pending, accepted, or active mentorship with this mentor.');
-          setIsSubmitting(false);
-          setHasExistingRequest(true);
-          return;
-        }
-      } catch (checkErr) {
-        console.error('Error checking existing requests before submit:', checkErr);
-        // Continue with submission if check fails
-      }
+      const response = await createRequestMutation.mutateAsync({ mentorId: mentorIdParsed });
 
-      const response = await createMentorshipRequest({ mentorId });
-      
       if (!response || !response.id) {
         throw new Error('Invalid response from server');
       }
-      
-      toast.success(t('mentorship.request.successMessage') || 'Mentorship request sent successfully!');
-      
+
       const newMentorship: Mentorship = {
         id: response.id,
         mentorId: response.mentorId,
@@ -187,67 +149,39 @@ const MentorshipRequestPage = () => {
         mentorAvatar: mentor.profileImage,
         menteeId: user?.id?.toString() || '',
         menteeName: 'You',
-        status: response.status === 'PENDING' ? 'pending' : 
-                response.status === 'ACCEPTED' ? 'active' : 
-                response.status === 'REJECTED' ? 'rejected' : 'pending',
+        status:
+          response.status === 'PENDING'
+            ? 'pending'
+            : response.status === 'ACCEPTED'
+              ? 'active'
+              : response.status === 'REJECTED'
+                ? 'rejected'
+                : 'pending',
         createdAt: new Date().toISOString(),
         acceptedAt: undefined,
         completedAt: undefined,
-        goals: formData.goals ? formData.goals.split('\n').filter(g => g.trim()) : [],
+        goals: formData.goals ? formData.goals.split('\n').filter((g) => g.trim()) : [],
         message: formData.message || 'No message provided',
         preferredTime: formData.preferredTime || 'Flexible',
-        expectedDuration: 'Flexible', // Removed from form, default to Flexible
+        expectedDuration: 'Flexible',
         conversationId: undefined,
       };
-      
-      // Success - Redirect to my mentorships page with the new request
-      navigate('/mentorship/my', { 
-        state: { 
+
+      navigate('/mentorship/my', {
+        state: {
           showSuccess: true,
           mentorName: mentor.name,
-          newMentorship: newMentorship // Pass the new request to show it immediately
-        }
+          newMentorship,
+        },
       });
     } catch (err: any) {
       console.error('Error sending mentorship request:', err);
-      
-      // More detailed error handling
-      let errorMessage = t('mentorship.request.errorMessage') || 'Failed to send mentorship request. Please try again.';
-      
-      if (err?.response) {
-        // API error response
-        const status = err.response.status;
-        const data = err.response.data;
-        
-        console.error('API Error Response:', { status, data });
-        
-        if (status === 400) {
-          errorMessage = data?.message || 'Invalid request. Please check your input.';
-        } else if (status === 401) {
-          errorMessage = 'You must be logged in to send a mentorship request.';
-        } else if (status === 403) {
-          errorMessage = 'You do not have permission to send this request.';
-        } else if (status === 404) {
-          errorMessage = 'Mentor not found.';
-        } else if (status === 409) {
-          errorMessage = data?.message || 'A mentorship request already exists for this mentor.';
-        } else if (status >= 500) {
-          errorMessage = 'Server error. Please try again later.';
-        } else {
-          errorMessage = data?.message || errorMessage;
-        }
-      } else if (err?.request) {
-        // Network error (no response received)
-        console.error('Network Error:', err.request);
-        errorMessage = 'Network error. Please check your connection and try again.';
-      } else if (err?.message) {
-        // Other error
-        errorMessage = err.message;
-      }
-      
-      toast.error(errorMessage);
-    } finally {
-      setIsSubmitting(false);
+      const normalized = normalizeApiError(
+        err,
+        t('mentorship.request.errorMessage') ||
+          'Failed to send mentorship request. Please try again.'
+      );
+      toast.error(normalized.friendlyMessage);
     }
   };
 
@@ -554,15 +488,17 @@ const MentorshipRequestPage = () => {
                     onClick={() => navigate(`/mentorship/${id}`)}
                     className="flex-1"
                   >
-                    {t('mentorship.request.cancel')}
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     type="submit"
-                    disabled={!isAvailable || isSubmitting || hasExistingRequest}
+                    disabled={
+                      !isAvailable || createRequestMutation.isPending || hasExistingRequest
+                    }
                     className="flex-1"
                     size="lg"
                   >
-                    {isSubmitting ? (
+                    {createRequestMutation.isPending ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                         {t('mentorship.request.sendingRequest') || 'Sending Request...'}

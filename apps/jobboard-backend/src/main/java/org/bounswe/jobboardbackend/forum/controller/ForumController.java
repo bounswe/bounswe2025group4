@@ -59,6 +59,36 @@ public class ForumController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/posts/{id}/upvote")
+    public ResponseEntity<Void> upvotePost(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = getUser(userDetails);
+        forumService.upvotePost(id, user);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/posts/{id}/upvote")
+    public ResponseEntity<Void> removePostUpvote(@PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        User user = getUser(userDetails);
+        forumService.removePostUpvote(id, user);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/posts/{id}/downvote")
+    public ResponseEntity<Void> downvotePost(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        User user = getUser(userDetails);
+        forumService.downvotePost(id, user);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/posts/{id}/downvote")
+    public ResponseEntity<Void> removePostDownvote(@PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        User user = getUser(userDetails);
+        forumService.removePostDownvote(id, user);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/posts/{id}/comments")
     public ResponseEntity<CommentResponse> createComment(@PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails,

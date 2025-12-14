@@ -512,7 +512,6 @@ public class ProfileService {
                 .experiences(p.getExperiences().stream().map(this::toExperienceDto).collect(java.util.stream.Collectors.toList()))
                 .skills(p.getSkills().stream().map(this::toSkillDto).collect(java.util.stream.Collectors.toList()))
                 .interests(p.getInterests().stream().map(this::toInterestDto).collect(java.util.stream.Collectors.toList()))
-                .badges(null)
                 .createdAt(p.getCreatedAt())
                 .updatedAt(p.getUpdatedAt())
                 .build();

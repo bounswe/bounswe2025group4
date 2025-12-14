@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { AlertCircle, Heart, Leaf, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -6,10 +6,10 @@ import { NonProfitJobCard } from '@modules/jobs/components/jobs/NonProfitJobCard
 import { Button } from '@shared/components/ui/button';
 import { Card, CardContent } from '@shared/components/ui/card';
 import { type Job } from '@shared/types/job';
-import { getJobs } from '@modules/jobs/services/jobs.service';
+import { useJobsQuery } from '@modules/jobs/services/jobs.service';
 import type { JobPostResponse } from '@shared/types/api.types';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
-import { AxiosError } from 'axios';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 /**
  * Convert API JobPostResponse to Job type for NonProfitJobCard component
@@ -31,48 +31,20 @@ function convertJobPostToJob(jobPost: JobPostResponse): Job {
 }
 
 export default function NonProfitJobsPage() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isAuthError, setIsAuthError] = useState(false);
   const { t, i18n } = useTranslation('common');
   const resolvedLanguage = i18n.resolvedLanguage ?? i18n.language;
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
 
-  // Fetch nonprofit jobs from API
-  useEffect(() => {
-    const fetchNonProfitJobs = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        setIsAuthError(false);
-
-        // Filter for nonprofit jobs only
-        const filters = {
-          nonProfit: true,
-        };
-
-        const jobPosts = await getJobs(filters);
-        const convertedJobs = jobPosts.map(convertJobPostToJob);
-        setJobs(convertedJobs);
-      } catch (err) {
-        console.error('Error fetching nonprofit jobs:', err);
-
-        // Check if it's a 401 authentication error
-        if (err instanceof AxiosError && err.response?.status === 401) {
-          setIsAuthError(true);
-          setError('auth_error');
-        } else {
-          setError('fetch_error');
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchNonProfitJobs();
-  }, []);
-
+  const jobsQuery = useJobsQuery({ nonProfit: true });
+  const jobs = useMemo(
+    () => ((jobsQuery.data ?? []) as JobPostResponse[]).map(convertJobPostToJob),
+    [jobsQuery.data],
+  );
+  const normalizedError = jobsQuery.error ? normalizeApiError(jobsQuery.error) : null;
+  const isAuthError = normalizedError?.status === 401;
+  const hasError = Boolean(jobsQuery.error);
+  const errorMessage = normalizedError?.friendlyMessage;
+  const isLoading = jobsQuery.isLoading;
   const jobCount = jobs.length;
 
   return (
@@ -117,7 +89,7 @@ export default function NonProfitJobsPage() {
       <div className="max-w-4xl mx-auto">
         {isLoading ? (
           <CenteredLoader />
-        ) : error ? (
+        ) : hasError ? (
           isAuthError ? (
             <Card className="gap-4 py-4 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
               <CardContent className="px-4 space-y-4">
@@ -147,7 +119,7 @@ export default function NonProfitJobsPage() {
             </Card>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
-              <p className="text-lg text-destructive">{t('jobs.error')}</p>
+              <p className="text-lg text-destructive">{errorMessage || t('jobs.error')}</p>
               <Button onClick={() => window.location.reload()}>{t('jobs.retry')}</Button>
             </div>
           )

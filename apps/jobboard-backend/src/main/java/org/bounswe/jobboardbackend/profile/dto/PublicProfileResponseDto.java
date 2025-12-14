@@ -3,6 +3,11 @@ package org.bounswe.jobboardbackend.profile.dto;
 import lombok.*;
 import java.util.List;
 
+/**
+ * Public profile response DTO.
+ * Note: Badges are now independent of Profile.
+ * Use GET /api/badges/user/{userId} to get user badges.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,5 +22,4 @@ public class PublicProfileResponseDto {
 
     private List<EducationResponseDto> educations;
     private List<ExperienceResponseDto> experiences;
-    private List<BadgeResponseDto> badges;
 }

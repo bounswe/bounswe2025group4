@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../stores/authStore';
+import { normalizeApiError, type NormalizedApiError } from '../utils/error-handler';
 
 /**
  * Base API URL - must be set via VITE_API_URL environment variable
@@ -57,6 +58,9 @@ apiClient.interceptors.response.use(
       skipAuthRedirect?: boolean;
     };
 
+    // Attach normalized error for downstream hooks/UI
+    (error as unknown as { normalizedError: NormalizedApiError }).normalizedError = normalizeApiError(error);
+
     // If 401 Unauthorized and haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -109,7 +113,7 @@ apiClient.interceptors.response.use(
       // Return a custom error that maintains the structure but won't trigger excessive logging
       const silentError = error;
       // Mark this error as expected/silent
-      (silentError as any).isExpected404 = true;
+      (silentError as unknown as { isExpected404: boolean }).isExpected404 = true;
       return Promise.reject(silentError);
     }
 

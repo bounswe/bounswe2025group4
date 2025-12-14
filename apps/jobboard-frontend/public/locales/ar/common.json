@@ -45,7 +45,10 @@
   "common": {
     "loading": "جارٍ التحميل...",
     "goHome": "الذهاب إلى الصفحة الرئيسية",
-    "visitWebsite": "زيارة الموقع",
+    "visitWebsite": "زيارة الموقع الإلكتروني",
+    "settings": "الإعدادات",
+    "employer": "صاحب عمل",
+    "employers": "أصحاب العمل",
     "edited": "تم التعديل",
     "cancel": "إلغاء",
     "optional": "اختياري",
@@ -342,14 +345,24 @@
       "applyNow": "قدّم الآن",
       "description": "وصف الوظيفة",
       "ethicalPolicy": {
-        "title": "العلامات الأخلاقية والامتثال"
+        "title": "العلامات الأخلاقية والامتثال",
+        "sourceNote": "المعلومات الأخلاقية لهذه الوظيفة تأتي من ملف الشركة.",
+        "overallScore": "تقييم الشركة الأخلاقي",
+        "ratingsTitle": "تقييمات السياسات الأخلاقية",
+        "tagCount": "{{count}} سياسة أخلاقية",
+        "tagCount_plural": "{{count}} سياسة أخلاقية",
+        "noPolicies": "لم تشارك الشركة سياساتها الأخلاقية بعد.",
+        "inclusiveNote": "تعتبر الشركة هذا الدور فرصة شاملة."
       },
       "inclusiveOpportunity": "فرصة شاملة",
       "contact": {
         "title": "معلومات التواصل"
       },
       "workplace": {
-        "title": "عن الشركة"
+        "title": "عن الشركة",
+        "sector": "القطاع",
+        "location": "الموقع",
+        "overallRating": "تقييم الشركة الأخلاقي"
       }
     }
   },
@@ -427,8 +440,7 @@
           "remove": "إزالة الملف"
         },
         "submit": "إرسال الطلب",
-        "submitting": "جارٍ الإرسال...",
-        "cancel": "إلغاء"
+        "submitting": "جارٍ الإرسال..."
       },
       "success": {
         "title": "تم إرسال الطلب!",
@@ -451,6 +463,34 @@
         "viewApplication": "عرض الطلب",
         "backToJobs": "العودة إلى الوظائف"
       }
+    },
+    "list": {
+      "breadcrumbPrefix": "الطلبات لـ",
+      "backToJob": "العودة إلى الوظيفة",
+      "filters": "عوامل التصفية",
+      "searchPlaceholder": "ابحث بالاسم أو المسمى",
+      "status": {
+        "all": "كل الحالات",
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "sort": {
+        "recent": "الأحدث أولاً",
+        "oldest": "الأقدم أولاً",
+        "nameAz": "الاسم أ-ي",
+        "nameZa": "الاسم ي-أ"
+      },
+      "count": "{{count}} طلب",
+      "emptyTitle": "لا توجد طلبات تطابق عوامل التصفية",
+      "emptyDescription": "جرّب تعديل البحث أو حالة الطلب.",
+      "errorTitle": "تعذر تحميل الطلبات",
+      "errorDescription": "ارجع لصفحة الوظيفة وحاول مجددًا.",
+      "jobTitleFallback": "وظيفة",
+      "viewApplication": "عرض الطلب",
+      "viewAll": "عرض الطلبات",
+      "loading": "جارٍ تحميل الطلبات...",
+      "summary": "تم استلام {{count}} طلب"
     },
     "volunteer": {
       "title": "تطوع في {{jobTitle}}",
@@ -485,7 +525,6 @@
           "chooseFile": "اختر ملف",
           "fileTypes": "PDF أو DOC أو DOCX حتى 10MB"
         },
-        "cancel": "إلغاء",
         "submit": "إرسال طلب التطوع",
         "submitting": "جاري الإرسال..."
       },
@@ -591,7 +630,6 @@
         "title": "سحب الطلب",
         "message": "هل أنت متأكد من أنك تريد سحب هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.",
         "confirm": "نعم، سحب",
-        "cancel": "إلغاء",
         "success": "تم سحب الطلب بنجاح",
         "error": "فشل سحب الطلب. يرجى المحاولة مرة أخرى."
       },
@@ -599,6 +637,39 @@
         "loadFailed": "فشل تحميل الطلبات. يرجى المحاولة مرة أخرى.",
         "deleteFailed": "فشل حذف الطلب. يرجى المحاولة مرة أخرى."
       }
+    },
+    "list": {
+      "back": "العودة إلى صفحة الوظيفة",
+      "jobErrorTitle": "لم يتم العثور على الوظيفة",
+      "jobErrorMessage": "تعذر تحميل هذه الوظيفة.",
+      "backToDashboard": "العودة للوحة التحكم",
+      "permissionDenied": "لا يمكنك عرض هذه الطلبات",
+      "permissionHint": "فقط أصحاب العمل في هذا مكان العمل يمكنهم رؤية الطلبات.",
+      "backToJob": "العودة إلى إعلان الوظيفة",
+      "title": "الطلبات لـ {{title}}",
+      "subtitle": "راجع وأدر كل الطلبات في مكان واحد.",
+      "postedOn": "تاريخ النشر",
+      "viewJob": "عرض الوظيفة",
+      "stats": {
+        "total": "الإجمالي",
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "searchPlaceholder": "ابحث بالاسم أو خطاب التغطية أو الاحتياجات",
+      "sort": {
+        "title": "ترتيب الطلبات",
+        "newest": "الأحدث أولاً",
+        "oldest": "الأقدم أولاً",
+        "nameAsc": "الاسم أ-ي",
+        "nameDesc": "الاسم ي-أ"
+      },
+      "emptyTitle": "لا توجد طلبات بعد",
+      "emptySubtitle": "شارك إعلانك لبدء تلقي الطلبات.",
+      "hasNeeds": "احتياجات خاصة مذكورة",
+      "hasCoverLetter": "خطاب تغطية",
+      "appliedOn": "تم التقديم في {{date}}",
+      "review": "مراجعة الطلب"
     }
   },
   "employer": {
@@ -884,6 +955,155 @@
     "nonprofit": "غير ربحي",
     "other": "أخرى"
   },
+  "workplace": {
+    "createModal": {
+      "title": "إنشاء مكان عمل",
+      "description": "أضف شركتك وابدأ بناء سمعتها",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "أدخل اسم الشركة",
+      "sector": "القطاع",
+      "sectorPlaceholder": "مثال: تقنية، رعاية صحية",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع",
+      "website": "الموقع الإلكتروني",
+      "shortDescription": "وصف مختصر",
+      "detailedDescription": "وصف تفصيلي",
+      "websitePlaceholder": "https://www.example.com",
+      "ethicalTagsLabel": "العلامات الأخلاقية",
+      "ethicalTagsHelper": "اختر العلامات التي تمثل التزامات شركتك الأخلاقية",
+      "shortDescriptionHint": "(بحد أقصى 300 حرف)",
+      "shortDescriptionPlaceholder": "سطر قصير أو ملخص",
+      "detailedDescriptionHint": "(بحد أقصى 4000 حرف)",
+      "detailedDescriptionPlaceholder": "أخبرنا عن رسالة شركتك وقيمها وثقافتها",
+      "submit": "إنشاء مكان العمل",
+      "workplaceCreated": "تم إنشاء مكان العمل!",
+      "workplaceCreatedMessage": "تم إنشاء مكان عملك بنجاح.",
+      "creating": "جارٍ الإنشاء...",
+      "redirecting": "يتم تحويلك إلى مكان العمل الجديد...",
+      "errors": {
+        "companyNameRequired": "اسم الشركة مطلوب",
+        "sectorRequired": "القطاع مطلوب",
+        "locationRequired": "الموقع مطلوب",
+        "ethicalTagsRequired": "يجب اختيار علامة أخلاقية واحدة على الأقل",
+        "websiteInvalid": "يجب أن يكون رابطاً صالحاً"
+      }
+    },
+    "joinModal": {
+      "title": "الانضمام إلى مكان عمل",
+      "searchDescription": "ابحث عن أماكن العمل وأرسل طلب انضمام.",
+      "searchPlaceholder": "ابحث عن أماكن العمل...",
+      "filters": "عوامل التصفية",
+      "clear": "مسح",
+      "searching": "جارٍ البحث...",
+      "search": "بحث",
+      "sector": "القطاع",
+      "allSectors": "جميع القطاعات",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع...",
+      "sortBy": "ترتيب حسب",
+      "sortOptions": {
+        "default": "افتراضي",
+        "ratingDesc": "التقييم (من الأعلى للأدنى)",
+        "ratingAsc": "التقييم (من الأدنى للأعلى)",
+        "nameAsc": "الاسم (أ إلى ي)",
+        "nameDesc": "الاسم (ي إلى أ)"
+      },
+      "minimumRating": "أدنى تقييم",
+      "anyRating": "أي قيمة",
+      "ratingMinLabel": "0★",
+      "ratingMaxLabel": "5★",
+      "searchResults": "تم العثور على {{count}} مكان عمل",
+      "noWorkplacesFound": "لا توجد أماكن عمل تطابق عوامل التصفية.",
+      "clearFiltersAndShowAll": "مسح عوامل التصفية وإظهار الكل",
+      "requestTitle": "طلب انضمام",
+      "requestDescription": "أضف ملاحظة قصيرة لطلب الانضمام إلى هذا المكان.",
+      "selectedWorkplace": "مكان العمل المختار",
+      "noteLabel": "ملاحظة للمسؤولين",
+      "noteMaxLength": "بحد أقصى 500 حرف",
+      "notePlaceholder": "رسالة اختيارية تشرح سبب رغبتك في الانضمام إلى هذا المكان...",
+      "submitRequest": "إرسال الطلب",
+      "submittingRequest": "جارٍ الإرسال...",
+      "back": "رجوع",
+      "alreadyMember": "أنت بالفعل صاحب عمل في هذا المكان",
+      "requestSubmitted": "تم إرسال الطلب",
+      "requestSubmittedMessage": "تم إرسال طلب الانضمام إلى {{company}} بنجاح. سيتم إعلامك عند المراجعة.",
+      "closing": "سيتم الإغلاق خلال لحظات...",
+      "close": "إغلاق"
+    },
+    "settings": {
+      "label": "الإعدادات",
+      "failedToLoad": "تعذر تحميل إعدادات مكان العمل.",
+      "notFound": {
+        "title": "مكان العمل غير موجود",
+        "description": "مكان العمل الذي تبحث عنه غير موجود أو تم حذفه.",
+        "goToWorkplaces": "الذهاب إلى أماكن العمل"
+      },
+      "backToWorkplace": "العودة إلى مكان العمل",
+      "title": "إعدادات مكان العمل",
+      "subtitle": "حدّث معلومات مكان العمل وقم بإدارتها",
+      "updateSuccess": "تم تحديث مكان العمل بنجاح.",
+      "companyLogo": "شعار الشركة",
+      "imagePreviewAlt": "معاينة صورة مكان العمل",
+      "changeImage": "تغيير الصورة",
+      "uploadImage": "رفع صورة",
+      "uploading": "جارٍ الرفع...",
+      "saveImage": "حفظ الصورة",
+      "imageGuidelines": "مستحسن: صورة مربعة لا تقل عن 200×200 بكسل",
+      "basicInformation": "المعلومات الأساسية",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "أدخل اسم الشركة",
+      "sector": "القطاع",
+      "sectorPlaceholder": "مثال: تقنية، رعاية صحية",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع",
+      "website": "الموقع الإلكتروني",
+      "websitePlaceholder": "https://www.example.com",
+      "description": "الوصف",
+      "shortDescription": "وصف مختصر",
+      "shortDescriptionPlaceholder": "سطر قصير أو ملخص",
+      "shortDescriptionHint": "(بحد أقصى 300 حرف)",
+      "detailedDescription": "وصف تفصيلي",
+      "detailedDescriptionPlaceholder": "أخبرنا عن رسالة شركتك وقيمها وثقافتها",
+      "detailedDescriptionHint": "(بحد أقصى 4000 حرف)",
+      "ethicalTags": "العلامات الأخلاقية",
+      "ethicalTagsHelper": "اختر العلامات التي تمثل التزامات شركتك الأخلاقية",
+      "cancel": "إلغاء",
+      "saving": "جارٍ الحفظ...",
+      "saveChanges": "حفظ التغييرات",
+      "dangerZone": {
+        "title": "منطقة الخطر",
+        "deleteDescription": "حذف مكان العمل إجراء نهائي ولا يمكن التراجع عنه.",
+        "deleteButton": "حذف مكان العمل",
+        "deleteFailed": "فشل حذف مكان العمل. يرجى المحاولة مرة أخرى.",
+        "confirmTitle": "تأكيد الحذف",
+        "confirmDescription": "هذا الإجراء لا يمكن التراجع عنه. يرجى التأكيد بكتابة اسم مكان العمل.",
+        "confirmWarning": "اكتب اسم مكان العمل بالضبط للتأكيد.",
+        "confirmPlaceholder": "اكتب اسم مكان العمل للتأكيد",
+        "confirmCancel": "إلغاء",
+        "confirmButton": "نعم، احذف مكان العمل",
+        "confirmHelper": "يرجى كتابة اسم مكان العمل بالضبط للتأكيد",
+        "deleting": "جارٍ الحذف..."
+      }
+    },
+    "profile": {
+      "title": "ملف مكان العمل",
+      "notFound": "لم يتم العثور على مكان العمل",
+      "notFoundDescription": "مكان العمل الذي تبحث عنه غير موجود أو تم حذفه.",
+      "aboutCompany": "عن الشركة",
+      "ethicalCommitments": "الالتزامات الأخلاقية",
+      "employers": "أصحاب العمل",
+      "manageRequests": "إدارة الطلبات",
+      "currentJobOpenings": "الوظائف المتاحة حالياً",
+      "noJobOpenings": "لا توجد وظائف حالياً",
+      "viewAllJobs": "عرض جميع {{count}} وظيفة",
+      "reportWorkplace": "الإبلاغ عن مكان العمل"
+    },
+    "manageRequests": "إدارة الطلبات",
+    "roles": {
+      "owner": "المالك",
+      "manager": "المدير"
+    }
+  },
   "mentorship": {
     "title": "ابحث عن مرشد",
     "subtitle": "اعثر على مرشدين ذوي خبرة لدعم مسارك",
@@ -1142,7 +1362,6 @@
       "resumeHint": "شارك سيرتك الذاتية لمساعدة المرشد على فهم خلفيتك بشكل أفضل.",
       "sendRequest": "إرسال طلب الإرشاد",
       "sendingRequest": "جارٍ الإرسال...",
-      "cancel": "إلغاء",
       "successMessage": "تم إرسال طلب الإرشاد بنجاح!",
       "errorMessage": "فشل إرسال طلب الإرشاد. يرجى المحاولة مرة أخرى.",
       "alreadyExists": "لديك بالفعل طلب قيد الانتظار أو مقبول لهذا المرشد.",
@@ -1221,7 +1440,7 @@
     "page": {
       "loadErrorTitle": "تعذّر تحميل الملف الشخصي",
       "emptyTitle": "لم يتم العثور على ملف شخصي",
-      "emptyDescription": "يرجى إنشاء ملفك الشخصي للمتابعة",
+      "emptyDescription": "المستخدم أو ملفه الشخصي غير متاح أو ربما تم حذفه.",
       "dangerZone": {
         "title": "حذف بيانات الحساب",
         "description": "سيتم حذف جميع بيانات ملفك الشخصي نهائيًا (متوافق مع GDPR/KVKK). لا يمكن التراجع عن هذا الإجراء.",
@@ -1247,7 +1466,6 @@
     },
     "actions": {
       "add": "إضافة",
-      "cancel": "إلغاء",
       "saveChanges": "حفظ التغييرات",
       "continue": "متابعة",
       "back": "رجوع"
@@ -1421,7 +1639,6 @@
       },
       "compliance": "يتم هذا الإجراء بما يتوافق مع لوائح حماية البيانات GDPR/KVKK.",
       "buttons": {
-        "cancel": "إلغاء",
         "continue": "متابعة",
         "back": "رجوع",
         "delete": "حذف كل البيانات",
@@ -1483,7 +1700,6 @@
     "postAnonymously": "انشر بشكل مجهول",
     "submitReview": "إرسال التقييم",
     "submitting": "جارٍ الإرسال...",
-    "cancel": "إلغاء",
     "categories": {
       "culture": "الثقافة",
       "benefits": "المزايا",
@@ -1589,5 +1805,77 @@
     "notReady": "الدردشة ليست جاهزة بعد. يرجى الانتظار قليلاً ثم المحاولة.",
     "authRequired": "يجب تسجيل الدخول لاستخدام الدردشة",
     "noConversationsDesc": "تحتاج إلى وجود إرشاد نشط لبدء الدردشة."
+  },
+  "errors": {
+    "DEFAULT": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "VALIDATION_FAILED": "بعض الحقول تحتاج إلى انتباهك.",
+    "MALFORMED_JSON": "تنسيق الطلب غير صالح.",
+    "METHOD_NOT_ALLOWED": "هذا الإجراء غير مسموح.",
+    "ACCESS_DENIED": "ليست لديك صلاحية لتنفيذ هذا الإجراء.",
+    "AUTHENTICATION_FAILED": "فشلت المصادقة.",
+    "RESOURCE_CONFLICT": "هذا الإجراء يتعارض مع مورد موجود.",
+    "NOT_FOUND": "المورد المطلوب غير موجود.",
+    "INTERNAL_ERROR": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "USER_NOT_FOUND": "المستخدم غير موجود.",
+    "EMAIL_NOT_VERIFIED": "يرجى تأكيد بريدك الإلكتروني قبل المتابعة.",
+    "INVALID_CREDENTIALS": "اسم المستخدم أو كلمة المرور غير صحيحة.",
+    "USER_UNAUTHORIZED": "يرجى تسجيل الدخول للمتابعة.",
+    "USER_ALREADY_EXISTS": "المستخدم موجود بالفعل.",
+    "USERNAME_ALREADY_USED": "اسم المستخدم مستخدم بالفعل.",
+    "EMAIL_ALREADY_USED": "البريد الإلكتروني مستخدم بالفعل.",
+    "ROLE_INVALID": "حسابك لا يملك الدور المطلوب.",
+    "EMPLOYER_ALREADY_ASSIGNED": "تم تعيين صاحب العمل لهذا المكان بالفعل.",
+    "EMPLOYER_REQUEST_ALREADY_EXISTS": "لقد قدمت بالفعل طلبًا للانضمام إلى مكان العمل هذا.",
+    "EMPLOYER_REQUEST_NOT_FOUND": "لم يتم العثور على طلب صاحب العمل.",
+    "EMPLOYER_REQUEST_ALREADY_RESOLVED": "تمت معالجة طلب صاحب العمل هذا بالفعل.",
+    "EMPLOYER_REQUEST_INVALID_ACTION": "هذا الإجراء غير صالح لحالة الطلب الحالية.",
+    "EMPLOYER_REQUEST_NO_APPLICANT": "لا يوجد متقدم مرتبط بهذا الطلب.",
+    "EMPLOYER_LINK_NOT_FOUND": "رابط صاحب العمل غير موجود.",
+    "WORKPLACE_OWNER_MINIMUM_REQUIRED": "مطلوب وجود مالك واحد على الأقل لمكان العمل.",
+    "CURRENT_PASSWORD_INVALID": "كلمة المرور الحالية غير صحيحة.",
+    "PASSWORD_SAME_AS_OLD": "يجب أن تختلف كلمة المرور الجديدة عن القديمة.",
+    "PROFILE_NOT_FOUND": "الملف الشخصي غير موجود.",
+    "PROFILE_ALREADY_EXISTS": "الملف الشخصي موجود بالفعل.",
+    "WORKPLACE_NOT_FOUND": "مكان العمل غير موجود.",
+    "WORKPLACE_ALREADY_EXISTS": "مكان العمل موجود بالفعل.",
+    "REVIEW_NOT_FOUND": "لم يتم العثور على التقييم.",
+    "REVIEW_ALREADY_EXISTS": "لقد أضفت تقييمًا بالفعل.",
+    "REPLY_ALREADY_EXISTS": "لقد أرسلت ردًا على هذا التقييم بالفعل.",
+    "REPLY_NOT_FOUND": "لم يتم العثور على الرد.",
+    "WORKPLACE_UNAUTHORIZED": "ليست لديك صلاحية لهذا مكان العمل.",
+    "VALIDATION_ERROR": "بعض الحقول فشلت في التحقق.",
+    "EDUCATION_NOT_FOUND": "سجل التعليم غير موجود.",
+    "EXPERIENCE_NOT_FOUND": "سجل الخبرة غير موجود.",
+    "SKILL_NOT_FOUND": "المهارة غير موجودة.",
+    "INTEREST_NOT_FOUND": "الاهتمام غير موجود.",
+    "IMAGE_FILE_REQUIRED": "يرجى رفع ملف صورة.",
+    "IMAGE_CONTENT_TYPE_INVALID": "نوع ملف الصورة غير صالح.",
+    "IMAGE_UPLOAD_FAILED": "فشل رفع الصورة. يرجى المحاولة مرة أخرى.",
+    "INVALID_TOKEN": "الجلسة غير صالحة، يرجى تسجيل الدخول مرة أخرى.",
+    "TOKEN_EXPIRED": "انتهت صلاحية جلستك، يرجى تسجيل الدخول مرة أخرى.",
+    "BAD_REQUEST": "الطلب غير صالح. يرجى التحقق من البيانات.",
+    "JOB_APPLICATION_NOT_FOUND": "طلب الوظيفة غير موجود.",
+    "APPLICATION_ALREADY_EXISTS": "لقد تقدمت لهذه الوظيفة بالفعل.",
+    "MISSING_FILTER_PARAMETER": "يوجد عامل تصفية مطلوب مفقود.",
+    "JOB_POST_NOT_FOUND": "إعلان الوظيفة غير موجود.",
+    "JOB_POST_FORBIDDEN": "لا يُسمح لك بإدارة إعلان الوظيفة هذا.",
+    "JOB_POST_CORRUPT": "بيانات إعلان الوظيفة تالفة. يرجى التواصل مع الدعم.",
+    "CHAT_NOT_LINKED_TO_REVIEW": "المحادثة غير مرتبطة بالتقييم المحدد.",
+    "CONVERSATION_NOT_FOUND": "المحادثة غير موجودة.",
+    "MENTORSHIP_NOT_ACTIVE": "الإرشاد غير نشط.",
+    "RESUME_REVIEW_NOT_FOUND": "مراجعة السيرة الذاتية غير موجودة.",
+    "REQUEST_NOT_FOUND": "الطلب غير موجود.",
+    "REVIEW_NOT_COMPLETED": "لم يكتمل التقييم بعد.",
+    "UNAUTHORIZED_REVIEW_ACCESS": "لا تملك صلاحية للوصول إلى هذا التقييم.",
+    "REQUEST_ALREADY_PROCESSED": "تمت معالجة هذا الطلب بالفعل.",
+    "MENTOR_UNAVAILABLE": "المرشد غير متاح.",
+    "ACTIVE_MENTORSHIP_EXIST": "يوجد إرشاد نشط بالفعل.",
+    "MENTEE_CAPACITY_CONFLICT": "طاقة المرشد ممتلئة.",
+    "MENTOR_PROFILE_NOT_FOUND": "ملف المرشد غير موجود.",
+    "MENTOR_PROFILE_ALREADY_EXISTS": "لقد أنشأت ملف مرشد بالفعل.",
+    "RESUME_FILE_REQUIRED": "ملف السيرة الذاتية مطلوب.",
+    "RESUME_FILE_CONTENT_TYPE_INVALID": "نوع ملف السيرة الذاتية غير صالح.",
+    "RESUME_FILE_UPLOAD_FAILED": "فشل رفع السيرة الذاتية. يرجى المحاولة مرة أخرى.",
+    "RESUME_FILE_NOT_FOUND": "ملف السيرة الذاتية غير موجود."
   }
 }

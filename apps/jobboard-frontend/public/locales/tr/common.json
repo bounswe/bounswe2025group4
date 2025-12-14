@@ -48,6 +48,9 @@
     "loading": "Yükleniyor...",
     "goHome": "Ana Sayfaya Git",
     "visitWebsite": "Web Sitesini Ziyaret Et",
+    "settings": "Ayarlar",
+    "employer": "İşveren",
+    "employers": "İşverenler",
     "edited": "Düzenlendi",
     "cancel": "İptal",
     "optional": "Opsiyonel",
@@ -405,14 +408,24 @@
       "applyNow": "Hemen Başvur",
       "description": "İlan Açıklaması",
       "ethicalPolicy": {
-        "title": "Etik Etiketler ve Uyumluluk"
+        "title": "Etik Etiketler ve Uyumluluk",
+        "sourceNote": "Bu ilanın etik bilgileri şirket profilinden alınmıştır.",
+        "overallScore": "Şirket etik puanı",
+        "ratingsTitle": "Etik politika puanları",
+        "tagCount": "{{count}} etik politika",
+        "tagCount_plural": "{{count}} etik politika",
+        "noPolicies": "Şirket henüz etik politikalarını paylaşmadı.",
+        "inclusiveNote": "Şirket bu rolü kapsayıcı bir fırsat olarak işaretliyor."
       },
       "inclusiveOpportunity": "Kapsayıcı Fırsat",
       "contact": {
         "title": "İletişim Bilgileri"
       },
       "workplace": {
-        "title": "Şirket Hakkında"
+        "title": "Şirket Hakkında",
+        "sector": "Sektör",
+        "location": "Konum",
+        "overallRating": "Şirket etik puanı"
       }
     }
   },
@@ -490,8 +503,7 @@
           "remove": "Dosyayı Kaldır"
         },
         "submit": "Başvuruyu Gönder",
-        "submitting": "Gönderiliyor...",
-        "cancel": "İptal"
+        "submitting": "Gönderiliyor..."
       },
       "success": {
         "title": "Başvuru Gönderildi!",
@@ -514,6 +526,34 @@
         "viewApplication": "Başvuruyu Görüntüle",
         "backToJobs": "İş İlanlarına Dön"
       }
+    },
+    "list": {
+      "breadcrumbPrefix": "Başvurular",
+      "backToJob": "İlana dön",
+      "filters": "Filtreler",
+      "searchPlaceholder": "İsim veya pozisyona göre ara",
+      "status": {
+        "all": "Tüm durumlar",
+        "pending": "Beklemede",
+        "approved": "Onaylandı",
+        "rejected": "Reddedildi"
+      },
+      "sort": {
+        "recent": "En yeni",
+        "oldest": "En eski",
+        "nameAz": "İsim A-Z",
+        "nameZa": "İsim Z-A"
+      },
+      "count": "{{count}} başvuru",
+      "emptyTitle": "Filtrelerinize uyan başvuru yok",
+      "emptyDescription": "Aramanızı veya durum filtresini değiştirin.",
+      "errorTitle": "Başvurular yüklenemedi",
+      "errorDescription": "Lütfen ilan sayfasına dönüp tekrar deneyin.",
+      "jobTitleFallback": "İlan",
+      "viewApplication": "Başvuruyu görüntüle",
+      "viewAll": "Başvuruları gör",
+      "loading": "Başvurular yükleniyor...",
+      "summary": "{{count}} başvuru alındı"
     },
     "volunteer": {
       "title": "{{jobTitle}} için Gönüllü Ol",
@@ -548,7 +588,6 @@
           "chooseFile": "Dosya Seç",
           "fileTypes": "10MB'a kadar PDF, DOC veya DOCX"
         },
-        "cancel": "İptal",
         "submit": "Gönüllü Başvurusu Gönder",
         "submitting": "Gönderiliyor..."
       },
@@ -575,12 +614,12 @@
         "approve": "Başvuru başarıyla onaylandı.",
         "reject": "Başvuru başarıyla reddedildi."
       },
-      "applied": {
-        "today": "bugün",
-        "yesterday": "1 gün önce",
-        "daysAgo": "{{count}} gün önce"
-      },
+      "applied": "Başvuruldu",
+      "appliedToday": "Bugün",
+      "appliedYesterday": "Dün",
+      "appliedDaysAgo": "{{count}} gün önce",
       "backToJob": "İlana Dön",
+      "backToApplications": "Başvurulara dön",
       "title": "{{jobTitle}} için Başvuru",
       "atCompany": "{{company}} şirketinde",
       "applicantInfo": "Başvuran Bilgileri",
@@ -654,7 +693,6 @@
         "title": "Başvuruyu Geri Çek",
         "message": "Bu başvuruyu geri çekmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
         "confirm": "Evet, Geri Çek",
-        "cancel": "İptal",
         "success": "Başvuru başarıyla geri çekildi",
         "error": "Başvuru geri çekilemedi. Lütfen tekrar deneyin."
       },
@@ -662,6 +700,39 @@
         "loadFailed": "Başvurular yüklenemedi. Lütfen tekrar deneyin.",
         "deleteFailed": "Başvuru silinemedi. Lütfen tekrar deneyin."
       }
+    },
+    "list": {
+      "back": "İlan sayfasına dön",
+      "jobErrorTitle": "İş ilanı bulunamadı",
+      "jobErrorMessage": "Bu iş ilanını yükleyemedik.",
+      "backToDashboard": "Panoya dön",
+      "permissionDenied": "Bu başvuruları görüntüleyemezsiniz",
+      "permissionHint": "Yalnızca bu işyerinin işverenleri başvuruları görebilir.",
+      "backToJob": "İlan sayfasına dön",
+      "title": "{{title}} için başvurular",
+      "subtitle": "Tüm başvuruları tek yerde inceleyin ve yönetin.",
+      "postedOn": "Yayınlanma",
+      "viewJob": "İlanı görüntüle",
+      "stats": {
+        "total": "Toplam",
+        "pending": "Beklemede",
+        "approved": "Onaylandı",
+        "rejected": "Reddedildi"
+      },
+      "searchPlaceholder": "İsme, ön yazıya veya ihtiyaçlara göre arayın",
+      "sort": {
+        "title": "Başvuruları sırala",
+        "newest": "En yeni ilk",
+        "oldest": "En eski ilk",
+        "nameAsc": "İsim A-Z",
+        "nameDesc": "İsim Z-A"
+      },
+      "emptyTitle": "Henüz başvuru yok",
+      "emptySubtitle": "Başvuruları almak için ilanınızı paylaşın.",
+      "hasNeeds": "Özel ihtiyaç belirtilmiş",
+      "hasCoverLetter": "Ön yazı",
+      "appliedOn": "{{date}} tarihinde başvurdu",
+      "review": "Başvuruyu incele"
     }
   },
   "employer": {
@@ -721,6 +792,7 @@
       "loadError": "İş detayları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
       "applied": {
         "today": "Bugün başvuruldu",
+        "today": "Bugün başvuruldu",
         "yesterday": "1 gün önce başvuruldu",
         "daysAgo": "{{count}} gün önce başvuruldu"
       },
@@ -740,7 +812,7 @@
       "contact": "İletişim Bilgileri",
       "ethicalPolicies": "Etik Politikalar",
       "inclusiveOpportunity": "Kapsayıcı Fırsat",
-      "inclusiveOpportunityDescription": "Bu pozisyon, farklı geçmişlerden gelen adayları memnuniyetle karşılayan kapsayıcı bir fırsat olarak belirlenmiştir.",
+      "inclusiveOpportunityDescription": "Bu pozisyon, engelli adaylar başta olmak üzere çeşitliliğe değer veren ve herkese eşit fırsatlar sunan kapsayıcı bir iş fırsatı olarak tasarlanmıştır.",
       "applicationsReceived": "Alınan Başvurular ({{count}})",
       "noApplications": "Henüz başvuru alınmadı.",
       "viewApplication": "Başvuruyu Görüntüle"
@@ -867,22 +939,9 @@
     }
   },
   "workplace": {
-    "selector": {
-      "placeholder": "Bir iş yeri seçin",
-      "noWorkplaces": "Kullanılabilir iş yeri yok",
-      "fetchError": "İş yerleri yüklenemedi"
-    },
-    "newModal": {
-      "title": "Yeni İş Yeri",
-      "description": "Hesabınıza nasıl iş yeri eklemek istersiniz",
-      "createWorkplace": "İş Yeri Oluştur",
-      "joinWorkplace": "İş Yerine Katıl",
-      "createWorkplaceDescription": "Kendi iş yerinizi oluşturup yönetin",
-      "joinWorkplaceDescription": "Mevcut bir iş yerine katılma isteği gönderin"
-    },
     "createModal": {
       "title": "İş Yeri Oluştur",
-      "description": "Şirketinizi platforma ekleyin ve itibarınızı oluşturun",
+      "description": "Şirketinizi ekleyin ve itibarınızı oluşturmaya başlayın",
       "companyName": "Şirket Adı",
       "companyNamePlaceholder": "Şirket adını girin",
       "sector": "Sektör",
@@ -892,48 +951,141 @@
       "website": "Web Sitesi",
       "shortDescription": "Kısa Açıklama",
       "detailedDescription": "Detaylı Açıklama",
-      "websitePlaceholder": "https://www.ornek.com",
+      "websitePlaceholder": "https://www.example.com",
+      "ethicalTagsLabel": "Etik Etiketler",
+      "ethicalTagsHelper": "Şirketinizin etik taahhütlerini temsil eden etiketleri seçin",
+      "shortDescriptionHint": "(en fazla 300 karakter)",
+      "shortDescriptionPlaceholder": "Kısa bir slogan veya özet",
+      "detailedDescriptionHint": "(en fazla 4000 karakter)",
+      "detailedDescriptionPlaceholder": "Şirketinizin misyonu, değerleri ve kültürü hakkında bilgi verin",
       "submit": "İş Yerini Oluştur",
-      "workplaceCreated": "İş Yeri Oluşturuldu!",
+      "workplaceCreated": "İş yeri oluşturuldu!",
       "workplaceCreatedMessage": "İş yeriniz başarıyla oluşturuldu.",
-      "errors": {
-        "companyNameRequired": "Şirket adı gerekli",
-        "sectorRequired": "Sektör gerekli",
-        "locationRequired": "Konum gerekli",
-        "ethicalTagsRequired": "En az bir etik etiket gerekli",
-        "websiteInvalid": "Geçerli bir URL olmalı"
-      },
       "creating": "Oluşturuluyor...",
-      "redirecting": "Yeni iş yerinize yönlendiriliyorsunuz..."
+      "redirecting": "Yeni iş yerine yönlendiriliyorsunuz...",
+      "errors": {
+        "companyNameRequired": "Şirket adı zorunludur",
+        "sectorRequired": "Sektör zorunludur",
+        "locationRequired": "Konum zorunludur",
+        "ethicalTagsRequired": "En az bir etik etiket seçilmelidir",
+        "websiteInvalid": "Geçerli bir URL olmalıdır"
+      }
     },
     "joinModal": {
       "title": "Bir İş Yerine Katıl",
-      "searchPlaceholder": "İş yerleri ara...",
+      "searchDescription": "Katılmak istediğiniz iş yerini arayın ve talep gönderin.",
+      "searchPlaceholder": "İş yerlerini ara...",
+      "filters": "Filtreler",
+      "clear": "Temizle",
+      "searching": "Aranıyor...",
+      "search": "Ara",
+      "sector": "Sektör",
+      "allSectors": "Tüm Sektörler",
+      "location": "Konum",
+      "locationPlaceholder": "Konum girin...",
+      "sortBy": "Sırala",
+      "sortOptions": {
+        "default": "Varsayılan",
+        "ratingDesc": "Puan (Yüksekten Düşüğe)",
+        "ratingAsc": "Puan (Düşükten Yükseğe)",
+        "nameAsc": "İsim (A'dan Z'ye)",
+        "nameDesc": "İsim (Z'den A'ya)"
+      },
+      "minimumRating": "Minimum Puan",
+      "anyRating": "Herhangi",
+      "ratingMinLabel": "0★",
+      "ratingMaxLabel": "5★",
+      "searchResults": "{{count}} iş yeri bulundu",
+      "noWorkplacesFound": "Filtrelerinize uyan iş yeri bulunamadı.",
+      "clearFiltersAndShowAll": "Filtreleri temizle ve tümünü göster",
       "requestTitle": "Katılma Talebi",
+      "requestDescription": "Bu iş yerine katılmak için kısa bir not ekleyin.",
+      "selectedWorkplace": "Seçilen İş Yeri",
       "noteLabel": "Yöneticilere Not",
-      "notePlaceholder": "Bu iş yerine neden katılmak istediğinizi açıklayan opsiyonel mesaj...",
+      "noteMaxLength": "En fazla 500 karakter",
+      "notePlaceholder": "Bu iş yerine neden katılmak istediğinizi kısaca anlatan isteğe bağlı mesaj...",
       "submitRequest": "Talebi Gönder",
       "submittingRequest": "Gönderiliyor...",
       "back": "Geri",
       "alreadyMember": "Zaten bu iş yerinin işverenisiniz",
       "requestSubmitted": "Talep Gönderildi",
-      "requestSubmittedMessage": "{{company}} için katılma talebiniz gönderildi. İncelendiğinde bilgilendirileceksiniz.",
+      "requestSubmittedMessage": "{{company}} iş yerine katılma talebiniz başarıyla gönderildi. İncelendiğinde bilgilendirileceksiniz.",
+      "closing": "Pencere kısa süre içinde kapanacak...",
       "close": "Kapat"
     },
-    "settings": "Ayarlar",
+    "settings": {
+      "label": "Ayarlar",
+      "failedToLoad": "İş yeri ayarları yüklenemedi.",
+      "notFound": {
+        "title": "İş yeri bulunamadı",
+        "description": "Aradığınız iş yeri mevcut değil veya kaldırılmış olabilir.",
+        "goToWorkplaces": "İş yerlerine git"
+      },
+      "backToWorkplace": "İş yerine dön",
+      "title": "İş Yeri Ayarları",
+      "subtitle": "İş yeri bilgilerini güncelleyin ve yönetin",
+      "updateSuccess": "İş yeri başarıyla güncellendi.",
+      "companyLogo": "Şirket Logosu",
+      "imagePreviewAlt": "İş yeri görsel önizleme",
+      "changeImage": "Görseli Değiştir",
+      "uploadImage": "Görsel Yükle",
+      "uploading": "Yükleniyor...",
+      "saveImage": "Görseli Kaydet",
+      "imageGuidelines": "Önerilen: Kare görsel, en az 200x200 piksel",
+      "basicInformation": "Temel Bilgiler",
+      "companyName": "Şirket Adı",
+      "companyNamePlaceholder": "Şirket adını girin",
+      "sector": "Sektör",
+      "sectorPlaceholder": "örn. Teknoloji, Sağlık",
+      "location": "Konum",
+      "locationPlaceholder": "Konum girin",
+      "website": "Web Sitesi",
+      "websitePlaceholder": "https://www.example.com",
+      "description": "Açıklama",
+      "shortDescription": "Kısa Açıklama",
+      "shortDescriptionPlaceholder": "Kısa bir slogan veya özet",
+      "shortDescriptionHint": "(en fazla 300 karakter)",
+      "detailedDescription": "Detaylı Açıklama",
+      "detailedDescriptionPlaceholder": "Şirketinizin misyonu, değerleri ve kültürü hakkında bilgi verin",
+      "detailedDescriptionHint": "(en fazla 4000 karakter)",
+      "ethicalTags": "Etik Etiketler",
+      "ethicalTagsHelper": "Şirketinizin etik taahhütlerini temsil eden etiketleri seçin",
+      "cancel": "İptal",
+      "saving": "Kaydediliyor...",
+      "saveChanges": "Değişiklikleri Kaydet",
+      "dangerZone": {
+        "title": "Tehlikeli Bölge",
+        "deleteDescription": "Bir iş yerini silmek kalıcıdır ve geri alınamaz.",
+        "deleteButton": "İş Yerini Sil",
+        "deleteFailed": "İş yeri silinemedi. Lütfen tekrar deneyin.",
+        "confirmTitle": "Silme Onayı",
+        "confirmDescription": "Bu işlem geri alınamaz. Lütfen iş yeri adını yazarak onaylayın.",
+        "confirmWarning": "Onaylamak için tam iş yeri adını yazın.",
+        "confirmPlaceholder": "Onay için iş yeri adını yazın",
+        "confirmCancel": "İptal",
+        "confirmButton": "Evet, iş yerini sil",
+        "confirmHelper": "Lütfen onay için tam iş yeri adını yazın",
+        "deleting": "Siliniyor..."
+      }
+    },
     "profile": {
       "title": "İş Yeri Profili",
       "notFound": "İş yeri bulunamadı",
-      "notFoundDescription": "Aradığınız iş yeri mevcut değil veya kaldırılmış.",
+      "notFoundDescription": "Aradığınız iş yeri mevcut değil veya kaldırılmış olabilir.",
       "aboutCompany": "Şirket Hakkında",
       "ethicalCommitments": "Etik Taahhütler",
       "employers": "İşverenler",
       "manageRequests": "Talepleri Yönet",
-      "currentJobOpenings": "Mevcut İş İlanları",
+      "currentJobOpenings": "Güncel İş İlanları",
       "noJobOpenings": "Şu anda iş ilanı yok",
-      "viewAllJobs": "Tüm {{count}} ilanı görüntüle"
+      "viewAllJobs": "{{count}} işin tamamını görüntüle",
+      "reportWorkplace": "İş Yerini Bildir"
     },
-    "manageRequests": "Talepleri Yönet"
+    "manageRequests": "Talepleri Yönet",
+    "roles": {
+      "owner": "Sahip",
+      "manager": "Yönetici"
+    }
   },
   "sectors": {
     "technology": "Teknoloji",
@@ -1205,7 +1357,6 @@
       "resumeHint": "Özgeçmişinizi paylaşarak mentorun geçmişinizi daha iyi anlamasına yardımcı olun.",
       "sendRequest": "Mentorluk Talebi Gönder",
       "sendingRequest": "Talep Gönderiliyor...",
-      "cancel": "İptal",
       "successMessage": "Mentorluk talebi başarıyla gönderildi!",
       "errorMessage": "Mentorluk talebi gönderilemedi. Lütfen tekrar deneyin.",
       "alreadyExists": "Bu mentor için zaten bekleyen veya kabul edilmiş bir talebiniz var.",
@@ -1284,7 +1435,7 @@
     "page": {
       "loadErrorTitle": "Profil yüklenemedi",
       "emptyTitle": "Profil bulunamadı",
-      "emptyDescription": "Devam etmek için lütfen profilinizi oluşturun",
+      "emptyDescription": "Kullanıcı ya da profili mevcut değil veya kaldırılmış olabilir.",
       "dangerZone": {
         "title": "Hesap Verilerini Silme",
         "description": "Tüm profil verilerinizi kalıcı olarak silin (GDPR/KVKK uyumlu). Bu işlem geri alınamaz.",
@@ -1310,7 +1461,6 @@
     },
     "actions": {
       "add": "Ekle",
-      "cancel": "İptal",
       "saveChanges": "Değişiklikleri Kaydet",
       "continue": "Devam Et",
       "back": "Geri"
@@ -1484,7 +1634,6 @@
       },
       "compliance": "Bu işlem GDPR/KVKK veri koruma düzenlemeleriyle uyumludur.",
       "buttons": {
-        "cancel": "İptal",
         "continue": "Devam Et",
         "back": "Geri",
         "delete": "Tüm Verileri Sil",
@@ -1578,7 +1727,6 @@
     "postAnonymously": "Anonim olarak yayınla",
     "submitReview": "Değerlendirmeyi Gönder",
     "submitting": "Gönderiliyor...",
-    "cancel": "İptal",
     "categories": {
       "culture": "Kültür",
       "benefits": "Yan Haklar",
@@ -1593,6 +1741,7 @@
     "recentReviews": "Son Değerlendirmeler",
     "sortBy": "Yorumlari sirala",
     "sortByRating": "Puana göre sırala",
+    "sortByRating": "Puana göre sırala",
     "sortOptions": {
       "ratingDesc": "Puan (Yuksekten dusuge)",
       "ratingAsc": "Puan (Dusukten yuksege)"
@@ -1600,7 +1749,7 @@
     "ratingFilter": "Puan araligi",
     "minRating": "Min",
     "maxRating": "Max",
-    "clearFilters": "Filtreleri sifirla",
+    "clearFilters": "Filtreleri sıfırla",
     "totalReviews": "{{count}} değerlendirme",
     "totalReviews_plural": "{{count}} değerlendirme",
     "noReviews": "Henüz değerlendirme yok. Deneyiminizi paylaşan ilk kişi siz olun!",
@@ -1684,5 +1833,77 @@
     "notReady": "Sohbet henüz hazır değil. Lütfen biraz bekleyip tekrar deneyin.",
     "authRequired": "Sohbeti kullanmak için giriş yapmalısınız",
     "noConversationsDesc": "Sohbete başlamak için aktif bir mentorluk lazım."
+  },
+  "errors": {
+    "DEFAULT": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+    "VALIDATION_FAILED": "Bazı alanların düzeltilmesi gerekiyor.",
+    "MALFORMED_JSON": "İstek formatı geçersiz.",
+    "METHOD_NOT_ALLOWED": "Bu işlem için izin yok.",
+    "ACCESS_DENIED": "Bu işlemi yapma izniniz yok.",
+    "AUTHENTICATION_FAILED": "Kimlik doğrulama başarısız.",
+    "RESOURCE_CONFLICT": "Bu işlem mevcut bir kaynakla çakışıyor.",
+    "NOT_FOUND": "İstenen kaynak bulunamadı.",
+    "INTERNAL_ERROR": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+    "USER_NOT_FOUND": "Kullanıcı bulunamadı.",
+    "EMAIL_NOT_VERIFIED": "Devam etmek için lütfen e-postanızı doğrulayın.",
+    "INVALID_CREDENTIALS": "Kullanıcı adı veya şifre hatalı.",
+    "USER_UNAUTHORIZED": "Devam etmek için lütfen giriş yapın.",
+    "USER_ALREADY_EXISTS": "Kullanıcı zaten mevcut.",
+    "USERNAME_ALREADY_USED": "Kullanıcı adı zaten kullanımda.",
+    "EMAIL_ALREADY_USED": "E-posta zaten kullanımda.",
+    "ROLE_INVALID": "Hesabınız gerekli role sahip değil.",
+    "EMPLOYER_ALREADY_ASSIGNED": "İşveren zaten bu iş yerine atanmış.",
+    "EMPLOYER_REQUEST_ALREADY_EXISTS": "Bu iş yerine katılmak için zaten başvurdunuz.",
+    "EMPLOYER_REQUEST_NOT_FOUND": "İşveren talebi bulunamadı.",
+    "EMPLOYER_REQUEST_ALREADY_RESOLVED": "Bu işveren talebi zaten sonuçlandırılmış.",
+    "EMPLOYER_REQUEST_INVALID_ACTION": "Bu işlem mevcut işveren talebi için geçerli değil.",
+    "EMPLOYER_REQUEST_NO_APPLICANT": "Bu taleple ilişkili başvuran yok.",
+    "EMPLOYER_LINK_NOT_FOUND": "İşveren bağlantısı bulunamadı.",
+    "WORKPLACE_OWNER_MINIMUM_REQUIRED": "En az bir iş yeri sahibi gereklidir.",
+    "CURRENT_PASSWORD_INVALID": "Mevcut şifre hatalı.",
+    "PASSWORD_SAME_AS_OLD": "Yeni şifre eskisiyle aynı olamaz.",
+    "PROFILE_NOT_FOUND": "Profil bulunamadı.",
+    "PROFILE_ALREADY_EXISTS": "Profil zaten mevcut.",
+    "WORKPLACE_NOT_FOUND": "İş yeri bulunamadı.",
+    "WORKPLACE_ALREADY_EXISTS": "İş yeri zaten mevcut.",
+    "REVIEW_NOT_FOUND": "Değerlendirme bulunamadı.",
+    "REVIEW_ALREADY_EXISTS": "Bu değerlendirmeyi zaten yaptınız.",
+    "REPLY_ALREADY_EXISTS": "Bu değerlendirmeye zaten yanıt verdiniz.",
+    "REPLY_NOT_FOUND": "Yanıt bulunamadı.",
+    "WORKPLACE_UNAUTHORIZED": "Bu iş yeri için yetkiniz yok.",
+    "VALIDATION_ERROR": "Bazı alanlar doğrulamadan geçemedi.",
+    "EDUCATION_NOT_FOUND": "Eğitim kaydı bulunamadı.",
+    "EXPERIENCE_NOT_FOUND": "Deneyim kaydı bulunamadı.",
+    "SKILL_NOT_FOUND": "Yetenek bulunamadı.",
+    "INTEREST_NOT_FOUND": "İlgi alanı bulunamadı.",
+    "IMAGE_FILE_REQUIRED": "Lütfen bir görsel dosyası yükleyin.",
+    "IMAGE_CONTENT_TYPE_INVALID": "Geçersiz görsel dosya tipi.",
+    "IMAGE_UPLOAD_FAILED": "Görsel yükleme başarısız. Lütfen tekrar deneyin.",
+    "INVALID_TOKEN": "Oturumunuz geçersiz, lütfen tekrar giriş yapın.",
+    "TOKEN_EXPIRED": "Oturumunuzun süresi doldu, lütfen tekrar giriş yapın.",
+    "BAD_REQUEST": "İstek geçersiz. Lütfen girdilerinizi kontrol edin.",
+    "JOB_APPLICATION_NOT_FOUND": "İş başvurusu bulunamadı.",
+    "APPLICATION_ALREADY_EXISTS": "Bu işe zaten başvurdunuz.",
+    "MISSING_FILTER_PARAMETER": "Gerekli bir filtre parametresi eksik.",
+    "JOB_POST_NOT_FOUND": "İş ilanı bulunamadı.",
+    "JOB_POST_FORBIDDEN": "Bu iş ilanını yönetme yetkiniz yok.",
+    "JOB_POST_CORRUPT": "İş ilanı verisi hatalı. Lütfen destek ile iletişime geçin.",
+    "CHAT_NOT_LINKED_TO_REVIEW": "Sohbet seçilen değerlendirme ile ilişkilendirilmemiş.",
+    "CONVERSATION_NOT_FOUND": "Sohbet bulunamadı.",
+    "MENTORSHIP_NOT_ACTIVE": "Mentorluk aktif değil.",
+    "RESUME_REVIEW_NOT_FOUND": "Özgeçmiş incelemesi bulunamadı.",
+    "REQUEST_NOT_FOUND": "Talep bulunamadı.",
+    "REVIEW_NOT_COMPLETED": "Değerlendirme henüz tamamlanmadı.",
+    "UNAUTHORIZED_REVIEW_ACCESS": "Bu değerlendirmeye erişim yetkiniz yok.",
+    "REQUEST_ALREADY_PROCESSED": "Bu talep zaten işlenmiş.",
+    "MENTOR_UNAVAILABLE": "Mentor uygun değil.",
+    "ACTIVE_MENTORSHIP_EXIST": "Aktif bir mentorluk zaten var.",
+    "MENTEE_CAPACITY_CONFLICT": "Mentor kapasitesi dolu.",
+    "MENTOR_PROFILE_NOT_FOUND": "Mentor profili bulunamadı.",
+    "MENTOR_PROFILE_ALREADY_EXISTS": "Zaten bir mentor profili oluşturdunuz.",
+    "RESUME_FILE_REQUIRED": "Özgeçmiş dosyası gerekli.",
+    "RESUME_FILE_CONTENT_TYPE_INVALID": "Geçersiz özgeçmiş dosya tipi.",
+    "RESUME_FILE_UPLOAD_FAILED": "Özgeçmiş yükleme başarısız. Lütfen tekrar deneyin.",
+    "RESUME_FILE_NOT_FOUND": "Özgeçmiş dosyası bulunamadı."
   }
 }

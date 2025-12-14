@@ -1,5 +1,5 @@
 import { startTransition, useCallback, useMemo, useState } from 'react';
-import { ReportModal, type ReportReasonType } from '@modules/workplace/components/report/ReportModal';
+import { ReportModal, type ReportReasonType } from '@/modules/shared/components/report/ReportModal';
 
 interface OpenReportParams {
   title: string;

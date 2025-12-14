@@ -1,98 +1,103 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useState, useRef, useMemo } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Download, FileText, MessageCircle, ArrowLeft, Upload, X } from 'lucide-react';
 import { Button } from '@shared/components/ui/button';
 import { Card } from '@shared/components/ui/card';
 import { Label } from '@shared/components/ui/label';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
-import { 
-  getResumeReview, 
-  getResumeFileUrl, 
-  uploadResumeFile,
-  getMentorMentorshipRequests
+import {
+  useResumeReviewQuery,
+  useResumeFileUrlQuery,
+  useUploadResumeFileMutation,
+  useMenteeMentorshipsQuery,
+  useMentorMentorshipRequestsQuery,
 } from '@modules/mentorship/services/mentorship.service';
-import type { ResumeReviewDTO, MentorshipDetailsDTO, MentorshipRequestDTO } from '@shared/types/api.types';
-import { getMenteeMentorships } from '@modules/mentorship/services/mentorship.service';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 export default function ResumeReviewPage() {
   const { resumeReviewId } = useParams<{ resumeReviewId: string }>();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  const [resumeReview, setResumeReview] = useState<ResumeReviewDTO | null>(null);
-  const [resumeFileUrl, setResumeFileUrl] = useState<string | null>(null);
-  const [mentorship, setMentorship] = useState<MentorshipDetailsDTO | null>(null);
-  const [mentorMentorshipRequest, setMentorMentorshipRequest] = useState<MentorshipRequestDTO | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isUploading, setIsUploading] = useState(false);
+  const resumeReviewIdNum = resumeReviewId ? parseInt(resumeReviewId, 10) : undefined;
+
+  const resumeReviewQuery = useResumeReviewQuery(
+    resumeReviewIdNum,
+    Boolean(resumeReviewIdNum && user?.id)
+  );
+  const resumeFileUrlQuery = useResumeFileUrlQuery(
+    resumeReviewIdNum,
+    Boolean(resumeReviewIdNum && user?.id && (resumeReviewQuery.data?.fileUrl ?? false))
+  );
+  const uploadResumeFileMutation = useUploadResumeFileMutation(resumeReviewIdNum ?? 0);
+  const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
+  const mentorRequestsQuery = useMentorMentorshipRequestsQuery(user?.id, Boolean(user?.id));
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [isMentee, setIsMentee] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchResumeReview = async () => {
-      if (!resumeReviewId || !user?.id) return;
+  const mentorship = useMemo(() => {
+    if (!resumeReviewIdNum) return null;
+    const menteeMentorships = menteeMentorshipsQuery.data ?? [];
+    return (
+      menteeMentorships.find((m) => m.resumeReviewId === resumeReviewIdNum) ?? null
+    );
+  }, [menteeMentorshipsQuery.data, resumeReviewIdNum]);
 
-      try {
-        setIsLoading(true);
-        
-        const reviewData = await getResumeReview(parseInt(resumeReviewId, 10));
-        setResumeReview(reviewData);
+  const mentorMentorshipRequest = useMemo(() => {
+    const requests = mentorRequestsQuery.data ?? [];
+    return requests.find((r) => r.status?.toUpperCase() === 'ACCEPTED') ?? null;
+  }, [mentorRequestsQuery.data]);
 
-        if (reviewData.fileUrl) {
-          try {
-            const fileUrl = await getResumeFileUrl(parseInt(resumeReviewId, 10));
-            setResumeFileUrl(fileUrl);
-          } catch (err) {
-            console.error('Error fetching resume file URL:', err);
-            if (reviewData.fileUrl) {
-              setResumeFileUrl(reviewData.fileUrl);
-            }
-          }
-        }
+  const isMentee = Boolean(mentorship);
+  const resumeReview = resumeReviewQuery.data ?? null;
+  const resumeFileUrl = resumeFileUrlQuery.data ?? resumeReview?.fileUrl ?? null;
 
-        try {
-          const menteeMentorships = await getMenteeMentorships(user.id);
-          const foundMenteeMentorship = menteeMentorships.find(
-            (m) => m.resumeReviewId === parseInt(resumeReviewId, 10)
-          );
-          
-          if (foundMenteeMentorship) {
-            setIsMentee(true);
-            setMentorship(foundMenteeMentorship);
-          } else {
-            setIsMentee(false);
-            // Try to find mentorship request for mentor
-            try {
-              const mentorRequests = await getMentorMentorshipRequests(user.id);
-              // Find request that might be related to this resume review
-              // Since MentorshipRequestDTO doesn't have resumeReviewId, we'll use the first accepted request
-              // This is a workaround - ideally backend should return mentorshipRequestId in ResumeReviewDTO
-              const acceptedRequest = mentorRequests.find(r => r.status === 'ACCEPTED');
-              if (acceptedRequest) {
-                setMentorMentorshipRequest(acceptedRequest);
-              }
-            } catch (mentorErr) {
-              console.error('Error fetching mentor requests:', mentorErr);
-            }
-          }
-        } catch (err) {
-          console.error('Error determining user role:', err);
-        }
+  const loadError =
+    resumeReviewQuery.error || menteeMentorshipsQuery.error || mentorRequestsQuery.error;
 
-        setIsLoading(false);
-      } catch (err) {
-        console.error('Error fetching resume review:', err);
-        toast.error('Failed to load resume review');
-        setIsLoading(false);
-        navigate('/mentorship/my');
-      }
-    };
+  if (!resumeReviewIdNum) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <h1 className="text-2xl font-semibold mb-4">Resume Review Not Found</h1>
+        <Button asChild>
+          <Link to="/mentorship/my">Back to My Mentorships</Link>
+        </Button>
+      </div>
+    );
+  }
 
-    fetchResumeReview();
-  }, [resumeReviewId, user?.id, navigate]);
+  if (loadError) {
+    const normalized = normalizeApiError(loadError, 'Failed to load resume review');
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <h1 className="text-2xl font-semibold mb-4">{normalized.friendlyMessage}</h1>
+        <Button asChild>
+          <Link to="/mentorship/my">Back to My Mentorships</Link>
+        </Button>
+      </div>
+    );
+  }
+
+  if (
+    resumeReviewQuery.isLoading ||
+    menteeMentorshipsQuery.isLoading ||
+    mentorRequestsQuery.isLoading ||
+    (resumeReview?.fileUrl && resumeFileUrlQuery.isLoading)
+  ) {
+    return <CenteredLoader />;
+  }
+
+  if (!resumeReview) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <h1 className="text-2xl font-semibold mb-4">Resume Review Not Found</h1>
+        <Button asChild>
+          <Link to="/mentorship/my">Back to My Mentorships</Link>
+        </Button>
+      </div>
+    );
+  }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -114,48 +119,24 @@ export default function ResumeReviewPage() {
   };
 
   const handleUploadResume = async () => {
-    if (!resumeReviewId || !selectedFile) return;
+    if (!resumeReviewIdNum || !selectedFile) return;
 
     try {
-      setIsUploading(true);
-      await uploadResumeFile(parseInt(resumeReviewId, 10), selectedFile);
+      await uploadResumeFileMutation.mutateAsync(selectedFile);
       toast.success('Resume uploaded successfully!');
-      
-      const reviewData = await getResumeReview(parseInt(resumeReviewId, 10));
-      setResumeReview(reviewData);
-      
-      if (reviewData.fileUrl) {
-        const fileUrl = await getResumeFileUrl(parseInt(resumeReviewId, 10));
-        setResumeFileUrl(fileUrl);
-      }
-      
+
+      await Promise.all([resumeReviewQuery.refetch(), resumeFileUrlQuery.refetch()]);
+
       setSelectedFile(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error uploading resume:', err);
-      const errorMessage = err?.response?.data?.message || err?.message || 'Failed to upload resume';
-      toast.error(errorMessage);
-    } finally {
-      setIsUploading(false);
+      const normalized = normalizeApiError(err, 'Failed to upload resume');
+      toast.error(normalized.friendlyMessage);
     }
   };
-
-  if (isLoading) {
-    return <CenteredLoader />;
-  }
-
-  if (!resumeReview) {
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-semibold mb-4">Resume Review Not Found</h1>
-        <Button asChild>
-          <Link to="/mentorship/my">Back to My Mentorships</Link>
-        </Button>
-      </div>
-    );
-  }
 
   const isActive = resumeReview.reviewStatus?.toUpperCase() === 'ACTIVE';
   const isCompleted = resumeReview.reviewStatus?.toUpperCase() === 'COMPLETED';
@@ -297,10 +278,10 @@ export default function ResumeReviewPage() {
                         </div>
                         <Button
                           onClick={handleUploadResume}
-                          disabled={isUploading}
+                          disabled={uploadResumeFileMutation.isPending}
                           className="w-full"
                         >
-                          {isUploading ? (
+                          {uploadResumeFileMutation.isPending ? (
                             <>
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                               Uploading...
@@ -362,10 +343,10 @@ export default function ResumeReviewPage() {
                         </div>
                         <Button
                           onClick={handleUploadResume}
-                          disabled={isUploading}
+                          disabled={uploadResumeFileMutation.isPending}
                           className="w-full max-w-md mx-auto"
                         >
-                          {isUploading ? (
+                          {uploadResumeFileMutation.isPending ? (
                             <>
                               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
                               Uploading...

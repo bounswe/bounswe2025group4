@@ -12,13 +12,17 @@ import org.bounswe.jobboardbackend.forum.model.ForumPost;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentDownvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentUpvoteRepository;
+import org.bounswe.jobboardbackend.forum.repository.ForumPostDownvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
+import org.bounswe.jobboardbackend.forum.repository.ForumPostUpvoteRepository;
+import org.bounswe.jobboardbackend.notification.notifier.ForumNotifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.Instant;
 import java.util.List;
@@ -42,6 +46,18 @@ class ForumServiceTest {
 
     @Mock
     private ForumCommentDownvoteRepository downvoteRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
+    @Mock
+    private ForumPostUpvoteRepository postUpvoteRepository;
+
+    @Mock
+    private ForumPostDownvoteRepository postDownvoteRepository;
+
+    @Mock
+    private ForumNotifier notifier;
 
     @InjectMocks
     private ForumService forumService;

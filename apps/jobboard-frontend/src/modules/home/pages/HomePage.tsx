@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@shared/components/ui/button';
 import heroBackground from '@/assets/hero-background.jpg';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/components/ui/card';
@@ -14,19 +15,29 @@ import {
   MessageCircle,
   UserCheck,
 } from 'lucide-react';
-import { type FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getDashboardStats, type DashboardStatsResponse } from '@modules/employer/services/dashboard.service';
+import { dashboardKeys } from '@shared/lib/query-keys';
 
 export default function HomePage() {
   const isMediumOrLarger = useMediaQuery('(min-width: 768px)');
   const navigate = useNavigate();
   const { t } = useTranslation('common');
   const [searchTerm, setSearchTerm] = useState('');
-  const [stats, setStats] = useState<DashboardStatsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const {
+    data: stats,
+    isLoading: isStatsLoading,
+    isError: isStatsError,
+    isFetching: isStatsFetching,
+    refetch: refetchStats,
+  } = useQuery<DashboardStatsResponse>({
+    queryKey: dashboardKeys.stats,
+    queryFn: getDashboardStats,
+    staleTime: 5 * 60_000, // cache for 5 minutes before revalidating
+    gcTime: 30 * 60_000, // keep cached stats for 30 minutes
+  });
 
   const formatNumber = (value: number | null | undefined) => {
     if (typeof value === 'number' && !Number.isNaN(value)) {
@@ -66,22 +77,8 @@ export default function HomePage() {
     }
   };
 
-  const fetchStats = async () => {
-    setLoading(true);
-    setError(false);
-    try {
-      const data = await getDashboardStats();
-      setStats(data);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchStats();
-  }, []);
+  const showStatsSkeleton = (isStatsLoading || isStatsFetching) && !stats;
+  const showStatsError = isStatsError && !stats;
 
   return (
     <div className="min-h-screen">
@@ -208,18 +205,18 @@ export default function HomePage() {
             </p>
           </div>
 
-          {error && (
+          {showStatsError && (
             <div className="text-center py-12">
               <p className="text-muted-foreground mb-4">{t('home.stats.error')}</p>
-              <Button onClick={fetchStats} variant="outline">
+              <Button onClick={() => void refetchStats()} variant="outline" disabled={isStatsFetching}>
                 {t('home.stats.retry')}
               </Button>
             </div>
           )}
 
-          {loading && !error && renderStatsSkeleton()}
+          {showStatsSkeleton && renderStatsSkeleton()}
 
-          {stats && !loading && !error && (
+          {stats && (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {/* Users Stats Card */}
               <Card className="hover:shadow-lg transition-shadow">

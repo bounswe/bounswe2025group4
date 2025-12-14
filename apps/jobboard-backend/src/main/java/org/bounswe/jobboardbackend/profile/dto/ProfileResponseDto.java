@@ -4,6 +4,11 @@ import lombok.*;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * Profile response DTO.
+ * Note: Badges are now independent of Profile.
+ * Use GET /api/badges/user/{userId} to get user badges.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,7 +27,6 @@ public class ProfileResponseDto {
     private List<ExperienceResponseDto> experiences;
     private List<SkillResponseDto> skills;
     private List<InterestResponseDto> interests;
-    private List<BadgeResponseDto> badges;
 
     private Instant createdAt;
     private Instant updatedAt;

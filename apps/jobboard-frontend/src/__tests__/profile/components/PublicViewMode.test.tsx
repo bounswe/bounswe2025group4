@@ -5,7 +5,7 @@ import { ExperienceSection } from '@modules/profile/components/profile/Experienc
 import { EducationSection } from '@modules/profile/components/profile/EducationSection';
 import type { Experience, Education } from '@shared/types/profile.types';
 
-vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
+vi.mock('react-i18next', async () => await import('@/__tests__/__mocks__/react-i18next'));
 
 describe('Profile Components - Public View Mode', () => {
   describe('AboutSection', () => {

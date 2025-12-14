@@ -10,10 +10,19 @@ import org.bounswe.jobboardbackend.forum.model.ForumComment;
 import org.bounswe.jobboardbackend.forum.model.ForumCommentDownvote;
 import org.bounswe.jobboardbackend.forum.model.ForumCommentUpvote;
 import org.bounswe.jobboardbackend.forum.model.ForumPost;
+import org.bounswe.jobboardbackend.forum.model.ForumPostDownvote;
+import org.bounswe.jobboardbackend.forum.model.ForumPostUpvote;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentDownvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentUpvoteRepository;
+import org.bounswe.jobboardbackend.forum.repository.ForumPostDownvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
+import org.bounswe.jobboardbackend.forum.repository.ForumPostUpvoteRepository;
+import org.bounswe.jobboardbackend.badge.event.CommentCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.CommentUpvotedEvent;
+import org.bounswe.jobboardbackend.badge.event.ForumPostCreatedEvent;
+import org.bounswe.jobboardbackend.notification.notifier.ForumNotifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +38,10 @@ public class ForumService {
     private final ForumCommentRepository commentRepository;
     private final ForumCommentUpvoteRepository upvoteRepository;
     private final ForumCommentDownvoteRepository downvoteRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final ForumPostUpvoteRepository postUpvoteRepository;
+    private final ForumPostDownvoteRepository postDownvoteRepository;
+    private final ForumNotifier notifier;
 
     @Transactional
     public PostResponse createPost(User author, CreatePostRequest request) {
@@ -40,13 +53,18 @@ public class ForumService {
                 .build();
 
         ForumPost savedPost = postRepository.save(post);
-        return PostResponse.from(savedPost);
+
+        // Publish event for badge checking
+        eventPublisher.publishEvent(new ForumPostCreatedEvent(author.getId(), savedPost.getId()));
+
+
+        return toPostResponse(savedPost);
     }
 
     @Transactional(readOnly = true)
     public List<PostResponse> findAllPosts() {
         return postRepository.findAll().stream()
-                .map(PostResponse::from)
+                .map(this::toPostResponse)
                 .collect(Collectors.toList());
     }
 
@@ -54,7 +72,7 @@ public class ForumService {
     public PostResponse findPostById(Long id) {
         ForumPost post = postRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Post not found"));
-        return PostResponse.from(post);
+        return toPostResponse(post);
     }
 
     @Transactional
@@ -77,7 +95,7 @@ public class ForumService {
         }
 
         ForumPost updatedPost = postRepository.save(post);
-        return PostResponse.from(updatedPost);
+        return toPostResponse(updatedPost);
     }
 
     @Transactional
@@ -114,6 +132,12 @@ public class ForumService {
                 .build();
 
         ForumComment savedComment = commentRepository.save(comment);
+
+        notifier.notifyNewComment(post, savedComment);
+
+        // Publish event for badge checking
+        eventPublisher.publishEvent(new CommentCreatedEvent(author.getId(), savedComment.getId(), postId));
+
         return CommentResponse.from(savedComment, 0, 0);
     }
 
@@ -172,6 +196,9 @@ public class ForumService {
                 .comment(comment)
                 .build();
         upvoteRepository.save(upvote);
+
+        // Publish event for badge checking (for the comment author, not the voter)
+        eventPublisher.publishEvent(new CommentUpvotedEvent(comment.getAuthor().getId(), commentId));
     }
 
     @Transactional
@@ -210,5 +237,64 @@ public class ForumService {
         long upvotes = upvoteRepository.countByCommentId(comment.getId());
         long downvotes = downvoteRepository.countByCommentId(comment.getId());
         return CommentResponse.from(comment, upvotes, downvotes);
+    }
+
+    private PostResponse toPostResponse(ForumPost post) {
+        long upvotes = postUpvoteRepository.countByPostId(post.getId());
+        long downvotes = postDownvoteRepository.countByPostId(post.getId());
+        List<CommentResponse> comments = post.getComments().stream()
+                .map(this::toCommentResponse)
+                .collect(Collectors.toList());
+        return PostResponse.from(post, upvotes, downvotes, comments);
+    }
+
+    @Transactional
+    public void upvotePost(Long postId, User user) {
+        ForumPost post = postRepository.findById(postId)
+                .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Post not found"));
+
+        if (postUpvoteRepository.findByUserIdAndPostId(user.getId(), postId).isPresent()) {
+            return;
+        }
+
+        postDownvoteRepository.findByUserIdAndPostId(user.getId(), postId)
+                .ifPresent(postDownvoteRepository::delete);
+
+        ForumPostUpvote upvote = ForumPostUpvote.builder()
+                .user(user)
+                .post(post)
+                .build();
+        postUpvoteRepository.save(upvote);
+    }
+
+    @Transactional
+    public void removePostUpvote(Long postId, User user) {
+        postUpvoteRepository.findByUserIdAndPostId(user.getId(), postId)
+                .ifPresent(postUpvoteRepository::delete);
+    }
+
+    @Transactional
+    public void downvotePost(Long postId, User user) {
+        ForumPost post = postRepository.findById(postId)
+                .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Post not found"));
+
+        if (postDownvoteRepository.findByUserIdAndPostId(user.getId(), postId).isPresent()) {
+            return;
+        }
+
+        postUpvoteRepository.findByUserIdAndPostId(user.getId(), postId)
+                .ifPresent(postUpvoteRepository::delete);
+
+        ForumPostDownvote downvote = ForumPostDownvote.builder()
+                .user(user)
+                .post(post)
+                .build();
+        postDownvoteRepository.save(downvote);
+    }
+
+    @Transactional
+    public void removePostDownvote(Long postId, User user) {
+        postDownvoteRepository.findByUserIdAndPostId(user.getId(), postId)
+                .ifPresent(postDownvoteRepository::delete);
     }
 }

@@ -4,6 +4,11 @@ import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 import type { WorkplaceBriefResponse } from '@shared/types/workplace.types';
 
+vi.mock('react-i18next', async () => await import('@/__tests__/__mocks__/react-i18next'));
+vi.mock('@shared/utils/ethical-tag-translator', () => ({
+  translateEthicalTag: (_t: unknown, label: string) => label,
+}));
+
 const mockWorkplace: WorkplaceBriefResponse = {
   id: 1,
   companyName: 'Test Company',

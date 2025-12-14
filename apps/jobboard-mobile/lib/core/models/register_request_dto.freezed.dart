@@ -23,12 +23,13 @@ RegisterRequestDto _$RegisterRequestDtoFromJson(Map<String, dynamic> json) {
 mixin _$RegisterRequestDto {
   String get username => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
+  UserType get role =>
+      throw _privateConstructorUsedError; // Ensure UserType enum is imported
   String get password => throw _privateConstructorUsedError;
   String get firstName => throw _privateConstructorUsedError;
   String get lastName => throw _privateConstructorUsedError;
-  String? get pronounSet => throw _privateConstructorUsedError;
-  String? get bio => throw _privateConstructorUsedError;
-  UserType get role => throw _privateConstructorUsedError;
+  String get pronounSet => throw _privateConstructorUsedError;
+  String get bio => throw _privateConstructorUsedError;
 
   /// Serializes this RegisterRequestDto to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -50,12 +51,12 @@ abstract class $RegisterRequestDtoCopyWith<$Res> {
   $Res call({
     String username,
     String email,
+    UserType role,
     String password,
     String firstName,
     String lastName,
-    String? pronounSet,
-    String? bio,
-    UserType role,
+    String pronounSet,
+    String bio,
   });
 }
 
@@ -76,12 +77,12 @@ class _$RegisterRequestDtoCopyWithImpl<$Res, $Val extends RegisterRequestDto>
   $Res call({
     Object? username = null,
     Object? email = null,
+    Object? role = null,
     Object? password = null,
     Object? firstName = null,
     Object? lastName = null,
-    Object? pronounSet = freezed,
-    Object? bio = freezed,
-    Object? role = null,
+    Object? pronounSet = null,
+    Object? bio = null,
   }) {
     return _then(
       _value.copyWith(
@@ -95,6 +96,11 @@ class _$RegisterRequestDtoCopyWithImpl<$Res, $Val extends RegisterRequestDto>
                     ? _value.email
                     : email // ignore: cast_nullable_to_non_nullable
                         as String,
+            role:
+                null == role
+                    ? _value.role
+                    : role // ignore: cast_nullable_to_non_nullable
+                        as UserType,
             password:
                 null == password
                     ? _value.password
@@ -111,20 +117,15 @@ class _$RegisterRequestDtoCopyWithImpl<$Res, $Val extends RegisterRequestDto>
                     : lastName // ignore: cast_nullable_to_non_nullable
                         as String,
             pronounSet:
-                freezed == pronounSet
+                null == pronounSet
                     ? _value.pronounSet
                     : pronounSet // ignore: cast_nullable_to_non_nullable
-                        as String?,
+                        as String,
             bio:
-                freezed == bio
+                null == bio
                     ? _value.bio
                     : bio // ignore: cast_nullable_to_non_nullable
-                        as String?,
-            role:
-                null == role
-                    ? _value.role
-                    : role // ignore: cast_nullable_to_non_nullable
-                        as UserType,
+                        as String,
           )
           as $Val,
     );
@@ -143,12 +144,12 @@ abstract class _$$RegisterRequestDtoImplCopyWith<$Res>
   $Res call({
     String username,
     String email,
+    UserType role,
     String password,
     String firstName,
     String lastName,
-    String? pronounSet,
-    String? bio,
-    UserType role,
+    String pronounSet,
+    String bio,
   });
 }
 
@@ -168,12 +169,12 @@ class __$$RegisterRequestDtoImplCopyWithImpl<$Res>
   $Res call({
     Object? username = null,
     Object? email = null,
+    Object? role = null,
     Object? password = null,
     Object? firstName = null,
     Object? lastName = null,
-    Object? pronounSet = freezed,
-    Object? bio = freezed,
-    Object? role = null,
+    Object? pronounSet = null,
+    Object? bio = null,
   }) {
     return _then(
       _$RegisterRequestDtoImpl(
@@ -187,6 +188,11 @@ class __$$RegisterRequestDtoImplCopyWithImpl<$Res>
                 ? _value.email
                 : email // ignore: cast_nullable_to_non_nullable
                     as String,
+        role:
+            null == role
+                ? _value.role
+                : role // ignore: cast_nullable_to_non_nullable
+                    as UserType,
         password:
             null == password
                 ? _value.password
@@ -203,20 +209,15 @@ class __$$RegisterRequestDtoImplCopyWithImpl<$Res>
                 : lastName // ignore: cast_nullable_to_non_nullable
                     as String,
         pronounSet:
-            freezed == pronounSet
+            null == pronounSet
                 ? _value.pronounSet
                 : pronounSet // ignore: cast_nullable_to_non_nullable
-                    as String?,
+                    as String,
         bio:
-            freezed == bio
+            null == bio
                 ? _value.bio
                 : bio // ignore: cast_nullable_to_non_nullable
-                    as String?,
-        role:
-            null == role
-                ? _value.role
-                : role // ignore: cast_nullable_to_non_nullable
-                    as UserType,
+                    as String,
       ),
     );
   }
@@ -228,12 +229,12 @@ class _$RegisterRequestDtoImpl implements _RegisterRequestDto {
   const _$RegisterRequestDtoImpl({
     required this.username,
     required this.email,
+    required this.role,
     required this.password,
     required this.firstName,
     required this.lastName,
-    this.pronounSet,
-    this.bio,
-    required this.role,
+    required this.pronounSet,
+    required this.bio,
   });
 
   factory _$RegisterRequestDtoImpl.fromJson(Map<String, dynamic> json) =>
@@ -244,21 +245,22 @@ class _$RegisterRequestDtoImpl implements _RegisterRequestDto {
   @override
   final String email;
   @override
+  final UserType role;
+  // Ensure UserType enum is imported
+  @override
   final String password;
   @override
   final String firstName;
   @override
   final String lastName;
   @override
-  final String? pronounSet;
+  final String pronounSet;
   @override
-  final String? bio;
-  @override
-  final UserType role;
+  final String bio;
 
   @override
   String toString() {
-    return 'RegisterRequestDto(username: $username, email: $email, password: $password, firstName: $firstName, lastName: $lastName, pronounSet: $pronounSet, bio: $bio, role: $role)';
+    return 'RegisterRequestDto(username: $username, email: $email, role: $role, password: $password, firstName: $firstName, lastName: $lastName, pronounSet: $pronounSet, bio: $bio)';
   }
 
   @override
@@ -269,6 +271,7 @@ class _$RegisterRequestDtoImpl implements _RegisterRequestDto {
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.email, email) || other.email == email) &&
+            (identical(other.role, role) || other.role == role) &&
             (identical(other.password, password) ||
                 other.password == password) &&
             (identical(other.firstName, firstName) ||
@@ -277,8 +280,7 @@ class _$RegisterRequestDtoImpl implements _RegisterRequestDto {
                 other.lastName == lastName) &&
             (identical(other.pronounSet, pronounSet) ||
                 other.pronounSet == pronounSet) &&
-            (identical(other.bio, bio) || other.bio == bio) &&
-            (identical(other.role, role) || other.role == role));
+            (identical(other.bio, bio) || other.bio == bio));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -287,12 +289,12 @@ class _$RegisterRequestDtoImpl implements _RegisterRequestDto {
     runtimeType,
     username,
     email,
+    role,
     password,
     firstName,
     lastName,
     pronounSet,
     bio,
-    role,
   );
 
   /// Create a copy of RegisterRequestDto
@@ -316,12 +318,12 @@ abstract class _RegisterRequestDto implements RegisterRequestDto {
   const factory _RegisterRequestDto({
     required final String username,
     required final String email,
+    required final UserType role,
     required final String password,
     required final String firstName,
     required final String lastName,
-    final String? pronounSet,
-    final String? bio,
-    required final UserType role,
+    required final String pronounSet,
+    required final String bio,
   }) = _$RegisterRequestDtoImpl;
 
   factory _RegisterRequestDto.fromJson(Map<String, dynamic> json) =
@@ -332,17 +334,17 @@ abstract class _RegisterRequestDto implements RegisterRequestDto {
   @override
   String get email;
   @override
+  UserType get role; // Ensure UserType enum is imported
+  @override
   String get password;
   @override
   String get firstName;
   @override
   String get lastName;
   @override
-  String? get pronounSet;
+  String get pronounSet;
   @override
-  String? get bio;
-  @override
-  UserType get role;
+  String get bio;
 
   /// Create a copy of RegisterRequestDto
   /// with the given fields replaced by the non-null parameter values.

@@ -12,11 +12,14 @@ import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.notification.notifier.JobApplicationNotifier;
 import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
+import org.bounswe.jobboardbackend.badge.event.JobApplicationCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.JobApplicationApprovedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +46,8 @@ public class JobApplicationService {
     private final WorkplaceService workplaceService;
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final WorkplaceRepository workplaceRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final JobApplicationNotifier notifier;
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -65,13 +70,17 @@ public class JobApplicationService {
                                  JobPostRepository jobPostRepository,
                                  WorkplaceService workplaceService,
                                  EmployerWorkplaceRepository employerWorkplaceRepository,
-                                 WorkplaceRepository workplaceRepository) {
+                                 WorkplaceRepository workplaceRepository,
+                                 ApplicationEventPublisher eventPublisher,
+                                 JobApplicationNotifier notifier) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
         this.jobPostRepository = jobPostRepository;
         this.workplaceService = workplaceService;
         this.employerWorkplaceRepository = employerWorkplaceRepository;
         this.workplaceRepository = workplaceRepository;
+        this.eventPublisher = eventPublisher;
+        this.notifier = notifier;
     }
 
     @Transactional(readOnly = true)
@@ -138,7 +147,14 @@ public class JobApplicationService {
                 .appliedDate(LocalDateTime.now())
                 .build();
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        notifier.notifyNewApplication(savedApplication);
+
+        // Publish event for badge system
+        eventPublisher.publishEvent(new JobApplicationCreatedEvent(jobSeeker.getId(), savedApplication.getId()));
+        
+        return toResponseDto(savedApplication);
     }
 
     @Transactional
@@ -158,7 +174,15 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        notifier.notifyApplicationApproved(savedApplication, employer);
+        
+        // Publish event for badge system
+        eventPublisher.publishEvent(new JobApplicationApprovedEvent(
+            application.getJobSeeker().getId(), savedApplication.getId()));
+        
+        return toResponseDto(savedApplication);
     }
 
     @Transactional
@@ -178,7 +202,12 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        notifier.notifyApplicationRejected(savedApplication, employer);
+
+        return toResponseDto(savedApplication);
+
     }
 
     @Transactional

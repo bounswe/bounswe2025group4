@@ -1,6 +1,5 @@
 package org.bounswe.jobboardbackend.auth.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -11,24 +10,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
-@Table(
-        name = "users",
-        indexes = {
-                @Index(name = "ix_users_username", columnList = "username"),
-                @Index(name = "ix_users_email", columnList = "email")
-        },
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_users_username", columnNames = "username"),
-                @UniqueConstraint(name = "uk_users_email", columnNames = "email")
-        }
-)
+@Table(name = "users", indexes = {
+        @Index(name = "ix_users_username", columnList = "username"),
+        @Index(name = "ix_users_email", columnList = "email")
+}, uniqueConstraints = {
+        @UniqueConstraint(name = "uk_users_username", columnNames = "username"),
+        @UniqueConstraint(name = "uk_users_email", columnNames = "email")
+})
 public class User {
 
     @Id
@@ -60,6 +53,19 @@ public class User {
     @Builder.Default
     private Boolean emailVerified = false;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isBanned = false;
+
+    @Column(length = 500)
+    private String banReason;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isMentorBanned = false;
+
+    @Column(length = 500)
+    private String mentorBanReason;
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -69,7 +75,12 @@ public class User {
 
     @PrePersist
     private void onCreate() {
-        if (emailVerified == null) emailVerified = false;
+        if (emailVerified == null)
+            emailVerified = false;
+        if (isBanned == null)
+            isBanned = false;
+        if (isMentorBanned == null)
+            isMentorBanned = false;
     }
 
 }

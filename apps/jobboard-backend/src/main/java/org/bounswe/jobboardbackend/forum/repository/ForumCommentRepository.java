@@ -9,4 +9,10 @@ import java.time.Instant;
 @Repository
 public interface ForumCommentRepository extends JpaRepository<ForumComment, Long> {
     long countByAuthorIdAndPostIdAndCreatedAtAfter(Long authorId, Long postId, Instant createdAt);
+    
+    /**
+     * Count total comments made by a user.
+     * Used for badge criteria checking.
+     */
+    long countByAuthorId(Long authorId);
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
-import { renderWithProviders, setupUserEvent } from '@/test/utils';
+import { renderWithProviders, setupUserEvent } from '@/__tests__/utils';
 import { JobCard } from '@modules/jobs/components/jobs/JobCard';
 import type { Job } from '@shared/types/job';
 
@@ -170,7 +170,7 @@ describe('JobCard', () => {
     const card = screen.getByText('Software Engineer').closest('.group');
     await user.click(card!);
 
-    expect(mockNavigate).toHaveBeenCalledWith('/jobs/123');
+    expect(mockNavigate).toHaveBeenCalledWith('/jobs/123', { state: { from: 'jobs' } });
   });
 
   it('navigates to workplace page when company name is clicked', async () => {

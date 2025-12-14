@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Briefcase, MapPin, Download, ExternalLink, Trash2, FileText, Heart } from 'lucide-react';
@@ -15,9 +15,14 @@ import {
 } from '@shared/components/ui/dialog';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
 import type { JobApplicationResponse, JobApplicationStatus } from '@shared/types/api.types';
-import { getApplicationsByJobSeeker, deleteApplication, getCvUrl } from '@modules/jobs/applications/services/applications.service';
+import {
+  useApplicationsByJobSeekerQuery,
+  useDeleteApplicationMutation,
+  getCvUrl,
+} from '@modules/jobs/applications/services/applications.service';
 import { getJobById } from '@modules/jobs/services/jobs.service';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
+import { normalizeApiError } from '@shared/utils/error-handler';
 
 type FilterType = 'all' | 'PENDING' | 'APPROVED' | 'REJECTED';
 
@@ -28,7 +33,6 @@ export default function MyApplicationsPage() {
   const isRtl = i18n.dir(resolvedLanguage) === 'rtl';
 
   const [applications, setApplications] = useState<JobApplicationResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterType>('all');
   const [nonprofitJobs, setNonprofitJobs] = useState<Set<number>>(new Set());
@@ -51,7 +55,8 @@ export default function MyApplicationsPage() {
   };
 
   // Function to check if a job is nonprofit (with caching)
-  const checkIfNonprofitJob = async (jobPostId: number): Promise<boolean> => {
+const checkIfNonprofitJob = useCallback(
+  async (jobPostId: number): Promise<boolean> => {
     if (jobDetailsCache.has(jobPostId)) {
       return jobDetailsCache.get(jobPostId);
     }
@@ -67,44 +72,37 @@ export default function MyApplicationsPage() {
       jobDetailsCache.set(jobPostId, false);
       return false;
     }
-  };
+  },
+  [jobDetailsCache]
+);
+
+  const applicationsQuery = useApplicationsByJobSeekerQuery(user?.id, Boolean(user));
+  const deleteApplicationMutation = useDeleteApplicationMutation();
 
   useEffect(() => {
-    const fetchApplications = async () => {
-      if (!user) return;
+    if (applicationsQuery.data) {
+      setApplications(applicationsQuery.data);
+      const nonprofitJobIds = new Set<number>();
+      const uniqueJobIds = [...new Set(applicationsQuery.data.map((app) => app.jobPostId))];
+      Promise.all(
+        uniqueJobIds.map(async (jobPostId: number) => {
+          const isNonprofit = await checkIfNonprofitJob(jobPostId);
+          if (isNonprofit) {
+            nonprofitJobIds.add(jobPostId);
+          }
+        })
+      ).then(() => setNonprofitJobs(nonprofitJobIds));
+    }
+  }, [applicationsQuery.data, checkIfNonprofitJob]);
 
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const apps = await getApplicationsByJobSeeker(user.id);
-
-        setApplications(apps);
-
-        // Check which jobs are nonprofit jobs (batch processing for better performance)
-        const nonprofitJobIds = new Set<number>();
-        const uniqueJobIds = [...new Set(apps.map((app) => app.jobPostId))];
-
-        await Promise.all(
-          uniqueJobIds.map(async (jobPostId: number) => {
-            const isNonprofit = await checkIfNonprofitJob(jobPostId);
-            if (isNonprofit) {
-              nonprofitJobIds.add(jobPostId);
-            }
-          })
-        );
-
-        setNonprofitJobs(nonprofitJobIds);
-      } catch (err) {
-        console.error('Error fetching applications:', err);
-        setError(t('applications.mine.errors.loadFailed'));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchApplications();
-  }, [user, t, jobDetailsCache]);
+  useEffect(() => {
+    if (applicationsQuery.error) {
+      const normalized = normalizeApiError(applicationsQuery.error, t('applications.mine.errors.loadFailed'));
+      setError(normalized.friendlyMessage);
+    } else {
+      setError(null);
+    }
+  }, [applicationsQuery.error, t]);
 
   const filteredApplications = useMemo(() => {
     if (filter === 'all') {
@@ -127,15 +125,12 @@ export default function MyApplicationsPage() {
 
     try {
       setIsWithdrawing(true);
-      await deleteApplication(applicationToWithdraw);
-
-      // Remove from list
-      setApplications((prev) => prev.filter((app) => app.id !== applicationToWithdraw));
-
+      await deleteApplicationMutation.mutateAsync(applicationToWithdraw);
       setApplicationToWithdraw(null);
     } catch (err) {
       console.error('Error withdrawing application:', err);
-      setError(t('applications.mine.withdraw.error'));
+      const normalized = normalizeApiError(err, t('applications.mine.withdraw.error'));
+      setError(normalized.friendlyMessage);
     } finally {
       setIsWithdrawing(false);
     }
@@ -173,7 +168,7 @@ export default function MyApplicationsPage() {
     }
   };
 
-  if (isLoading) {
+  if (applicationsQuery.isLoading) {
     return <CenteredLoader />;
   }
 
@@ -436,7 +431,7 @@ export default function MyApplicationsPage() {
               onClick={() => setApplicationToWithdraw(null)}
               disabled={isWithdrawing}
             >
-              {t('applications.mine.withdraw.cancel')}
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"

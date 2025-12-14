@@ -12,16 +12,13 @@ import { StarRating } from '@shared/components/ui/star-rating';
 import { Building2, MapPin, Settings, Users } from 'lucide-react';
 import type { WorkplaceBriefResponse } from '@shared/types/workplace.types';
 import { useTranslation } from 'react-i18next';
+import { translateEthicalTag } from '@shared/utils/ethical-tag-translator';
 
 interface EmployerWorkplaceCardProps {
   workplace: WorkplaceBriefResponse;
   role: string;
   hasPendingRequests?: boolean;
 }
-
-const formatPolicyName = (policy: string) => {
-  return policy.replace(/([A-Z])/g, ' $1').trim();
-};
 
 export function EmployerWorkplaceCard({
   workplace,
@@ -30,6 +27,16 @@ export function EmployerWorkplaceCard({
 }: EmployerWorkplaceCardProps) {
   const navigate = useNavigate();
   const { t } = useTranslation('common');
+  const translateEthicalLabel = (label: string) => translateEthicalTag(t, label);
+  const translateRole = (roleLabel: string) =>
+    t(`workplace.roles.${roleLabel.toLowerCase()}`, { defaultValue: roleLabel });
+
+  const policyEntries =
+    workplace.ethicalAverages && Object.keys(workplace.ethicalAverages).length > 0
+      ? Object.entries(workplace.ethicalAverages).filter(([, avg]) => avg != null && !isNaN(avg))
+      : [];
+  const displayedPolicies = policyEntries.slice(0, 4);
+  const remainingPolicies = policyEntries.length - displayedPolicies.length;
 
   return (
     <Card
@@ -59,18 +66,13 @@ export function EmployerWorkplaceCard({
               <div>
                 <h2 className="text-2xl font-bold mb-1">{workplace.companyName}</h2>
                 <Badge variant="secondary" className="text-xs">
-                  {role}
+                  {translateRole(role)}
                 </Badge>
               </div>
             </div>
 
             <div className="flex items-center gap-2 mb-2">
-              <StarRating
-                value={workplace.overallAvg}
-                readonly
-                size="md"
-                showValue
-              />
+              <StarRating value={workplace.overallAvg} readonly size="md" showValue />
             </div>
 
             <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
@@ -90,28 +92,12 @@ export function EmployerWorkplaceCard({
               </p>
             )}
 
-            {/* Ethical Tags */}
-            {workplace.ethicalTags && workplace.ethicalTags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {workplace.ethicalTags.slice(0, 5).map((tag) => (
-                  <Badge key={tag} variant="secondary" className="text-xs">
-                    {tag}
-                  </Badge>
-                ))}
-                {workplace.ethicalTags.length > 5 && (
-                  <Badge variant="outline" className="text-xs">
-                    +{workplace.ethicalTags.length - 5}
-                  </Badge>
-                )}
-              </div>
-            )}
-
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
               <Button variant="outline" asChild>
                 <Link to={`/employer/workplace/${workplace.id}/settings`}>
                   <Settings className="h-4 w-4" />
-                  {t('workplace.settings')}
+                  {t('workplace.settings.label', { defaultValue: t('workplace.settings') })}
                 </Link>
               </Button>
               <Button variant="outline" asChild className="relative">
@@ -127,39 +113,38 @@ export function EmployerWorkplaceCard({
           </div>
 
           {/* Ethical Tag Ratings - Right Side */}
-          {workplace.ethicalAverages &&
-            Object.keys(workplace.ethicalAverages).length > 0 && (
-              <div className="md:w-56 flex-shrink-0 border-l md:border-l md:border-t-0 border-t pl-5 md:pl-5 pt-5 md:pt-0">
-                <h4 className="text-xs font-semibold mb-2 text-muted-foreground">
-                  Ethical Ratings
-                </h4>
-                <div className="space-y-1.5">
-                  {Object.entries(workplace.ethicalAverages)
-                    .filter(([, avg]) => avg != null && !isNaN(avg))
-                    .map(([policy, average]) => (
-                      <div key={policy} className="flex items-center justify-between gap-2">
-                        <span className="text-xs text-muted-foreground capitalize flex-1">
-                          {formatPolicyName(policy)}
-                        </span>
-                        <div className="flex items-center gap-1">
-                          <StarRating
-                            value={average as number}
-                            readonly
-                            size="sm"
-                          />
-                          <span className="text-xs font-medium w-8 text-right">
-                            {(average as number).toFixed(1)}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                </div>
+          {policyEntries.length > 0 && (
+            <div className="md:w-80 flex-shrink-0 border-l md:border-l md:border-t-0 border-t pl-5 md:pl-5 pt-5 md:pt-0">
+              <h4 className="text-xs font-semibold mb-2 text-muted-foreground">
+                {t('jobs.detail.ethicalPolicy.ratingsTitle', { defaultValue: 'Ethical Ratings' })}
+              </h4>
+              <div className="space-y-1.5">
+                {displayedPolicies.map(([policy, average]) => (
+                  <div key={policy} className="flex items-center justify-between gap-2">
+                    <span className="text-sm text-muted-foreground capitalize flex-1">
+                      {translateEthicalLabel(policy)}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <StarRating value={average as number} readonly size="sm" />
+                      <span className="text-xs font-medium w-8 text-right">
+                        {(average as number).toFixed(1)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                {remainingPolicies > 0 && (
+                  <>
+                    <div className="border-t border-border my-2" />
+                    <div className="text-xs text-muted-foreground">
+                      +{remainingPolicies} {t('common.more', { defaultValue: 'more' })}
+                    </div>
+                  </>
+                )}
               </div>
-            )}
+            </div>
+          )}
         </div>
       </div>
     </Card>
   );
 }
-
-

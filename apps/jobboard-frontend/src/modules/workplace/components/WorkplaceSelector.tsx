@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Building2, MapPin, Star } from 'lucide-react';
 import { cn } from '@shared/lib/utils';
-import { getMyWorkplaces } from '@modules/employer/services/employer.service';
+import { useMyWorkplacesQuery } from '@modules/employer/services/employer.service';
 import type { EmployerWorkplaceBrief } from '@shared/types/workplace.types';
 import {
   DropdownMenu,
@@ -28,31 +28,16 @@ export default function WorkplaceSelector({
   className,
 }: WorkplaceSelectorProps) {
   const { t } = useTranslation('common');
-  const [workplaces, setWorkplaces] = useState<EmployerWorkplaceBrief[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const workplacesQuery = useMyWorkplacesQuery();
+  const workplaces = workplacesQuery.data ?? [];
+  const fetchError = workplacesQuery.error ? t('workplace.selector.fetchError') : null;
 
-  useEffect(() => {
-    const fetchWorkplaces = async () => {
-      try {
-        setIsLoading(true);
-        setFetchError(null);
-        const data = await getMyWorkplaces();
-        setWorkplaces(data);
-      } catch (err) {
-        console.error('Error fetching workplaces:', err);
-        setFetchError(t('workplace.selector.fetchError'));
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const selectedWorkplace = useMemo(
+    () => workplaces.find((w) => w.workplace.id === value),
+    [workplaces, value]
+  );
 
-    fetchWorkplaces();
-  }, [t]);
-
-  const selectedWorkplace = useMemo(() => workplaces.find((w) => w.workplace.id === value), [workplaces, value]);
-
-  if (isLoading) {
+  if (workplacesQuery.isLoading) {
     return (
       <div className={cn('h-10 bg-muted animate-pulse rounded-md', className)} />
     );
