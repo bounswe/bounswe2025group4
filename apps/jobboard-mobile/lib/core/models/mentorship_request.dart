@@ -3,7 +3,7 @@ import 'user.dart';
 enum MentorshipRequestStatus {
   PENDING,
   ACCEPTED,
-  REJECTED,
+  DECLINED,
   CANCELLED,
   COMPLETED,
   UNKNOWN,
@@ -17,8 +17,8 @@ MentorshipRequestStatus _parseStatus(String? raw) {
       return MentorshipRequestStatus.PENDING;
     case 'ACCEPTED':
       return MentorshipRequestStatus.ACCEPTED;
-    case 'REJECTED':
-      return MentorshipRequestStatus.REJECTED;
+    case 'DECLINED':
+      return MentorshipRequestStatus.DECLINED;
     case 'CANCELLED':
       return MentorshipRequestStatus.CANCELLED;
     case 'COMPLETED':
@@ -52,6 +52,8 @@ class MentorshipRequest {
   final int? conversationId;
   final String? motivation;
 
+  final String? responseMessage;
+
   MentorshipRequest({
     required this.id,
     required this.requesterId,
@@ -64,6 +66,7 @@ class MentorshipRequest {
     this.reviewStatus,
     this.conversationId,
     this.motivation,
+    this.responseMessage,
 
   });
 
@@ -91,6 +94,8 @@ class MentorshipRequest {
       reviewStatus: json['reviewStatus']?.toString(),
       conversationId: json['conversationId'] as int?,
       motivation: json['motivation']?.toString(),
+      responseMessage: json['responseMessage']?.toString(),
+
     );
   }
 
@@ -107,6 +112,8 @@ class MentorshipRequest {
       'reviewStatus': reviewStatus,
       'conversationId': conversationId,
       'motivation': motivation,
+      'responseMessage': responseMessage,
+
     };
   }
 }

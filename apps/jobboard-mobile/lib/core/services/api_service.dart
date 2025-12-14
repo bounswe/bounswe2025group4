@@ -32,6 +32,7 @@ import '../models/employer_request.dart';
 import '../models/paginated_employer_request_response.dart';
 import '../models/employer_request_action_response.dart';
 import '../models/paginated_workplace_review_response.dart';
+import '../models/chat_message.dart';
 
 const List<String> _availableEthicalPolicies = [
   'salary_transparency',
@@ -955,6 +956,27 @@ class ApiService {
       throw Exception('Failed to update user: $e');
     }
   }
+
+  // --- Chat Endpoints ---
+
+  Future<List<ChatMessage>> getChatHistory({
+    required int conversationId,
+  }) async {
+    final uri = _buildUri('/chat/history/$conversationId');
+
+    try {
+      final response = await _client.get(
+        uri,
+        headers: _getHeaders(),
+      );
+
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => ChatMessage.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch chat history. $e');
+    }
+  }
+
 
   // --- Mentor Profile Endpoints ---
 

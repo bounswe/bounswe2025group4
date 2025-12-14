@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
-// import 'package:file_picker/file_picker.dart'; // Import if you use file_picker
-// import 'package:image_picker/image_picker.dart'; // Import if you use image_picker
+import 'package:mobile/features/mentorship/providers/chat_provider.dart';
+import '../../../core/models/chat_message.dart';
+import '../../../core/providers/auth_provider.dart';
 
 class DirectMessageScreen extends StatefulWidget {
-  final String mentorId;
+  final int conversationId;
   final String mentorName;
   final int? resumeReviewId;
 
   const DirectMessageScreen({
     super.key,
-    required this.mentorId,
+    required this.conversationId,
     required this.mentorName,
     this.resumeReviewId,
   });
@@ -22,89 +24,92 @@ class DirectMessageScreen extends StatefulWidget {
 
 class _DirectMessageScreenState extends State<DirectMessageScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final List<Map<String, dynamic>> _messages = []; // TODO: Load real messages
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    // TODO: Fetch initial messages for widget.mentorId
-    // For now, add some dummy messages
-    _messages.addAll([
-      {'sender': 'mentor', 'text': 'Hi there! How can I help you today?'},
-      {
-        'sender': 'mentee',
-        'text': 'Hi ${widget.mentorName}, I had a question about my resume.',
-      },
-      {
-        'sender': 'mentor',
-        'text': 'Sure, feel free to share it or ask your question.',
-      },
-    ]);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final chatProvider = context.read<ChatProvider>();
+      final authProvider = context.read<AuthProvider>();
+
+      chatProvider.connect(
+        jwtToken: authProvider.token!,
+        conversationId: widget.conversationId,
+      );
+    });
   }
 
   @override
   void dispose() {
+    //context.read<ChatProvider>().disconnect();
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   void _sendMessage() {
     final text = _messageController.text.trim();
-    if (text.isNotEmpty) {
-      setState(() {
-        _messages.add({'sender': 'mentee', 'text': text});
-        // TODO: Send message to backend/service
-        print('Sending message to ${widget.mentorId}: $text');
-      });
-      _messageController.clear();
-      // TODO: Scroll to bottom
-    }
+    if (text.isEmpty) return;
+
+    context.read<ChatProvider>().sendMessage(
+      conversationId: widget.conversationId,
+      content: text,
+    );
+
+    _messageController.clear();
+    _scrollToBottom();
   }
 
-  void _attachFile() async {
-    // TODO: Implement file attachment logic
-    // Example using file_picker (ensure you add the dependency)
-    /*
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      PlatformFile file = result.files.first;
-      print('Picked file: ${file.name}');
-      // TODO: Upload file and potentially send a message indicating file attached
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Attached ${file.name}')),
-      );
-    } else {
-      // User canceled the picker
-    }
-    */
-    print('Attach file button pressed for mentor ${widget.mentorId}');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context)!.directMessage_fileNotImplemented)),
-    );
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent + 80,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final chatProvider = context.watch<ChatProvider>();
+    final messages = chatProvider.messages;
+
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.directMessage_title(widget.mentorName))),
+      appBar: AppBar(
+        title: Text(
+          AppLocalizations.of(context)!
+              .directMessage_title(widget.mentorName),
+        ),
+      ),
       body: Column(
         children: [
-          // Message List Area
+          // MESSAGE LIST
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.all(8.0),
-              reverse:
-                  false, // Typically true for chats, but false for simple list demo
-              itemCount: _messages.length,
+              itemCount: messages.length,
               itemBuilder: (context, index) {
-                final message = _messages[index];
-                final isMe = message['sender'] == 'mentee';
-                return _buildMessageBubble(message['text'], isMe);
+                final ChatMessage message = messages[index];
+                final isMe =
+                    message.senderUsername != widget.mentorName;
+                print("UI DEBUG:");
+                print(message.senderUsername);
+                print(widget.mentorName);
+
+                return _buildMessageBubble(message.content, isMe);
               },
             ),
           ),
-          // Input Area
-          _buildMessageInputArea(),
+
+          // INPUT
+          _buildMessageInputArea(theme),
         ],
       ),
     );
@@ -115,37 +120,34 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 14.0),
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         decoration: BoxDecoration(
-          color:
-              isMe
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.secondaryContainer,
+          color: isMe
+              ? theme.colorScheme.primary
+              : theme.colorScheme.secondaryContainer,
           borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16.0),
-            topRight: const Radius.circular(16.0),
-            bottomLeft: isMe ? const Radius.circular(16.0) : Radius.zero,
-            bottomRight: isMe ? Radius.zero : const Radius.circular(16.0),
+            topLeft: const Radius.circular(16),
+            topRight: const Radius.circular(16),
+            bottomLeft: isMe ? const Radius.circular(16) : Radius.zero,
+            bottomRight: isMe ? Radius.zero : const Radius.circular(16),
           ),
         ),
         child: Text(
           text,
           style: TextStyle(
-            color:
-                isMe
-                    ? theme.colorScheme.onPrimary
-                    : theme.colorScheme.onSecondaryContainer,
+            color: isMe
+                ? theme.colorScheme.onPrimary
+                : theme.colorScheme.onSecondaryContainer,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildMessageInputArea() {
-    final theme = Theme.of(context);
+  Widget _buildMessageInputArea(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
         color: theme.canvasColor,
         boxShadow: const [
@@ -158,30 +160,40 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
       ),
       child: Row(
         children: [
-          // Attach File Button
           IconButton(
-            icon: A11y(label: 'Attach file', child: Icon(
-              Icons.attach_file,
-              color: theme.iconTheme.color?.withOpacity(0.7),
-            )),
-            onPressed: _attachFile,
-            tooltip: AppLocalizations.of(context)!.directMessage_attachFile,
+            icon: A11y(
+              label: 'Attach file',
+              child: Icon(
+                Icons.attach_file,
+                color: theme.iconTheme.color?.withOpacity(0.7),
+              ),
+            ),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context)!
+                        .directMessage_fileNotImplemented,
+                  ),
+                ),
+              );
+            },
           ),
-          // Message Text Field
           Expanded(
             child: TextField(
               controller: _messageController,
               decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.directMessage_typeMessage,
+                hintText: AppLocalizations.of(context)!
+                    .directMessage_typeMessage,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide.none,
                 ),
                 filled: true,
                 fillColor: theme.dividerColor.withOpacity(0.05),
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 10.0,
+                  horizontal: 16,
+                  vertical: 10,
                 ),
               ),
               textInputAction: TextInputAction.send,
@@ -190,12 +202,15 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
               maxLines: 5,
             ),
           ),
-          const SizedBox(width: 4),
-          // Send Button
           IconButton(
-            icon: A11y(label: 'Send message', child: Icon(Icons.send, color: theme.colorScheme.primary)),
+            icon: A11y(
+              label: 'Send message',
+              child: Icon(
+                Icons.send,
+                color: theme.colorScheme.primary,
+              ),
+            ),
             onPressed: _sendMessage,
-            tooltip: AppLocalizations.of(context)!.directMessage_sendMessage,
           ),
         ],
       ),

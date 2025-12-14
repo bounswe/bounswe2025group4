@@ -355,14 +355,22 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
     await mentorProvider.fetchMenteeRequests(authProvider.currentUser!.id);
   }
 
-  void _navigateToDirectMessage(String mentorId, String mentorName, int? resumeReviewId) {
+  void _navigateToDirectMessage({
+    required int conversationId,
+    required String mentorName,
+    int? resumeReviewId,
+  }) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>
-            DirectMessageScreen(mentorId: mentorId, mentorName: mentorName, resumeReviewId: resumeReviewId),
+        builder: (context) => DirectMessageScreen(
+          conversationId: conversationId,
+          mentorName: mentorName,
+          resumeReviewId: resumeReviewId,
+        ),
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -504,11 +512,21 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                   mentorId: req.mentorId,
                   mentorName: mentorName,
                   mentorRole: null,
-                  onTap: () => _navigateToDirectMessage(
-                    req.mentorId,
-                    mentorName,
-                    req.resumeReviewId,
-                  ),
+                  onTap: () {
+                    if (req.conversationId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Conversation not available yet")),
+                      );
+                      return;
+                    }
+
+                    _navigateToDirectMessage(
+                      conversationId: req.conversationId!,
+                      mentorName: mentorName,
+                      resumeReviewId: req.resumeReviewId,
+                    );
+                  },
+
 
 
                   onCompleteTap: req.resumeReviewId != null
