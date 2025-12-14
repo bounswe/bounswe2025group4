@@ -68,36 +68,29 @@ class MentorshipRequest {
   });
 
   factory MentorshipRequest.fromJson(Map<String, dynamic> json) {
-    // Mentee view (`mentorshipRequestId` etc.)
-    if (json.containsKey('id')) {
-      return MentorshipRequest(
-        id: json['id'].toString(),
-        requesterId: json['requesterId']?.toString(),
-        requesterUsername: json['requesterUsername']?.toString() ?? '',
-        mentorId: json['mentorId']?.toString() ?? '',
-        status: _parseStatus(json['status']?.toString()),
-        createdAt: DateTime.parse(json['createdAt'] as String),
-        mentorUsername: json['mentorUsername']?.toString(),
-        resumeReviewId: json['resumeReviewId'] as int?,
-        reviewStatus: json['reviewStatus']?.toString(),
-        conversationId: json['conversationId'] as int?,
-        motivation: json['motivation']?.toString(),
-      );
-    }
+    // Normalize ID
+    final id = (json['id'] ?? json['mentorshipRequestId']).toString();
 
-    // Generic request shape
+    // Normalize status
+    final rawStatus = json['status'] ?? json['requestStatus'];
+
+    // Normalize createdAt
+    final rawCreatedAt = json['createdAt'] ?? json['requestCreatedAt'];
+
     return MentorshipRequest(
-      id: json['id']?.toString() ?? '',
+      id: id,
       requesterId: json['requesterId']?.toString(),
-      requesterUsername: json['requesterUsername']?.toString() ?? '',
+      requesterUsername: json['requesterUsername']?.toString(),
       mentorId: json['mentorId']?.toString() ?? '',
-      status: _parseStatus(json['status']?.toString()),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      mentorUsername: null,
-      resumeReviewId: null,
-      reviewStatus: null,
-      conversationId: null,
-      motivation: null,
+      status: _parseStatus(rawStatus?.toString()),
+      createdAt: DateTime.parse(rawCreatedAt as String),
+
+      // Optional / mentee-only fields
+      mentorUsername: json['mentorUsername']?.toString(),
+      resumeReviewId: json['resumeReviewId'] as int?,
+      reviewStatus: json['reviewStatus']?.toString(),
+      conversationId: json['conversationId'] as int?,
+      motivation: json['motivation']?.toString(),
     );
   }
 

@@ -1027,6 +1027,7 @@ class ApiService {
     try {
       final response = await _client.get(uri, headers: _getHeaders());
       final List<dynamic> data = await _handleResponse(response);
+      print("data: $data");
       return data.map((json) => MentorshipRequest.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Failed to get mentorship requests as mentee. $e');
@@ -1058,7 +1059,7 @@ class ApiService {
 
     final payload = {
       'accept': accept,
-      responseMessage: responseMessage ?? "",
+      'responseMessage': responseMessage ?? "thanks",
     };
 
     try {
@@ -1189,7 +1190,6 @@ class ApiService {
     try {
       final response = await _client.get(uri, headers: _getHeaders());
       final data = await _handleResponse(response);
-      print("User profile: $data");
       return FullProfile.fromJson(data);
     } catch (e) {
       throw Exception('Failed to load user profile. $e');
