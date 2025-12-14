@@ -10,49 +10,32 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
 import org.bounswe.jobboardbackend.workplace.dto.*;
 import org.bounswe.jobboardbackend.workplace.service.ReplyService;
-import org.bounswe.jobboardbackend.auth.model.User;
-import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.exception.ApiError;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/workplace")
 @RequiredArgsConstructor
 @Tag(name = "Workplace Reply", description = "Management of employer replies to reviews")
+@PreAuthorize("isAuthenticated()")
 public class WorkplaceReplyController {
 
     private final ReplyService replyService;
-    private final UserRepository userRepository;
 
-    private User currentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated())
-            throw new AccessDeniedException("Unauthenticated");
-        Object principal = auth.getPrincipal();
-        if (principal instanceof User u)
-            return u;
-        if (principal instanceof UserDetails ud) {
-            String key = ud.getUsername();
-            return userRepository.findByEmail(key).or(() -> userRepository.findByUsername(key))
-                    .orElseThrow(() -> new AccessDeniedException("User not found for principal: " + key));
-        }
-        String name = auth.getName();
-        return userRepository.findByEmail(name).or(() -> userRepository.findByUsername(name))
-                .orElseThrow(() -> new AccessDeniedException("User not found for name: " + name));
-    }
-
-    private boolean isAdmin() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    private boolean isAdmin(Authentication auth) {
         if (auth == null)
             return false;
         return auth.getAuthorities().stream().anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+    }
+
+    private Long getUserId(Authentication auth) {
+        return ((UserDetailsImpl) auth.getPrincipal()).getId();
     }
 
     @Operation(summary = "Get Reply", description = "Retrieves the employer's reply for a specific review.")
@@ -80,9 +63,10 @@ public class WorkplaceReplyController {
     public ResponseEntity<ReplyResponse> createReply(
             @Parameter(description = "ID of the workplace") @PathVariable Long workplaceId,
             @Parameter(description = "ID of the review") @PathVariable Long reviewId,
-            @RequestBody @Valid ReplyCreateRequest req) {
-        var user = currentUser();
-        var res = replyService.createReply(workplaceId, reviewId, req, user.getId(), isAdmin());
+            @RequestBody @Valid ReplyCreateRequest req,
+            Authentication authentication) {
+        var res = replyService.createReply(workplaceId, reviewId, req, getUserId(authentication),
+                isAdmin(authentication));
         return ResponseEntity.ok(res);
     }
 
@@ -98,9 +82,10 @@ public class WorkplaceReplyController {
     public ResponseEntity<ReplyResponse> updateReply(
             @Parameter(description = "ID of the workplace") @PathVariable Long workplaceId,
             @Parameter(description = "ID of the review") @PathVariable Long reviewId,
-            @RequestBody @Valid ReplyUpdateRequest req) {
-        var user = currentUser();
-        var res = replyService.updateReply(workplaceId, reviewId, req, user.getId(), isAdmin());
+            @RequestBody @Valid ReplyUpdateRequest req,
+            Authentication authentication) {
+        var res = replyService.updateReply(workplaceId, reviewId, req, getUserId(authentication),
+                isAdmin(authentication));
         return ResponseEntity.ok(res);
     }
 
@@ -114,9 +99,9 @@ public class WorkplaceReplyController {
     @DeleteMapping("/{workplaceId}/review/{reviewId}/reply")
     public ResponseEntity<ApiMessage> deleteReply(
             @Parameter(description = "ID of the workplace") @PathVariable Long workplaceId,
-            @Parameter(description = "ID of the review") @PathVariable Long reviewId) {
-        var user = currentUser();
-        replyService.deleteReply(workplaceId, reviewId, user.getId(), isAdmin());
+            @Parameter(description = "ID of the review") @PathVariable Long reviewId,
+            Authentication authentication) {
+        replyService.deleteReply(workplaceId, reviewId, getUserId(authentication), isAdmin(authentication));
         return ResponseEntity.ok(ApiMessage.builder().message("Reply deleted").code("REPLY_DELETED").build());
     }
 }

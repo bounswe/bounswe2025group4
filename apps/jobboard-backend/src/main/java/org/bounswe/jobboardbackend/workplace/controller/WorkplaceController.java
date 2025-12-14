@@ -12,52 +12,24 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.workplace.dto.*;
 import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
-import org.bounswe.jobboardbackend.auth.model.User;
-import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
 import org.bounswe.jobboardbackend.exception.ApiError;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/workplace")
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 @Tag(name = "Workplace", description = "Workplace Management API")
 public class WorkplaceController {
 
         private final WorkplaceService workplaceService;
-        private final UserRepository userRepository;
-
-        private User currentUser() {
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                if (auth == null || !auth.isAuthenticated()) {
-                        throw new AccessDeniedException("Unauthenticated");
-                }
-                Object principal = auth.getPrincipal();
-                if (principal instanceof User u) {
-                        return u;
-                }
-                if (principal instanceof UserDetails ud) {
-                        String key = ud.getUsername();
-                        return userRepository.findByEmail(key)
-                                        .or(() -> userRepository.findByUsername(key))
-                                        .orElseThrow(() -> new AccessDeniedException(
-                                                        "User not found for principal: " + key));
-                }
-                String name = auth.getName();
-                if (name != null && !"anonymousUser".equalsIgnoreCase(name)) {
-                        return userRepository.findByEmail(name)
-                                        .or(() -> userRepository.findByUsername(name))
-                                        .orElseThrow(() -> new AccessDeniedException(
-                                                        "User not found for name: " + name));
-                }
-                throw new AccessDeniedException("Unauthenticated");
-        }
 
         @Operation(summary = "Create Workplace", description = "Creates a new workplace entry.")
         @ApiResponses(value = {
@@ -66,8 +38,10 @@ public class WorkplaceController {
                         @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{\"status\": 401, \"error\": \"Unauthorized\", \"message\": \"Full authentication is required to access this resource\", \"timestamp\": \"2023-12-14T12:00:00\"}")))
         })
         @PostMapping
-        public ResponseEntity<WorkplaceDetailResponse> create(@RequestBody @Valid WorkplaceCreateRequest req) {
-                var res = workplaceService.create(req, currentUser());
+        public ResponseEntity<WorkplaceDetailResponse> create(@RequestBody @Valid WorkplaceCreateRequest req,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                var res = workplaceService.create(req, userDetails.getId());
                 return ResponseEntity.ok(res);
         }
 
@@ -82,9 +56,10 @@ public class WorkplaceController {
         @PostMapping(path = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
         public ResponseEntity<WorkplaceImageResponseDto> uploadImage(
                         @Parameter(description = "ID of the workplace") @PathVariable Long id,
-                        @Parameter(description = "Image file to upload") @RequestPart("file") MultipartFile file) {
-                Long userId = currentUser().getId();
-                var res = workplaceService.uploadImage(id, file, userId);
+                        @Parameter(description = "Image file to upload") @RequestPart("file") MultipartFile file,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                var res = workplaceService.uploadImage(id, file, userDetails.getId());
                 return ResponseEntity.ok(res);
         }
 
@@ -97,9 +72,10 @@ public class WorkplaceController {
         })
         @DeleteMapping(path = "/{id}/image")
         public ResponseEntity<ApiMessage> deleteImage(
-                        @Parameter(description = "ID of the workplace") @PathVariable Long id) {
-                Long userId = currentUser().getId();
-                workplaceService.deleteImage(id, userId);
+                        @Parameter(description = "ID of the workplace") @PathVariable Long id,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                workplaceService.deleteImage(id, userDetails.getId());
                 return ResponseEntity.ok(ApiMessage.builder()
                                 .message("Workplace image deleted")
                                 .code("WORKPLACE_IMAGE_DELETED")
@@ -150,8 +126,10 @@ public class WorkplaceController {
         @PutMapping("/{id}")
         public ResponseEntity<WorkplaceDetailResponse> update(
                         @Parameter(description = "ID of the workplace") @PathVariable Long id,
-                        @RequestBody @Valid WorkplaceUpdateRequest req) {
-                var res = workplaceService.update(id, req, currentUser());
+                        @RequestBody @Valid WorkplaceUpdateRequest req,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                var res = workplaceService.update(id, req, userDetails.getId());
                 return ResponseEntity.ok(res);
         }
 
@@ -164,8 +142,10 @@ public class WorkplaceController {
         })
         @DeleteMapping("/{id}")
         public ResponseEntity<ApiMessage> delete(
-                        @Parameter(description = "ID of the workplace") @PathVariable Long id) {
-                workplaceService.softDelete(id, currentUser());
+                        @Parameter(description = "ID of the workplace") @PathVariable Long id,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                workplaceService.softDelete(id, userDetails.getId());
                 return ResponseEntity.ok(ApiMessage.builder()
                                 .message("Workplace deleted")
                                 .code("WORKPLACE_DELETED")

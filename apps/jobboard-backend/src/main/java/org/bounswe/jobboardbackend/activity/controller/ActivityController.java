@@ -11,11 +11,13 @@ import org.bounswe.jobboardbackend.activity.service.ActivityService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/activities")
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 @Tag(name = "Activity", description = "Activity Logging and Retrieval API")
 public class ActivityController {
 

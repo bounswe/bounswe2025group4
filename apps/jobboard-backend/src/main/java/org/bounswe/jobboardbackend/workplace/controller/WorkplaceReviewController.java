@@ -12,41 +12,32 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.workplace.dto.*;
 import org.bounswe.jobboardbackend.workplace.service.ReviewService;
-import org.bounswe.jobboardbackend.auth.model.User;
-import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+
+import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
 import org.bounswe.jobboardbackend.exception.ApiError;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/workplace/{workplaceId}")
 @RequiredArgsConstructor
 @Tag(name = "Workplace Review", description = "Management of workplace reviews")
+@PreAuthorize("isAuthenticated()")
 public class WorkplaceReviewController {
 
         private final ReviewService reviewService;
-        private final UserRepository userRepository;
 
-        private User currentUser() {
-                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                if (auth == null || !auth.isAuthenticated())
-                        throw new AccessDeniedException("Unauthenticated");
-                Object principal = auth.getPrincipal();
-                if (principal instanceof User u)
-                        return u;
-                if (principal instanceof UserDetails ud) {
-                        String key = ud.getUsername();
-                        return userRepository.findByEmail(key).or(() -> userRepository.findByUsername(key))
-                                        .orElseThrow(() -> new AccessDeniedException(
-                                                        "User not found for principal: " + key));
+        private boolean isAdmin(Authentication auth) {
+                if (auth == null)
+                        return false;
+                for (GrantedAuthority ga : auth.getAuthorities()) {
+                        if ("ROLE_ADMIN".equals(ga.getAuthority()))
+                                return true;
                 }
-                String name = auth.getName();
-                return userRepository.findByEmail(name).or(() -> userRepository.findByUsername(name))
-                                .orElseThrow(() -> new AccessDeniedException("User not found for name: " + name));
+                return false;
         }
 
         // === REVIEWS ===
@@ -60,8 +51,10 @@ public class WorkplaceReviewController {
         @PostMapping("/review")
         public ResponseEntity<ReviewResponse> create(
                         @Parameter(description = "ID of the workplace") @PathVariable Long workplaceId,
-                        @RequestBody @Valid ReviewCreateRequest req) {
-                var res = reviewService.createReview(workplaceId, req, currentUser());
+                        @RequestBody @Valid ReviewCreateRequest req,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                var res = reviewService.createReview(workplaceId, req, userDetails.getId());
                 return ResponseEntity.ok(res);
         }
 
@@ -79,9 +72,12 @@ public class WorkplaceReviewController {
                         @Parameter(description = "Sort criteria (e.g. 'DATE_DESC', 'RATING_DESC')") @RequestParam(required = false) String sortBy,
                         @Parameter(description = "Filter checks for comments existence") @RequestParam(required = false) Boolean hasComment,
                         @Parameter(description = "Filter by specific ethical policy") @RequestParam(required = false) String policy,
-                        @Parameter(description = "Minimum rating for the policy filter") @RequestParam(required = false) Integer policyMin) {
+                        @Parameter(description = "Minimum rating for the policy filter") @RequestParam(required = false) Integer policyMin,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal(); // Assuming list requires auth as
+                                                                                     // per class level PreAuthorize
                 var res = reviewService.listReviews(workplaceId, page, size, ratingFilter, sortBy, hasComment, policy,
-                                policyMin, currentUser());
+                                policyMin, userDetails.getId());
                 return ResponseEntity.ok(res);
         }
 
@@ -93,8 +89,10 @@ public class WorkplaceReviewController {
         @GetMapping("/review/{reviewId}")
         public ResponseEntity<ReviewResponse> getOne(
                         @Parameter(description = "ID of the workplace") @PathVariable Long workplaceId,
-                        @Parameter(description = "ID of the review") @PathVariable Long reviewId) {
-                return ResponseEntity.ok(reviewService.getOne(workplaceId, reviewId, currentUser()));
+                        @Parameter(description = "ID of the review") @PathVariable Long reviewId,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                return ResponseEntity.ok(reviewService.getOne(workplaceId, reviewId, userDetails.getId()));
         }
 
         @Operation(summary = "Update Review", description = "Updates an existing review.")
@@ -109,8 +107,10 @@ public class WorkplaceReviewController {
         public ResponseEntity<ReviewResponse> update(
                         @Parameter(description = "ID of the workplace") @PathVariable Long workplaceId,
                         @Parameter(description = "ID of the review") @PathVariable Long reviewId,
-                        @RequestBody @Valid ReviewUpdateRequest req) {
-                var res = reviewService.updateReview(workplaceId, reviewId, req, currentUser());
+                        @RequestBody @Valid ReviewUpdateRequest req,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                var res = reviewService.updateReview(workplaceId, reviewId, req, userDetails.getId());
                 return ResponseEntity.ok(res);
         }
 
@@ -124,9 +124,11 @@ public class WorkplaceReviewController {
         @DeleteMapping("/review/{reviewId}")
         public ResponseEntity<ApiMessage> delete(
                         @Parameter(description = "ID of the workplace") @PathVariable Long workplaceId,
-                        @Parameter(description = "ID of the review") @PathVariable Long reviewId) {
-                boolean isAdmin = false; // TODO: implement isAdmin check in milestone 3
-                reviewService.deleteReview(workplaceId, reviewId, currentUser(), isAdmin);
+                        @Parameter(description = "ID of the review") @PathVariable Long reviewId,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                boolean isAdmin = isAdmin(auth);
+                reviewService.deleteReview(workplaceId, reviewId, userDetails.getId(), isAdmin);
                 return ResponseEntity.ok(ApiMessage.builder().message("Review deleted").code("REVIEW_DELETED").build());
         }
 
@@ -140,8 +142,10 @@ public class WorkplaceReviewController {
         @PostMapping("/review/{reviewId}/helpful")
         public ResponseEntity<ReviewResponse> toggleHelpful(
                         @Parameter(description = "ID of the workplace") @PathVariable Long workplaceId,
-                        @Parameter(description = "ID of the review") @PathVariable Long reviewId) {
-                var res = reviewService.toggleHelpful(workplaceId, reviewId, currentUser());
+                        @Parameter(description = "ID of the review") @PathVariable Long reviewId,
+                        Authentication auth) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+                var res = reviewService.toggleHelpful(workplaceId, reviewId, userDetails.getId());
                 return ResponseEntity.ok(res);
         }
 

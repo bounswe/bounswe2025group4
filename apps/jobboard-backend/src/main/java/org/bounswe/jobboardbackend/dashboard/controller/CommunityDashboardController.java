@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.bounswe.jobboardbackend.dashboard.dto.DashboardStatsResponse;
 import org.bounswe.jobboardbackend.dashboard.service.CommunityDashboardService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/public/dashboard")
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 @Tag(name = "Community Dashboard", description = "Public API for community statistics")
 public class CommunityDashboardController {
 
