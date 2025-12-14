@@ -117,28 +117,7 @@ class _MentorshipRequestDetailsScreenState
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              ClipOval(
-                child: SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: mentee.profilePicture != null
-                      ? Image.network(
-                    mentee.profilePicture!,
-                    fit: BoxFit.contain,
-                  )
-                      : Container(
-                    color: Colors.grey.shade300,
-                    child: Center(
-                      child: Text(
-                        mentee.fullName.isNotEmpty
-                            ? mentee.fullName[0].toUpperCase()
-                            : "?",
-                        style: const TextStyle(fontSize: 32),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              Center(child: _avatar(mentee)),
               const SizedBox(height: 12),
               Center(
                 child: Text(
@@ -241,6 +220,34 @@ class _MentorshipRequestDetailsScreenState
       ],
     );
   }
+  Widget _avatar(FullProfile mentee) {
+    final String initial = (() {
+      if (mentee.fullName.isNotEmpty) {
+        return mentee.fullName.trim()[0].toUpperCase();
+      }
+      
+      return '?';
+    })();
+
+    return CircleAvatar(
+      radius: 40,
+      backgroundColor: Colors.blueGrey.shade300,
+      backgroundImage: mentee.profilePicture != null
+          ? NetworkImage(mentee.profilePicture!)
+          : null,
+      child: mentee.profilePicture == null
+          ? Text(
+        initial,
+        style: const TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+      )
+          : null,
+    );
+  }
+
 
   Widget _experienceSection(List<Experience> experiences) {
     if (experiences.isEmpty) return const SizedBox.shrink();
