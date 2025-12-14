@@ -50,6 +50,7 @@ class MentorshipRequest {
   final int? resumeReviewId;
   final String? reviewStatus;
   final int? conversationId;
+  final String? motivation;
 
   MentorshipRequest({
     required this.id,
@@ -62,23 +63,25 @@ class MentorshipRequest {
     this.resumeReviewId,
     this.reviewStatus,
     this.conversationId,
+    this.motivation,
 
   });
 
   factory MentorshipRequest.fromJson(Map<String, dynamic> json) {
     // Mentee view (`mentorshipRequestId` etc.)
-    if (json.containsKey('mentorshipRequestId')) {
+    if (json.containsKey('id')) {
       return MentorshipRequest(
-        id: json['mentorshipRequestId'].toString(),
-        requesterId: null, // not present here
+        id: json['id'].toString(),
+        requesterId: json['requesterId']?.toString(),
         requesterUsername: json['requesterUsername']?.toString() ?? '',
         mentorId: json['mentorId']?.toString() ?? '',
-        status: _parseStatus(json['requestStatus']?.toString()),
-        createdAt: DateTime.parse(json['requestCreatedAt'] as String),
+        status: _parseStatus(json['status']?.toString()),
+        createdAt: DateTime.parse(json['createdAt'] as String),
         mentorUsername: json['mentorUsername']?.toString(),
         resumeReviewId: json['resumeReviewId'] as int?,
         reviewStatus: json['reviewStatus']?.toString(),
         conversationId: json['conversationId'] as int?,
+        motivation: json['motivation']?.toString(),
       );
     }
 
@@ -94,6 +97,7 @@ class MentorshipRequest {
       resumeReviewId: null,
       reviewStatus: null,
       conversationId: null,
+      motivation: null,
     );
   }
 
@@ -109,6 +113,7 @@ class MentorshipRequest {
       'resumeReviewId': resumeReviewId,
       'reviewStatus': reviewStatus,
       'conversationId': conversationId,
+      'motivation': motivation,
     };
   }
 }

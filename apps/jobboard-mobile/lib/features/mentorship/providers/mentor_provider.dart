@@ -1,6 +1,7 @@
 // lib/core/providers/mentor_provider.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/core/models/full_profile.dart';
 import 'package:mobile/core/models/mentor_profile.dart';
 import 'package:mobile/core/models/mentorship_request.dart';
 import 'package:mobile/core/services/api_service.dart';
@@ -13,6 +14,9 @@ class MentorProvider with ChangeNotifier {
   List<MentorshipRequest> _mentorRequests = [];
   List<MentorshipRequest> _menteeRequests = [];
   MentorProfile? _currentUserMentorProfile;
+  MentorshipRequest? _currentRequest;
+  FullProfile? _otherProfile;
+
 
   // Loading states
   bool _isLoadingMentors = false;
@@ -27,6 +31,8 @@ class MentorProvider with ChangeNotifier {
   List<MentorProfile> get availableMentors => _availableMentors;
   List<MentorshipRequest> get mentorRequests => _mentorRequests;
   List<MentorshipRequest> get menteeRequests => _menteeRequests;
+  MentorshipRequest? get currentRequest => _currentRequest;
+  FullProfile? get otherProfile => _otherProfile;
   MentorProfile? get currentUserMentorProfile => _currentUserMentorProfile;
   bool get isLoadingMentors => _isLoadingMentors;
   bool get isLoadingMentorRequests => _isLoadingMentorRequests;
@@ -59,6 +65,38 @@ class MentorProvider with ChangeNotifier {
     }
   }
 
+  Future<void> fetchMentorshipRequest(String requestId) async {
+    _error = null;
+    _currentRequest = null;
+    notifyListeners();
+    print("Fetching the mentorship request...");
+    try {
+      _currentRequest = await _apiService.getMentorshipRequest(requestId);
+    } catch (e) {
+      _error = e.toString();
+      debugPrint('Error fetching request: $_error');
+    } finally {
+      notifyListeners();
+    }
+  }
+
+
+  Future<void> getUserProfile(int userId) async {
+    _otherProfile = null;
+    _error = null;
+    notifyListeners();
+    print("Fetching the user's profile");
+    try {
+      _otherProfile = await _apiService.getUserProfile(userId);
+
+    } catch (e) {
+      _error = e.toString();
+      debugPrint('Error fetching user profile: $_error');
+    } finally {
+      notifyListeners();
+    }
+  }
+
   // REQUESTS WHERE CURRENT USER IS A MENTOR
   Future<void> fetchMentorRequests(String mentorId) async {
     _isLoadingMentorRequests = true;
@@ -71,9 +109,10 @@ class MentorProvider with ChangeNotifier {
 
       // Enrich with requester usernames
       for (var r in rawRequests) {
+        print(r.status);
         if (r.requesterId != null) {
           final username = await _apiService.getUsernameForUser(r.requesterId!);
-          r.requesterUsername = username; // <-- assign here
+          r.requesterUsername = username;
         }
       }
 
@@ -132,6 +171,7 @@ class MentorProvider with ChangeNotifier {
   Future<bool> respondToRequest({
     required String requestId,
     required bool accept,
+    String? responseMessage,
   }) async {
     _error = null;
     notifyListeners();
@@ -140,6 +180,7 @@ class MentorProvider with ChangeNotifier {
       final updatedRequest = await _apiService.respondToMentorshipRequest(
         requestId: requestId,
         accept: accept,
+        responseMessage: responseMessage,
       );
 
       _updateRequestInLists(updatedRequest);

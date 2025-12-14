@@ -6,6 +6,7 @@ import '../providers/mentor_provider.dart';
 import '../widgets/mentee_card.dart';
 import '../widgets/mentorship_request_card.dart';
 import 'package:mobile/core/models/mentor_profile.dart';
+import 'package:mobile/features/mentorship/screens/mentorship_request_details_screen.dart';
 import 'package:mobile/core/models/user.dart';
 import 'package:mobile/core/models/user_type.dart';
 import '../../../generated/l10n/app_localizations.dart';
@@ -322,6 +323,14 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                             ),
                           );
                         }
+                      },
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MentorshipRequestDetailsScreen(requestId: request.id),
+                          ),
+                        );
                       },
                     );
                   },

@@ -1052,11 +1052,13 @@ class ApiService {
   Future<MentorshipRequest> respondToMentorshipRequest({
     required String requestId,
     required bool accept,
+    String? responseMessage
   }) async {
     final uri = _buildUri('/mentorship/requests/$requestId/respond');
 
     final payload = {
       'accept': accept,
+      responseMessage: responseMessage ?? "",
     };
 
     try {
@@ -1187,6 +1189,7 @@ class ApiService {
     try {
       final response = await _client.get(uri, headers: _getHeaders());
       final data = await _handleResponse(response);
+      print("User profile: $data");
       return FullProfile.fromJson(data);
     } catch (e) {
       throw Exception('Failed to load user profile. $e');

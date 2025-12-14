@@ -41,7 +41,7 @@ class FullProfile {
           .toList() ?? [],
       fullName: json['fullName'] ?? '',
       bio: json['bio'],
-      profilePicture: json['profilePicture'],
+      profilePicture: json['imageUrl'],
       skills: (json['skills'] as List<dynamic>?)?.cast<String>() ?? [],
       interests: (json['interests'] as List<dynamic>?)?.cast<String>() ?? [],
     );
