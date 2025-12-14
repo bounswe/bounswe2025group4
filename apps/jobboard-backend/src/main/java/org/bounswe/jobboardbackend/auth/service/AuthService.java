@@ -12,6 +12,8 @@ import org.bounswe.jobboardbackend.auth.repository.PasswordResetTokenRepository;
 import org.bounswe.jobboardbackend.auth.repository.TokenRepository;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.security.JwtUtils;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.profile.model.Profile;
@@ -47,6 +49,7 @@ public class AuthService {
     private final OtpRepository otpRepository;
     private final UserDetailsServiceImpl userDetailsService;
     private final ProfileRepository profileRepository;
+    private final ActivityService activityService;
 
     @Transactional
     public OtpRequestResponse initiateLogin(@Valid LoginRequest loginRequest) {
@@ -160,6 +163,8 @@ public class AuthService {
         if (appEnv.equals("prod")) {
             sendEmailForRegister(newUser);
         }
+
+        activityService.logActivity(newUser, ActivityType.REGISTER, newUser.getId(), "User");
 
         return new MessageResponse("User registered. Please verify your email.");
     }
