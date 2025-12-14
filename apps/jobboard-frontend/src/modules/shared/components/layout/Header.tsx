@@ -165,30 +165,46 @@ export default function Header() {
 
           {/* Desktop navigation */}
           <nav className="hidden md:flex items-center gap-1.5" aria-label="Main navigation">
-            {filteredSections.map((section) => (
-              <DropdownMenu key={section.key}>
-                <DropdownMenuTrigger asChild>
+            {filteredSections.map((section) => {
+              if (section.key === 'forum') {
+                return (
                   <Button
+                    key={section.key}
                     variant="ghost"
                     className="flex items-center gap-1 font-semibold"
-                    aria-haspopup="menu"
-                    aria-label={`${section.label} menu`}
+                    asChild
+                    aria-label={section.label}
                   >
-                    <span>{section.label}</span>
-                    <ChevronDown className="h-4 w-4" aria-hidden />
+                    <Link to={section.items[0]?.to ?? '/forum'}>{section.label}</Link>
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  {section.items.map((item) => (
-                    <DropdownMenuItem key={item.label} asChild>
-                      <Link to={item.to} aria-label={item.label}>
-                        {item.label}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ))}
+                );
+              }
+
+              return (
+                <DropdownMenu key={section.key}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-1 font-semibold"
+                      aria-haspopup="menu"
+                      aria-label={`${section.label} menu`}
+                    >
+                      <span>{section.label}</span>
+                      <ChevronDown className="h-4 w-4" aria-hidden />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {section.items.map((item) => (
+                      <DropdownMenuItem key={item.label} asChild>
+                        <Link to={item.to} aria-label={item.label}>
+                          {item.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
+            })}
             {user?.role === 'ROLE_ADMIN' && (
               <Button variant="ghost" asChild className="font-semibold">
                 <Link to="/admin/reports" aria-label="Admin Panel">

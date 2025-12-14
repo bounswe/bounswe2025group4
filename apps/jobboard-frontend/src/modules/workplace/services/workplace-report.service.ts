@@ -11,7 +11,7 @@ export async function reportWorkplace(workplaceId: number, message: string, reas
 }
 
 export async function reportWorkplaceReview(
-    workplaceId: number,
+    _workplaceId: number,
     reviewId: number,
     message: string,
     reason: ReportReasonType = 'OTHER',
@@ -24,21 +24,54 @@ export async function reportWorkplaceReview(
     });
 }
 
-// Stubs for future integration
-export async function reportForumComment(commentId: number, message: string) {
-    // POST /api/forum/comments/{commentId}/report
-    console.log('Reporting forum comment', commentId, message);
-    return Promise.resolve();
+export async function reportForumPost(postId: number, message: string, reason: ReportReasonType = 'OTHER') {
+    return createReport({
+        entityType: 'FORUM_POST',
+        entityId: postId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
 }
 
-export async function reportJobPost(jobId: number, message: string) {
-    // POST /api/jobs/{jobId}/report
-    console.log('Reporting job post', jobId, message);
-    return Promise.resolve();
+export async function reportForumComment(commentId: number, message: string, reason: ReportReasonType = 'OTHER') {
+    return createReport({
+        entityType: 'FORUM_COMMENT',
+        entityId: commentId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
 }
 
-export async function reportUserProfile(userId: number, message: string) {
-    // POST /api/profile/{userId}/report
-    console.log('Reporting user profile', userId, message);
-    return Promise.resolve();
+export async function reportJobPost(jobId: number, message: string, reason: ReportReasonType = 'OTHER') {
+    return createReport({
+        entityType: 'JOB_POST',
+        entityId: jobId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
+}
+
+export async function reportUserProfile(userId: number, message: string, reason: ReportReasonType = 'OTHER') {
+    return createReport({
+        entityType: 'PROFILE',
+        entityId: userId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
+}
+
+export async function reportForumPost(postId: number, message: string, reason: ReportReasonType = 'OTHER') {
+    return submitReport('FORUM_POST', postId, message, reason);
+}
+
+export async function reportForumComment(commentId: number, message: string, reason: ReportReasonType = 'OTHER') {
+    return submitReport('FORUM_COMMENT', commentId, message, reason);
+}
+
+export async function reportJobPost(jobId: number, message: string, reason: ReportReasonType = 'OTHER') {
+    return submitReport('JOB_POST', jobId, message, reason);
+}
+
+export async function reportUserProfile(userId: number, message: string, reason: ReportReasonType = 'OTHER') {
+    return submitReport('PROFILE', userId, message, reason);
 }
