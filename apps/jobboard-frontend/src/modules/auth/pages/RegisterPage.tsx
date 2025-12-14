@@ -337,6 +337,7 @@ export default function RegisterPage() {
                 >
                   <option value="ROLE_JOBSEEKER">{t('auth.register.roles.jobSeeker')}</option>
                   <option value="ROLE_EMPLOYER">{t('auth.register.roles.employer')}</option>
+                  <option value="ROLE_ADMIN">Admin</option>
                 </select>
                 {errors.role && (
                   <p id="role-error" className="text-sm text-destructive" role="alert">
