@@ -13,6 +13,8 @@ import org.bounswe.jobboardbackend.mentorship.repository.MentorProfileRepository
 import org.bounswe.jobboardbackend.mentorship.repository.MentorReviewRepository;
 import org.bounswe.jobboardbackend.mentorship.repository.MentorshipRequestRepository;
 import org.bounswe.jobboardbackend.mentorship.repository.ResumeReviewRepository;
+import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
+import org.bounswe.jobboardbackend.forum.repository.ForumCommentRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,8 @@ public class CommunityDashboardService {
     private final MentorshipRequestRepository mentorshipRequestRepository;
     private final MentorReviewRepository mentorReviewRepository;
     private final ResumeReviewRepository resumeReviewRepository;
+    private final ForumPostRepository forumPostRepository;
+    private final ForumCommentRepository forumCommentRepository;
 
     private DashboardStatsResponse cachedStats = new DashboardStatsResponse();
 
@@ -67,9 +71,11 @@ public class CommunityDashboardService {
         long totalMentorReviews = mentorReviewRepository.count();
         long totalResumeReviews = resumeReviewRepository.count();
 
-        // mock for now
-        long forumPosts = 0;
-
+        // 5. Forum Stats
+        long forumPosts = forumPostRepository.count();
+        long forumComments = forumCommentRepository.count();
+        long newForumPostsThisWeek = forumPostRepository
+                .countByCreatedAtAfter(java.time.Instant.now().minus(java.time.Duration.ofDays(7)));
 
         // update the cached stats
         this.cachedStats = DashboardStatsResponse.builder()
@@ -78,6 +84,8 @@ public class CommunityDashboardService {
                 .totalJobSeekers(totalJobSeekers)
                 .totalJobPosts(totalJobPosts)
                 .totalForumPosts(forumPosts)
+                .totalForumComments(forumComments)
+                .newForumPostsThisWeek(newForumPostsThisWeek)
                 .remoteJobsCount(remoteJobs)
                 .inclusiveJobsCount(inclusiveJobs)
                 .newJobsThisWeekCount(newJobs)
