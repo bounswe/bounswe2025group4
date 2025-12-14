@@ -50,6 +50,8 @@ class WorkplaceServiceTest {
         private ProfileRepository profileRepository;
         @Mock
         private ReviewService reviewService;
+        @Mock
+        private org.bounswe.jobboardbackend.activity.service.ActivityService activityService;
 
         @InjectMocks
         private WorkplaceService workplaceService;
