@@ -24,8 +24,19 @@ import type {
  */
 
 async function fetchMentors(): Promise<MentorProfileDetailDTO[]> {
-  const response = await api.get<MentorProfileDetailDTO[]>('/mentorship');
-  return response.data;
+  try {
+    const response = await api.get<MentorProfileDetailDTO[]>('/mentorship');
+    return response.data;
+  } catch (error: unknown) {
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    // If backend is unavailable (502), return empty array instead of throwing
+    if (status === 502) {
+      console.warn('Backend service temporarily unavailable (502), returning empty mentor list');
+      return [];
+    }
+    // Re-throw other errors
+    throw error;
+  }
 }
 
 /**
@@ -35,20 +46,31 @@ async function fetchMentors(): Promise<MentorProfileDetailDTO[]> {
  */
 async function fetchMentorProfile(userId: number): Promise<MentorProfileDetailDTO | null> {
   try {
-    // Use validateStatus to treat 404 as success (not an error) to prevent console logging
+    // Use validateStatus to treat 404 and 502 as success (not an error) to prevent console logging
     const response = await api.get<MentorProfileDetailDTO>(`/mentorship/mentor/${userId}`, {
-      validateStatus: (status) => status === 200 || status === 404
+      validateStatus: (status) => status === 200 || status === 404 || status === 502
     });
     
-    // If 404, return null
+    // If 404, return null (profile doesn't exist)
     if (response.status === 404) {
+      return null;
+    }
+    
+    // If 502, return null (backend service unavailable)
+    if (response.status === 502) {
+      console.warn(`[Mentorship Service] Backend returned 502 for mentor profile userId: ${userId}`);
       return null;
     }
     
     return response.data;
   } catch (error: unknown) {
-    // Fallback: if validateStatus didn't work, check for 404
-    if ((error as { response?: { status?: number } })?.response?.status === 404) {
+    // Fallback: if validateStatus didn't work, check for 404 or 502
+    const status = (error as { response?: { status?: number } })?.response?.status;
+    if (status === 404) {
+      return null;
+    }
+    if (status === 502) {
+      console.warn(`[Mentorship Service] Backend returned 502 for mentor profile userId: ${userId}`);
       return null;
     }
     // Re-throw other errors
@@ -77,6 +99,14 @@ async function updateMentorProfile(
 ): Promise<MentorProfileDTO> {
   const response = await api.put<MentorProfileDTO>(`/mentorship/mentor/${userId}`, data);
   return response.data;
+}
+
+/**
+ * Delete a mentor profile
+ * DELETE /api/mentorship/mentor/{userId}
+ */
+async function deleteMentorProfile(userId: number): Promise<void> {
+  await api.delete(`/mentorship/mentor/${userId}`);
 }
 
 /**
@@ -184,6 +214,7 @@ export {
   fetchMentorProfile as getMentorProfile,
   createMentorProfile,
   updateMentorProfile,
+  deleteMentorProfile,
   createMentorshipRequest,
   fetchMenteeMentorships as getMenteeMentorships,
   fetchMentorMentorshipRequests as getMentorMentorshipRequests,
@@ -238,6 +269,24 @@ export const useUpdateMentorProfileMutation = (userId: number) => {
   });
 };
 
+export const useDeleteMentorProfileMutation = (userId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => deleteMentorProfile(userId),
+    onSuccess: () => {
+      // Remove all mentorship-related queries for this user
+      queryClient.removeQueries({ queryKey: mentorshipKeys.mentorProfile(userId) });
+      queryClient.removeQueries({ queryKey: mentorshipKeys.mentorRequests(userId) });
+      // Invalidate mentors list to remove deleted profile from browse page
+      queryClient.invalidateQueries({ queryKey: mentorshipKeys.mentors });
+      // Clear cache to prevent showing deleted profile
+      queryClient.refetchQueries({ queryKey: mentorshipKeys.mentors });
+      toast.success('Mentor profile deleted');
+    },
+    onError: (err) => toast.error(normalizeApiError(err).friendlyMessage),
+  });
+};
+
 export const useCreateMentorshipRequestMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -268,8 +317,11 @@ export const useMentorMentorshipRequestsQuery = (mentorId?: number, enabled = tr
 export const useRespondToMentorshipRequestMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ requestId, accept }: { requestId: number; accept: boolean }) =>
-      respondToMentorshipRequest(requestId, { accept }),
+    mutationFn: ({ requestId, accept, responseMessage }: { requestId: number; accept: boolean; responseMessage: string }) =>
+      respondToMentorshipRequest(requestId, {
+        accept,
+        responseMessage,
+      }),
     onMutate: async ({ requestId, accept }) => {
       await queryClient.cancelQueries({ queryKey: mentorshipKeys.mentorRequests('me') });
       const previous = queryClient.getQueryData<MentorshipRequestDTO[]>(

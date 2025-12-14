@@ -1,47 +1,47 @@
 {
   "layout": {
-    "languageSwitcher": {
-      "label": "Dil",
-      "english": "İngilizce",
-      "turkish": "Türkçe",
-      "arabic": "Arapça"
-    },
-    "header": {
-      "brand": "Ethica Jobs",
-      "menu": "Menü",
-      "nav": {
-        "home": "Ana Sayfa",
+  "languageSwitcher": {
+    "label": "Dil",
+    "english": "İngilizce",
+    "turkish": "Türkçe",
+    "arabic": "Arapça"
+  },
+  "header": {
+    "brand": "Ethica Jobs",
+    "menu": "Menü",
+    "nav": {
+      "home": "Ana Sayfa",
         "jobs": "İş İlanları",
         "nonProfitJobs": "Gönüllülük",
         "volunteering": "Gönüllülük",
         "volunteerBrowse": "Gönüllülük Fırsatları",
-        "myApplications": "Başvurularım",
-        "mentorship": "Mentorluk",
+      "myApplications": "Başvurularım",
+      "mentorship": "Mentorluk",
         "myMentorships": "Mentorluklarım",
         "chat": "Sohbet",
-        "forum": "Forum",
+      "forum": "Forum",
         "employerDashboard": "İşveren Paneli",
         "workplaces": "İş Yerleri",
         "myWorkplaces": "İş Yerlerim",
         "browseWorkplaces": "İş Yerlerini Keşfet",
         "profile": "Profil",
         "settings": "Ayarlar"
-      },
-      "auth": {
-        "login": "Giriş Yap",
-        "signup": "Kayıt Ol",
-        "logout": "Çıkış Yap",
-        "profile": "Profil"
+    },
+    "auth": {
+      "login": "Giriş Yap",
+      "signup": "Kayıt Ol",
+      "logout": "Çıkış Yap",
+      "profile": "Profil"
       },
       "theme": "Tema",
       "language": "Dil"
-    },
-    "footer": {
-      "about": "Hakkımızda",
-      "contact": "İletişim",
-      "privacy": "Gizlilik Politikası",
-      "terms": "Kullanım Şartları",
-      "brandSuffix": "Ethica Jobs"
+  },
+  "footer": {
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Şartları",
+    "brandSuffix": "Ethica Jobs"
     }
   },
   "common": {
@@ -83,6 +83,7 @@
       "errors": {
         "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin veya destek ile iletişime geçin.",
         "invalidCredentials": "Kullanıcı adı veya şifre hatalı. Lütfen tekrar deneyin.",
+        "internalServerError": "Sunucu hatası. Lütfen daha sonra tekrar deneyin.",
         "generic": "Giriş işlemi başarısız oldu. Lütfen tekrar deneyin."
       },
       "notifications": {
@@ -321,93 +322,93 @@
       "invitation": "Bugün Ethica Jobs'a katılın ve değerlerinize uygun, amaç odaklı kariyer fırsatlarını keşfedin!",
       "signUp": "Hesap Oluştur",
       "login": "Zaten hesabınız var mı? Giriş Yapın"
-    },
+  },
     "filters": {
-      "ethicalTags": "Etik Etiketler",
-      "selectEthicalTags": "Etik etiketleri seçin",
-      "salary": "Maaş Aralığı",
-      "salaryRangeValue": "${{min}}k - ${{max}}k",
-      "jobType": "İş Türü",
-      "workArrangement": "Çalışma Düzeni",
-      "remoteOnly": "Sadece Uzaktan",
-      "inclusivity": "Kapsayıcılık",
-      "disabilityInclusive": "Engelli Dostu Fırsatlar",
-      "companyName": "Şirket Adı",
-      "companyNamePlaceholder": "Şirket adına göre ara",
-      "jobTypeOptions": {
-        "fullTime": "Tam zamanlı",
-        "partTime": "Yarı zamanlı",
-        "contract": "Sözleşmeli"
-      },
-      "salaryEndpoint": "${{value}}k"
+    "ethicalTags": "Etik Etiketler",
+    "selectEthicalTags": "Etik etiketleri seçin",
+    "salary": "Maaş Aralığı",
+    "salaryRangeValue": "${{min}}k - ${{max}}k",
+    "jobType": "İş Türü",
+    "workArrangement": "Çalışma Düzeni",
+    "remoteOnly": "Sadece Uzaktan",
+    "inclusivity": "Kapsayıcılık",
+    "disabilityInclusive": "Engelli Dostu Fırsatlar",
+    "companyName": "Şirket Adı",
+    "companyNamePlaceholder": "Şirket adına göre ara",
+    "jobTypeOptions": {
+      "fullTime": "Tam zamanlı",
+      "partTime": "Yarı zamanlı",
+      "contract": "Sözleşmeli"
+    },
+    "salaryEndpoint": "${{value}}k"
+  },
+    "tags": {
+    "select": "Etik etiketleri seçin",
+    "selectEthicalTags": "Etik Etiketleri Seçin",
+    "selectedCount": "{{count}} etiket seçildi",
+    "selectedCount_plural": "{{count}} etiket seçildi",
+    "clearAll": "Tümünü temizle",
+    "removeTag": "{{tag}} kaldır",
+    "categories": {
+      "compensationAndBenefits": "Ücret ve Yan Haklar",
+      "workLifeBalance": "İş-Yaşam Dengesi",
+      "diversityAndInclusion": "Çeşitlilik ve Kapsayıcılık",
+      "careerDevelopment": "Kariyer Gelişimi",
+      "environmentalAndSocialImpact": "Çevresel ve Sosyal Etki"
     },
     "tags": {
-      "select": "Etik etiketleri seçin",
-      "selectEthicalTags": "Etik Etiketleri Seçin",
-      "selectedCount": "{{count}} etiket seçildi",
-      "selectedCount_plural": "{{count}} etiket seçildi",
-      "clearAll": "Tümünü temizle",
-      "removeTag": "{{tag}} kaldır",
-      "categories": {
-        "compensationAndBenefits": "Ücret ve Yan Haklar",
-        "workLifeBalance": "İş-Yaşam Dengesi",
-        "diversityAndInclusion": "Çeşitlilik ve Kapsayıcılık",
-        "careerDevelopment": "Kariyer Gelişimi",
-        "environmentalAndSocialImpact": "Çevresel ve Sosyal Etki"
-      },
-      "tags": {
-        "salaryTransparency": "Maaş Şeffaflığı",
-        "equalPayPolicy": "Eşit Ücret Politikası",
-        "livingWageEmployer": "Yaşanabilir Ücret İşvereni",
-        "comprehensiveHealthInsurance": "Kapsamlı Sağlık Sigortası",
-        "performanceBasedBonus": "Performansa Dayalı Bonus",
-        "retirementPlanSupport": "Emeklilik Planı Desteği",
-        "paidParentalLeave": "Ücretli Ebeveyn İzni",
-        "flexibleHours": "Esnek Çalışma Saatleri",
-        "remoteFriendly": "Uzaktan Çalışma Dostu",
-        "noAfterHoursWorkCulture": "Mesai Sonrası Çalışma Yok",
-        "mentalHealthSupport": "Ruh Sağlığı Desteği",
-        "generousPaidTimeOff": "Bol Ücretli İzin",
-        "inclusiveHiringPractices": "Kapsayıcı İşe Alım Uygulamaları",
-        "diverseLeadership": "Çeşitli Liderlik",
-        "lgbtqFriendlyWorkplace": "LGBTQ+ Dostu İşyeri",
-        "disabilityInclusiveWorkplace": "Engelli Dostu İşyeri",
-        "supportsWomenInLeadership": "Liderlikte Kadınları Destekler",
-        "mentorshipProgram": "Mentorluk Programı",
-        "learningDevelopmentBudget": "Öğrenme ve Gelişim Bütçesi",
-        "transparentPromotionPaths": "Şeffaf Terfi Yolları",
-        "internalMobility": "İç Mobilite",
-        "sustainabilityFocused": "Sürdürülebilirlik Odaklı",
-        "ethicalSupplyChain": "Etik Tedarik Zinciri",
-        "communityVolunteering": "Toplum Gönüllülüğü",
-        "certifiedBCorporation": "Sertifikalı B-Corporation"
-      }
-    },
+      "salaryTransparency": "Maaş Şeffaflığı",
+      "equalPayPolicy": "Eşit Ücret Politikası",
+      "livingWageEmployer": "Yaşanabilir Ücret İşvereni",
+      "comprehensiveHealthInsurance": "Kapsamlı Sağlık Sigortası",
+      "performanceBasedBonus": "Performansa Dayalı Bonus",
+      "retirementPlanSupport": "Emeklilik Planı Desteği",
+      "paidParentalLeave": "Ücretli Ebeveyn İzni",
+      "flexibleHours": "Esnek Çalışma Saatleri",
+      "remoteFriendly": "Uzaktan Çalışma Dostu",
+      "noAfterHoursWorkCulture": "Mesai Sonrası Çalışma Yok",
+      "mentalHealthSupport": "Ruh Sağlığı Desteği",
+      "generousPaidTimeOff": "Bol Ücretli İzin",
+      "inclusiveHiringPractices": "Kapsayıcı İşe Alım Uygulamaları",
+      "diverseLeadership": "Çeşitli Liderlik",
+      "lgbtqFriendlyWorkplace": "LGBTQ+ Dostu İşyeri",
+      "disabilityInclusiveWorkplace": "Engelli Dostu İşyeri",
+      "supportsWomenInLeadership": "Liderlikte Kadınları Destekler",
+      "mentorshipProgram": "Mentorluk Programı",
+      "learningDevelopmentBudget": "Öğrenme ve Gelişim Bütçesi",
+      "transparentPromotionPaths": "Şeffaf Terfi Yolları",
+      "internalMobility": "İç Mobilite",
+      "sustainabilityFocused": "Sürdürülebilirlik Odaklı",
+      "ethicalSupplyChain": "Etik Tedarik Zinciri",
+      "communityVolunteering": "Toplum Gönüllülüğü",
+      "certifiedBCorporation": "Sertifikalı B-Corporation"
+    }
+  },
     "card": {
-      "remote": "Uzaktan",
+    "remote": "Uzaktan",
       "inclusiveOpportunity": "Kapsayıcı Fırsat",
       "notSpecified": "Konum belirtilmemiş"
-    },
-    "mobileFilters": {
-      "open": "Filtreleri aç",
-      "title": "Filtreler",
-      "reset": "Sıfırla",
-      "apply": "Uygula"
-    },
+  },
+  "mobileFilters": {
+    "open": "Filtreleri aç",
+    "title": "Filtreler",
+    "reset": "Sıfırla",
+    "apply": "Uygula"
+  },
     "detail": {
-      "breadcrumb": {
-        "jobs": "İlanlar"
-      },
-      "error": {
-        "title": "İlan Yüklenemedi",
-        "missing": "İlan bulunamadı",
-        "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir.",
-        "fetch": "İlan detayları yüklenemedi. Lütfen daha sonra tekrar deneyin."
-      },
-      "backToJobs": "İlanlara Dön",
-      "applyNow": "Hemen Başvur",
-      "description": "İlan Açıklaması",
-      "ethicalPolicy": {
+    "breadcrumb": {
+      "jobs": "İlanlar"
+    },
+    "error": {
+      "title": "İlan Yüklenemedi",
+      "missing": "İlan bulunamadı",
+      "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir.",
+      "fetch": "İlan detayları yüklenemedi. Lütfen daha sonra tekrar deneyin."
+    },
+    "backToJobs": "İlanlara Dön",
+    "applyNow": "Hemen Başvur",
+    "description": "İlan Açıklaması",
+    "ethicalPolicy": {
         "title": "Etik Etiketler ve Uyumluluk",
         "sourceNote": "Bu ilanın etik bilgileri şirket profilinden alınmıştır.",
         "overallScore": "Şirket etik puanı",
@@ -416,10 +417,10 @@
         "tagCount_plural": "{{count}} etik politika",
         "noPolicies": "Şirket henüz etik politikalarını paylaşmadı.",
         "inclusiveNote": "Şirket bu rolü kapsayıcı bir fırsat olarak işaretliyor."
-      },
-      "inclusiveOpportunity": "Kapsayıcı Fırsat",
-      "contact": {
-        "title": "İletişim Bilgileri"
+    },
+    "inclusiveOpportunity": "Kapsayıcı Fırsat",
+    "contact": {
+      "title": "İletişim Bilgileri"
       },
       "workplace": {
         "title": "Şirket Hakkında",
@@ -737,18 +738,18 @@
   },
   "employer": {
     "dashboard": {
-      "brand": "Ethical Careers",
-      "sidebar": {
-        "dashboard": "Panel",
-        "jobs": "İlanlar",
-        "profile": "Şirket Profili",
-        "settings": "Ayarlar",
-        "support": "Yardım ve Destek"
-      },
-      "title": "İşveren Paneli",
+    "brand": "Ethical Careers",
+    "sidebar": {
+      "dashboard": "Panel",
+      "jobs": "İlanlar",
+      "profile": "Şirket Profili",
+      "settings": "Ayarlar",
+      "support": "Yardım ve Destek"
+    },
+    "title": "İşveren Paneli",
       "subtitle": "İş ilanlarınızı ve iş yerlerinizi yönetin",
-      "currentPostings": "Mevcut İş İlanları",
-      "createJob": "Yeni İş İlanı Oluştur",
+    "currentPostings": "Mevcut İş İlanları",
+    "createJob": "Yeni İş İlanı Oluştur",
       "addWorkplace": "İş Yeri Ekle",
       "joinWorkplace": "İş Yerine Katıl",
       "unassignedJobs": "Atanmamış İlanlar",
@@ -762,26 +763,26 @@
         "createWorkplace": "İş Yeri Oluştur",
         "joinWorkplace": "İş Yerine Katıl"
       },
-      "loadingError": "İş ilanları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
-      "emptyState": "Henüz herhangi bir iş ilanı oluşturmadınız.",
-      "emptyCta": "İlk İlanınızı Oluşturun",
-      "table": {
-        "jobTitle": "İş Başlığı",
-        "status": "Durum",
-        "applications": "Başvurular",
-        "views": "Görüntülenme",
-        "actions": "İşlemler"
-      },
-      "actions": {
-        "manage": "Yönet",
-        "view": "Görüntüle"
-      },
-      "statusLabels": {
-        "open": "Açık",
-        "active": "Aktif",
-        "paused": "Durduruldu"
-      }
+    "loadingError": "İş ilanları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "emptyState": "Henüz herhangi bir iş ilanı oluşturmadınız.",
+    "emptyCta": "İlk İlanınızı Oluşturun",
+    "table": {
+      "jobTitle": "İş Başlığı",
+      "status": "Durum",
+      "applications": "Başvurular",
+      "views": "Görüntülenme",
+      "actions": "İşlemler"
     },
+    "actions": {
+      "manage": "Yönet",
+      "view": "Görüntüle"
+    },
+    "statusLabels": {
+      "open": "Açık",
+      "active": "Aktif",
+      "paused": "Durduruldu"
+    }
+  },
     "jobPostDetails": {
       "error": {
         "load": "İş detayları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
@@ -1105,7 +1106,8 @@
     "tabs": {
       "browse": "Keşfet",
       "my": "Mentorluklarım",
-      "chat": "Sohbet"
+      "chat": "Sohbet",
+      "myProfile": "Mentor Profilimi Görüntüle"
     },
     "searchPlaceholder": "İsim, uzmanlık veya beceriye göre mentor ara...",
     "noResults": "Mentor bulunamadı. Aramayı genişletmeyi deneyin.",
@@ -1246,6 +1248,7 @@
       "completeSuccess": "Mentorluk başarıyla tamamlandı!",
       "completedMentorships": "Tamamlanan Mentorluklar",
       "alreadyRequested": "Bu mentorla halihazırda bekleyen veya aktif talebiniz var.",
+      "requested": "Talep Edildi",
       "requestSent": "Mentorluk talebi gönderildi!",
       "requestError": "Mentorluk talebi gönderilemedi",
       "requesting": "Gönderiliyor...",
@@ -1323,7 +1326,7 @@
         }
       }
     },
-    "errors": {
+      "errors": {
       "timeout": "Bağlantı zaman aşımı. Lütfen backend sunucusunun çalıştığından emin olun.",
       "networkError": "Sunucuya bağlanılamıyor. Lütfen backend'in çalıştığını kontrol edin.",
       "loadFailed": "Mentorlar yüklenemedi. Lütfen daha sonra tekrar deneyin.",
@@ -1339,7 +1342,7 @@
       "reviews": "değerlendirme",
       "mentoring": "Mentorluk",
       "specialties": "Uzmanlık Alanları",
-      "fullCapacity": "Bu mentor şu anda tam kapasitede",
+      "fullCapacity": "Kapasite dolu",
       "formTitle": "Mentorluk Talebi",
       "formDescription": "Mentor'a hedefleriniz ve mentorluk ile başarmak istedikleriniz hakkında bilgi verin.",
       "messageLabel": "Mentor'a Mesaj",
@@ -1360,12 +1363,20 @@
       "successMessage": "Mentorluk talebi başarıyla gönderildi!",
       "errorMessage": "Mentorluk talebi gönderilemedi. Lütfen tekrar deneyin.",
       "alreadyExists": "Bu mentor için zaten bekleyen veya kabul edilmiş bir talebiniz var.",
-      "userNotAuthenticated": "Mentorluk talebi göndermek için giriş yapmalısınız"
+      "alreadyExistsMessage": "Bu mentor ile zaten bekleyen veya aktif bir mentorluk talebiniz var. Lütfen mentorluklarım sayfasını kontrol edin.",
+      "userNotAuthenticated": "Mentorluk talebi göndermek için giriş yapmalısınız",
+      "description": "Mentor'a hedefleriniz ve mentorluk ile başarmak istedikleriniz hakkında bilgi verin.",
+      "motivation": "Motivasyon",
+      "motivationPlaceholder": "Lütfen bu mentordan neden mentorluk almak istediğinizi ve ne başarmayı umduğunuzu açıklayın...",
+      "motivationHint": "Hedeflerinizi, beklentilerinizi ve bu mentorluktan ne öğrenmeyi umduğunuzu paylaşın.",
+      "motivationRequired": "Lütfen mentorluk talebiniz için bir motivasyon mesajı sağlayın."
     },
     "myMentorships": {
       "title": "Mentorluklarım",
       "subtitle": "Mentorluk taleplerinizi ve aktif mentorluklarınızı takip edin",
       "successMessage": "{{mentorName}} için mentorluk talebi başarıyla gönderildi!",
+      "asMentor": "Mentor Olarak",
+      "asMentee": "Mentee Olarak",
       "active": "Aktif",
       "pending": "Beklemede",
       "completed": "Tamamlandı",
@@ -1726,7 +1737,7 @@
     "anonymous": "Anonim",
     "postAnonymously": "Anonim olarak yayınla",
     "submitReview": "Değerlendirmeyi Gönder",
-    "submitting": "Gönderiliyor...",
+      "submitting": "Gönderiliyor...",
     "categories": {
       "culture": "Kültür",
       "benefits": "Yan Haklar",
@@ -1794,7 +1805,7 @@
     "aboutUs": "Hakkımızda",
     "ethicalPolicyCommitments": "Etik Politika Taahhütleri",
     "currentJobOpenings": "Güncel İş İlanları",
-    "viewJob": "İlanı Görüntüle",
+        "viewJob": "İlanı Görüntüle",
     "notFound": "Şirket Bulunamadı",
     "notFoundDescription": "Aradığınız şirket mevcut değil veya kaldırılmış."
   },
@@ -1833,8 +1844,8 @@
     "notReady": "Sohbet henüz hazır değil. Lütfen biraz bekleyip tekrar deneyin.",
     "authRequired": "Sohbeti kullanmak için giriş yapmalısınız",
     "noConversationsDesc": "Sohbete başlamak için aktif bir mentorluk lazım."
-  },
-  "errors": {
+    },
+    "errors": {
     "DEFAULT": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
     "VALIDATION_FAILED": "Bazı alanların düzeltilmesi gerekiyor.",
     "MALFORMED_JSON": "İstek formatı geçersiz.",
