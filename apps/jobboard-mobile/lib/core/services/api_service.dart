@@ -15,7 +15,7 @@ import '../models/full_profile.dart';
 import '../models/profile.dart';
 import '../models/experience.dart';
 import '../models/education.dart';
-import '../models/badge.dart';
+import '../models/badge.dart' show Badge, BadgeTypeInfo;
 import '../providers/auth_provider.dart'; // Import AuthProvider
 import '../constants/app_constants.dart'; // Imp// ort AppConstants
 import '../models/mentorship_status.dart';
@@ -1505,10 +1505,24 @@ class ApiService {
     }
   }
 
-  /// GET /api/profile/{userId}/badges
-  /// Fetches a user's badges
+  /// GET /api/badges/my
+  /// Fetches the current user's badges
+  Future<List<Badge>> getMyBadges() async {
+    final uri = _buildUri('/badges/my');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => Badge.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to load my badges. $e');
+    }
+  }
+
+  /// GET /api/badges/user/{userId}
+  /// Fetches a specific user's badges
   Future<List<Badge>> getUserBadges(int userId) async {
-    final uri = _buildUri('/profile/$userId/badges');
+    final uri = _buildUri('/badges/user/$userId');
 
     try {
       final response = await _client.get(uri, headers: _getHeaders());
@@ -1519,33 +1533,17 @@ class ApiService {
     }
   }
 
-  /// POST /api/profile/{userId}/badges
-  /// Adds a badge to a user
-  Future<void> addBadgeToUser(int userId, int badgeId) async {
-    final uri = _buildUri('/profile/$userId/badges');
+  /// GET /api/badges/types
+  /// Fetches all available badge types
+  Future<List<BadgeTypeInfo>> getBadgeTypes() async {
+    final uri = _buildUri('/badges/types');
 
     try {
-      final response = await _client.post(
-        uri,
-        headers: _getHeaders(),
-        body: jsonEncode({'badgeId': badgeId}),
-      );
-      await _handleResponse(response);
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => BadgeTypeInfo.fromJson(json)).toList();
     } catch (e) {
-      throw Exception('Failed to add badge. $e');
-    }
-  }
-
-  /// DELETE /api/profile/{userId}/badges/{badgeId}
-  /// Removes a badge from a user
-  Future<void> removeBadgeFromUser(int userId, int badgeId) async {
-    final uri = _buildUri('/profile/$userId/badges/$badgeId');
-
-    try {
-      final response = await _client.delete(uri, headers: _getHeaders());
-      await _handleResponse(response);
-    } catch (e) {
-      throw Exception('Failed to remove badge. $e');
+      throw Exception('Failed to load badge types. $e');
     }
   }
 
