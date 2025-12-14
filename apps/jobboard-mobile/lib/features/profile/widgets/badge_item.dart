@@ -43,7 +43,7 @@ class BadgeItem extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  _getBadgeIcon(badgeDisplay.category),
+                  _getBadgeIcon(badgeDisplay.badgeType.type),
                   size: 28,
                   color: isEarned ? categoryColor : Colors.grey[400],
                 ),
@@ -103,16 +103,58 @@ class BadgeItem extends StatelessWidget {
     );
   }
 
-  IconData _getBadgeIcon(BadgeCategory category) {
-    switch (category) {
-      case BadgeCategory.FORUM:
-        return Icons.forum;
-      case BadgeCategory.JOB_POST:
-        return Icons.work;
-      case BadgeCategory.JOB_APPLICATION:
-        return Icons.assignment;
-      case BadgeCategory.MENTORSHIP:
-        return Icons.school;
+  IconData _getBadgeIcon(String badgeType) {
+    // Map each specific badge type to a unique icon
+    switch (badgeType.toUpperCase()) {
+      // Forum Badges
+      case 'FIRST_VOICE':
+        return Icons.record_voice_over; // First forum post
+      case 'COMMUNITY_PILLAR':
+        return Icons.account_balance; // 25 posts - pillar of community
+      case 'CONVERSATION_STARTER':
+        return Icons.chat_bubble_outline; // First comment
+      case 'DISCUSSION_DRIVER':
+        return Icons.forum; // 50 comments - driving discussions
+      case 'HELPFUL':
+        return Icons.thumb_up; // 10 upvotes
+      case 'VALUABLE_CONTRIBUTOR':
+        return Icons.stars; // 50 upvotes - valuable content
+      
+      // Job Post Badges (Employer)
+      case 'FIRST_LISTING':
+        return Icons.post_add; // First job post
+      case 'HIRING_MACHINE':
+        return Icons.business_center; // 15 job posts
+      
+      // Job Application Badges (Job Seeker)
+      case 'FIRST_STEP':
+        return Icons.assignment_turned_in; // First application
+      case 'PERSISTENT':
+        return Icons.trending_up; // 15 applications
+      case 'HIRED':
+        return Icons.celebration; // First job offer
+      case 'CAREER_STAR':
+        return Icons.emoji_events; // 5 job offers
+      
+      // Mentor Badges
+      case 'GUIDE':
+        return Icons.school; // Created mentor profile
+      case 'FIRST_MENTEE':
+        return Icons.person_add; // First mentee
+      case 'DEDICATED_MENTOR':
+        return Icons.groups; // 5 mentees
+      
+      // Mentee Badges
+      case 'SEEKING_GUIDANCE':
+        return Icons.explore; // First mentorship request
+      case 'MENTORED':
+        return Icons.handshake; // Got accepted by mentor
+      case 'FEEDBACK_GIVER':
+        return Icons.rate_review; // Left first review
+      
+      // Default fallback
+      default:
+        return Icons.workspace_premium;
     }
   }
 
@@ -139,7 +181,7 @@ class BadgeItem extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                _getBadgeIcon(badgeDisplay.category),
+                _getBadgeIcon(badgeDisplay.badgeType.type),
                 color: categoryColor,
                 size: 24,
               ),

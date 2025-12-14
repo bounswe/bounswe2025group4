@@ -108,7 +108,7 @@ class BadgeList extends StatelessWidget {
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
-                                _getCategoryIcon(badge.category),
+                                _getBadgeIcon(badge.badgeType),
                                 size: 28,
                                 color: _getCategoryColor(badge.category),
                               ),
@@ -159,16 +159,58 @@ class BadgeList extends StatelessWidget {
         .join(' ');
   }
 
-  IconData _getCategoryIcon(model.BadgeCategory category) {
-    switch (category) {
-      case model.BadgeCategory.FORUM:
+  IconData _getBadgeIcon(String badgeType) {
+    // Map each specific badge type to a unique icon
+    switch (badgeType.toUpperCase()) {
+      // Forum Badges
+      case 'FIRST_VOICE':
+        return Icons.record_voice_over;
+      case 'COMMUNITY_PILLAR':
+        return Icons.account_balance;
+      case 'CONVERSATION_STARTER':
+        return Icons.chat_bubble_outline;
+      case 'DISCUSSION_DRIVER':
         return Icons.forum;
-      case model.BadgeCategory.JOB_POST:
-        return Icons.work;
-      case model.BadgeCategory.JOB_APPLICATION:
-        return Icons.assignment;
-      case model.BadgeCategory.MENTORSHIP:
+      case 'HELPFUL':
+        return Icons.thumb_up;
+      case 'VALUABLE_CONTRIBUTOR':
+        return Icons.stars;
+      
+      // Job Post Badges (Employer)
+      case 'FIRST_LISTING':
+        return Icons.post_add;
+      case 'HIRING_MACHINE':
+        return Icons.business_center;
+      
+      // Job Application Badges (Job Seeker)
+      case 'FIRST_STEP':
+        return Icons.assignment_turned_in;
+      case 'PERSISTENT':
+        return Icons.trending_up;
+      case 'HIRED':
+        return Icons.celebration;
+      case 'CAREER_STAR':
+        return Icons.emoji_events;
+      
+      // Mentor Badges
+      case 'GUIDE':
         return Icons.school;
+      case 'FIRST_MENTEE':
+        return Icons.person_add;
+      case 'DEDICATED_MENTOR':
+        return Icons.groups;
+      
+      // Mentee Badges
+      case 'SEEKING_GUIDANCE':
+        return Icons.explore;
+      case 'MENTORED':
+        return Icons.handshake;
+      case 'FEEDBACK_GIVER':
+        return Icons.rate_review;
+      
+      // Default fallback
+      default:
+        return Icons.workspace_premium;
     }
   }
 
