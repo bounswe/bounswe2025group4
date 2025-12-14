@@ -13,7 +13,10 @@ public class DashboardStatsResponse {
     private long totalEmployers;
     private long totalJobSeekers;
 
-    private long totalForumPosts;      // mock for now
+    // forum related stats
+    private long totalForumPosts;
+    private long totalForumComments;
+    private long newForumPostsThisWeek;
 
     // job post  related stats
     private long totalJobPosts;
