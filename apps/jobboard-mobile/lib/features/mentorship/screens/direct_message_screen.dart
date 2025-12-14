@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:provider/provider.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
 import 'package:mobile/features/mentorship/providers/chat_provider.dart';
 import '../../../core/models/chat_message.dart';
 import '../../../core/providers/auth_provider.dart';
+import 'package:mobile/core/services/api_service.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class DirectMessageScreen extends StatelessWidget {
+
+class DirectMessageScreen extends StatefulWidget {
   final int conversationId;
   final String peerName;
   final int? resumeReviewId;
@@ -16,8 +22,10 @@ class DirectMessageScreen extends StatelessWidget {
     super.key,
     required this.conversationId,
     required this.peerName,
-    required this.isMentor,
     this.resumeReviewId,
+    required this.isMentor,
+
+
   });
 
   @override
@@ -76,6 +84,69 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     });
   }
 
+  Future<void> _viewResume(BuildContext context) async {
+    final api = context.read<ApiService>();
+
+    try {
+      final url = await api.getResumeFileUrl(widget.resumeReviewId!);
+
+      // Download file
+      final tempDir = await Directory.systemTemp.createTemp();
+      final filePath = '${tempDir.path}/resume.pdf';
+
+      final request = await HttpClient().getUrl(Uri.parse(url));
+      final response = await request.close();
+
+      final file = File(filePath);
+      await response.pipe(file.openWrite());
+
+      if (!mounted) return;
+
+      // Open PDF inside app
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => PdfViewerScreen(filePath: filePath),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to open resume')),
+      );
+    }
+  }
+
+
+  Future<File?> _pickPdf() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf'],
+    );
+
+    if (result == null) return null;
+    return File(result.files.single.path!);
+  }
+
+  Future<void> _uploadResume(BuildContext context) async {
+    final api = context.read<ApiService>();
+
+    final file = await _pickPdf();
+    if (file == null) return;
+
+    try {
+      await api.uploadResumeFile(widget.resumeReviewId!, file);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Resume uploaded successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload resume')),
+      );
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -89,12 +160,12 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
               .directMessage_title(widget.peerName),
         ),
         actions: [
-          if (resumeReviewId != null)
+          if (widget.resumeReviewId != null)
             IconButton(
-              icon: Icon(isMentor ? Icons.picture_as_pdf : Icons.upload_file),
-              tooltip: isMentor ? 'View Resume' : 'Send Resume',
+              icon: Icon(widget.isMentor ? Icons.picture_as_pdf : Icons.upload_file),
+              tooltip: widget.isMentor ? 'View Resume' : 'Send Resume',
               onPressed: () {
-                if (isMentor) {
+                if (widget.isMentor) {
                   _viewResume(context);
                 } else {
                   _uploadResume(context);
@@ -175,25 +246,7 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: A11y(
-              label: 'Attach file',
-              child: Icon(
-                Icons.attach_file,
-                color: theme.iconTheme.color?.withOpacity(0.7),
-              ),
-            ),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    AppLocalizations.of(context)!
-                        .directMessage_fileNotImplemented,
-                  ),
-                ),
-              );
-            },
-          ),
+
           Expanded(
             child: TextField(
               controller: _messageController,
@@ -228,6 +281,38 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
             onPressed: _sendMessage,
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+class PdfViewerScreen extends StatelessWidget {
+  final String filePath;
+
+  const PdfViewerScreen({
+    super.key,
+    required this.filePath,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Resume'),
+      ),
+      body: PDFView(
+        filePath: filePath,
+        enableSwipe: true,
+        swipeHorizontal: false,
+        autoSpacing: true,
+        pageFling: true,
+        onError: (error) {
+          debugPrint('PDF error: $error');
+        },
+        onPageError: (page, error) {
+          debugPrint('PDF page error: $page → $error');
+        },
       ),
     );
   }

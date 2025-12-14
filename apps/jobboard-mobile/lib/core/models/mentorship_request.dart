@@ -47,7 +47,7 @@ class MentorshipRequest {
 
   /// Extra mentee-view fields:
   final String? mentorUsername;
-  final int? resumeReviewId;
+  int? resumeReviewId;
   final String? reviewStatus;
   int? conversationId;
   final String? motivation;

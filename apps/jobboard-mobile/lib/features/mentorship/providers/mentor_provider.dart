@@ -108,26 +108,28 @@ class MentorProvider with ChangeNotifier {
       await _apiService.getMentorshipRequestsAsMentor(mentorId);
 
       for (final r in rawRequests) {
-        // 1️⃣ Username enrichment
-        if (r.requesterId != null) {
+
+        if (r.requesterId != null && r.requesterUsername == null) {
           r.requesterUsername =
           await _apiService.getUsernameForUser(r.requesterId!);
         }
 
-        // Conversation ID enrichment (ONLY if accepted & missing)
         if (r.status == MentorshipRequestStatus.ACCEPTED &&
-            r.conversationId == null &&
-            r.requesterId != null) {
+            r.requesterId != null &&
+            (r.conversationId == null || r.resumeReviewId == null)) {
 
-          final conversationId =
-          await resolveConversationIdViaMentee(
+          final info = await resolveMentorshipInfoViaMentee(
             menteeId: r.requesterId!,
             mentorId: mentorId,
             mentorshipRequestId: r.id,
           );
 
-          r.conversationId = conversationId;
+          if (info != null) {
+            r.conversationId = info.conversationId;
+            r.resumeReviewId = info.resumeReviewId;
+          }
         }
+
       }
 
       _mentorRequests = rawRequests;
@@ -160,7 +162,7 @@ class MentorProvider with ChangeNotifier {
     }
   }
 
-  Future<int?> resolveConversationIdViaMentee({
+  Future<MentorshipLinkInfo?> resolveMentorshipInfoViaMentee({
     required String menteeId,
     required String mentorId,
     required String mentorshipRequestId,
@@ -172,17 +174,18 @@ class MentorProvider with ChangeNotifier {
       for (final r in menteeRequests) {
         final sameMentor = r.mentorId.toString() == mentorId;
         final sameRequest =
-            r.id == mentorshipRequestId ||
-                r.resumeReviewId?.toString() == mentorshipRequestId;
+            r.id.toString() == mentorshipRequestId.toString();
 
         if (sameMentor && sameRequest) {
-          return r.conversationId;
+          return MentorshipLinkInfo(
+            conversationId: r.conversationId,
+            resumeReviewId: r.resumeReviewId,
+          );
         }
       }
-
       return null;
     } catch (e) {
-      debugPrint('Failed to resolve conversationId via mentee: $e');
+      debugPrint('Failed to resolve mentorship info: $e');
       return null;
     }
   }
@@ -415,4 +418,11 @@ class MentorProvider with ChangeNotifier {
     _error = null;
     notifyListeners();
   }
+}
+
+class MentorshipLinkInfo {
+  final int? conversationId;
+  final int? resumeReviewId;
+
+  MentorshipLinkInfo({this.conversationId, this.resumeReviewId});
 }

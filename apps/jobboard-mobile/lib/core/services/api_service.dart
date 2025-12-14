@@ -981,12 +981,58 @@ class ApiService {
   // --- Mentor Profile Endpoints ---
 
   Future<String> getResumeFileUrl(int resumeReviewId) async {
-    final res = await _dio.get(
-      '/api/mentorship/$resumeReviewId/file',
+    final uri = _buildUri(
+      '/mentorship/$resumeReviewId/file',
     );
 
-    return res.data['fileUrl'] as String;
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return data['fileUrl'];
+    } catch (e) {
+      throw Exception('Failed to get resume file URL. $e');
+    }
   }
+
+  Future<void> uploadResumeFile(
+      int resumeReviewId,
+      File file,
+      ) async {
+    final uri = _buildUri('/mentorship/$resumeReviewId/file');
+    try {
+      // Ensure file exists
+      if (!await file.exists()) {
+        throw Exception('File not found: ${file.path}');
+      }
+
+      // Create multipart request
+      final request = http.MultipartRequest('POST', uri);
+
+      // add auth headers BUT remove Content-Type
+      final headers = Map<String, String>.from(_getHeaders());
+      headers.remove('Content-Type');
+      request.headers.addAll(headers);
+
+      // Attach file
+      final multipartFile = await http.MultipartFile.fromPath(
+        'file',
+        file.path,
+        contentType: MediaType('application', 'pdf'),
+      );
+
+      request.files.add(multipartFile);
+
+      // send request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      await _handleResponse(response);
+    } catch (e) {
+      print('Failed to upload resume file. $e');
+      throw Exception('Failed to upload resume file. $e');
+    }
+  }
+
 
 
   /// PUT /api/mentorship/mentor

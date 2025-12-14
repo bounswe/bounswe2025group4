@@ -252,6 +252,8 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                         itemCount: acceptedRequests.length,
                         itemBuilder: (context, index) {
                           final request = acceptedRequests[index];
+                          final resumeReviewId = request.resumeReviewId;
+                          print("Resume review Id: $resumeReviewId");
 
                           final menteeLabel =
                               request.requesterUsername ??
@@ -273,7 +275,7 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                   builder: (_) => DirectMessageScreen(
                                     conversationId: conversationId,
                                     peerName: menteeLabel,
-                                    resumeReviewId: request.resumeReviewId,
+                                    resumeReviewId: resumeReviewId,
                                     isMentor: true,
                                   ),
                                 ),
