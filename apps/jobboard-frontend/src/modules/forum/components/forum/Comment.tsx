@@ -1,12 +1,15 @@
 import type { ChangeEvent } from 'react';
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { Button } from "@shared/components/ui/button";
 import { Card, CardContent } from "@shared/components/ui/card";
 import { Input } from '@shared/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@shared/components/ui/dialog';
 import LikeDislikeButtons from "./LikeDislikeButtons";
 import { ShieldAlert } from 'lucide-react';
 import { useReportModal } from '@shared/hooks/useReportModal';
 import { reportForumComment } from '@modules/workplace/services/workplace-report.service';
+import { toast } from 'react-toastify';
 
 interface CommentProps {
   comment: {
@@ -16,6 +19,7 @@ interface CommentProps {
     likes: number;
     dislikes: number;
   };
+  isOwner?: boolean;
   onEdit: (commentId: string, newContent: string) => void;
   onDelete: (commentId: string) => void;
   onLike?: (commentId: string) => void;
@@ -24,9 +28,11 @@ interface CommentProps {
   activeDislike?: boolean;
 }
 
-const Comment = ({ comment, onEdit, onDelete, onLike, onDislike, activeLike, activeDislike }: CommentProps) => {
+const Comment = ({ comment, isOwner = false, onEdit, onDelete, onLike, onDislike, activeLike, activeDislike }: CommentProps) => {
+  const { t } = useTranslation('common');
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(comment.content);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const likes = comment.likes;
   const dislikes = comment.dislikes;
   const { openReport, ReportModalElement } = useReportModal();
@@ -36,6 +42,13 @@ const Comment = ({ comment, onEdit, onDelete, onLike, onDislike, activeLike, act
   const handleEdit = () => {
     onEdit(comment.id, editedContent);
     setIsEditing(false);
+    toast.success(t('forum.comment.editSuccess'));
+  };
+
+  const handleDelete = () => {
+    onDelete(comment.id);
+    setIsDeleteDialogOpen(false);
+    toast.success(t('forum.comment.deleteSuccess'));
   };
 
   return (
@@ -64,14 +77,16 @@ const Comment = ({ comment, onEdit, onDelete, onLike, onDislike, activeLike, act
         </div>
         <div className="flex items-center justify-between pr-6">
           <span className="font-semibold text-sm">{comment.author}</span>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => setIsEditing(!isEditing)}>
-              {isEditing ? "Cancel" : "Edit"}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => onDelete(comment.id)}>
-              Delete
-            </Button>
-          </div>
+          {isOwner && (
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="sm" onClick={() => setIsEditing(!isEditing)}>
+                {isEditing ? t('forum.comment.cancel') : t('forum.comment.edit')}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setIsDeleteDialogOpen(true)}>
+                {t('forum.comment.delete')}
+              </Button>
+            </div>
+          )}
         </div>
         {isEditing ? (
           <div className="space-y-2">
@@ -79,7 +94,7 @@ const Comment = ({ comment, onEdit, onDelete, onLike, onDislike, activeLike, act
               value={editedContent}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setEditedContent(e.target.value)}
             />
-            <Button size="sm" onClick={handleEdit}>Save</Button>
+            <Button size="sm" onClick={handleEdit}>{t('forum.comment.save')}</Button>
           </div>
         ) : (
           <p className="text-sm text-muted-foreground leading-relaxed">{comment.content}</p>
@@ -117,6 +132,26 @@ const Comment = ({ comment, onEdit, onDelete, onLike, onDislike, activeLike, act
           />
         </div>
       </CardContent>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('forum.comment.deleteTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('forum.comment.deleteDescription')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              {t('forum.comment.cancel')}
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              {t('forum.comment.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

@@ -872,6 +872,57 @@
       "browse": "تصفح المواضيع",
       "create": "إنشاء موضوع",
       "mine": "منشوراتي"
+    },
+    "title": "المنتدى",
+    "subtitle": "شارك المعرفة، اطرح الأسئلة، وتواصل مع المجتمع",
+    "searchPlaceholder": "ابحث في المنشورات أو الكتّاب أو الوسوم...",
+    "createThread": "إنشاء موضوع",
+    "createNewThread": "إنشاء موضوع جديد",
+    "titleLabel": "العنوان",
+    "titlePlaceholder": "العنوان",
+    "contentPlaceholder": "اكتب منشورك هنا...",
+    "tagsPlaceholder": "الوسوم (مفصولة بفواصل)",
+    "create": "إنشاء",
+    "loading": "جارٍ التحميل...",
+    "loadError": "فشل تحميل المنشورات",
+    "postNotFound": "المنشور غير موجود",
+    "by": "بواسطة",
+    "comments": "التعليقات",
+    "viewPost": "عرض المنشور",
+    "topCommentFrom": "أفضل تعليق من",
+    "deletePost": {
+      "title": "حذف المنشور",
+      "description": "هل أنت متأكد من حذف هذا المنشور؟ لا يمكن التراجع عن هذا الإجراء.",
+      "cancel": "إلغاء",
+      "confirm": "حذف",
+      "deleting": "جارٍ الحذف...",
+      "success": "تم حذف المنشور بنجاح",
+      "error": "فشل حذف المنشور"
+    },
+    "editPost": {
+      "title": "تعديل المنشور",
+      "save": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ...",
+      "success": "تم تحديث المنشور بنجاح",
+      "error": "فشل تحديث المنشور"
+    },
+    "comment": {
+      "title": "التعليقات",
+      "edit": "تعديل",
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "delete": "حذف",
+      "deleteTitle": "حذف التعليق",
+      "deleteDescription": "هل أنت متأكد من حذف هذا التعليق؟ لا يمكن التراجع عن هذا الإجراء.",
+      "addPlaceholder": "أضف تعليقاً...",
+      "submit": "إرسال",
+      "addSuccess": "تمت إضافة التعليق بنجاح",
+      "addError": "فشل إضافة التعليق",
+      "editSuccess": "تم تحديث التعليق بنجاح",
+      "deleteSuccess": "تم حذف التعليق بنجاح"
+    },
+    "post": {
+      "createSuccess": "تم إنشاء المنشور بنجاح"
     }
   },
   "workplace": {

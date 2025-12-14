@@ -1,29 +1,73 @@
 import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/components/ui/card';
 import { Badge } from '@shared/components/ui/badge';
 import { Input } from '@shared/components/ui/input';
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@shared/components/ui/dialog';
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@shared/components/ui/dialog';
 import { Button } from '@shared/components/ui/button';
 import { Textarea } from '@shared/components/ui/textarea';
 import LikeDislikeButtons from '@modules/forum/components/forum/LikeDislikeButtons';
-import { useForumPostsQuery } from '@modules/forum/services/forum.service';
+import { useForumPostsQuery, deletePost, updatePost } from '@modules/forum/services/forum.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { upvotePost, downvotePost, useCreateForumPostMutation } from '@modules/forum/services/forum.service';
 import { forumKeys } from '@shared/lib/query-keys';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
+import { Trash2, Pencil } from 'lucide-react';
+import { toast } from 'react-toastify';
+import type { ForumPostResponseDTO } from '@shared/types/api.types';
 
 const truncate = (s: string, n = 250) => (s.length > n ? s.slice(0, n) + '…' : s);
 
 const ForumPage = () => {
+  const { t } = useTranslation('common');
   const [query, setQuery] = useState('');
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tagsInput, setTagsInput] = useState('');
+  const [deletePostId, setDeletePostId] = useState<number | null>(null);
+  const [editingPost, setEditingPost] = useState<ForumPostResponseDTO | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
+  const [editTagsInput, setEditTagsInput] = useState('');
   const { data: posts = [], isLoading, isError } = useForumPostsQuery();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const createPostMutation = useCreateForumPostMutation();
+
+  const deleteMutation = useMutation({
+    mutationFn: (postId: number) => deletePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: forumKeys.posts });
+      toast.success(t('forum.deletePost.success'));
+      setDeletePostId(null);
+    },
+    onError: () => {
+      toast.error(t('forum.deletePost.error'));
+    },
+  });
+
+  const editMutation = useMutation({
+    mutationFn: ({ postId, data }: { postId: number; data: { title?: string; content?: string; tags?: string[] } }) => 
+      updatePost(postId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: forumKeys.posts });
+      toast.success(t('forum.editPost.success'));
+      setEditingPost(null);
+    },
+    onError: () => {
+      toast.error(t('forum.editPost.error'));
+    },
+  });
+
+  const openEditDialog = (post: ForumPostResponseDTO) => {
+    setEditingPost(post);
+    setEditTitle(post.title);
+    setEditContent(post.content);
+    setEditTagsInput(post.tags?.join(', ') || '');
+  };
 
   const upvoteMutation = useMutation({
     mutationFn: (postId: number) => upvotePost(postId),
@@ -67,30 +111,30 @@ const ForumPage = () => {
     });
   }, [posts, query]);
 
-  if (isLoading) return <div className="container mx-auto p-6">Loading...</div>;
-  if (isError) return <div className="container mx-auto p-6">Failed to load posts</div>;
+  if (isLoading) return <div className="container mx-auto p-6">{t('forum.loading')}</div>;
+  if (isError) return <div className="container mx-auto p-6">{t('forum.loadError')}</div>;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-5xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">Forum</h1>
-        <p className="text-muted-foreground text-sm">Share knowledge, ask questions, and connect with the community</p>
+        <h1 className="text-2xl font-bold mb-2">{t('forum.title')}</h1>
+        <p className="text-muted-foreground text-sm">{t('forum.subtitle')}</p>
       </div>
 
       <div className="flex items-center justify-between gap-4 mb-4">
-        <Input className="flex-1" placeholder="Search posts, authors or tags..." value={query} onChange={(e) => setQuery(e.target.value)} />
+        <Input className="flex-1" placeholder={t('forum.searchPlaceholder')} value={query} onChange={(e) => setQuery(e.target.value)} />
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
-            <Button>Create Thread</Button>
+            <Button>{t('forum.createThread')}</Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Create a new thread</DialogTitle>
+              <DialogTitle>{t('forum.createNewThread')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
-              <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write your post here..." />
-              <Input value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="Tags (comma separated)" />
+              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('forum.titlePlaceholder')} />
+              <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={t('forum.contentPlaceholder')} />
+              <Input value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder={t('forum.tagsPlaceholder')} />
             </div>
             <DialogFooter>
               <Button
@@ -107,7 +151,7 @@ const ForumPage = () => {
                   }
                 }}
               >
-                Create
+                {t('forum.create')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -122,9 +166,11 @@ const ForumPage = () => {
               <CardHeader className="px-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-lg">{post.title}</CardTitle>
+                    <Link to={`/forum/${post.id}`}>
+                      <CardTitle className="text-lg hover:underline cursor-pointer">{post.title}</CardTitle>
+                    </Link>
                     <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <span>By {post.authorUsername}</span>
+                      <span>{t('forum.by')} <Link to={`/profile/${post.authorId}`} className="hover:underline text-primary">{post.authorUsername}</Link></span>
                       <span>•</span>
                       <span>{new Date(post.createdAt).toLocaleString()}</span>
                     </div>
@@ -134,16 +180,18 @@ const ForumPage = () => {
                       ))}
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">Comments: {post.commentCount}</div>
+                  <div className="text-sm text-muted-foreground">{t('forum.comments')}: {post.commentCount}</div>
                 </div>
               </CardHeader>
 
               <CardContent className="px-4 space-y-4">
-                <p className="text-sm leading-relaxed">{truncate(post.content, 300)}</p>
+                <Link to={`/forum/${post.id}`} className="block">
+                  <p className="text-sm leading-relaxed hover:underline cursor-pointer">{truncate(post.content, 300)}</p>
+                </Link>
 
                 {topComment && (
                   <div className="p-3 bg-muted rounded">
-                    <div className="text-xs text-muted-foreground">Top comment from {topComment.authorUsername}</div>
+                    <div className="text-xs text-muted-foreground">{t('forum.topCommentFrom')} {topComment.authorUsername}</div>
                     <div className="text-sm">{truncate(topComment.content, 200)}</div>
                   </div>
                 )}
@@ -177,15 +225,104 @@ const ForumPage = () => {
                       activeDislike={postVotes[post.id] === 'dislike'}
                     />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Link to={`/forum/${post.id}`} className="text-sm text-primary underline">View post</Link>
-                  </div>
+                  {user && user.id === post.authorId && (
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openEditDialog(post)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => setDeletePostId(post.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
           );
         })}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deletePostId !== null} onOpenChange={(open) => !open && setDeletePostId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('forum.deletePost.title')}</DialogTitle>
+            <DialogDescription>
+              {t('forum.deletePost.description')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletePostId(null)}>
+              {t('forum.deletePost.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (deletePostId !== null) {
+                  deleteMutation.mutate(deletePostId);
+                }
+              }}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? t('forum.deletePost.deleting') : t('forum.deletePost.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Post Dialog */}
+      <Dialog open={editingPost !== null} onOpenChange={(open) => !open && setEditingPost(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{t('forum.editPost.title')}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Input 
+              value={editTitle} 
+              onChange={(e) => setEditTitle(e.target.value)} 
+              placeholder={t('forum.titlePlaceholder')} 
+            />
+            <Textarea 
+              value={editContent} 
+              onChange={(e) => setEditContent(e.target.value)} 
+              placeholder={t('forum.contentPlaceholder')} 
+            />
+            <Input 
+              value={editTagsInput} 
+              onChange={(e) => setEditTagsInput(e.target.value)} 
+              placeholder={t('forum.tagsPlaceholder')} 
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingPost(null)}>
+              {t('forum.deletePost.cancel')}
+            </Button>
+            <Button
+              onClick={() => {
+                if (editingPost) {
+                  const tags = editTagsInput.split(',').map((t) => t.trim()).filter(Boolean);
+                  editMutation.mutate({
+                    postId: editingPost.id,
+                    data: { title: editTitle, content: editContent, tags },
+                  });
+                }
+              }}
+              disabled={editMutation.isPending}
+            >
+              {editMutation.isPending ? t('forum.editPost.saving') : t('forum.editPost.save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

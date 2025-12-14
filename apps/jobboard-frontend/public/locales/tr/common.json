@@ -936,6 +936,57 @@
       "browse": "Başlıkları Keşfet",
       "create": "Başlık Oluştur",
       "mine": "Gönderilerim"
+    },
+    "title": "Forum",
+    "subtitle": "Bilgi paylaşın, soru sorun ve toplulukla bağlantı kurun",
+    "searchPlaceholder": "Gönderi, yazar veya etiket ara...",
+    "createThread": "Başlık Oluştur",
+    "createNewThread": "Yeni bir başlık oluştur",
+    "titleLabel": "Başlık",
+    "titlePlaceholder": "Başlık",
+    "contentPlaceholder": "Gönderinizi buraya yazın...",
+    "tagsPlaceholder": "Etiketler (virgülle ayırın)",
+    "create": "Oluştur",
+    "loading": "Yükleniyor...",
+    "loadError": "Gönderiler yüklenemedi",
+    "postNotFound": "Gönderi bulunamadı",
+    "by": "Yazan",
+    "comments": "Yorumlar",
+    "viewPost": "Gönderiyi gör",
+    "topCommentFrom": "En iyi yorum",
+    "deletePost": {
+      "title": "Gönderiyi Sil",
+      "description": "Bu gönderiyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "cancel": "İptal",
+      "confirm": "Sil",
+      "deleting": "Siliniyor...",
+      "success": "Gönderi başarıyla silindi",
+      "error": "Gönderi silinemedi"
+    },
+    "editPost": {
+      "title": "Gönderiyi Düzenle",
+      "save": "Değişiklikleri Kaydet",
+      "saving": "Kaydediliyor...",
+      "success": "Gönderi başarıyla güncellendi",
+      "error": "Gönderi güncellenemedi"
+    },
+    "comment": {
+      "title": "Yorumlar",
+      "edit": "Düzenle",
+      "cancel": "İptal",
+      "save": "Kaydet",
+      "delete": "Sil",
+      "deleteTitle": "Yorumu Sil",
+      "deleteDescription": "Bu yorumu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      "addPlaceholder": "Yorum ekle...",
+      "submit": "Gönder",
+      "addSuccess": "Yorum başarıyla eklendi",
+      "addError": "Yorum eklenemedi",
+      "editSuccess": "Yorum başarıyla güncellendi",
+      "deleteSuccess": "Yorum başarıyla silindi"
+    },
+    "post": {
+      "createSuccess": "Gönderi başarıyla oluşturuldu"
     }
   },
   "workplace": {

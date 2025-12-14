@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForumPostQuery, createComment as createCommentFn, updateComment as updateCommentFn, deleteComment as deleteCommentFn, upvoteComment as upvoteCommentFn, downvoteComment as downvoteCommentFn, upvotePost as upvotePostFn, downvotePost as downvotePostFn } from '@modules/forum/services/forum.service';
 import Comment from '@modules/forum/components/forum/Comment';
 import CommentForm from '@modules/forum/components/forum/CommentForm';
@@ -8,17 +9,27 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { forumKeys } from '@shared/lib/query-keys';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/components/ui/card';
 import { Badge } from '@shared/components/ui/badge';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
+import { toast } from 'react-toastify';
 
 const ForumPostDetail = () => {
+  const { t } = useTranslation('common');
   const { postId } = useParams();
   const id = Number(postId);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const { data: post, isLoading, isError } = useForumPostQuery(id, Boolean(postId));
 
   const createCommentMutation = useMutation({
     mutationFn: (payload: { content: string }) => createCommentFn(id, payload),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: forumKeys.post(id) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: forumKeys.post(id) });
+      toast.success(t('forum.comment.addSuccess'));
+    },
+    onError: () => {
+      toast.error(t('forum.comment.addError'));
+    },
   });
 
   const updateCommentMutation = useMutation({
@@ -66,8 +77,9 @@ const ForumPostDetail = () => {
     setter((prev) => (add ? [...prev, id] : prev.filter((x) => x !== id)));
   };
 
-  if (isLoading) return <div className="container mx-auto p-6">Loading...</div>;
-  if (isError || !post) return <div className="container mx-auto p-6">Post not found</div>;
+  if (isLoading) return <div className="container mx-auto p-6">{t('forum.loading')}</div>;
+  if (isError || !post) return <div className="container mx-auto p-6">{t('forum.postNotFound')}</div>;
+
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
@@ -75,13 +87,13 @@ const ForumPostDetail = () => {
         <CardHeader className="px-4">
           <CardTitle className="text-xl">{post.title}</CardTitle>
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <span>By {post.authorUsername}</span>
+            <span>{t('forum.by')} {post.authorUsername}</span>
             <span>•</span>
             <span>{new Date(post.createdAt).toLocaleString()}</span>
           </div>
           <div className="flex flex-wrap gap-1.5 pt-2">
-            {post.tags?.map((t) => (
-              <Badge key={t} variant="secondary" className="text-xs px-2 py-0.5">{t}</Badge>
+            {post.tags?.map((tag) => (
+              <Badge key={tag} variant="secondary" className="text-xs px-2 py-0.5">{tag}</Badge>
             ))}
           </div>
         </CardHeader>
@@ -115,13 +127,14 @@ const ForumPostDetail = () => {
       </Card>
 
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Comments ({post.commentCount})</h2>
+        <h2 className="text-lg font-semibold">{t('forum.comment.title')} ({post.commentCount})</h2>
 
         <div className="space-y-3">
           {post.comments.map((c) => (
             <Comment
               key={c.id}
               comment={{ id: String(c.id), author: c.authorUsername, content: c.content, likes: c.upvoteCount, dislikes: c.downvoteCount }}
+              isOwner={user?.id === c.authorId}
               onEdit={(commentId, newContent) => updateCommentMutation.mutate({ commentId: Number(commentId), content: newContent })}
               onDelete={(commentId) => deleteCommentMutation.mutate(Number(commentId))}
               onLike={async (commentId) => {
