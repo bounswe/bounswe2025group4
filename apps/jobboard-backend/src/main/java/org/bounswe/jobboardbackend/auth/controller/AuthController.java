@@ -73,5 +73,11 @@ public class AuthController {
         return new ResponseEntity<>(authService.getUserDetails(auth), HttpStatus.OK);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/me")
+    public ResponseEntity<MessageResponse> deleteAccount(Authentication auth) {
+        authService.deleteAccount(auth);
+        return ResponseEntity.ok(new MessageResponse("Account deleted successfully."));
+    }
 }
 

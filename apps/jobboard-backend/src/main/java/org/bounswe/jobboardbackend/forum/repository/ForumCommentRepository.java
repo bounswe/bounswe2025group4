@@ -15,4 +15,6 @@ public interface ForumCommentRepository extends JpaRepository<ForumComment, Long
      * Used for badge criteria checking.
      */
     long countByAuthorId(Long authorId);
+
+    void deleteByAuthorId(Long authorId);
 }

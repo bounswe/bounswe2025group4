@@ -18,6 +18,14 @@ import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.profile.model.Profile;
 import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
+import org.bounswe.jobboardbackend.profile.service.ProfileService;
+import org.bounswe.jobboardbackend.forum.service.ForumService;
+import org.bounswe.jobboardbackend.workplace.service.ReviewService;
+import org.bounswe.jobboardbackend.jobpost.service.JobPostService;
+import org.bounswe.jobboardbackend.jobapplication.service.JobApplicationService;
+import org.bounswe.jobboardbackend.mentorship.service.MentorshipService;
+import org.bounswe.jobboardbackend.notification.service.NotificationService;
+import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,7 +57,15 @@ public class AuthService {
     private final OtpRepository otpRepository;
     private final UserDetailsServiceImpl userDetailsService;
     private final ProfileRepository profileRepository;
+    private final ProfileService profileService;
     private final ActivityService activityService;
+    private final ForumService forumService;
+    private final ReviewService reviewService;
+    private final JobPostService jobPostService;
+    private final JobApplicationService jobApplicationService;
+    private final MentorshipService mentorshipService;
+    private final NotificationService notificationService;
+    private final EmployerWorkplaceRepository employerWorkplaceRepository;
 
     @Transactional
     public OtpRequestResponse initiateLogin(@Valid LoginRequest loginRequest) {
@@ -265,5 +281,31 @@ public class AuthService {
         tokenRepository.save(new EmailVerificationToken(token, user.getId(), expires));
 
         emailService.sendVerificationEmail(user.getEmail(), token);
+    }
+
+    @Transactional
+    public void deleteAccount(Authentication auth) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+        User user = userRepository.findById(userDetails.getId())
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
+
+        Long userId = user.getId();
+        String username = user.getUsername();
+
+        notificationService.deleteUserData(username);
+        jobApplicationService.deleteUserData(userId);
+        jobPostService.deleteUserData(userId);
+        mentorshipService.deleteUserData(userId);
+        forumService.deleteUserData(userId);
+        reviewService.deleteUserData(userId);
+        activityService.deleteActivitiesByUserId(userId);
+        profileService.deleteProfileByUserId(userId);
+
+        tokenRepository.deleteByUserId(userId);
+        passwordResetTokenRepository.deleteByUserId(userId);
+        otpRepository.deleteByUsername(username);
+        employerWorkplaceRepository.deleteByUser_Id(userId);
+
+        userRepository.delete(user);
     }
 }

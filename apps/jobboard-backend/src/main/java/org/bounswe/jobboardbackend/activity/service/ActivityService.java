@@ -28,4 +28,8 @@ public class ActivityService {
     public Page<Activity> getActivitiesByActor(Long actorId, Pageable pageable) {
         return activityRepository.findByActorIdOrderByCreatedAtDesc(actorId, pageable);
     }
+
+    public void deleteActivitiesByUserId(Long userId) {
+        activityRepository.deleteByActorId(userId);
+    }
 }
