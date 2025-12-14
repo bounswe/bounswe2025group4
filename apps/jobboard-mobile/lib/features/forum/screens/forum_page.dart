@@ -341,25 +341,87 @@ class _ForumPageState extends State<ForumPage> {
                 ),
               )
               : _posts.isEmpty
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.forum_outlined,
-                      size: 64,
-                      color: isDark ? Colors.grey[700] : Colors.grey[300],
+              ? Stack(
+                children: [
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.forum_outlined,
+                          size: 64,
+                          color: isDark ? Colors.grey[700] : Colors.grey[300],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          AppLocalizations.of(context)!.forumPage_noDiscussions,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            final created = await Navigator.push<ForumPost>(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const CreateThreadScreen(),
+                              ),
+                            );
+                            if (created != null) {
+                              setState(() {
+                                _posts.insert(0, created);
+                              });
+                            }
+                          },
+                          icon: const Icon(Icons.add_rounded),
+                          label: const Text('Create First Post'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppLocalizations.of(context)!.forumPage_noDiscussions,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    right: 20,
+                    child: FloatingActionButton.extended(
+                      onPressed: () async {
+                        final created = await Navigator.push<ForumPost>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const CreateThreadScreen(),
+                          ),
+                        );
+                        if (created != null) {
+                          setState(() {
+                            _posts.insert(0, created);
+                          });
+                        }
+                      },
+                      backgroundColor: Colors.blue,
+                      elevation: 4,
+                      icon: const Icon(Icons.edit_rounded, color: Colors.white),
+                      label: const Text(
+                        'New Post',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               )
               : Column(
                 children: [
@@ -471,22 +533,21 @@ class _ForumPageState extends State<ForumPage> {
                                                 ThreadDetailScreen(post: post),
                                       ),
                                     );
+
+                                    // Always refresh the posts list when returning from detail view
+                                    // to ensure comment counts, vote counts, and other data are up-to-date
                                     if (result is ForumPost) {
-                                      setState(() {
-                                        final index = _posts.indexWhere(
-                                          (p) => p.id == result.id,
-                                        );
-                                        if (index != -1) {
-                                          _posts[index] = result;
-                                        }
-                                      });
+                                      // Post was updated, refresh entire list
+                                      _loadPosts();
                                     } else if (result == 'deleted') {
-                                      setState(() {
-                                        _posts.removeWhere(
-                                          (p) => p.id == post.id,
-                                        );
-                                      });
+                                      // Post was deleted, refresh list
+                                      _loadPosts();
                                     } else if (result == 'refresh') {
+                                      // Explicit refresh requested
+                                      _loadPosts();
+                                    } else if (result == null) {
+                                      // User just viewed the post (may have commented/voted)
+                                      // Refresh to get updated counts
                                       _loadPosts();
                                     }
                                   },

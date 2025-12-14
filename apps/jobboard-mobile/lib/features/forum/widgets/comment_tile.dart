@@ -197,24 +197,214 @@ class _CommentTileState extends State<CommentTile> {
                   onSelected: (action) async {
                     final messenger = ScaffoldMessenger.of(ctx);
                     if (action == 'Report') {
-                      // Show "Reported!" dialog for now (mock implementation)
-                      showDialog(
+                      // Show report dialog
+                      final result = await showDialog<Map<String, String>>(
                         context: ctx,
                         builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Reported!'),
-                            content: const Text(
-                              'Thank you for reporting this comment. We will review it soon.',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('OK'),
-                              ),
-                            ],
+                          String selectedReason = 'SPAM';
+                          final descriptionController = TextEditingController();
+
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return AlertDialog(
+                                title: const Text('Report Comment'),
+                                content: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('Reason for reporting:'),
+                                      const SizedBox(height: 8),
+                                      DropdownButtonFormField<String>(
+                                        value: selectedReason,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                        ),
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: 'SPAM',
+                                            child: Text('Spam'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'FAKE',
+                                            child: Text('Fake/Misleading'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'OFFENSIVE',
+                                            child: Text('Offensive'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'HARASSMENT',
+                                            child: Text('Harassment'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'MISINFORMATION',
+                                            child: Text('Misinformation'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'OTHER',
+                                            child: Text('Other'),
+                                          ),
+                                        ],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedReason = value!;
+                                          });
+                                        },
+                                      ),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        'Additional details (optional):',
+                                      ),
+                                      const SizedBox(height: 8),
+                                      TextField(
+                                        controller: descriptionController,
+                                        maxLines: 3,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          hintText: 'Provide more context...',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.of(context).pop(),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop({
+                                        'reason': selectedReason,
+                                        'description':
+                                            descriptionController.text,
+                                      });
+                                    },
+                                    child: const Text('Report'),
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
                       );
+
+                      if (result != null) {
+                        try {
+                          await api.reportContent(
+                            entityType: 'FORUM_COMMENT',
+                            entityId: _currentComment.id,
+                            reasonType: result['reason']!,
+                            description: result['description'],
+                          );
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: const Row(
+                                children: [
+                                  Icon(Icons.check_circle, color: Colors.white),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'Thank you for reporting. We will review it soon.',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          );
+                        } on SocketException {
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: const Row(
+                                children: [
+                                  Icon(Icons.wifi_off, color: Colors.white),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'Failed: Please check your connection.',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              action: SnackBarAction(
+                                label: 'Retry',
+                                textColor: Colors.white,
+                                onPressed: () {
+                                  // Retry the report
+                                  api.reportContent(
+                                    entityType: 'FORUM_COMMENT',
+                                    entityId: _currentComment.id,
+                                    reasonType: result['reason']!,
+                                    description: result['description'],
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          // Parse the error message to provide better feedback
+                          String errorMessage = 'Failed to submit report';
+
+                          final errorString = e.toString().toLowerCase();
+                          if (errorString.contains('already reported') ||
+                              errorString.contains('duplicate')) {
+                            errorMessage =
+                                'You have already reported this comment';
+                          } else if (errorString.contains('unauthorized') ||
+                              errorString.contains('403')) {
+                            errorMessage = 'You need to be logged in to report';
+                          } else if (errorString.contains('not found') ||
+                              errorString.contains('404')) {
+                            errorMessage = 'This comment no longer exists';
+                          } else if (errorString.contains('400') ||
+                              errorString.contains('bad request')) {
+                            errorMessage =
+                                'Invalid report data. Please try again';
+                          } else if (errorString.contains('500') ||
+                              errorString.contains('server error')) {
+                            errorMessage =
+                                'Server error. Please try again later';
+                          }
+
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: Text(errorMessage)),
+                                ],
+                              ),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              duration: const Duration(seconds: 4),
+                            ),
+                          );
+                        }
+                      }
                     } else if (action == 'Edit' && isOwner) {
                       final controller = TextEditingController(
                         text: _currentComment.content,

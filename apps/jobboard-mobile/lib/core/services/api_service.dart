@@ -2187,18 +2187,45 @@ class ApiService {
     }
   }
 
-  /// POST /api/workplace/{id}/report
-  /// Reports a workplace
-  Future<void> reportWorkplace({
-    required int workplaceId,
+  // ─────────────────────────────────────────────────
+  // Generic Report Endpoint
+  // ─────────────────────────────────────────────────
+
+  /// POST /api/report
+  /// Generic report endpoint for reporting any type of content
+  ///
+  /// This method can be used to report:
+  /// - WORKPLACE
+  /// - REVIEW
+  /// - REVIEW_REPLY
+  /// - FORUM_POST
+  /// - FORUM_COMMENT
+  /// - JOB_POST
+  /// - JOB_APPLICATION
+  /// - PROFILE
+  /// - MENTOR
+  ///
+  /// Reason types:
+  /// - SPAM
+  /// - FAKE
+  /// - OFFENSIVE
+  /// - HARASSMENT
+  /// - MISINFORMATION
+  /// - OTHER
+  Future<void> reportContent({
+    required String entityType,
+    required int entityId,
     required String reasonType,
-    required String description,
+    String? description,
   }) async {
-    final uri = _buildUri('/workplace/$workplaceId/report');
+    final uri = _buildUri('/report');
 
     final body = jsonEncode({
+      'entityType': entityType,
+      'entityId': entityId,
       'reasonType': reasonType,
-      'description': description,
+      if (description != null && description.isNotEmpty)
+        'description': description,
     });
 
     try {
@@ -2208,35 +2235,10 @@ class ApiService {
         body: body,
       );
       await _handleResponse(response);
+    } on SocketException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to report workplace. $e');
-    }
-  }
-
-  /// POST /api/workplace/{id}/review/{reviewId}/report
-  /// Reports a workplace review
-  Future<void> reportWorkplaceReview({
-    required int workplaceId,
-    required int reviewId,
-    required String reasonType,
-    required String description,
-  }) async {
-    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId/report');
-
-    final body = jsonEncode({
-      'reasonType': reasonType,
-      'description': description,
-    });
-
-    try {
-      final response = await _client.post(
-        uri,
-        headers: _getHeaders(),
-        body: body,
-      );
-      await _handleResponse(response);
-    } catch (e) {
-      throw Exception('Failed to report review. $e');
+      throw Exception('Failed to report content. $e');
     }
   }
 
