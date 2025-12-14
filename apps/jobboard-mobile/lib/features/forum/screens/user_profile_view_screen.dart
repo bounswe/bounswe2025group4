@@ -1,53 +1,51 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/providers/profile_provider.dart';
+import '../../../core/models/full_profile.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/widgets/a11y.dart';
-import '../widgets/work_experience_list.dart';
-import '../widgets/education_list.dart';
-import '../widgets/badge_list.dart';
-import '../../../core/models/mentorship_status.dart';
-import '../../../generated/l10n/app_localizations.dart';
 
-class UserProfileView extends StatefulWidget {
+class UserProfileViewScreen extends StatefulWidget {
   final int userId;
 
-  const UserProfileView({super.key, required this.userId});
+  const UserProfileViewScreen({super.key, required this.userId});
 
   @override
-  State<UserProfileView> createState() => _UserProfileViewState();
+  State<UserProfileViewScreen> createState() => _UserProfileViewScreenState();
 }
 
-class _UserProfileViewState extends State<UserProfileView> {
+class _UserProfileViewScreenState extends State<UserProfileViewScreen> {
+  late final ApiService _api;
+  FullProfile? _profile;
+  bool _isLoading = true;
+  String? _errorMessage;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final profileProvider = Provider.of<ProfileProvider>(
-        context,
-        listen: false,
-      );
-      profileProvider.fetchUserProfile(widget.userId);
-      profileProvider.fetchUserDetails(widget.userId);
-    });
+    _api = ApiService(authProvider: context.read<AuthProvider>());
+    _loadProfile();
   }
 
-  late ProfileProvider _profileProvider;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _profileProvider = Provider.of<ProfileProvider>(context, listen: false);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _profileProvider.clearViewedProfile();
+  Future<void> _loadProfile() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
     });
-    super.dispose();
+
+    try {
+      final profile = await _api.getUserProfile(widget.userId);
+      setState(() {
+        _profile = profile;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
   }
 
   Future<void> _showReportDialog() async {
@@ -140,8 +138,7 @@ class _UserProfileViewState extends State<UserProfileView> {
 
     if (result != null && mounted) {
       try {
-        final api = ApiService(authProvider: context.read<AuthProvider>());
-        await api.reportContent(
+        await _api.reportContent(
           entityType: 'PROFILE',
           entityId: widget.userId,
           reasonType: result['reason']!,
@@ -191,9 +188,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                 label: 'Retry',
                 textColor: Colors.white,
                 onPressed: () {
-                  ApiService(
-                    authProvider: context.read<AuthProvider>(),
-                  ).reportContent(
+                  _api.reportContent(
                     entityType: 'PROFILE',
                     entityId: widget.userId,
                     reasonType: result['reason']!,
@@ -216,12 +211,12 @@ class _UserProfileViewState extends State<UserProfileView> {
           } else if (errorString.contains('unauthorized') ||
               errorString.contains('403')) {
             errorMessage = 'You need to be logged in to report';
-          } else if (errorString.contains('400') ||
-              errorString.contains('bad request')) {
-            errorMessage = 'Invalid report data. Please try again';
           } else if (errorString.contains('not found') ||
               errorString.contains('404')) {
             errorMessage = 'This profile no longer exists';
+          } else if (errorString.contains('400') ||
+              errorString.contains('bad request')) {
+            errorMessage = 'Invalid report data. Please try again';
           } else if (errorString.contains('500') ||
               errorString.contains('server error')) {
             errorMessage = 'Server error. Please try again later';
@@ -251,9 +246,6 @@ class _UserProfileViewState extends State<UserProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    final profileProvider = Provider.of<ProfileProvider>(context);
-    final userProfile = profileProvider.viewedProfile;
-    final user = profileProvider.currentUser;
     final authProvider = context.read<AuthProvider>();
     final currentUserId = authProvider.currentUser?.id;
     final isOwnProfile =
@@ -261,12 +253,9 @@ class _UserProfileViewState extends State<UserProfileView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          userProfile?.profile.fullName ??
-              AppLocalizations.of(context)!.userProfile_title,
-        ),
+        title: const Text('User Profile'),
         actions: [
-          if (!isOwnProfile && userProfile != null)
+          if (!isOwnProfile)
             IconButton(
               icon: const Icon(Icons.flag_outlined),
               tooltip: 'Report Profile',
@@ -275,171 +264,203 @@ class _UserProfileViewState extends State<UserProfileView> {
         ],
       ),
       body:
-          profileProvider.isLoading
+          _isLoading
               ? const Center(child: CircularProgressIndicator())
-              : userProfile == null
+              : _errorMessage != null
               ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(AppLocalizations.of(context)!.userProfile_loadError),
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Failed to load profile',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(_errorMessage!),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () {
-                        profileProvider.fetchUserProfile(widget.userId);
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.userProfile_tryAgain,
-                      ),
+                      onPressed: _loadProfile,
+                      child: const Text('Retry'),
                     ),
                   ],
                 ),
               )
+              : _profile == null
+              ? const Center(child: Text('Profile not found'))
               : SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        A11y(
-                          label: 'User profile picture',
-                          child: ClipOval(
-                            child: Image.network(
-                              userProfile.profile.profilePicture ?? '',
-                              key: ValueKey(userProfile.profile.profilePicture),
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                              errorBuilder:
-                                  (context, error, stackTrace) => Container(
-                                    width: 100,
-                                    height: 100,
-                                    color: Colors.grey[300],
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 50,
-                                      color: Colors.grey[600],
+                    // Profile Header
+                    Center(
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundImage:
+                                _profile!.profile.profilePicture != null
+                                    ? NetworkImage(
+                                      _profile!.profile.profilePicture!,
+                                    )
+                                    : null,
+                            child:
+                                _profile!.profile.profilePicture == null
+                                    ? const Icon(Icons.person, size: 50)
+                                    : null,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _profile!.profile.fullName,
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          if (_profile!.profile.occupation != null &&
+                              _profile!.profile.occupation!.isNotEmpty)
+                            Text(
+                              _profile!.profile.occupation!,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: Colors.grey[600]),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Bio Section
+                    if (_profile!.profile.bio != null &&
+                        _profile!.profile.bio!.isNotEmpty) ...[
+                      Text(
+                        'About',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(_profile!.profile.bio!),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+
+                    // Experience Section
+                    if (_profile!.experience.isNotEmpty) ...[
+                      Text(
+                        'Experience',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ..._profile!.experience.map(
+                        (exp) => Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  exp.position,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  exp.company,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const A11y(
+                                      label: 'Date range',
+                                      child: Icon(
+                                        Icons.calendar_today,
+                                        size: 16,
+                                      ),
                                     ),
-                                  ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${exp.startDate} - ${exp.endDate ?? 'Present'}',
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
+                                if (exp.description != null &&
+                                    exp.description!.isNotEmpty) ...[
+                                  const SizedBox(height: 8),
+                                  Text(exp.description!),
+                                ],
+                              ],
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                userProfile.profile.fullName,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              if (user?.mentorshipStatus ==
-                                  MentorshipStatus.MENTOR)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    'Mentor',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.green[700],
-                                    ),
-                                  ),
-                                ),
-                              if (userProfile.profile.occupation != null)
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+
+                    // Education Section
+                    if (_profile!.education.isNotEmpty) ...[
+                      Text(
+                        'Education',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ..._profile!.education.map(
+                        (edu) => Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  userProfile.profile.occupation!,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.grey[700],
-                                  ),
+                                  edu.school,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
                                 ),
-                              if (userProfile.profile.location != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Row(
-                                    children: [
-                                      const A11y(
-                                        label: 'Location',
-                                        child: Icon(
-                                          Icons.location_on,
-                                          size: 16,
-                                          color: Colors.grey,
-                                        ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${edu.degree} in ${edu.field}',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const A11y(
+                                      label: 'Date range',
+                                      child: Icon(
+                                        Icons.calendar_today,
+                                        size: 16,
                                       ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        userProfile.profile.location!,
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${edu.startDate} - ${edu.endDate ?? 'Present'}',
+                                      style:
+                                          Theme.of(context).textTheme.bodySmall,
+                                    ),
+                                  ],
                                 ),
-                              if (userProfile.profile.bio != null)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 16),
-                                  child: Text(
-                                    userProfile.profile.bio!,
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    WorkExperienceList(
-                      experiences: userProfile.experience,
-                      isEditable: false,
-                    ),
-                    const SizedBox(height: 24),
-                    EducationList(
-                      educationHistory: userProfile.education,
-                      isEditable: false,
-                    ),
-                    const SizedBox(height: 24),
-                    if (userProfile.profile.skills.isNotEmpty) ...[
-                      Text(
-                        AppLocalizations.of(context)!.userProfile_skills,
-                        style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children:
-                            userProfile.profile.skills.map((skill) {
-                              return Chip(label: Text(skill));
-                            }).toList(),
-                      ),
-                      const SizedBox(height: 24),
                     ],
-                    if (userProfile.profile.interests.isNotEmpty) ...[
-                      Text(
-                        AppLocalizations.of(context)!.userProfile_interests,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children:
-                            userProfile.profile.interests.map((interest) {
-                              return Chip(label: Text(interest));
-                            }).toList(),
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                    BadgeList(badges: userProfile.badges),
-                    const SizedBox(height: 50),
                   ],
                 ),
               ),

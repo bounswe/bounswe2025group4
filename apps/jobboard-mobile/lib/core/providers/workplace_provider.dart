@@ -480,9 +480,10 @@ class WorkplaceProvider with ChangeNotifier {
     }
   }
 
-  /// Reports a workplace
-  Future<bool> reportWorkplace({
-    required int workplaceId,
+  /// Reports any type of content (workplace, review, etc.)
+  Future<bool> reportContent({
+    required String entityType,
+    required int entityId,
     required String reasonType,
     required String description,
   }) async {
@@ -490,34 +491,9 @@ class WorkplaceProvider with ChangeNotifier {
     _setError(null);
 
     try {
-      await _apiService.reportWorkplace(
-        workplaceId: workplaceId,
-        reasonType: reasonType,
-        description: description,
-      );
-      return true;
-    } catch (e) {
-      _setError(e.toString());
-      return false;
-    } finally {
-      _setLoading(false);
-    }
-  }
-
-  /// Reports a workplace review
-  Future<bool> reportWorkplaceReview({
-    required int workplaceId,
-    required int reviewId,
-    required String reasonType,
-    required String description,
-  }) async {
-    _setLoading(true);
-    _setError(null);
-
-    try {
-      await _apiService.reportWorkplaceReview(
-        workplaceId: workplaceId,
-        reviewId: reviewId,
+      await _apiService.reportContent(
+        entityType: entityType,
+        entityId: entityId,
         reasonType: reasonType,
         description: description,
       );
