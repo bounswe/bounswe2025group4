@@ -56,6 +56,9 @@ class ReviewServiceTest {
         @Mock
         private ReviewReactionRepository reviewReactionRepository;
 
+        @Mock
+        private org.bounswe.jobboardbackend.activity.service.ActivityService activityService;
+
         @InjectMocks
         private ReviewService reviewService;
 

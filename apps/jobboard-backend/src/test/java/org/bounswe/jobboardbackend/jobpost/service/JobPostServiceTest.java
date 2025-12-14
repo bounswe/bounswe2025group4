@@ -56,6 +56,9 @@ class JobPostServiceTest {
     @Mock
     private ApplicationEventPublisher eventPublisher;
 
+    @Mock
+    private org.bounswe.jobboardbackend.activity.service.ActivityService activityService;
+
     @InjectMocks
     private JobPostService jobPostService;
 
@@ -86,7 +89,8 @@ class JobPostServiceTest {
                 .workplace(mockWorkplace)
                 .build();
 
-        // 2. Security Context Mocklama (Lenient kullanarak gereksiz stub hatasını önlüyoruz)
+        // 2. Security Context Mocklama (Lenient kullanarak gereksiz stub hatasını
+        // önlüyoruz)
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
         UserDetails userDetails = mock(UserDetails.class);
@@ -211,7 +215,8 @@ class JobPostServiceTest {
         when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(mockWorkplace.getId(), mockUser.getId()))
                 .thenReturn(false);
 
-        HandleException exception = assertThrows(HandleException.class, () -> jobPostService.update(mockJobPost.getId(), request));
+        HandleException exception = assertThrows(HandleException.class,
+                () -> jobPostService.update(mockJobPost.getId(), request));
         assertEquals(ErrorCode.WORKPLACE_UNAUTHORIZED, exception.getCode());
     }
 
@@ -251,8 +256,7 @@ class JobPostServiceTest {
         when(workplaceService.toBriefResponse(any())).thenReturn(new WorkplaceBriefResponse());
 
         List<JobPostResponse> responses = jobPostService.getFiltered(
-                "Title", null, null, null, null, null, null, null, null, null
-        );
+                "Title", null, null, null, null, null, null, null, null, null);
 
         assertEquals(1, responses.size());
         assertEquals(mockJobPost.getTitle(), responses.getFirst().getTitle());
@@ -299,14 +303,13 @@ class JobPostServiceTest {
         when(userRepository.findByUsername(mockUser.getUsername())).thenReturn(Optional.of(mockUser));
         when(jobPostRepository.findById(mockJobPost.getId())).thenReturn(Optional.of(mockJobPost));
 
-
         when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(mockWorkplace.getId(), mockUser.getId()))
                 .thenReturn(false);
 
         // Act & Assert
-        HandleException exception = assertThrows(HandleException.class, () -> jobPostService.delete(mockJobPost.getId()));
+        HandleException exception = assertThrows(HandleException.class,
+                () -> jobPostService.delete(mockJobPost.getId()));
         assertEquals(ErrorCode.WORKPLACE_UNAUTHORIZED, exception.getCode());
-
 
         verify(jobPostRepository, never()).delete(any());
     }
@@ -323,13 +326,10 @@ class JobPostServiceTest {
         when(userRepository.findByUsername(mockUser.getUsername())).thenReturn(Optional.of(mockUser));
         when(jobPostRepository.findById(mockJobPost.getId())).thenReturn(Optional.of(mockJobPost));
 
-
         when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(mockWorkplace.getId(), mockUser.getId()))
                 .thenReturn(true);
 
-
         when(workplaceRepository.findById(200L)).thenReturn(Optional.of(newWorkplace));
-
 
         when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(200L, mockUser.getId()))
                 .thenReturn(true);

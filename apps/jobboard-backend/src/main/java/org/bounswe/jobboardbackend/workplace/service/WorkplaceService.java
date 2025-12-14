@@ -11,6 +11,8 @@ import org.bounswe.jobboardbackend.workplace.model.EmployerWorkplace;
 import org.bounswe.jobboardbackend.workplace.model.enums.EthicalPolicy;
 import org.bounswe.jobboardbackend.workplace.model.enums.EmployerRole;
 import org.bounswe.jobboardbackend.workplace.repository.*;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.model.Role;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +41,7 @@ public class WorkplaceService {
     private final ReviewService reviewService;
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final ActivityService activityService;
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -185,6 +188,9 @@ public class WorkplaceService {
                 .role(EmployerRole.OWNER)
                 .build();
         employerWorkplaceRepository.save(ew);
+
+        activityService.logActivity(currentUser, ActivityType.CREATE_WORKPLACE,
+                wp.getId(), "Workplace");
 
         return toDetailResponse(wp, /* includeReviews */ false, /* reviewsLimit */ 0);
     }
