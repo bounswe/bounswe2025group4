@@ -7,7 +7,7 @@ import { Textarea } from '@shared/components/ui/textarea';
 import { Label } from '@shared/components/ui/label';
 import { Badge } from '@shared/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
-import { Star, ArrowLeft, Send, Clock, Users, AlertCircle } from 'lucide-react';
+import { Star, ArrowLeft, Send, Clock, Users } from 'lucide-react';
 import type { Mentor, Mentorship } from '@shared/types/mentor';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import {

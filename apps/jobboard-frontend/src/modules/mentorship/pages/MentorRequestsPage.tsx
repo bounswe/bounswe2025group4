@@ -105,7 +105,7 @@ const MentorRequestsPage = () => {
         throw new Error('Request not found');
       }
 
-      await respondMutation.mutateAsync({ requestId: requestIdNum, accept });
+      await respondMutation.mutateAsync({ requestId: requestIdNum, accept, responseMessage: '' });
 
       const refreshed = await mentorRequestsQuery.refetch();
       if (refreshed.data) {

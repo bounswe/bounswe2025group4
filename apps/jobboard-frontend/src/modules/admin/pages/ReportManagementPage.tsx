@@ -22,8 +22,8 @@ import type {
   ResolveReportRequest,
 } from '../types/admin.types';
 import { toast } from 'react-toastify';
-import { formatDistanceToNow, format } from 'date-fns';
-import { Search, X, Trash2, Ban, Loader2, AlertTriangle } from 'lucide-react';
+import { format } from 'date-fns';
+import { Search, X, Trash2, Ban, Loader2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,

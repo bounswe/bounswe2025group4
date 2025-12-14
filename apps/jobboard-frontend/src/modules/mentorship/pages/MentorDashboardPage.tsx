@@ -551,7 +551,7 @@ const MentorDashboardPage = () => {
                               size="sm"
                               className="flex-1"
                               onClick={() => handleRespond(request.id, true)}
-                              disabled={respondingTo === request.id || respondMutation.isPending || isCapacityFull}
+                              disabled={respondingTo === request.id || respondMutation.isPending || isCapacityFull === true}
                               title={isCapacityFull ? t('mentorship.dashboard.capacityFullTooltip', 'Capacity is full') : ''}
                             >
                               {t('mentorship.dashboard.approve', 'Approve')}

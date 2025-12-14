@@ -58,6 +58,8 @@ export default function JobDetailPage() {
 
   const numericJobId = id ? parseInt(id, 10) : jobId ? parseInt(jobId, 10) : undefined;
   const { user } = useAuth();
+  const isAuthenticated = !!user;
+  const { openReport, ReportModalElement } = useReportModal();
   const jobQuery = useJobQuery(numericJobId);
   const [jobView, setJobView] = useState<JobPostResponse | null>(null);
   const [editOpen, setEditOpen] = useState(false);
@@ -307,7 +309,7 @@ export default function JobDetailPage() {
                         contextSnippet: jobView.title,
                         reportType: 'Job Post',
                         reportedName: jobView.workplace.companyName,
-                        onSubmit: async (message, reason) => {
+                        onSubmit: async (message: string, reason: string) => {
                           await createReport({
                             entityType: 'JOB_POST',
                             entityId: numericJobId!,

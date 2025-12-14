@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Send, AlertCircle } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { Button } from '@shared/components/ui/button';
 import { Textarea } from '@shared/components/ui/textarea';
 import { Label } from '@shared/components/ui/label';
@@ -17,7 +17,6 @@ import {
 import {
   useCreateMentorshipRequestMutation,
   useMenteeMentorshipsQuery,
-  getMenteeMentorships,
 } from '@modules/mentorship/services/mentorship.service';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
 import { normalizeApiError } from '@shared/utils/error-handler';

@@ -59,19 +59,3 @@ export async function reportUserProfile(userId: number, message: string, reason:
         description: message,
     });
 }
-
-export async function reportForumPost(postId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return submitReport('FORUM_POST', postId, message, reason);
-}
-
-export async function reportForumComment(commentId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return submitReport('FORUM_COMMENT', commentId, message, reason);
-}
-
-export async function reportJobPost(jobId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return submitReport('JOB_POST', jobId, message, reason);
-}
-
-export async function reportUserProfile(userId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return submitReport('PROFILE', userId, message, reason);
-}
