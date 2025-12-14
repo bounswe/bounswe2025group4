@@ -2,17 +2,14 @@ import { useQueryWithToast } from '@shared/hooks/useQueryWithToast';
 import { apiClient } from '@shared/lib/api-client';
 import { badgeKeys } from '@shared/lib/query-keys';
 import type { BadgeCode } from '@modules/profile/constants/badges';
+import type { Badge } from '@shared/types/profile.types';
 
 export interface BadgeType {
-  code: BadgeCode;
+  type: BadgeCode;
   name: string;
   description: string;
   criteria: string;
   threshold: number;
-}
-
-export interface UserBadgeResponse {
-  earnedBadges: BadgeCode[];
 }
 
 /**
@@ -30,12 +27,20 @@ export const badgeService = {
   },
 
   /**
-   * Get user's earned badges
+   * Get current user's earned badges
+   * GET /api/badges/my
+   */
+  getMyBadges: async (): Promise<Badge[]> => {
+    const response = await apiClient.get('/badges/my');
+    return response.data;
+  },
+
+  /**
+   * Get a specific user's earned badges
    * GET /api/badges/user/{userId}
    */
-  getUserBadges: async (userId?: number): Promise<UserBadgeResponse> => {
-    const endpoint = userId ? `/badges/user/${userId}` : '/badges/user/me';
-    const response = await apiClient.get(endpoint);
+  getUserBadges: async (userId: number): Promise<Badge[]> => {
+    const response = await apiClient.get(`/badges/user/${userId}`);
     return response.data;
   },
 };
@@ -51,10 +56,21 @@ export const useBadgeTypesQuery = () =>
   });
 
 /**
- * Hook to fetch user's earned badges
+ * Hook to fetch current user's earned badges
  */
-export const useUserBadgesQuery = (userId?: number) =>
+export const useMyBadgesQuery = (enabled = true) =>
   useQueryWithToast({
-    queryKey: userId ? badgeKeys.user(userId) : badgeKeys.myBadges,
-    queryFn: () => badgeService.getUserBadges(userId),
+    queryKey: badgeKeys.myBadges,
+    queryFn: () => badgeService.getMyBadges(),
+    enabled,
+  });
+
+/**
+ * Hook to fetch a specific user's earned badges
+ */
+export const useUserBadgesQuery = (userId?: number, enabled = true) =>
+  useQueryWithToast({
+    queryKey: userId ? badgeKeys.user(userId) : [...badgeKeys.all, 'user', 'missing'],
+    queryFn: () => badgeService.getUserBadges(userId as number),
+    enabled: Boolean(userId) && enabled,
   });
