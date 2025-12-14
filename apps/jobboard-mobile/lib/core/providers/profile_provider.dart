@@ -426,24 +426,8 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addBadge(int userId, int badgeId) async {
-    if (_currentUserProfile == null) return;
-    try {
-      await _apiService.addBadgeToUser(userId, badgeId);
-      await fetchBadges(userId);
-    } catch (e) {
-      throw Exception('Failed to add badge: $e');
-    }
-  }
-
-  Future<void> removeBadge(int userId, int badgeId) async {
-    try {
-      await _apiService.removeBadgeFromUser(userId, badgeId);
-      await fetchBadges(userId);
-    } catch (e) {
-      throw Exception('Failed to remove badge: $e');
-    }
-  }
+  // Badge methods removed - badges are now automatically awarded by the backend
+  // Use BadgeProvider to fetch and display badges
 
   User? _user;
   User? get currentUser => _user;
