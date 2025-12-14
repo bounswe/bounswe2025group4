@@ -421,6 +421,43 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
 
             const SizedBox(height: 16),
 
+            if (_userProfile!.profile.skills.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                "Skills",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _userProfile!.skills.map((skill) {
+                  return Chip(
+                    label: Text(skill),
+                    backgroundColor: Colors.blue.shade50,
+                  );
+                }).toList(),
+              ),
+            ],
+
+            if (_userProfile!.profile.interests.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                "Interests",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _userProfile!.interests.map((interest) {
+                  return Chip(
+                    label: Text(interest),
+                    backgroundColor: Colors.green.shade50,
+                  );
+                }).toList(),
+              ),
+            ],
 
 
             // Rating summary

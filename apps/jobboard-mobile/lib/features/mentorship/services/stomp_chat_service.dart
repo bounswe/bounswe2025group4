@@ -34,8 +34,7 @@ class StompChatService {
 
     _client = StompClient(
       config: StompConfig(
-        url:
-        'wss://jobboard-backend-dev-728855696411.europe-west1.run.app/ws-chat/websocket',
+        url: AppConstants.baseWsUrl,
         useSockJS: false,
         stompConnectHeaders: {
           'Authorization': 'Bearer $jwtToken',
