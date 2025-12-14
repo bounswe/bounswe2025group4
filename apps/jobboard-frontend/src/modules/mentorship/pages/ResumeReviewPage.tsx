@@ -71,6 +71,38 @@ export default function ResumeReviewPage() {
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [mentorMentorshipDetails, setMentorMentorshipDetails] = useState<MentorshipDetailsDTO | null>(null);
 
+  // Calculate unread count from messages (always derive from messages)
+  const calculatedUnreadCount = useMemo(() => {
+    if (!chatMessages.length || !user?.id) return 0;
+    return chatMessages.filter(
+      (msg) => {
+        const isFromOtherUser = msg.senderId !== user.id.toString();
+        const isUnread = msg.read === false || msg.read === undefined || msg.read === null;
+        return isFromOtherUser && isUnread;
+      }
+    ).length;
+  }, [chatMessages, user?.id]);
+
+  // Update chatRoom unreadCount whenever calculatedUnreadCount changes
+  useEffect(() => {
+    if (chatRoom && calculatedUnreadCount !== chatRoom.unreadCount) {
+      console.log('[ResumeReviewPage] Updating chatRoom unreadCount from calculated:', {
+        old: chatRoom.unreadCount,
+        new: calculatedUnreadCount
+      });
+      setChatRoom((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          unreadCount: calculatedUnreadCount,
+          ...(isMentee
+            ? { menteeUnreadCount: calculatedUnreadCount }
+            : { mentorUnreadCount: calculatedUnreadCount }),
+        };
+      });
+    }
+  }, [calculatedUnreadCount, chatRoom?.id, isMentee]);
+
   // Update conversationId when mentorship data is loaded (for mentee)
   useEffect(() => {
     if (isMentee && mentorship?.conversationId) {
@@ -171,8 +203,8 @@ export default function ResumeReviewPage() {
 
     const setupChatRoom = async () => {
       try {
-        setIsLoadingChat(true);
         setChatError(null);
+        setIsLoadingChat(true);
 
         const mentorId = isMentee ? activeMentorship.mentorId : user.id;
         const actualMenteeId = isMentee ? user.id : (menteeId ?? user.id);
@@ -184,50 +216,68 @@ export default function ResumeReviewPage() {
           ? `${menteeProfile.firstName} ${menteeProfile.lastName}`.trim() || menteeProfile.firstName || (isMentee ? user.username : 'Mentee') || 'Mentee'
           : (isMentee ? user.username : 'Mentee') || 'Mentee';
 
+        // First create room without unreadCount, we'll update it after fetching messages
+        // Fetch chat history via HTTP (pagination) FIRST
+        const history = await getChatHistory(conversationId);
+        
+        // Set messages
+        setChatMessages(history);
+        
+        // Calculate unread count from messages
+        // Count messages from other users that are not read
+        const unreadMessages = history.filter(
+          (msg) => {
+            const isFromOtherUser = msg.senderId !== user?.id?.toString();
+            // Message is unread if read is false, undefined, or null
+            const isUnread = msg.read === false || msg.read === undefined || msg.read === null;
+            return isFromOtherUser && isUnread;
+          }
+        );
+        const unreadCount = unreadMessages.length;
+        
+        // Debug log
+        console.log('[ResumeReviewPage] Unread count calculation:', {
+          totalMessages: history.length,
+          unreadCount,
+          currentUserId: user?.id?.toString(),
+          unreadMessages: unreadMessages.slice(0, 5).map(m => ({
+            id: m.id,
+            senderId: m.senderId,
+            read: m.read,
+            content: m.content.substring(0, 30) + '...'
+          })),
+        });
+        
+        // Create room WITH unread count already calculated
         const room: ChatRoomForUser = {
           id: conversationId.toString(),
           mentorshipId: (isMentee ? activeMentorship.mentorshipRequestId : (mentorRequestsQuery.data?.[0]?.id || '0')).toString(),
           mentorProfileId: mentorId.toString(),
           mentorProfileName: mentorName,
           mentorProfileAvatar: mentorProfile?.imageUrl,
-          mentorOnline: false, // TODO: Implement real-time online status
-          mentorUnreadCount: 0,
+          mentorOnline: false,
+          mentorUnreadCount: isMentee ? 0 : unreadCount,
           menteeProfileId: actualMenteeId.toString(),
           menteeProfileName: menteeName,
           menteeProfileAvatar: menteeProfile?.imageUrl,
-          menteeOnline: false, // TODO: Implement real-time online status
-          menteeUnreadCount: 0,
+          menteeOnline: false,
+          menteeUnreadCount: isMentee ? unreadCount : 0,
           status: 'OPEN',
           participantId: isMentee ? actualMenteeId.toString() : mentorId.toString(),
           participantName: isMentee ? mentorName : menteeName,
           participantAvatar: isMentee ? mentorProfile?.imageUrl : menteeProfile?.imageUrl,
           participantRole: isMentee ? 'mentee' : 'mentor',
-          unreadCount: 0, // Will be updated after fetching messages
-          isOnline: false, // TODO: Implement real-time online status
+          unreadCount: unreadCount, // Set unread count directly
+          isOnline: false,
         };
 
+        console.log('[ResumeReviewPage] Setting chatRoom with unreadCount:', unreadCount, 'room object:', room);
         setChatRoom(room);
-
-        // Fetch chat history via HTTP (pagination)
-        const history = await getChatHistory(conversationId);
-        setChatMessages(history);
         
-        // Calculate unread count (messages not read by current user)
-        const unreadCount = history.filter(
-          (msg) => msg.senderId !== user?.id?.toString() && !msg.read
-        ).length;
-        
-        // Update room with unread count
-        setChatRoom((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            unreadCount,
-            ...(isMentee
-              ? { menteeUnreadCount: unreadCount }
-              : { mentorUnreadCount: unreadCount }),
-          };
-        });
+        // Verify the state was set correctly
+        setTimeout(() => {
+          console.log('[ResumeReviewPage] chatRoom state after setChatRoom (async check):', room.unreadCount);
+        }, 0);
       } catch (err) {
         console.error('Error setting up chat:', err);
         const normalized = normalizeApiError(err, 'Failed to load chat');
@@ -238,7 +288,8 @@ export default function ResumeReviewPage() {
     };
 
     setupChatRoom();
-  }, [conversationId, user?.id, mentorship, mentorMentorshipDetails, mentorProfile, menteeProfile, isMentee, menteeId, mentorRequestsQuery.data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationId, user?.id, isMentee]); // Only re-run when conversationId or user changes
 
   // WebSocket connection
   useEffect(() => {
@@ -264,32 +315,45 @@ export default function ResumeReviewPage() {
       accessToken,
       (message: ChatMessage) => {
         setChatMessages((prev) => {
-          // Check if message already exists (avoid duplicates)
+          // Check if message already exists (avoid duplicates from history + WS)
           if (prev.some((m) => m.id === message.id)) {
+            console.log('[ResumeReviewPage] Message already exists, skipping:', message.id);
             return prev;
           }
+          
+          console.log('[ResumeReviewPage] New message received via WS:', {
+            id: message.id,
+            senderId: message.senderId,
+            currentUserId: user?.id?.toString(),
+            read: message.read,
+            isFromOtherUser: message.senderId !== user?.id?.toString(),
+            isUnread: !message.read
+          });
+          
           const newMessages = [...prev, message];
           
-          // Update unread count only if message is from other user and not read
+          // Update unread count if message is from other user and not read
           if (message.senderId !== user?.id?.toString() && !message.read) {
             setChatRoom((prevRoom) => {
-              if (!prevRoom) return prevRoom;
-              // Recalculate unread count from all messages
-              const unreadCount = newMessages.filter(
-                (msg) => msg.senderId !== user?.id?.toString() && !msg.read
-              ).length;
-              
-              // Only update if count actually changed to prevent flickering
-              if (prevRoom.unreadCount === unreadCount) {
+              if (!prevRoom) {
+                console.warn('[ResumeReviewPage] Cannot update unreadCount: chatRoom is null');
                 return prevRoom;
               }
+              const currentUnread = prevRoom.unreadCount ?? 0;
+              const newUnreadCount = currentUnread + 1;
+              
+              console.log('[ResumeReviewPage] Incrementing unread count:', {
+                before: currentUnread,
+                after: newUnreadCount,
+                messageId: message.id
+              });
               
               return {
                 ...prevRoom,
-                unreadCount,
+                unreadCount: newUnreadCount,
                 ...(isMentee
-                  ? { menteeUnreadCount: unreadCount }
-                  : { mentorUnreadCount: unreadCount }),
+                  ? { menteeUnreadCount: newUnreadCount }
+                  : { mentorUnreadCount: newUnreadCount }),
               };
             });
           }
@@ -315,7 +379,7 @@ export default function ResumeReviewPage() {
         wsRef.current = null;
       }
     };
-  }, [conversationId, accessToken, chatRoom?.id, user?.id, isMentee]);
+  }, [conversationId, accessToken, chatRoom?.id, user?.id, isMentee]); // Keep chatRoom?.id to reconnect when room changes
 
   const handleSendMessage = (content: string) => {
     if (!wsRef.current || !content.trim()) return;
@@ -687,14 +751,20 @@ export default function ResumeReviewPage() {
         {/* Right Panel: Chat */}
         <div className="flex flex-col min-h-0 overflow-hidden">
           <Card className="flex-1 flex flex-col overflow-hidden min-h-0 h-full">
-            {conversationId && chatRoom ? (
+            {isLoadingChat ? (
+              <div className="flex-1 flex items-center justify-center p-8">
+                <CenteredLoader />
+              </div>
+            ) : conversationId && chatRoom ? (
               <ChatInterface
                 room={chatRoom}
                 messages={chatMessages}
                 onSendMessage={handleSendMessage}
                 currentUserId={user?.id?.toString()}
                 disabled={isCompleted || isClosed}
+                autoScrollOnMount={true}
                 onMessagesViewed={() => {
+                  console.log('[ResumeReviewPage] onMessagesViewed called, current unreadCount:', chatRoom?.unreadCount, 'room prop:', chatRoom);
                   // Mark messages as read when user scrolls to bottom
                   setChatMessages((prev) => {
                     const updated = prev.map((msg) =>
@@ -724,7 +794,7 @@ export default function ResumeReviewPage() {
                   });
                   
                   // Send read sync to backend
-                  if (wsRef.current) {
+                  if (wsRef.current && wsRef.current.isConnected()) {
                     wsRef.current.sendReadSync();
                   }
                 }}
