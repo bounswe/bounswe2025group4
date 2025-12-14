@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/providers/badge_provider.dart';
 import '../../../core/providers/font_size_provider.dart';
 import '../../../core/models/badge.dart';
+import '../../../generated/l10n/app_localizations.dart';
 
 class BadgeItem extends StatelessWidget {
   final BadgeDisplay badgeDisplay;
@@ -88,7 +89,7 @@ class BadgeItem extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    'Locked',
+                    AppLocalizations.of(context).badges_locked,
                     style: TextStyle(
                       fontSize: fontSizeProvider.getScaledFontSize(9),
                       color: Colors.white,
@@ -170,7 +171,7 @@ class BadgeItem extends StatelessWidget {
                 Icon(Icons.flag, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 8),
                 Text(
-                  'Requirement: ${badgeDisplay.threshold}',
+                  AppLocalizations.of(context).badges_requirement(badgeDisplay.threshold),
                   style: TextStyle(
                     fontSize: fontSizeProvider.getScaledFontSize(12),
                     color: Colors.grey[600],
@@ -185,7 +186,7 @@ class BadgeItem extends StatelessWidget {
                   Icon(Icons.check_circle, size: 16, color: categoryColor),
                   const SizedBox(width: 8),
                   Text(
-                    'Earned on ${_formatDate(badgeDisplay.awardedAt!)}',
+                    AppLocalizations.of(context).badges_earnedOn(_formatDate(badgeDisplay.awardedAt!)),
                     style: TextStyle(
                       fontSize: fontSizeProvider.getScaledFontSize(12),
                       color: categoryColor,
@@ -200,7 +201,7 @@ class BadgeItem extends StatelessWidget {
                   Icon(Icons.lock, size: 16, color: Colors.grey[600]),
                   const SizedBox(width: 8),
                   Text(
-                    'Not yet earned',
+                    AppLocalizations.of(context).badges_notYetEarned,
                     style: TextStyle(
                       fontSize: fontSizeProvider.getScaledFontSize(12),
                       color: Colors.grey[600],
@@ -214,7 +215,7 @@ class BadgeItem extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            child: Text(AppLocalizations.of(context).badges_close),
           ),
         ],
       ),

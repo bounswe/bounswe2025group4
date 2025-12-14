@@ -56,7 +56,7 @@ class BadgeList extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'Tap to view all badges',
+                AppLocalizations.of(context).badges_tapToViewAll,
                 style: TextStyle(
                   fontSize: fontSizeProvider.getScaledFontSize(12),
                   color: Colors.grey[600],
@@ -135,7 +135,7 @@ class BadgeList extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      '+${badges.length - 5} more badges',
+                      AppLocalizations.of(context).badges_moreBadges(badges.length - 5),
                       style: TextStyle(
                         fontSize: fontSizeProvider.getScaledFontSize(12),
                         color: Colors.blue,

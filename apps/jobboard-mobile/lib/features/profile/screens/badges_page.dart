@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/providers/badge_provider.dart';
 import '../../../core/providers/font_size_provider.dart';
 import '../../../core/models/badge.dart';
+import '../../../generated/l10n/app_localizations.dart';
 import '../widgets/badge_item.dart';
 
 class BadgesPage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _BadgesPageState extends State<BadgesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My Badges',
+          AppLocalizations.of(context).badges_myBadges,
           style: TextStyle(fontSize: fontSizeProvider.getScaledFontSize(20)),
         ),
       ),
@@ -44,7 +45,7 @@ class _BadgesPageState extends State<BadgesPage> {
                       const Icon(Icons.error_outline, size: 64, color: Colors.red),
                       const SizedBox(height: 16),
                       Text(
-                        'Failed to load badges',
+                        AppLocalizations.of(context).badges_failedToLoad,
                         style: TextStyle(
                           fontSize: fontSizeProvider.getScaledFontSize(18),
                         ),
@@ -63,7 +64,7 @@ class _BadgesPageState extends State<BadgesPage> {
                         onPressed: () {
                           badgeProvider.fetchAllBadgeData();
                         },
-                        child: const Text('Retry'),
+                        child: Text(AppLocalizations.of(context).common_retry),
                       ),
                     ],
                   ),
@@ -95,22 +96,22 @@ class _BadgesPageState extends State<BadgesPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Summary card
-            _buildSummaryCard(badgeProvider, fontSizeProvider),
+            _buildSummaryCard(context, badgeProvider, fontSizeProvider),
             const SizedBox(height: 24),
 
             // All badges in one grid
             if (allBadges.isEmpty)
               Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'No badges available',
-                    style: TextStyle(
-                      fontSize: fontSizeProvider.getScaledFontSize(14),
-                      color: Colors.grey[600],
-                    ),
-                  ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                AppLocalizations.of(context).badges_noBadgesAvailable,
+                style: TextStyle(
+                  fontSize: fontSizeProvider.getScaledFontSize(14),
+                  color: Colors.grey[600],
                 ),
+              ),
+            ),
               )
             else
               GridView.builder(
@@ -152,6 +153,7 @@ class _BadgesPageState extends State<BadgesPage> {
   }
 
   Widget _buildSummaryCard(
+    BuildContext context,
     BadgeProvider badgeProvider,
     FontSizeProvider fontSizeProvider,
   ) {
@@ -182,7 +184,7 @@ class _BadgesPageState extends State<BadgesPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Badges Earned',
+                    AppLocalizations.of(context).badges_earnedCount,
                     style: TextStyle(
                       fontSize: fontSizeProvider.getScaledFontSize(16),
                       color: Colors.grey[600],
