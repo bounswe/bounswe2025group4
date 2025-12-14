@@ -364,8 +364,9 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
       MaterialPageRoute(
         builder: (context) => DirectMessageScreen(
           conversationId: conversationId,
-          mentorName: mentorName,
+          peerName: mentorName,
           resumeReviewId: resumeReviewId,
+          isMentor: false,
         ),
       ),
     );

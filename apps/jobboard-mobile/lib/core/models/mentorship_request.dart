@@ -49,7 +49,7 @@ class MentorshipRequest {
   final String? mentorUsername;
   final int? resumeReviewId;
   final String? reviewStatus;
-  final int? conversationId;
+  int? conversationId;
   final String? motivation;
 
   final String? responseMessage;

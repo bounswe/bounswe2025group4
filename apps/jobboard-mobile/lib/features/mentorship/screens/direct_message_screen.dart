@@ -6,15 +6,17 @@ import 'package:mobile/features/mentorship/providers/chat_provider.dart';
 import '../../../core/models/chat_message.dart';
 import '../../../core/providers/auth_provider.dart';
 
-class DirectMessageScreen extends StatefulWidget {
+class DirectMessageScreen extends StatelessWidget {
   final int conversationId;
-  final String mentorName;
+  final String peerName;
   final int? resumeReviewId;
+  final bool isMentor;
 
   const DirectMessageScreen({
     super.key,
     required this.conversationId,
-    required this.mentorName,
+    required this.peerName,
+    required this.isMentor,
     this.resumeReviewId,
   });
 
@@ -84,8 +86,23 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!
-              .directMessage_title(widget.mentorName),
+              .directMessage_title(widget.peerName),
         ),
+        actions: [
+          if (resumeReviewId != null)
+            IconButton(
+              icon: Icon(isMentor ? Icons.picture_as_pdf : Icons.upload_file),
+              tooltip: isMentor ? 'View Resume' : 'Send Resume',
+              onPressed: () {
+                if (isMentor) {
+                  _viewResume(context);
+                } else {
+                  _uploadResume(context);
+                }
+              },
+            ),
+        ]
+
       ),
       body: Column(
         children: [
@@ -97,11 +114,9 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
               itemCount: messages.length,
               itemBuilder: (context, index) {
                 final ChatMessage message = messages[index];
-                final isMe =
-                    message.senderUsername != widget.mentorName;
-                print("UI DEBUG:");
-                print(message.senderUsername);
-                print(widget.mentorName);
+                final myUsername =
+                    context.read<AuthProvider>().currentUser!.username;
+                final isMe = message.senderUsername == myUsername;
 
                 return _buildMessageBubble(message.content, isMe);
               },

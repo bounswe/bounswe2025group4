@@ -107,12 +107,26 @@ class MentorProvider with ChangeNotifier {
       final rawRequests =
       await _apiService.getMentorshipRequestsAsMentor(mentorId);
 
-      // Enrich with requester usernames
-      for (var r in rawRequests) {
-        print(r.status);
+      for (final r in rawRequests) {
+        // 1️⃣ Username enrichment
         if (r.requesterId != null) {
-          final username = await _apiService.getUsernameForUser(r.requesterId!);
-          r.requesterUsername = username;
+          r.requesterUsername =
+          await _apiService.getUsernameForUser(r.requesterId!);
+        }
+
+        // Conversation ID enrichment (ONLY if accepted & missing)
+        if (r.status == MentorshipRequestStatus.ACCEPTED &&
+            r.conversationId == null &&
+            r.requesterId != null) {
+
+          final conversationId =
+          await resolveConversationIdViaMentee(
+            menteeId: r.requesterId!,
+            mentorId: mentorId,
+            mentorshipRequestId: r.id,
+          );
+
+          r.conversationId = conversationId;
         }
       }
 
@@ -125,6 +139,7 @@ class MentorProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
 
   // REQUESTS WHERE CURRENT USER IS A MENTEE
   Future<void> fetchMenteeRequests(String menteeId) async {
@@ -144,6 +159,35 @@ class MentorProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<int?> resolveConversationIdViaMentee({
+    required String menteeId,
+    required String mentorId,
+    required String mentorshipRequestId,
+  }) async {
+    try {
+      final menteeRequests =
+      await _apiService.getMentorshipRequestsAsMentee(menteeId);
+
+      for (final r in menteeRequests) {
+        final sameMentor = r.mentorId.toString() == mentorId;
+        final sameRequest =
+            r.id == mentorshipRequestId ||
+                r.resumeReviewId?.toString() == mentorshipRequestId;
+
+        if (sameMentor && sameRequest) {
+          return r.conversationId;
+        }
+      }
+
+      return null;
+    } catch (e) {
+      debugPrint('Failed to resolve conversationId via mentee: $e');
+      return null;
+    }
+  }
+
+
 
   // CREATE MENTORSHIP REQUEST
   Future<bool> createMentorshipRequest({

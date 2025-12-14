@@ -980,6 +980,15 @@ class ApiService {
 
   // --- Mentor Profile Endpoints ---
 
+  Future<String> getResumeFileUrl(int resumeReviewId) async {
+    final res = await _dio.get(
+      '/api/mentorship/$resumeReviewId/file',
+    );
+
+    return res.data['fileUrl'] as String;
+  }
+
+
   /// PUT /api/mentorship/mentor
   /// Creates a mentor profile for the current user.
   Future<MentorProfile> createMentorProfile({
