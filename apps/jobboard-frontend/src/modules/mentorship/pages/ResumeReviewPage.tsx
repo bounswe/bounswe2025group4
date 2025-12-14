@@ -722,6 +722,11 @@ export default function ResumeReviewPage() {
                     });
                     return updated;
                   });
+                  
+                  // Send read sync to backend
+                  if (wsRef.current) {
+                    wsRef.current.sendReadSync();
+                  }
                 }}
               />
             ) : (

@@ -24,6 +24,7 @@ const ChatInterface = ({ room, messages, onSendMessage, currentUserId = 'current
   const [messageInput, setMessageInput] = useState('');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const lastUnreadCountRef = useRef<number>(0);
 
   // Auto-scroll to bottom when new messages arrive (only if user is at bottom)
   useEffect(() => {
@@ -35,22 +36,65 @@ const ChatInterface = ({ room, messages, onSendMessage, currentUserId = 'current
           if (isAtBottom) {
             requestAnimationFrame(() => {
               scrollElement.scrollTop = scrollElement.scrollHeight;
-              // Mark messages as read when scrolled to bottom
-              if (onMessagesViewed) {
+              // Mark messages as read when scrolled to bottom and there are unread messages
+              if (onMessagesViewed && (room.unreadCount ?? 0) > 0) {
                 onMessagesViewed();
+                lastUnreadCountRef.current = 0;
               }
             });
           }
       }
     }
-  }, [messages.length, onMessagesViewed]); // Only trigger on message count change
+  }, [messages.length, onMessagesViewed, room.unreadCount]); // Only trigger on message count change
 
-  // Mark messages as read when user scrolls to bottom or views chat
-  // But don't automatically reset unread count - let user see the count
+  // Mark messages as read when chat is first opened (if at bottom)
   useEffect(() => {
-    // Only mark as read when user actively views (scrolls to bottom)
-    // This is handled by scroll detection, not automatically
-  }, [messages, currentUserId, onMessagesViewed]);
+    if (scrollAreaRef.current && onMessagesViewed && (room.unreadCount ?? 0) > 0) {
+      const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+      if (scrollElement) {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          const isAtBottom = scrollElement.scrollHeight - scrollElement.scrollTop <= scrollElement.clientHeight + 50;
+          if (isAtBottom) {
+            onMessagesViewed();
+            lastUnreadCountRef.current = 0;
+          }
+        }, 100);
+      }
+    }
+  }, [room.id, onMessagesViewed]); // Only when room changes
+
+  // Mark messages as read when user scrolls to bottom
+  useEffect(() => {
+    const scrollElement = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+    if (!scrollElement) return;
+
+    const handleScroll = () => {
+      const isAtBottom = scrollElement.scrollHeight - scrollElement.scrollTop <= scrollElement.clientHeight + 50;
+      if (isAtBottom && onMessagesViewed && (room.unreadCount ?? 0) > 0) {
+        onMessagesViewed();
+        lastUnreadCountRef.current = 0;
+      }
+    };
+
+    scrollElement.addEventListener('scroll', handleScroll);
+    
+    // Also check on mount if already at bottom
+    const isAtBottom = scrollElement.scrollHeight - scrollElement.scrollTop <= scrollElement.clientHeight + 50;
+    if (isAtBottom && onMessagesViewed && (room.unreadCount ?? 0) > 0) {
+      onMessagesViewed();
+      lastUnreadCountRef.current = 0;
+    }
+
+    return () => {
+      scrollElement.removeEventListener('scroll', handleScroll);
+    };
+  }, [onMessagesViewed, room.unreadCount]);
+
+  // Reset lastUnreadCount when room changes
+  useEffect(() => {
+    lastUnreadCountRef.current = room.unreadCount ?? 0;
+  }, [room.id, room.unreadCount]);
 
   const handleSendMessage = () => {
     if (disabled) return;

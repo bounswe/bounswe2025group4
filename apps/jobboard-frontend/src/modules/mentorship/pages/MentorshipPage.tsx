@@ -49,8 +49,6 @@ const MentorshipPage = () => {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [minRating, setMinRating] = useState<number>(0);
-  const [maxRating, setMaxRating] = useState<number>(5);
   const [ratingRange, setRatingRange] = useState<[number, number]>([0, 5]);
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>(new Set());
@@ -451,7 +449,7 @@ const MentorshipPage = () => {
                     setSelectedTags(newTags);
                   }}
                   className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20"
-                  aria-label={t('mentorship.filters.removeTag', { tag }, `Remove ${tag}`)}
+                  aria-label={t('mentorship.filters.removeTag', { tag }) || `Remove ${tag}`}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -526,7 +524,7 @@ const MentorshipPage = () => {
                     setSelectedSkills(newSkills);
                   }}
                   className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20"
-                  aria-label={t('mentorship.filters.removeTag', { tag: skill }, `Remove ${skill}`)}
+                  aria-label={t('mentorship.filters.removeTag', { tag: skill }) || `Remove ${skill}`}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -601,7 +599,7 @@ const MentorshipPage = () => {
                     setSelectedInterests(newInterests);
                   }}
                   className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20"
-                  aria-label={t('mentorship.filters.removeTag', { tag: interest }, `Remove ${interest}`)}
+                  aria-label={t('mentorship.filters.removeTag', { tag: interest }) || `Remove ${interest}`}
                 >
                   <X className="h-3 w-3" />
                 </button>

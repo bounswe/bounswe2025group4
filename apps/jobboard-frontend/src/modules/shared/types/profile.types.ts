@@ -61,6 +61,8 @@ export interface PublicProfile {
   imageUrl?: string;
   educations: Education[];
   experiences: Experience[];
+  skills?: Skill[];
+  interests?: Interest[];
   badges?: Badge[];
 }
 
