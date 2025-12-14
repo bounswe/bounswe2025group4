@@ -88,7 +88,9 @@ public enum ErrorCode {
     RESUME_FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR),
     RESUME_FILE_NOT_FOUND(HttpStatus.NOT_FOUND),
     ACCOUNT_BANNED(HttpStatus.FORBIDDEN),
-    MENTOR_BANNED(HttpStatus.FORBIDDEN);
+    MENTOR_BANNED(HttpStatus.FORBIDDEN),
+
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND);
 
     public final HttpStatus status;
 

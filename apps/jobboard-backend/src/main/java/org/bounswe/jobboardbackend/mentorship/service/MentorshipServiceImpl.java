@@ -14,6 +14,7 @@ import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.bounswe.jobboardbackend.mentorship.model.*;
 import org.bounswe.jobboardbackend.mentorship.repository.*;
+import org.bounswe.jobboardbackend.notification.notifier.MentorshipNotifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -45,8 +46,7 @@ public class MentorshipServiceImpl implements MentorshipService {
     private final ConversationRepository conversationRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final Storage storage = StorageOptions.getDefaultInstance().getService();
-    // private final NotificationService notificationService; // (Future
-    // implementation)
+    private final MentorshipNotifier notifier;
 
     @Value("${app.gcs.bucket}")
     private String gcsBucket;
@@ -194,7 +194,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         mentorProfile.setReviewCount(0);
 
         MentorProfile savedProfile = mentorProfileRepository.save(mentorProfile);
-        
+
         // Publish event for badge system
         eventPublisher.publishEvent(new MentorProfileCreatedEvent(userId));
         
@@ -265,9 +265,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         newRequest.setMotivation(requestDTO.motivation());
         MentorshipRequest savedRequest = mentorshipRequestRepository.save(newRequest);
 
-        // Trigger notification
-        // notificationService.notifyMentor(mentor.getUser(), "New mentorship request");
-        // // (Future implementation)
+        notifier.notifyRequestCreated(savedRequest);
 
         // Publish event for badge system
         eventPublisher.publishEvent(new MentorshipRequestCreatedEvent(jobSeekerId, savedRequest.getId()));
@@ -304,15 +302,13 @@ public class MentorshipServiceImpl implements MentorshipService {
             review.setCreatedAt(LocalDateTime.now());
             ResumeReview savedReview = resumeReviewRepository.save(review);
 
-            chatService.createConversationForReview(savedReview);
+            Conversation conversation = chatService.createConversationForReview(savedReview);
 
             MentorProfile mentor = request.getMentor();
             mentor.setCurrentMentees(mentor.getCurrentMentees() + 1);
             mentorProfileRepository.save(mentor);
 
-            // Trigger notification
-            // notificationService.notifyUser(request.getRequester(), "Your request was
-            // accepted!"); // (Future implementation)
+            notifier.notifyRequestResponded(request, respondToRequestDTO.responseMessage(), true, conversation.getId());
 
             // Publish event for badge system (both mentor and mentee get badges)
             eventPublisher.publishEvent(new MentorshipRequestAcceptedEvent(
@@ -324,9 +320,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         } else {
             request.decline(respondToRequestDTO.responseMessage());
 
-            // Trigger notification
-            // notificationService.notifyUser(request.getRequester(), "Your request was
-            // declined."); // (Future implementation)
+            notifier.notifyRequestResponded(request, respondToRequestDTO.responseMessage(), false, null);
         }
 
         MentorshipRequest updatedRequest = mentorshipRequestRepository.save(request);
