@@ -468,6 +468,29 @@ export const profileHandlers = [
   }),
 ];
 
+export const badgeHandlers = [
+  http.options(`${API_BASE_URL}/badges/types`, async () => {
+    return HttpResponse.json({}, { status: 200 });
+  }),
+  http.get(`${API_BASE_URL}/badges/types`, async () => {
+    return HttpResponse.json([], { status: 200 });
+  }),
+
+  http.options(`${API_BASE_URL}/badges/my`, async () => {
+    return HttpResponse.json({}, { status: 200 });
+  }),
+  http.get(`${API_BASE_URL}/badges/my`, async () => {
+    return HttpResponse.json([], { status: 200 });
+  }),
+
+  http.options(`${API_BASE_URL}/badges/user/:userId`, async () => {
+    return HttpResponse.json({}, { status: 200 });
+  }),
+  http.get(`${API_BASE_URL}/badges/user/:userId`, async () => {
+    return HttpResponse.json([], { status: 200 });
+  }),
+];
+
 // ============================================================================
 // MOCK DATA FACTORIES
 // ============================================================================

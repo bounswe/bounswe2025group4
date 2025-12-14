@@ -76,9 +76,11 @@ describe('ProfilePage', () => {
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('profile.public.note')).toBeInTheDocument();
+    expect(screen.getByText(/profile\.header\.badges/)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'profile.actions.add' })).not.toBeInTheDocument();
     expect(screen.queryByLabelText('profile.header.actions.editImage')).not.toBeInTheDocument();
+    expect(screen.queryByText('profile.skills.title')).not.toBeInTheDocument();
+    expect(screen.queryByText('profile.interests.title')).not.toBeInTheDocument();
   });
 
   it('shows create profile modal when owner profile is missing and submits data', async () => {
