@@ -7,6 +7,7 @@ export type NotificationType =
   | 'JOB_APPLICATION_APPROVED'
   | 'JOB_APPLICATION_REJECTED'
   | 'FORUM_COMMENT'
+  | 'AWARDED_BADGE'
   | 'SYSTEM_BROADCAST'
   | 'BROADCAST'
   | 'GLOBAL'

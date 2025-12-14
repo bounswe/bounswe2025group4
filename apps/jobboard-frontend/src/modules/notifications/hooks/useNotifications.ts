@@ -21,6 +21,7 @@ const resolveNotificationLink = (notification: NotificationItem): string => {
     'JOB_APPLICATION_APPROVED': '/jobs/applications',
     'JOB_APPLICATION_REJECTED': '/jobs/applications',
     'FORUM_COMMENT': '/forum',
+    'AWARDED_BADGE': '/profile/badges',
     'SYSTEM_BROADCAST': '/',
     'BROADCAST': '/',
     'GLOBAL': '/',
