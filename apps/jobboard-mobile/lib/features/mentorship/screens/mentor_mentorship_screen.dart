@@ -281,6 +281,32 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                                 ),
                               );
                             },
+                            onComplete: resumeReviewId == null
+                                ? null
+                                : () async {
+                              final success = await mentorProvider
+                                  .completeMentorship(resumeReviewId);
+
+                              if (success && mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Mentorship completed')),
+                                );
+                                refresh();
+                              }
+                            },
+                            onCancel: resumeReviewId == null
+                                ? null
+                                : () async {
+                              final success = await mentorProvider
+                                  .cancelMentorship(resumeReviewId);
+
+                              if (success && mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Mentorship cancelled')),
+                                );
+                                refresh();
+                              }
+                            },
                           );
                         },
                       ),
