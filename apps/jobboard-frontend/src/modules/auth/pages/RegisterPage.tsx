@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shar
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
   ? import.meta.env.VITE_API_URL
-  : (import.meta.env.VITE_API_URL || '') + '/api';
+  : (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api';
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);

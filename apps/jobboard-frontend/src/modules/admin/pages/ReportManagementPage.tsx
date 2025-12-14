@@ -57,10 +57,12 @@ export function ReportManagementPage() {
     return tab as ReportStatus;
   };
 
+  const pageSize = 10; // Reports per page
+  
   // Fetch reports for current tab
   const { data: reportsData, isLoading } = useQuery({
     queryKey: ['admin', 'reports', activeTab, page],
-    queryFn: () => getReports(getStatusFromTab(activeTab), undefined, page, 20),
+    queryFn: () => getReports(getStatusFromTab(activeTab), undefined, page, pageSize),
   });
 
   // Fetch all reports for counts (without status filter)
@@ -307,7 +309,7 @@ export function ReportManagementPage() {
                             <TableHead>Reported Item</TableHead>
                             <TableHead>Reporter</TableHead>
                             <TableHead>Reason</TableHead>
-                            <TableHead>Date</TableHead>
+                            <TableHead className="whitespace-nowrap">Date</TableHead>
                             <TableHead>Actions</TableHead>
                           </TableRow>
                         </TableHeader>
@@ -328,7 +330,7 @@ export function ReportManagementPage() {
                               </TableCell>
                               <TableCell>{report.createdByUsername}</TableCell>
                               <TableCell>{getReasonBadge(report.reasonType)}</TableCell>
-                              <TableCell className="text-sm text-muted-foreground">
+                              <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                                 {format(new Date(report.createdAt), 'yyyy-MM-dd')}
                               </TableCell>
                               <TableCell>
