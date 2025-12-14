@@ -13,9 +13,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { upvotePost, downvotePost, useCreateForumPostMutation } from '@modules/forum/services/forum.service';
 import { forumKeys } from '@shared/lib/query-keys';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
-import { Trash2, Pencil } from 'lucide-react';
+import { Trash2, Pencil, ShieldAlert } from 'lucide-react';
 import { toast } from 'react-toastify';
 import type { ForumPostResponseDTO } from '@shared/types/api.types';
+import { useReportModal } from '@shared/hooks/useReportModal';
+import { reportForumPost } from '@modules/workplace/services/workplace-report.service';
 
 const truncate = (s: string, n = 250) => (s.length > n ? s.slice(0, n) + '…' : s);
 
@@ -34,6 +36,7 @@ const ForumPage = () => {
   const { data: posts = [], isLoading, isError } = useForumPostsQuery();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { openReport, ReportModalElement } = useReportModal();
 
   const createPostMutation = useCreateForumPostMutation();
 
@@ -225,25 +228,45 @@ const ForumPage = () => {
                       activeDislike={postVotes[post.id] === 'dislike'}
                     />
                   </div>
-                  {user && user.id === post.authorId && (
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openEditDialog(post)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => setDeletePostId(post.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        openReport({
+                          title: t('forum.reportPost.title'),
+                          subtitle: t('forum.reportPost.subtitle', { author: post.authorUsername }),
+                          contextSnippet: post.content,
+                          reportType: 'Post',
+                          reportedName: post.authorUsername,
+                          onSubmit: async (message) => {
+                            await reportForumPost(post.id, message);
+                          },
+                        })
+                      }
+                    >
+                      <ShieldAlert className="h-4 w-4 text-red-500" />
+                    </Button>
+                    {user && user.id === post.authorId && (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEditDialog(post)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => setDeletePostId(post.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -323,6 +346,8 @@ const ForumPage = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {ReportModalElement}
     </div>
   );
 };

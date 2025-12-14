@@ -7,7 +7,7 @@ import LikeDislikeButtons from "./LikeDislikeButtons";
 import { useState } from "react";
 import { ShieldAlert } from 'lucide-react';
 import { useReportModal } from '@shared/hooks/useReportModal';
-import { reportForumComment } from '@modules/workplace/services/workplace-report.service';
+import { reportForumPost } from '@modules/workplace/services/workplace-report.service';
 
 interface ForumPostProps {
   post: {
@@ -67,7 +67,7 @@ const ForumPost = ({
               reportType: 'Post',
               reportedName: post.author,
               onSubmit: async (message) => {
-                await reportForumComment(Number(post.id), message);
+                await reportForumPost(Number(post.id), message);
               },
             })
           }

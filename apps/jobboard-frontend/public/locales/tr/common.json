@@ -67,6 +67,24 @@
       "pageInfo": "Sayfa {{page}} / {{total}}"
     }
   },
+  "report": {
+    "messageLabel": "Neden şikayet ettiğinizi açıklayın",
+    "messagePlaceholder": "Lütfen detay verin...",
+    "errorEmpty": "Lütfen şikayetinizi açıklayan bir mesaj girin.",
+    "errorFailed": "Şikayet gönderilemedi. Lütfen tekrar deneyin.",
+    "success": "Teşekkürler, şikayetiniz gönderildi.",
+    "type": "Tür",
+    "author": "Yazar",
+    "reason": "Sebep",
+    "reasons": {
+      "fake": "Sahte",
+      "spam": "Spam",
+      "offensive": "Saldırgan",
+      "other": "Diğer"
+    },
+    "submit": "Şikayeti Gönder",
+    "submitting": "Gönderiliyor..."
+  },
   "auth": {
     "login": {
       "title": "Tekrar Hoş Geldiniz",
@@ -969,6 +987,10 @@
       "saving": "Kaydediliyor...",
       "success": "Gönderi başarıyla güncellendi",
       "error": "Gönderi güncellenemedi"
+    },
+    "reportPost": {
+      "title": "Gönderiyi Şikayet Et",
+      "subtitle": "{{author}} tarafından paylaşılan gönderi şikayet ediliyor"
     },
     "comment": {
       "title": "Yorumlar",

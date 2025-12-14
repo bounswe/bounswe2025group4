@@ -67,6 +67,24 @@
       "pageInfo": "Page {{page}} of {{total}}"
     }
   },
+  "report": {
+    "messageLabel": "Explain why you are reporting this",
+    "messagePlaceholder": "Please provide details...",
+    "errorEmpty": "Please enter a message explaining the report.",
+    "errorFailed": "Failed to submit report. Please try again.",
+    "success": "Thank you, your report has been submitted.",
+    "type": "Type",
+    "author": "Author",
+    "reason": "Reason",
+    "reasons": {
+      "fake": "Fake",
+      "spam": "Spam",
+      "offensive": "Offensive",
+      "other": "Other"
+    },
+    "submit": "Submit Report",
+    "submitting": "Submitting..."
+  },
   "auth": {
     "login": {
       "title": "Welcome Back",
@@ -948,6 +966,10 @@
       "saving": "Saving...",
       "success": "Post updated successfully",
       "error": "Failed to update post"
+    },
+    "reportPost": {
+      "title": "Report Post",
+      "subtitle": "Reporting post by {{author}}"
     },
     "comment": {
       "title": "Comments",

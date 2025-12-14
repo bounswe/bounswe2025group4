@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -53,16 +54,20 @@ export function ReportModal({
   contextSnippet,
   reportType,
   reportedName,
-  messageLabel = 'Explain why you are reporting this',
-  messagePlaceholder = 'Please provide details...',
+  messageLabel,
+  messagePlaceholder,
   initialMessage = '',
   onSubmit,
   isLoading = false,
 }: ReportModalProps) {
+  const { t } = useTranslation('common');
   const [message, setMessage] = useState(initialMessage);
   const [reason, setReason] = useState<ReportReasonType>(ReportReason.OTHER);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const resolvedMessageLabel = messageLabel ?? t('report.messageLabel');
+  const resolvedMessagePlaceholder = messagePlaceholder ?? t('report.messagePlaceholder');
 
   // Reset state when modal opens
   useEffect(() => {
@@ -76,7 +81,7 @@ export function ReportModal({
 
   const handleSubmit = useCallback(async () => {
     if (!message.trim()) {
-      setError('Please enter a message explaining the report.');
+      setError(t('report.errorEmpty'));
       return;
     }
 
@@ -85,17 +90,17 @@ export function ReportModal({
 
     try {
       await onSubmit(message, reason);
-      toast.success('Thank you, your report has been submitted.');
+      toast.success(t('report.success'));
       onClose();
       setMessage('');
       setReason(ReportReason.OTHER);
     } catch (err) {
       console.error('Report submission failed:', err);
-      setError('Failed to submit report. Please try again.');
+      setError(t('report.errorFailed'));
     } finally {
       setIsSubmitting(false);
     }
-  }, [message, reason, onSubmit, onClose]);
+  }, [message, reason, onSubmit, onClose, t]);
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -109,7 +114,7 @@ export function ReportModal({
           {isLoading ? (
             <div className="flex items-center justify-center py-6 text-muted-foreground">
               <Loader2 className="h-5 w-5 animate-spin mr-2" />
-              <span>Loading…</span>
+              <span>{t('common.loading')}</span>
             </div>
           ) : (
             <>
@@ -117,7 +122,7 @@ export function ReportModal({
                 <div className="flex flex-col gap-1 text-sm">
                   {reportType && (
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-muted-foreground">Type:</span>
+                      <span className="font-semibold text-muted-foreground">{t('report.type')}:</span>
                       <span className="px-2 py-0.5 bg-secondary rounded-md text-secondary-foreground text-xs font-medium uppercase">
                         {reportType}
                       </span>
@@ -125,7 +130,7 @@ export function ReportModal({
                   )}
                   {reportedName && (
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-muted-foreground">Author:</span>
+                      <span className="font-semibold text-muted-foreground">{t('report.author')}:</span>
                       <span className="font-medium">{reportedName}</span>
                     </div>
                   )}
@@ -139,25 +144,25 @@ export function ReportModal({
               )}
 
               <div className="grid gap-2">
-                <Label htmlFor="report-reason">Reason</Label>
+                <Label htmlFor="report-reason">{t('report.reason')}</Label>
                 <select
                   id="report-reason"
                   value={reason}
                   onChange={(e) => setReason(e.target.value as ReportReasonType)}
                   className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value={ReportReason.FAKE}>Fake</option>
-                  <option value={ReportReason.SPAM}>Spam</option>
-                  <option value={ReportReason.OFFENSIVE}>Offensive</option>
-                  <option value={ReportReason.OTHER}>Other</option>
+                  <option value={ReportReason.FAKE}>{t('report.reasons.fake')}</option>
+                  <option value={ReportReason.SPAM}>{t('report.reasons.spam')}</option>
+                  <option value={ReportReason.OFFENSIVE}>{t('report.reasons.offensive')}</option>
+                  <option value={ReportReason.OTHER}>{t('report.reasons.other')}</option>
                 </select>
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="report-message">{messageLabel}</Label>
+                <Label htmlFor="report-message">{resolvedMessageLabel}</Label>
                 <Textarea
                   id="report-message"
-                  placeholder={messagePlaceholder}
+                  placeholder={resolvedMessagePlaceholder}
                   value={message}
                   onChange={(e) => {
                     setMessage(e.target.value);
@@ -174,10 +179,10 @@ export function ReportModal({
 
         <DialogFooter className="sm:justify-end">
           <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSubmit} disabled={isSubmitting || isLoading || !message.trim()}>
-            {isSubmitting ? 'Submitting...' : 'Submit Report'}
+            {isSubmitting ? t('report.submitting') : t('report.submit')}
           </Button>
         </DialogFooter>
       </DialogContent>
