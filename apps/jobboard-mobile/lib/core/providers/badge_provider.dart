@@ -43,13 +43,16 @@ class BadgeProvider with ChangeNotifier {
     };
 
     // Create a map of earned badges by type
+    // Using badgeType field as key (e.g., "GUIDE")
     final Map<String, Badge> earnedMap = {
       for (var badge in _earnedBadges) badge.badgeType: badge
     };
 
     // Add all badge types, marking which are earned
     for (var badgeType in _allBadgeTypes) {
-      final earnedBadge = earnedMap[badgeType.name];
+      // Match using TYPE field (enum name) from BadgeTypeInfo, not NAME (display name)
+      final earnedBadge = earnedMap[badgeType.type];
+      
       grouped[badgeType.category]?.add(
         BadgeDisplay(
           badgeType: badgeType,

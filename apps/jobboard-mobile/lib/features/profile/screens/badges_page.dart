@@ -77,7 +77,14 @@ class _BadgesPageState extends State<BadgesPage> {
     BadgeProvider badgeProvider,
     FontSizeProvider fontSizeProvider,
   ) {
+    // Get all badges in a single flat list
     final allBadgesGrouped = badgeProvider.allBadgesGrouped;
+    final allBadges = <BadgeDisplay>[];
+    
+    // Flatten all categories into a single list
+    allBadgesGrouped.forEach((category, badges) {
+      allBadges.addAll(badges);
+    });
 
     return RefreshIndicator(
       onRefresh: () => badgeProvider.fetchAllBadgeData(),
@@ -91,57 +98,57 @@ class _BadgesPageState extends State<BadgesPage> {
             _buildSummaryCard(badgeProvider, fontSizeProvider),
             const SizedBox(height: 24),
 
-            // Forum Badges
-            _buildCategorySection(
-              context,
-              'Forum Badges',
-              BadgeCategory.FORUM,
-              allBadgesGrouped[BadgeCategory.FORUM] ?? [],
-              fontSizeProvider,
-              Icons.forum,
-              Colors.blue,
-            ),
-            const SizedBox(height: 24),
-
-            // Job Post Badges
-            _buildCategorySection(
-              context,
-              'Job Post Badges',
-              BadgeCategory.JOB_POST,
-              allBadgesGrouped[BadgeCategory.JOB_POST] ?? [],
-              fontSizeProvider,
-              Icons.work,
-              Colors.green,
-            ),
-            const SizedBox(height: 24),
-
-            // Job Application Badges
-            _buildCategorySection(
-              context,
-              'Job Application Badges',
-              BadgeCategory.JOB_APPLICATION,
-              allBadgesGrouped[BadgeCategory.JOB_APPLICATION] ?? [],
-              fontSizeProvider,
-              Icons.assignment,
-              Colors.orange,
-            ),
-            const SizedBox(height: 24),
-
-            // Mentorship Badges
-            _buildCategorySection(
-              context,
-              'Mentorship Badges',
-              BadgeCategory.MENTORSHIP,
-              allBadgesGrouped[BadgeCategory.MENTORSHIP] ?? [],
-              fontSizeProvider,
-              Icons.school,
-              Colors.purple,
-            ),
+            // All badges in one grid
+            if (allBadges.isEmpty)
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'No badges available',
+                    style: TextStyle(
+                      fontSize: fontSizeProvider.getScaledFontSize(14),
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+              )
+            else
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.75, // Reduced from 0.85 to make cards taller
+                ),
+                itemCount: allBadges.length,
+                itemBuilder: (context, index) {
+                  final badge = allBadges[index];
+                  return BadgeItem(
+                    badgeDisplay: badge,
+                    categoryColor: _getCategoryColor(badge.category),
+                  );
+                },
+              ),
             const SizedBox(height: 50),
           ],
         ),
       ),
     );
+  }
+
+  Color _getCategoryColor(BadgeCategory category) {
+    switch (category) {
+      case BadgeCategory.FORUM:
+        return Colors.blue;
+      case BadgeCategory.JOB_POST:
+        return Colors.green;
+      case BadgeCategory.JOB_APPLICATION:
+        return Colors.orange;
+      case BadgeCategory.MENTORSHIP:
+        return Colors.purple;
+    }
   }
 
   Widget _buildSummaryCard(
@@ -204,82 +211,4 @@ class _BadgesPageState extends State<BadgesPage> {
     );
   }
 
-  Widget _buildCategorySection(
-    BuildContext context,
-    String title,
-    BadgeCategory category,
-    List<BadgeDisplay> badges,
-    FontSizeProvider fontSizeProvider,
-    IconData icon,
-    Color color,
-  ) {
-    final earnedCount = badges.where((b) => b.isEarned).length;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: fontSizeProvider.getScaledFontSize(20),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                '$earnedCount/${badges.length}',
-                style: TextStyle(
-                  fontSize: fontSizeProvider.getScaledFontSize(12),
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        if (badges.isEmpty)
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'No badges in this category',
-                style: TextStyle(
-                  fontSize: fontSizeProvider.getScaledFontSize(14),
-                  color: Colors.grey[600],
-                ),
-              ),
-            ),
-          )
-        else
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.85,
-            ),
-            itemCount: badges.length,
-            itemBuilder: (context, index) {
-              return BadgeItem(
-                badgeDisplay: badges[index],
-                categoryColor: color,
-              );
-            },
-          ),
-      ],
-    );
-  }
 }

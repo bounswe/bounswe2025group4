@@ -36,12 +36,14 @@ enum BadgeType {
 }
 
 class BadgeTypeInfo {
-  final String name;
+  final String type; // Enum name for matching (e.g., "GUIDE")
+  final String name; // Display name for UI (e.g., "Guide")
   final String description;
   final BadgeCategory category;
   final int threshold;
 
   BadgeTypeInfo({
+    required this.type,
     required this.name,
     required this.description,
     required this.category,
@@ -49,28 +51,37 @@ class BadgeTypeInfo {
   });
 
   factory BadgeTypeInfo.fromJson(Map<String, dynamic> json) {
+    final type = json['type'] ?? '';
     return BadgeTypeInfo(
-      name: json['name'] ?? '',
+      type: type, // Enum name for matching
+      name: json['name'] ?? '', // Display name
       description: json['description'] ?? '',
-      category: _parseBadgeCategory(json['category']),
+      category: _determineCategoryFromType(type),
       threshold: json['threshold'] ?? 0,
     );
   }
 
-  static BadgeCategory _parseBadgeCategory(String? category) {
-    if (category == null) return BadgeCategory.FORUM;
-    switch (category.toUpperCase()) {
-      case 'FORUM':
-        return BadgeCategory.FORUM;
-      case 'JOB_POST':
-        return BadgeCategory.JOB_POST;
-      case 'JOB_APPLICATION':
-        return BadgeCategory.JOB_APPLICATION;
-      case 'MENTORSHIP':
-        return BadgeCategory.MENTORSHIP;
-      default:
-        return BadgeCategory.FORUM;
-    }
+  // Map badge types to categories (since backend doesn't send category)
+  static BadgeCategory _determineCategoryFromType(String type) {
+    const forumBadges = {
+      'FIRST_VOICE', 'COMMUNITY_PILLAR', 'CONVERSATION_STARTER',
+      'DISCUSSION_DRIVER', 'HELPFUL', 'VALUABLE_CONTRIBUTOR'
+    };
+    const jobPostBadges = {'FIRST_LISTING', 'HIRING_MACHINE'};
+    const jobApplicationBadges = {
+      'FIRST_STEP', 'PERSISTENT', 'HIRED', 'CAREER_STAR'
+    };
+    const mentorshipBadges = {
+      'GUIDE', 'FIRST_MENTEE', 'DEDICATED_MENTOR',
+      'SEEKING_GUIDANCE', 'MENTORED', 'FEEDBACK_GIVER'
+    };
+
+    if (forumBadges.contains(type)) return BadgeCategory.FORUM;
+    if (jobPostBadges.contains(type)) return BadgeCategory.JOB_POST;
+    if (jobApplicationBadges.contains(type)) return BadgeCategory.JOB_APPLICATION;
+    if (mentorshipBadges.contains(type)) return BadgeCategory.MENTORSHIP;
+    
+    return BadgeCategory.FORUM; // Default
   }
 }
 
@@ -92,32 +103,17 @@ class Badge {
   });
 
   factory Badge.fromJson(Map<String, dynamic> json) {
+    final badgeType = json['badgeType'] ?? json['type'] ?? '';
     return Badge(
-      badgeType: json['badgeType'] ?? json['type'] ?? '',
+      badgeType: badgeType,
       name: json['name'] ?? '',
       description: json['description'] ?? '',
-      category: _parseBadgeCategory(json['category']),
-      awardedAt: json['awardedAt'] != null 
-          ? DateTime.parse(json['awardedAt']) 
+      category: BadgeTypeInfo._determineCategoryFromType(badgeType),
+      awardedAt: json['earnedAt'] != null 
+          ? DateTime.parse(json['earnedAt']) 
           : null,
       threshold: json['threshold'] ?? 0,
     );
-  }
-
-  static BadgeCategory _parseBadgeCategory(String? category) {
-    if (category == null) return BadgeCategory.FORUM;
-    switch (category.toUpperCase()) {
-      case 'FORUM':
-        return BadgeCategory.FORUM;
-      case 'JOB_POST':
-        return BadgeCategory.JOB_POST;
-      case 'JOB_APPLICATION':
-        return BadgeCategory.JOB_APPLICATION;
-      case 'MENTORSHIP':
-        return BadgeCategory.MENTORSHIP;
-      default:
-        return BadgeCategory.FORUM;
-    }
   }
 
   bool get isEarned => awardedAt != null;

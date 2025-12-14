@@ -27,13 +27,14 @@ class BadgeItem extends StatelessWidget {
         elevation: isEarned ? 4 : 1,
         color: isEarned ? null : Colors.grey[200],
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 10.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Badge icon
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: isEarned
                       ? categoryColor.withOpacity(0.2)
@@ -42,24 +43,26 @@ class BadgeItem extends StatelessWidget {
                 ),
                 child: Icon(
                   _getBadgeIcon(badgeDisplay.category),
-                  size: 32,
+                  size: 28,
                   color: isEarned ? categoryColor : Colors.grey[400],
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               // Badge name
-              Text(
-                _formatBadgeName(badgeDisplay.name),
-                style: TextStyle(
-                  fontSize: fontSizeProvider.getScaledFontSize(11),
-                  fontWeight: isEarned ? FontWeight.bold : FontWeight.normal,
-                  color: isEarned ? Colors.black : Colors.grey[600],
+              Flexible(
+                child: Text(
+                  _formatBadgeName(badgeDisplay.name),
+                  style: TextStyle(
+                    fontSize: fontSizeProvider.getScaledFontSize(10.5),
+                    fontWeight: isEarned ? FontWeight.bold : FontWeight.normal,
+                    color: isEarned ? Colors.black : Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               // Earned indicator
               if (isEarned)
                 Container(
