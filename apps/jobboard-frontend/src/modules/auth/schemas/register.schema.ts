@@ -19,9 +19,24 @@ export const registerSchema = z
     email: z.string().email('Invalid email address'),
     password: passwordSchema,
     confirmPassword: z.string(),
+    firstName: z
+      .string()
+      .min(2, 'First name must be at least 2 characters')
+      .max(30, 'First name must be at most 30 characters'),
+    lastName: z
+      .string()
+      .min(2, 'Last name must be at least 2 characters')
+      .max(30, 'Last name must be at most 30 characters'),
     role: z.enum(['ROLE_JOBSEEKER', 'ROLE_EMPLOYER'], {
       message: 'Please select a role',
     }),
+    pronounSet: z
+      .union([
+        z.enum(['HE_HIM', 'SHE_HER', 'THEY_THEM', 'SHE_THEY', 'HE_THEY', 'OTHER', 'NONE']),
+        z.literal(''),
+      ])
+      .optional(),
+    bio: z.string().max(250, 'Bio must be at most 250 characters').optional(),
     gender: z.string().optional(),
     pronouns: z.string().optional(),
     agreeToTerms: z.boolean().refine((val) => val === true, {

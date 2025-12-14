@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-
     @ExceptionHandler(HandleException.class)
     public ResponseEntity<ApiError> handleException(HandleException ex, HttpServletRequest req) {
         return build(ex.getMessage(), ex.getCode(), ex.getCode().status, req, null);
@@ -47,11 +46,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiError> handleConstraintViolation(ConstraintViolationException ex,
-                                                              HttpServletRequest req) {
+            HttpServletRequest req) {
         List<ApiError.Violation> violations = ex.getConstraintViolations().stream()
                 .map(cv -> new ApiError.Violation(cv.getPropertyPath().toString(), cv.getMessage()))
                 .collect(Collectors.toList());
-        return build("Validation failed", ErrorCode.VALIDATION_FAILED, ErrorCode.VALIDATION_FAILED.status, req, violations);
+        return build("Validation failed", ErrorCode.VALIDATION_FAILED, ErrorCode.VALIDATION_FAILED.status, req,
+                violations);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -64,7 +64,8 @@ public class GlobalExceptionHandler {
         List<ApiError.Violation> violations = ex.getBindingResult().getFieldErrors().stream()
                 .map(fe -> new ApiError.Violation(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
-        return build("Validation failed", ErrorCode.VALIDATION_FAILED, ErrorCode.VALIDATION_FAILED.status, req, violations);
+        return build("Validation failed", ErrorCode.VALIDATION_FAILED, ErrorCode.VALIDATION_FAILED.status, req,
+                violations);
     }
 
     @ExceptionHandler(BindException.class)
@@ -72,7 +73,8 @@ public class GlobalExceptionHandler {
         List<ApiError.Violation> violations = ex.getBindingResult().getFieldErrors().stream()
                 .map(fe -> new ApiError.Violation(fe.getField(), fe.getDefaultMessage()))
                 .collect(Collectors.toList());
-        return build("Validation failed", ErrorCode.VALIDATION_FAILED, ErrorCode.VALIDATION_FAILED.status, req, violations);
+        return build("Validation failed", ErrorCode.VALIDATION_FAILED, ErrorCode.VALIDATION_FAILED.status, req,
+                violations);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -82,14 +84,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ApiError> handleMissingParam(MissingServletRequestParameterException ex, HttpServletRequest req) {
+    public ResponseEntity<ApiError> handleMissingParam(MissingServletRequestParameterException ex,
+            HttpServletRequest req) {
         String msg = "Missing request parameter: " + ex.getParameterName();
         return build(msg, ErrorCode.VALIDATION_FAILED, ErrorCode.VALIDATION_FAILED.status, req, null);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ApiError> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex, HttpServletRequest req) {
-        return build("Method not allowed", ErrorCode.METHOD_NOT_ALLOWED, ErrorCode.METHOD_NOT_ALLOWED.status, req, null);
+    public ResponseEntity<ApiError> handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex,
+            HttpServletRequest req) {
+        return build("Method not allowed", ErrorCode.METHOD_NOT_ALLOWED, ErrorCode.METHOD_NOT_ALLOWED.status, req,
+                null);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -103,8 +108,7 @@ public class GlobalExceptionHandler {
                     ErrorCode.USER_UNAUTHORIZED,
                     ErrorCode.USER_UNAUTHORIZED.status,
                     req,
-                    null
-            );
+                    null);
         }
 
         return build(
@@ -112,18 +116,26 @@ public class GlobalExceptionHandler {
                 ErrorCode.ACCESS_DENIED,
                 ErrorCode.ACCESS_DENIED.status,
                 req,
-                null
-        );
+                null);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiError> handleBadCredentials(BadCredentialsException ex, HttpServletRequest req) {
-        return build("Invalid username or password", ErrorCode.INVALID_CREDENTIALS, ErrorCode.INVALID_CREDENTIALS.status, req, null);
+        return build("Invalid username or password", ErrorCode.INVALID_CREDENTIALS,
+                ErrorCode.INVALID_CREDENTIALS.status, req, null);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ApiError> handleAuthentication(AuthenticationException ex, HttpServletRequest req) {
-        return build("Authentication failed", ErrorCode.AUTHENTICATION_FAILED, ErrorCode.AUTHENTICATION_FAILED.status, req, null);
+        return build("Authentication failed", ErrorCode.AUTHENTICATION_FAILED, ErrorCode.AUTHENTICATION_FAILED.status,
+                req, null);
+    }
+
+    @ExceptionHandler(org.springframework.security.authentication.LockedException.class)
+    public ResponseEntity<ApiError> handleAccountLocked(org.springframework.security.authentication.LockedException ex,
+            HttpServletRequest req) {
+        return build("Your account has been banned.", ErrorCode.ACCOUNT_BANNED, ErrorCode.ACCOUNT_BANNED.status, req,
+                null);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -137,11 +149,11 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ApiError> build(
-    String message,
-    ErrorCode code,
-    HttpStatus status,
-    HttpServletRequest req,
-    List<ApiError.Violation> violations) {
+            String message,
+            ErrorCode code,
+            HttpStatus status,
+            HttpServletRequest req,
+            List<ApiError.Violation> violations) {
 
         ApiError apiError = new ApiError(
                 LocalDateTime.now(),
@@ -150,8 +162,7 @@ public class GlobalExceptionHandler {
                 code.name(),
                 message,
                 req.getRequestURI(),
-                violations
-        );
+                violations);
         return new ResponseEntity<>(apiError, new HttpHeaders(), status);
     }
 }

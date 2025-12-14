@@ -12,6 +12,9 @@ import org.bounswe.jobboardbackend.mentorship.repository.ConversationRepository;
 import org.bounswe.jobboardbackend.mentorship.repository.MessageRepository;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.mentorship.repository.ResumeReviewRepository;
+import org.bounswe.jobboardbackend.notification.notifier.ChatNotifier;
+import org.springframework.messaging.simp.user.SimpUser;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,17 +30,19 @@ public class ChatServiceImpl implements ChatService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final ResumeReviewRepository resumeReviewRepository;
+    private final SimpUserRegistry simpUserRegistry;
+    private final ChatNotifier notifier;
 
 
 
     @Override
     @Transactional
 
-    public void createConversationForReview(ResumeReview review) {
+    public Conversation createConversationForReview(ResumeReview review) {
         Conversation conversation = new Conversation();
         conversation.setResumeReview(review);
         conversation.setCreatedAt(LocalDateTime.now());
-        conversationRepository.save(conversation);
+        return conversationRepository.save(conversation);
     }
 
     @Override
@@ -58,6 +63,15 @@ public class ChatServiceImpl implements ChatService {
         message.setTimestamp(LocalDateTime.now());
 
         Message savedMessage = messageRepository.save(message);
+
+        String mentorName = conversation.getResumeReview().getMentor().getUser().getUsername();
+        String jobSeekerName = conversation.getResumeReview().getJobSeeker().getUsername();
+        String receiverName = sender.getUsername().equals(mentorName) ? jobSeekerName : mentorName;
+
+        String conversationDestination = "/topic/conversation/" + conversationId;
+        boolean isSubscribed = isUserSubscribedToDestination(receiverName, conversationDestination);
+
+        notifier.notifyNewMessage(savedMessage, isSubscribed);
 
         return toChatMessageDTO(savedMessage);
     }
@@ -101,6 +115,18 @@ public class ChatServiceImpl implements ChatService {
                 message.getContent(),
                 message.getTimestamp()
         );
+    }
+
+    private boolean isUserSubscribedToDestination(String username, String destination) {
+
+        SimpUser simpUser = simpUserRegistry.getUser(username);
+        if (simpUser == null) {
+            return false;
+        }
+
+        return simpUser.getSessions().stream()
+                .flatMap(session -> session.getSubscriptions().stream())
+                .anyMatch(sub -> destination.equals(sub.getDestination()));
     }
 
 
