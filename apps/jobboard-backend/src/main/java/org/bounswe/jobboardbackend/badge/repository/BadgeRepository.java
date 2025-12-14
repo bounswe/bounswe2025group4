@@ -20,10 +20,11 @@ public interface BadgeRepository extends JpaRepository<Badge, Long> {
      * Used to prevent duplicate badge awards.
      */
     boolean existsByUserIdAndBadgeType(Long userId, BadgeType badgeType);
-    
+
     /**
      * Count how many users have earned a specific badge type.
      */
     long countByBadgeType(BadgeType badgeType);
-}
 
+    void deleteAllByUserId(Long userId);
+}

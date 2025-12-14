@@ -15,6 +15,7 @@ import org.bounswe.jobboardbackend.forum.repository.ForumCommentUpvoteRepository
 import org.bounswe.jobboardbackend.forum.repository.ForumPostDownvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumPostUpvoteRepository;
+import org.bounswe.jobboardbackend.notification.notifier.ForumNotifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +55,9 @@ class ForumServiceTest {
 
     @Mock
     private ForumPostDownvoteRepository postDownvoteRepository;
+
+    @Mock
+    private ForumNotifier notifier;
 
     @InjectMocks
     private ForumService forumService;

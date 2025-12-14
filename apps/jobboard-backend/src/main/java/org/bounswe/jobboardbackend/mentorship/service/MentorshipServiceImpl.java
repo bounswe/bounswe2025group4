@@ -14,6 +14,7 @@ import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.bounswe.jobboardbackend.mentorship.model.*;
 import org.bounswe.jobboardbackend.mentorship.repository.*;
+import org.bounswe.jobboardbackend.notification.notifier.MentorshipNotifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -45,8 +46,7 @@ public class MentorshipServiceImpl implements MentorshipService {
     private final ConversationRepository conversationRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final Storage storage = StorageOptions.getDefaultInstance().getService();
-    // private final NotificationService notificationService; // (Future implementation)
-
+    private final MentorshipNotifier notifier;
 
     @Value("${app.gcs.bucket}")
     private String gcsBucket;
@@ -59,7 +59,6 @@ public class MentorshipServiceImpl implements MentorshipService {
 
     @Value("${app.env}")
     private String appEnv;
-
 
     @Override
     @Transactional
@@ -93,7 +92,7 @@ public class MentorshipServiceImpl implements MentorshipService {
 
         LocalDateTime now = LocalDateTime.now();
         review.setResumeUrl(url);
-        //review.setStatus(ReviewStatus.ACTIVE);
+        // review.setStatus(ReviewStatus.ACTIVE);
         review.setResumeUploadedAt(now);
 
         return ResumeFileResponseDTO.builder()
@@ -103,7 +102,6 @@ public class MentorshipServiceImpl implements MentorshipService {
                 .uploadedAt(review.getResumeUploadedAt())
                 .build();
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -120,7 +118,6 @@ public class MentorshipServiceImpl implements MentorshipService {
                 .build();
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public ResumeReviewDTO getResumeReview(Long resumeReviewId) {
@@ -135,10 +132,6 @@ public class MentorshipServiceImpl implements MentorshipService {
                 .build();
     }
 
-
-
-
-
     @Override
     @Transactional(readOnly = true)
     public List<MentorProfileDetailDTO> searchMentors() {
@@ -147,8 +140,8 @@ public class MentorshipServiceImpl implements MentorshipService {
         Stream<MentorProfile> stream = allMentors.stream();
 
         return stream
-            .map(this::toMentorProfileDetailDTO)
-            .toList();
+                .map(this::toMentorProfileDetailDTO)
+                .toList();
     }
 
     @Override
@@ -182,12 +175,15 @@ public class MentorshipServiceImpl implements MentorshipService {
     public MentorProfileDTO createMentorProfile(Long userId, CreateMentorProfileDTO createDTO) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found. Please check your username."));
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND,
+                        "User not found. Please check your username."));
 
         if (mentorProfileRepository.existsById(userId)) {
             throw new HandleException(ErrorCode.MENTOR_PROFILE_ALREADY_EXISTS, "Mentor Profile is already exists.");
         }
-
+        if (user.getIsMentorBanned()) {
+            throw new HandleException(ErrorCode.MENTOR_BANNED, "User is banned from being a mentor.");
+        }
 
         MentorProfile mentorProfile = new MentorProfile();
         mentorProfile.setUser(user);
@@ -198,7 +194,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         mentorProfile.setReviewCount(0);
 
         MentorProfile savedProfile = mentorProfileRepository.save(mentorProfile);
-        
+
         // Publish event for badge system
         eventPublisher.publishEvent(new MentorProfileCreatedEvent(userId));
         
@@ -218,10 +214,12 @@ public class MentorshipServiceImpl implements MentorshipService {
     public MentorProfileDTO updateMentorProfile(Long userId, UpdateMentorProfileDTO updateDTO) {
 
         MentorProfile profile = mentorProfileRepository.findById(userId)
-                .orElseThrow(() -> new HandleException(ErrorCode.MENTOR_PROFILE_NOT_FOUND, "Mentor profile not found for user."));
+                .orElseThrow(() -> new HandleException(ErrorCode.MENTOR_PROFILE_NOT_FOUND,
+                        "Mentor profile not found for user."));
 
         if (updateDTO.maxMentees() < profile.getCurrentMentees()) {
-            throw new HandleException(ErrorCode.MENTEE_CAPACITY_CONFLICT, "Cannot set max mentees lower than current mentee count.");
+            throw new HandleException(ErrorCode.MENTEE_CAPACITY_CONFLICT,
+                    "Cannot set max mentees lower than current mentee count.");
         }
 
         profile.setExpertise(updateDTO.expertise());
@@ -235,10 +233,12 @@ public class MentorshipServiceImpl implements MentorshipService {
     @Transactional
     public void deleteMentorProfile(Long userId) {
         MentorProfile profile = mentorProfileRepository.findById(userId)
-                .orElseThrow(() -> new HandleException(ErrorCode.MENTOR_PROFILE_NOT_FOUND, "Mentor profile not found for user."));
+                .orElseThrow(() -> new HandleException(ErrorCode.MENTOR_PROFILE_NOT_FOUND,
+                        "Mentor profile not found for user."));
 
         if (profile.getCurrentMentees() > 0) {
-            throw new HandleException(ErrorCode.ACTIVE_MENTORSHIP_EXIST, "Please complete or close all active mentorship before deleting your profile.");
+            throw new HandleException(ErrorCode.ACTIVE_MENTORSHIP_EXIST,
+                    "Please complete or close all active mentorship before deleting your profile.");
         }
 
         mentorProfileRepository.delete(profile);
@@ -248,7 +248,8 @@ public class MentorshipServiceImpl implements MentorshipService {
     @Transactional
     public MentorshipRequestDTO createMentorshipRequest(CreateMentorshipRequestDTO requestDTO, Long jobSeekerId) {
         MentorProfile mentor = mentorProfileRepository.findById(requestDTO.mentorId())
-                .orElseThrow(() -> new HandleException(ErrorCode.MENTOR_PROFILE_NOT_FOUND, "Mentor profile not found for user."));
+                .orElseThrow(() -> new HandleException(ErrorCode.MENTOR_PROFILE_NOT_FOUND,
+                        "Mentor profile not found for user."));
         User jobSeeker = userRepository.findById(jobSeekerId)
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "Job seeker not found for user."));
 
@@ -264,8 +265,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         newRequest.setMotivation(requestDTO.motivation());
         MentorshipRequest savedRequest = mentorshipRequestRepository.save(newRequest);
 
-        // Trigger notification
-        // notificationService.notifyMentor(mentor.getUser(), "New mentorship request");  // (Future implementation)
+        notifier.notifyRequestCreated(savedRequest);
 
         // Publish event for badge system
         eventPublisher.publishEvent(new MentorshipRequestCreatedEvent(jobSeekerId, savedRequest.getId()));
@@ -284,7 +284,8 @@ public class MentorshipServiceImpl implements MentorshipService {
         }
 
         if (request.getStatus() != RequestStatus.PENDING) {
-            throw new HandleException(ErrorCode.REQUEST_ALREADY_PROCESSED, "This request has already been responded to.");
+            throw new HandleException(ErrorCode.REQUEST_ALREADY_PROCESSED,
+                    "This request has already been responded to.");
         }
 
 
@@ -301,14 +302,13 @@ public class MentorshipServiceImpl implements MentorshipService {
             review.setCreatedAt(LocalDateTime.now());
             ResumeReview savedReview = resumeReviewRepository.save(review);
 
-            chatService.createConversationForReview(savedReview);
+            Conversation conversation = chatService.createConversationForReview(savedReview);
 
             MentorProfile mentor = request.getMentor();
             mentor.setCurrentMentees(mentor.getCurrentMentees() + 1);
             mentorProfileRepository.save(mentor);
 
-            // Trigger notification
-            // notificationService.notifyUser(request.getRequester(), "Your request was accepted!"); // (Future implementation)
+            notifier.notifyRequestResponded(request, respondToRequestDTO.responseMessage(), true, conversation.getId());
 
             // Publish event for badge system (both mentor and mentee get badges)
             eventPublisher.publishEvent(new MentorshipRequestAcceptedEvent(
@@ -320,8 +320,7 @@ public class MentorshipServiceImpl implements MentorshipService {
         } else {
             request.decline(respondToRequestDTO.responseMessage());
 
-            // Trigger notification
-            // notificationService.notifyUser(request.getRequester(), "Your request was declined."); // (Future implementation)
+            notifier.notifyRequestResponded(request, respondToRequestDTO.responseMessage(), false, null);
         }
 
         MentorshipRequest updatedRequest = mentorshipRequestRepository.save(request);
@@ -339,9 +338,9 @@ public class MentorshipServiceImpl implements MentorshipService {
 
         MentorProfile mentor = review.getMentor();
 
-
         if (!review.getJobSeeker().getId().equals(jobSeekerId)) {
-            throw new HandleException(ErrorCode.UNAUTHORIZED_REVIEW_ACCESS, "You can only rate reviews you participated in.");
+            throw new HandleException(ErrorCode.UNAUTHORIZED_REVIEW_ACCESS,
+                    "You can only rate reviews you participated in.");
         }
 
         if (review.getStatus() != ReviewStatus.COMPLETED) {
@@ -367,8 +366,6 @@ public class MentorshipServiceImpl implements MentorshipService {
     @Transactional(readOnly = true)
     public MentorshipRequestResponseDTO getMentorshipRequest(Long requestId, Long userId) {
 
-
-
         MentorshipRequest request = mentorshipRequestRepository.findById(requestId)
                 .orElseThrow(() -> new HandleException(ErrorCode.REQUEST_NOT_FOUND, "Request not found"));
 
@@ -376,7 +373,8 @@ public class MentorshipServiceImpl implements MentorshipService {
         Long requesterId = request.getRequester().getId();
 
         if (!userId.equals(mentorId) && !userId.equals(requesterId)) {
-            throw new HandleException(ErrorCode.UNAUTHORIZED_REVIEW_ACCESS, "User is not authorized to see this request");
+            throw new HandleException(ErrorCode.UNAUTHORIZED_REVIEW_ACCESS,
+                    "User is not authorized to see this request");
         }
         return toMentorshipRequestResponseDTO(request);
     }
@@ -424,7 +422,8 @@ public class MentorshipServiceImpl implements MentorshipService {
         review.setStatus(ReviewStatus.CLOSED);
         review.getMentorshipRequest().setStatus(RequestStatus.CLOSED);
 
-        closeChatAndNotify(review, "This mentorship has been closed by one of the participants. No new messages can be sent.");
+        closeChatAndNotify(review,
+                "This mentorship has been closed by one of the participants. No new messages can be sent.");
 
         decrementMentorCount(review.getMentor());
 
@@ -447,8 +446,7 @@ public class MentorshipServiceImpl implements MentorshipService {
                 mentor.getMaxMentees(),
                 mentor.getAverageRating(),
                 mentor.getReviewCount(),
-                reviewDTOs
-        );
+                reviewDTOs);
     }
 
     private MentorReviewDTO toMentorReviewDTO(MentorReview review) {
@@ -458,8 +456,7 @@ public class MentorshipServiceImpl implements MentorshipService {
                 reviewerUsername,
                 review.getRating(),
                 review.getComment(),
-                review.getCreatedAt()
-        );
+                review.getCreatedAt());
     }
 
     private void closeChatAndNotify(ResumeReview review, String systemMessageText) {
@@ -476,13 +473,11 @@ public class MentorshipServiceImpl implements MentorshipService {
                     "system",
                     "System",
                     systemMessageText,
-                    LocalDateTime.now()
-            );
+                    LocalDateTime.now());
 
             messagingTemplate.convertAndSend(
                     "/topic/conversation/" + conversation.getId(),
-                    systemMessage
-            );
+                    systemMessage);
         }
     }
 
@@ -516,8 +511,7 @@ public class MentorshipServiceImpl implements MentorshipService {
                 mentor.getCurrentMentees(),
                 mentor.getMaxMentees(),
                 mentor.getAverageRating(),
-                mentor.getReviewCount()
-        );
+                mentor.getReviewCount());
     }
 
     private MentorshipRequestDTO toMentorshipRequestDTO(MentorshipRequest request) {
@@ -579,14 +573,14 @@ public class MentorshipServiceImpl implements MentorshipService {
                     BlobInfo.newBuilder(gcsBucket, objectName).build(),
                     15, TimeUnit.MINUTES,
                     Storage.SignUrlOption.withV4Signature(),
-                    Storage.SignUrlOption.httpMethod(HttpMethod.GET)
-            );
+                    Storage.SignUrlOption.httpMethod(HttpMethod.GET));
             return signed.toString();
         }
     }
 
     private void deleteFromGcs(String objectName) {
-        if (objectName == null) return;
+        if (objectName == null)
+            return;
         try {
             storage.delete(gcsBucket, objectName);
         } catch (StorageException ignore) {

@@ -18,4 +18,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     long countByRole(Role role);
+
+    org.springframework.data.domain.Page<User> findByRole(Role role, org.springframework.data.domain.Pageable pageable);
+
+    org.springframework.data.domain.Page<User> findByIsBanned(Boolean isBanned,
+            org.springframework.data.domain.Pageable pageable);
+
+    org.springframework.data.domain.Page<User> findByRoleAndIsBanned(Role role, Boolean isBanned,
+            org.springframework.data.domain.Pageable pageable);
 }
