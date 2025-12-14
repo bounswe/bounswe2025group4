@@ -1,9 +1,11 @@
-import { apiClient } from '@shared/lib/api-client';
+import { createReport, mapReportReason } from '@shared/services/report.service';
 import type { ReportReasonType } from '@/modules/shared/components/report/ReportModal';
 
 export async function reportWorkplace(workplaceId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return apiClient.post(`/workplace/${workplaceId}/report`, {
-        reasonType: reason,
+    return createReport({
+        entityType: 'WORKPLACE',
+        entityId: workplaceId,
+        reasonType: mapReportReason(reason),
         description: message,
     });
 }
@@ -14,13 +16,12 @@ export async function reportWorkplaceReview(
     message: string,
     reason: ReportReasonType = 'OTHER',
 ) {
-    return apiClient.post(
-        `/workplace/${workplaceId}/review/${reviewId}/report`,
-        {
-            reasonType: reason,
-            description: message,
-        },
-    );
+    return createReport({
+        entityType: 'REVIEW',
+        entityId: reviewId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
 }
 
 // Stubs for future integration

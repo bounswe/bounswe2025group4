@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/components/ui/card';
 import { Button } from '@shared/components/ui/button';
 import { Badge } from '@shared/components/ui/badge';
-import { Star, MapPin, Award, GraduationCap, Briefcase, Edit, MessageCircle, ArrowLeft } from 'lucide-react';
+import { Star, MapPin, Award, GraduationCap, Briefcase, Edit, MessageCircle, ArrowLeft, Flag } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
 import { Separator } from '@shared/components/ui/separator';
 import type { Mentor, MentorshipReview } from '@shared/types/mentor';
@@ -25,6 +25,8 @@ import CenteredError from '@shared/components/common/CenteredError';
 import type { MentorshipRequestDTO } from '@shared/types/api.types';
 import { toast } from 'react-toastify';
 import MentorshipRequestModal from '@modules/mentorship/components/mentorship/MentorshipRequestModal';
+import { useReportModal } from '@shared/hooks/useReportModal';
+import { createReport, mapReportReason } from '@shared/services/report.service';
 
 const MentorProfilePage = () => {
   const { t } = useTranslation('common');
@@ -45,16 +47,9 @@ const MentorProfilePage = () => {
   const [completedMentorships, setCompletedMentorships] = useState<MentorshipDetailsDTO[]>([]);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
+  const { openReport, ReportModalElement } = useReportModal();
   
   const isOwnProfile = user?.id && id && parseInt(id, 10) === user.id;
-
-  const getCachedMenteeMentorships = async () => {
-    if (menteeMentorshipsQuery.data) {
-      return menteeMentorshipsQuery.data;
-    }
-    const refreshed = await menteeMentorshipsQuery.refetch();
-    return refreshed.data ?? [];
-  };
 
   const fetchMentorProfile = async () => {
     if (!id) {
@@ -277,64 +272,69 @@ const MentorProfilePage = () => {
             </div>
 
 
-            {isOwnProfile ? (
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full md:w-auto"
-                onClick={() => navigate(`/mentorship/mentor/edit?userId=${user.id}`)}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                {t('mentorship.profile.editProfile') || 'Edit Profile'}
-              </Button>
-            ) : hasActiveMentorship ? (
-              <Button
-                size="lg"
-                variant="outline"
-                disabled
-                className="w-full md:w-auto"
-              >
-                {t('mentorship.profile.requested') || 'Requested'}
-              </Button>
-            ) : (
-              <Button 
-                size="lg" 
-                disabled={!isAvailable}
-                className="w-full md:w-auto"
-                onClick={async () => {
-                  if (!id || !user?.id) return;
-                  
-                  const mentorIdNum = parseInt(id, 10);
-                  if (isNaN(mentorIdNum)) {
-                    toast.error(t('mentorship.profile.requestError') || 'Invalid mentor id');
-                    return;
-                  }
-
-                  // Check if user already has an active or pending request
-                  try {
-                    const mentorships = await getCachedMenteeMentorships();
-                    const existingRequest = mentorships.find(
-                      (m: MentorshipDetailsDTO) => 
-                        m.mentorId === mentorIdNum && 
-                        (m.requestStatus?.toUpperCase() === 'PENDING' || 
-                         m.requestStatus?.toUpperCase() === 'ACCEPTED' || 
-                         m.reviewStatus?.toUpperCase() === 'ACTIVE')
-                    );
-                    
-                    if (existingRequest) {
-                      setHasActiveMentorship(true);
-                      return;
-                    }
-                  } catch (err) {
-                    console.error('Error checking existing requests:', err);
-                  }
-
-                  setIsRequestModalOpen(true);
-                }}
-              >
-                {isAvailable ? t('mentorship.profile.requestMentorship') : t('mentorship.profile.unavailable')}
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {isOwnProfile ? (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full md:w-auto"
+                  onClick={() => navigate(`/mentorship/mentor/edit?userId=${user.id}`)}
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  {t('mentorship.profile.editProfile') || 'Edit Profile'}
+                </Button>
+              ) : hasActiveMentorship ? (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  disabled
+                  className="w-full md:w-auto"
+                >
+                  {t('mentorship.profile.requested') || 'Requested'}
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    size="lg"
+                    className="w-full md:w-auto"
+                    onClick={() => setIsRequestModalOpen(true)}
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    {t('mentorship.profile.requestMentorship') || 'Request Mentorship'}
+                  </Button>
+                  {user && id && (
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="gap-2"
+                      onClick={() => {
+                        const mentorIdNum = parseInt(id, 10);
+                        if (!isNaN(mentorIdNum)) {
+                          openReport({
+                            title: t('mentorship.report', { defaultValue: 'Report Mentor' }),
+                            subtitle: t('mentorship.reportSubtitle', { defaultValue: 'Report this mentor profile if it violates our guidelines' }),
+                            contextSnippet: mentor.name,
+                            reportType: 'Mentor',
+                            reportedName: mentor.name,
+                            onSubmit: async (message, reason) => {
+                              await createReport({
+                                entityType: 'MENTOR',
+                                entityId: mentorIdNum,
+                                reasonType: mapReportReason(reason),
+                                description: message,
+                              });
+                            },
+                          });
+                        }
+                      }}
+                    >
+                      <Flag className="h-4 w-4" />
+                      {t('mentorship.report', { defaultValue: 'Report' })}
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -776,10 +776,11 @@ const MentorProfilePage = () => {
           open={isRequestModalOpen}
           onOpenChange={setIsRequestModalOpen}
           mentorId={parseInt(id, 10)}
-          mentorName={mentor?.name}
+          mentorName={mentor?.name || ''}
           isAvailable={isAvailable}
         />
       )}
+      {ReportModalElement}
     </div>
   );
 };

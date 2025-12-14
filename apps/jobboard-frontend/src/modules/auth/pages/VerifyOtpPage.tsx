@@ -57,7 +57,16 @@ export default function VerifyOtpPage() {
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        const responseData = error.response?.data as { message?: string; error?: string } | undefined;
+        const responseData = error.response?.data as { message?: string; error?: string; code?: string } | undefined;
+
+        // Check for banned account
+        if (responseData?.code === 'ACCOUNT_BANNED' || responseData?.message?.toLowerCase().includes('banned')) {
+          const banMessage = responseData?.message || 'Your account has been banned. Please contact support for more information.';
+          toast.error(banMessage, {
+            autoClose: 8000,
+          });
+          return;
+        }
 
         if (error.response?.status === 401) {
           toast.error(t('auth.otp.errors.invalid'));

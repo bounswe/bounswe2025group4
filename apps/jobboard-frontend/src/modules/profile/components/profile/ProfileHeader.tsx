@@ -1,4 +1,4 @@
-import { Pencil } from 'lucide-react';
+import { Pencil, Flag } from 'lucide-react';
 import { Button } from '@shared/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +21,8 @@ interface ProfileHeaderProps {
   postsCount?: number;
   badgesCount?: number;
   onEditImage?: () => void;
+  onReport?: () => void;
+  showReport?: boolean;
 }
 
 export function ProfileHeader({
@@ -32,6 +34,8 @@ export function ProfileHeader({
   postsCount = 42,
   badgesCount = 5,
   onEditImage,
+  onReport,
+  showReport = false,
 }: ProfileHeaderProps) {
   const joinYear = new Date(createdAt).getFullYear();
   const currentJob = experiences.find((exp) => !exp.endDate);
@@ -75,7 +79,19 @@ export function ProfileHeader({
             <p className="text-sm text-muted-foreground mt-1">{joinedLabel}</p>
           </div>
 
-          <div className="flex gap-6 text-center">
+          <div className="flex items-center gap-4">
+            {showReport && onReport && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2"
+                onClick={onReport}
+              >
+                <Flag className="h-4 w-4" />
+                {t('profile.report', { defaultValue: 'Report' })}
+              </Button>
+            )}
+            <div className="flex gap-6 text-center">
             <div>
               <div className="text-2xl font-bold">{postsCount}</div>
               <div className="text-sm text-muted-foreground">
@@ -88,6 +104,7 @@ export function ProfileHeader({
                 {t('profile.header.stats.badges')}
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>

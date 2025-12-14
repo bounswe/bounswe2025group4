@@ -189,6 +189,13 @@ export default function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ))}
+            {user?.role === 'ROLE_ADMIN' && (
+              <Button variant="ghost" asChild className="font-semibold">
+                <Link to="/admin/reports" aria-label="Admin Panel">
+                  Admin
+                </Link>
+              </Button>
+            )}
           </nav>
         </div>
 

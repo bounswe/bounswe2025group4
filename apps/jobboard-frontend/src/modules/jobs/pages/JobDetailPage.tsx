@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Accessibility, Building2, ChevronRight, DollarSign, Edit, MapPin } from 'lucide-react';
+import { Accessibility, Building2, ChevronRight, DollarSign, Edit, MapPin, Flag } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { Button } from '@shared/components/ui/button';
@@ -26,6 +26,8 @@ import { jobsKeys } from '@shared/lib/query-keys';
 import type { JobPostResponse, UpdateJobPostRequest } from '@shared/types/api.types';
 import { TAG_TO_KEY_MAP } from '@shared/constants/ethical-tags';
 import { StarRating } from '@shared/components/ui/star-rating';
+import { useReportModal } from '@shared/hooks/useReportModal';
+import { createReport, mapReportReason } from '@shared/services/report.service';
 
 const getEthicalTagTranslationKey = (tag: string): string => {
   return TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP] || tag.toLowerCase().replace(/[^a-zA-Z0-9]/g, '');
@@ -293,6 +295,33 @@ export default function JobDetailPage() {
                     </Button>
                   </>
                 )}
+                {!canEdit && isAuthenticated && (
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="gap-2"
+                    onClick={() => {
+                      openReport({
+                        title: t('jobs.detail.report', { defaultValue: 'Report Job Post' }),
+                        subtitle: t('jobs.detail.reportSubtitle', { defaultValue: 'Report this job posting if it violates our guidelines' }),
+                        contextSnippet: jobView.title,
+                        reportType: 'Job Post',
+                        reportedName: jobView.workplace.companyName,
+                        onSubmit: async (message, reason) => {
+                          await createReport({
+                            entityType: 'JOB_POST',
+                            entityId: numericJobId!,
+                            reasonType: mapReportReason(reason),
+                            description: message,
+                          });
+                        },
+                      });
+                    }}
+                  >
+                    <Flag className="size-4" />
+                    {t('jobs.detail.report', { defaultValue: 'Report' })}
+                  </Button>
+                )}
                 {showApplyButton && (
                   <Button
                     size="lg"
@@ -501,6 +530,7 @@ export default function JobDetailPage() {
           />
         </DialogContent>
       </Dialog>
+      {ReportModalElement}
     </div>
   );
 }
