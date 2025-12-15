@@ -29,34 +29,45 @@ class NotificationWebSocketService {
 
   /// Connect to the STOMP WebSocket server
   Future<void> connect(String token, String username) async {
-    if (_isConnected) {
-      print('[NotificationWebSocket] Already connected');
+    // If already connected with same credentials, do nothing
+    if (_isConnected && _token == token && _username == username) {
+      print('[NotificationWebSocket] Already connected with same credentials');
       return;
+    }
+
+    // If connected with different credentials, disconnect first
+    if (_isConnected && (_token != token || _username != username)) {
+      print('[NotificationWebSocket] Credentials changed, reconnecting...');
+      disconnect();
+      // Wait a bit for disconnect to complete
+      await Future.delayed(const Duration(milliseconds: 500));
     }
 
     _token = token;
     _username = username;
 
     try {
-      // Convert HTTPS to WebSocket URL
-      final wsUrl = AppConstants.baseUrl
-          .replaceFirst('https://', 'wss://')
-          .replaceFirst('http://', 'ws://');
-      
-      final url = '$wsUrl/ws-chat';
+      // Use the same WebSocket URL as StompChatService
+      final url = AppConstants.baseWsUrl;
       
       print('[NotificationWebSocket] Connecting to STOMP: $url');
+      print('[NotificationWebSocket] Token: ${token.substring(0, 20)}...');
+      print('[NotificationWebSocket] Username: $username');
       
       _stompClient = StompClient(
         config: StompConfig(
           url: url,
+          useSockJS: false, // Same as StompChatService - connects directly to websocket endpoint
           onConnect: _onConnect,
           onWebSocketError: (dynamic error) {
             print('[NotificationWebSocket] WebSocket error: $error');
+            print('[NotificationWebSocket] Error type: ${error.runtimeType}');
             _onError(error);
           },
           onStompError: (StompFrame frame) {
             print('[NotificationWebSocket] STOMP error: ${frame.body}');
+            print('[NotificationWebSocket] STOMP error headers: ${frame.headers}');
+            _onError(frame.body ?? 'STOMP error');
           },
           onDisconnect: (StompFrame? frame) {
             print('[NotificationWebSocket] Disconnected');
@@ -83,27 +94,36 @@ class NotificationWebSocketService {
   /// Handle successful connection
   void _onConnect(StompFrame frame) {
     print('[NotificationWebSocket] Connected successfully');
+    print('[NotificationWebSocket] Frame headers: ${frame.headers}');
     _isConnected = true;
     _reconnectAttempts = 0;
     _connectionStatusController.add(true);
     
-    // Subscribe to broadcast notifications
-    _stompClient!.subscribe(
-      destination: '/topic/notifications',
-      callback: (StompFrame frame) {
-        _handleNotificationFrame(frame);
-      },
-    );
-    
-    // Subscribe to user-specific notifications
-    _stompClient!.subscribe(
-      destination: '/user/queue/notifications',
-      callback: (StompFrame frame) {
-        _handleNotificationFrame(frame);
-      },
-    );
-    
-    print('[NotificationWebSocket] Subscribed to notification channels');
+    try {
+      // Subscribe to broadcast notifications
+      _stompClient!.subscribe(
+        destination: '/topic/notifications',
+        callback: (StompFrame frame) {
+          print('[NotificationWebSocket] Received message on /topic/notifications');
+          _handleNotificationFrame(frame);
+        },
+      );
+      
+      // Subscribe to user-specific notifications
+      // Spring STOMP automatically converts /user/queue/notifications to /queue/notifications for the authenticated user
+      _stompClient!.subscribe(
+        destination: '/user/queue/notifications',
+        callback: (StompFrame frame) {
+          print('[NotificationWebSocket] Received message on /user/queue/notifications');
+          _handleNotificationFrame(frame);
+        },
+      );
+      
+      print('[NotificationWebSocket] Subscribed to notification channels');
+      print('[NotificationWebSocket] Listening for notifications from user: $_username');
+    } catch (e) {
+      print('[NotificationWebSocket] Error subscribing to channels: $e');
+    }
   }
 
   /// Handle incoming notification frame

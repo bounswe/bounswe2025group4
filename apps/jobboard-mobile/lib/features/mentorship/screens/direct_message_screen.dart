@@ -32,28 +32,72 @@ class DirectMessageScreen extends StatefulWidget {
   State<DirectMessageScreen> createState() => _DirectMessageScreenState();
 }
 
-class _DirectMessageScreenState extends State<DirectMessageScreen> {
+class _DirectMessageScreenState extends State<DirectMessageScreen> with WidgetsBindingObserver {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  ChatProvider? _chatProvider;
+  AuthProvider? _authProvider;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Save references to providers for safe use in dispose()
+    _chatProvider ??= context.read<ChatProvider>();
+    _authProvider ??= context.read<AuthProvider>();
+  }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final chatProvider = context.read<ChatProvider>();
-      final authProvider = context.read<AuthProvider>();
+      if (_chatProvider == null || _authProvider == null) {
+        _chatProvider = context.read<ChatProvider>();
+        _authProvider = context.read<AuthProvider>();
+      }
 
-      chatProvider.connect(
-        jwtToken: authProvider.token!,
+      _chatProvider!.connect(
+        jwtToken: _authProvider!.token!,
         conversationId: widget.conversationId,
       );
     });
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    
+    // Disconnect from chat WebSocket when app goes to background
+    // This ensures notifications are sent when user is not actively viewing the chat
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      print('[DirectMessageScreen] App paused/inactive, disconnecting chat WebSocket');
+      if (mounted && _chatProvider != null) {
+        _chatProvider!.disconnect();
+      }
+    } else if (state == AppLifecycleState.resumed) {
+      // Reconnect when app comes back to foreground
+      print('[DirectMessageScreen] App resumed, reconnecting chat WebSocket');
+      if (mounted && _chatProvider != null && _authProvider != null) {
+        if (_authProvider!.token != null) {
+          _chatProvider!.connect(
+            jwtToken: _authProvider!.token!,
+            conversationId: widget.conversationId,
+          );
+        }
+      }
+    }
+  }
+
+  @override
   void dispose() {
-    //context.read<ChatProvider>().disconnect();
+    WidgetsBinding.instance.removeObserver(this);
+    // Disconnect from chat WebSocket when leaving the screen
+    // This ensures notifications are sent when user is not actively viewing the chat
+    print('[DirectMessageScreen] Disposing, disconnecting chat WebSocket');
+    if (_chatProvider != null) {
+      _chatProvider!.disconnect();
+    }
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();

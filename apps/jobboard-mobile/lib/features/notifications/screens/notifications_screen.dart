@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/notification_provider.dart';
 import '../../../core/providers/tab_navigation_provider.dart';
+import '../../../core/providers/auth_provider.dart';
 import '../../../core/models/notification_type.dart';
+import '../../../core/services/api_service.dart';
+import '../../job/screens/job_details_screen.dart';
+import '../../mentorship/screens/direct_message_screen.dart';
+import '../../forum/screens/thread_detail_screen.dart';
 import '../widgets/notification_item.dart';
 
 /// Screen for displaying all notifications
@@ -17,10 +22,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch notifications when screen opens
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<NotificationProvider>().fetchNotifications();
-    });
+    // Don't fetch on screen open - notifications are fetched periodically by NotificationProvider
   }
 
   @override
@@ -206,58 +208,147 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     if (!context.mounted) return;
 
-    // Navigate based on notification type - simple tab navigation
-    switch (notification.notificationType) {
-      // Mentorlük ve DM bildirimleri → Mentorship sayfasına
-      case NotificationType.NEW_MESSAGE:
-      case NotificationType.MENTORSHIP_REQUEST:
-      case NotificationType.MENTORSHIP_APPROVED:
-      case NotificationType.MENTORSHIP_REJECTED:
-        _navigateToMentorshipTab(context);
-        break;
+    // Parse notification type from String to enum
+    final notificationType = NotificationTypeExtension.fromString(
+      notification.notificationType,
+    );
 
-      // İş bildirimleri → Job sayfasına
-      case NotificationType.JOB_APPLICATION_REQUEST:
-      case NotificationType.JOB_APPLICATION_APPROVED:
-      case NotificationType.JOB_APPLICATION_REJECTED:
-        _navigateToJobTab(context);
-        break;
+    final linkId = notification.linkId;
 
-      // Forum bildirimleri → Forum sayfasına
-      case NotificationType.FORUM_COMMENT:
-      case NotificationType.FORUM_REPORT:
-        _navigateToForumTab(context);
-        break;
+    // Navigate based on notification type
+    try {
+      switch (notificationType) {
+        case NotificationType.NEW_MESSAGE:
+          // Open direct chat if linkId is conversationId
+          if (linkId != null) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => DirectMessageScreen(
+                  conversationId: linkId,
+                  peerName: notification.username ?? 'User',
+                  resumeReviewId: null,
+                  isMentor: false, // We'll determine this based on user role
+                ),
+              ),
+            );
+          } else {
+            _navigateToMentorshipTab(context);
+          }
+          break;
 
-      // Badge bildirimleri → Profile sayfasına
-      case NotificationType.AWARDED_BADGE:
-        _navigateToProfileTab(context);
-        break;
+        case NotificationType.MENTORSHIP_REQUEST:
+        case NotificationType.MENTORSHIP_APPROVED:
+        case NotificationType.MENTORSHIP_REJECTED:
+          _navigateToMentorshipTab(context);
+          break;
+
+        case NotificationType.JOB_APPLICATION_REQUEST:
+        case NotificationType.JOB_APPLICATION_APPROVED:
+        case NotificationType.JOB_APPLICATION_REJECTED:
+          // Open job details if linkId is jobId
+          if (linkId != null) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => JobDetailsScreen(
+                  jobId: linkId.toString(),
+                ),
+              ),
+            );
+          } else {
+            _navigateToJobTab(context);
+          }
+          break;
+
+        case NotificationType.FORUM_COMMENT:
+        case NotificationType.FORUM_REPORT:
+          // Open forum post if linkId is postId
+          if (linkId != null) {
+            await _navigateToForumPost(context, linkId);
+          } else {
+            _navigateToForumTab(context);
+          }
+          break;
+
+        case NotificationType.AWARDED_BADGE:
+          _navigateToProfileTab(context);
+          break;
+
+        case NotificationType.GENERAL:
+          break;
+      }
+    } catch (e) {
+      print('Error navigating from notification: $e');
+      if (context.mounted) {
+        _showErrorSnackBar(context, 'Failed to open notification');
+      }
+    }
+  }
+
+  /// Navigate to forum post details
+  Future<void> _navigateToForumPost(BuildContext context, int postId) async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      // Fetch forum post details
+      final authProvider = context.read<AuthProvider>();
+      final apiService = ApiService(authProvider: authProvider);
+      final post = await apiService.getForumPost(postId);
+
+      if (!context.mounted) return;
+
+      // Close loading indicator
+      Navigator.of(context).pop();
+
+      // Navigate to thread detail
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ThreadDetailScreen(post: post),
+        ),
+      );
+    } catch (e) {
+      print('Error loading forum post: $e');
+      if (context.mounted) {
+        Navigator.of(context).pop(); // Close loading indicator
+        _showErrorSnackBar(context, 'Failed to load forum post');
+      }
     }
   }
 
   /// Navigate to mentorship tab in MainScaffold (index 2)
   void _navigateToMentorshipTab(BuildContext context) {
-    Navigator.popUntil(context, (route) => route.isFirst);
     Provider.of<TabNavigationProvider>(context, listen: false).changeTab(2);
+    Navigator.pop(context);
   }
 
   /// Navigate to job tab in MainScaffold (index 1)
   void _navigateToJobTab(BuildContext context) {
-    Navigator.popUntil(context, (route) => route.isFirst);
     Provider.of<TabNavigationProvider>(context, listen: false).changeTab(1);
+    Navigator.pop(context);
   }
 
   /// Navigate to forum tab in MainScaffold (index 0)
   void _navigateToForumTab(BuildContext context) {
-    Navigator.popUntil(context, (route) => route.isFirst);
     Provider.of<TabNavigationProvider>(context, listen: false).changeTab(0);
+    Navigator.pop(context);
   }
 
   /// Navigate to profile tab in MainScaffold (index 3)
   void _navigateToProfileTab(BuildContext context) {
-    Navigator.popUntil(context, (route) => route.isFirst);
     Provider.of<TabNavigationProvider>(context, listen: false).changeTab(3);
+    Navigator.pop(context);
+  }
+
+  /// Navigate to workplaces tab in MainScaffold (index 4)
+  void _navigateToWorkplacesTab(BuildContext context) {
+    Provider.of<TabNavigationProvider>(context, listen: false).changeTab(4);
+    Navigator.pop(context);
   }
 
   /// Show error snackbar

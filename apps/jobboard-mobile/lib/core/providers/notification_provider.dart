@@ -15,6 +15,8 @@ class NotificationProvider with ChangeNotifier {
   String? _error;
   StreamSubscription<NotificationMessage>? _notificationSubscription;
   StreamSubscription<bool>? _connectionSubscription;
+  Timer? _periodicFetchTimer;
+  static const Duration _fetchInterval = Duration(seconds: 5); // Fetch every 1 second
 
   NotificationProvider({
     required ApiService apiService,
@@ -67,9 +69,12 @@ class NotificationProvider with ChangeNotifier {
         notifyListeners(); // Immediately update UI/badge
         
         // Refresh notifications from server to get the full notification with ID
+        // Wait a bit for server to save the notification before fetching
         // Don't show loading indicator and don't await - let it run in background so badge updates immediately
-        fetchNotifications(showLoading: false).catchError((error) {
-          print('[NotificationProvider] Error refreshing notifications after WebSocket message: $error');
+        Future.delayed(const Duration(milliseconds: 500), () {
+          fetchNotifications(showLoading: false).catchError((error) {
+            print('[NotificationProvider] Error refreshing notifications after WebSocket message: $error');
+          });
         });
       },
       onError: (error) {
@@ -83,9 +88,12 @@ class NotificationProvider with ChangeNotifier {
         print('[NotificationProvider] WebSocket connection status: $isConnected');
         notifyListeners();
         
-        // Fetch notifications when connected
+        // Fetch notifications when connected and start periodic fetching
         if (isConnected) {
           fetchNotifications();
+          _startPeriodicFetch();
+        } else {
+          _stopPeriodicFetch();
         }
       },
       onError: (error) {
@@ -109,12 +117,32 @@ class NotificationProvider with ChangeNotifier {
       // Sort notifications by timestamp (newest first)
       notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       
-      // Replace list with fresh data from server (this will replace any temporary notifications)
-      _notifications = notifications;
+      // Merge with temporary notifications (keep temporary ones that don't exist in server response)
+      // Temporary notifications have negative IDs
+      final tempNotifications = _notifications.where((n) => n.id < 0).toList();
+      
+      // Create a set of server notification timestamps for quick lookup
+      // We match by timestamp since temporary notifications use -timestamp as ID
+      final serverNotificationTimestamps = notifications.map((n) => n.timestamp).toSet();
+      
+      // Keep temporary notifications that haven't been confirmed by server yet
+      // (server hasn't returned a notification with matching timestamp)
+      final unconfirmedTempNotifications = tempNotifications.where(
+        (temp) => !serverNotificationTimestamps.contains(temp.timestamp),
+      ).toList();
+      
+      // Combine: server notifications first, then unconfirmed temporary ones
+      _notifications = [...notifications, ...unconfirmedTempNotifications];
+      
+      // Sort again by timestamp (newest first)
+      _notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+      
       _isLoading = false;
       _error = null;
       
-      print('[NotificationProvider] Fetched ${notifications.length} notifications');
+      print('[NotificationProvider] Fetched ${notifications.length} notifications from server');
+      print('[NotificationProvider] Total notifications: ${_notifications.length} (${unconfirmedTempNotifications.length} temporary)');
+      print('[NotificationProvider] Unread count: $unreadCount');
       notifyListeners();
     } catch (e) {
       print('[NotificationProvider] Error fetching notifications: $e');
@@ -176,9 +204,30 @@ class NotificationProvider with ChangeNotifier {
     }
   }
 
+  /// Start periodic fetching of notifications
+  void _startPeriodicFetch() {
+    _stopPeriodicFetch(); // Stop any existing timer
+    
+    print('[NotificationProvider] Starting periodic fetch (every ${_fetchInterval.inSeconds}s)');
+    _periodicFetchTimer = Timer.periodic(_fetchInterval, (timer) {
+      print('[NotificationProvider] Periodic fetch triggered');
+      fetchNotifications(showLoading: false);
+    });
+  }
+
+  /// Stop periodic fetching of notifications
+  void _stopPeriodicFetch() {
+    if (_periodicFetchTimer != null) {
+      print('[NotificationProvider] Stopping periodic fetch');
+      _periodicFetchTimer!.cancel();
+      _periodicFetchTimer = null;
+    }
+  }
+
   /// Disconnect from WebSocket
   void disconnectWebSocket() {
     print('[NotificationProvider] Disconnecting WebSocket...');
+    _stopPeriodicFetch();
     _webSocketService.disconnect();
     _notifications.clear();
     notifyListeners();
@@ -193,6 +242,7 @@ class NotificationProvider with ChangeNotifier {
   @override
   void dispose() {
     print('[NotificationProvider] Disposing...');
+    _stopPeriodicFetch();
     _notificationSubscription?.cancel();
     _connectionSubscription?.cancel();
     _webSocketService.dispose();

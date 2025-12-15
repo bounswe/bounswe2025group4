@@ -11,6 +11,7 @@ import 'package:mobile/features/mentorship/screens/direct_message_screen.dart';
 import 'package:mobile/core/models/user.dart';
 import 'package:mobile/core/models/user_type.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 class MentorMentorshipScreen extends StatefulWidget {
   const MentorMentorshipScreen({super.key});
@@ -160,6 +161,9 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.mentorScreen_title),
         automaticallyImplyLeading: false,
+        actions: const [
+          NotificationIconButton(),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: [
