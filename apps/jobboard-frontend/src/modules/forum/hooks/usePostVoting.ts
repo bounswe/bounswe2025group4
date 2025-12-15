@@ -3,7 +3,7 @@
  * Manages upvote/downvote state and operations for forum posts
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -41,6 +41,14 @@ export function usePostVoting({
   const [userUpvoted, setUserUpvoted] = useState(initialUserUpvoted);
   const [userDownvoted, setUserDownvoted] = useState(initialUserDownvoted);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sync state when initial values change (e.g., when post data loads)
+  useEffect(() => {
+    setUpvoteCount(initialUpvoteCount);
+    setDownvoteCount(initialDownvoteCount);
+    setUserUpvoted(initialUserUpvoted ?? false);
+    setUserDownvoted(initialUserDownvoted ?? false);
+  }, [initialUpvoteCount, initialDownvoteCount, initialUserUpvoted, initialUserDownvoted]);
   const { t } = useTranslation('common');
   const queryClient = useQueryClient();
 

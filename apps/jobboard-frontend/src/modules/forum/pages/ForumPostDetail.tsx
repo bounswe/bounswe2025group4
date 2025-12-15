@@ -180,7 +180,7 @@ const ForumPostDetail = () => {
           <p className="whitespace-pre-wrap leading-relaxed text-base">{post.content}</p>
 
           {/* Voting UI */}
-          <div className="pt-4 border-t">
+          <div className="flex items-center justify-between pt-2 border-t">
             <LikeDislikeButtons
               likes={postVoting.upvoteCount}
               dislikes={postVoting.downvoteCount}

@@ -11,7 +11,6 @@ const resolveNotificationLink = (notification: NotificationItem): string => {
   const type = notification.notificationType?.toUpperCase() || '';
   const linkId = notification.linkId;
 
-  // links must be finalized TODO
   const NOTIFICATION_TYPE_TO_LINK = {
     'NEW_MESSAGE': '/mentorship/chat',
     'MENTORSHIP_REQUEST': '/mentorship/mentor/requests',

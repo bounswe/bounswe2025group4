@@ -26,6 +26,21 @@ const formatTimestamp = (timestamp: number) => {
   }
 };
 
+const formatNotificationTitle = (title: string): string => {
+  // Convert "NEW MESSAGE" to "New Message" and similar patterns
+  if (title.startsWith('NEW MESSAGE')) {
+    return title.replace(/^NEW MESSAGE/, 'New Message');
+  }
+  // Handle other uppercase patterns - convert to title case
+  return title.replace(/\b([A-Z]+)\b/g, (match) => {
+    // If it's all caps and more than 2 characters, convert to title case
+    if (match.length > 2 && match === match.toUpperCase()) {
+      return match.charAt(0) + match.slice(1).toLowerCase();
+    }
+    return match;
+  });
+};
+
 const NotificationListItem = ({
   notification,
   onClick,
@@ -38,13 +53,13 @@ const NotificationListItem = ({
   return (
     <DropdownMenuItem
       onSelect={() => onClick(notification)}
-      className={`items-start px-0 py-3 text-left transition-colors hover:bg-muted ${
+      className={`items-start px-4 py-3 text-left transition-colors hover:bg-muted ${
         isUnread ? 'bg-muted/60' : ''
       }`}
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <span className="font-medium line-clamp-1">{notification.title}</span>
+          <span className="font-medium line-clamp-1">{formatNotificationTitle(notification.title)}</span>
           <div className="flex flex-col items-end gap-1">
             <span className="text-xs text-muted-foreground whitespace-nowrap">
               {formatTimestamp(Number(notification.timestamp))}
@@ -74,7 +89,7 @@ export const NotificationBell = () => {
   const renderList = () => {
     if (isLoading) {
       return (
-        <div className="p-4 text-sm text-muted-foreground">
+        <div className="px-5 py-4 text-sm text-muted-foreground">
           {t('notifications.loading', 'Loading notifications...')}
         </div>
       );
@@ -82,7 +97,7 @@ export const NotificationBell = () => {
 
     if (notifications.length === 0) {
       return (
-        <div className="p-6 text-sm text-muted-foreground">
+        <div className="px-5 py-6 text-sm text-muted-foreground">
           {t('notifications.empty', "You're all caught up. No notifications yet.")}
         </div>
       );
@@ -118,7 +133,7 @@ export const NotificationBell = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-100 p-0">
-        <DropdownMenuLabel className="px-3 py-2 mt-1">
+        <DropdownMenuLabel className="px-5 py-2 mt-1">
           <div className="flex items-center justify-between">
             <span className="font-semibold">{t('notifications.title', 'Notifications')}</span>
             {hasUnread ? (
@@ -138,7 +153,7 @@ export const NotificationBell = () => {
         <DropdownMenuSeparator />
         {renderList()}
         <Separator />
-        <div className="px-3 py-2 text-xs text-muted-foreground flex justify-between">
+        <div className="px-5 py-2 text-xs text-muted-foreground flex justify-between">
           <span className="py-1">
             {t('notifications.footer', 'Newest notifications appear first.')}
           </span>
