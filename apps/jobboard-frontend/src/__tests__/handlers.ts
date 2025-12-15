@@ -942,3 +942,56 @@ export const activityHandlers = [
     return HttpResponse.json({}, { status: 200 });
   }),
 ];
+
+// ============================================================================
+// FORUM HANDLERS
+// ============================================================================
+
+const mockForumPosts = [
+  {
+    id: 1,
+    title: 'User Research Techniques: A Comprehensive Guide',
+    content: 'This is a comprehensive guide to user research techniques...',
+    authorId: 1,
+    authorUsername: 'owner',
+    tags: ['research', 'ux'],
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    commentCount: 5,
+    upvoteCount: 10,
+    downvoteCount: 0,
+    comments: [],
+    hasUserUpvoted: false,
+    hasUserDownvoted: false,
+  },
+  {
+    id: 2,
+    title: 'Another Post',
+    content: 'This is another post...',
+    authorId: 1,
+    authorUsername: 'owner',
+    tags: ['general'],
+    createdAt: '2024-01-02T00:00:00Z',
+    updatedAt: '2024-01-02T00:00:00Z',
+    commentCount: 2,
+    upvoteCount: 5,
+    downvoteCount: 0,
+    comments: [],
+    hasUserUpvoted: false,
+    hasUserDownvoted: false,
+  },
+];
+
+export const forumHandlers = [
+  // Get posts by user ID
+  http.get(`${API_BASE_URL}/forum/posts/user/:userId`, async ({ params }) => {
+    const { userId } = params;
+    const userPosts = mockForumPosts.filter(post => post.authorId === Number(userId));
+    return HttpResponse.json(userPosts, { status: 200 });
+  }),
+
+  // OPTIONS handler for CORS preflight
+  http.options(`${API_BASE_URL}/forum/posts/user/:userId`, async () => {
+    return HttpResponse.json({}, { status: 200 });
+  }),
+];
