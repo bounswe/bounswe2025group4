@@ -65,14 +65,12 @@ void main() {
         ),
 
         ChangeNotifierProvider<ChatProvider>(
-          create: (context) => ChatProvider(
-            chatService: context.read<StompChatService>(),
-            apiService: context.read<ApiService>(),
-          ),
+        create: (context) => ChatProvider(
+          chatService: context.read<StompChatService>(),
+          apiService: context.read<ApiService>(),
         ),
-Ş
-
-      ],
+      ),
+    ],
       child: const MyApp(),
     ),
   );
