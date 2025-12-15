@@ -1,4 +1,4 @@
-package org.bounswe.jobboardbackend.admin.integration;
+package org.bounswe.jobboardbackend.admin.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bounswe.jobboardbackend.admin.controller.AdminReportController;
@@ -6,6 +6,7 @@ import org.bounswe.jobboardbackend.admin.service.AdminReportService;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
+import org.bounswe.jobboardbackend.auth.model.Role;
 import org.bounswe.jobboardbackend.report.controller.ReportController;
 import org.bounswe.jobboardbackend.report.dto.CreateReportRequest;
 import org.bounswe.jobboardbackend.report.dto.ReportResponse;
@@ -17,7 +18,6 @@ import org.bounswe.jobboardbackend.report.service.ReportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = { AdminReportController.class, ReportController.class })
 @AutoConfigureMockMvc(addFilters = false)
-class ReportWorkflowIntegrationTest {
+class ReportWorkflowControllerTest {
 
         @Autowired
         private MockMvc mockMvc;
@@ -65,7 +65,7 @@ class ReportWorkflowIntegrationTest {
                 user.setId(10L);
                 user.setUsername("reporter");
                 user.setEmail("reporter@example.com");
-                user.setRole(org.bounswe.jobboardbackend.auth.model.Role.ROLE_JOBSEEKER);
+                user.setRole(Role.ROLE_JOBSEEKER);
 
                 UserDetailsImpl userDetails = UserDetailsImpl.build(user);
                 mockAuth = new UsernamePasswordAuthenticationToken(userDetails, null,
@@ -105,14 +105,15 @@ class ReportWorkflowIntegrationTest {
                 resolveRequest.setBanUser(false);
                 resolveRequest.setAdminNote("Deleted content");
 
-                doNothing().when(adminReportService).resolveReport(eq(1L), any(ResolveReportRequest.class));
+                doNothing().when(adminReportService).resolveReport(eq(1L), any(ResolveReportRequest.class), eq(10L));
 
                 mockMvc.perform(post("/api/admin/report/1/resolve")
+                                .principal(mockAuth)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(resolveRequest)))
                                 .andExpect(status().isOk());
 
-                verify(adminReportService).resolveReport(eq(1L), any(ResolveReportRequest.class));
+                verify(adminReportService).resolveReport(eq(1L), any(ResolveReportRequest.class), eq(10L));
         }
 
         @Test
@@ -147,11 +148,12 @@ class ReportWorkflowIntegrationTest {
                 resolveRequest.setBanReason("Hate speech violation");
 
                 mockMvc.perform(post("/api/admin/report/2/resolve")
+                                .principal(mockAuth)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(resolveRequest)))
                                 .andExpect(status().isOk());
 
-                verify(adminReportService).resolveReport(eq(2L), any(ResolveReportRequest.class));
+                verify(adminReportService).resolveReport(eq(2L), any(ResolveReportRequest.class), eq(10L));
         }
 
         @Test
@@ -185,11 +187,12 @@ class ReportWorkflowIntegrationTest {
                 resolveRequest.setBanReason("Spammer");
 
                 mockMvc.perform(post("/api/admin/report/3/resolve")
+                                .principal(mockAuth)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(resolveRequest)))
                                 .andExpect(status().isOk());
 
-                verify(adminReportService).resolveReport(eq(3L), any(ResolveReportRequest.class));
+                verify(adminReportService).resolveReport(eq(3L), any(ResolveReportRequest.class), eq(10L));
         }
 
         @Test
@@ -223,11 +226,12 @@ class ReportWorkflowIntegrationTest {
                 resolveRequest.setAdminNote("No violation found");
 
                 mockMvc.perform(post("/api/admin/report/4/resolve")
+                                .principal(mockAuth)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(resolveRequest)))
                                 .andExpect(status().isOk());
 
-                verify(adminReportService).resolveReport(eq(4L), any(ResolveReportRequest.class));
+                verify(adminReportService).resolveReport(eq(4L), any(ResolveReportRequest.class), eq(10L));
         }
 
         @Test
@@ -261,11 +265,12 @@ class ReportWorkflowIntegrationTest {
                 resolveRequest.setBanUser(false);
 
                 mockMvc.perform(post("/api/admin/report/5/resolve")
+                                .principal(mockAuth)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(resolveRequest)))
                                 .andExpect(status().isOk());
 
-                verify(adminReportService).resolveReport(eq(5L), any(ResolveReportRequest.class));
+                verify(adminReportService).resolveReport(eq(5L), any(ResolveReportRequest.class), eq(10L));
         }
 
         @Test
@@ -297,6 +302,7 @@ class ReportWorkflowIntegrationTest {
                 resolveRequest.setDeleteContent(true);
 
                 mockMvc.perform(post("/api/admin/report/6/resolve")
+                                .principal(mockAuth)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(resolveRequest)))
                                 .andExpect(status().isOk());
@@ -346,9 +352,10 @@ class ReportWorkflowIntegrationTest {
 
                 doThrow(new org.bounswe.jobboardbackend.exception.HandleException(
                                 org.bounswe.jobboardbackend.exception.ErrorCode.NOT_FOUND, "Report not found"))
-                                .when(adminReportService).resolveReport(eq(999L), any());
+                                .when(adminReportService).resolveReport(eq(999L), any(), eq(10L));
 
                 mockMvc.perform(post("/api/admin/report/999/resolve")
+                                .principal(mockAuth)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isNotFound());
@@ -363,9 +370,10 @@ class ReportWorkflowIntegrationTest {
                 doThrow(new org.bounswe.jobboardbackend.exception.HandleException(
                                 org.bounswe.jobboardbackend.exception.ErrorCode.BAD_REQUEST,
                                 "Report has already been resolved"))
-                                .when(adminReportService).resolveReport(eq(10L), any());
+                                .when(adminReportService).resolveReport(eq(10L), any(), eq(10L));
 
                 mockMvc.perform(post("/api/admin/report/10/resolve")
+                                .principal(mockAuth)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                                 .andExpect(status().isBadRequest());

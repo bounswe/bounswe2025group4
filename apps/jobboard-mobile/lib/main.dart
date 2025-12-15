@@ -8,6 +8,8 @@ import 'core/providers/font_size_provider.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/services/api_service.dart';
 import 'features/mentorship/providers/mentor_provider.dart';
+import 'features/mentorship/providers/chat_provider.dart';
+import 'features/mentorship/services/stomp_chat_service.dart';
 import 'app.dart'; // Adjust path
 
 void main() {
@@ -48,6 +50,18 @@ void main() {
           update: (context, apiService, previous) =>
           previous!..updateApiService(apiService),
         ),
+
+        Provider(
+          create: (_) => StompChatService(),
+        ),
+
+        ChangeNotifierProvider<ChatProvider>(
+          create: (context) => ChatProvider(
+            chatService: context.read<StompChatService>(),
+            apiService: context.read<ApiService>(),
+          ),
+        ),
+
 
       ],
       child: const MyApp(),

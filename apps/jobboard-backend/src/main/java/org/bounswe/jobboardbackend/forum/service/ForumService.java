@@ -22,6 +22,8 @@ import org.bounswe.jobboardbackend.badge.event.CommentCreatedEvent;
 import org.bounswe.jobboardbackend.badge.event.CommentUpvotedEvent;
 import org.bounswe.jobboardbackend.badge.event.ForumPostCreatedEvent;
 import org.bounswe.jobboardbackend.notification.notifier.ForumNotifier;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +44,7 @@ public class ForumService {
     private final ForumPostUpvoteRepository postUpvoteRepository;
     private final ForumPostDownvoteRepository postDownvoteRepository;
     private final ForumNotifier notifier;
+    private final ActivityService activityService;
 
     @Transactional
     public PostResponse createPost(User author, CreatePostRequest request) {
@@ -57,6 +60,7 @@ public class ForumService {
         // Publish event for badge checking
         eventPublisher.publishEvent(new ForumPostCreatedEvent(author.getId(), savedPost.getId()));
 
+        activityService.logActivity(author, ActivityType.CREATE_THREAD, savedPost.getId(), "ForumPost");
 
         return toPostResponse(savedPost);
     }
@@ -95,6 +99,9 @@ public class ForumService {
         }
 
         ForumPost updatedPost = postRepository.save(post);
+
+        activityService.logActivity(user, ActivityType.EDIT_THREAD, updatedPost.getId(), "ForumPost");
+
         return toPostResponse(updatedPost);
     }
 
@@ -109,6 +116,8 @@ public class ForumService {
         }
 
         postRepository.delete(post);
+
+        activityService.logActivity(user, ActivityType.DELETE_THREAD, id, "ForumPost");
     }
 
     @Transactional
@@ -137,6 +146,8 @@ public class ForumService {
 
         // Publish event for badge checking
         eventPublisher.publishEvent(new CommentCreatedEvent(author.getId(), savedComment.getId(), postId));
+
+        activityService.logActivity(author, ActivityType.CREATE_COMMENT, savedComment.getId(), "ForumComment");
 
         return CommentResponse.from(savedComment, 0, 0);
     }
@@ -265,6 +276,8 @@ public class ForumService {
                 .post(post)
                 .build();
         postUpvoteRepository.save(upvote);
+
+        activityService.logActivity(user, ActivityType.UPVOTE_THREAD, postId, "ForumPost");
     }
 
     @Transactional
@@ -290,11 +303,28 @@ public class ForumService {
                 .post(post)
                 .build();
         postDownvoteRepository.save(downvote);
+
+        activityService.logActivity(user, ActivityType.DOWNVOTE_THREAD, postId, "ForumPost");
     }
 
     @Transactional
     public void removePostDownvote(Long postId, User user) {
         postDownvoteRepository.findByUserIdAndPostId(user.getId(), postId)
                 .ifPresent(postDownvoteRepository::delete);
+    }
+
+    @Transactional
+    public void deleteUserData(Long userId) {
+        // Delete votes
+        postUpvoteRepository.deleteByUserId(userId);
+        postDownvoteRepository.deleteByUserId(userId);
+        upvoteRepository.deleteByUserId(userId);
+        downvoteRepository.deleteByUserId(userId);
+
+        // Delete comments
+        commentRepository.deleteByAuthorId(userId);
+
+        // Delete posts (cascades to comments on that post)
+        postRepository.deleteByAuthorId(userId);
     }
 }

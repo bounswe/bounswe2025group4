@@ -59,6 +59,9 @@ class ForumServiceTest {
     @Mock
     private ForumNotifier notifier;
 
+    @Mock
+    private org.bounswe.jobboardbackend.activity.service.ActivityService activityService;
+
     @InjectMocks
     private ForumService forumService;
 

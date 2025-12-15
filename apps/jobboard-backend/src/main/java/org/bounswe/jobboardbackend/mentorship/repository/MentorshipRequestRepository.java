@@ -39,4 +39,6 @@ public interface MentorshipRequestRepository extends JpaRepository<MentorshipReq
     long countByRequesterId(Long requesterId);
     
     long countByRequesterIdAndStatus(Long requesterId, RequestStatus status);
+
+    void deleteByRequesterId(Long requesterId);
 }

@@ -9,6 +9,8 @@ import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.profile.dto.*;
 import org.bounswe.jobboardbackend.profile.model.*;
 import org.bounswe.jobboardbackend.profile.repository.*;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +37,7 @@ public class ProfileService {
     private final ExperienceRepository experienceRepository;
     private final SkillRepository skillRepository;
     private final InterestRepository interestRepository;
+    private final ActivityService activityService;
 
     private static void requireNotBlank(String value, String field) {
         if (value == null || value.trim().isEmpty()) {
@@ -124,7 +127,13 @@ public class ProfileService {
         if (dto.getBio()       != null) profile.setBio(dto.getBio());
         if (dto.getPronounSet()       != null) profile.setPronounSet(PronounSet.valueOf(dto.getPronounSet().toUpperCase()));
 
+        activityService.logActivity(profile.getUser(), ActivityType.UPDATE_PROFILE, profile.getId(), "Profile");
+
         return toProfileDto(profile);
+    }
+
+    public void deleteProfileByUserId(Long userId) {
+        profileRepository.deleteByUserId(userId);
     }
 
     @Transactional(readOnly = true)

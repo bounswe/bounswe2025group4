@@ -15,6 +15,8 @@ import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.bounswe.jobboardbackend.mentorship.model.*;
 import org.bounswe.jobboardbackend.mentorship.repository.*;
 import org.bounswe.jobboardbackend.notification.notifier.MentorshipNotifier;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -47,6 +49,7 @@ public class MentorshipServiceImpl implements MentorshipService {
     private final ApplicationEventPublisher eventPublisher;
     private final Storage storage = StorageOptions.getDefaultInstance().getService();
     private final MentorshipNotifier notifier;
+    private final ActivityService activityService;
 
     @Value("${app.gcs.bucket}")
     private String gcsBucket;
@@ -270,6 +273,8 @@ public class MentorshipServiceImpl implements MentorshipService {
         // Publish event for badge system
         eventPublisher.publishEvent(new MentorshipRequestCreatedEvent(jobSeekerId, savedRequest.getId()));
 
+        activityService.logActivity(jobSeeker, ActivityType.REQUEST_MENTORSHIP, savedRequest.getId(), "MentorshipRequest");
+
         return toMentorshipRequestDTO(savedRequest);
     }
 
@@ -316,6 +321,8 @@ public class MentorshipServiceImpl implements MentorshipService {
                 request.getRequester().getId(),
                 request.getId()
             ));
+
+            activityService.logActivity(mentor.getUser(), ActivityType.ACCEPT_MENTORSHIP, request.getId(), "MentorshipRequest");
 
         } else {
             request.decline(respondToRequestDTO.responseMessage());
@@ -399,6 +406,8 @@ public class MentorshipServiceImpl implements MentorshipService {
         closeChatAndNotify(review, "This mentorship has been completed. You can now rate your mentor.");
 
         decrementMentorCount(review.getMentor());
+
+        activityService.logActivity(review.getMentor().getUser(), ActivityType.COMPLETE_MENTORSHIP, resumeReviewId, "Mentorship");
 
         resumeReviewRepository.save(review);
         mentorshipRequestRepository.save(review.getMentorshipRequest());
@@ -584,6 +593,24 @@ public class MentorshipServiceImpl implements MentorshipService {
         try {
             storage.delete(gcsBucket, objectName);
         } catch (StorageException ignore) {
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteUserData(Long userId) {
+        // Delete resume reviews where user is job seeker
+        resumeReviewRepository.deleteByJobSeekerId(userId);
+
+        // Delete requests where user is requester
+        mentorshipRequestRepository.deleteByRequesterId(userId);
+
+        // Delete reviews written by user
+        mentorReviewRepository.deleteByReviewerId(userId);
+
+        // Delete mentor profile if exists (cascades to requests/reviews received)
+        if (mentorProfileRepository.existsById(userId)) {
+            mentorProfileRepository.deleteById(userId);
         }
     }
 

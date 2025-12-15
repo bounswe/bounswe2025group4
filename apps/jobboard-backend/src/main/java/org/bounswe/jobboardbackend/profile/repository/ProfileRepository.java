@@ -9,6 +9,8 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     Optional<Profile> findByUserId(Long userId);
 
+    void deleteByUserId(Long userId);
+
     // Profil var mı yok mu hızlı kontrol
     boolean existsByUserId(Long userId);
 }

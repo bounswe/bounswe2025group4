@@ -14,6 +14,8 @@ import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
 import org.bounswe.jobboardbackend.badge.event.JobPostCreatedEvent;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,19 +39,24 @@ public class JobPostService {
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final WorkplaceService workplaceService;
     private final ApplicationEventPublisher eventPublisher;
+    private final ActivityService activityService;
 
-    public JobPostService(JobPostRepository jobPostRepository, 
-                          UserRepository userRepository,
-                          WorkplaceRepository workplaceRepository,
-                          EmployerWorkplaceRepository employerWorkplaceRepository,
-                          WorkplaceService workplaceService,
-                          ApplicationEventPublisher eventPublisher) {
+    public JobPostService(
+        JobPostRepository jobPostRepository,
+        UserRepository userRepository,
+        WorkplaceRepository workplaceRepository,
+        EmployerWorkplaceRepository employerWorkplaceRepository,
+        WorkplaceService workplaceService,
+        ApplicationEventPublisher eventPublisher,
+        ActivityService activityService
+    ) {
         this.jobPostRepository = jobPostRepository;
         this.userRepository = userRepository;
         this.workplaceRepository = workplaceRepository;
         this.employerWorkplaceRepository = employerWorkplaceRepository;
         this.workplaceService = workplaceService;
         this.eventPublisher = eventPublisher;
+        this.activityService = activityService;
     }
 
     @Transactional(readOnly = true)
@@ -136,7 +143,9 @@ public class JobPostService {
         
         // Publish event for badge system
         eventPublisher.publishEvent(new JobPostCreatedEvent(employer.getId(), savedJob.getId()));
-        
+
+        activityService.logActivity(employer, ActivityType.CREATE_JOB, savedJob.getId(), "JobPost");
+
         return toResponseDto(savedJob);
     }
 
@@ -242,6 +251,11 @@ public class JobPostService {
         if (!isEmployer) {
             throw new HandleException(ErrorCode.WORKPLACE_UNAUTHORIZED, "You are not an employer of this workplace");
         }
+    }
+
+    @Transactional
+    public void deleteUserData(Long userId) {
+        jobPostRepository.deleteByEmployerId(userId);
     }
 
 }

@@ -1,10 +1,12 @@
 package org.bounswe.jobboardbackend.auth.security;
 
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+
+import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
@@ -21,6 +23,7 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
+
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
@@ -30,7 +33,11 @@ public class JwtUtils {
     @Value("${app.jwtExpirationInMs}")
     private int jwtExpirationMs;
 
+    private final UserRepository userRepository;
 
+    public JwtUtils(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public String generateOtpToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -44,7 +51,6 @@ public class JwtUtils {
         return JwtGenerator(userPrincipal.getUsername(), jwtExpirationMs, "auth", "ACCESS");
     }
 
-
     public Authentication buildAuthenticationFromAccessToken(String token, UserDetailsService uds) {
         Claims claims = getClaims(token);
         if (!"ACCESS".equals(claims.get("purpose")) || !"auth".equals(claims.getAudience())) {
@@ -55,14 +61,19 @@ public class JwtUtils {
 
         UserDetails userDetails = uds.loadUserByUsername(subject);
 
+        String username = userDetails.getUsername();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
+        if (user.getIsBanned()) {
+            throw new HandleException(ErrorCode.USER_BANNED, "User is banned");
+        }
+
         return new UsernamePasswordAuthenticationToken(
                 userDetails,
                 null,
-                userDetails.getAuthorities()
-        );
+                userDetails.getAuthorities());
     }
-
-
 
     public boolean validateJwtToken(String authToken) {
         try {
@@ -76,7 +87,6 @@ public class JwtUtils {
         }
         return false;
     }
-
 
     public Claims getClaims(String token) {
         return jwtParser().parseClaimsJws(token).getBody();
@@ -95,8 +105,6 @@ public class JwtUtils {
     public String getUserNameFromJwtToken(String token) {
         return getClaims(token).getSubject();
     }
-
-
 
     private Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));

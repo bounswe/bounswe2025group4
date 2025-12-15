@@ -10,4 +10,5 @@ public interface ResumeReviewRepository extends JpaRepository<ResumeReview, Long
 
     Optional<ResumeReview> findByConversationId(Long conversationId);
 
+    void deleteByJobSeekerId(Long jobSeekerId);
 }

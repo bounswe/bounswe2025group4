@@ -13,7 +13,9 @@ public interface ForumCommentUpvoteRepository extends JpaRepository<ForumComment
     Optional<ForumCommentUpvote> findByUserIdAndCommentId(Long userId, Long commentId);
 
     long countByCommentId(Long commentId);
-    
+
+    void deleteByUserId(Long userId);
+
     /**
      * Count total upvotes received by a user on all their comments.
      * Used for badge criteria checking (Helpful, Valuable Contributor badges).
