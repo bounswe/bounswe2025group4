@@ -65,7 +65,8 @@
       "previous": "Previous",
       "next": "Next",
       "pageInfo": "Page {{page}} of {{total}}"
-    }
+    },
+    "report": "Report"
   },
   "report": {
     "messageLabel": "Explain why you are reporting this",
@@ -948,9 +949,7 @@
     "title": "Forum",
     "subtitle": "Share knowledge, ask questions, and connect with the community",
     "searchPlaceholder": "Search posts, authors or tags...",
-    "createThread": "Create Thread",
     "createNewThread": "Create a new thread",
-    "titleLabel": "Title",
     "titlePlaceholder": "Title",
     "contentPlaceholder": "Write your post here...",
     "tagsPlaceholder": "Tags (comma separated)",
@@ -962,6 +961,10 @@
     "comments": "Comments",
     "viewPost": "View post",
     "topCommentFrom": "Top comment from",
+    "seeAllComments": "See all {{count}} comments",
+    "beFirstToComment": "Be the first to comment...",
+    "backToForum": "Back to Forum",
+    "voteError": "Failed to update vote",
     "deletePost": {
       "title": "Delete Post",
       "description": "Are you sure you want to delete this post? This action cannot be undone.",
@@ -2150,6 +2153,179 @@
         "description": "There are no reports matching your current filters."
       },
       "loading": "Loading reports..."
+    }
+  },
+  "info": {
+    "about": {
+      "title": "About Ethica Jobs",
+      "subtitle": "Connecting job seekers with ethical employers who share their values",
+      "mission": {
+        "title": "Our Mission",
+        "content": "Ethica Jobs is dedicated to transforming the job market by connecting job seekers with employers who prioritize ethical practices, social responsibility, and positive workplace cultures. We believe that everyone deserves to work for organizations that align with their personal values and contribute meaningfully to society.",
+        "content2": "Our platform goes beyond traditional job boards by highlighting employers committed to diversity and inclusion, environmental sustainability, fair labor practices, and community engagement. We empower job seekers to make informed decisions about where they invest their time and talent."
+      },
+      "values": {
+        "title": "Our Core Values",
+        "transparency": {
+          "title": "Transparency",
+          "content": "We provide clear, accurate information about employers, including their ethical commitments, workplace practices, and community impact. Job seekers deserve honesty about the companies they consider joining."
+        },
+        "inclusion": {
+          "title": "Inclusion & Diversity",
+          "content": "We celebrate and promote workplaces that embrace diversity in all its forms. We believe that inclusive teams are stronger, more innovative, and better equipped to solve complex challenges."
+        },
+        "fairness": {
+          "title": "Fair Labor Practices",
+          "content": "We support employers who offer fair wages, safe working conditions, opportunities for professional growth, and respect for workers' rights. Everyone deserves dignity in the workplace."
+        },
+        "community": {
+          "title": "Community Impact",
+          "content": "We highlight organizations that give back to their communities, support local initiatives, and create positive social change. We believe businesses have a responsibility to contribute to the common good."
+        }
+      },
+      "offer": {
+        "title": "What We Offer",
+        "jobs": "Curated job listings from employers verified for their ethical practices and commitments",
+        "workplaces": "Detailed workplace profiles showcasing company values, culture, and ethical initiatives",
+        "mentorship": "Mentorship opportunities connecting job seekers with experienced professionals in their field",
+        "community": "A supportive community forum for discussing career development, workplace ethics, and industry trends",
+        "volunteering": "Volunteering opportunities with nonprofit organizations making a difference in their communities"
+      },
+      "closing": "Join us in building a job market where values matter. Together, we can create workplaces that not only succeed economically but also contribute to a better world."
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "We'd love to hear from you",
+      "intro": "At Ethica Jobs, we're committed to providing the best possible experience for job seekers and employers alike. Whether you have questions, feedback, or need assistance, we're here to help. Your input helps us improve our platform and better serve our community.",
+      "general": {
+        "title": "General Inquiries",
+        "description": "For general questions about our platform, features, or how to get started:",
+        "email": "info@ethicajobs.com"
+      },
+      "support": {
+        "title": "Technical Support",
+        "description": "Need help with your account, password reset, or technical issues?",
+        "email": "support@ethicajobs.com"
+      },
+      "feedback": {
+        "title": "Feedback & Suggestions",
+        "description": "Share your ideas, suggestions, or feedback to help us improve:",
+        "email": "feedback@ethicajobs.com"
+      },
+      "bug": {
+        "title": "Report a Bug",
+        "description": "Found a bug or experiencing issues? Please let us know:",
+        "email": "bugs@ethicajobs.com"
+      },
+      "partnerships": {
+        "title": "Employer Partnerships",
+        "content": "Are you an employer committed to ethical practices and looking to connect with values-driven job seekers? We'd love to partner with you. Please reach out to discuss how we can help showcase your organization's commitment to ethics and attract talented individuals who share your values.",
+        "email": "partnerships@ethicajobs.com"
+      },
+      "response": "We typically respond to all inquiries within 1-2 business days. Thank you for your patience and for being part of the Ethica Jobs community!"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last Updated: January 2025",
+      "intro": {
+        "title": "Our Commitment to Privacy",
+        "content": "At Ethica Jobs, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform. We are committed to protecting your personal data and being transparent about our practices.",
+        "content2": "By using Ethica Jobs, you agree to the collection and use of information in accordance with this policy. We will only use your personal information as described in this Privacy Policy and in ways that are consistent with our ethical values."
+      },
+      "collect": {
+        "title": "Information We Collect",
+        "personal": {
+          "title": "Personal Information",
+          "content": "When you create an account or use our services, we may collect:",
+          "name": "Name, email address, and contact information",
+          "profile": "Profile information, including work experience, education, and skills",
+          "preferences": "Account preferences and settings",
+          "credentials": "Authentication credentials (securely hashed)"
+        },
+        "usage": {
+          "title": "Usage Data",
+          "content": "We automatically collect information about how you interact with our platform, including pages visited, searches performed, and features used. This helps us improve our services and user experience."
+        }
+      },
+      "use": {
+        "title": "How We Use Your Information",
+        "service": "To provide, maintain, and improve our job board and related services",
+        "communication": "To communicate with you about your account, applications, and important platform updates",
+        "matching": "To match job seekers with relevant opportunities based on skills and preferences",
+        "analytics": "To analyze usage patterns and enhance the user experience",
+        "security": "To detect, prevent, and address technical issues, security threats, or fraudulent activity"
+      },
+      "security": {
+        "title": "Data Security",
+        "content": "We implement appropriate technical and organizational security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the Internet or electronic storage is 100% secure.",
+        "content2": "We use industry-standard encryption, secure authentication practices, and regular security audits to safeguard your data. We also limit access to personal information to employees, contractors, and service providers who need it to perform their duties."
+      },
+      "rights": {
+        "title": "Your Privacy Rights",
+        "intro": "You have the right to:",
+        "access": "Access and review your personal information",
+        "update": "Update or correct inaccurate information",
+        "delete": "Request deletion of your account and personal data",
+        "export": "Export your data in a portable format",
+        "optout": "Opt-out of certain communications and data processing activities"
+      },
+      "contact": {
+        "intro": "If you have questions about this Privacy Policy or wish to exercise your privacy rights, please contact us at:",
+        "email": "privacy@ethicajobs.com"
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last Updated: January 2025",
+      "intro": {
+        "title": "Agreement to Terms",
+        "content": "Welcome to Ethica Jobs. These Terms of Service (\"Terms\") govern your access to and use of our platform, including our website, mobile applications, and related services (collectively, the \"Service\"). By accessing or using Ethica Jobs, you agree to be bound by these Terms.",
+        "content2": "If you do not agree to these Terms, please do not use our Service. We reserve the right to modify these Terms at any time, and such modifications will be effective immediately upon posting. Your continued use of the Service after changes are posted constitutes your acceptance of the modified Terms."
+      },
+      "responsibilities": {
+        "title": "User Responsibilities",
+        "accuracy": {
+          "title": "Accurate Information",
+          "content": "You agree to provide accurate, current, and complete information when creating an account or using our Service. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account."
+        },
+        "conduct": {
+          "title": "Acceptable Use",
+          "intro": "You agree not to:",
+          "spam": "Post false, misleading, or fraudulent information",
+          "harassment": "Harass, threaten, or discriminate against other users",
+          "illegal": "Use the Service for any illegal or unauthorized purpose",
+          "violate": "Violate any applicable laws or regulations",
+          "abuse": "Interfere with or disrupt the Service or servers"
+        }
+      },
+      "jobs": {
+        "title": "Job Listings and Applications",
+        "content": "Ethica Jobs serves as a platform connecting job seekers with employers. We do not guarantee employment, and we are not responsible for the hiring decisions made by employers. Job seekers are responsible for verifying the legitimacy of job postings and employers before applying.",
+        "content2": "Employers are responsible for ensuring their job postings are accurate, comply with applicable employment laws, and reflect their genuine commitment to ethical practices. We reserve the right to remove any job posting or employer profile that violates our standards or these Terms."
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "content": "The Service and its original content, features, and functionality are owned by Ethica Jobs and are protected by international copyright, trademark, and other intellectual property laws. You may not reproduce, distribute, modify, or create derivative works from our Service without our prior written consent.",
+        "content2": "You retain ownership of any content you post on our platform, but by posting content, you grant Ethica Jobs a worldwide, non-exclusive, royalty-free license to use, display, and distribute your content in connection with operating and promoting our Service."
+      },
+      "disclaimer": {
+        "title": "Disclaimer of Warranties",
+        "content": "The Service is provided \"as is\" and \"as available\" without warranties of any kind, either express or implied. We do not warrant that the Service will be uninterrupted, secure, or error-free, or that defects will be corrected.",
+        "content2": "We do not guarantee the accuracy, completeness, or reliability of any job listings, employer profiles, or user-generated content. You use the Service at your own risk."
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "content": "To the maximum extent permitted by law, Ethica Jobs shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your use of the Service."
+      },
+      "ethical": {
+        "title": "Our Commitment to Ethical Practices",
+        "content": "As a platform dedicated to connecting job seekers with ethical employers, we hold ourselves to high standards. We are committed to fair treatment of all users, transparency in our practices, and promoting diversity, inclusion, and social responsibility.",
+        "content2": "We expect all users—both job seekers and employers—to share this commitment to ethical conduct. Violations of these principles may result in account suspension or termination."
+      },
+      "contact": {
+        "intro": "If you have questions about these Terms of Service, please contact us at:",
+        "email": "legal@ethicajobs.com"
+      }
     }
   }
 }

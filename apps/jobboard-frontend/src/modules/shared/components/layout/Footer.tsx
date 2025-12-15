@@ -10,16 +10,16 @@ export default function Footer() {
       <div className="container mx-auto px-4 py-6">
         <div className="hidden md:grid grid-cols-[1fr_auto_1fr] items-center gap-6">
           <div className="flex gap-6 text-sm text-muted-foreground">
-            <Link to="#" className="hover:text-foreground transition-colors">
+            <Link to="/about" className="hover:text-foreground transition-colors">
               {t('layout.footer.about')}
             </Link>
-            <Link to="#" className="hover:text-foreground transition-colors">
+            <Link to="/contact" className="hover:text-foreground transition-colors">
               {t('layout.footer.contact')}
             </Link>
-            <Link to="#" className="hover:text-foreground transition-colors">
+            <Link to="/privacy" className="hover:text-foreground transition-colors">
               {t('layout.footer.privacy')}
             </Link>
-            <Link to="#" className="hover:text-foreground transition-colors">
+            <Link to="/terms" className="hover:text-foreground transition-colors">
               {t('layout.footer.terms')}
             </Link>
           </div>

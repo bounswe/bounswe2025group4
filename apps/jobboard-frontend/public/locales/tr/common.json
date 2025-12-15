@@ -65,7 +65,8 @@
       "previous": "Önceki",
       "next": "Sonraki",
       "pageInfo": "Sayfa {{page}} / {{total}}"
-    }
+    },
+    "report": "Şikayet Et"
   },
   "report": {
     "messageLabel": "Neden şikayet ettiğinizi açıklayın",
@@ -969,9 +970,7 @@
     "title": "Forum",
     "subtitle": "Bilgi paylaşın, soru sorun ve toplulukla bağlantı kurun",
     "searchPlaceholder": "Gönderi, yazar veya etiket ara...",
-    "createThread": "Başlık Oluştur",
     "createNewThread": "Yeni bir başlık oluştur",
-    "titleLabel": "Başlık",
     "titlePlaceholder": "Başlık",
     "contentPlaceholder": "Gönderinizi buraya yazın...",
     "tagsPlaceholder": "Etiketler (virgülle ayırın)",
@@ -980,9 +979,14 @@
     "loadError": "Gönderiler yüklenemedi",
     "postNotFound": "Gönderi bulunamadı",
     "by": "Yazan",
+    "comment": "Yorum",
     "comments": "Yorumlar",
     "viewPost": "Gönderiyi gör",
     "topCommentFrom": "En iyi yorum",
+    "seeAllComments": "{{count}} yorumu gör",
+    "beFirstToComment": "Yorum yapan ilk kişi olun...",
+    "backToForum": "Foruma Geri Dön",
+    "voteError": "Oylama güncellenemedi",
     "deletePost": {
       "title": "Gönderiyi Sil",
       "description": "Bu gönderiyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
@@ -2159,6 +2163,179 @@
         "description": "Mevcut filtrelerinizle eşleşen rapor yok."
       },
       "loading": "Raporlar yükleniyor..."
+    }
+  },
+  "info": {
+    "about": {
+      "title": "Ethica Jobs Hakkında",
+      "subtitle": "İş arayanları, değerlerini paylaşan etik işverenlerle buluşturuyoruz",
+      "mission": {
+        "title": "Misyonumuz",
+        "content": "Ethica Jobs, etik uygulamalara, sosyal sorumluluğa ve olumlu iş yeri kültürlerine öncelik veren işverenlerle iş arayanları buluşturarak iş pazarını dönüştürmeye kendini adamıştır. Herkesin kişisel değerleriyle uyumlu olan ve topluma anlamlı katkılar sağlayan kuruluşlarda çalışmayı hak ettiğine inanıyoruz.",
+        "content2": "Platformumuz, çeşitlilik ve kapsayıcılığa, çevresel sürdürülebilirliğe, adil çalışma uygulamalarına ve toplumsal katılıma bağlı işverenleri vurgulayarak geleneksel iş panolarının ötesine geçiyor. İş arayanların zamanlarını ve yeteneklerini nereye yatıracakları konusunda bilinçli kararlar vermelerini sağlıyoruz."
+      },
+      "values": {
+        "title": "Temel Değerlerimiz",
+        "transparency": {
+          "title": "Şeffaflık",
+          "content": "İşverenler hakkında, etik taahhütleri, iş yeri uygulamaları ve toplumsal etkileri dahil olmak üzere net ve doğru bilgiler sağlıyoruz. İş arayanlar, katılmayı düşündükleri şirketler hakkında dürüstlüğü hak ediyor."
+        },
+        "inclusion": {
+          "title": "Kapsayıcılık ve Çeşitlilik",
+          "content": "Her biçimde çeşitliliği kucaklayan iş yerlerini kutluyor ve destekliyoruz. Kapsayıcı ekiplerin daha güçlü, daha yenilikçi ve karmaşık zorlukları çözmek için daha donanımlı olduğuna inanıyoruz."
+        },
+        "fairness": {
+          "title": "Adil Çalışma Uygulamaları",
+          "content": "Adil ücretler, güvenli çalışma koşulları, profesyonel gelişim fırsatları ve işçi haklarına saygı sunan işverenleri destekliyoruz. Herkes iş yerinde saygınlığı hak ediyor."
+        },
+        "community": {
+          "title": "Toplumsal Etki",
+          "content": "Topluluklarına geri veren, yerel girişimleri destekleyen ve olumlu sosyal değişim yaratan kuruluşları öne çıkarıyoruz. İşletmelerin ortak iyiliğe katkıda bulunma sorumluluğu olduğuna inanıyoruz."
+        }
+      },
+      "offer": {
+        "title": "Sunduklarımız",
+        "jobs": "Etik uygulamaları ve taahhütleri doğrulanmış işverenlerden seçilmiş iş ilanları",
+        "workplaces": "Şirket değerlerini, kültürünü ve etik girişimlerini gösteren detaylı iş yeri profilleri",
+        "mentorship": "İş arayanları alanlarında deneyimli profesyonellerle buluşturan mentorluk fırsatları",
+        "community": "Kariyer gelişimi, iş yeri etiği ve sektör trendlerini tartışmak için destekleyici bir topluluk forumu",
+        "volunteering": "Topluluklarında fark yaratan kar amacı gütmeyen kuruluşlarla gönüllülük fırsatları"
+      },
+      "closing": "Değerlerin önemli olduğu bir iş pazarı oluşturmak için bize katılın. Birlikte, yalnızca ekonomik olarak başarılı olmakla kalmayıp aynı zamanda daha iyi bir dünyaya katkıda bulunan iş yerleri yaratabiliriz."
+    },
+    "contact": {
+      "title": "İletişim",
+      "subtitle": "Sizden haber almak isteriz",
+      "intro": "Ethica Jobs'ta, hem iş arayanlar hem de işverenler için mümkün olan en iyi deneyimi sunmaya kendini adamış durumdayız. Sorularınız, geri bildirimleriniz veya yardıma ihtiyacınız olsun, yardımcı olmak için buradayız. Girdileriniz platformumuzu geliştirmemize ve topluluğumuzua daha iyi hizmet etmemize yardımcı olur.",
+      "general": {
+        "title": "Genel Sorular",
+        "description": "Platformumuz, özelliklerimiz veya nasıl başlayacağınız hakkında genel sorular için:",
+        "email": "info@ethicajobs.com"
+      },
+      "support": {
+        "title": "Teknik Destek",
+        "description": "Hesabınız, şifre sıfırlama veya teknik sorunlar konusunda yardıma mı ihtiyacınız var?",
+        "email": "support@ethicajobs.com"
+      },
+      "feedback": {
+        "title": "Geri Bildirim ve Öneriler",
+        "description": "Gelişmemize yardımcı olmak için fikirlerinizi, önerilerinizi veya geri bildirimlerinizi paylaşın:",
+        "email": "feedback@ethicajobs.com"
+      },
+      "bug": {
+        "title": "Hata Bildir",
+        "description": "Bir hata buldunuz mu veya sorun mu yaşıyorsunuz? Lütfen bize bildirin:",
+        "email": "bugs@ethicajobs.com"
+      },
+      "partnerships": {
+        "title": "İşveren Ortaklıkları",
+        "content": "Etik uygulamalara bağlı bir işveren misiniz ve değer odaklı iş arayanlarla bağlantı kurmak mı istiyorsunuz? Sizinle ortaklık yapmak isteriz. Kuruluşunuzun etik taahhüdünü sergilememize ve değerlerinizi paylaşan yetenekli bireyleri çekmemize nasıl yardımcı olabileceğimizi tartışmak için lütfen bizimle iletişime geçin.",
+        "email": "partnerships@ethicajobs.com"
+      },
+      "response": "Genellikle tüm sorulara 1-2 iş günü içinde yanıt veriyoruz. Sabrınız ve Ethica Jobs topluluğunun bir parçası olduğunuz için teşekkürler!"
+    },
+    "privacy": {
+      "title": "Gizlilik Politikası",
+      "lastUpdated": "Son Güncelleme: Ocak 2025",
+      "intro": {
+        "title": "Gizliliğe Bağlılığımız",
+        "content": "Ethica Jobs'ta gizliliğinizi ciddiye alıyoruz. Bu Gizlilik Politikası, platformumuzu kullandığınızda bilgilerinizi nasıl topladığımızı, kullandığımızı, açıkladığımızı ve koruduğumuzu açıklar. Kişisel verilerinizi korumaya ve uygulamalarımız hakkında şeffaf olmaya kararlıyız.",
+        "content2": "Ethica Jobs'ı kullanarak, bu politikaya uygun olarak bilgilerin toplanması ve kullanılmasını kabul edersiniz. Kişisel bilgilerinizi yalnızca bu Gizlilik Politikasında açıklandığı şekilde ve etik değerlerimizle tutarlı şekillerde kullanacağız."
+      },
+      "collect": {
+        "title": "Topladığımız Bilgiler",
+        "personal": {
+          "title": "Kişisel Bilgiler",
+          "content": "Bir hesap oluşturduğunuzda veya hizmetlerimizi kullandığınızda şunları toplayabiliriz:",
+          "name": "Ad, e-posta adresi ve iletişim bilgileri",
+          "profile": "İş deneyimi, eğitim ve beceriler dahil profil bilgileri",
+          "preferences": "Hesap tercihleri ve ayarları",
+          "credentials": "Kimlik doğrulama bilgileri (güvenli şekilde hashlenmiş)"
+        },
+        "usage": {
+          "title": "Kullanım Verileri",
+          "content": "Ziyaret edilen sayfalar, yapılan aramalar ve kullanılan özellikler dahil olmak üzere platformumuzla nasıl etkileşim kurduğunuz hakkında bilgileri otomatik olarak topluyoruz. Bu, hizmetlerimizi ve kullanıcı deneyimini iyileştirmemize yardımcı olur."
+        }
+      },
+      "use": {
+        "title": "Bilgilerinizi Nasıl Kullanıyoruz",
+        "service": "İş panomuzu ve ilgili hizmetleri sağlamak, sürdürmek ve iyileştirmek için",
+        "communication": "Hesabınız, başvurularınız ve önemli platform güncellemeleri hakkında sizinle iletişim kurmak için",
+        "matching": "Becerilere ve tercihlere göre iş arayanları ilgili fırsatlarla eşleştirmek için",
+        "analytics": "Kullanım kalıplarını analiz etmek ve kullanıcı deneyimini geliştirmek için",
+        "security": "Teknik sorunları, güvenlik tehditlerini veya dolandırıcılık faaliyetlerini tespit etmek, önlemek ve ele almak için"
+      },
+      "security": {
+        "title": "Veri Güvenliği",
+        "content": "Kişisel bilgilerinizi yetkisiz erişime, değişikliğe, ifşaya veya tahribe karşı korumak için uygun teknik ve örgütsel güvenlik önlemleri uyguluyoruz. Ancak, İnternet üzerinden aktarım veya elektronik depolama yöntemi %100 güvenli değildir.",
+        "content2": "Verilerinizi korumak için endüstri standardı şifreleme, güvenli kimlik doğrulama uygulamaları ve düzenli güvenlik denetimleri kullanıyoruz. Ayrıca, kişisel bilgilere erişimi, görevlerini yerine getirmesi gereken çalışanlar, yükleniciler ve hizmet sağlayıcılar ile sınırlandırıyoruz."
+      },
+      "rights": {
+        "title": "Gizlilik Haklarınız",
+        "intro": "Şu haklara sahipsiniz:",
+        "access": "Kişisel bilgilerinize erişmek ve gözden geçirmek",
+        "update": "Yanlış bilgileri güncellemek veya düzeltmek",
+        "delete": "Hesabınızın ve kişisel verilerinizin silinmesini talep etmek",
+        "export": "Verilerinizi taşınabilir bir formatta dışa aktarmak",
+        "optout": "Belirli iletişimlerden ve veri işleme faaliyetlerinden çıkmak"
+      },
+      "contact": {
+        "intro": "Bu Gizlilik Politikası hakkında sorularınız varsa veya gizlilik haklarınızı kullanmak istiyorsanız, lütfen bizimle iletişime geçin:",
+        "email": "privacy@ethicajobs.com"
+      }
+    },
+    "terms": {
+      "title": "Hizmet Şartları",
+      "lastUpdated": "Son Güncelleme: Ocak 2025",
+      "intro": {
+        "title": "Şartlara Anlaşma",
+        "content": "Ethica Jobs'a hoş geldiniz. Bu Hizmet Şartları (\"Şartlar\"), web sitemiz, mobil uygulamalarımız ve ilgili hizmetlerimiz (topluca \"Hizmet\") dahil olmak üzere platformumuza erişiminizi ve kullanımınızı yönetir. Ethica Jobs'a erişerek veya kullanarak bu Şartlara bağlı kalmayı kabul edersiniz.",
+        "content2": "Bu Şartlara katılmıyorsanız, lütfen Hizmetimizi kullanmayın. Bu Şartları istediğimiz zaman değiştirme hakkını saklı tutarız ve bu tür değişiklikler yayınlandığı anda yürürlüğe girer. Değişiklikler yayınlandıktan sonra Hizmeti kullanmaya devam etmeniz, değiştirilmiş Şartları kabul ettiğiniz anlamına gelir."
+      },
+      "responsibilities": {
+        "title": "Kullanıcı Sorumlulukları",
+        "accuracy": {
+          "title": "Doğru Bilgi",
+          "content": "Bir hesap oluştururken veya Hizmetimizi kullanırken doğru, güncel ve eksiksiz bilgiler sağlamayı kabul edersiniz. Hesap kimlik bilgilerinizin gizliliğini korumaktan ve hesabınız altında gerçekleşen tüm faaliyetlerden siz sorumlusunuz."
+        },
+        "conduct": {
+          "title": "Kabul Edilebilir Kullanım",
+          "intro": "Aşağıdakileri yapmayı kabul etmezsiniz:",
+          "spam": "Yanlış, yanıltıcı veya dolandırıcılık bilgileri yayınlamak",
+          "harassment": "Diğer kullanıcıları taciz etmek, tehdit etmek veya ayrımcılık yapmak",
+          "illegal": "Hizmeti herhangi bir yasa dışı veya yetkisiz amaç için kullanmak",
+          "violate": "Geçerli yasalara veya düzenlemelere aykırı davranmak",
+          "abuse": "Hizmete veya sunuculara müdahale etmek veya bunları bozmak"
+        }
+      },
+      "jobs": {
+        "title": "İş İlanları ve Başvurular",
+        "content": "Ethica Jobs, iş arayanları işverenlerle buluşturan bir platform olarak hizmet vermektedir. İstihdam garantisi vermiyoruz ve işverenlerin yaptığı işe alma kararlarından sorumlu değiliz. İş arayanlar, başvurmadan önce iş ilanlarının ve işverenlerin meşruiyetini doğrulamaktan sorumludur.",
+        "content2": "İşverenler, iş ilanlarının doğru olduğundan, geçerli istihdam yasalarına uygun olduğundan ve etik uygulamalara olan gerçek bağlılıklarını yansıttığından emin olmaktan sorumludur. Standartlarımıza veya bu Şartlara aykırı olan herhangi bir iş ilanını veya işveren profilini kaldırma hakkını saklı tutarız."
+      },
+      "ip": {
+        "title": "Fikri Mülkiyet",
+        "content": "Hizmet ve orijinal içeriği, özellikleri ve işlevselliği Ethica Jobs'a aittir ve uluslararası telif hakkı, marka ve diğer fikri mülkiyet yasalarıyla korunmaktadır. Önceden yazılı iznimiz olmadan Hizmetimizi çoğaltamaz, dağıtamaz, değiştiremez veya türev eserler oluşturamazsınız.",
+        "content2": "Platformumuzda yayınladığınız herhangi bir içeriğin mülkiyetini elinizde tutarsınız, ancak içerik yayınlayarak, Hizmetimizi işletmek ve tanıtmakla bağlantılı olarak içeriğinizi kullanma, görüntüleme ve dağıtma hakkı için Ethica Jobs'a dünya çapında, münhasır olmayan, telif hakkı ücretsiz bir lisans verirsiniz."
+      },
+      "disclaimer": {
+        "title": "Garanti Reddi",
+        "content": "Hizmet \"olduğu gibi\" ve \"mevcut olduğu şekilde\" herhangi bir tür açık veya zımni garanti olmaksızın sağlanmaktadır. Hizmetin kesintisiz, güvenli veya hatasız olacağını veya hataların düzeltileceğini garanti etmiyoruz.",
+        "content2": "Herhangi bir iş ilanının, işveren profilinin veya kullanıcı tarafından oluşturulan içeriğin doğruluğunu, eksiksizliğini veya güvenilirliğini garanti etmiyoruz. Hizmeti kendi riskiniz altında kullanırsınız."
+      },
+      "liability": {
+        "title": "Sorumluluk Sınırlaması",
+        "content": "Yasaların izin verdiği maksimum ölçüde, Ethica Jobs, Hizmetin kullanımınızdan kaynaklanan dolaylı, arızi, özel, sonuçsal veya cezai zararlardan veya doğrudan veya dolaylı olarak oluşan kâr veya gelir kayıplarından veya veri, kullanım, itibar veya diğer maddi olmayan kayıplardan sorumlu olmayacaktır."
+      },
+      "ethical": {
+        "title": "Etik Uygulamalara Bağlılığımız",
+        "content": "İş arayanları etik işverenlerle buluşturmaya adanmış bir platform olarak, kendimizi yüksek standartlara tabi tutuyoruz. Tüm kullanıcılara adil muamele, uygulamalarımızda şeffaflık ve çeşitlilik, kapsayıcılık ve sosyal sorumluluğu teşvik etmeye kararlıyız.",
+        "content2": "Tüm kullanıcıların—hem iş arayanlar hem de işverenler—etik davranışa olan bu bağlılığı paylaşmasını bekliyoruz. Bu ilkelerin ihlali, hesap askıya alma veya sonlandırmaya neden olabilir."
+      },
+      "contact": {
+        "intro": "Bu Hizmet Şartları hakkında sorularınız varsa, lütfen bizimle iletişime geçin:",
+        "email": "legal@ethicajobs.com"
+      }
     }
   }
 }
