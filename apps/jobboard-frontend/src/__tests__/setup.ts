@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { authHandlers, profileHandlers, API_BASE_URL, jobHandlers, applicationHandlers } from './handlers';
+import { authHandlers, profileHandlers, API_BASE_URL, jobHandlers, applicationHandlers, dashboardHandlers } from './handlers';
 import { workplaceHandlers } from './workplace-handlers';
 import { mentorshipHandlers } from './mentorship-handlers';
 
@@ -35,6 +35,7 @@ export const server = setupServer(
   ...jobHandlers,
   ...applicationHandlers,
   ...mentorshipHandlers,
+  ...dashboardHandlers,
 );
 
 vi.stubEnv('VITE_API_URL', API_BASE_URL);
