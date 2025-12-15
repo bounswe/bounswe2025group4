@@ -983,15 +983,21 @@ const mockForumPosts = [
 ];
 
 export const forumHandlers = [
-  // Get posts by user ID
-  http.get(`${API_BASE_URL}/forum/posts/user/:userId`, async ({ params }) => {
-    const { userId } = params;
-    const userPosts = mockForumPosts.filter(post => post.authorId === Number(userId));
-    return HttpResponse.json(userPosts, { status: 200 });
+  // Get posts (with optional userId query parameter)
+  http.get(`${API_BASE_URL}/forum/posts`, async ({ request }) => {
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId');
+    
+    if (userId) {
+      const userPosts = mockForumPosts.filter(post => post.authorId === Number(userId));
+      return HttpResponse.json(userPosts, { status: 200 });
+    }
+    
+    return HttpResponse.json(mockForumPosts, { status: 200 });
   }),
 
   // OPTIONS handler for CORS preflight
-  http.options(`${API_BASE_URL}/forum/posts/user/:userId`, async () => {
+  http.options(`${API_BASE_URL}/forum/posts`, async () => {
     return HttpResponse.json({}, { status: 200 });
   }),
 ];

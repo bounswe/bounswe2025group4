@@ -23,7 +23,7 @@ async function fetchPosts(): Promise<ForumPostResponseDTO[]> {
 }
 
 async function fetchPostsByUserId(userId: number): Promise<ForumPostResponseDTO[]> {
-  const response = await api.get<ForumPostResponseDTO[]>(`/forum/posts/user/${userId}`);
+  const response = await api.get<ForumPostResponseDTO[]>(`/forum/posts?userId=${userId}`);
   return response.data;
 }
 
