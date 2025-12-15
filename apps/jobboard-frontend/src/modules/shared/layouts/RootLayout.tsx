@@ -4,9 +4,12 @@ import { ToastContainer } from 'react-toastify';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import CenteredLoader from '../components/common/CenteredLoader';
+import { useTheme } from '../providers/ThemeProvider';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function RootLayout() {
+  const { theme } = useTheme();
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -16,7 +19,7 @@ export default function RootLayout() {
         </Suspense>
       </main>
       <Footer />
-      <ToastContainer position="bottom-right" />
+      <ToastContainer position="bottom-right" theme={theme} />
     </div>
   );
 }
