@@ -67,11 +67,20 @@ export interface PublicProfile {
   badges?: Badge[];
 }
 
-export interface Activity {
+import type { ActivityType, ActivityResponse } from './api.types';
+
+/**
+ * Activity display data for UI rendering
+ */
+export interface ActivityDisplay {
   id: number;
-  type: 'application' | 'forum' | 'comment' | 'like';
-  text: string;
-  date: string;
+  type: ActivityType;
+  icon: string; // Lucide icon name
+  text: string; // Human-readable description
+  date: string; // Relative time (e.g., "2 days ago")
+  clickable: boolean;
+  navigationUrl?: string;
+  rawData: ActivityResponse; // Original API response
 }
 
 export interface Post {
