@@ -1,45 +1,45 @@
 {
   "layout": {
-  "languageSwitcher": {
-    "label": "اللغة",
-    "english": "الإنجليزية",
-    "turkish": "التركية",
-    "arabic": "العربية"
-  },
-  "header": {
-    "brand": "Ethica Jobs",
-    "menu": "القائمة",
-    "nav": {
-      "home": "الرئيسية",
-      "jobs": "الوظائف",
+    "languageSwitcher": {
+      "label": "اللغة",
+      "english": "الإنجليزية",
+      "turkish": "التركية",
+      "arabic": "العربية"
+    },
+    "header": {
+      "brand": "Ethica Jobs",
+      "menu": "القائمة",
+      "nav": {
+        "home": "الرئيسية",
+        "jobs": "الوظائف",
         "nonProfitJobs": "التطوع",
-      "myApplications": "طلباتي",
-      "mentorship": "الإرشاد",
+        "myApplications": "طلباتي",
+        "mentorship": "الإرشاد",
         "myMentorships": "إرشاداتي",
         "chat": "الدردشة",
-      "forum": "المنتدى",
+        "forum": "المنتدى",
         "employerDashboard": "لوحة صاحب العمل",
         "workplaces": "أماكن العمل",
         "myWorkplaces": "أماكن عملي",
         "browseWorkplaces": "تصفح أماكن العمل",
         "profile": "الملف الشخصي",
         "settings": "الإعدادات"
-    },
-    "auth": {
-      "login": "تسجيل الدخول",
-      "signup": "إنشاء حساب",
-      "logout": "تسجيل الخروج",
-      "profile": "الملف الشخصي"
+      },
+      "auth": {
+        "login": "تسجيل الدخول",
+        "signup": "إنشاء حساب",
+        "logout": "تسجيل الخروج",
+        "profile": "الملف الشخصي"
       },
       "theme": "السمة",
       "language": "اللغة"
-  },
-  "footer": {
-    "about": "من نحن",
-    "contact": "تواصل معنا",
-    "privacy": "سياسة الخصوصية",
-    "terms": "شروط الاستخدام",
-    "brandSuffix": "Ethica Jobs"
+    },
+    "footer": {
+      "about": "من نحن",
+      "contact": "تواصل معنا",
+      "privacy": "سياسة الخصوصية",
+      "terms": "شروط الاستخدام",
+      "brandSuffix": "Ethica Jobs"
     }
   },
   "common": {
@@ -318,93 +318,93 @@
       "invitation": "انضم إلى Ethica Jobs اليوم واكتشف فرص العمل الهادفة التي تتوافق مع قيمك!",
       "signUp": "إنشاء حساب",
       "login": "هل لديك حساب بالفعل؟ تسجيل الدخول"
-  },
+    },
     "filters": {
-    "ethicalTags": "العلامات الأخلاقية",
-    "selectEthicalTags": "اختر العلامات الأخلاقية",
-    "salary": "نطاق الراتب",
-    "salaryRangeValue": "${{min}}k - ${{max}}k",
-    "jobType": "نوع الوظيفة",
-    "workArrangement": "ترتيب العمل",
-    "remoteOnly": "عن بُعد فقط",
-    "inclusivity": "الشمولية",
-    "disabilityInclusive": "فرص شاملة للأشخاص ذوي الإعاقة",
-    "companyName": "اسم الشركة",
-    "companyNamePlaceholder": "البحث باسم الشركة",
-    "jobTypeOptions": {
-      "fullTime": "دوام كامل",
-      "partTime": "دوام جزئي",
-      "contract": "عقد"
-    },
-    "salaryEndpoint": "${{value}}k"
-  },
-    "tags": {
-    "select": "اختر العلامات الأخلاقية",
-    "selectEthicalTags": "اختر العلامات الأخلاقية",
-    "selectedCount": "تم اختيار {{count}} علامة",
-    "selectedCount_plural": "تم اختيار {{count}} علامات",
-    "clearAll": "مسح الكل",
-    "removeTag": "إزالة {{tag}}",
-    "categories": {
-      "compensationAndBenefits": "التعويضات والمزايا",
-      "workLifeBalance": "توازن العمل والحياة",
-      "diversityAndInclusion": "التنوع والشمول",
-      "careerDevelopment": "التطوير المهني",
-      "environmentalAndSocialImpact": "التأثير البيئي والاجتماعي"
+      "ethicalTags": "العلامات الأخلاقية",
+      "selectEthicalTags": "اختر العلامات الأخلاقية",
+      "salary": "نطاق الراتب",
+      "salaryRangeValue": "${{min}}k - ${{max}}k",
+      "jobType": "نوع الوظيفة",
+      "workArrangement": "ترتيب العمل",
+      "remoteOnly": "عن بُعد فقط",
+      "inclusivity": "الشمولية",
+      "disabilityInclusive": "فرص شاملة للأشخاص ذوي الإعاقة",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "البحث باسم الشركة",
+      "jobTypeOptions": {
+        "fullTime": "دوام كامل",
+        "partTime": "دوام جزئي",
+        "contract": "عقد"
+      },
+      "salaryEndpoint": "${{value}}k"
     },
     "tags": {
-      "salaryTransparency": "شفافية الرواتب",
-      "equalPayPolicy": "سياسة الأجر المتساوي",
-      "livingWageEmployer": "صاحب عمل يدفع أجراً معيشياً",
-      "comprehensiveHealthInsurance": "تأمين صحي شامل",
-      "performanceBasedBonus": "مكافأة على أساس الأداء",
-      "retirementPlanSupport": "دعم خطة التقاعد",
-      "paidParentalLeave": "إجازة والدية مدفوعة",
-      "flexibleHours": "ساعات عمل مرنة",
-      "remoteFriendly": "صديق للعمل عن بُعد",
-      "noAfterHoursWorkCulture": "لا ثقافة العمل بعد ساعات العمل",
-      "mentalHealthSupport": "دعم الصحة النفسية",
-      "generousPaidTimeOff": "إجازة مدفوعة سخية",
-      "inclusiveHiringPractices": "ممارسات توظيف شاملة",
-      "diverseLeadership": "قيادة متنوعة",
-      "lgbtqFriendlyWorkplace": "مكان عمل صديق لمجتمع LGBTQ+",
-      "disabilityInclusiveWorkplace": "مكان عمل شامل للأشخاص ذوي الإعاقة",
-      "supportsWomenInLeadership": "يدعم النساء في القيادة",
-      "mentorshipProgram": "برنامج الإرشاد",
-      "learningDevelopmentBudget": "ميزانية التعلم والتطوير",
-      "transparentPromotionPaths": "مسارات ترقية شفافة",
-      "internalMobility": "التنقل الداخلي",
-      "sustainabilityFocused": "مركّز على الاستدامة",
-      "ethicalSupplyChain": "سلسلة توريد أخلاقية",
-      "communityVolunteering": "التطوع المجتمعي",
-      "certifiedBCorporation": "شركة B معتمدة"
-    }
-  },
+      "select": "اختر العلامات الأخلاقية",
+      "selectEthicalTags": "اختر العلامات الأخلاقية",
+      "selectedCount": "تم اختيار {{count}} علامة",
+      "selectedCount_plural": "تم اختيار {{count}} علامات",
+      "clearAll": "مسح الكل",
+      "removeTag": "إزالة {{tag}}",
+      "categories": {
+        "compensationAndBenefits": "التعويضات والمزايا",
+        "workLifeBalance": "توازن العمل والحياة",
+        "diversityAndInclusion": "التنوع والشمول",
+        "careerDevelopment": "التطوير المهني",
+        "environmentalAndSocialImpact": "التأثير البيئي والاجتماعي"
+      },
+      "tags": {
+        "salaryTransparency": "شفافية الرواتب",
+        "equalPayPolicy": "سياسة الأجر المتساوي",
+        "livingWageEmployer": "صاحب عمل يدفع أجراً معيشياً",
+        "comprehensiveHealthInsurance": "تأمين صحي شامل",
+        "performanceBasedBonus": "مكافأة على أساس الأداء",
+        "retirementPlanSupport": "دعم خطة التقاعد",
+        "paidParentalLeave": "إجازة والدية مدفوعة",
+        "flexibleHours": "ساعات عمل مرنة",
+        "remoteFriendly": "صديق للعمل عن بُعد",
+        "noAfterHoursWorkCulture": "لا ثقافة العمل بعد ساعات العمل",
+        "mentalHealthSupport": "دعم الصحة النفسية",
+        "generousPaidTimeOff": "إجازة مدفوعة سخية",
+        "inclusiveHiringPractices": "ممارسات توظيف شاملة",
+        "diverseLeadership": "قيادة متنوعة",
+        "lgbtqFriendlyWorkplace": "مكان عمل صديق لمجتمع LGBTQ+",
+        "disabilityInclusiveWorkplace": "مكان عمل شامل للأشخاص ذوي الإعاقة",
+        "supportsWomenInLeadership": "يدعم النساء في القيادة",
+        "mentorshipProgram": "برنامج الإرشاد",
+        "learningDevelopmentBudget": "ميزانية التعلم والتطوير",
+        "transparentPromotionPaths": "مسارات ترقية شفافة",
+        "internalMobility": "التنقل الداخلي",
+        "sustainabilityFocused": "مركّز على الاستدامة",
+        "ethicalSupplyChain": "سلسلة توريد أخلاقية",
+        "communityVolunteering": "التطوع المجتمعي",
+        "certifiedBCorporation": "شركة B معتمدة"
+      }
+    },
     "card": {
-    "remote": "عن بُعد",
+      "remote": "عن بُعد",
       "inclusiveOpportunity": "فرصة شاملة",
       "notSpecified": "الموقع غير محدد"
-  },
-  "mobileFilters": {
-    "open": "فتح عوامل التصفية",
-    "title": "عوامل التصفية",
-    "reset": "إعادة تعيين",
-    "apply": "تطبيق"
-  },
+    },
+    "mobileFilters": {
+      "open": "فتح عوامل التصفية",
+      "title": "عوامل التصفية",
+      "reset": "إعادة تعيين",
+      "apply": "تطبيق"
+    },
     "detail": {
-    "breadcrumb": {
-      "jobs": "الوظائف"
-    },
-    "error": {
-      "title": "تعذّر تحميل الوظيفة",
-      "missing": "الوظيفة غير متاحة",
-      "description": "الوظيفة التي تبحث عنها غير موجودة أو تم حذفها.",
-      "fetch": "تعذّر تحميل تفاصيل الوظيفة. يرجى المحاولة لاحقًا."
-    },
-    "backToJobs": "العودة إلى الوظائف",
-    "applyNow": "قدّم الآن",
-    "description": "وصف الوظيفة",
-    "ethicalPolicy": {
+      "breadcrumb": {
+        "jobs": "الوظائف"
+      },
+      "error": {
+        "title": "تعذّر تحميل الوظيفة",
+        "missing": "الوظيفة غير متاحة",
+        "description": "الوظيفة التي تبحث عنها غير موجودة أو تم حذفها.",
+        "fetch": "تعذّر تحميل تفاصيل الوظيفة. يرجى المحاولة لاحقًا."
+      },
+      "backToJobs": "العودة إلى الوظائف",
+      "applyNow": "قدّم الآن",
+      "description": "وصف الوظيفة",
+      "ethicalPolicy": {
         "title": "العلامات الأخلاقية والامتثال",
         "sourceNote": "المعلومات الأخلاقية لهذه الوظيفة تأتي من ملف الشركة.",
         "overallScore": "تقييم الشركة الأخلاقي",
@@ -413,10 +413,10 @@
         "tagCount_plural": "{{count}} سياسة أخلاقية",
         "noPolicies": "لم تشارك الشركة سياساتها الأخلاقية بعد.",
         "inclusiveNote": "تعتبر الشركة هذا الدور فرصة شاملة."
-    },
-    "inclusiveOpportunity": "فرصة شاملة",
-    "contact": {
-      "title": "معلومات التواصل"
+      },
+      "inclusiveOpportunity": "فرصة شاملة",
+      "contact": {
+        "title": "معلومات التواصل"
       },
       "workplace": {
         "title": "عن الشركة",
@@ -734,18 +734,18 @@
   },
   "employer": {
     "dashboard": {
-    "brand": "Ethical Careers",
-    "sidebar": {
-      "dashboard": "لوحة التحكم",
-      "jobs": "الوظائف",
-      "profile": "ملف الشركة",
-      "settings": "الإعدادات",
-      "support": "المساعدة والدعم"
-    },
-    "title": "لوحة صاحب العمل",
+      "brand": "Ethical Careers",
+      "sidebar": {
+        "dashboard": "لوحة التحكم",
+        "jobs": "الوظائف",
+        "profile": "ملف الشركة",
+        "settings": "الإعدادات",
+        "support": "المساعدة والدعم"
+      },
+      "title": "لوحة صاحب العمل",
       "subtitle": "أدِر إعلانات الوظائف وأماكن العمل الخاصة بك",
-    "currentPostings": "الوظائف الحالية",
-    "createJob": "إنشاء وظيفة جديدة",
+      "currentPostings": "الوظائف الحالية",
+      "createJob": "إنشاء وظيفة جديدة",
       "addWorkplace": "إضافة مكان عمل",
       "joinWorkplace": "الانضمام إلى مكان عمل",
       "unassignedJobs": "وظائف غير مخصصة",
@@ -759,26 +759,26 @@
         "createWorkplace": "إنشاء مكان عمل",
         "joinWorkplace": "الانضمام إلى مكان عمل"
       },
-    "loadingError": "تعذّر تحميل الوظائف. يرجى المحاولة لاحقًا.",
-    "emptyState": "لم تقم بإنشاء أي وظائف بعد.",
-    "emptyCta": "أنشئ أول وظيفة لك",
-    "table": {
-      "jobTitle": "المسمى الوظيفي",
-      "status": "الحالة",
-      "applications": "طلبات التوظيف",
-      "views": "المشاهدات",
-      "actions": "الإجراءات"
+      "loadingError": "تعذّر تحميل الوظائف. يرجى المحاولة لاحقًا.",
+      "emptyState": "لم تقم بإنشاء أي وظائف بعد.",
+      "emptyCta": "أنشئ أول وظيفة لك",
+      "table": {
+        "jobTitle": "المسمى الوظيفي",
+        "status": "الحالة",
+        "applications": "طلبات التوظيف",
+        "views": "المشاهدات",
+        "actions": "الإجراءات"
+      },
+      "actions": {
+        "manage": "إدارة",
+        "view": "عرض"
+      },
+      "statusLabels": {
+        "open": "مفتوح",
+        "active": "نشط",
+        "paused": "موقوف"
+      }
     },
-    "actions": {
-      "manage": "إدارة",
-      "view": "عرض"
-    },
-    "statusLabels": {
-      "open": "مفتوح",
-      "active": "نشط",
-      "paused": "موقوف"
-    }
-  },
     "jobPostDetails": {
       "error": {
         "load": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة لاحقًا.",
@@ -1808,7 +1808,12 @@
       "replyLabel": "{{value}} رد",
       "repliesLabel": "{{value}} ردود",
       "likeLabel": "{{value}} إعجاب",
-      "likesLabel": "{{value}} إعجابات"
+      "likesLabel": "{{value}} إعجابات",
+      "noPosts": "لا توجد منشورات بعد",
+      "oneDayAgo": "يوم واحد مضى",
+      "daysAgo": "{{days}} أيام مضت",
+      "weeksAgo": "{{weeks}} أسابيع مضت",
+      "monthsAgo": "{{months}} أشهر مضت"
     },
     "activity": {
       "downloading": "جارٍ التحميل...",
@@ -1831,7 +1836,7 @@
     "anonymous": "مجهول",
     "postAnonymously": "انشر بشكل مجهول",
     "submitReview": "إرسال التقييم",
-      "submitting": "جارٍ الإرسال...",
+    "submitting": "جارٍ الإرسال...",
     "categories": {
       "culture": "الثقافة",
       "benefits": "المزايا",
@@ -1898,7 +1903,7 @@
     "aboutUs": "معلومات عنا",
     "ethicalPolicyCommitments": "التزامات السياسة الأخلاقية",
     "currentJobOpenings": "الوظائف الشاغرة الحالية",
-        "viewJob": "عرض الوظيفة",
+    "viewJob": "عرض الوظيفة",
     "notFound": "الشركة غير موجودة",
     "notFoundDescription": "الشركة التي تبحث عنها غير موجودة أو تم إزالتها."
   },

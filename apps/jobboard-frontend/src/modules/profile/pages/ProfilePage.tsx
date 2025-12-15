@@ -35,7 +35,6 @@ import type {
   Skill,
   Interest,
 } from '@shared/types/profile.types';
-import type { ForumPostResponseDTO } from '@shared/types/api.types';
 import {
   profileService,
   useCreateProfileMutationWithToasts,
@@ -374,6 +373,8 @@ export default function ProfilePage() {
       <div className="bg-card rounded-lg border shadow-sm p-6">
         {isOwner ? (
           <ProfileHeader
+            postsCount={userPostsQuery.data?.length || 0}
+            badgesCount={profile.badges?.length || 0}
             onReport={
               !isOwner && viewedUserId
                 ? () => {
