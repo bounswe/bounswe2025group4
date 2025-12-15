@@ -891,6 +891,12 @@
         "note": "Note: {{note}}",
         "updatedOn": "Updated {{date}}"
       },
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "rejected": "Rejected",
+        "unknown": "Unknown"
+      },
       "workplaceLabel": "Workplace",
       "page": {
         "loadError": "Failed to load your workplaces"

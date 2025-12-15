@@ -166,9 +166,10 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
       setSuccess(false);
       setError(null);
       reset();
-      performSearch();
+      // Perform initial search when modal opens
+      refetchSearch();
     }
-  }, [open, performSearch, reset]);
+  }, [open, reset, refetchSearch]); // Only reset when modal opens/closes
 
   useEffect(() => {
     if (Array.isArray(myWorkplacesQuery.data) && myWorkplacesQuery.data.length > 0) {
@@ -183,9 +184,10 @@ export function JoinWorkplaceModal({ open, onOpenChange, onSuccess }: JoinWorkpl
 
   useEffect(() => {
     if (open && step === 'search') {
-      performSearch();
+      setError(null);
+      refetchSearch();
     }
-  }, [filters.sector, filters.sortBy, filters.minRating, open, step, performSearch]);
+  }, [filters.sector, filters.sortBy, filters.minRating, open, step, refetchSearch]);
 
   const handleSearch = () => {
     performSearch();

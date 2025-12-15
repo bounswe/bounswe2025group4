@@ -912,6 +912,12 @@
         "note": "Not: {{note}}",
         "updatedOn": "{{date}} tarihinde güncellendi"
       },
+      "status": {
+        "pending": "Beklemede",
+        "accepted": "Kabul Edildi",
+        "rejected": "Reddedildi",
+        "unknown": "Bilinmiyor"
+      },
       "workplaceLabel": "İş Yeri",
       "page": {
         "loadError": "İş yerleriniz yüklenemedi"

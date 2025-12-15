@@ -878,6 +878,12 @@
         "note": "ملاحظة: {{note}}",
         "updatedOn": "تم التحديث في {{date}}"
       },
+      "status": {
+        "pending": "قيد الانتظار",
+        "accepted": "مقبول",
+        "rejected": "مرفوض",
+        "unknown": "غير معروف"
+      },
       "workplaceLabel": "مكان العمل",
       "page": {
         "loadError": "تعذر تحميل أماكن عملك"

@@ -21,8 +21,16 @@ export function WorkplaceCard({ workplace, onClick }: WorkplaceCardProps) {
   const { t } = useTranslation('common');
   const translateTag = (tag: string) => translateEthicalTag(t, tag);
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      onClick();
+    }
+  };
+
   const cardContent = (
-    <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer" onClick={onClick}>
+    <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer" onClick={handleClick}>
       <CardContent>
         <div className="flex gap-4">
           {/* Image/Logo */}
