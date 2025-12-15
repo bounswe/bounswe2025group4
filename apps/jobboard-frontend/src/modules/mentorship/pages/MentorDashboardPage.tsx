@@ -527,7 +527,7 @@ const MentorDashboardPage = () => {
                   <div className="space-y-4">
                     {pendingRequests.slice(0, 2).map((request) => {
                       const requesterProfile = menteeProfiles[request.requesterId];
-                      const isCapacityFull = mentorProfileQuery.data && mentorProfileQuery.data.currentMentees >= mentorProfileQuery.data.maxMentees;
+                      const isCapacityFull = mentorProfileQuery.data ? mentorProfileQuery.data.currentMentees >= mentorProfileQuery.data.maxMentees : false;
                       return (
                         <div key={request.id} className="p-4 border rounded-lg space-y-3">
                           <div className="flex items-center gap-3">
@@ -551,7 +551,7 @@ const MentorDashboardPage = () => {
                               size="sm"
                               className="flex-1"
                               onClick={() => handleRespond(request.id, true)}
-                              disabled={respondingTo === request.id || respondMutation.isPending || isCapacityFull === true}
+                              disabled={respondingTo === request.id || respondMutation.isPending || isCapacityFull}
                               title={isCapacityFull ? t('mentorship.dashboard.capacityFullTooltip', 'Capacity is full') : ''}
                             >
                               {t('mentorship.dashboard.approve', 'Approve')}

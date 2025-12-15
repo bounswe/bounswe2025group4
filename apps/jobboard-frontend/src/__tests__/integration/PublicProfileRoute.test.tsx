@@ -54,6 +54,8 @@ describe('Public Profile Route Integration', () => {
         endDate: undefined
       }
     ],
+    skills: [],
+    interests: [],
     badges: []
   };
 

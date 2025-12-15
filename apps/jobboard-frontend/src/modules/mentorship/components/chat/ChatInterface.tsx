@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@shared/components/ui/button';
@@ -16,9 +16,10 @@ interface ChatInterfaceProps {
   currentUserId?: string;
   disabled?: boolean;
   onMessagesViewed?: () => void; // Callback when messages are viewed (to update unread count)
+  autoScrollOnMount?: boolean; // Auto scroll to bottom when component mounts
 }
 
-const ChatInterface = ({ room, messages, onSendMessage, currentUserId = 'current-user', disabled = false, onMessagesViewed }: ChatInterfaceProps) => {
+const ChatInterface = ({ room, messages, onSendMessage, currentUserId = 'current-user', disabled = false, onMessagesViewed, autoScrollOnMount = false }: ChatInterfaceProps) => {
   const { t } = useTranslation('common');
   const navigate = useNavigate();
   const [messageInput, setMessageInput] = useState('');
@@ -26,26 +27,55 @@ const ChatInterface = ({ room, messages, onSendMessage, currentUserId = 'current
   const inputRef = useRef<HTMLInputElement>(null);
   const lastUnreadCountRef = useRef<number>(0);
 
-  // Auto-scroll to bottom when new messages arrive (only if user is at bottom)
+  const scrollToBottom = useCallback(() => {
+    if (scrollAreaRef.current) {
+      const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
+      if (scrollElement) {
+        requestAnimationFrame(() => {
+          scrollElement.scrollTop = scrollElement.scrollHeight;
+        });
+      }
+    }
+  }, []);
+
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]') as HTMLElement;
       if (scrollElement) {
         const isAtBottom = scrollElement.scrollHeight - scrollElement.scrollTop <= scrollElement.clientHeight + 50;
-          // Only auto-scroll if user is already at bottom
-          if (isAtBottom) {
-            requestAnimationFrame(() => {
-              scrollElement.scrollTop = scrollElement.scrollHeight;
-              // Mark messages as read when scrolled to bottom and there are unread messages
-              if (onMessagesViewed && (room.unreadCount ?? 0) > 0) {
-                onMessagesViewed();
-                lastUnreadCountRef.current = 0;
-              }
-            });
-          }
+        
+        // If user is at bottom OR if the last message is from current user, always scroll
+        const lastMessage = messages[messages.length - 1];
+        const isMyMessage = lastMessage?.senderId === currentUserId;
+        
+        if (isAtBottom || isMyMessage) {
+          requestAnimationFrame(() => {
+            scrollElement.scrollTop = scrollElement.scrollHeight;
+            // Mark messages as read when scrolled to bottom and there are unread messages
+            if (onMessagesViewed && (room.unreadCount ?? 0) > 0 && isAtBottom) {
+              onMessagesViewed();
+              lastUnreadCountRef.current = 0;
+            }
+          });
+        }
       }
     }
-  }, [messages.length, onMessagesViewed, room.unreadCount]); // Only trigger on message count change
+  }, [messages.length, onMessagesViewed, room.unreadCount, currentUserId, messages]); // Trigger on message count change
+
+  // Auto scroll to bottom when component mounts (if autoScrollOnMount is true)
+  useEffect(() => {
+    if (autoScrollOnMount && messages.length > 0) {
+      setTimeout(() => {
+        scrollToBottom();
+        // If at bottom and there are unread messages, mark as viewed
+        if (onMessagesViewed && (room.unreadCount ?? 0) > 0) {
+          onMessagesViewed();
+          lastUnreadCountRef.current = 0;
+        }
+      }, 200);
+    }
+  }, [autoScrollOnMount, messages.length, onMessagesViewed, room.unreadCount, scrollToBottom]);
 
   // Mark messages as read when chat is first opened (if at bottom)
   useEffect(() => {
@@ -103,6 +133,8 @@ const ChatInterface = ({ room, messages, onSendMessage, currentUserId = 'current
       onSendMessage(trimmedMessage);
       setMessageInput('');
       inputRef.current?.focus();
+      // Scroll to bottom after sending message
+      setTimeout(() => scrollToBottom(), 100);
     }
   };
 
@@ -137,17 +169,24 @@ const ChatInterface = ({ room, messages, onSendMessage, currentUserId = 'current
           <div>
             <div className="flex items-center gap-2">
               <h2 className="font-semibold">{room.participantName}</h2>
-              {(room.unreadCount ?? 0) > 0 && (
-                <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold text-white bg-primary rounded-full">
-                  {room.unreadCount! > 99 ? '99+' : room.unreadCount}
-                </span>
-              )}
+              {(() => {
+                const unread = room.unreadCount ?? 0;
+                console.log('[ChatInterface] Rendering unread badge, unreadCount:', unread, 'room:', room);
+                return unread > 0 ? (
+                  <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold text-white bg-primary rounded-full">
+                    {unread > 99 ? '99+' : unread}
+                  </span>
+                ) : null;
+              })()}
             </div>
-            {(room.unreadCount ?? 0) > 0 && (
-              <p className="text-xs text-primary font-medium">
-                {room.unreadCount} {room.unreadCount === 1 ? 'unread message' : 'unread messages'}
-              </p>
-            )}
+            {(() => {
+              const unread = room.unreadCount ?? 0;
+              return unread > 0 ? (
+                <p className="text-xs text-primary font-medium">
+                  {unread} {unread === 1 ? 'unread message' : 'unread messages'}
+                </p>
+              ) : null;
+            })()}
           </div>
         </div>
 

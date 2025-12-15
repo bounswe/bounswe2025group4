@@ -23,6 +23,7 @@ export async function getChatHistory(conversationId: number): Promise<ChatMessag
     senderAvatar: dto.senderAvatar,
     content: dto.content,
     timestamp: dto.timestamp,
+    // Use read status from backend exactly as it comes
     read: dto.read || false,
   }));
 }
@@ -235,14 +236,18 @@ export class ChatWebSocket {
       return;
     }
 
-    const destination = `/app/chat.readSync`;
-    const message = { conversationId: this.conversationId };
+    try {
+      const destination = `/app/chat.readSync`;
+      const message = { conversationId: this.conversationId };
 
-    this.client.publish({
-      destination,
-      body: JSON.stringify(message),
-    });
+      this.client.publish({
+        destination,
+        body: JSON.stringify(message),
+      });
 
-    console.log('[ChatWebSocket] Read sync sent:', { destination, conversationId: this.conversationId });
+      console.log('[ChatWebSocket] Read sync sent:', { destination, conversationId: this.conversationId });
+    } catch (error) {
+      console.warn('[ChatWebSocket] Failed to send read sync:', error);
+    }
   }
 }

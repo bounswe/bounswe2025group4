@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@shared/components/ui/card";
 import { Button } from "@shared/components/ui/button";
-import { Star, Users, Flag } from "lucide-react";
+import { Star, Users } from "lucide-react";
 import { Badge } from "@shared/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@shared/components/ui/avatar";
 import { Link } from "react-router-dom";
@@ -14,8 +14,7 @@ import {
 import { useAuth } from "@/modules/auth/contexts/AuthContext";
 import { toast } from "react-toastify";
 import MentorshipRequestModal from "./MentorshipRequestModal";
-import { useReportModal } from "@shared/hooks/useReportModal";
-import { createReport, mapReportReason } from "@shared/services/report.service";
+import ReportDialog from "@modules/forum/components/forum/ReportDialog";
 
 interface MentorCardProps {
   mentor: Mentor;
@@ -28,8 +27,6 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
   const isAvailable = mentor.mentees < mentor.capacity;
-  const { openReport, ReportModalElement } = useReportModal();
-  const isOwnMentor = user?.id && mentor.id && parseInt(mentor.id, 10) === user.id;
 
   const handleRequest = async () => {
     if (!user?.id) {
@@ -69,58 +66,32 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
   };
 
   return (
-    <>
-      <Card className="h-full flex flex-col">
-        <CardHeader>
-          <div className="flex items-start gap-3">
-            <Avatar className="w-12 h-12">
-              <AvatarImage src={mentor.profileImage} alt={mentor.name} />
-              <AvatarFallback>
-                {mentor.name.split(' ').map(n => n[0]).join('')}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="flex items-start justify-between">
-                <div>
-                  <CardTitle className="text-lg">{mentor.name}</CardTitle>
-                  {mentor.title && (
-                    <CardDescription className="text-sm">{mentor.title}</CardDescription>
-                  )}
-                </div>
-                {!isOwnMentor && user && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const mentorIdNum = parseInt(mentor.id, 10);
-                      if (!isNaN(mentorIdNum)) {
-                        openReport({
-                          title: t('mentorship.report', { defaultValue: 'Report Mentor' }),
-                          subtitle: t('mentorship.reportSubtitle', { defaultValue: 'Report this mentor profile if it violates our guidelines' }),
-                          contextSnippet: mentor.name,
-                          reportType: 'Mentor',
-                          reportedName: mentor.name,
-                          onSubmit: async (message, reason) => {
-                            await createReport({
-                              entityType: 'MENTOR',
-                              entityId: mentorIdNum,
-                              reasonType: mapReportReason(reason),
-                              description: message,
-                            });
-                          },
-                        });
-                      }
-                    }}
-                  >
-                    <Flag className="h-4 w-4 text-red-500" />
-                  </Button>
-                )}
-              </div>
-            </div>
+    <Card className="h-full flex flex-col">
+      <CardHeader className="relative">
+        <div className="flex items-start gap-3">
+          <Avatar className="w-12 h-12">
+            <AvatarImage src={mentor.profileImage} alt={mentor.name} />
+            <AvatarFallback>
+              {mentor.name.split(' ').map(n => n[0]).join('')}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <CardTitle className="text-lg">{mentor.name}</CardTitle>
+            {mentor.title && (
+              <CardDescription className="text-sm">{mentor.title}</CardDescription>
+            )}
           </div>
-        </CardHeader>
+        </div>
+        {user?.id && parseInt(mentor.id, 10) !== user.id && (
+          <div className="absolute top-4 right-4">
+            <ReportDialog
+              entityType="MENTOR"
+              entityId={parseInt(mentor.id, 10)}
+              entityName={mentor.name}
+            />
+          </div>
+        )}
+      </CardHeader>
       
       <CardContent className="flex-1">
         <p className="mb-3 text-sm text-muted-foreground line-clamp-2">{mentor.bio}</p>
@@ -207,9 +178,7 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
         mentorName={mentor.name}
         isAvailable={isAvailable}
       />
-      {ReportModalElement}
     </Card>
-    </>
   );
 };
 

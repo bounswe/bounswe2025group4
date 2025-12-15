@@ -111,7 +111,7 @@ export const mentorshipHandlers = [
       mentorId: String(body.mentorId),
       status: 'PENDING',
       createdAt: new Date().toISOString(),
-      motivation: '',
+      motivation: 'Test motivation',
     };
     mockMentorshipRequests.push(newRequest);
     return HttpResponse.json(newRequest, { status: 201 });
