@@ -59,7 +59,7 @@ const NotificationListItem = ({
     >
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <span className="font-medium line-clamp-1">{formatNotificationTitle(notification.title)}</span>
+          <span className="font-medium line-clamp-2">{formatNotificationTitle(notification.title)}</span>
           <div className="flex flex-col items-end gap-1">
             <span className="text-xs text-muted-foreground whitespace-nowrap">
               {formatTimestamp(Number(notification.timestamp))}
