@@ -278,6 +278,7 @@ export interface MentorProfileDetailDTO {
  */
 export interface CreateMentorshipRequestDTO {
   mentorId: number;
+  motivation: string;
 }
 
 /**
@@ -289,10 +290,7 @@ export interface MentorshipRequestDTO {
   mentorId: string;
   status: string; // PENDING, ACCEPTED, REJECTED
   createdAt: string; // ISO 8601 date-time string
-  message?: string; // Optional: message from mentee
-  goals?: string[]; // Optional: learning goals
-  expectedDuration?: string; // Optional: expected mentorship duration
-  preferredTime?: string; // Optional: preferred meeting time
+  motivation: string; // Motivation message from mentee
 }
 
 /**
@@ -300,6 +298,7 @@ export interface MentorshipRequestDTO {
  */
 export interface RespondToRequestDTO {
   accept: boolean;
+  responseMessage: string;
 }
 
 export interface CreateRatingDTO {

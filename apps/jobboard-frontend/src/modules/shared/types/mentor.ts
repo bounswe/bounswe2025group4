@@ -19,6 +19,9 @@ export interface Mentor {
   specialties: string[];
   achievements: string[];
   profileImage?: string;
+  skills?: string[]; // Skills from profile
+  interests?: string[]; // Interests from profile
+  yearsOfExperience?: number; // Calculated from experiences
 }
 
 export interface MentorshipReview {

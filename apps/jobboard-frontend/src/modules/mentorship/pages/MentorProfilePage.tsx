@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/components/ui/card';
 import { Button } from '@shared/components/ui/button';
 import { Badge } from '@shared/components/ui/badge';
-import { Star, MapPin, Award, GraduationCap, Briefcase, Edit, MessageCircle } from 'lucide-react';
+import { Star, MapPin, Award, GraduationCap, Briefcase, Edit, MessageCircle, ArrowLeft } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
 import { Separator } from '@shared/components/ui/separator';
 import type { Mentor, MentorshipReview } from '@shared/types/mentor';
@@ -13,7 +13,6 @@ import {
   getMentorMentorshipRequests,
   getMenteeMentorships,
   completeMentorship,
-  useCreateMentorshipRequestMutation,
   useMenteeMentorshipsQuery,
 } from '@modules/mentorship/services/mentorship.service';
 import type { MentorshipDetailsDTO } from '@shared/types/api.types';
@@ -25,6 +24,7 @@ import CenteredLoader from '@shared/components/common/CenteredLoader';
 import CenteredError from '@shared/components/common/CenteredError';
 import type { MentorshipRequestDTO } from '@shared/types/api.types';
 import { toast } from 'react-toastify';
+import MentorshipRequestModal from '@modules/mentorship/components/mentorship/MentorshipRequestModal';
 
 const MentorProfilePage = () => {
   const { t } = useTranslation('common');
@@ -40,12 +40,11 @@ const MentorProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasActiveMentorship, setHasActiveMentorship] = useState(false);
-  const [isRequesting, setIsRequesting] = useState(false);
   const [completingRequestId, setCompletingRequestId] = useState<string | null>(null);
   const [activeMentorships, setActiveMentorships] = useState<MentorshipDetailsDTO[]>([]);
   const [completedMentorships, setCompletedMentorships] = useState<MentorshipDetailsDTO[]>([]);
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
-  const createRequestMutation = useCreateMentorshipRequestMutation();
   
   const isOwnProfile = user?.id && id && parseInt(id, 10) === user.id;
 
@@ -61,6 +60,7 @@ const MentorProfilePage = () => {
     if (!id) {
       setError('Mentor ID is missing');
       setIsLoading(false);
+      navigate('/mentorship/browse');
       return;
     }
 
@@ -69,7 +69,8 @@ const MentorProfilePage = () => {
       setError(null);
       const mentorId = parseInt(id, 10);
       if (isNaN(mentorId)) {
-        throw new Error('Invalid mentor ID');
+        navigate('/mentorship/browse');
+        return;
       }
 
       const backendMentor = await getMentorProfile(mentorId);
@@ -200,6 +201,7 @@ const MentorProfilePage = () => {
     setHasActiveMentorship(Boolean(existingRequest));
   }, [isOwnProfile, user?.id, id, menteeMentorshipsQuery.data]);
 
+
   useEffect(() => {
     const handleRefresh = () => {
       if (id) {
@@ -222,13 +224,29 @@ const MentorProfilePage = () => {
 
   return (
     <div className="container mx-auto p-4 max-w-6xl">
+      {/* Back Button */}
+      <div className="mb-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(-1)}
+          className="mb-2"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+      </div>
+
       {/* Header Section */}
       <div className="mb-8">
         <div className="flex flex-col md:flex-row gap-6">
           <Avatar className="w-32 h-32">
             <AvatarImage src={mentor.profileImage} alt={mentor.name} />
             <AvatarFallback className="text-2xl">
-              {mentor.name.split(' ').map(n => n[0]?.toUpperCase() || '').join('')}
+              {mentorNormalProfile 
+                ? `${mentorNormalProfile.firstName?.[0]?.toUpperCase() || ''}${mentorNormalProfile.lastName?.[0]?.toUpperCase() || ''}`
+                : mentor.name.split(' ').map(n => n[0]?.toUpperCase() || '').slice(0, 2).join('')
+              }
             </AvatarFallback>
           </Avatar>
           
@@ -239,16 +257,18 @@ const MentorProfilePage = () => {
             )}
             
             <div className="flex items-center gap-4 mb-4">
-              <div className="flex items-center">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-5 w-5 ${i < Math.floor(mentor.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
-                  />
-                ))}
-                <span className="ml-2 font-semibold">{mentor.rating.toFixed(1)}</span>
-                <span className="ml-1 text-muted-foreground">({mentor.reviews} {t('mentorship.profile.reviews')})</span>
-              </div>
+              {mentor.reviews > 0 && (
+                <div className="flex items-center">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-5 w-5 ${i < Math.floor(mentor.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                    />
+                  ))}
+                  <span className="ml-2 font-semibold">{mentor.rating.toFixed(1)}</span>
+                  <span className="ml-1 text-muted-foreground">({mentor.reviews} {t('mentorship.profile.reviews')})</span>
+                </div>
+              )}
               
               <div className="flex items-center text-muted-foreground">
                 <MapPin className="h-4 w-4 mr-1" />
@@ -271,17 +291,15 @@ const MentorProfilePage = () => {
               <Button
                 size="lg"
                 variant="outline"
+                disabled
                 className="w-full md:w-auto"
-                asChild
               >
-                <Link to="/mentorship/my">
-                  {t('mentorship.profile.viewMentorship') || 'View My Mentorship'}
-                </Link>
+                {t('mentorship.profile.requested') || 'Requested'}
               </Button>
             ) : (
               <Button 
                 size="lg" 
-                disabled={!isAvailable || isRequesting || hasActiveMentorship}
+                disabled={!isAvailable}
                 className="w-full md:w-auto"
                 onClick={async () => {
                   if (!id || !user?.id) return;
@@ -292,6 +310,7 @@ const MentorProfilePage = () => {
                     return;
                   }
 
+                  // Check if user already has an active or pending request
                   try {
                     const mentorships = await getCachedMenteeMentorships();
                     const existingRequest = mentorships.find(
@@ -303,40 +322,17 @@ const MentorProfilePage = () => {
                     );
                     
                     if (existingRequest) {
-                      toast.error(t('mentorship.profile.alreadyRequested') || 'You already have a pending or active mentorship request with this mentor.');
                       setHasActiveMentorship(true);
                       return;
                     }
                   } catch (err) {
                     console.error('Error checking existing requests:', err);
                   }
-                  
-                  setIsRequesting(true);
-                  try {
-                    await createRequestMutation.mutateAsync({ mentorId: mentorIdNum });
-                    setHasActiveMentorship(true); // Disable button after successful request
-                    await menteeMentorshipsQuery.refetch();
-                    navigate('/mentorship/my', {
-                      state: { 
-                        showSuccess: true, 
-                        mentorName: mentor.name,
-                        activeTab: 'pending' // Switch to pending tab
-                      }
-                    });
-                  } catch (err: unknown) {
-                    console.error('Error sending mentorship request:', err);
-                  } finally {
-                    setIsRequesting(false);
-                  }
+
+                  setIsRequestModalOpen(true);
                 }}
               >
-                {isRequesting 
-                  ? (t('mentorship.profile.requesting') || 'Sending...')
-                  : (hasActiveMentorship 
-                      ? (t('mentorship.profile.alreadyRequested') || 'Already Requested')
-                      : (isAvailable ? t('mentorship.profile.requestMentorship') : t('mentorship.profile.unavailable'))
-                    )
-                }
+                {isAvailable ? t('mentorship.profile.requestMentorship') : t('mentorship.profile.unavailable')}
               </Button>
             )}
           </div>
@@ -540,10 +536,12 @@ const MentorProfilePage = () => {
                 <span className="text-muted-foreground">{t('mentorship.profile.totalReviews')}:</span>
                 <span className="font-semibold">{mentor.reviews}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">{t('mentorship.profile.averageRating')}:</span>
-                <span className="font-semibold">{mentor.rating.toFixed(1)}/5</span>
-              </div>
+              {mentor.reviews > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">{t('mentorship.profile.averageRating')}:</span>
+                  <span className="font-semibold">{mentor.rating.toFixed(1)}/5</span>
+                </div>
+              )}
               {isOwnProfile && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('mentorship.profile.completedMentorships') || 'Completed Mentorships'}:</span>
@@ -553,99 +551,10 @@ const MentorProfilePage = () => {
             </CardContent>
           </Card>
 
-          {/* Mentorship Requests - Only show for own profile */}
-          {isOwnProfile && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>{t('mentorship.profile.mentorshipRequests') || 'Mentorship Requests'}</span>
-                  {requests.filter(r => r.status.toUpperCase() === 'PENDING').length > 0 && (
-                    <Badge variant="secondary" className="ml-2">
-                      {requests.filter(r => r.status.toUpperCase() === 'PENDING').length}
-                    </Badge>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {requests.filter(r => r.status.toUpperCase() === 'PENDING').length > 0 ? (
-                  <>
-                    <div className="space-y-2">
-                      {requests
-                        .filter(r => r.status.toUpperCase() === 'PENDING')
-                        .slice(0, 2)
-                        .map((request) => {
-                          const requesterIdStr = String(request.requesterId);
-                          const requesterIdNum = typeof request.requesterId === 'string' 
-                            ? parseInt(request.requesterId, 10) 
-                            : request.requesterId;
-                          
-                          const menteeProfile = menteeProfiles[request.requesterId] || 
-                                               menteeProfiles[requesterIdStr] || 
-                                               menteeProfiles[requesterIdNum] || 
-                                               menteeProfiles[requesterIdNum?.toString()] || 
-                                               menteeProfiles[String(requesterIdNum)];
-                          
-                          return (
-                            <div key={request.id} className="flex items-center gap-2 p-2 rounded-lg border bg-muted/50">
-                              <Avatar className="w-8 h-8">
-                                <AvatarImage src={menteeProfile?.imageUrl} alt={menteeProfile ? `${menteeProfile.firstName} ${menteeProfile.lastName}` : ''} />
-                                <AvatarFallback className="text-xs">
-                                  {menteeProfile 
-                                    ? `${(menteeProfile.firstName?.[0] || '').toUpperCase()}${(menteeProfile.lastName?.[0] || '').toUpperCase()}`
-                                    : 'U'}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium truncate">
-                                  {menteeProfile 
-                                    ? `${menteeProfile.firstName} ${menteeProfile.lastName}`
-                                    : `Mentee #${request.requesterId}`}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {new Date(request.createdAt).toLocaleDateString()}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                    </div>
-                    {requests.filter(r => r.status.toUpperCase() === 'PENDING').length > 2 && (
-                      <p className="text-xs text-muted-foreground text-center">
-                        +{requests.filter(r => r.status.toUpperCase() === 'PENDING').length - 2} more
-                      </p>
-                    )}
-                    <Button 
-                      variant="default" 
-                      className="w-full"
-                      asChild
-                    >
-                      <Link to="/mentor/requests">
-                        {t('mentorship.profile.viewAllRequests') || 'View All Requests'}
-                      </Link>
-                    </Button>
-                  </>
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {t('mentorship.profile.noPendingRequests') || 'No pending requests'}
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      asChild
-                    >
-                      <Link to="/mentor/requests">
-                        {t('mentorship.profile.viewAllRequests') || 'View All Requests'}
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          {/* Mentorship Requests are now shown in Mentor Dashboard */}
 
-          {/* Active Mentees - Only show for own profile */}
-          {isOwnProfile && requests.filter(r => r.status.toUpperCase() === 'ACCEPTED').length > 0 && (
+          {/* Active Mentees and Completed Mentorships are now shown in Mentor Dashboard */}
+          {false && isOwnProfile && requests.filter(r => r.status.toUpperCase() === 'ACCEPTED').length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>{t('mentorship.profile.activeMentees') || 'Active Mentees'}</CardTitle>
@@ -738,7 +647,7 @@ const MentorProfilePage = () => {
                                   asChild
                                   className="flex-1"
                                 >
-                                  <Link to={`/resume-review/${activeMentorship.resumeReviewId}`}>
+                                  <Link to={`/mentorship/resume-review/${activeMentorship.resumeReviewId}`}>
                                     {t('mentorship.profile.reviewResume') || 'Review Resume'}
                                   </Link>
                                 </Button>
@@ -785,8 +694,8 @@ const MentorProfilePage = () => {
             </Card>
           )}
 
-          {/* Completed Mentorships - Only show for own profile */}
-          {isOwnProfile && completedMentorships.length > 0 && (
+          {/* Active Mentees and Completed Mentorships are now shown in Mentor Dashboard */}
+          {false && isOwnProfile && completedMentorships.length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>{t('mentorship.profile.completedMentorships') || 'Completed Mentorships'} ({completedMentorships.length})</CardTitle>
@@ -860,6 +769,17 @@ const MentorProfilePage = () => {
           )}
         </div>
       </div>
+
+      {/* Request Mentorship Modal */}
+      {id && (
+        <MentorshipRequestModal
+          open={isRequestModalOpen}
+          onOpenChange={setIsRequestModalOpen}
+          mentorId={parseInt(id, 10)}
+          mentorName={mentor?.name}
+          isAvailable={isAvailable}
+        />
+      )}
     </div>
   );
 };

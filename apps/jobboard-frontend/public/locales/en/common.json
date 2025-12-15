@@ -1,47 +1,47 @@
 {
   "layout": {
-    "languageSwitcher": {
-      "label": "Language",
-      "english": "English",
-      "turkish": "Türkçe",
-      "arabic": "العربية"
-    },
-    "header": {
-      "brand": "Ethica Jobs",
-      "menu": "Menu",
-      "nav": {
-        "home": "Home",
-        "jobs": "Jobs",
+  "languageSwitcher": {
+    "label": "Language",
+    "english": "English",
+    "turkish": "Türkçe",
+    "arabic": "العربية"
+  },
+  "header": {
+    "brand": "Ethica Jobs",
+    "menu": "Menu",
+    "nav": {
+      "home": "Home",
+      "jobs": "Jobs",
         "nonProfitJobs": "Volunteer",
         "volunteering": "Volunteering",
         "volunteerBrowse": "Volunteer Opportunities",
-        "myApplications": "My Applications",
-        "mentorship": "Mentorship",
+      "myApplications": "My Applications",
+      "mentorship": "Mentorship",
         "myMentorships": "My Mentorships",
         "chat": "Chat",
-        "forum": "Forum",
+      "forum": "Forum",
         "employerDashboard": "Employer Dashboard",
         "workplaces": "Workplaces",
         "myWorkplaces": "My Workplaces",
         "browseWorkplaces": "Browse Workplaces",
         "profile": "Profile",
         "settings": "Settings"
-      },
-      "auth": {
-        "login": "Login",
-        "signup": "Sign Up",
-        "logout": "Logout",
-        "profile": "Profile"
+    },
+    "auth": {
+      "login": "Login",
+      "signup": "Sign Up",
+      "logout": "Logout",
+      "profile": "Profile"
       },
       "theme": "Theme",
       "language": "Language"
-    },
-    "footer": {
-      "about": "About Us",
-      "contact": "Contact",
-      "privacy": "Privacy Policy",
-      "terms": "Terms of Service",
-      "brandSuffix": "Ethica Jobs"
+  },
+  "footer": {
+    "about": "About Us",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "brandSuffix": "Ethica Jobs"
     }
   },
   "common": {
@@ -101,6 +101,7 @@
       "errors": {
         "serviceUnavailable": "Service temporarily unavailable. Please try again later or contact support.",
         "invalidCredentials": "Invalid username or password. Please try again.",
+        "internalServerError": "Internal server error. Please try again later.",
         "generic": "Login failed. Please try again."
       },
       "notifications": {
@@ -293,93 +294,93 @@
       "invitation": "Join Ethica Jobs today and discover purpose-driven career opportunities that align with your values!",
       "signUp": "Create Account",
       "login": "Already have an account? Login"
-    },
+  },
     "filters": {
-      "ethicalTags": "Ethical Tags",
-      "selectEthicalTags": "Select ethical tags",
-      "salary": "Salary Range",
-      "salaryRangeValue": "${{min}}k - ${{max}}k",
-      "jobType": "Job Type",
-      "workArrangement": "Work Arrangement",
-      "remoteOnly": "Remote Only",
-      "inclusivity": "Inclusivity",
-      "disabilityInclusive": "Disability-Inclusive Opportunities",
-      "companyName": "Company Name",
-      "companyNamePlaceholder": "Search by company name",
-      "jobTypeOptions": {
-        "fullTime": "Full-time",
-        "partTime": "Part-time",
-        "contract": "Contract"
-      },
-      "salaryEndpoint": "${{value}}k"
+    "ethicalTags": "Ethical Tags",
+    "selectEthicalTags": "Select ethical tags",
+    "salary": "Salary Range",
+    "salaryRangeValue": "${{min}}k - ${{max}}k",
+    "jobType": "Job Type",
+    "workArrangement": "Work Arrangement",
+    "remoteOnly": "Remote Only",
+    "inclusivity": "Inclusivity",
+    "disabilityInclusive": "Disability-Inclusive Opportunities",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Search by company name",
+    "jobTypeOptions": {
+      "fullTime": "Full-time",
+      "partTime": "Part-time",
+      "contract": "Contract"
+    },
+    "salaryEndpoint": "${{value}}k"
+  },
+    "tags": {
+    "select": "Select ethical tags",
+    "selectEthicalTags": "Select Ethical Tags",
+    "selectedCount": "{{count}} tag selected",
+    "selectedCount_plural": "{{count}} tags selected",
+    "clearAll": "Clear all",
+    "removeTag": "Remove {{tag}}",
+    "categories": {
+      "compensationAndBenefits": "Compensation & Benefits",
+      "workLifeBalance": "Work-Life Balance",
+      "diversityAndInclusion": "Diversity & Inclusion",
+      "careerDevelopment": "Career Development",
+      "environmentalAndSocialImpact": "Environmental & Social Impact"
     },
     "tags": {
-      "select": "Select ethical tags",
-      "selectEthicalTags": "Select Ethical Tags",
-      "selectedCount": "{{count}} tag selected",
-      "selectedCount_plural": "{{count}} tags selected",
-      "clearAll": "Clear all",
-      "removeTag": "Remove {{tag}}",
-      "categories": {
-        "compensationAndBenefits": "Compensation & Benefits",
-        "workLifeBalance": "Work-Life Balance",
-        "diversityAndInclusion": "Diversity & Inclusion",
-        "careerDevelopment": "Career Development",
-        "environmentalAndSocialImpact": "Environmental & Social Impact"
-      },
-      "tags": {
-        "salaryTransparency": "Salary Transparency",
-        "equalPayPolicy": "Equal Pay Policy",
-        "livingWageEmployer": "Living Wage Employer",
-        "comprehensiveHealthInsurance": "Comprehensive Health Insurance",
-        "performanceBasedBonus": "Performance-Based Bonus",
-        "retirementPlanSupport": "Retirement Plan Support",
-        "paidParentalLeave": "Paid Parental Leave",
-        "flexibleHours": "Flexible Hours",
-        "remoteFriendly": "Remote-Friendly",
-        "noAfterHoursWorkCulture": "No After-Hours Work Culture",
-        "mentalHealthSupport": "Mental Health Support",
-        "generousPaidTimeOff": "Generous Paid Time Off",
-        "inclusiveHiringPractices": "Inclusive Hiring Practices",
-        "diverseLeadership": "Diverse Leadership",
-        "lgbtqFriendlyWorkplace": "LGBTQ+ Friendly Workplace",
-        "disabilityInclusiveWorkplace": "Disability-Inclusive Workplace",
-        "supportsWomenInLeadership": "Supports Women in Leadership",
-        "mentorshipProgram": "Mentorship Program",
-        "learningDevelopmentBudget": "Learning & Development Budget",
-        "transparentPromotionPaths": "Transparent Promotion Paths",
-        "internalMobility": "Internal Mobility",
-        "sustainabilityFocused": "Sustainability-Focused",
-        "ethicalSupplyChain": "Ethical Supply Chain",
-        "communityVolunteering": "Community Volunteering",
-        "certifiedBCorporation": "Certified B-Corporation"
-      }
-    },
+      "salaryTransparency": "Salary Transparency",
+      "equalPayPolicy": "Equal Pay Policy",
+      "livingWageEmployer": "Living Wage Employer",
+      "comprehensiveHealthInsurance": "Comprehensive Health Insurance",
+      "performanceBasedBonus": "Performance-Based Bonus",
+      "retirementPlanSupport": "Retirement Plan Support",
+      "paidParentalLeave": "Paid Parental Leave",
+      "flexibleHours": "Flexible Hours",
+      "remoteFriendly": "Remote-Friendly",
+      "noAfterHoursWorkCulture": "No After-Hours Work Culture",
+      "mentalHealthSupport": "Mental Health Support",
+      "generousPaidTimeOff": "Generous Paid Time Off",
+      "inclusiveHiringPractices": "Inclusive Hiring Practices",
+      "diverseLeadership": "Diverse Leadership",
+      "lgbtqFriendlyWorkplace": "LGBTQ+ Friendly Workplace",
+      "disabilityInclusiveWorkplace": "Disability-Inclusive Workplace",
+      "supportsWomenInLeadership": "Supports Women in Leadership",
+      "mentorshipProgram": "Mentorship Program",
+      "learningDevelopmentBudget": "Learning & Development Budget",
+      "transparentPromotionPaths": "Transparent Promotion Paths",
+      "internalMobility": "Internal Mobility",
+      "sustainabilityFocused": "Sustainability-Focused",
+      "ethicalSupplyChain": "Ethical Supply Chain",
+      "communityVolunteering": "Community Volunteering",
+      "certifiedBCorporation": "Certified B-Corporation"
+    }
+  },
     "card": {
-      "remote": "Remote",
+    "remote": "Remote",
       "inclusiveOpportunity": "Inclusive Opportunity",
       "notSpecified": "Location not specified"
-    },
-    "mobileFilters": {
-      "open": "Open filters",
-      "title": "Filters",
-      "reset": "Reset",
-      "apply": "Apply"
-    },
+  },
+  "mobileFilters": {
+    "open": "Open filters",
+    "title": "Filters",
+    "reset": "Reset",
+    "apply": "Apply"
+  },
     "detail": {
-      "breadcrumb": {
-        "jobs": "Jobs"
-      },
-      "error": {
-        "title": "Error Loading Job",
-        "missing": "Job not found",
-        "description": "The job you're looking for doesn't exist or has been removed.",
-        "fetch": "Failed to load job details. Please try again later."
-      },
-      "backToJobs": "Back to Jobs",
-      "applyNow": "Apply Now",
-      "description": "Job Description",
-      "ethicalPolicy": {
+    "breadcrumb": {
+      "jobs": "Jobs"
+    },
+    "error": {
+      "title": "Error Loading Job",
+      "missing": "Job not found",
+      "description": "The job you're looking for doesn't exist or has been removed.",
+      "fetch": "Failed to load job details. Please try again later."
+    },
+    "backToJobs": "Back to Jobs",
+    "applyNow": "Apply Now",
+    "description": "Job Description",
+    "ethicalPolicy": {
         "title": "Ethical Tags & Compliance",
         "sourceNote": "Ethical information for this job comes from the company profile.",
         "overallScore": "Company ethical score",
@@ -388,10 +389,10 @@
         "tagCount_plural": "{{count}} ethical policies",
         "noPolicies": "The company has not shared its ethical policies yet.",
         "inclusiveNote": "This company marks this role as an inclusive opportunity."
-      },
-      "inclusiveOpportunity": "Inclusive Opportunity",
-      "contact": {
-        "title": "Contact Information"
+    },
+    "inclusiveOpportunity": "Inclusive Opportunity",
+    "contact": {
+      "title": "Contact Information"
       },
       "workplace": {
         "title": "About the Company",
@@ -736,19 +737,19 @@
   },
   "employer": {
     "dashboard": {
-      "brand": "Ethical Careers",
-      "sidebar": {
-        "dashboard": "Dashboard",
-        "jobs": "Job Postings",
-        "profile": "Company Profile",
-        "settings": "Settings",
-        "support": "Help and Support"
-      },
-      "title": "Employer Dashboard",
+    "brand": "Ethical Careers",
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "jobs": "Job Postings",
+      "profile": "Company Profile",
+      "settings": "Settings",
+      "support": "Help and Support"
+    },
+    "title": "Employer Dashboard",
       "subtitle": "Manage your job postings and workplaces",
-      "currentPostings": "Current Job Postings",
+    "currentPostings": "Current Job Postings",
       "createJob": "Post New Job",
-      "loadingError": "Failed to load job postings. Please try again later.",
+    "loadingError": "Failed to load job postings. Please try again later.",
       "emptyState": "No job postings yet",
       "emptyCta": "Post Your First Job",
       "addWorkplace": "Add Workplace",
@@ -764,56 +765,56 @@
         "createWorkplace": "Create Workplace",
         "joinWorkplace": "Join Workplace"
       },
-      "table": {
-        "jobTitle": "Job Title",
-        "status": "Status",
-        "applications": "Applications",
-        "views": "Views",
-        "actions": "Actions"
-      },
-      "actions": {
-        "manage": "Manage",
-        "view": "View"
-      },
-      "statusLabels": {
-        "open": "Open",
-        "active": "Active",
-        "paused": "Paused"
-      }
+    "table": {
+      "jobTitle": "Job Title",
+      "status": "Status",
+      "applications": "Applications",
+      "views": "Views",
+      "actions": "Actions"
     },
+    "actions": {
+      "manage": "Manage",
+      "view": "View"
+    },
+    "statusLabels": {
+      "open": "Open",
+      "active": "Active",
+      "paused": "Paused"
+    }
+  },
     "jobPostDetails": {
-      "error": {
-        "load": "Failed to load job details. Please try again later.",
-        "title": "Error Loading Job",
-        "notFound": "Job not found",
-        "description": "The job you're looking for doesn't exist or has been removed."
-      },
-      "applied": {
-        "today": "Applied today",
+    "error": {
+      "load": "Failed to load job details. Please try again later.",
+      "title": "Error Loading Job",
+      "notFound": "Job not found",
+      "description": "The job you're looking for doesn't exist or has been removed."
+    },
+    "applied": {
+      "today": "Applied today",
         "yesterday": "Applied yesterday",
-        "daysAgo": "Applied {{count}} days ago"
-      },
-      "backToDashboard": "Back to Dashboard",
-      "breadcrumb": {
-        "jobs": "Jobs"
-      },
-      "editJobPost": "Edit Job Post",
+      "daysAgo": "Applied {{count}} days ago"
+    },
+    "backToDashboard": "Back to Dashboard",
+    "breadcrumb": {
+      "jobs": "Jobs"
+    },
+    "editJobPost": "Edit Job Post",
       "loadError": "Failed to load job details. Please try again later.",
       "save": "Save Changes",
       "saving": "Saving...",
       "submitError": "Failed to update job posting. Please try again.",
-      "jobDescription": "Job Description",
-      "salaryRange": "Salary Range",
-      "location": "Location",
-      "remote": "Remote",
-      "contact": "Contact Information",
-      "ethicalPolicies": "Ethical Policies",
-      "inclusiveOpportunity": "Inclusive Opportunity",
+    "jobDescription": "Job Description",
+    "salaryRange": "Salary Range",
+    "location": "Location",
+    "remote": "Remote",
+    "contact": "Contact Information",
+    "ethicalPolicies": "Ethical Policies",
+    "inclusiveOpportunity": "Inclusive Opportunity",
       "inclusiveOpportunityDescription": "This position is an inclusive opportunity that warmly welcomes candidates with diverse backgrounds, experiences, and abilities, including individuals with disabilities.",
-      "applicationsReceived": "Applications Received ({{count}})",
+    "applicationsReceived": "Applications Received ({{count}})",
       "noApplications": "No applications yet.",
-      "viewApplication": "View Application"
-    },
+    "viewApplication": "View Application"
+  },
     "createJob": {
       "title": "Create Job Posting",
       "subtitle": "Post a new job opportunity and find the perfect candidate",
@@ -1170,7 +1171,8 @@
     "tabs": {
       "browse": "Browse",
       "my": "My Mentorships",
-      "chat": "Chat"
+      "chat": "Chat",
+      "myProfile": "View My Mentor Profile"
     },
     "searchPlaceholder": "Search mentors by name, expertise, or skills...",
     "noResults": "No mentors found. Try adjusting your search.",
@@ -1270,7 +1272,8 @@
       "alreadyExistsTitle": "Mentor Profile Already Exists",
       "alreadyExistsMessage": "You already have a mentor profile. To update your profile, please use the edit option.",
       "viewProfile": "View My Profile",
-      "backToMentors": "Back to Mentors"
+      "backToMentors": "Back to Mentors",
+      "cancel": "Cancel"
     },
     "profile": {
       "reviews": "reviews",
@@ -1311,6 +1314,7 @@
       "completeSuccess": "Mentorship completed successfully!",
       "completedMentorships": "Completed Mentorships",
       "alreadyRequested": "You already have a pending or active mentorship request with this mentor.",
+      "requested": "Requested",
       "requestSent": "Mentorship request sent successfully!",
       "requestError": "Failed to send mentorship request",
       "requesting": "Sending...",
@@ -1387,7 +1391,7 @@
         }
       }
     },
-    "errors": {
+      "errors": {
       "timeout": "Connection timeout. Please check if the backend server is running.",
       "networkError": "Cannot connect to server. Please check if the backend is running.",
       "loadFailed": "Failed to load mentors. Please try again later.",
@@ -1403,7 +1407,7 @@
       "reviews": "reviews",
       "mentoring": "Mentoring",
       "specialties": "Specialties",
-      "fullCapacity": "This mentor is currently at full capacity",
+      "fullCapacity": "Full capacity",
       "formTitle": "Mentorship Request",
       "formDescription": "Tell the mentor about your goals and what you hope to achieve through mentorship.",
       "messageLabel": "Message to Mentor",
@@ -1425,12 +1429,20 @@
       "successMessage": "Mentorship request sent successfully!",
       "errorMessage": "Failed to send mentorship request. Please try again.",
       "alreadyExists": "You already have a pending or accepted request for this mentor.",
-      "userNotAuthenticated": "You must be logged in to send a mentorship request"
+      "alreadyExistsMessage": "You already have a pending or active mentorship request with this mentor. Please check your mentorships page.",
+      "userNotAuthenticated": "You must be logged in to send a mentorship request",
+      "description": "Tell the mentor about your goals and what you hope to achieve through mentorship.",
+      "motivation": "Motivation",
+      "motivationPlaceholder": "Please explain why you want to be mentored by this mentor and what you hope to achieve...",
+      "motivationHint": "Share your goals, expectations, and what you hope to learn from this mentorship.",
+      "motivationRequired": "Please provide a motivation message for your mentorship request."
     },
     "myMentorships": {
       "title": "My Mentorships",
       "subtitle": "Track your mentorship requests and active mentorships",
       "successMessage": "Mentorship request sent successfully to {{mentorName}}!",
+      "asMentor": "As a Mentor",
+      "asMentee": "As a Mentee",
       "active": "Active",
       "pending": "Pending",
       "completed": "Completed",
@@ -1790,7 +1802,7 @@
     "anonymous": "Anonymous",
     "postAnonymously": "Post anonymously",
     "submitReview": "Submit Review",
-    "submitting": "Submitting...",
+      "submitting": "Submitting...",
     "categories": {
       "culture": "Culture",
       "benefits": "Benefits",
@@ -1857,7 +1869,7 @@
     "aboutUs": "About Us",
     "ethicalPolicyCommitments": "Ethical Policy Commitments",
     "currentJobOpenings": "Current Job Openings",
-    "viewJob": "View Job",
+        "viewJob": "View Job",
     "notFound": "Company Not Found",
     "notFoundDescription": "The company you're looking for doesn't exist or has been removed."
   },
@@ -1896,8 +1908,8 @@
     "notReady": "Chat is not ready yet. Please wait a moment and try again.",
     "authRequired": "You must be logged in to use chat",
     "noConversationsDesc": "You need to have an active mentorship to start chatting."
-  },
-  "errors": {
+    },
+    "errors": {
     "DEFAULT": "Something went wrong. Please try again.",
     "VALIDATION_FAILED": "Some fields need your attention.",
     "MALFORMED_JSON": "Request format is invalid.",
