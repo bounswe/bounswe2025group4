@@ -1,6 +1,25 @@
 import type { ActivityResponse, ActivityType } from '@shared/types/api.types';
 import type { ActivityDisplay } from '@shared/types/profile.types';
 import { formatDistanceToNow } from 'date-fns';
+import { enUS, tr, ar } from 'date-fns/locale';
+import i18n from '@shared/lib/i18n';
+
+/**
+ * Get date-fns locale based on current i18n language
+ */
+function getDateLocale() {
+  const currentLang = i18n.language;
+
+  switch (currentLang) {
+    case 'tr':
+      return tr;
+    case 'ar':
+      return ar;
+    case 'en':
+    default:
+      return enUS;
+  }
+}
 
 export type ActivityEntityData = {
   title?: string;
@@ -33,50 +52,41 @@ const ACTIVITY_ICONS: Record<ActivityType, string> = {
 };
 
 /**
+ * Mapping from activity type to translation key
+ */
+const ACTIVITY_TYPE_KEYS: Record<ActivityType, string> = {
+  REGISTER: 'profile.activity.types.register',
+  UPDATE_PROFILE: 'profile.activity.types.updateProfile',
+  CREATE_WORKPLACE: 'profile.activity.types.createWorkplace',
+  CREATE_JOB: 'profile.activity.types.createJob',
+  APPLY_JOB: 'profile.activity.types.applyJob',
+  APPROVE_APPLICATION: 'profile.activity.types.approveApplication',
+  REJECT_APPLICATION: 'profile.activity.types.rejectApplication',
+  CREATE_REVIEW: 'profile.activity.types.createReview',
+  REQUEST_MENTORSHIP: 'profile.activity.types.requestMentorship',
+  ACCEPT_MENTORSHIP: 'profile.activity.types.acceptMentorship',
+  COMPLETE_MENTORSHIP: 'profile.activity.types.completeMentorship',
+  CREATE_THREAD: 'profile.activity.types.createThread',
+  CREATE_COMMENT: 'profile.activity.types.createComment',
+  UPVOTE_THREAD: 'profile.activity.types.upvoteThread',
+  DOWNVOTE_THREAD: 'profile.activity.types.downvoteThread',
+  EDIT_THREAD: 'profile.activity.types.editThread',
+  DELETE_THREAD: 'profile.activity.types.deleteThread',
+};
+
+/**
  * Generate simple description from activity type and actor
  * Used as fallback or when entity details aren't needed
  */
 function getSimpleDescription(activity: ActivityResponse): string {
   const { type } = activity;
+  const translationKey = ACTIVITY_TYPE_KEYS[type];
 
-  switch (type) {
-    case 'REGISTER':
-      return 'Joined the platform';
-    case 'UPDATE_PROFILE':
-      return 'Updated profile';
-    case 'CREATE_WORKPLACE':
-      return 'Created a workplace';
-    case 'CREATE_JOB':
-      return 'Posted a job';
-    case 'APPLY_JOB':
-      return 'Applied to a job';
-    case 'APPROVE_APPLICATION':
-      return 'Approved a job application';
-    case 'REJECT_APPLICATION':
-      return 'Rejected a job application';
-    case 'CREATE_REVIEW':
-      return 'Wrote a workplace review';
-    case 'REQUEST_MENTORSHIP':
-      return 'Requested mentorship';
-    case 'ACCEPT_MENTORSHIP':
-      return 'Accepted a mentorship request';
-    case 'COMPLETE_MENTORSHIP':
-      return 'Completed a mentorship session';
-    case 'CREATE_THREAD':
-      return 'Posted in the forum';
-    case 'CREATE_COMMENT':
-      return 'Commented on a forum post';
-    case 'UPVOTE_THREAD':
-      return 'Upvoted a forum post';
-    case 'DOWNVOTE_THREAD':
-      return 'Downvoted a forum post';
-    case 'EDIT_THREAD':
-      return 'Edited a forum post';
-    case 'DELETE_THREAD':
-      return 'Deleted a forum post';
-    default:
-      return 'Unknown activity';
+  if (translationKey) {
+    return i18n.t(translationKey);
   }
+
+  return 'Unknown activity';
 }
 
 /**
@@ -133,7 +143,10 @@ export function mapActivityToDisplay(activity: ActivityResponse): ActivityDispla
     type: activity.type,
     icon: ACTIVITY_ICONS[activity.type] || 'Circle',
     text: getSimpleDescription(activity),
-    date: formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true }),
+    date: formatDistanceToNow(new Date(activity.createdAt), {
+      addSuffix: true,
+      locale: getDateLocale(),
+    }),
     clickable: Boolean(navigationUrl),
     navigationUrl,
     rawData: activity,
@@ -163,37 +176,60 @@ export function enrichActivityDescription(
 
   switch (activity.type) {
     case 'CREATE_JOB':
-      richText = `Posted a job: ${entityData.title || 'Unknown'}`;
+      richText = i18n.t('profile.activity.enriched.createJob', {
+        title: entityData.title || 'Unknown',
+      });
       break;
     case 'APPLY_JOB':
       {
         const workplaceName = entityData.workplace?.companyName;
-        richText = `Applied to ${entityData.title || 'a job'}${workplaceName ? ` at ${workplaceName}` : ''}`;
+        richText = i18n.t('profile.activity.enriched.applyJob', {
+          title: entityData.title || 'a job',
+          workplace: workplaceName
+            ? i18n.t('profile.activity.enriched.applyJobWithWorkplace', {
+                workplace: workplaceName,
+              })
+            : '',
+        });
       }
       break;
     case 'APPROVE_APPLICATION':
-      richText = `Approved an application for ${entityData.title || 'a job'}`;
+      richText = i18n.t('profile.activity.enriched.approveApplication', {
+        title: entityData.title || 'a job',
+      });
       break;
     case 'REJECT_APPLICATION':
-      richText = `Rejected an application for ${entityData.title || 'a job'}`;
+      richText = i18n.t('profile.activity.enriched.rejectApplication', {
+        title: entityData.title || 'a job',
+      });
       break;
     case 'CREATE_WORKPLACE':
-      richText = `Created workplace: ${entityData.name || 'Unknown'}`;
+      richText = i18n.t('profile.activity.enriched.createWorkplace', {
+        name: entityData.name || 'Unknown',
+      });
       break;
     case 'CREATE_REVIEW':
-      richText = `Reviewed ${entityData.name || 'a workplace'}`;
+      richText = i18n.t('profile.activity.enriched.createReview', {
+        name: entityData.name || 'a workplace',
+      });
       break;
     case 'CREATE_THREAD':
-      richText = `Posted in forum: "${entityData.title || 'Untitled'}"`;
+      richText = i18n.t('profile.activity.enriched.createThread', {
+        title: entityData.title || 'Untitled',
+      });
       break;
     case 'CREATE_COMMENT':
-      richText = `Commented on "${entityData.title || 'a thread'}"`;
+      richText = i18n.t('profile.activity.enriched.createComment', {
+        title: entityData.title || 'a thread',
+      });
       break;
     case 'REQUEST_MENTORSHIP':
-      richText = `Requested mentorship from ${entityData.username || 'a mentor'}`;
+      richText = i18n.t('profile.activity.enriched.requestMentorship', {
+        username: entityData.username || 'a mentor',
+      });
       break;
     case 'ACCEPT_MENTORSHIP':
-      richText = `Accepted mentorship request`;
+      richText = i18n.t('profile.activity.enriched.acceptMentorship');
       break;
   }
 

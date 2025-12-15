@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Download, Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { ActivityItem } from './ActivityItem';
 import { useUserActivitiesQuery, fetchAllUserActivities } from '@modules/profile/services/activities.service';
@@ -17,6 +18,7 @@ interface ActivityTabProps {
 
 export function ActivityTab({ userId, isOwner }: ActivityTabProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
   const [enrichedActivities, setEnrichedActivities] = useState<ActivityDisplay[]>([]);
   const [isEnriching, setIsEnriching] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -111,7 +113,7 @@ export function ActivityTab({ userId, isOwner }: ActivityTabProps) {
             ) : (
               <Download className="w-4 h-4" />
             )}
-            {isDownloading ? 'Downloading...' : 'Download My Data'}
+            {isDownloading ? t('profile.activity.downloading', 'Downloading...') : t('profile.activity.downloadData', 'Download My Data')}
           </button>
         </div>
       )}

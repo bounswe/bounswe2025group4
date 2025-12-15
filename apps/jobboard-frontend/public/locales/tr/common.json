@@ -232,6 +232,11 @@
         "accepted": "Kabul Edilen",
         "rejected": "Reddedilen"
       },
+      "forum": {
+        "title": "Forum Activity",
+        "comments": "Engagement (comments)",
+        "newThisWeek": "New posts this week"
+      },
       "mentorship": {
         "title": "Mentorluk Programı",
         "mentors": "Aktif Mentorlar",
@@ -1764,6 +1769,40 @@
       "note": "Bu halka açık bir profil görünümüdür. Gizlilik nedeniyle yetenekler ve ilgi alanları gösterilmez."
     },
     "activity": {
+      "downloading": "İndiriliyor...",
+      "downloadData": "Verilerimi İndir",
+      "types": {
+        "register": "Platforma katıldı",
+        "updateProfile": "Profili güncelledi",
+        "createWorkplace": "Bir işyeri oluşturdu",
+        "createJob": "İş ilanı paylaştı",
+        "applyJob": "Bir işe başvurdu",
+        "approveApplication": "Bir iş başvurusunu onayladı",
+        "rejectApplication": "Bir iş başvurusunu reddetti",
+        "createReview": "İşyeri değerlendirmesi yazdı",
+        "requestMentorship": "Mentorluk talep etti",
+        "acceptMentorship": "Mentorluk talebini kabul etti",
+        "completeMentorship": "Mentorluk oturumunu tamamladı",
+        "createThread": "Forumda gönderi paylaştı",
+        "createComment": "Forum gönderisine yorum yaptı",
+        "upvoteThread": "Forum gönderisini beğendi",
+        "downvoteThread": "Forum gönderisini beğenmedi",
+        "editThread": "Forum gönderisini düzenledi",
+        "deleteThread": "Forum gönderisini sildi"
+      },
+      "enriched": {
+        "createJob": "İş ilanı paylaştı: {{title}}",
+        "applyJob": "{{title}} pozisyonuna başvurdu{{workplace}}",
+        "applyJobWithWorkplace": " ({{workplace}})",
+        "approveApplication": "{{title}} pozisyonu için başvuruyu onayladı",
+        "rejectApplication": "{{title}} pozisyonu için başvuruyu reddetti",
+        "createWorkplace": "İşyeri oluşturdu: {{name}}",
+        "createReview": "{{name}} için değerlendirme yazdı",
+        "createThread": "Forumda gönderi paylaştı: \"{{title}}\"",
+        "createComment": "\"{{title}}\" gönderisine yorum yaptı",
+        "requestMentorship": "{{username}} kullanıcısından mentorluk talep etti",
+        "acceptMentorship": "Mentorluk talebini kabul etti"
+      },
       "items": [
         {
           "type": "application",
