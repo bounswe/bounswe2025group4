@@ -8,7 +8,7 @@ import { CheckCircle, XCircle } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api') 
   ? import.meta.env.VITE_API_URL 
-  : (import.meta.env.VITE_API_URL || '') + '/api';
+  : (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api';
 
 type VerificationStatus = 'loading' | 'success' | 'error';
 

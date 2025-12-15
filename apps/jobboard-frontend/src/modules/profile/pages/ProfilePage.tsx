@@ -4,6 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthContext } from '@modules/auth/contexts/AuthContext';
+import { useReportModal } from '@shared/hooks/useReportModal';
+import { createReport, mapReportReason } from '@shared/services/report.service';
+import { Flag } from 'lucide-react';
 import { ProfileHeader } from '@modules/profile/components/profile/ProfileHeader';
 import { AboutSection } from '@modules/profile/components/profile/AboutSection';
 import { ExperienceSection } from '@modules/profile/components/profile/ExperienceSection';
@@ -60,6 +63,7 @@ export default function ProfilePage() {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const { t } = useTranslation('common');
   const queryClient = useQueryClient();
+  const { openReport, ReportModalElement } = useReportModal();
 
   const viewedUserId = routeUserId ? Number(routeUserId) : undefined;
   const isOwner = user ? (!viewedUserId || user.id === viewedUserId) : false;
@@ -400,6 +404,28 @@ export default function ProfilePage() {
       <div className="bg-card rounded-lg border shadow-sm p-6">
         {isOwner ? (
           <ProfileHeader
+            onReport={
+              !isOwner && viewedUserId
+                ? () => {
+                    openReport({
+                      title: t('profile.report', { defaultValue: 'Report Profile' }),
+                      subtitle: t('profile.reportSubtitle', { defaultValue: 'Report this profile if it violates our guidelines' }),
+                      contextSnippet: `${profile.firstName} ${profile.lastName}`,
+                      reportType: 'Profile',
+                      reportedName: `${profile.firstName} ${profile.lastName}`,
+                      onSubmit: async (message, reason) => {
+                        await createReport({
+                          entityType: 'PROFILE',
+                          entityId: viewedUserId!,
+                          reasonType: mapReportReason(reason),
+                          description: message,
+                        });
+                      },
+                    });
+                  }
+                : undefined
+            }
+            showReport={!isOwner && Boolean(viewedUserId)}
             firstName={ownerProfile?.firstName || ''}
             lastName={ownerProfile?.lastName || ''}
             imageUrl={ownerProfile?.imageUrl}
@@ -427,11 +453,40 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl font-bold text-foreground mb-2">
-                {publicProfile?.firstName} {publicProfile?.lastName}
-              </h1>
-
-              <p className="text-muted-foreground mb-3">{currentRoleLabel}</p>
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h1 className="text-3xl font-bold text-foreground">
+                    {publicProfile?.firstName} {publicProfile?.lastName}
+                  </h1>
+                  <p className="text-muted-foreground mt-1">{currentRoleLabel}</p>
+                </div>
+                {viewedUserId && (
+                  <button
+                    onClick={() => {
+                      openReport({
+                        title: t('profile.report', { defaultValue: 'Report Profile' }),
+                        subtitle: t('profile.reportSubtitle', { defaultValue: 'Report this profile if it violates our guidelines' }),
+                        contextSnippet: `${publicProfile?.firstName} ${publicProfile?.lastName}`,
+                        reportType: 'Profile',
+                        reportedName: `${publicProfile?.firstName} ${publicProfile?.lastName}`,
+                        onSubmit: async (message, reason) => {
+                          await createReport({
+                            entityType: 'PROFILE',
+                            entityId: viewedUserId,
+                            reasonType: mapReportReason(reason),
+                            description: message,
+                          });
+                        },
+                      });
+                    }}
+                    className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                    title={t('profile.report', { defaultValue: 'Report' })}
+                  >
+                    <Flag className="h-4 w-4" />
+                    <span className="sr-only">{t('profile.report', { defaultValue: 'Report' })}</span>
+                  </button>
+                )}
+              </div>
 
               <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
                 {joinedLabel && <span>{joinedLabel}</span>}
@@ -626,6 +681,7 @@ export default function ProfilePage() {
           />
         </>
       )}
+      {ReportModalElement}
     </div>
   );
 }
