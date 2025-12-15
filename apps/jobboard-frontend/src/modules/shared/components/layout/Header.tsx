@@ -22,6 +22,7 @@ import { LanguageSwitcher } from '../common/LanguageSwitcher';
 import { useAuth, useAuthActions } from '@shared/stores/authStore';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
 import { useMentorProfileQuery } from '@modules/mentorship/services/mentorship.service';
+import NotificationBell from '@modules/notifications/components/NotificationBell';
 
 type Role = 'ROLE_EMPLOYER' | 'ROLE_JOBSEEKER';
 
@@ -217,6 +218,7 @@ export default function Header() {
 
         {/* Desktop actions */}
         <div className="hidden md:flex items-center gap-2">
+          {isAuthenticated && <NotificationBell />}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" aria-label={t('layout.header.nav.settings', 'Settings')}>
@@ -283,6 +285,11 @@ export default function Header() {
             </SheetHeader>
 
             <div className="mt-4 flex flex-col gap-3" role="navigation" aria-label="Mobile navigation">
+              {isAuthenticated && (
+                <div className="flex items-center justify-start">
+                  <NotificationBell />
+                </div>
+              )}
               {filteredSections.map((section) => {
                 const isOpen = openMobileSection === section.key;
                 return (

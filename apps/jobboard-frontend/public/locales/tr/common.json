@@ -1923,7 +1923,17 @@
     "authRequired": "Sohbeti kullanmak için giriş yapmalısınız",
     "noConversationsDesc": "Sohbete başlamak için aktif bir mentorluk lazım."
     },
-    "errors": {
+    "notifications": {
+    "title": "Bildirimler",
+    "ariaLabel": "Bildirimler",
+    "loading": "Bildirimler yükleniyor...",
+    "empty": "Harika! Hiç bildirimin yok.",
+    "unread": "{{count}} okunmamış",
+    "upToDate": "Güncel",
+    "markAllAsRead": "Tümünü okundu olarak işaretle",
+    "footer": "En yeni bildirimler önce görünür."
+  },
+  "errors": {
     "DEFAULT": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
     "VALIDATION_FAILED": "Bazı alanların düzeltilmesi gerekiyor.",
     "MALFORMED_JSON": "İstek formatı geçersiz.",

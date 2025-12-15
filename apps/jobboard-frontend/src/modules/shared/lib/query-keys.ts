@@ -78,3 +78,8 @@ export const forumKeys = {
   post: (postId: number | string) => [...forumKeys.all, 'post', postId] as const,
   comment: (commentId: number | string) => [...forumKeys.all, 'comment', commentId] as const,
 };
+
+export const notificationKeys = {
+  all: ['notifications'] as const,
+  me: ['notifications', 'me'] as const,
+};
