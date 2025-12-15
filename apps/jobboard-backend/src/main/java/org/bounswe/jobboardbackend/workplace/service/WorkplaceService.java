@@ -30,6 +30,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+
 @Service
 @RequiredArgsConstructor
 public class WorkplaceService {
@@ -38,10 +40,40 @@ public class WorkplaceService {
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewPolicyRatingRepository reviewPolicyRatingRepository;
+    private final ReviewReplyRepository reviewReplyRepository;
     private final ReviewService reviewService;
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
     private final ActivityService activityService;
+    private final JobPostRepository jobPostRepository;
+
+    @Transactional
+    public void deleteUserData(Long userId) {
+        List<EmployerWorkplace> userWorkplaces = employerWorkplaceRepository.findByUser_Id(userId);
+
+        for (EmployerWorkplace ew : userWorkplaces) {
+            Long workplaceId = ew.getWorkplace().getId();
+
+            long employerCount = employerWorkplaceRepository.countByWorkplace_Id(workplaceId);
+
+            if (employerCount == 1) {
+                reviewReplyRepository.deleteAllByReview_Workplace_Id(workplaceId);
+                reviewRepository.deleteAllByWorkplace_Id(workplaceId);
+                jobPostRepository.deleteAllByWorkplaceId(workplaceId);
+                Workplace w = ew.getWorkplace();
+                if (w.getImageUrl() != null) {
+                    deleteImage(workplaceId, userId);
+                }
+                employerWorkplaceRepository.delete(ew);
+
+                workplaceRepository.delete(w);
+            }
+        }
+    }
+
+    private Double calcAvgRating(Long workplaceId) {
+        return reviewRepository.averageOverallByWorkplaceUsingPolicies(workplaceId);
+    }
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -399,10 +431,6 @@ public class WorkplaceService {
                 .createdAt(wp.getCreatedAt())
                 .updatedAt(wp.getUpdatedAt())
                 .build();
-    }
-
-    private Double calcAvgRating(Long workplaceId) {
-        return reviewRepository.averageOverallByWorkplaceUsingPolicies(workplaceId);
     }
 
     private static Double oneDecimal(Double x) {

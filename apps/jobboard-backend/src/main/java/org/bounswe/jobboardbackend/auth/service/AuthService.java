@@ -26,6 +26,7 @@ import org.bounswe.jobboardbackend.jobapplication.service.JobApplicationService;
 import org.bounswe.jobboardbackend.mentorship.service.MentorshipService;
 import org.bounswe.jobboardbackend.notification.service.NotificationService;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
+import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -66,6 +67,7 @@ public class AuthService {
     private final MentorshipService mentorshipService;
     private final NotificationService notificationService;
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
+    private final WorkplaceService workplaceService;
 
     @Transactional
     public OtpRequestResponse initiateLogin(@Valid LoginRequest loginRequest) {
@@ -298,6 +300,7 @@ public class AuthService {
         mentorshipService.deleteUserData(userId);
         forumService.deleteUserData(userId);
         reviewService.deleteUserData(userId);
+        workplaceService.deleteUserData(userId);
         activityService.deleteActivitiesByUserId(userId);
         profileService.deleteProfileByUserId(userId);
 
