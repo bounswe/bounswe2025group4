@@ -26,7 +26,7 @@ import {
   ImageUploadModal,
 } from '@modules/profile/components/profile/ProfileEditModals';
 import { DeleteAccountModal } from '@modules/profile/components/profile/DeleteAccountModal';
-import type { Profile, PublicProfile, Activity, Post, Experience, Education, Skill, Interest } from '@shared/types/profile.types';
+import type { Profile, PublicProfile, Post, Experience, Education, Skill, Interest } from '@shared/types/profile.types';
 import {
   profileService,
   useCreateProfileMutationWithToasts,
@@ -77,39 +77,6 @@ export default function ProfilePage() {
   const myBadgesQuery = useMyBadgesQuery(isOwner);
   const userBadgesQuery = useUserBadgesQuery(viewedUserId, !isOwner);
   const badgesQuery = isOwner ? myBadgesQuery : userBadgesQuery;
-
-  const mockActivity: Activity[] = useMemo(() => [
-    {
-      id: 1,
-      type: 'application',
-      text: 'Applied to Senior Product Designer at Innovation Labs',
-      date: '2 days ago',
-    },
-    {
-      id: 2,
-      type: 'forum',
-      text: "Posted a thread on forum: 'Best practices for accessibility in design'",
-      date: '5 days ago',
-    },
-    {
-      id: 3,
-      type: 'comment',
-      text: "Made a comment on 'Remote work strategies for designers'",
-      date: '1 week ago',
-    },
-    {
-      id: 4,
-      type: 'like',
-      text: "Liked a comment on 'Design system implementation'",
-      date: '1 week ago',
-    },
-    {
-      id: 5,
-      type: 'application',
-      text: 'Applied to UX Designer at Creative Studio',
-      date: '2 weeks ago',
-    },
-  ], []);
 
   const mockPosts: Post[] = useMemo(() => [
     {
@@ -634,7 +601,12 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {activeTab === 'activity' && <ActivityTab activities={mockActivity} />}
+        {activeTab === 'activity' && profile && (
+          <ActivityTab
+            userId={viewedUserId || user?.id || 0}
+            isOwner={isOwner}
+          />
+        )}
         {activeTab === 'posts' && <PostsTab posts={mockPosts} />}
       </div>
 

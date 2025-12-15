@@ -583,6 +583,20 @@ let mockJobs: JobPostResponse[] = [
   createMockJob({ id: 1, title: 'Senior Software Engineer' }),
   createMockJob({ id: 2, title: 'Frontend Developer' }),
   createMockJob({ id: 3, title: 'Backend Engineer' }),
+  createMockJob({
+    id: 4,
+    title: 'Senior Product Designer',
+    workplace: {
+      id: 99,
+      companyName: 'Innovation Labs',
+      sector: 'Design',
+      location: 'Berlin',
+      shortDescription: 'Human-centered design agency',
+      overallAvg: 4.2,
+      ethicalTags: ['Remote-Friendly'],
+      ethicalAverages: {},
+    },
+  }),
 ];
 
 // eslint-disable-next-line prefer-const
@@ -880,3 +894,51 @@ export const dashboardHandlers = [
   }),
 ];
 
+// ============================================================================
+// ACTIVITY HANDLERS
+// ============================================================================
+
+const mockActivities = [
+  {
+    id: 101,
+    actor: { id: 1, username: 'owner' },
+    type: 'APPLY_JOB',
+    entityId: 4,
+    entityType: 'JOB_POST',
+    createdAt: '2024-01-01T00:00:00Z',
+  },
+];
+
+export const activityHandlers = [
+  http.get(`${API_BASE_URL}/activities/user/:userId`, async ({ request }) => {
+    const url = new URL(request.url);
+    const page = Number(url.searchParams.get('page') ?? '0');
+    const size = Number(url.searchParams.get('size') ?? '20');
+
+    const start = page * size;
+    const paginated = mockActivities.slice(start, start + size);
+    const totalPages = Math.max(1, Math.ceil(mockActivities.length / size));
+
+    return HttpResponse.json(
+      {
+        content: paginated,
+        pageable: {
+          pageNumber: page,
+          pageSize: size,
+          offset: start,
+        },
+        totalElements: mockActivities.length,
+        totalPages,
+        last: page >= totalPages - 1,
+        size,
+        number: page,
+        first: page === 0,
+        empty: paginated.length === 0,
+      },
+      { status: 200 },
+    );
+  }),
+  http.options(`${API_BASE_URL}/activities/user/:userId`, async () => {
+    return HttpResponse.json({}, { status: 200 });
+  }),
+];

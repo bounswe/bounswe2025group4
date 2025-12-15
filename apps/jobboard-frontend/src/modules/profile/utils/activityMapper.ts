@@ -4,7 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 export type ActivityEntityData = {
   title?: string;
-  workplace?: { name?: string };
+  workplace?: { companyName?: string };
   name?: string;
   username?: string;
 };
@@ -166,7 +166,10 @@ export function enrichActivityDescription(
       richText = `Posted a job: ${entityData.title || 'Unknown'}`;
       break;
     case 'APPLY_JOB':
-      richText = `Applied to ${entityData.title || 'a job'}${entityData.workplace?.name ? ` at ${entityData.workplace.name}` : ''}`;
+      {
+        const workplaceName = entityData.workplace?.companyName;
+        richText = `Applied to ${entityData.title || 'a job'}${workplaceName ? ` at ${workplaceName}` : ''}`;
+      }
       break;
     case 'APPROVE_APPLICATION':
       richText = `Approved an application for ${entityData.title || 'a job'}`;
