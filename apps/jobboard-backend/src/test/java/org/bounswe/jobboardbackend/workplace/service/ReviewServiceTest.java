@@ -156,7 +156,7 @@ class ReviewServiceTest {
                 when(profileRepository.findByUserId(userId))
                                 .thenReturn(Optional.of(profile));
 
-                ReviewResponse res = reviewService.createReview(workplaceId, req, user);
+                ReviewResponse res = reviewService.createReview(workplaceId, req, user.getId());
 
                 assertThat(res).isNotNull();
                 assertThat(res.getWorkplaceId()).isEqualTo(workplaceId);
@@ -187,7 +187,7 @@ class ReviewServiceTest {
                 when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId))
                                 .thenReturn(true);
 
-                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user))
+                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.WORKPLACE_UNAUTHORIZED);
@@ -213,7 +213,7 @@ class ReviewServiceTest {
                 when(reviewRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId))
                                 .thenReturn(true);
 
-                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user))
+                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.REVIEW_ALREADY_EXISTS);
@@ -227,7 +227,7 @@ class ReviewServiceTest {
 
                 when(workplaceRepository.findById(workplaceId)).thenReturn(Optional.empty());
 
-                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user))
+                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
@@ -252,7 +252,7 @@ class ReviewServiceTest {
                                 .thenReturn(false);
                 when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user))
+                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.VALIDATION_ERROR);
@@ -275,7 +275,7 @@ class ReviewServiceTest {
                                 .thenReturn(false);
                 when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user))
+                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.VALIDATION_ERROR);
@@ -302,7 +302,7 @@ class ReviewServiceTest {
                                 .thenReturn(false);
                 when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user))
+                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.VALIDATION_ERROR);
@@ -329,7 +329,7 @@ class ReviewServiceTest {
                                 .thenReturn(false);
                 when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user))
+                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.VALIDATION_ERROR);
@@ -357,7 +357,7 @@ class ReviewServiceTest {
                                 .thenReturn(false);
                 when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user))
+                assertThatThrownBy(() -> reviewService.createReview(workplaceId, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.VALIDATION_ERROR);
@@ -621,7 +621,7 @@ class ReviewServiceTest {
                 updatedPolicies.put(EthicalPolicy.SALARY_TRANSPARENCY.getLabel(), 5);
                 req.setEthicalPolicyRatings(updatedPolicies);
 
-                ReviewResponse res = reviewService.updateReview(workplaceId, 200L, req, user);
+                ReviewResponse res = reviewService.updateReview(workplaceId, 200L, req, user.getId());
 
                 assertThat(res.getTitle()).isEqualTo("Updated title");
                 assertThat(res.getContent()).isEqualTo("Updated content");
@@ -645,7 +645,7 @@ class ReviewServiceTest {
                 ReviewUpdateRequest req = new ReviewUpdateRequest();
                 req.setTitle("Should not matter");
 
-                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 300L, req, other))
+                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 300L, req, other.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.ACCESS_DENIED);
@@ -659,7 +659,7 @@ class ReviewServiceTest {
 
                 when(reviewRepository.findById(999L)).thenReturn(Optional.empty());
 
-                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 999L, req, user))
+                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 999L, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
@@ -677,7 +677,7 @@ class ReviewServiceTest {
                 ReviewUpdateRequest req = new ReviewUpdateRequest();
                 req.setTitle("test");
 
-                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 500L, req, user))
+                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 500L, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
@@ -697,7 +697,7 @@ class ReviewServiceTest {
                 req.setEthicalPolicyRatings(
                                 Map.of(EthicalPolicy.SALARY_TRANSPARENCY.getLabel(), 0));
 
-                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 600L, req, user))
+                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 600L, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.VALIDATION_ERROR);
@@ -717,7 +717,7 @@ class ReviewServiceTest {
                 req.setEthicalPolicyRatings(
                                 Map.of("UnknownPolicy", 4));
 
-                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 601L, req, user))
+                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 601L, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.VALIDATION_ERROR);
@@ -738,7 +738,7 @@ class ReviewServiceTest {
                 req.setEthicalPolicyRatings(
                                 Map.of(EthicalPolicy.SALARY_TRANSPARENCY.getLabel(), 4));
 
-                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 602L, req, user))
+                assertThatThrownBy(() -> reviewService.updateReview(workplaceId, 602L, req, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.VALIDATION_ERROR);
@@ -774,7 +774,7 @@ class ReviewServiceTest {
                 when(reviewPolicyRatingRepository.findByReview_Id(300L))
                                 .thenReturn(List.of(rating1));
 
-                reviewService.deleteReview(workplaceId, 300L, user, false);
+                reviewService.deleteReview(workplaceId, 300L, user.getId(), false);
 
                 verify(reviewReplyRepository).delete(reply);
                 verify(reviewPolicyRatingRepository).deleteAll(List.of(rating1));
@@ -793,7 +793,7 @@ class ReviewServiceTest {
 
                 when(reviewRepository.findById(301L)).thenReturn(Optional.of(review));
 
-                assertThatThrownBy(() -> reviewService.deleteReview(workplaceId, 301L, other, false))
+                assertThatThrownBy(() -> reviewService.deleteReview(workplaceId, 301L, other.getId(), false))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.ACCESS_DENIED);
@@ -815,8 +815,9 @@ class ReviewServiceTest {
                 when(reviewRepository.findById(100L)).thenReturn(Optional.of(review));
                 when(reviewReactionRepository.findByReview_IdAndUser_Id(100L, userId))
                                 .thenReturn(Optional.empty());
+                when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-                ReviewResponse res = reviewService.toggleHelpful(workplaceId, 100L, user);
+                ReviewResponse res = reviewService.toggleHelpful(workplaceId, 100L, user.getId());
 
                 assertThat(res.getHelpfulCount()).isEqualTo(6);
                 assertThat(res.isHelpfulByUser()).isTrue();
@@ -846,7 +847,7 @@ class ReviewServiceTest {
                 when(reviewReactionRepository.findByReview_IdAndUser_Id(100L, userId))
                                 .thenReturn(Optional.of(reaction));
 
-                ReviewResponse res = reviewService.toggleHelpful(workplaceId, 100L, user);
+                ReviewResponse res = reviewService.toggleHelpful(workplaceId, 100L, user.getId());
 
                 assertThat(res.getHelpfulCount()).isEqualTo(4);
                 assertThat(res.isHelpfulByUser()).isFalse();
@@ -865,7 +866,7 @@ class ReviewServiceTest {
                 Review review = sampleReview(100L, wp, user);
                 when(reviewRepository.findById(100L)).thenReturn(Optional.of(review));
 
-                assertThatThrownBy(() -> reviewService.toggleHelpful(workplaceId, 100L, user))
+                assertThatThrownBy(() -> reviewService.toggleHelpful(workplaceId, 100L, user.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.VALIDATION_ERROR);
@@ -881,7 +882,7 @@ class ReviewServiceTest {
 
                 when(reviewRepository.findById(999L)).thenReturn(Optional.empty());
 
-                assertThatThrownBy(() -> reviewService.deleteReview(workplaceId, 999L, user, false))
+                assertThatThrownBy(() -> reviewService.deleteReview(workplaceId, 999L, user.getId(), false))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
@@ -896,7 +897,7 @@ class ReviewServiceTest {
 
                 when(reviewRepository.findById(700L)).thenReturn(Optional.of(review));
 
-                assertThatThrownBy(() -> reviewService.deleteReview(workplaceId, 700L, user, false))
+                assertThatThrownBy(() -> reviewService.deleteReview(workplaceId, 700L, user.getId(), false))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.REVIEW_NOT_FOUND);
@@ -929,7 +930,7 @@ class ReviewServiceTest {
                 when(reviewPolicyRatingRepository.findByReview_Id(401L))
                                 .thenReturn(List.of(rating));
 
-                reviewService.deleteReview(workplaceId, 401L, admin, true);
+                reviewService.deleteReview(workplaceId, 401L, admin.getId(), true);
 
                 verify(reviewReplyRepository).delete(reply);
                 verify(reviewPolicyRatingRepository).deleteAll(List.of(rating));

@@ -1,6 +1,5 @@
 package org.bounswe.jobboardbackend.admin.service;
 
-import org.bounswe.jobboardbackend.admin.dto.BanUserRequest;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.forum.model.ForumComment;
@@ -13,6 +12,7 @@ import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
 import org.bounswe.jobboardbackend.mentorship.model.MentorProfile;
 import org.bounswe.jobboardbackend.mentorship.repository.MentorProfileRepository;
+import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.profile.model.Profile;
 import org.bounswe.jobboardbackend.profile.repository.ProfileRepository;
 import org.bounswe.jobboardbackend.report.dto.ResolveReportRequest;
@@ -84,6 +84,9 @@ class AdminReportServiceTest {
     @Mock
     private AdminUserService adminUserService;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private AdminReportService adminReportService;
 
@@ -116,7 +119,11 @@ class AdminReportServiceTest {
         lenient().when(authentication.getPrincipal()).thenReturn(userDetails);
         lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
 
+        lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
+
         SecurityContextHolder.setContext(securityContext);
+
+        lenient().when(userRepository.findById(mockUser.getId())).thenReturn(Optional.of(mockUser));
     }
 
     @AfterEach
@@ -130,7 +137,7 @@ class AdminReportServiceTest {
         when(reportRepository.findById(999L)).thenReturn(Optional.empty());
 
         HandleException exception = assertThrows(HandleException.class,
-                () -> adminReportService.resolveReport(999L, resolveRequest));
+                () -> adminReportService.resolveReport(999L, resolveRequest, mockUser.getId()));
 
         assertEquals(ErrorCode.NOT_FOUND, exception.getCode());
     }
@@ -138,11 +145,11 @@ class AdminReportServiceTest {
     @Test
     @DisplayName("ResolveReport: Should fail if report is already resolved")
     void resolveReport_Fail_AlreadyResolved() {
-        mockReport.setStatus(ReportStatus.REJECTED); // Already processed
+        mockReport.setStatus(ReportStatus.REJECTED);
         when(reportRepository.findById(mockReport.getId())).thenReturn(Optional.of(mockReport));
 
         HandleException exception = assertThrows(HandleException.class,
-                () -> adminReportService.resolveReport(mockReport.getId(), resolveRequest));
+                () -> adminReportService.resolveReport(mockReport.getId(), resolveRequest, mockUser.getId()));
 
         assertEquals(ErrorCode.BAD_REQUEST, exception.getCode());
         assertTrue(exception.getMessage().contains("already been resolved"));
@@ -158,7 +165,7 @@ class AdminReportServiceTest {
         mockReport.setEntityId(10L);
 
         when(reportRepository.findById(mockReport.getId())).thenReturn(Optional.of(mockReport));
-        adminReportService.resolveReport(mockReport.getId(), resolveRequest);
+        adminReportService.resolveReport(mockReport.getId(), resolveRequest, mockUser.getId());
         verify(adminWorkplaceService).deleteWorkplace(eq(10L), anyString());
         verify(adminUserService, never()).banUser(anyLong(), any());
         verify(reportRepository).save(argThat(r -> r.getStatus() == ReportStatus.APPROVED &&
@@ -180,7 +187,7 @@ class AdminReportServiceTest {
                 .thenReturn(Optional.of(ew));
 
         when(reportRepository.findById(mockReport.getId())).thenReturn(Optional.of(mockReport));
-        adminReportService.resolveReport(mockReport.getId(), resolveRequest);
+        adminReportService.resolveReport(mockReport.getId(), resolveRequest, mockUser.getId());
         verify(adminWorkplaceService, never()).deleteWorkplace(anyLong(), anyString());
         verify(adminUserService).banUser(eq(mockUser.getId()), argThat(req -> req.getReason().equals("Spammer")));
         verify(reportRepository).save(mockReport);
@@ -199,7 +206,7 @@ class AdminReportServiceTest {
         when(reviewRepository.findById(200L)).thenReturn(Optional.of(mockReview));
 
         when(reportRepository.findById(mockReport.getId())).thenReturn(Optional.of(mockReport));
-        adminReportService.resolveReport(mockReport.getId(), resolveRequest);
+        adminReportService.resolveReport(mockReport.getId(), resolveRequest, mockUser.getId());
         verify(adminWorkplaceService).deleteReview(eq(200L), anyString());
         verify(adminUserService).banUser(eq(mockUser.getId()),
                 argThat(req -> req.getReason().equals("Severe violation")));
@@ -258,23 +265,23 @@ class AdminReportServiceTest {
     @Test
     @DisplayName("DeleteReportedContent: Should route to correct service for all entity types")
     void deleteReportedContent_Success_AllTypes() {
-        adminReportService.deleteReportedContent(ReportableEntityType.WORKPLACE, 1L);
+        adminReportService.deleteReportedContent(ReportableEntityType.WORKPLACE, 1L, mockUser);
         verify(adminWorkplaceService).deleteWorkplace(eq(1L), anyString());
-        adminReportService.deleteReportedContent(ReportableEntityType.REVIEW, 2L);
+        adminReportService.deleteReportedContent(ReportableEntityType.REVIEW, 2L, mockUser);
         verify(adminWorkplaceService).deleteReview(eq(2L), anyString());
-        adminReportService.deleteReportedContent(ReportableEntityType.FORUM_POST, 3L);
-        verify(adminForumService).deletePost(eq(3L), anyString());
-        adminReportService.deleteReportedContent(ReportableEntityType.FORUM_COMMENT, 4L);
-        verify(adminForumService).deleteComment(eq(4L), anyString());
-        adminReportService.deleteReportedContent(ReportableEntityType.JOB_POST, 5L);
+        adminReportService.deleteReportedContent(ReportableEntityType.FORUM_POST, 3L, mockUser);
+        verify(adminForumService).deletePost(eq(3L), eq(mockUser), anyString());
+        adminReportService.deleteReportedContent(ReportableEntityType.FORUM_COMMENT, 4L, mockUser);
+        verify(adminForumService).deleteComment(eq(4L), eq(mockUser), anyString());
+        adminReportService.deleteReportedContent(ReportableEntityType.JOB_POST, 5L, mockUser);
         verify(adminJobPostService).deleteJobPost(eq(5L), anyString());
-        adminReportService.deleteReportedContent(ReportableEntityType.JOB_APPLICATION, 6L);
+        adminReportService.deleteReportedContent(ReportableEntityType.JOB_APPLICATION, 6L, mockUser);
         verify(adminJobApplicationService).deleteJobApplication(eq(6L), anyString());
-        adminReportService.deleteReportedContent(ReportableEntityType.REVIEW_REPLY, 7L);
+        adminReportService.deleteReportedContent(ReportableEntityType.REVIEW_REPLY, 7L, mockUser);
         verify(adminWorkplaceService).deleteReviewReply(eq(7L), anyString());
-        adminReportService.deleteReportedContent(ReportableEntityType.PROFILE, 8L);
+        adminReportService.deleteReportedContent(ReportableEntityType.PROFILE, 8L, mockUser);
         verify(adminProfileService).deleteProfile(eq(8L), anyString());
-        adminReportService.deleteReportedContent(ReportableEntityType.MENTOR, 9L);
+        adminReportService.deleteReportedContent(ReportableEntityType.MENTOR, 9L, mockUser);
         verify(adminMentorService).deleteMentor(eq(9L), anyString());
     }
 

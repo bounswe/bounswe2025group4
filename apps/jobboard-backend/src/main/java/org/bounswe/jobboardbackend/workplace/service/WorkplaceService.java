@@ -194,8 +194,8 @@ public class WorkplaceService {
 
     // === CREATE ===
     @Transactional
-    public WorkplaceDetailResponse create(WorkplaceCreateRequest req, User currentUser) {
-        currentUser = userRepository.findById(currentUser.getId())
+    public WorkplaceDetailResponse create(WorkplaceCreateRequest req, Long currentUserId) {
+        User currentUser = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
         if (!isEmployer(currentUser))
             throw new HandleException(ErrorCode.ACCESS_DENIED, "Employer role required");
@@ -282,11 +282,11 @@ public class WorkplaceService {
 
     // === UPDATE ===
     @Transactional
-    public WorkplaceDetailResponse update(Long id, WorkplaceUpdateRequest req, User currentUser) {
+    public WorkplaceDetailResponse update(Long id, WorkplaceUpdateRequest req, Long currentUserId) {
         Workplace wp = workplaceRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
 
-        assertEmployer(id, currentUser.getId());
+        assertEmployer(id, currentUserId);
         // TODO: bu şirkette employer olan herkes yapabiliyor bu işi, eğer sadece iş
         // yerini oluşturan kişi yapabilsin dersek değiştiririz
 
@@ -328,10 +328,10 @@ public class WorkplaceService {
 
     // === DELETE (soft) ===
     @Transactional
-    public void softDelete(Long id, User currentUser) {
+    public void softDelete(Long id, Long currentUserId) {
         Workplace wp = workplaceRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
-        assertOwner(id, currentUser.getId());
+        assertOwner(id, currentUserId);
         wp.setDeleted(true);
         workplaceRepository.save(wp);
     }

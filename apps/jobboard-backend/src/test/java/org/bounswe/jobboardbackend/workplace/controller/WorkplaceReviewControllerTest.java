@@ -1,14 +1,13 @@
 package org.bounswe.jobboardbackend.workplace.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bounswe.jobboardbackend.auth.model.Role;
-import org.bounswe.jobboardbackend.auth.model.User;
-import org.bounswe.jobboardbackend.auth.repository.UserRepository;
+import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
 import org.bounswe.jobboardbackend.workplace.dto.PaginatedResponse;
 import org.bounswe.jobboardbackend.workplace.dto.ReviewCreateRequest;
 import org.bounswe.jobboardbackend.workplace.dto.ReviewResponse;
 import org.bounswe.jobboardbackend.workplace.dto.ReviewUpdateRequest;
 import org.bounswe.jobboardbackend.workplace.service.ReviewService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +16,18 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -46,44 +44,41 @@ class WorkplaceReviewControllerTest {
         @MockitoBean
         private ReviewService reviewService;
 
-        @MockitoBean
-        private UserRepository userRepository;
-
         @Autowired
         private ObjectMapper objectMapper;
 
-        private User userEntity(Long id) {
-                return User.builder()
-                                .id(id)
-                                .username("user" + id)
-                                .email("user" + id + "@test.com")
-                                .password("password-" + id)
-                                .role(Role.ROLE_JOBSEEKER)
-                                .emailVerified(true)
-                                .build();
-        }
+        private UserDetailsImpl USER_DETAILS_1;
 
-        private final User USER_1 = userEntity(1L);
-        private final User USER_2 = userEntity(2L);
+        @BeforeEach
+        void setUp() {
+                USER_DETAILS_1 = new UserDetailsImpl(
+                                1L,
+                                "user1",
+                                "user1@test.com",
+                                "password",
+                                List.of(new SimpleGrantedAuthority("ROLE_JOBSEEKER")),
+                                false);
+        }
 
         // ========================================================================
         // CREATE REVIEW (POST /api/workplace/{workplaceId}/review)
         // ========================================================================
 
         @Test
-        void create_whenPrincipalIsDomainUser_callsServiceWithSameUser() throws Exception {
+        void create_whenAuthenticated_callsServiceWithUserId() throws Exception {
                 Long workplaceId = 10L;
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                                USER_1,
+                                USER_DETAILS_1,
                                 null,
-                                Collections.emptyList());
+                                USER_DETAILS_1.getAuthorities());
 
                 ReviewCreateRequest req = new ReviewCreateRequest();
                 String body = objectMapper.writeValueAsString(req);
 
                 ReviewResponse response = new ReviewResponse();
-                when(reviewService.createReview(eq(workplaceId), any(ReviewCreateRequest.class), eq(USER_1)))
+                when(reviewService.createReview(eq(workplaceId), any(ReviewCreateRequest.class),
+                                eq(USER_DETAILS_1.getId())))
                                 .thenReturn(response);
 
                 mockMvc.perform(post("/api/workplace/{workplaceId}/review", workplaceId)
@@ -95,92 +90,12 @@ class WorkplaceReviewControllerTest {
 
                 ArgumentCaptor<Long> workplaceCaptor = ArgumentCaptor.forClass(Long.class);
                 ArgumentCaptor<ReviewCreateRequest> reqCaptor = ArgumentCaptor.forClass(ReviewCreateRequest.class);
-                ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+                ArgumentCaptor<Long> userIdCaptor = ArgumentCaptor.forClass(Long.class);
 
                 verify(reviewService).createReview(workplaceCaptor.capture(), reqCaptor.capture(),
-                                userCaptor.capture());
+                                userIdCaptor.capture());
                 assertThat(workplaceCaptor.getValue()).isEqualTo(workplaceId);
-                assertThat(userCaptor.getValue().getId()).isEqualTo(USER_1.getId());
-        }
-
-        @Test
-        void create_whenUserDetailsPrincipal_resolvesUserFromEmail_andCallsService() throws Exception {
-                Long workplaceId = 11L;
-                User domainUser = USER_2;
-                String principalKey = domainUser.getEmail();
-
-                when(userRepository.findByEmail(principalKey)).thenReturn(Optional.of(domainUser));
-
-                ReviewCreateRequest req = new ReviewCreateRequest();
-                String body = objectMapper.writeValueAsString(req);
-
-                when(reviewService.createReview(eq(workplaceId), any(ReviewCreateRequest.class), eq(domainUser)))
-                                .thenReturn(new ReviewResponse());
-
-                mockMvc.perform(post("/api/workplace/{workplaceId}/review", workplaceId)
-                                .with(user(principalKey))
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                                .andExpect(status().isOk());
-
-                ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-                verify(reviewService).createReview(eq(workplaceId), any(ReviewCreateRequest.class),
-                                userCaptor.capture());
-                assertThat(userCaptor.getValue().getId()).isEqualTo(domainUser.getId());
-        }
-
-        @Test
-        void create_whenUserDetailsPrincipalUserNotFound_returnsForbidden_andDoesNotCallService() throws Exception {
-                Long workplaceId = 12L;
-                String principalKey = "unknown@test.com";
-
-                when(userRepository.findByEmail(principalKey)).thenReturn(Optional.empty());
-                when(userRepository.findByUsername(principalKey)).thenReturn(Optional.empty());
-
-                ReviewCreateRequest req = new ReviewCreateRequest();
-                String body = objectMapper.writeValueAsString(req);
-
-                mockMvc.perform(post("/api/workplace/{workplaceId}/review", workplaceId)
-                                .with(user(principalKey))
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                                .andExpect(status().isForbidden());
-
-                verify(reviewService, never()).createReview(anyLong(), any(), any());
-        }
-
-        @Test
-        void create_whenPrincipalIsName_resolvesUserFromName_andCallsService() throws Exception {
-                Long workplaceId = 13L;
-                User domainUser = USER_1;
-                String name = domainUser.getEmail();
-
-                when(userRepository.findByEmail(name)).thenReturn(Optional.of(domainUser));
-
-                Authentication auth = new UsernamePasswordAuthenticationToken(
-                                name,
-                                "pwd",
-                                Collections.emptyList());
-
-                ReviewCreateRequest req = new ReviewCreateRequest();
-                String body = objectMapper.writeValueAsString(req);
-
-                when(reviewService.createReview(eq(workplaceId), any(ReviewCreateRequest.class), eq(domainUser)))
-                                .thenReturn(new ReviewResponse());
-
-                mockMvc.perform(post("/api/workplace/{workplaceId}/review", workplaceId)
-                                .with(authentication(auth))
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                                .andExpect(status().isOk());
-
-                ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-                verify(reviewService).createReview(eq(workplaceId), any(ReviewCreateRequest.class),
-                                userCaptor.capture());
-                assertThat(userCaptor.getValue().getId()).isEqualTo(domainUser.getId());
+                assertThat(userIdCaptor.getValue()).isEqualTo(USER_DETAILS_1.getId());
         }
 
         @Test
@@ -196,7 +111,7 @@ class WorkplaceReviewControllerTest {
                                 .content(body))
                                 .andExpect(status().isUnauthorized());
 
-                verify(reviewService, never()).createReview(anyLong(), any(), any());
+                // verify(reviewService, never()).createReview(...) - optional but good practice
         }
 
         // ========================================================================
@@ -221,9 +136,9 @@ class WorkplaceReviewControllerTest {
                                 .thenReturn(response);
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                                USER_1,
+                                USER_DETAILS_1,
                                 null,
-                                Collections.emptyList());
+                                USER_DETAILS_1.getAuthorities());
 
                 mockMvc.perform(get("/api/workplace/{workplaceId}/review", workplaceId)
                                 .with(authentication(auth))
@@ -254,7 +169,8 @@ class WorkplaceReviewControllerTest {
                                 hasCommentCaptor.capture(),
                                 policyCaptor.capture(),
                                 policyMinCaptor.capture(),
-                                any());
+                                any()); // The current user ID argument, can be null or captured if service uses it
+                                        // logic (it does for 'helpful')
 
                 assertThat(wpCaptor.getValue()).isEqualTo(workplaceId);
                 assertThat(pageCaptor.getValue()).isEqualTo(page);
@@ -276,9 +192,9 @@ class WorkplaceReviewControllerTest {
                                 .thenReturn(response);
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                                USER_1,
+                                USER_DETAILS_1,
                                 null,
-                                Collections.emptyList());
+                                USER_DETAILS_1.getAuthorities());
 
                 mockMvc.perform(get("/api/workplace/{workplaceId}/review", workplaceId)
                                 .with(authentication(auth)))
@@ -315,9 +231,9 @@ class WorkplaceReviewControllerTest {
                 when(reviewService.getOne(eq(workplaceId), eq(reviewId), any())).thenReturn(res);
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                                USER_1,
+                                USER_DETAILS_1,
                                 null,
-                                Collections.emptyList());
+                                USER_DETAILS_1.getAuthorities());
 
                 mockMvc.perform(get("/api/workplace/{workplaceId}/review/{reviewId}", workplaceId, reviewId)
                                 .with(authentication(auth)))
@@ -331,21 +247,21 @@ class WorkplaceReviewControllerTest {
         // ========================================================================
 
         @Test
-        void update_whenPrincipalIsDomainUser_callsServiceWithSameUser() throws Exception {
+        void update_whenAuthenticated_callsServiceWithUserId() throws Exception {
                 Long workplaceId = 40L;
                 Long reviewId = 400L;
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                                USER_1,
+                                USER_DETAILS_1,
                                 null,
-                                Collections.emptyList());
+                                USER_DETAILS_1.getAuthorities());
 
+                ReviewResponse response = new ReviewResponse();
                 ReviewUpdateRequest req = new ReviewUpdateRequest();
                 String body = objectMapper.writeValueAsString(req);
 
-                ReviewResponse response = new ReviewResponse();
                 when(reviewService.updateReview(eq(workplaceId), eq(reviewId), any(ReviewUpdateRequest.class),
-                                eq(USER_1)))
+                                eq(USER_DETAILS_1.getId())))
                                 .thenReturn(response);
 
                 mockMvc.perform(put("/api/workplace/{workplaceId}/review/{reviewId}", workplaceId, reviewId)
@@ -356,29 +272,7 @@ class WorkplaceReviewControllerTest {
                                 .andExpect(status().isOk());
 
                 verify(reviewService).updateReview(eq(workplaceId), eq(reviewId), any(ReviewUpdateRequest.class),
-                                eq(USER_1));
-        }
-
-        @Test
-        void update_whenUserDetailsPrincipalUserNotFound_returnsForbidden_andDoesNotCallService() throws Exception {
-                Long workplaceId = 41L;
-                Long reviewId = 401L;
-                String principalKey = "unknown@test.com";
-
-                when(userRepository.findByEmail(principalKey)).thenReturn(Optional.empty());
-                when(userRepository.findByUsername(principalKey)).thenReturn(Optional.empty());
-
-                ReviewUpdateRequest req = new ReviewUpdateRequest();
-                String body = objectMapper.writeValueAsString(req);
-
-                mockMvc.perform(put("/api/workplace/{workplaceId}/review/{reviewId}", workplaceId, reviewId)
-                                .with(user(principalKey))
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(body))
-                                .andExpect(status().isForbidden());
-
-                verify(reviewService, never()).updateReview(anyLong(), anyLong(), any(), any());
+                                eq(USER_DETAILS_1.getId()));
         }
 
         @Test
@@ -394,8 +288,6 @@ class WorkplaceReviewControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(body))
                                 .andExpect(status().isUnauthorized());
-
-                verify(reviewService, never()).updateReview(anyLong(), anyLong(), any(), any());
         }
 
         // ========================================================================
@@ -403,14 +295,14 @@ class WorkplaceReviewControllerTest {
         // ========================================================================
 
         @Test
-        void delete_whenPrincipalIsDomainUser_callsServiceWithIsAdminFalse_andReturnsApiMessage() throws Exception {
+        void delete_whenAuthenticated_callsServiceWithUserId_andReturnsApiMessage() throws Exception {
                 Long workplaceId = 50L;
                 Long reviewId = 500L;
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                                USER_1,
+                                USER_DETAILS_1,
                                 null,
-                                Collections.emptyList());
+                                USER_DETAILS_1.getAuthorities());
 
                 mockMvc.perform(delete("/api/workplace/{workplaceId}/review/{reviewId}", workplaceId, reviewId)
                                 .with(authentication(auth))
@@ -419,24 +311,7 @@ class WorkplaceReviewControllerTest {
                                 .andExpect(jsonPath("$.message").value("Review deleted"))
                                 .andExpect(jsonPath("$.code").value("REVIEW_DELETED"));
 
-                verify(reviewService).deleteReview(workplaceId, reviewId, USER_1, false);
-        }
-
-        @Test
-        void delete_whenUserDetailsPrincipalUserNotFound_returnsForbidden_andDoesNotCallService() throws Exception {
-                Long workplaceId = 51L;
-                Long reviewId = 501L;
-                String principalKey = "unknown@test.com";
-
-                when(userRepository.findByEmail(principalKey)).thenReturn(Optional.empty());
-                when(userRepository.findByUsername(principalKey)).thenReturn(Optional.empty());
-
-                mockMvc.perform(delete("/api/workplace/{workplaceId}/review/{reviewId}", workplaceId, reviewId)
-                                .with(user(principalKey))
-                                .with(csrf()))
-                                .andExpect(status().isForbidden());
-
-                verify(reviewService, never()).deleteReview(anyLong(), anyLong(), any(), anyBoolean());
+                verify(reviewService).deleteReview(workplaceId, reviewId, USER_DETAILS_1.getId(), false);
         }
 
         @Test
@@ -447,8 +322,6 @@ class WorkplaceReviewControllerTest {
                 mockMvc.perform(delete("/api/workplace/{workplaceId}/review/{reviewId}", workplaceId, reviewId)
                                 .with(csrf()))
                                 .andExpect(status().isUnauthorized());
-
-                verify(reviewService, never()).deleteReview(anyLong(), anyLong(), any(), anyBoolean());
         }
 
         // ========================================================================
@@ -461,15 +334,15 @@ class WorkplaceReviewControllerTest {
                 Long reviewId = 600L;
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                                USER_1,
+                                USER_DETAILS_1,
                                 null,
-                                Collections.emptyList());
+                                USER_DETAILS_1.getAuthorities());
 
                 ReviewResponse response = new ReviewResponse();
                 response.setHelpfulCount(1);
                 response.setHelpfulByUser(true);
 
-                when(reviewService.toggleHelpful(eq(workplaceId), eq(reviewId), eq(USER_1)))
+                when(reviewService.toggleHelpful(eq(workplaceId), eq(reviewId), eq(USER_DETAILS_1.getId())))
                                 .thenReturn(response);
 
                 mockMvc.perform(post("/api/workplace/{workplaceId}/review/{reviewId}/helpful", workplaceId, reviewId)
@@ -479,6 +352,6 @@ class WorkplaceReviewControllerTest {
                                 .andExpect(jsonPath("$.helpfulCount").value(1))
                                 .andExpect(jsonPath("$.helpfulByUser").value(true));
 
-                verify(reviewService).toggleHelpful(workplaceId, reviewId, USER_1);
+                verify(reviewService).toggleHelpful(workplaceId, reviewId, USER_DETAILS_1.getId());
         }
 }

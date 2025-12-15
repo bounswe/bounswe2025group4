@@ -1,10 +1,8 @@
 package org.bounswe.jobboardbackend.admin.service;
 
 import org.bounswe.jobboardbackend.exception.HandleException;
-import org.bounswe.jobboardbackend.forum.model.ForumComment;
-import org.bounswe.jobboardbackend.forum.model.ForumPost;
-import org.bounswe.jobboardbackend.forum.repository.ForumCommentRepository;
-import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
+import org.bounswe.jobboardbackend.forum.service.ForumService;
+import org.bounswe.jobboardbackend.auth.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,9 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
@@ -22,103 +19,84 @@ import static org.mockito.Mockito.*;
 class AdminForumServiceTest {
 
     @Mock
-    private ForumPostRepository forumPostRepository;
-    @Mock
-    private ForumCommentRepository forumCommentRepository;
+    private ForumService forumService;
 
     @InjectMocks
     private AdminForumService adminForumService;
 
-    private ForumPost testPost;
-    private ForumComment testComment;
+    private User adminUser;
 
     @BeforeEach
     void setUp() {
-        testPost = new ForumPost();
-        testPost.setId(1L);
-        testPost.setTitle("Test Post");
-
-        testComment = new ForumComment();
-        testComment.setId(10L);
-        testComment.setContent("Test comment");
+        adminUser = User.builder()
+                .id(1L)
+                .username("admin")
+                .email("admin@example.com")
+                .build();
     }
 
     @Test
-    void deletePost_Success_DeletesPostAndCascadeComments() {
-        when(forumPostRepository.findById(1L)).thenReturn(Optional.of(testPost));
-        adminForumService.deletePost(1L, "Spam content");
-        verify(forumPostRepository).delete(testPost);
+    void deletePost_Success_DelegatesToForumService() {
+        adminForumService.deletePost(1L, adminUser, "Spam content");
+        verify(forumService).deletePost(1L, adminUser);
     }
 
     @Test
-    void deletePost_NotFound_ThrowsException() {
-        when(forumPostRepository.findById(999L)).thenReturn(Optional.empty());
+    void deletePost_DelegateThrowsException() {
+        doThrow(new HandleException(org.bounswe.jobboardbackend.exception.ErrorCode.NOT_FOUND, "Not found"))
+                .when(forumService).deletePost(999L, adminUser);
+
         assertThrows(HandleException.class,
-                () -> adminForumService.deletePost(999L, "Test"));
-
-        verify(forumPostRepository, never()).delete(any());
+                () -> adminForumService.deletePost(999L, adminUser, "Test"));
     }
 
     @Test
     void deletePost_WithReason_ProcessesCorrectly() {
-        when(forumPostRepository.findById(1L)).thenReturn(Optional.of(testPost));
         String reason = "Policy violation - harassment";
-        adminForumService.deletePost(1L, reason);
-        verify(forumPostRepository).delete(testPost);
-        // TODO: Verify reason logged for audit
+        adminForumService.deletePost(1L, adminUser, reason);
+        verify(forumService).deletePost(1L, adminUser);
     }
 
     @Test
     void deletePost_NullReason_StillDeletes() {
-        when(forumPostRepository.findById(1L)).thenReturn(Optional.of(testPost));
-        adminForumService.deletePost(1L, null);
-        verify(forumPostRepository).delete(testPost);
+        adminForumService.deletePost(1L, adminUser, null);
+        verify(forumService).deletePost(1L, adminUser);
     }
 
     @Test
     void deleteComment_Success_DeletesComment() {
-        when(forumCommentRepository.findById(10L)).thenReturn(Optional.of(testComment));
-        adminForumService.deleteComment(10L, "Offensive content");
-        verify(forumCommentRepository).delete(testComment);
+        adminForumService.deleteComment(10L, adminUser, "Offensive content");
+        verify(forumService).deleteComment(10L, adminUser);
     }
 
     @Test
     void deleteComment_NotFound_ThrowsException() {
-        when(forumCommentRepository.findById(999L)).thenReturn(Optional.empty());
-        assertThrows(HandleException.class,
-                () -> adminForumService.deleteComment(999L, "Test"));
+        doThrow(new HandleException(org.bounswe.jobboardbackend.exception.ErrorCode.NOT_FOUND, "Not found"))
+                .when(forumService).deleteComment(999L, adminUser);
 
-        verify(forumCommentRepository, never()).delete(any());
+        assertThrows(HandleException.class,
+                () -> adminForumService.deleteComment(999L, adminUser, "Test"));
     }
 
     @Test
     void deleteComment_WithReason_ProcessesCorrectly() {
-        when(forumCommentRepository.findById(10L)).thenReturn(Optional.of(testComment));
         String reason = "Spam";
-        adminForumService.deleteComment(10L, reason);
-        verify(forumCommentRepository).delete(testComment);
+        adminForumService.deleteComment(10L, adminUser, reason);
+        verify(forumService).deleteComment(10L, adminUser);
     }
 
     @Test
     void deleteComment_DoesNotAffectPost() {
-        when(forumCommentRepository.findById(10L)).thenReturn(Optional.of(testComment));
-        adminForumService.deleteComment(10L, "Spam");
-        verify(forumCommentRepository).delete(testComment);
-        verify(forumPostRepository, never()).delete(any());
+        adminForumService.deleteComment(10L, adminUser, "Spam");
+        verify(forumService).deleteComment(10L, adminUser);
+        verify(forumService, never()).deletePost(anyLong(), any());
     }
 
     @Test
     void deletePost_MultipleDeletions_AllSucceed() {
-        ForumPost post1 = new ForumPost();
-        post1.setId(1L);
-        ForumPost post2 = new ForumPost();
-        post2.setId(2L);
-
-        when(forumPostRepository.findById(1L)).thenReturn(Optional.of(post1));
-        when(forumPostRepository.findById(2L)).thenReturn(Optional.of(post2));
-        adminForumService.deletePost(1L, "Spam");
-        adminForumService.deletePost(2L, "Spam");
-        verify(forumPostRepository).delete(post1);
-        verify(forumPostRepository).delete(post2);
+        adminForumService.deletePost(1L, adminUser, "Spam");
+        adminForumService.deletePost(2L, adminUser, "Spam");
+        verify(forumService).deletePost(1L, adminUser);
+        verify(forumService).deletePost(2L, adminUser);
     }
 }

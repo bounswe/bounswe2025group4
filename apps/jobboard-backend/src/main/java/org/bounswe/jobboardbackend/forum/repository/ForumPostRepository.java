@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ForumPostRepository extends JpaRepository<ForumPost, Long> {
-    
+
     /**
      * Count total posts created by a user.
      * Used for badge criteria checking.
