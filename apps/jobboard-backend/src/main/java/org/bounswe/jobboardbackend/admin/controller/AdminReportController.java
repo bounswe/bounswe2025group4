@@ -47,7 +47,7 @@ public class AdminReportController {
         public ResponseEntity<Page<ReportResponse>> listReports(
                         @Parameter(description = "Filter by report status") @RequestParam(required = false) ReportStatus status,
                         @Parameter(description = "Filter by entity type") @RequestParam(required = false) ReportableEntityType entityType,
-                        @Parameter(description = "Pagination information") @PageableDefault(size = 20) Pageable pageable) {
+                        @Parameter(hidden = true) @PageableDefault(size = 20) Pageable pageable){
 
                 Page<ReportResponse> reports = reportService.listReports(status, entityType, pageable);
                 return ResponseEntity.ok(reports);

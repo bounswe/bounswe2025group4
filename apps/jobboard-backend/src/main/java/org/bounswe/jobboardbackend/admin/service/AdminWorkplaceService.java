@@ -52,7 +52,6 @@ public class AdminWorkplaceService {
 
         workplaceRepository.delete(workplace);
 
-        // TODO: Log deletion with reason for audit
     }
 
     @Transactional
@@ -62,7 +61,6 @@ public class AdminWorkplaceService {
 
         reviewService.deleteReview(review.getWorkplace().getId(), reviewId, null, true);
 
-        // TODO: Log deletion with reason for audit
     }
 
     @Transactional
@@ -75,6 +73,5 @@ public class AdminWorkplaceService {
 
         replyService.deleteReply(workplaceId, reviewId, null, true);
 
-        // TODO: Log deletion with reason for audit
     }
 }
