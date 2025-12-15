@@ -7,7 +7,6 @@ import { useAuthContext } from '@modules/auth/contexts/AuthContext';
 import { useReportModal } from '@shared/hooks/useReportModal';
 import { createReport, mapReportReason } from '@shared/services/report.service';
 import { Flag } from 'lucide-react';
-import { Button } from '@shared/components/ui/button';
 import { ProfileHeader } from '@modules/profile/components/profile/ProfileHeader';
 import { AboutSection } from '@modules/profile/components/profile/AboutSection';
 import { ExperienceSection } from '@modules/profile/components/profile/ExperienceSection';

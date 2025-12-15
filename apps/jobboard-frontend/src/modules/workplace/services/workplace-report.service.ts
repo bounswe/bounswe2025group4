@@ -62,7 +62,7 @@ export async function reportUserProfile(userId: number, message: string, reason:
 
 export async function reportWorkplaceReviewReply(
     _workplaceId: number,
-    reviewId: number,
+    _reviewId: number,
     replyId: number,
     message: string,
     reason: ReportReasonType = 'OTHER',
