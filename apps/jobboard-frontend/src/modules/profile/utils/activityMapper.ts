@@ -138,15 +138,45 @@ function getNavigationUrl(activity: ActivityResponse): string | undefined {
 export function mapActivityToDisplay(activity: ActivityResponse): ActivityDisplay {
   const navigationUrl = getNavigationUrl(activity);
 
+  const formatTimestamp = (timestamp: string): string => {
+    try {
+      // Properly handle UTC timezone - if timestamp doesn't have timezone info, treat it as UTC
+      let date: Date;
+      
+      // If timestamp already has timezone info (Z or +/- offset), parse directly
+      if (timestamp.includes('Z') || timestamp.match(/[+-]\d{2}:\d{2}$/)) {
+        date = new Date(timestamp);
+      } else {
+        // No timezone info - assume it's UTC and append 'Z'
+        // This ensures backend UTC timestamps are properly converted to local time
+        date = new Date(timestamp + 'Z');
+      }
+      
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        // Fallback: try parsing without 'Z'
+        date = new Date(timestamp);
+        if (isNaN(date.getTime())) {
+          return ''; // Return empty if still invalid
+        }
+      }
+
+      // Show relative time for all activities
+      return formatDistanceToNow(date, {
+        addSuffix: true,
+        locale: getDateLocale(),
+      });
+    } catch (_err: unknown) {
+      return '';
+    }
+  };
+
   return {
     id: activity.id,
     type: activity.type,
     icon: ACTIVITY_ICONS[activity.type] || 'Circle',
     text: getSimpleDescription(activity),
-    date: formatDistanceToNow(new Date(activity.createdAt), {
-      addSuffix: true,
-      locale: getDateLocale(),
-    }),
+    date: formatTimestamp(activity.createdAt),
     clickable: Boolean(navigationUrl),
     navigationUrl,
     rawData: activity,
