@@ -45,25 +45,27 @@ class ChatProvider with ChangeNotifier {
       _error = e.toString();
     }
 
-    // 🔹 CONNECT STOMP ONLY IF NEEDED
-    if (!_chatService.isConnected) {
-      _chatService.connect(
-        jwtToken: jwtToken,
-        conversationId: conversationId,
-        onConnected: () {
-          _isConnected = true;
-          _isLoading = false;
-          notifyListeners();
-        },
-        onMessage: _handleIncomingMessage,
-        onError: _handleError,
-      );
-    } else {
-      // already connected → just update UI state
-      _isConnected = true;
-      _isLoading = false;
-      notifyListeners();
+    // 🔹 CONNECT STOMP - always disconnect first to ensure clean state
+    // This ensures backend knows user is not subscribed when they leave
+    if (_chatService.isConnected) {
+      debugPrint('[ChatProvider] Disconnecting existing connection before connecting to new conversation');
+      _chatService.disconnect();
+      // Wait a bit for disconnect to complete
+      await Future.delayed(const Duration(milliseconds: 300));
     }
+    
+    _chatService.connect(
+      jwtToken: jwtToken,
+      conversationId: conversationId,
+      onConnected: () {
+        debugPrint('[ChatProvider] Connected to conversation $conversationId');
+        _isConnected = true;
+        _isLoading = false;
+        notifyListeners();
+      },
+      onMessage: _handleIncomingMessage,
+      onError: _handleError,
+    );
   }
 
   void _handleIncomingMessage(Map<String, dynamic> data) {
@@ -93,8 +95,10 @@ class ChatProvider with ChangeNotifier {
 
   /// Disconnect chat
   void disconnect() {
+    debugPrint('[ChatProvider] Disconnecting chat');
     _chatService.disconnect();
     _isConnected = false;
+    _messages.clear(); // Clear messages when disconnecting
     notifyListeners();
   }
 

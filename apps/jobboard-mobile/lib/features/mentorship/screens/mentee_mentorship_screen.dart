@@ -12,6 +12,7 @@ import './direct_message_screen.dart';
 import './mentor_profile_screen.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import 'package:collection/collection.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 /// -------------------- FIND MENTORS TAB --------------------
 class FindMentorsTab extends StatefulWidget {
@@ -756,6 +757,7 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
         title: Text(AppLocalizations.of(context)!.mentorshipPage_title),
         automaticallyImplyLeading: false,
         actions: [
+          const NotificationIconButton(),
           if (showBecomeMentorButton)
             TextButton(
               onPressed: () => _showBecomeMentorDialog(context),

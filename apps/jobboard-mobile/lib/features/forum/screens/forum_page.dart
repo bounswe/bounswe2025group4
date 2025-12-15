@@ -8,6 +8,7 @@ import 'create_thread_screen.dart';
 import 'thread_detail_screen.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 class ForumPage extends StatefulWidget {
   const ForumPage({super.key});
@@ -266,6 +267,8 @@ class _ForumPageState extends State<ForumPage> {
           ),
         ),
         actions: [
+          // Notification icon
+          const NotificationIconButton(),
           // Filter button
           Padding(
             padding: const EdgeInsets.only(right: 8),

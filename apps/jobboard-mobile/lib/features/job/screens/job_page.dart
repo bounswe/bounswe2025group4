@@ -13,6 +13,7 @@ import '../widgets/job_filter_dialog.dart'; // Import the filter dialog
 import '../../application/screens/my_applications_screen.dart'; // Import the new screen
 import 'dart:async'; // Import for Timer
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 class JobPage extends StatefulWidget {
   const JobPage({super.key});
@@ -420,8 +421,11 @@ class _JobPageState extends State<JobPage> with SingleTickerProviderStateMixin {
 
     return Scaffold(
       appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.jobPage_title),
         automaticallyImplyLeading: false,
         actions: [
+          // Notification icon
+          const NotificationIconButton(),
           // Conditionally show the "My Applications" button for job seekers
           if (_userRole == UserType.ROLE_JOBSEEKER)
             Padding(

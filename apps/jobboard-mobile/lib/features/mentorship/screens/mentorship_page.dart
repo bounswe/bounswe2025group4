@@ -7,6 +7,7 @@ import '../providers/mentor_provider.dart';
 import './mentee_mentorship_screen.dart';
 import './mentor_mentorship_screen.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 class MentorshipPage extends StatefulWidget {
   const MentorshipPage({super.key});
@@ -73,6 +74,9 @@ class _MentorshipPageState extends State<MentorshipPage> {
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.mentorshipPage_title),
           automaticallyImplyLeading: false,
+          actions: const [
+            NotificationIconButton(),
+          ],
         ),
         body: Center(
           child: Text(
@@ -88,6 +92,9 @@ class _MentorshipPageState extends State<MentorshipPage> {
         appBar: AppBar(
           title: Text(AppLocalizations.of(context)!.mentorshipPage_title),
           automaticallyImplyLeading: false,
+          actions: const [
+            NotificationIconButton(),
+          ],
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
