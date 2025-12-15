@@ -380,7 +380,7 @@ export interface CreateMessageDTO {
 export interface ForumCommentResponseDTO {
   id: number;
   content: string;
-  authorId: number;
+  authorId: number | null;
   authorUsername: string;
   postId: number;
   parentCommentId?: number | null;
@@ -399,7 +399,7 @@ export interface ForumPostResponseDTO {
   id: number;
   title: string;
   content: string;
-  authorId: number;
+  authorId: number | null;
   authorUsername: string;
   tags: string[];
   createdAt: string;

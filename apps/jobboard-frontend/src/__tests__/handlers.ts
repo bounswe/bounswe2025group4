@@ -989,7 +989,7 @@ export const forumHandlers = [
     const userId = url.searchParams.get('userId');
     
     if (userId) {
-      const userPosts = mockForumPosts.filter(post => post.authorId === Number(userId));
+      const userPosts = mockForumPosts.filter((post) => post.authorId != null && post.authorId === Number(userId));
       return HttpResponse.json(userPosts, { status: 200 });
     }
     

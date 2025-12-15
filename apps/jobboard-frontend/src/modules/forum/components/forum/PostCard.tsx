@@ -84,9 +84,13 @@ const PostCard = ({ post, topComment, user, onEdit, onDelete, openReport, t }: P
               className="flex items-center gap-2 text-base text-muted-foreground mb-2"
               onClick={(e) => e.stopPropagation()}
             >
-              <Link to={`/profile/${post.authorId}`} className="font-semibold hover:underline text-foreground">
-                {post.authorUsername}
-              </Link>
+              {post.authorId == null ? (
+                <span className="font-semibold text-foreground cursor-default">{post.authorUsername}</span>
+              ) : (
+                <Link to={`/profile/${post.authorId}`} className="font-semibold hover:underline text-foreground">
+                  {post.authorUsername}
+                </Link>
+              )}
               <span>•</span>
               <span className="text-sm">{new Date(post.createdAt).toLocaleString()}</span>
             </div>
@@ -156,7 +160,7 @@ const PostCard = ({ post, topComment, user, onEdit, onDelete, openReport, t }: P
               </span>
             </Link>
 
-            {user && user.id === post.authorId && (
+            {user && post.authorId != null && user.id === post.authorId && (
               <>
                 <Button
                   variant="ghost"

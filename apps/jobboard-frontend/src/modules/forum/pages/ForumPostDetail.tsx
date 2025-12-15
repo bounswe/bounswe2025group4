@@ -136,9 +136,13 @@ const ForumPostDetail = () => {
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 text-base text-muted-foreground mb-3">
-                <Link to={`/profile/${post.authorId}`} className="font-semibold hover:underline text-foreground">
-                  {post.authorUsername}
-                </Link>
+                {post.authorId == null ? (
+                  <span className="font-semibold text-foreground cursor-default">{post.authorUsername}</span>
+                ) : (
+                  <Link to={`/profile/${post.authorId}`} className="font-semibold hover:underline text-foreground">
+                    {post.authorUsername}
+                  </Link>
+                )}
                 <span>•</span>
                 <span className="text-sm">{new Date(post.createdAt).toLocaleString()}</span>
               </div>
@@ -215,7 +219,7 @@ const ForumPostDetail = () => {
                 hasUserDownvoted: c.hasUserDownvoted,
               }}
               postId={id}
-              isOwner={user?.id === c.authorId}
+              isOwner={c.authorId != null && user?.id === c.authorId}
               onEdit={(commentId, newContent) => updateCommentMutation.mutate({ commentId: Number(commentId), content: newContent })}
               onDelete={(commentId) => deleteCommentMutation.mutate(Number(commentId))}
             />
