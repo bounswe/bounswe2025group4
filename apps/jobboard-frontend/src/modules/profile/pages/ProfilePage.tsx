@@ -105,6 +105,10 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!isOwner) {
       setShowCreateProfile(false);
+      // Reset to about tab when viewing public profile
+      if (activeTab === 'activity') {
+        setActiveTab('about');
+      }
       return;
     }
 
@@ -119,7 +123,7 @@ export default function ProfilePage() {
         setShowCreateProfile(true);
       }
     }
-  }, [isOwner, myProfileQuery.data, myProfileQuery.error, myProfileQuery.isError]);
+  }, [isOwner, myProfileQuery.data, myProfileQuery.error, myProfileQuery.isError, activeTab]);
 
   const [modals, setModals] = useState<Record<ModalKey, boolean>>({
     bio: false,
@@ -484,16 +488,18 @@ export default function ProfilePage() {
             >
               {t('profile.tabs.about')}
             </button>
-            <button
-              onClick={() => setActiveTab('activity')}
-              className={`pb-3 border-b-2 transition-colors ${
-                activeTab === 'activity'
-                  ? 'border-green-600 text-green-600 font-medium'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t('profile.tabs.activity')}
-            </button>
+            {isOwner && (
+              <button
+                onClick={() => setActiveTab('activity')}
+                className={`pb-3 border-b-2 transition-colors ${
+                  activeTab === 'activity'
+                    ? 'border-green-600 text-green-600 font-medium'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {t('profile.tabs.activity')}
+              </button>
+            )}
             <button
               onClick={() => setActiveTab('posts')}
               className={`pb-3 border-b-2 transition-colors ${
@@ -601,7 +607,7 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {activeTab === 'activity' && profile && (
+        {activeTab === 'activity' && isOwner && profile && (
           <ActivityTab
             userId={viewedUserId || user?.id || 0}
             isOwner={isOwner}
