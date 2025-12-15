@@ -7,6 +7,8 @@ import 'package:mobile/core/services/api_service.dart';
 import 'package:mobile/core/providers/quote_provider.dart';
 import 'package:mobile/features/mentorship/providers/mentor_provider.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import 'package:mobile/core/models/full_profile.dart';
+import 'package:mobile/core/models/profile.dart';
 
 class MentorProfileScreen extends StatefulWidget {
   final String mentorId;          // userId of mentor
@@ -27,6 +29,7 @@ class MentorProfileScreen extends StatefulWidget {
 class _MentorProfileScreenState extends State<MentorProfileScreen> {
   bool _isLoading = true;
   MentorProfile? _mentorProfile;
+  FullProfile? _userProfile;
   String? _errorMessage;
   bool _isSubmittingRating = false;
   int _selectedRating = 0;
@@ -53,9 +56,11 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
     try {
       final apiService = Provider.of<ApiService>(context, listen: false);
       final profile = await apiService.getMentorProfile(widget.mentorId);
+      final userFuture = await apiService.getUserProfile(int.parse(widget.mentorId));
 
       setState(() {
         _mentorProfile = profile;
+        _userProfile = userFuture;
         _isLoading = false;
       });
     } catch (e) {
@@ -351,6 +356,109 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
               },
             ),
             const SizedBox(height: 16),
+
+            if (_userProfile?.bio != null && _userProfile!.bio!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  _userProfile!.bio!,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+
+            const SizedBox(height: 16),
+
+            if (_userProfile!.education.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.profileWidgets_education,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              ..._userProfile!.education.map((edu) => Card(
+                child: ListTile(
+                  title: Text('${edu.school} - ${edu.degree}'),
+                  subtitle: Text(
+                    '${edu.field}\n${edu.startDate} - ${edu.endDate ?? "Present"}',
+                  ),
+                ),
+              )),
+            ],
+
+            if (_userProfile!.experience.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.profileWidgets_workExperience,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              ..._userProfile!.experience.map((exp) => Card(
+                child: ListTile(
+                  title: Text('${exp.company} - ${exp.position}'),
+                  subtitle: Text(
+                    '${exp.description}\n${exp.startDate} - ${exp.endDate ?? "Present"}',
+                  ),
+                ),
+              )),
+            ],
+
+            if (_userProfile!.badges.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!.badges_title,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Wrap(
+                spacing: 8,
+                children: _userProfile!.badges.map((b) {
+                  return Chip(
+                    label: Text(b.name),
+                    avatar: b.icon != null ? Image.network(b.icon!) : null,
+                  );
+                }).toList(),
+              ),
+            ],
+
+            const SizedBox(height: 16),
+
+            if (_userProfile!.profile.skills.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                "Skills",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _userProfile!.skills.map((skill) {
+                  return Chip(
+                    label: Text(skill),
+                    backgroundColor: Colors.blue.shade50,
+                  );
+                }).toList(),
+              ),
+            ],
+
+            if (_userProfile!.profile.interests.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                "Interests",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _userProfile!.interests.map((interest) {
+                  return Chip(
+                    label: Text(interest),
+                    backgroundColor: Colors.green.shade50,
+                  );
+                }).toList(),
+              ),
+            ],
+
 
             // Rating summary
             Card(

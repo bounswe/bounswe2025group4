@@ -32,6 +32,7 @@ import '../models/employer_request.dart';
 import '../models/paginated_employer_request_response.dart';
 import '../models/employer_request_action_response.dart';
 import '../models/paginated_workplace_review_response.dart';
+import '../models/chat_message.dart';
 
 const List<String> _availableEthicalPolicies = [
   'salary_transparency',
@@ -956,7 +957,83 @@ class ApiService {
     }
   }
 
+  // --- Chat Endpoints ---
+
+  Future<List<ChatMessage>> getChatHistory({
+    required int conversationId,
+  }) async {
+    final uri = _buildUri('/chat/history/$conversationId');
+
+    try {
+      final response = await _client.get(
+        uri,
+        headers: _getHeaders(),
+      );
+
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => ChatMessage.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch chat history. $e');
+    }
+  }
+
+
   // --- Mentor Profile Endpoints ---
+
+  Future<String> getResumeFileUrl(int resumeReviewId) async {
+    final uri = _buildUri(
+      '/mentorship/$resumeReviewId/file',
+    );
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return data['fileUrl'];
+    } catch (e) {
+      throw Exception('Failed to get resume file URL. $e');
+    }
+  }
+
+  Future<void> uploadResumeFile(
+      int resumeReviewId,
+      File file,
+      ) async {
+    final uri = _buildUri('/mentorship/$resumeReviewId/file');
+    try {
+      // Ensure file exists
+      if (!await file.exists()) {
+        throw Exception('File not found: ${file.path}');
+      }
+
+      // Create multipart request
+      final request = http.MultipartRequest('POST', uri);
+
+      // add auth headers BUT remove Content-Type
+      final headers = Map<String, String>.from(_getHeaders());
+      headers.remove('Content-Type');
+      request.headers.addAll(headers);
+
+      // Attach file
+      final multipartFile = await http.MultipartFile.fromPath(
+        'file',
+        file.path,
+        contentType: MediaType('application', 'pdf'),
+      );
+
+      request.files.add(multipartFile);
+
+      // send request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      await _handleResponse(response);
+    } catch (e) {
+      print('Failed to upload resume file. $e');
+      throw Exception('Failed to upload resume file. $e');
+    }
+  }
+
+
 
   /// PUT /api/mentorship/mentor
   /// Creates a mentor profile for the current user.
@@ -1056,10 +1133,14 @@ class ApiService {
   /// Creates a mentorship request.
   Future<MentorshipRequest> createMentorshipRequest({
     required int mentorId,
+    required String motivation,
   }) async {
     final uri = _buildUri('/mentorship/requests');
 
-    final requestData = {'mentorId': mentorId};
+    final requestData = {
+      'mentorId': mentorId,
+      'motivation': motivation
+    };
 
     try {
       final response = await _client.post(
@@ -1125,10 +1206,14 @@ class ApiService {
   Future<MentorshipRequest> respondToMentorshipRequest({
     required String requestId,
     required bool accept,
+    String? responseMessage
   }) async {
     final uri = _buildUri('/mentorship/requests/$requestId/respond');
 
-    final payload = {'accept': accept};
+    final payload = {
+      'accept': accept,
+      'responseMessage': responseMessage ?? "thanks",
+    };
 
     try {
       final response = await _client.patch(
