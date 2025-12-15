@@ -11,4 +11,6 @@ public interface ForumCommentDownvoteRepository extends JpaRepository<ForumComme
     Optional<ForumCommentDownvote> findByUserIdAndCommentId(Long userId, Long commentId);
 
     long countByCommentId(Long commentId);
+
+    void deleteByUserId(Long userId);
 }

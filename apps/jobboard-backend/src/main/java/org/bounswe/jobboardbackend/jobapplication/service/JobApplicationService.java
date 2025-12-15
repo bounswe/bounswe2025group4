@@ -431,6 +431,19 @@ public class JobApplicationService {
         }
     }
 
+    @Transactional
+    public void deleteUserData(Long userId) {
+        List<JobApplication> apps = applicationRepository.findByJobSeekerId(userId);
+        for (JobApplication app : apps) {
+            if (app.getCvUrl() != null) {
+                String objectName = extractObjectNameFromUrl(app.getCvUrl());
+                if (objectName != null)
+                    deleteFromGcs(objectName);
+            }
+            applicationRepository.delete(app);
+        }
+    }
+
     private void assertEmployerOfWorkplace(Long workplaceId, Long userId) {
         boolean isEmployer = employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId);
         if (!isEmployer) {

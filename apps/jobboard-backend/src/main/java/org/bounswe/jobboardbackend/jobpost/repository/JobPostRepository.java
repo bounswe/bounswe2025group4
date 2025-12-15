@@ -48,4 +48,5 @@ public interface JobPostRepository extends JpaRepository<JobPost, Long> {
 
         long countByEmployerId(Long employerId);
 
+        void deleteByEmployerId(Long employerId);
 }

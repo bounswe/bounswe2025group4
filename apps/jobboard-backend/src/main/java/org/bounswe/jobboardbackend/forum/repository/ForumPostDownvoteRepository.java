@@ -9,4 +9,6 @@ public interface ForumPostDownvoteRepository extends JpaRepository<ForumPostDown
     Optional<ForumPostDownvote> findByUserIdAndPostId(Long userId, Long postId);
 
     long countByPostId(Long postId);
+
+    void deleteByUserId(Long userId);
 }

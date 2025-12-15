@@ -312,4 +312,19 @@ public class ForumService {
         postDownvoteRepository.findByUserIdAndPostId(user.getId(), postId)
                 .ifPresent(postDownvoteRepository::delete);
     }
+
+    @Transactional
+    public void deleteUserData(Long userId) {
+        // Delete votes
+        postUpvoteRepository.deleteByUserId(userId);
+        postDownvoteRepository.deleteByUserId(userId);
+        upvoteRepository.deleteByUserId(userId);
+        downvoteRepository.deleteByUserId(userId);
+
+        // Delete comments
+        commentRepository.deleteByAuthorId(userId);
+
+        // Delete posts (cascades to comments on that post)
+        postRepository.deleteByAuthorId(userId);
+    }
 }

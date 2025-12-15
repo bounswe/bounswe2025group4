@@ -370,17 +370,39 @@ public class ReviewService {
                                         "Only review owner or admin can delete the review");
                 }
 
-                reviewReplyRepository.findByReview_Id(reviewId).ifPresent(reviewReplyRepository::delete);
-                reviewPolicyRatingRepository.deleteAll(reviewPolicyRatingRepository.findByReview_Id(reviewId));
+                deleteReviewInternal(r);
+        }
+
+        private void deleteReviewInternal(Review r) {
+                reviewReplyRepository.findByReview_Id(r.getId()).ifPresent(reviewReplyRepository::delete);
+                reviewPolicyRatingRepository.deleteAll(reviewPolicyRatingRepository.findByReview_Id(r.getId()));
                 reviewRepository.delete(r);
 
-                Workplace wp = workplaceRepository.findById(workplaceId)
-                                .orElseThrow(() -> new HandleException(
-                                                ErrorCode.WORKPLACE_NOT_FOUND,
-                                                "Workplace not found"));
+                Workplace wp = r.getWorkplace();
                 long currentCount = wp.getReviewCount();
                 wp.setReviewCount(Math.max(0, currentCount - 1));
                 workplaceRepository.save(wp);
+        }
+
+        @Transactional
+        public void deleteUserData(Long userId) {
+                // Remove helpful reactions
+                List<ReviewReaction> reactions = reviewReactionRepository.findByUserId(userId);
+                for (ReviewReaction reaction : reactions) {
+                        Review r = reaction.getReview();
+                        r.setHelpfulCount(Math.max(0, r.getHelpfulCount() - 1));
+                        reviewRepository.save(r);
+                        reviewReactionRepository.delete(reaction);
+                }
+
+                // Remove replies by this user (if they are employer)
+                reviewReplyRepository.deleteByEmployerUserId(userId);
+
+                // Remove reviews
+                List<Review> reviews = reviewRepository.findByUserId(userId);
+                for (Review r : reviews) {
+                        deleteReviewInternal(r);
+                }
         }
 
         // === HELPERS ===

@@ -596,4 +596,22 @@ public class MentorshipServiceImpl implements MentorshipService {
         }
     }
 
+    @Override
+    @Transactional
+    public void deleteUserData(Long userId) {
+        // Delete resume reviews where user is job seeker
+        resumeReviewRepository.deleteByJobSeekerId(userId);
+
+        // Delete requests where user is requester
+        mentorshipRequestRepository.deleteByRequesterId(userId);
+
+        // Delete reviews written by user
+        mentorReviewRepository.deleteByReviewerId(userId);
+
+        // Delete mentor profile if exists (cascades to requests/reviews received)
+        if (mentorProfileRepository.existsById(userId)) {
+            mentorProfileRepository.deleteById(userId);
+        }
+    }
+
 }
