@@ -86,7 +86,7 @@ class NotificationItem extends StatelessWidget {
 
                     // Message
                     Text(
-                      notification.message,
+                      _removeIdFromMessage(notification.message),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withOpacity(0.7),
                       ),
@@ -190,6 +190,12 @@ class NotificationItem extends StatelessWidget {
       case NotificationType.GENERAL:
         return Colors.grey;
     }
+  }
+
+  /// Remove ID from message (e.g., "(ID: 8)" -> "")
+  String _removeIdFromMessage(String message) {
+    // Remove patterns like "(ID: 8)" or "(ID:8)" from the message
+    return message.replaceAll(RegExp(r'\s*\(ID:\s*\d+\)\s*', caseSensitive: false), ' ').trim();
   }
 
   /// Format timestamp to human-readable format
