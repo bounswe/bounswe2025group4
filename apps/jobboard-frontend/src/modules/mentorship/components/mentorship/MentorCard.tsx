@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@shared/components/ui/card";
 import { Button } from "@shared/components/ui/button";
-import { Star, Users } from "lucide-react";
+import { Star, Users, Flag } from "lucide-react";
 import { Badge } from "@shared/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@shared/components/ui/avatar";
 import { Link } from "react-router-dom";
@@ -14,6 +14,9 @@ import {
 import { useAuth } from "@/modules/auth/contexts/AuthContext";
 import { toast } from "react-toastify";
 import MentorshipRequestModal from "./MentorshipRequestModal";
+import { useReportModal } from '@shared/hooks/useReportModal';
+import { createReport, mapReportReason } from '@shared/services/report.service';
+import type { ReportReasonType } from '@/modules/shared/components/report/ReportModal';
 
 interface MentorCardProps {
   mentor: Mentor;
@@ -25,6 +28,7 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
   const { user } = useAuth();
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
+  const { openReport, ReportModalElement } = useReportModal();
   const isAvailable = mentor.mentees < mentor.capacity;
 
   const handleRequest = async () => {
@@ -64,22 +68,52 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
     }
   };
 
+  const handleReport = () => {
+    openReport({
+      title: t('mentorship.card.report', { defaultValue: 'Report Mentor' }),
+      subtitle: t('mentorship.card.reportSubtitle', { defaultValue: 'Report this mentor if they violate our guidelines' }),
+      contextSnippet: mentor.bio || mentor.name,
+      reportType: 'Mentor',
+      reportedName: mentor.name,
+      onSubmit: async (message: string, reason: string) => {
+        await createReport({
+          entityType: 'MENTOR',
+          entityId: parseInt(mentor.id, 10),
+          reasonType: mapReportReason(reason as ReportReasonType),
+          description: message,
+        });
+      },
+    });
+  };
+
   return (
     <Card className="h-full flex flex-col">
       <CardHeader>
-        <div className="flex items-start gap-3">
-          <Avatar className="w-12 h-12">
-            <AvatarImage src={mentor.profileImage} alt={mentor.name} />
-            <AvatarFallback>
-              {mentor.name.split(' ').map(n => n[0]).join('')}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <CardTitle className="text-lg">{mentor.name}</CardTitle>
-            {mentor.title && (
-              <CardDescription className="text-sm">{mentor.title}</CardDescription>
-            )}
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3 flex-1">
+            <Avatar className="w-12 h-12">
+              <AvatarImage src={mentor.profileImage} alt={mentor.name} />
+              <AvatarFallback>
+                {mentor.name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1">
+              <CardTitle className="text-lg">{mentor.name}</CardTitle>
+              {mentor.title && (
+                <CardDescription className="text-sm">{mentor.title}</CardDescription>
+              )}
+            </div>
           </div>
+          {user?.id && parseInt(mentor.id, 10) !== user.id && (
+            <button
+              onClick={handleReport}
+              className="text-muted-foreground hover:text-destructive transition-colors p-1"
+              title={t('mentorship.card.report', { defaultValue: 'Report' })}
+            >
+              <Flag className="h-4 w-4" />
+              <span className="sr-only">{t('mentorship.card.report', { defaultValue: 'Report' })}</span>
+            </button>
+          )}
         </div>
       </CardHeader>
       
@@ -168,6 +202,7 @@ const MentorCard = ({ mentor, hasRequested = false }: MentorCardProps) => {
         mentorName={mentor.name}
         isAvailable={isAvailable}
       />
+      {ReportModalElement}
     </Card>
   );
 };

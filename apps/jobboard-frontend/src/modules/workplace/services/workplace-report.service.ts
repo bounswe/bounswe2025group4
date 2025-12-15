@@ -1,35 +1,13 @@
-import { apiClient } from '@shared/lib/api-client';
+import { createReport, mapReportReason } from '@shared/services/report.service';
 import type { ReportReasonType } from '@/modules/shared/components/report/ReportModal';
 
-// Entity types matching backend enum
-type ReportableEntityType = 
-    | 'WORKPLACE' 
-    | 'REVIEW' 
-    | 'REVIEW_REPLY' 
-    | 'FORUM_POST' 
-    | 'FORUM_COMMENT' 
-    | 'JOB_POST' 
-    | 'JOB_APPLICATION' 
-    | 'PROFILE' 
-    | 'MENTOR';
-
-// Unified report function
-async function submitReport(
-    entityType: ReportableEntityType,
-    entityId: number,
-    description: string,
-    reasonType: ReportReasonType = 'OTHER'
-) {
-    return apiClient.post('/report', {
-        entityType,
-        entityId,
-        reasonType,
-        description,
-    });
-}
-
 export async function reportWorkplace(workplaceId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return submitReport('WORKPLACE', workplaceId, message, reason);
+    return createReport({
+        entityType: 'WORKPLACE',
+        entityId: workplaceId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
 }
 
 export async function reportWorkplaceReview(
@@ -38,21 +16,61 @@ export async function reportWorkplaceReview(
     message: string,
     reason: ReportReasonType = 'OTHER',
 ) {
-    return submitReport('REVIEW', reviewId, message, reason);
+    return createReport({
+        entityType: 'REVIEW',
+        entityId: reviewId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
 }
 
 export async function reportForumPost(postId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return submitReport('FORUM_POST', postId, message, reason);
+    return createReport({
+        entityType: 'FORUM_POST',
+        entityId: postId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
 }
 
 export async function reportForumComment(commentId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return submitReport('FORUM_COMMENT', commentId, message, reason);
+    return createReport({
+        entityType: 'FORUM_COMMENT',
+        entityId: commentId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
 }
 
 export async function reportJobPost(jobId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return submitReport('JOB_POST', jobId, message, reason);
+    return createReport({
+        entityType: 'JOB_POST',
+        entityId: jobId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
 }
 
 export async function reportUserProfile(userId: number, message: string, reason: ReportReasonType = 'OTHER') {
-    return submitReport('PROFILE', userId, message, reason);
+    return createReport({
+        entityType: 'PROFILE',
+        entityId: userId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
+}
+
+export async function reportWorkplaceReviewReply(
+    _workplaceId: number,
+    _reviewId: number,
+    replyId: number,
+    message: string,
+    reason: ReportReasonType = 'OTHER',
+) {
+    return createReport({
+        entityType: 'REVIEW_REPLY',
+        entityId: replyId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
 }

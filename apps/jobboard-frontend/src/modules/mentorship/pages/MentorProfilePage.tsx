@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/components/ui/card';
 import { Button } from '@shared/components/ui/button';
 import { Badge } from '@shared/components/ui/badge';
-import { Star, MapPin, Award, GraduationCap, Briefcase, Edit, MessageCircle, ArrowLeft } from 'lucide-react';
+import { Star, MapPin, Award, GraduationCap, Briefcase, Edit, MessageCircle, ArrowLeft, Flag } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
 import { Separator } from '@shared/components/ui/separator';
 import type { Mentor, MentorshipReview } from '@shared/types/mentor';
@@ -25,6 +25,9 @@ import CenteredError from '@shared/components/common/CenteredError';
 import type { MentorshipRequestDTO } from '@shared/types/api.types';
 import { toast } from 'react-toastify';
 import MentorshipRequestModal from '@modules/mentorship/components/mentorship/MentorshipRequestModal';
+import { useReportModal } from '@shared/hooks/useReportModal';
+import { createReport, mapReportReason } from '@shared/services/report.service';
+import type { ReportReasonType } from '@/modules/shared/components/report/ReportModal';
 
 const MentorProfilePage = () => {
   const { t } = useTranslation('common');
@@ -45,8 +48,28 @@ const MentorProfilePage = () => {
   const [completedMentorships, setCompletedMentorships] = useState<MentorshipDetailsDTO[]>([]);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const menteeMentorshipsQuery = useMenteeMentorshipsQuery(user?.id, Boolean(user?.id));
+  const { openReport, ReportModalElement } = useReportModal();
   
   const isOwnProfile = user?.id && id && parseInt(id, 10) === user.id;
+
+  const handleReport = () => {
+    if (!id || !mentor) return;
+    openReport({
+      title: t('mentorship.profile.report', { defaultValue: 'Report Mentor' }),
+      subtitle: t('mentorship.profile.reportSubtitle', { defaultValue: 'Report this mentor if they violate our guidelines' }),
+      contextSnippet: mentor.bio || mentor.name,
+      reportType: 'Mentor',
+      reportedName: mentor.name,
+      onSubmit: async (message: string, reason: string) => {
+        await createReport({
+          entityType: 'MENTOR',
+          entityId: parseInt(id, 10),
+          reasonType: mapReportReason(reason as ReportReasonType),
+          description: message,
+        });
+      },
+    });
+  };
 
   const getCachedMenteeMentorships = async () => {
     if (menteeMentorshipsQuery.data) {
@@ -250,11 +273,25 @@ const MentorProfilePage = () => {
             </AvatarFallback>
           </Avatar>
           
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold mb-2">{mentor.name}</h1>
-            {mentor.title && (
-              <p className="text-xl text-muted-foreground mb-4">{mentor.title}</p>
-            )}
+          <div className="flex-1 relative">
+            <div className="flex items-start justify-between gap-4 mb-2">
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold">{mentor.name}</h1>
+                {mentor.title && (
+                  <p className="text-xl text-muted-foreground mt-2">{mentor.title}</p>
+                )}
+              </div>
+              {!isOwnProfile && user?.id && id && (
+                <button
+                  onClick={handleReport}
+                  className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                  title={t('mentorship.profile.report', { defaultValue: 'Report' })}
+                >
+                  <Flag className="h-4 w-4" />
+                  <span className="sr-only">{t('mentorship.profile.report', { defaultValue: 'Report' })}</span>
+                </button>
+              )}
+            </div>
             
             <div className="flex items-center gap-4 mb-4">
               {mentor.reviews > 0 && (
@@ -780,6 +817,7 @@ const MentorProfilePage = () => {
           isAvailable={isAvailable}
         />
       )}
+      {ReportModalElement}
     </div>
   );
 };
