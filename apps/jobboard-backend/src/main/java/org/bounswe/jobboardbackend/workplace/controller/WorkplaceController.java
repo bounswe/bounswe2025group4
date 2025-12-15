@@ -16,7 +16,6 @@ import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
 import org.bounswe.jobboardbackend.exception.ApiError;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;

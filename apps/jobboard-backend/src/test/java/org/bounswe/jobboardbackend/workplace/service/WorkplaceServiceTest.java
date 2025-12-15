@@ -259,7 +259,7 @@ class WorkplaceServiceTest {
                 when(employerWorkplaceRepository.findByWorkplace_Id(anyLong()))
                                 .thenReturn(Collections.emptyList());
 
-                WorkplaceDetailResponse res = workplaceService.create(req, creator);
+                WorkplaceDetailResponse res = workplaceService.create(req, creator.getId());
 
                 assertThat(res).isNotNull();
                 assertThat(res.getId()).isEqualTo(42L);
@@ -290,7 +290,7 @@ class WorkplaceServiceTest {
                 when(userRepository.findById(nonEmployer.getId()))
                                 .thenReturn(Optional.of(nonEmployer));
 
-                assertThatThrownBy(() -> workplaceService.create(req, nonEmployer))
+                assertThatThrownBy(() -> workplaceService.create(req, nonEmployer.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.ACCESS_DENIED);
@@ -305,7 +305,7 @@ class WorkplaceServiceTest {
                 when(userRepository.findById(creator.getId()))
                                 .thenReturn(Optional.empty());
 
-                assertThatThrownBy(() -> workplaceService.create(req, creator))
+                assertThatThrownBy(() -> workplaceService.create(req, creator.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.USER_NOT_FOUND);
@@ -713,7 +713,7 @@ class WorkplaceServiceTest {
                                 .ethicalTags(List.of(EthicalPolicy.MENTORSHIP_PROGRAM.getLabel()))
                                 .build();
 
-                WorkplaceDetailResponse res = workplaceService.update(workplaceId, req, creator);
+                WorkplaceDetailResponse res = workplaceService.update(workplaceId, req, creator.getId());
 
                 assertThat(res).isNotNull();
                 assertThat(res.getCompanyName()).isEqualTo("Updated Corp");
@@ -741,7 +741,7 @@ class WorkplaceServiceTest {
                                 .companyName("Updated Corp")
                                 .build();
 
-                assertThatThrownBy(() -> workplaceService.update(workplaceId, req, creator))
+                assertThatThrownBy(() -> workplaceService.update(workplaceId, req, creator.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.ACCESS_DENIED);
@@ -757,7 +757,7 @@ class WorkplaceServiceTest {
                 when(workplaceRepository.findById(workplaceId))
                                 .thenReturn(Optional.empty());
 
-                assertThatThrownBy(() -> workplaceService.update(workplaceId, req, creator))
+                assertThatThrownBy(() -> workplaceService.update(workplaceId, req, creator.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
@@ -826,7 +826,7 @@ class WorkplaceServiceTest {
                 when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
                                 workplaceId, ownerId, EmployerRole.OWNER)).thenReturn(true);
 
-                workplaceService.softDelete(workplaceId, creator);
+                workplaceService.softDelete(workplaceId, creator.getId());
 
                 ArgumentCaptor<Workplace> captor = ArgumentCaptor.forClass(Workplace.class);
                 verify(workplaceRepository).save(captor.capture());
@@ -845,7 +845,7 @@ class WorkplaceServiceTest {
                 when(employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
                                 workplaceId, userId, EmployerRole.OWNER)).thenReturn(false);
 
-                assertThatThrownBy(() -> workplaceService.softDelete(workplaceId, creator))
+                assertThatThrownBy(() -> workplaceService.softDelete(workplaceId, creator.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.ACCESS_DENIED);
@@ -860,7 +860,7 @@ class WorkplaceServiceTest {
                 when(workplaceRepository.findById(workplaceId))
                                 .thenReturn(Optional.empty());
 
-                assertThatThrownBy(() -> workplaceService.softDelete(workplaceId, creator))
+                assertThatThrownBy(() -> workplaceService.softDelete(workplaceId, creator.getId()))
                                 .isInstanceOf(HandleException.class)
                                 .extracting("code")
                                 .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);

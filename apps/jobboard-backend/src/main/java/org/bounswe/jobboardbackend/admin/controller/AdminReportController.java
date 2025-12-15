@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.bounswe.jobboardbackend.auth.service.UserDetailsImpl;
 import org.bounswe.jobboardbackend.admin.dto.AdminActionResponse;
 import org.bounswe.jobboardbackend.report.dto.ReportResponse;
 import org.bounswe.jobboardbackend.report.dto.ResolveReportRequest;
@@ -72,9 +74,12 @@ public class AdminReportController {
         @PostMapping("/{id}/resolve")
         public ResponseEntity<AdminActionResponse> resolveReport(
                         @Parameter(description = "ID of the report to resolve") @PathVariable Long id,
-                        @Valid @RequestBody ResolveReportRequest request) {
+                        @Valid @RequestBody ResolveReportRequest request,
+                        Authentication auth) {
 
-                adminReportService.resolveReport(id, request);
+                UserDetailsImpl userDetails = (UserDetailsImpl) auth
+                                .getPrincipal();
+                adminReportService.resolveReport(id, request, userDetails.getId());
                 return ResponseEntity.ok(new AdminActionResponse("Report resolved successfully"));
         }
 }
