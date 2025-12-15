@@ -12,6 +12,8 @@ export interface DashboardStatsResponse {
 
   // Forum statistics
   totalForumPosts: number;
+  totalForumComments: number;
+  newForumPostsThisWeek: number;
 
   // Job post statistics
   totalJobPosts: number;
