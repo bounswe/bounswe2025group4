@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -200,7 +200,7 @@ describe('Public Profile Route Integration', () => {
       // Assert
       await waitFor(() => {
         expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
-        expect(screen.getByText('profile.public.note')).toBeInTheDocument();
+        expect(screen.getByText(/profile\.header\.badges/)).toBeInTheDocument();
       });
 
       // Should not render private profile elements
@@ -254,11 +254,10 @@ describe('Public Profile Route Integration', () => {
 
       // Assert - URL should remain intact during tab switches
       expect(router.state.location.pathname).toBe('/profile/456');
-      
-      // Tab navigation shouldn't change URL
-      const activityTab = screen.getByRole('button', { name: 'profile.tabs.activity' });
-      expect(activityTab).toBeInTheDocument();
-      
+
+      // Activity tab should not be present in public view
+      expect(screen.queryByRole('button', { name: 'profile.tabs.activity' })).not.toBeInTheDocument();
+
       // URL should still be the same
       expect(router.state.location.pathname).toBe('/profile/456');
     });
@@ -296,7 +295,9 @@ describe('Public Profile Route Integration', () => {
       });
 
       // Simulate back navigation
-      router.navigate(-1);
+      await act(async () => {
+        await router.navigate(-1);
+      });
 
       // Assert
       await waitFor(() => {

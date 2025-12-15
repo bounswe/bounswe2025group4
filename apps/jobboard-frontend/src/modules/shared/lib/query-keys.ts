@@ -78,3 +78,21 @@ export const forumKeys = {
   post: (postId: number | string) => [...forumKeys.all, 'post', postId] as const,
   comment: (commentId: number | string) => [...forumKeys.all, 'comment', commentId] as const,
 };
+
+export const activityKeys = {
+  all: ['activities'] as const,
+  user: (userId: number | string, params?: unknown) =>
+    [...activityKeys.all, 'user', userId, params || {}] as const,
+};
+
+export const badgeKeys = {
+  all: ['badges'] as const,
+  types: ['badges', 'types'] as const,
+  myBadges: ['badges', 'me'] as const,
+  user: (userId: number | string) => [...badgeKeys.all, 'user', userId] as const,
+};
+
+export const notificationKeys = {
+  all: ['notifications'] as const,
+  me: ['notifications', 'me'] as const,
+};

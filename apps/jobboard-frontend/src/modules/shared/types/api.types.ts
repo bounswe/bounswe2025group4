@@ -440,3 +440,130 @@ export interface CreateForumCommentRequest {
 export interface UpdateForumCommentRequest {
   content: string;
 }
+
+// ============================================================================
+// USER ACTIVITY STREAM
+// ============================================================================
+
+/**
+ * Activity type enum matching backend ActivityType
+ */
+export type ActivityType =
+  | 'REGISTER'
+  | 'UPDATE_PROFILE'
+  | 'CREATE_WORKPLACE'
+  | 'CREATE_JOB'
+  | 'APPLY_JOB'
+  | 'APPROVE_APPLICATION'
+  | 'REJECT_APPLICATION'
+  | 'CREATE_REVIEW'
+  | 'REQUEST_MENTORSHIP'
+  | 'ACCEPT_MENTORSHIP'
+  | 'COMPLETE_MENTORSHIP'
+  | 'CREATE_THREAD'
+  | 'CREATE_COMMENT'
+  | 'UPVOTE_THREAD'
+  | 'DOWNVOTE_THREAD'
+  | 'EDIT_THREAD'
+  | 'DELETE_THREAD';
+
+/**
+ * Actor information in activity response
+ */
+export interface ActivityActor {
+  id: number;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+/**
+ * Activity response from backend
+ * Matches backend Activity entity structure
+ */
+export interface ActivityResponse {
+  id: number;
+  actor: ActivityActor;
+  type: ActivityType;
+  entityId?: number;
+  entityType?: string;
+  createdAt: string; // ISO 8601 date-time
+}
+
+/**
+ * Paginated activity response (Spring Data Page format)
+ */
+export interface PaginatedActivitiesResponse {
+  content: ActivityResponse[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    offset: number;
+  };
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+  size: number;
+  number: number;
+  first: boolean;
+  empty: boolean;
+}
+
+/**
+ * Activity query parameters
+ */
+export interface ActivityQueryParams {
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+/**
+ * W3C Activity Streams 2.0 Actor
+ * Spec: https://www.w3.org/TR/activitystreams-core/#actors
+ */
+export interface AS2Actor {
+  type: 'Person' | 'Organization' | 'Service';
+  id: string; // User URI
+  name?: string; // Username
+}
+
+/**
+ * W3C Activity Streams 2.0 Object
+ * Spec: https://www.w3.org/TR/activitystreams-core/#object
+ */
+export interface AS2Object {
+  type: string; // Person, JobPosting, Article, etc.
+  id: string; // Entity URI
+  name?: string; // Optional entity name
+}
+
+/**
+ * W3C Activity Streams 2.0 Activity
+ * Spec: https://www.w3.org/TR/activitystreams-core/#activities
+ */
+export interface AS2Activity {
+  '@context'?: string; // Only on first activity in collection
+  type: string; // AS2 activity type (Create, Update, Join, etc.)
+  id: string; // Unique activity URI
+  actor: AS2Actor;
+  object: AS2Object;
+  summary?: string; // Optional activity summary
+  published: string; // ISO 8601 timestamp
+}
+
+/**
+ * W3C Activity Streams 2.0 OrderedCollection
+ * Used for activity stream exports
+ * Spec: https://www.w3.org/TR/activitystreams-core/#collections
+ *
+ * Provides GDPR/KVKK data portability compliance using
+ * W3C Activity Streams 2.0 (2017 Recommendation) format
+ */
+export interface AS2OrderedCollection {
+  '@context': 'https://www.w3.org/ns/activitystreams';
+  type: 'OrderedCollection';
+  totalItems: number;
+  published: string; // Collection creation timestamp
+  orderedItems: AS2Activity[];
+}

@@ -15,6 +15,7 @@ import { SkillsSection } from '@modules/profile/components/profile/SkillsSection
 import { InterestsSection } from '@modules/profile/components/profile/InterestsSection';
 import { ActivityTab } from '@modules/profile/components/profile/ActivityTab';
 import { PostsTab } from '@modules/profile/components/profile/PostsTab';
+import { BadgesSection } from '@modules/profile/components/badges/BadgesSection';
 import {
   EditBioModal,
   ExperienceModal,
@@ -25,7 +26,7 @@ import {
   ImageUploadModal,
 } from '@modules/profile/components/profile/ProfileEditModals';
 import { DeleteAccountModal } from '@modules/profile/components/profile/DeleteAccountModal';
-import type { Profile, PublicProfile, Activity, Post, Experience, Education, Skill, Interest } from '@shared/types/profile.types';
+import type { Profile, PublicProfile, Post, Experience, Education, Skill, Interest } from '@shared/types/profile.types';
 import {
   profileService,
   useCreateProfileMutationWithToasts,
@@ -41,6 +42,7 @@ import {
   useSaveSkillMutationWithOptimistic,
   useUpdateBioMutationWithOptimistic,
 } from '@modules/profile/services/profile.service';
+import { useMyBadgesQuery, useUserBadgesQuery } from '@modules/profile/services/badge.service';
 import { profileKeys } from '@shared/lib/query-keys';
 import { normalizeApiError } from '@shared/utils/error-handler';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
@@ -72,38 +74,9 @@ export default function ProfilePage() {
   const publicProfileQuery = usePublicProfileQuery(viewedUserId, !isOwner);
   const profile = (isOwner ? myProfileQuery.data : publicProfileQuery.data) as Profile | PublicProfile | undefined;
 
-  const mockActivity: Activity[] = useMemo(() => [
-    {
-      id: 1,
-      type: 'application',
-      text: 'Applied to Senior Product Designer at Innovation Labs',
-      date: '2 days ago',
-    },
-    {
-      id: 2,
-      type: 'forum',
-      text: "Posted a thread on forum: 'Best practices for accessibility in design'",
-      date: '5 days ago',
-    },
-    {
-      id: 3,
-      type: 'comment',
-      text: "Made a comment on 'Remote work strategies for designers'",
-      date: '1 week ago',
-    },
-    {
-      id: 4,
-      type: 'like',
-      text: "Liked a comment on 'Design system implementation'",
-      date: '1 week ago',
-    },
-    {
-      id: 5,
-      type: 'application',
-      text: 'Applied to UX Designer at Creative Studio',
-      date: '2 weeks ago',
-    },
-  ], []);
+  const myBadgesQuery = useMyBadgesQuery(isOwner);
+  const userBadgesQuery = useUserBadgesQuery(viewedUserId, !isOwner);
+  const badgesQuery = isOwner ? myBadgesQuery : userBadgesQuery;
 
   const mockPosts: Post[] = useMemo(() => [
     {
@@ -132,6 +105,10 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!isOwner) {
       setShowCreateProfile(false);
+      // Reset to about tab when viewing public profile
+      if (activeTab === 'activity') {
+        setActiveTab('about');
+      }
       return;
     }
 
@@ -146,7 +123,7 @@ export default function ProfilePage() {
         setShowCreateProfile(true);
       }
     }
-  }, [isOwner, myProfileQuery.data, myProfileQuery.error, myProfileQuery.isError]);
+  }, [isOwner, myProfileQuery.data, myProfileQuery.error, myProfileQuery.isError, activeTab]);
 
   const [modals, setModals] = useState<Record<ModalKey, boolean>>({
     bio: false,
@@ -493,7 +470,7 @@ export default function ProfilePage() {
                 <span>•</span>
                 <span>42 {t('profile.header.posts')}</span>
                 <span>•</span>
-                <span>5 {t('profile.header.badges')}</span>
+                <span>{badgesQuery.data?.length || 0} {t('profile.header.badges')}</span>
               </div>
             </div>
           </div>
@@ -511,16 +488,18 @@ export default function ProfilePage() {
             >
               {t('profile.tabs.about')}
             </button>
-            <button
-              onClick={() => setActiveTab('activity')}
-              className={`pb-3 border-b-2 transition-colors ${
-                activeTab === 'activity'
-                  ? 'border-green-600 text-green-600 font-medium'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t('profile.tabs.activity')}
-            </button>
+            {isOwner && (
+              <button
+                onClick={() => setActiveTab('activity')}
+                className={`pb-3 border-b-2 transition-colors ${
+                  activeTab === 'activity'
+                    ? 'border-green-600 text-green-600 font-medium'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {t('profile.tabs.activity')}
+              </button>
+            )}
             <button
               onClick={() => setActiveTab('posts')}
               className={`pb-3 border-b-2 transition-colors ${
@@ -611,17 +590,29 @@ export default function ProfilePage() {
                       openModal('interest', interest);
                     }}
                   />
+
+                  <BadgesSection badges={badgesQuery.data} isLoading={badgesQuery.isLoading} />
                 </>
               ) : (
-                <div className="text-muted-foreground text-sm">
-                  {t('profile.public.note')}
-                </div>
+                <>
+                  <BadgesSection
+                    badges={badgesQuery.data}
+                    userId={viewedUserId}
+                    isPublicView
+                    isLoading={badgesQuery.isLoading}
+                  />
+                </>
               )}
             </div>
           </div>
         )}
 
-        {activeTab === 'activity' && <ActivityTab activities={mockActivity} />}
+        {activeTab === 'activity' && isOwner && profile && (
+          <ActivityTab
+            userId={viewedUserId || user?.id || 0}
+            isOwner={isOwner}
+          />
+        )}
         {activeTab === 'posts' && <PostsTab posts={mockPosts} />}
       </div>
 

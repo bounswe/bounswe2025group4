@@ -408,15 +408,14 @@ class _MentorProfileScreenState extends State<MentorProfileScreen> {
                 AppLocalizations.of(context)!.badges_title,
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Wrap(
-                spacing: 8,
-                children: _userProfile!.badges.map((b) {
-                  return Chip(
-                    label: Text(b.name),
-                    avatar: b.icon != null ? Image.network(b.icon!) : null,
-                  );
-                }).toList(),
-              ),
+            Wrap(
+              spacing: 8,
+              children: _userProfile!.badges.map((b) {
+                return Chip(
+                  label: Text(b.name),
+                );
+              }).toList(),
+            ),
             ],
 
             const SizedBox(height: 16),

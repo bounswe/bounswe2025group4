@@ -2328,6 +2328,65 @@
   "@badges_years": {
     "description": "Year plural"
   },
+  "badges_myBadges": "My Badges",
+  "@badges_myBadges": {
+    "description": "My badges page title"
+  },
+  "badges_earnedCount": "Badges Earned",
+  "@badges_earnedCount": {
+    "description": "Badges earned label"
+  },
+  "badges_locked": "Locked",
+  "@badges_locked": {
+    "description": "Locked badge label"
+  },
+  "badges_notYetEarned": "Not yet earned",
+  "@badges_notYetEarned": {
+    "description": "Not yet earned label"
+  },
+  "badges_earnedOn": "Earned on {date}",
+  "@badges_earnedOn": {
+    "description": "Earned on date label",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "badges_requirement": "Requirement: {count}",
+  "@badges_requirement": {
+    "description": "Requirement label",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "badges_close": "Close",
+  "@badges_close": {
+    "description": "Close button"
+  },
+  "badges_tapToViewAll": "Tap to view all badges",
+  "@badges_tapToViewAll": {
+    "description": "Tap to view all badges hint"
+  },
+  "badges_moreBadges": "+{count} more badges",
+  "@badges_moreBadges": {
+    "description": "More badges indicator",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "badges_noBadgesAvailable": "No badges available",
+  "@badges_noBadgesAvailable": {
+    "description": "No badges available message"
+  },
+  "badges_failedToLoad": "Failed to load badges",
+  "@badges_failedToLoad": {
+    "description": "Failed to load badges error"
+  },
 
   "@@_COMMON": {},
   "common_retry": "Retry",

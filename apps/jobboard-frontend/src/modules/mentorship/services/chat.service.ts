@@ -1,8 +1,7 @@
 import { api } from '@shared/lib/api-client';
 import type { ChatMessageDTO } from '@shared/types/api.types';
 import type { ChatMessage } from '@shared/types/chat';
-import SockJS from 'sockjs-client';
-import { Client, type StompSubscription } from '@stomp/stompjs';
+import { SharedStompClient } from '@shared/services/stompClient';
 
 /**
  * Chat Service
@@ -36,31 +35,13 @@ export async function getChatHistory(conversationId: number): Promise<ChatMessag
  * Unread sayısı WS'den gelen event'e göre yönetilecek ama aktif ekranda unread artmayacak.
  */
 export class ChatWebSocket {
-  private client: Client | null = null;
+  private client: SharedStompClient | null = null;
   private conversationId: number | null = null;
-  private subscription: StompSubscription | null = null;
+  private unsubscribe: (() => void) | null = null;
   private onMessageCallback: ((message: ChatMessage) => void) | null = null;
   private onErrorCallback: ((error: Error) => void) | null = null;
   private onConnectCallback: (() => void) | null = null;
   private onDisconnectCallback: (() => void) | null = null;
-
-  /**
-   * Get WebSocket URL based on environment
-   * SockJS requires http:// or https://, not ws:// or wss://
-   */
-  private getWebSocketUrl(): string {
-    // Use same base URL as API client
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-    // Remove /api suffix if present
-    const baseUrl = apiUrl.replace(/\/api$/, '');
-    // SockJS requires http:// or https://, it handles the WebSocket protocol internally
-    // Ensure we have http:// or https://
-    if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
-      // If no protocol, default to http://
-      return `http://${baseUrl}/ws-chat`;
-    }
-    return `${baseUrl}/ws-chat`;
-  }
 
   /**
    * Connect to WebSocket
@@ -79,8 +60,7 @@ export class ChatWebSocket {
     onConnect?: () => void,
     onDisconnect?: () => void
   ) {
-    // Disconnect existing connection if any
-    if (this.client?.active) {
+    if (this.client?.isConnected()) {
       this.disconnect();
     }
 
@@ -90,25 +70,13 @@ export class ChatWebSocket {
     this.onConnectCallback = onConnect || null;
     this.onDisconnectCallback = onDisconnect || null;
 
-    // Create STOMP client with SockJS
-    this.client = new Client({
-      webSocketFactory: () => new SockJS(this.getWebSocketUrl()) as any,
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-      debug: (str) => {
-        // Only log in development
-        if (import.meta.env.DEV) {
-          console.log('[STOMP]', str);
-        }
-      },
-      onConnect: (frame) => {
-        console.log('[ChatWebSocket] Connected:', frame);
-        
-        // Subscribe to conversation topic
+    this.client = new SharedStompClient({
+      token: accessToken,
+      debug: import.meta.env.DEV,
+      onConnect: () => {
         if (this.conversationId && this.client) {
           const topic = `/topic/conversation/${this.conversationId}`;
-          this.subscription = this.client.subscribe(topic, (message) => {
+          this.unsubscribe = this.client.subscribe(topic, (message) => {
             try {
               const chatMessageDTO: ChatMessageDTO = JSON.parse(message.body);
               const chatMessage: ChatMessage = {
@@ -118,51 +86,31 @@ export class ChatWebSocket {
                 senderAvatar: chatMessageDTO.senderAvatar,
                 content: chatMessageDTO.content,
                 timestamp: chatMessageDTO.timestamp,
-                read: false, // New messages are unread
+                read: false,
               };
-              
-              if (this.onMessageCallback) {
-                this.onMessageCallback(chatMessage);
-              }
+
+              this.onMessageCallback?.(chatMessage);
             } catch (err) {
               console.error('[ChatWebSocket] Error parsing message:', err);
             }
           });
-          
-          console.log(`[ChatWebSocket] Subscribed to ${topic}`);
         }
 
-        if (this.onConnectCallback) {
-          this.onConnectCallback();
-        }
-      },
-      onStompError: (frame) => {
-        console.error('[ChatWebSocket] STOMP error:', frame);
-        const error = new Error(frame.headers['message'] || 'WebSocket connection error');
-        if (this.onErrorCallback) {
-          this.onErrorCallback(error);
-        }
-      },
-      onWebSocketError: (event) => {
-        console.error('[ChatWebSocket] WebSocket error:', event);
-        const error = new Error('WebSocket connection failed');
-        if (this.onErrorCallback) {
-          this.onErrorCallback(error);
-        }
+        this.onConnectCallback?.();
       },
       onDisconnect: () => {
-        console.log('[ChatWebSocket] Disconnected');
-        if (this.onDisconnectCallback) {
-          this.onDisconnectCallback();
-        }
+        this.onDisconnectCallback?.();
       },
-      connectHeaders: {
-        Authorization: `Bearer ${accessToken}`,
+      onError: (error) => {
+        this.onErrorCallback?.(error);
       },
     });
 
-    // Activate the client
-    this.client.activate();
+    this.client
+      .connect()
+      .catch((error) => {
+        this.onErrorCallback?.(error);
+      });
   }
 
 
@@ -171,18 +119,13 @@ export class ChatWebSocket {
    * @param content - Message content
    */
   sendMessage(content: string) {
-    if (!this.client?.active || !this.conversationId) {
+    if (!this.client?.isConnected() || !this.conversationId) {
       console.error('[ChatWebSocket] Cannot send message: not connected');
       throw new Error('WebSocket not connected');
     }
 
     const destination = `/app/chat.sendMessage/${this.conversationId}`;
-    const message = { content };
-
-    this.client.publish({
-      destination,
-      body: JSON.stringify(message),
-    });
+    this.client.publish(destination, { content });
 
     console.log('[ChatWebSocket] Message sent:', { destination, content });
   }
@@ -191,15 +134,13 @@ export class ChatWebSocket {
    * Disconnect from WebSocket
    */
   disconnect() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-      this.subscription = null;
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
     }
 
     if (this.client) {
-      if (this.client.active) {
-        this.client.deactivate();
-      }
+      this.client.disconnect();
       this.client = null;
     }
 
@@ -216,7 +157,7 @@ export class ChatWebSocket {
    * Check if WebSocket is connected
    */
   isConnected(): boolean {
-    return this.client?.active || false;
+    return this.client?.isConnected() || false;
   }
 
   /**
@@ -231,7 +172,7 @@ export class ChatWebSocket {
    * Marks all messages in the conversation as read
    */
   sendReadSync() {
-    if (!this.client?.active || !this.conversationId) {
+    if (!this.client?.isConnected() || !this.conversationId) {
       console.warn('[ChatWebSocket] Cannot send read sync: not connected');
       return;
     }
@@ -240,10 +181,7 @@ export class ChatWebSocket {
       const destination = `/app/chat.readSync`;
       const message = { conversationId: this.conversationId };
 
-      this.client.publish({
-        destination,
-        body: JSON.stringify(message),
-      });
+      this.client.publish(destination, message);
 
       console.log('[ChatWebSocket] Read sync sent:', { destination, conversationId: this.conversationId });
     } catch (error) {

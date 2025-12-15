@@ -1805,6 +1805,10 @@
       "repliesLabel": "{{value}} ردود",
       "likeLabel": "{{value}} إعجاب",
       "likesLabel": "{{value}} إعجابات"
+    },
+    "activity": {
+      "downloading": "جارٍ التحميل...",
+      "downloadData": "تحميل بياناتي"
     }
   },
   "reviews": {
@@ -1930,7 +1934,17 @@
     "authRequired": "يجب تسجيل الدخول لاستخدام الدردشة",
     "noConversationsDesc": "تحتاج إلى وجود إرشاد نشط لبدء الدردشة."
     },
-    "errors": {
+    "notifications": {
+    "title": "الإشعارات",
+    "ariaLabel": "الإشعارات",
+    "loading": "جاري تحميل الإشعارات...",
+    "empty": "أنت مواكب لكل شيء. لا توجد إشعارات بعد.",
+    "unread": "{{count}} غير مقروء",
+    "upToDate": "محدَّث",
+    "markAllAsRead": "تحديد الكل كمقروء",
+    "footer": "أحدث الإشعارات تظهر أولاً."
+  },
+  "errors": {
     "DEFAULT": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
     "VALIDATION_FAILED": "بعض الحقول تحتاج إلى انتباهك.",
     "MALFORMED_JSON": "تنسيق الطلب غير صالح.",

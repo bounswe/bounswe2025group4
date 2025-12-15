@@ -8,6 +8,7 @@ import 'core/providers/font_size_provider.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/providers/notification_provider.dart';
 import 'core/providers/tab_navigation_provider.dart';
+import 'core/providers/badge_provider.dart';
 import 'core/services/api_service.dart';
 import 'core/services/notification_websocket_service.dart';
 import 'features/mentorship/providers/mentor_provider.dart';
@@ -53,6 +54,14 @@ void main() {
           ),
           update: (context, apiService, previous) =>
           previous!..updateApiService(apiService),
+        ),
+
+        ChangeNotifierProxyProvider<ApiService, BadgeProvider>(
+          create: (context) => BadgeProvider(
+            Provider.of<ApiService>(context, listen: false),
+          ),
+          update: (context, apiService, previous) =>
+              previous ?? BadgeProvider(apiService),
         ),
 
         Provider(
