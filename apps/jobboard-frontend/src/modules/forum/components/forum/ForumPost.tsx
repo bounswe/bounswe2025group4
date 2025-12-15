@@ -132,6 +132,7 @@ const ForumPost = ({
               <Comment
                 key={comment.id}
                 comment={comment}
+                postId={Number(post.id)}
                 onEdit={onCommentEdit}
                 onDelete={onCommentDelete}
               />

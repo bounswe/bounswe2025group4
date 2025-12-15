@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -29,7 +29,6 @@ import { DeleteAccountModal } from '@modules/profile/components/profile/DeleteAc
 import type {
   Profile,
   PublicProfile,
-  Activity,
   Experience,
   Education,
   Skill,
@@ -615,7 +614,7 @@ export default function ProfilePage() {
             isOwner={isOwner}
           />
         )}
-        {activeTab === 'posts' && <PostsTab posts={mockPosts} />}
+        {activeTab === 'posts' && <PostsTab posts={userPostsQuery.data || []} />}
       </div>
 
       {isOwner && (
