@@ -133,10 +133,12 @@ export default function WorkplaceProfilePage() {
   });
 
   const isEmployerForWorkplace = workplace?.employers?.some((emp) => emp.userId === user?.id);
+  const employerRole = workplace?.employers?.find((emp) => emp.userId === user?.id)?.role;
+  const isOwner = employerRole === 'OWNER';
   const employerRequestsQuery = useEmployerRequestsQuery(
     numericWorkplaceId,
     { size: 10 },
-    Boolean(numericWorkplaceId && isEmployerForWorkplace),
+    Boolean(numericWorkplaceId && isOwner),
   );
   const hasPendingRequests = Boolean(
     employerRequestsQuery.data?.content?.some(
@@ -170,9 +172,6 @@ export default function WorkplaceProfilePage() {
   const toggleSortDirection = () => {
     setReviewSortBy((prev) => (prev === 'ratingDesc' ? 'ratingAsc' : 'ratingDesc'));
   };
-
-  const employerRole = workplace?.employers?.find((emp) => emp.userId === user?.id)?.role;
-  const isOwner = employerRole === 'OWNER';
   // Employers can write reviews for workplaces they don't manage
   const canWriteReview =
     isAuthenticated &&
