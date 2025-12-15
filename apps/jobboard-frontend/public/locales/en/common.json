@@ -2034,5 +2034,122 @@
     "RESUME_FILE_CONTENT_TYPE_INVALID": "Invalid resume file type.",
     "RESUME_FILE_UPLOAD_FAILED": "Resume upload failed. Please try again.",
     "RESUME_FILE_NOT_FOUND": "Resume file not found."
+  },
+  "admin": {
+    "reports": {
+      "title": "Report Management",
+      "subtitle": "Review and take action on reported content and users",
+      "searchPlaceholder": "Search reports...",
+      "tabs": {
+        "pending": "Pending",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed"
+      },
+      "table": {
+        "contentType": "Content Type",
+        "reportedItem": "Reported Item",
+        "reporter": "Reporter",
+        "reason": "Reason",
+        "date": "Date",
+        "actions": "Actions",
+        "view": "View"
+      },
+      "entityTypes": {
+        "FORUM_POST": "Forum Post",
+        "FORUM_COMMENT": "Comment",
+        "WORKPLACE": "Workplace",
+        "REVIEW": "Workplace Review",
+        "REVIEW_REPLY": "Review Reply",
+        "JOB_POST": "Job Post",
+        "JOB_APPLICATION": "Job Application",
+        "PROFILE": "Profile",
+        "MENTOR": "Mentor"
+      },
+      "reasons": {
+        "SPAM": "Spam Content",
+        "FAKE": "Fake Information",
+        "OFFENSIVE": "Offensive Content",
+        "HARASSMENT": "Harassment",
+        "MISINFORMATION": "Misinformation",
+        "OTHER": "Other"
+      },
+      "status": {
+        "PENDING": "Pending",
+        "APPROVED": "Resolved",
+        "REJECTED": "Rejected",
+        "IGNORED": "Dismissed"
+      },
+      "details": {
+        "title": "Investigation Details",
+        "contentUnderReview": "Content Under Review",
+        "reporterInfo": "Reporter Information",
+        "reporter": "Reporter",
+        "reason": "Reason",
+        "status": "Status",
+        "selectReport": "Select a report to view details"
+      },
+      "actions": {
+        "title": "Moderation Actions",
+        "helper": "Choose an action to take on this report",
+        "dismiss": "Dismiss",
+        "remove": "Remove",
+        "banOnly": "Ban Only",
+        "both": "Both"
+      },
+      "dialog": {
+        "dismiss": {
+          "title": "Dismiss Report",
+          "description": "This will mark the report as dismissed. No action will be taken on the reported content or user."
+        },
+        "remove": {
+          "title": "Remove Content Only",
+          "description": "This will remove the reported content only. The user will not be banned."
+        },
+        "ban": {
+          "title": "Ban User Only",
+          "description": "This will ban the user who created the content. The content will remain visible."
+        },
+        "both": {
+          "title": "Ban User & Remove Content",
+          "description": "This will ban the user AND remove the reported content. Both actions will be applied."
+        },
+        "adminNote": {
+          "label": "Admin Note (Optional)",
+          "placeholder": "Add a note about this action..."
+        },
+        "banReason": {
+          "label": "Ban Reason (Optional)",
+          "placeholder": "Reason for banning this user..."
+        },
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "processing": "Processing..."
+      },
+      "resolve": {
+        "success": {
+          "default": "Report resolved successfully",
+          "both": "User has been banned and content removed successfully",
+          "ban": "User has been banned successfully",
+          "remove": "Content has been removed successfully",
+          "dismiss": "Report has been dismissed"
+        },
+        "error": {
+          "default": "Failed to resolve report. Please try again.",
+          "spam": "This content has been reported as spam. Please review and take appropriate action.",
+          "fake": "This content has been reported as containing fake information. Please verify and take action.",
+          "offensive": "This content has been reported as offensive. Please review the content carefully.",
+          "harassment": "This content has been reported for harassment. This is a serious violation.",
+          "misinformation": "This content has been reported as misinformation. Please verify the facts."
+        }
+      },
+      "pagination": {
+        "pageInfo": "Page {{page}} of {{totalPages}} ({{totalElements}} total)"
+      },
+      "empty": {
+        "title": "No reports found",
+        "description": "There are no reports matching your current filters."
+      },
+      "loading": "Loading reports..."
+    }
   }
 }

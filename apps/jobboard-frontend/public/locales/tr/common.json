@@ -2043,5 +2043,122 @@
     "RESUME_FILE_CONTENT_TYPE_INVALID": "Geçersiz özgeçmiş dosya tipi.",
     "RESUME_FILE_UPLOAD_FAILED": "Özgeçmiş yükleme başarısız. Lütfen tekrar deneyin.",
     "RESUME_FILE_NOT_FOUND": "Özgeçmiş dosyası bulunamadı."
+  },
+  "admin": {
+    "reports": {
+      "title": "Rapor Yönetimi",
+      "subtitle": "Bildirilen içerik ve kullanıcıları inceleyin ve harekete geçin",
+      "searchPlaceholder": "Raporları ara...",
+      "tabs": {
+        "pending": "Bekleyen",
+        "resolved": "Çözümlendi",
+        "dismissed": "Reddedildi"
+      },
+      "table": {
+        "contentType": "İçerik Türü",
+        "reportedItem": "Bildirilen Öğe",
+        "reporter": "Bildiren",
+        "reason": "Sebep",
+        "date": "Tarih",
+        "actions": "İşlemler",
+        "view": "Görüntüle"
+      },
+      "entityTypes": {
+        "FORUM_POST": "Forum Gönderisi",
+        "FORUM_COMMENT": "Yorum",
+        "WORKPLACE": "İş Yeri",
+        "REVIEW": "İş Yeri Değerlendirmesi",
+        "REVIEW_REPLY": "Değerlendirme Yanıtı",
+        "JOB_POST": "İş İlanı",
+        "JOB_APPLICATION": "İş Başvurusu",
+        "PROFILE": "Profil",
+        "MENTOR": "Mentor"
+      },
+      "reasons": {
+        "SPAM": "Spam İçerik",
+        "FAKE": "Sahte Bilgi",
+        "OFFENSIVE": "Rahatsız Edici İçerik",
+        "HARASSMENT": "Taciz",
+        "MISINFORMATION": "Yanlış Bilgi",
+        "OTHER": "Diğer"
+      },
+      "status": {
+        "PENDING": "Bekleyen",
+        "APPROVED": "Çözümlendi",
+        "REJECTED": "Reddedildi",
+        "IGNORED": "Göz Ardı Edildi"
+      },
+      "details": {
+        "title": "İnceleme Detayları",
+        "contentUnderReview": "İncelenen İçerik",
+        "reporterInfo": "Bildiren Bilgisi",
+        "reporter": "Bildiren",
+        "reason": "Sebep",
+        "status": "Durum",
+        "selectReport": "Detayları görmek için bir rapor seçin"
+      },
+      "actions": {
+        "title": "Moderasyon İşlemleri",
+        "helper": "Bu rapor için bir işlem seçin",
+        "dismiss": "Reddet",
+        "remove": "Kaldır",
+        "banOnly": "Sadece Yasakla",
+        "both": "İkisi de"
+      },
+      "dialog": {
+        "dismiss": {
+          "title": "Raporu Reddet",
+          "description": "Bu rapor reddedildi olarak işaretlenecek. Bildirilen içerik veya kullanıcı üzerinde herhangi bir işlem yapılmayacak."
+        },
+        "remove": {
+          "title": "Sadece İçeriği Kaldır",
+          "description": "Bu işlem sadece bildirilen içeriği kaldıracak. Kullanıcı yasaklanmayacak."
+        },
+        "ban": {
+          "title": "Sadece Kullanıcıyı Yasakla",
+          "description": "Bu işlem içeriği oluşturan kullanıcıyı yasaklayacak. İçerik görünür kalacak."
+        },
+        "both": {
+          "title": "Kullanıcıyı Yasakla ve İçeriği Kaldır",
+          "description": "Bu işlem kullanıcıyı yasaklayacak VE bildirilen içeriği kaldıracak. Her iki işlem de uygulanacak."
+        },
+        "adminNote": {
+          "label": "Yönetici Notu (Opsiyonel)",
+          "placeholder": "Bu işlem hakkında bir not ekleyin..."
+        },
+        "banReason": {
+          "label": "Yasaklama Sebebi (Opsiyonel)",
+          "placeholder": "Bu kullanıcıyı yasaklama sebebi..."
+        },
+        "cancel": "İptal",
+        "confirm": "Onayla",
+        "processing": "İşleniyor..."
+      },
+      "resolve": {
+        "success": {
+          "default": "Rapor başarıyla çözümlendi",
+          "both": "Kullanıcı yasaklandı ve içerik başarıyla kaldırıldı",
+          "ban": "Kullanıcı başarıyla yasaklandı",
+          "remove": "İçerik başarıyla kaldırıldı",
+          "dismiss": "Rapor reddedildi"
+        },
+        "error": {
+          "default": "Rapor çözümlenemedi. Lütfen tekrar deneyin.",
+          "spam": "Bu içerik spam olarak bildirildi. Lütfen inceleyin ve uygun işlemi yapın.",
+          "fake": "Bu içerik sahte bilgi içerdiği bildirildi. Lütfen doğrulayın ve işlem yapın.",
+          "offensive": "Bu içerik rahatsız edici olarak bildirildi. Lütfen içeriği dikkatlice inceleyin.",
+          "harassment": "Bu içerik taciz olarak bildirildi. Bu ciddi bir ihlaldir.",
+          "misinformation": "Bu içerik yanlış bilgi olarak bildirildi. Lütfen gerçekleri doğrulayın."
+        }
+      },
+      "pagination": {
+        "pageInfo": "Sayfa {{page}} / {{totalPages}} (toplam {{totalElements}})"
+      },
+      "empty": {
+        "title": "Rapor bulunamadı",
+        "description": "Mevcut filtrelerinizle eşleşen rapor yok."
+      },
+      "loading": "Raporlar yükleniyor..."
+    }
   }
 }
