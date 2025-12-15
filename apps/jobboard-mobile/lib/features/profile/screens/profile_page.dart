@@ -16,6 +16,7 @@ import '../widgets/editable_chip_list.dart';
 import '../widgets/badge_list.dart';
 import '../widgets/education_list.dart';
 import 'edit_profile_page.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -83,6 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         automaticallyImplyLeading: false,
         actions: [
+          const NotificationIconButton(),
           if (!profileProvider.isLoading && profile != null)
             IconButton(
               icon: const Icon(Icons.edit),

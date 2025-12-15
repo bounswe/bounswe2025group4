@@ -33,6 +33,7 @@ import '../models/paginated_employer_request_response.dart';
 import '../models/employer_request_action_response.dart';
 import '../models/paginated_workplace_review_response.dart';
 import '../models/chat_message.dart';
+import '../models/notification.dart';
 
 const List<String> _availableEthicalPolicies = [
   'salary_transparency',
@@ -2607,6 +2608,37 @@ class ApiService {
       );
     } catch (e) {
       throw Exception('Failed to load my employer requests. $e');
+    }
+  }
+
+  // ─────────────────────────────────────────────────
+  // Notification Endpoints
+  // ─────────────────────────────────────────────────
+
+  /// GET /api/notifications/me
+  /// Fetches all notifications for the current user
+  Future<List<Notification>> getMyNotifications() async {
+    final uri = _buildUri('/notifications/me');
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => Notification.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to load notifications. $e');
+    }
+  }
+
+  /// POST /api/notifications/{notificationId}/read
+  /// Marks a notification as read
+  Future<void> markNotificationAsRead(int notificationId) async {
+    final uri = _buildUri('/notifications/$notificationId/read');
+
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } catch (e) {
+      throw Exception('Failed to mark notification as read. $e');
     }
   }
 
