@@ -172,7 +172,7 @@ export class ChatWebSocket {
    * Marks all messages in the conversation as read
    */
   sendReadSync() {
-    if (!this.client?.active || !this.conversationId) {
+    if (!this.client?.isConnected() || !this.conversationId) {
       console.warn('[ChatWebSocket] Cannot send read sync: not connected');
       return;
     }
@@ -181,10 +181,7 @@ export class ChatWebSocket {
       const destination = `/app/chat.readSync`;
       const message = { conversationId: this.conversationId };
 
-      this.client.publish({
-        destination,
-        body: JSON.stringify(message),
-      });
+      this.client.publish(destination, message);
 
       console.log('[ChatWebSocket] Read sync sent:', { destination, conversationId: this.conversationId });
     } catch (error) {
