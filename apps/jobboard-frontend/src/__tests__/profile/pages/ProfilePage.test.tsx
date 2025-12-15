@@ -63,7 +63,7 @@ describe('ProfilePage', () => {
     await screen.findByText('profile.tabs.about');
 
     await user.click(screen.getByRole('button', { name: 'profile.tabs.activity' }));
-    expect(await screen.findByText('Applied to Senior Product Designer at Innovation Labs')).toBeInTheDocument();
+    expect(await screen.findByText('profile.activity.enriched.applyJob')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'profile.tabs.posts' }));
     expect(await screen.findByText('User Research Techniques: A Comprehensive Guide')).toBeInTheDocument();
@@ -81,6 +81,8 @@ describe('ProfilePage', () => {
     expect(screen.queryByLabelText('profile.header.actions.editImage')).not.toBeInTheDocument();
     expect(screen.queryByText('profile.skills.title')).not.toBeInTheDocument();
     expect(screen.queryByText('profile.interests.title')).not.toBeInTheDocument();
+    // Activity tab should not be present in public view
+    expect(screen.queryByRole('button', { name: 'profile.tabs.activity' })).not.toBeInTheDocument();
   });
 
   it('shows create profile modal when owner profile is missing and submits data', async () => {

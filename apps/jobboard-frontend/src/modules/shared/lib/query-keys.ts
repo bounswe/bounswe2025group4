@@ -79,6 +79,12 @@ export const forumKeys = {
   comment: (commentId: number | string) => [...forumKeys.all, 'comment', commentId] as const,
 };
 
+export const activityKeys = {
+  all: ['activities'] as const,
+  user: (userId: number | string, params?: unknown) =>
+    [...activityKeys.all, 'user', userId, params || {}] as const,
+};
+
 export const badgeKeys = {
   all: ['badges'] as const,
   types: ['badges', 'types'] as const,

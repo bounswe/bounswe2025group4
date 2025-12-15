@@ -1805,6 +1805,10 @@
       "repliesLabel": "{{value}} ردود",
       "likeLabel": "{{value}} إعجاب",
       "likesLabel": "{{value}} إعجابات"
+    },
+    "activity": {
+      "downloading": "جارٍ التحميل...",
+      "downloadData": "تحميل بياناتي"
     }
   },
   "reviews": {

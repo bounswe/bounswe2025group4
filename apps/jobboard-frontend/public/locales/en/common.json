@@ -232,6 +232,11 @@
         "accepted": "Accepted",
         "rejected": "Rejected"
       },
+      "forum": {
+        "title": "Forum Activity",
+        "comments": "Engagement (comments)",
+        "newThisWeek": "New posts this week"
+      },
       "mentorship": {
         "title": "Mentorship Program",
         "mentors": "Active Mentors",
@@ -1756,6 +1761,40 @@
       "note": "This is a public profile view. Skills and interests are not displayed for privacy."
     },
     "activity": {
+      "downloading": "Downloading...",
+      "downloadData": "Download My Data",
+      "types": {
+        "register": "Joined the platform",
+        "updateProfile": "Updated profile",
+        "createWorkplace": "Created a workplace",
+        "createJob": "Posted a job",
+        "applyJob": "Applied to a job",
+        "approveApplication": "Approved a job application",
+        "rejectApplication": "Rejected a job application",
+        "createReview": "Wrote a workplace review",
+        "requestMentorship": "Requested mentorship",
+        "acceptMentorship": "Accepted a mentorship request",
+        "completeMentorship": "Completed a mentorship session",
+        "createThread": "Posted in the forum",
+        "createComment": "Commented on a forum post",
+        "upvoteThread": "Upvoted a forum post",
+        "downvoteThread": "Downvoted a forum post",
+        "editThread": "Edited a forum post",
+        "deleteThread": "Deleted a forum post"
+      },
+      "enriched": {
+        "createJob": "Posted a job: {{title}}",
+        "applyJob": "Applied to {{title}}{{workplace}}",
+        "applyJobWithWorkplace": " at {{workplace}}",
+        "approveApplication": "Approved an application for {{title}}",
+        "rejectApplication": "Rejected an application for {{title}}",
+        "createWorkplace": "Created workplace: {{name}}",
+        "createReview": "Reviewed {{name}}",
+        "createThread": "Posted in forum: \"{{title}}\"",
+        "createComment": "Commented on \"{{title}}\"",
+        "requestMentorship": "Requested mentorship from {{username}}",
+        "acceptMentorship": "Accepted mentorship request"
+      },
       "items": [
         {
           "type": "application",

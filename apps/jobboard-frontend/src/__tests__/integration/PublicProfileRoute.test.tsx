@@ -254,11 +254,10 @@ describe('Public Profile Route Integration', () => {
 
       // Assert - URL should remain intact during tab switches
       expect(router.state.location.pathname).toBe('/profile/456');
-      
-      // Tab navigation shouldn't change URL
-      const activityTab = screen.getByRole('button', { name: 'profile.tabs.activity' });
-      expect(activityTab).toBeInTheDocument();
-      
+
+      // Activity tab should not be present in public view
+      expect(screen.queryByRole('button', { name: 'profile.tabs.activity' })).not.toBeInTheDocument();
+
       // URL should still be the same
       expect(router.state.location.pathname).toBe('/profile/456');
     });
