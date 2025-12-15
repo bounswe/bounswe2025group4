@@ -12,4 +12,6 @@ public interface ReviewReactionRepository extends JpaRepository<ReviewReaction, 
     Optional<ReviewReaction> findByReview_IdAndUser_Id(Long reviewId, Long userId);
 
     List<ReviewReaction> findByUser_IdAndReview_IdIn(Long userId, List<Long> reviewIds);
+
+    List<ReviewReaction> findByUserId(Long userId);
 }

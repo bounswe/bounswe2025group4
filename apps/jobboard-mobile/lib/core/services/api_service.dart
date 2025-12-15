@@ -5,8 +5,8 @@ import 'package:http_parser/http_parser.dart';
 
 import '../models/job_post.dart';
 import '../models/job_application.dart';
-import '../models/discussion_thread.dart';
-import '../models/comment.dart';
+import '../models/forum_post.dart';
+import '../models/forum_comment.dart';
 import '../models/user.dart';
 import '../models/mentor_profile.dart';
 import '../models/mentorship_request.dart';
@@ -32,6 +32,7 @@ import '../models/employer_request.dart';
 import '../models/paginated_employer_request_response.dart';
 import '../models/employer_request_action_response.dart';
 import '../models/paginated_workplace_review_response.dart';
+import '../models/chat_message.dart';
 
 const List<String> _availableEthicalPolicies = [
   'salary_transparency',
@@ -60,6 +61,7 @@ const List<String> _availableEthicalPolicies = [
   'community_volunteering',
   'certified_b_corporation',
 ];
+
 /// Service for interacting with the backend API.
 class ApiService {
   final http.Client _client;
@@ -209,7 +211,6 @@ class ApiService {
       queryParams['nonProfit'] = nonProfit;
     }
 
-
     final uri = _buildUri('/jobs', queryParams);
 
     try {
@@ -304,15 +305,15 @@ class ApiService {
   /// Updates an existing job post.
   Future<JobPost> updateJobPost(String jobId, JobPost jobPost) async {
     final uri = _buildUri('/jobs/$jobId');
-    
+
     // Get workplaceId from the jobPost's workplace
     if (jobPost.workplace == null) {
-      throw Exception('Cannot update job post: workplace information is missing');
+      throw Exception(
+        'Cannot update job post: workplace information is missing',
+      );
     }
-    
-    final body = jsonEncode(
-      jobPost.toJsonForUpdate(jobPost.workplace!.id),
-    );
+
+    final body = jsonEncode(jobPost.toJsonForUpdate(jobPost.workplace!.id));
 
     try {
       // Use dynamically generated headers
@@ -622,32 +623,39 @@ class ApiService {
   // ─────────────────────────────────────────────────
   // Forum / Discussion Endpoints
   // ─────────────────────────────────────────────────
-  /// GET /api/threads
-  Future<List<DiscussionThread>> fetchDiscussionThreads() async {
-    final uri = _buildUri('/threads');
+
+  /// GET /api/forum/posts
+  /// Fetches all forum posts
+  Future<List<ForumPost>> fetchForumPosts() async {
+    final uri = _buildUri('/forum/posts');
 
     try {
       final response = await _client.get(uri, headers: _getHeaders());
       final data = await _handleResponse(response);
 
       return (data as List)
-          .map((e) => DiscussionThread.fromJson(e as Map<String, dynamic>))
+          .map((e) => ForumPost.fromJson(e as Map<String, dynamic>))
           .toList();
     } on SocketException {
       rethrow;
     } catch (e) {
-      throw Exception('Failed to fetch discussion threads. $e');
+      throw Exception('Failed to fetch forum posts. $e');
     }
   }
 
-  /// POST /api/threads
-  Future<DiscussionThread> createDiscussionThread(
-    String title,
-    String body,
-    List<String> tags,
-  ) async {
-    final uri = _buildUri('/threads');
-    final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
+  /// POST /api/forum/posts
+  /// Creates a new forum post
+  Future<ForumPost> createForumPost({
+    required String title,
+    required String content,
+    required List<String> tags,
+  }) async {
+    final uri = _buildUri('/forum/posts');
+    final payload = jsonEncode({
+      'title': title,
+      'content': content,
+      'tags': tags,
+    });
 
     try {
       final response = await _client.post(
@@ -656,157 +664,64 @@ class ApiService {
         body: payload,
       );
       final data = await _handleResponse(response);
-      return DiscussionThread.fromJson(data);
+      return ForumPost.fromJson(data);
     } on SocketException {
       rethrow;
     } catch (e) {
-      throw Exception('Failed to create discussion thread. $e');
+      throw Exception('Failed to create forum post. $e');
     }
   }
 
-  /// GET /api/threads/{threadId}/comments
-  Future<List<Comment>> fetchComments(int threadId) async {
-    final uri = _buildUri('/threads/$threadId/comments');
-    try {
-      final response = await _client.get(uri, headers: _getHeaders());
-      final data = await _handleResponse(response);
-      return (data as List)
-          .map((e) => Comment.fromJson(e as Map<String, dynamic>))
-          .toList();
-    } on SocketException {
-      rethrow;
-    } catch (e) {
-      throw Exception('Failed to fetch comments: $e');
-    }
-  }
-
-  /// POST /api/threads/{threadId}/comments
-  Future<Comment> postComment(int threadId, String body) async {
-    final uri = _buildUri('/threads/$threadId/comments');
-    final payload = jsonEncode({'body': body});
-    try {
-      final response = await _client.post(
-        uri,
-        headers: _getHeaders(),
-        body: payload,
-      );
-      final data = await _handleResponse(response);
-      return Comment.fromJson(data);
-    } on SocketException {
-      rethrow;
-    } catch (e) {
-      throw Exception('Failed to post comment: $e');
-    }
-  }
-
-  /// PATCH /api/comments/{commentId}
-  Future<Comment> editComment(int commentId, String body) async {
-    final uri = _buildUri('/comments/$commentId');
-    final payload = jsonEncode({'body': body});
-    try {
-      final response = await _client.patch(
-        uri,
-        headers: _getHeaders(),
-        body: payload,
-      );
-      final data = await _handleResponse(response);
-      return Comment.fromJson(data);
-    } on SocketException {
-      rethrow;
-    } catch (e) {
-      throw Exception('Failed to edit comment: $e');
-    }
-  }
-
-  /// PATCH /api/threads/{threadId}
-  Future<DiscussionThread> editDiscussion(
-    int threadId,
-    String title,
-    String body,
-    List<String> tags,
-  ) async {
-    final uri = _buildUri('/threads/$threadId');
-    final payload = jsonEncode({'title': title, 'body': body, 'tags': tags});
-
-    try {
-      final response = await _client.patch(
-        uri,
-        headers: _getHeaders(),
-        body: payload,
-      );
-      final data = await _handleResponse(response);
-      return DiscussionThread.fromJson(data);
-    } on SocketException {
-      rethrow;
-    } catch (e) {
-      throw Exception('Failed to edit discussion thread. $e');
-    }
-  }
-
-  /// GET /api/threads/tags
-  Future<List<String>> fetchDiscussionTags() async {
-    final uri = _buildUri('/threads/tags');
+  /// GET /api/forum/posts/{id}
+  /// Fetches a specific forum post by ID
+  Future<ForumPost> getForumPost(int postId) async {
+    final uri = _buildUri('/forum/posts/$postId');
 
     try {
       final response = await _client.get(uri, headers: _getHeaders());
       final data = await _handleResponse(response);
-      return List<String>.from(data);
+      return ForumPost.fromJson(data);
     } on SocketException {
       rethrow;
     } catch (e) {
-      throw Exception('Failed to fetch discussion tags: $e');
+      throw Exception('Failed to fetch forum post. $e');
     }
   }
 
-  /// POST /api/tags
-  Future<String> createOrFindTag(String tagName) async {
-    final uri = _buildUri('/threads/tags');
-    final payload = jsonEncode({'name': tagName.trim()});
+  /// PUT /api/forum/posts/{id}
+  /// Updates a forum post
+  Future<ForumPost> updateForumPost({
+    required int postId,
+    required String title,
+    required String content,
+    required List<String> tags,
+  }) async {
+    final uri = _buildUri('/forum/posts/$postId');
+    final payload = jsonEncode({
+      'title': title,
+      'content': content,
+      'tags': tags,
+    });
+
     try {
-      final response = await _client.post(
+      final response = await _client.put(
         uri,
         headers: _getHeaders(),
         body: payload,
       );
       final data = await _handleResponse(response);
-      return data['name']; // returns normalized tag name
+      return ForumPost.fromJson(data);
     } on SocketException {
       rethrow;
     } catch (e) {
-      throw Exception('Failed to create or find tag. $e');
+      throw Exception('Failed to update forum post. $e');
     }
   }
 
-  /// DELETE /api/comments/{commentId}
-  Future<bool> deleteComment(int commentId) async {
-    final uri = _buildUri('/comments/$commentId');
-    try {
-      final response = await _client.delete(uri, headers: _getHeaders());
-      await _handleResponse(response);
-      return true;
-    } on SocketException {
-      rethrow;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /// POST /api/comments/{commentId}/report
-  Future<void> reportComment(int commentId) async {
-    final uri = _buildUri('/comments/$commentId/report');
-    try {
-      final response = await _client.post(uri, headers: _getHeaders());
-      await _handleResponse(response);
-    } on SocketException {
-      rethrow;
-    } catch (e) {
-      throw Exception('Failed to report comment: $e');
-    }
-  }
-
-  /// DELETE /api/threads/{threadId}
-  Future<void> deleteDiscussion(int threadId) async {
-    final uri = _buildUri('/threads/$threadId');
+  /// DELETE /api/forum/posts/{id}
+  /// Deletes a forum post
+  Future<void> deleteForumPost(int postId) async {
+    final uri = _buildUri('/forum/posts/$postId');
 
     try {
       final response = await _client.delete(uri, headers: _getHeaders());
@@ -814,21 +729,194 @@ class ApiService {
     } on SocketException {
       rethrow;
     } catch (e) {
-      throw Exception('Failed to delete discussion thread: $e');
+      throw Exception('Failed to delete forum post. $e');
     }
   }
 
-  /// POST /api/threads/{threadId}/report
+  /// POST /api/forum/posts/{id}/upvote
+  /// Upvotes a forum post
+  Future<void> upvoteForumPost(int postId) async {
+    final uri = _buildUri('/forum/posts/$postId/upvote');
 
-  Future<void> reportDiscussion(int threadId) async {
-    final uri = _buildUri('/threads/$threadId/report');
     try {
       final response = await _client.post(uri, headers: _getHeaders());
       await _handleResponse(response);
     } on SocketException {
       rethrow;
     } catch (e) {
-      throw Exception('Failed to report discussion: $e');
+      throw Exception('Failed to upvote forum post. $e');
+    }
+  }
+
+  /// DELETE /api/forum/posts/{id}/upvote
+  /// Removes upvote from a forum post
+  Future<void> removeUpvoteForumPost(int postId) async {
+    final uri = _buildUri('/forum/posts/$postId/upvote');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to remove upvote from forum post. $e');
+    }
+  }
+
+  /// POST /api/forum/posts/{id}/downvote
+  /// Downvotes a forum post
+  Future<void> downvoteForumPost(int postId) async {
+    final uri = _buildUri('/forum/posts/$postId/downvote');
+
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to downvote forum post. $e');
+    }
+  }
+
+  /// DELETE /api/forum/posts/{id}/downvote
+  /// Removes downvote from a forum post
+  Future<void> removeDownvoteForumPost(int postId) async {
+    final uri = _buildUri('/forum/posts/$postId/downvote');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to remove downvote from forum post. $e');
+    }
+  }
+
+  /// POST /api/forum/posts/{id}/comments
+  /// Creates a comment on a forum post
+  Future<ForumComment> createForumComment({
+    required int postId,
+    required String content,
+    int? parentCommentId,
+  }) async {
+    final uri = _buildUri('/forum/posts/$postId/comments');
+    final payload = jsonEncode({
+      'content': content,
+      if (parentCommentId != null) 'parentCommentId': parentCommentId,
+    });
+
+    try {
+      final response = await _client.post(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return ForumComment.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to create forum comment. $e');
+    }
+  }
+
+  /// PUT /api/forum/comments/{commentId}
+  /// Updates a forum comment
+  Future<ForumComment> updateForumComment({
+    required int commentId,
+    required String content,
+  }) async {
+    final uri = _buildUri('/forum/comments/$commentId');
+    final payload = jsonEncode({'content': content});
+
+    try {
+      final response = await _client.put(
+        uri,
+        headers: _getHeaders(),
+        body: payload,
+      );
+      final data = await _handleResponse(response);
+      return ForumComment.fromJson(data);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to update forum comment. $e');
+    }
+  }
+
+  /// DELETE /api/forum/comments/{commentId}
+  /// Deletes a forum comment
+  Future<void> deleteForumComment(int commentId) async {
+    final uri = _buildUri('/forum/comments/$commentId');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to delete forum comment. $e');
+    }
+  }
+
+  /// POST /api/forum/comments/{commentId}/upvote
+  /// Upvotes a forum comment
+  Future<void> upvoteForumComment(int commentId) async {
+    final uri = _buildUri('/forum/comments/$commentId/upvote');
+
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to upvote forum comment. $e');
+    }
+  }
+
+  /// DELETE /api/forum/comments/{commentId}/upvote
+  /// Removes upvote from a forum comment
+  Future<void> removeUpvoteForumComment(int commentId) async {
+    final uri = _buildUri('/forum/comments/$commentId/upvote');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to remove upvote from forum comment. $e');
+    }
+  }
+
+  /// POST /api/forum/comments/{commentId}/downvote
+  /// Downvotes a forum comment
+  Future<void> downvoteForumComment(int commentId) async {
+    final uri = _buildUri('/forum/comments/$commentId/downvote');
+
+    try {
+      final response = await _client.post(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to downvote forum comment. $e');
+    }
+  }
+
+  /// DELETE /api/forum/comments/{commentId}/downvote
+  /// Removes downvote from a forum comment
+  Future<void> removeDownvoteForumComment(int commentId) async {
+    final uri = _buildUri('/forum/comments/$commentId/downvote');
+
+    try {
+      final response = await _client.delete(uri, headers: _getHeaders());
+      await _handleResponse(response);
+    } on SocketException {
+      rethrow;
+    } catch (e) {
+      throw Exception('Failed to remove downvote from forum comment. $e');
     }
   }
 
@@ -869,7 +957,83 @@ class ApiService {
     }
   }
 
+  // --- Chat Endpoints ---
+
+  Future<List<ChatMessage>> getChatHistory({
+    required int conversationId,
+  }) async {
+    final uri = _buildUri('/chat/history/$conversationId');
+
+    try {
+      final response = await _client.get(
+        uri,
+        headers: _getHeaders(),
+      );
+
+      final List<dynamic> data = await _handleResponse(response);
+      return data.map((json) => ChatMessage.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch chat history. $e');
+    }
+  }
+
+
   // --- Mentor Profile Endpoints ---
+
+  Future<String> getResumeFileUrl(int resumeReviewId) async {
+    final uri = _buildUri(
+      '/mentorship/$resumeReviewId/file',
+    );
+
+    try {
+      final response = await _client.get(uri, headers: _getHeaders());
+      final dynamic data = await _handleResponse(response);
+      return data['fileUrl'];
+    } catch (e) {
+      throw Exception('Failed to get resume file URL. $e');
+    }
+  }
+
+  Future<void> uploadResumeFile(
+      int resumeReviewId,
+      File file,
+      ) async {
+    final uri = _buildUri('/mentorship/$resumeReviewId/file');
+    try {
+      // Ensure file exists
+      if (!await file.exists()) {
+        throw Exception('File not found: ${file.path}');
+      }
+
+      // Create multipart request
+      final request = http.MultipartRequest('POST', uri);
+
+      // add auth headers BUT remove Content-Type
+      final headers = Map<String, String>.from(_getHeaders());
+      headers.remove('Content-Type');
+      request.headers.addAll(headers);
+
+      // Attach file
+      final multipartFile = await http.MultipartFile.fromPath(
+        'file',
+        file.path,
+        contentType: MediaType('application', 'pdf'),
+      );
+
+      request.files.add(multipartFile);
+
+      // send request
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      await _handleResponse(response);
+    } catch (e) {
+      print('Failed to upload resume file. $e');
+      throw Exception('Failed to upload resume file. $e');
+    }
+  }
+
+
 
   /// PUT /api/mentorship/mentor
   /// Creates a mentor profile for the current user.
@@ -878,17 +1042,12 @@ class ApiService {
     required List<String> expertise,
     required int maxMentees,
   }) async {
-
     final uri = _buildUri('/mentorship/mentor');
 
-    final mentorData = {
-      'expertise': expertise,
-      'maxMentees': maxMentees,
-    };
+    final mentorData = {'expertise': expertise, 'maxMentees': maxMentees};
     print("mentorData: $mentorData");
 
     try {
-
       final response = await _client.post(
         uri,
         headers: _getHeaders(),
@@ -899,12 +1058,10 @@ class ApiService {
 
       final dynamic data = await _handleResponse(response);
       return MentorProfile.fromJson(data);
-
     } catch (e) {
       throw Exception('Failed to create mentor profile. $e');
     }
   }
-
 
   /// GET /api/mentorship/mentor/{userId}
   /// Gets a mentor profile by user ID.
@@ -943,10 +1100,7 @@ class ApiService {
   }) async {
     final uri = _buildUri('/mentorship/mentor/$userId');
 
-    final payload = {
-      'expertise': expertise,
-      'maxMentees': maxMentees,
-    };
+    final payload = {'expertise': expertise, 'maxMentees': maxMentees};
 
     try {
       final response = await _client.put(
@@ -979,11 +1133,13 @@ class ApiService {
   /// Creates a mentorship request.
   Future<MentorshipRequest> createMentorshipRequest({
     required int mentorId,
+    required String motivation,
   }) async {
     final uri = _buildUri('/mentorship/requests');
 
     final requestData = {
       'mentorId': mentorId,
+      'motivation': motivation
     };
 
     try {
@@ -1002,8 +1158,8 @@ class ApiService {
   /// GET /api/mentorship/mentor/{mentorId}/requests
   /// Gets all mentorship requests where the given user is the mentor.
   Future<List<MentorshipRequest>> getMentorshipRequestsAsMentor(
-      String mentorId,
-      ) async {
+    String mentorId,
+  ) async {
     final uri = _buildUri('/mentorship/mentor/$mentorId/requests');
 
     try {
@@ -1018,8 +1174,8 @@ class ApiService {
   /// GET /api/mentorship/mentee/{menteeId}/requests
   /// Gets all mentorship requests where the given user is the mentee.
   Future<List<MentorshipRequest>> getMentorshipRequestsAsMentee(
-      String menteeId,
-      ) async {
+    String menteeId,
+  ) async {
     final uri = _buildUri('/mentorship/mentee/$menteeId/requests');
 
     try {
@@ -1050,11 +1206,13 @@ class ApiService {
   Future<MentorshipRequest> respondToMentorshipRequest({
     required String requestId,
     required bool accept,
+    String? responseMessage
   }) async {
     final uri = _buildUri('/mentorship/requests/$requestId/respond');
 
     final payload = {
       'accept': accept,
+      'responseMessage': responseMessage ?? "thanks",
     };
 
     try {
@@ -2112,18 +2270,45 @@ class ApiService {
     }
   }
 
-  /// POST /api/workplace/{id}/report
-  /// Reports a workplace
-  Future<void> reportWorkplace({
-    required int workplaceId,
+  // ─────────────────────────────────────────────────
+  // Generic Report Endpoint
+  // ─────────────────────────────────────────────────
+
+  /// POST /api/report
+  /// Generic report endpoint for reporting any type of content
+  ///
+  /// This method can be used to report:
+  /// - WORKPLACE
+  /// - REVIEW
+  /// - REVIEW_REPLY
+  /// - FORUM_POST
+  /// - FORUM_COMMENT
+  /// - JOB_POST
+  /// - JOB_APPLICATION
+  /// - PROFILE
+  /// - MENTOR
+  ///
+  /// Reason types:
+  /// - SPAM
+  /// - FAKE
+  /// - OFFENSIVE
+  /// - HARASSMENT
+  /// - MISINFORMATION
+  /// - OTHER
+  Future<void> reportContent({
+    required String entityType,
+    required int entityId,
     required String reasonType,
-    required String description,
+    String? description,
   }) async {
-    final uri = _buildUri('/workplace/$workplaceId/report');
+    final uri = _buildUri('/report');
 
     final body = jsonEncode({
+      'entityType': entityType,
+      'entityId': entityId,
       'reasonType': reasonType,
-      'description': description,
+      if (description != null && description.isNotEmpty)
+        'description': description,
     });
 
     try {
@@ -2133,35 +2318,10 @@ class ApiService {
         body: body,
       );
       await _handleResponse(response);
+    } on SocketException {
+      rethrow;
     } catch (e) {
-      throw Exception('Failed to report workplace. $e');
-    }
-  }
-
-  /// POST /api/workplace/{id}/review/{reviewId}/report
-  /// Reports a workplace review
-  Future<void> reportWorkplaceReview({
-    required int workplaceId,
-    required int reviewId,
-    required String reasonType,
-    required String description,
-  }) async {
-    final uri = _buildUri('/workplace/$workplaceId/review/$reviewId/report');
-
-    final body = jsonEncode({
-      'reasonType': reasonType,
-      'description': description,
-    });
-
-    try {
-      final response = await _client.post(
-        uri,
-        headers: _getHeaders(),
-        body: body,
-      );
-      await _handleResponse(response);
-    } catch (e) {
-      throw Exception('Failed to report review. $e');
+      throw Exception('Failed to report content. $e');
     }
   }
 

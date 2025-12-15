@@ -6,10 +6,18 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ForumPostRepository extends JpaRepository<ForumPost, Long> {
-    
+
     /**
      * Count total posts created by a user.
      * Used for badge criteria checking.
      */
     long countByAuthorId(Long authorId);
+
+    /**
+     * Count posts created after a given date.
+     * Used for dashboard statistics (e.g., posts this week).
+     */
+    long countByCreatedAtAfter(java.time.Instant date);
+
+    void deleteByAuthorId(Long authorId);
 }

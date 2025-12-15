@@ -17,5 +17,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     """)
     List<Notification> findActiveNotificationsByUsername(String username, long oneDayAgo);
 
-
+    void deleteByUsername(String username);
 }

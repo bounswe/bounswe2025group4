@@ -10,7 +10,7 @@ const CreateMentorProfilePage = lazy(() => import('./pages/CreateMentorProfilePa
 const MentorRequestsPage = lazy(() => import('./pages/MentorRequestsPage'));
 const ResumeReviewPage = lazy(() => import('./pages/ResumeReviewPage'));
 const MyMentorshipsPage = lazy(() => import('./pages/MyMentorshipsPage'));
-const ChatPage = lazy(() => import('./pages/ChatPage'));
+const MentorDashboardPage = lazy(() => import('./pages/MentorDashboardPage'));
 
 export const mentorshipRoutes: RouteObject[] = [
   {
@@ -28,18 +28,10 @@ export const mentorshipRoutes: RouteObject[] = [
         ),
       },
       {
-        path: 'chat',
+        path: 'dashboard',
         element: (
           <ProtectedRoute>
-            <ChatPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: 'chat/:threadId',
-        element: (
-          <ProtectedRoute>
-            <ChatPage />
+            <MentorDashboardPage />
           </ProtectedRoute>
         ),
       },
@@ -90,6 +82,5 @@ export const mentorshipRoutes: RouteObject[] = [
     ],
   },
   { path: 'my-mentorships', element: <Navigate to="/mentorship/my" replace /> },
-  { path: 'chat', element: <Navigate to="/mentorship/chat" replace /> },
 ];
 

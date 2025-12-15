@@ -14,9 +14,7 @@ const mockMentorshipRequests: MentorshipRequestDTO[] = [
     mentorId: '1',
     status: 'PENDING',
     createdAt: new Date().toISOString(),
-    message: 'Looking for guidance',
-    goals: ['Career growth'],
-    preferredTime: 'Evenings',
+    motivation: 'Looking for guidance',
   },
   {
     id: '2',
@@ -24,8 +22,7 @@ const mockMentorshipRequests: MentorshipRequestDTO[] = [
     mentorId: '1',
     status: 'ACCEPTED',
     createdAt: new Date().toISOString(),
-    message: 'Need resume review',
-    goals: ['Resume polish'],
+    motivation: 'Need resume review',
   },
 ];
 
@@ -114,6 +111,7 @@ export const mentorshipHandlers = [
       mentorId: String(body.mentorId),
       status: 'PENDING',
       createdAt: new Date().toISOString(),
+      motivation: 'Test motivation',
     };
     mockMentorshipRequests.push(newRequest);
     return HttpResponse.json(newRequest, { status: 201 });

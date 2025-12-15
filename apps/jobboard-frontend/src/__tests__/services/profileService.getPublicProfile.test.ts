@@ -33,6 +33,8 @@ describe('Profile Service - getPublicProfile', () => {
         endDate: undefined
       }
     ],
+    skills: [],
+    interests: [],
     badges: [
       {
         id: 1,
@@ -78,6 +80,8 @@ describe('Profile Service - getPublicProfile', () => {
         lastName: 'Doe',
         educations: [],
         experiences: [],
+        skills: [],
+        interests: [],
         badges: []
       };
 

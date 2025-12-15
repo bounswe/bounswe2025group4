@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
-import '../../../core/models/comment.dart';
+import '../../../core/models/forum_comment.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
 import '../../../core/widgets/a11y.dart';
+import '../../../core/utils/date_formatter.dart';
+import '../screens/user_profile_view_screen.dart';
 
 class CommentTile extends StatefulWidget {
-  final Comment comment;
-  final void Function(int commentId, String newBody)? onUpdate;
+  final ForumComment comment;
+  final void Function(ForumComment updatedComment)? onUpdate;
   final void Function(int commentId)? onDelete;
 
   const CommentTile({
@@ -24,184 +26,557 @@ class CommentTile extends StatefulWidget {
 }
 
 class _CommentTileState extends State<CommentTile> {
+  late ForumComment _currentComment;
+  bool _isVoting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentComment = widget.comment;
+  }
+
+  @override
+  void didUpdateWidget(CommentTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.comment != widget.comment) {
+      _currentComment = widget.comment;
+    }
+  }
+
+  Future<void> _handleUpvote() async {
+    if (_isVoting) return;
+    setState(() => _isVoting = true);
+
+    try {
+      final api = ApiService(authProvider: context.read<AuthProvider>());
+      await api.upvoteForumComment(_currentComment.id);
+
+      // Notify parent to reload the post (which includes updated comments)
+      widget.onUpdate?.call(_currentComment);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to upvote: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isVoting = false);
+      }
+    }
+  }
+
+  Future<void> _handleDownvote() async {
+    if (_isVoting) return;
+    setState(() => _isVoting = true);
+
+    try {
+      final api = ApiService(authProvider: context.read<AuthProvider>());
+      await api.downvoteForumComment(_currentComment.id);
+
+      // Notify parent to reload the post (which includes updated comments)
+      widget.onUpdate?.call(_currentComment);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to downvote: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isVoting = false);
+      }
+    }
+  }
+
+  void _navigateToUserProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => UserProfileViewScreen(userId: _currentComment.authorId),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext ctx) {
     final api = ApiService(authProvider: ctx.read<AuthProvider>());
     final currentUser = ctx.read<AuthProvider>().currentUser?.id;
-    final isOwner = widget.comment.author.id == currentUser;
+    final isOwner = _currentComment.authorId.toString() == currentUser;
+    final isDark = Theme.of(ctx).brightness == Brightness.dark;
 
-    return ListTile(
-      key: ValueKey(widget.comment.id),
-      title: RichText(
-        text: TextSpan(
-          style: const TextStyle(fontSize: 16),
-          children: [
-            const TextSpan(
-              text: 'Author: ',
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            TextSpan(
-              text: widget.comment.author.username,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1565C0),
-                decoration: TextDecoration.underline,
-                letterSpacing: 0.3,
-                shadows: [
-                  Shadow(
-                    color: Colors.black12,
-                    offset: Offset(0.5, 0.5),
-                    blurRadius: 1,
-                  ),
-                ],
-              ),
-              recognizer:
-                  TapGestureRecognizer()
-                    ..onTap = () {
-                      // Disabled for mock data - will be enabled when API is ready
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (_) => UserProfileView(userId: int.parse(widget.comment.author.id)),
-                      //   ),
-                      // );
-                    },
-            ),
-          ],
-        ),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(widget.comment.body),
-          const SizedBox(height: 4),
-          Wrap(
-            spacing: 12,
-            runSpacing: 4,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const A11y(
-                    label: 'Created at',
-                    child: Icon(Icons.calendar_today, size: 14),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Created: ${widget.comment.createdAt.toLocal().toString().split(".").first}',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-              if (widget.comment.editedAt != null)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const A11y(
-                      label: 'Edited at',
-                      child: Icon(Icons.edit, size: 14),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Edited: ${widget.comment.editedAt!.toLocal().toString().split(".").first}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-            ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[850] : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: isDark ? Colors.black26 : Colors.grey.withOpacity(0.08),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
-      trailing: PopupMenuButton<String>(
-        onSelected: (action) async {
-          final messenger = ScaffoldMessenger.of(ctx);
-          if (action == 'Report') {
-            // Show "Reported!" dialog for now (mock implementation)
-            showDialog(
-              context: ctx,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Reported!'),
-                  content: const Text(
-                    'Thank you for reporting this comment. We will review it soon.',
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Author header
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 14,
+                  backgroundColor: isDark ? Colors.blue[700] : Colors.blue[100],
+                  child: Text(
+                    _currentComment.authorUsername[0].toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.blue[900],
+                    ),
                   ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('OK'),
-                    ),
-                  ],
-                );
-              },
-            );
-          } else if (action == 'Edit' && isOwner) {
-            final controller = TextEditingController(text: widget.comment.body);
-            final edited = await showDialog<String>(
-              context: ctx,
-              builder:
-                  (_) => AlertDialog(
-                    title: const Text('Edit Comment'),
-                    content: TextField(
-                      controller: controller,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        hintText: 'Update your comment',
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: _navigateToUserProfile,
+                        child: Text(
+                          _currentComment.authorUsername,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.blue[300] : Colors.blue[700],
+                          ),
+                        ),
                       ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(ctx),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed:
-                            () => Navigator.pop(ctx, controller.text.trim()),
-                        child: const Text('Save'),
+                      Row(
+                        children: [
+                          Text(
+                            DateFormatter.formatRelativeTime(
+                              _currentComment.createdAt,
+                            ),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  isDark ? Colors.grey[500] : Colors.grey[600],
+                            ),
+                          ),
+                          if (_currentComment.createdAt
+                                  .difference(_currentComment.updatedAt)
+                                  .abs()
+                                  .inSeconds >
+                              1) ...[
+                            Text(
+                              ' • edited',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color:
+                                    isDark
+                                        ? Colors.grey[600]
+                                        : Colors.grey[500],
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ),
-            );
-            if (edited != null && edited.isNotEmpty) {
-              try {
-                await api.editComment(widget.comment.id, edited);
-                widget.onUpdate?.call(widget.comment.id, edited);
-              } on SocketException {
-                messenger.showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Failed: Please check your connection and refresh the page.',
-                      style: TextStyle(color: Colors.red),
-                    ),
+                ),
+                PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: isDark ? Colors.grey[500] : Colors.grey[600],
+                    size: 20,
                   ),
-                );
-              } catch (e) {
-                messenger.showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      "Failed: This discussion is no longer available.",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ),
-                );
-              }
-            }
-          } else if (action == 'Delete' && isOwner) {
-            widget.onDelete?.call(widget.comment.id);
-          }
-        },
-        itemBuilder:
-            (_) => [
-              const PopupMenuItem(value: 'Report', child: Text('Report')),
-              if (isOwner) ...[
-                const PopupMenuItem(value: 'Edit', child: Text('Edit')),
-                const PopupMenuItem(value: 'Delete', child: Text('Delete')),
+                  onSelected: (action) async {
+                    final messenger = ScaffoldMessenger.of(ctx);
+                    if (action == 'Report') {
+                      // Show report dialog
+                      final result = await showDialog<Map<String, String>>(
+                        context: ctx,
+                        builder: (BuildContext context) {
+                          String selectedReason = 'SPAM';
+                          final descriptionController = TextEditingController();
+
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return AlertDialog(
+                                title: const Text('Report Comment'),
+                                content: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('Reason for reporting:'),
+                                      const SizedBox(height: 8),
+                                      DropdownButtonFormField<String>(
+                                        value: selectedReason,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 8,
+                                          ),
+                                        ),
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: 'SPAM',
+                                            child: Text('Spam'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'FAKE',
+                                            child: Text('Fake/Misleading'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'OFFENSIVE',
+                                            child: Text('Offensive'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'HARASSMENT',
+                                            child: Text('Harassment'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'MISINFORMATION',
+                                            child: Text('Misinformation'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'OTHER',
+                                            child: Text('Other'),
+                                          ),
+                                        ],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            selectedReason = value!;
+                                          });
+                                        },
+                                      ),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        'Additional details (optional):',
+                                      ),
+                                      const SizedBox(height: 8),
+                                      TextField(
+                                        controller: descriptionController,
+                                        maxLines: 3,
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          hintText: 'Provide more context...',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed:
+                                        () => Navigator.of(context).pop(),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop({
+                                        'reason': selectedReason,
+                                        'description':
+                                            descriptionController.text,
+                                      });
+                                    },
+                                    child: const Text('Report'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      );
+
+                      if (result != null) {
+                        try {
+                          await api.reportContent(
+                            entityType: 'FORUM_COMMENT',
+                            entityId: _currentComment.id,
+                            reasonType: result['reason']!,
+                            description: result['description'],
+                          );
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: const Row(
+                                children: [
+                                  Icon(Icons.check_circle, color: Colors.white),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'Thank you for reporting. We will review it soon.',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          );
+                        } on SocketException {
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: const Row(
+                                children: [
+                                  Icon(Icons.wifi_off, color: Colors.white),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      'Failed: Please check your connection.',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              action: SnackBarAction(
+                                label: 'Retry',
+                                textColor: Colors.white,
+                                onPressed: () {
+                                  // Retry the report
+                                  api.reportContent(
+                                    entityType: 'FORUM_COMMENT',
+                                    entityId: _currentComment.id,
+                                    reasonType: result['reason']!,
+                                    description: result['description'],
+                                  );
+                                },
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          // Parse the error message to provide better feedback
+                          String errorMessage = 'Failed to submit report';
+
+                          final errorString = e.toString().toLowerCase();
+                          if (errorString.contains('already reported') ||
+                              errorString.contains('duplicate')) {
+                            errorMessage =
+                                'You have already reported this comment';
+                          } else if (errorString.contains('unauthorized') ||
+                              errorString.contains('403')) {
+                            errorMessage = 'You need to be logged in to report';
+                          } else if (errorString.contains('not found') ||
+                              errorString.contains('404')) {
+                            errorMessage = 'This comment no longer exists';
+                          } else if (errorString.contains('400') ||
+                              errorString.contains('bad request')) {
+                            errorMessage =
+                                'Invalid report data. Please try again';
+                          } else if (errorString.contains('500') ||
+                              errorString.contains('server error')) {
+                            errorMessage =
+                                'Server error. Please try again later';
+                          }
+
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: Text(errorMessage)),
+                                ],
+                              ),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              duration: const Duration(seconds: 4),
+                            ),
+                          );
+                        }
+                      }
+                    } else if (action == 'Edit' && isOwner) {
+                      final controller = TextEditingController(
+                        text: _currentComment.content,
+                      );
+                      final edited = await showDialog<String>(
+                        context: ctx,
+                        builder:
+                            (_) => AlertDialog(
+                              title: const Text('Edit Comment'),
+                              content: TextField(
+                                controller: controller,
+                                maxLines: null,
+                                decoration: const InputDecoration(
+                                  hintText: 'Update your comment',
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(ctx),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(
+                                        ctx,
+                                        controller.text.trim(),
+                                      ),
+                                  child: const Text('Save'),
+                                ),
+                              ],
+                            ),
+                      );
+                      if (edited != null && edited.isNotEmpty) {
+                        try {
+                          final updated = await api.updateForumComment(
+                            commentId: _currentComment.id,
+                            content: edited,
+                          );
+                          setState(() {
+                            _currentComment = updated;
+                          });
+                          widget.onUpdate?.call(updated);
+                        } on SocketException {
+                          messenger.showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Failed: Please check your connection and refresh the page.',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          );
+                        } catch (e) {
+                          messenger.showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Failed: This comment is no longer available.",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    } else if (action == 'Delete' && isOwner) {
+                      widget.onDelete?.call(_currentComment.id);
+                    }
+                  },
+                  itemBuilder:
+                      (_) => [
+                        const PopupMenuItem(
+                          value: 'Report',
+                          child: Text('Report'),
+                        ),
+                        if (isOwner) ...[
+                          const PopupMenuItem(
+                            value: 'Edit',
+                            child: Text('Edit'),
+                          ),
+                          const PopupMenuItem(
+                            value: 'Delete',
+                            child: Text('Delete'),
+                          ),
+                        ],
+                      ],
+                ),
               ],
-            ],
+            ),
+            const SizedBox(height: 12),
+
+            // Content
+            Text(
+              _currentComment.content,
+              style: TextStyle(
+                fontSize: 15,
+                color: isDark ? Colors.grey[300] : Colors.grey[800],
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Voting row
+            Row(
+              children: [
+                // Upvote button
+                A11y(
+                  label: 'Upvote',
+                  child: InkWell(
+                    onTap: _isVoting ? null : _handleUpvote,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.arrow_upward_rounded,
+                            size: 16,
+                            color: Colors.green[600],
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${_currentComment.upvoteCount}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+
+                // Downvote button
+                A11y(
+                  label: 'Downvote',
+                  child: InkWell(
+                    onTap: _isVoting ? null : _handleDownvote,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.arrow_downward_rounded,
+                            size: 16,
+                            color: Colors.red[600],
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${_currentComment.downvoteCount}',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.red[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

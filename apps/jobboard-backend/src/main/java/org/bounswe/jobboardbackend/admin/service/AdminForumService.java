@@ -2,37 +2,23 @@ package org.bounswe.jobboardbackend.admin.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.bounswe.jobboardbackend.exception.ErrorCode;
-import org.bounswe.jobboardbackend.exception.HandleException;
-import org.bounswe.jobboardbackend.forum.model.ForumComment;
-import org.bounswe.jobboardbackend.forum.model.ForumPost;
-import org.bounswe.jobboardbackend.forum.repository.ForumCommentRepository;
-import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
 import org.springframework.stereotype.Service;
+import org.bounswe.jobboardbackend.auth.model.User;
+import org.bounswe.jobboardbackend.forum.service.ForumService;
 
 @Service
 @RequiredArgsConstructor
 public class AdminForumService {
 
-    private final ForumPostRepository forumPostRepository;
-    private final ForumCommentRepository forumCommentRepository;
+    private final ForumService forumService;
 
     @Transactional
-    public void deletePost(Long postId, String reason) {
-        ForumPost post = forumPostRepository.findById(postId)
-                .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Forum post not found"));
-        forumPostRepository.delete(post);
-
-        // TODO: Log deletion with reason for audit
+    public void deletePost(Long postId, User adminUser, String reason) {
+        forumService.deletePost(postId, adminUser);
     }
 
     @Transactional
-    public void deleteComment(Long commentId, String reason) {
-        ForumComment comment = forumCommentRepository.findById(commentId)
-                .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Forum comment not found"));
-
-        forumCommentRepository.delete(comment);
-
-        // TODO: Log deletion with reason for audit
+    public void deleteComment(Long commentId, User adminUser, String reason) {
+        forumService.deleteComment(commentId, adminUser);
     }
 }

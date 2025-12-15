@@ -21,6 +21,7 @@ import { ThemeToggle } from '../common/ThemeToggle';
 import { LanguageSwitcher } from '../common/LanguageSwitcher';
 import { useAuth, useAuthActions } from '@shared/stores/authStore';
 import { Avatar, AvatarFallback, AvatarImage } from '@shared/components/ui/avatar';
+import { useMentorProfileQuery } from '@modules/mentorship/services/mentorship.service';
 
 type Role = 'ROLE_EMPLOYER' | 'ROLE_JOBSEEKER';
 
@@ -46,6 +47,13 @@ export default function Header() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openMobileSection, setOpenMobileSection] = useState<string | null>(null);
+  
+  // Check if user has a mentor profile
+  const mentorProfileQuery = useMentorProfileQuery(
+    user?.id,
+    Boolean(user?.id && isAuthenticated)
+  );
+  const hasMentorProfile = Boolean(mentorProfileQuery.data);
 
   const navSections: NavSection[] = useMemo(
     () => [
@@ -97,7 +105,18 @@ export default function Header() {
         items: [
           { label: t('mentorship.tabs.browse', 'Browse Mentors'), to: '/mentorship/browse' },
           { label: t('mentorship.tabs.my', 'My Mentorships'), to: '/mentorship/my', requiresAuth: true },
-          { label: t('mentorship.tabs.chat', 'Chat Threads'), to: '/mentorship/chat', requiresAuth: true },
+          ...(user?.id && hasMentorProfile ? [
+            {
+              label: t('mentorship.tabs.dashboard', 'Mentor Dashboard'), 
+              to: '/mentorship/dashboard', 
+              requiresAuth: true 
+            },
+            {
+              label: t('mentorship.tabs.myProfile', 'My Profile'), 
+              to: `/mentorship/${user.id}`, 
+              requiresAuth: true 
+            }
+          ] : []),
         ],
       },
       {
@@ -110,7 +129,7 @@ export default function Header() {
         ],
       },
     ],
-    [t]
+    [t, user, hasMentorProfile]
   );
 
   const filteredSections = navSections
@@ -146,30 +165,53 @@ export default function Header() {
 
           {/* Desktop navigation */}
           <nav className="hidden md:flex items-center gap-1.5" aria-label="Main navigation">
-            {filteredSections.map((section) => (
-              <DropdownMenu key={section.key}>
-                <DropdownMenuTrigger asChild>
+            {filteredSections.map((section) => {
+              if (section.key === 'forum') {
+                return (
                   <Button
+                    key={section.key}
                     variant="ghost"
                     className="flex items-center gap-1 font-semibold"
-                    aria-haspopup="menu"
-                    aria-label={`${section.label} menu`}
+                    asChild
+                    aria-label={section.label}
                   >
-                    <span>{section.label}</span>
-                    <ChevronDown className="h-4 w-4" aria-hidden />
+                    <Link to={section.items[0]?.to ?? '/forum'}>{section.label}</Link>
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  {section.items.map((item) => (
-                    <DropdownMenuItem key={item.label} asChild>
-                      <Link to={item.to} aria-label={item.label}>
-                        {item.label}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ))}
+                );
+              }
+
+              return (
+                <DropdownMenu key={section.key}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-1 font-semibold"
+                      aria-haspopup="menu"
+                      aria-label={`${section.label} menu`}
+                    >
+                      <span>{section.label}</span>
+                      <ChevronDown className="h-4 w-4" aria-hidden />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    {section.items.map((item) => (
+                      <DropdownMenuItem key={item.label} asChild>
+                        <Link to={item.to} aria-label={item.label}>
+                          {item.label}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
+            })}
+            {user?.role === 'ROLE_ADMIN' && (
+              <Button variant="ghost" asChild className="font-semibold">
+                <Link to="/admin/reports" aria-label="Admin Panel">
+                  Admin
+                </Link>
+              </Button>
+            )}
           </nav>
         </div>
 

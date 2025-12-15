@@ -278,6 +278,7 @@ export interface MentorProfileDetailDTO {
  */
 export interface CreateMentorshipRequestDTO {
   mentorId: number;
+  motivation: string;
 }
 
 /**
@@ -289,10 +290,7 @@ export interface MentorshipRequestDTO {
   mentorId: string;
   status: string; // PENDING, ACCEPTED, REJECTED
   createdAt: string; // ISO 8601 date-time string
-  message?: string; // Optional: message from mentee
-  goals?: string[]; // Optional: learning goals
-  expectedDuration?: string; // Optional: expected mentorship duration
-  preferredTime?: string; // Optional: preferred meeting time
+  motivation: string; // Motivation message from mentee
 }
 
 /**
@@ -300,6 +298,7 @@ export interface MentorshipRequestDTO {
  */
 export interface RespondToRequestDTO {
   accept: boolean;
+  responseMessage: string;
 }
 
 export interface CreateRatingDTO {
@@ -368,5 +367,76 @@ export interface ResumeFileResponseDTO {
  * Request payload for creating a chat message
  */
 export interface CreateMessageDTO {
+  content: string;
+}
+
+// ============================================================================
+// FORUM
+// ============================================================================
+
+/**
+ * Forum comment response from API
+ */
+export interface ForumCommentResponseDTO {
+  id: number;
+  content: string;
+  authorId: number;
+  authorUsername: string;
+  postId: number;
+  parentCommentId?: number | null;
+  createdAt: string;
+  updatedAt: string;
+  upvoteCount: number;
+  downvoteCount: number;
+}
+
+/**
+ * Forum post response from API
+ */
+export interface ForumPostResponseDTO {
+  id: number;
+  title: string;
+  content: string;
+  authorId: number;
+  authorUsername: string;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+  commentCount: number;
+  upvoteCount: number;
+  downvoteCount: number;
+  comments: ForumCommentResponseDTO[];
+}
+
+/**
+ * Create post request payload
+ */
+export interface CreateForumPostRequest {
+  title: string;
+  content: string;
+  tags?: string[];
+}
+
+/**
+ * Update post request payload
+ */
+export interface UpdateForumPostRequest {
+  title?: string;
+  content?: string;
+  tags?: string[];
+}
+
+/**
+ * Create comment request payload
+ */
+export interface CreateForumCommentRequest {
+  content: string;
+  parentCommentId?: number | null;
+}
+
+/**
+ * Update comment request payload
+ */
+export interface UpdateForumCommentRequest {
   content: string;
 }

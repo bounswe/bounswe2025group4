@@ -12,7 +12,7 @@ import { useAuthActions } from '@shared/stores/authStore';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL?.endsWith('/api')
   ? import.meta.env.VITE_API_URL
-  : (import.meta.env.VITE_API_URL || '') + '/api';
+  : (import.meta.env.VITE_API_URL || 'http://localhost:8080') + '/api';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -76,7 +76,19 @@ export default function LoginPage() {
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        const responseData = error.response?.data as { message?: string; error?: string } | undefined;
+        const responseData = error.response?.data as { message?: string; error?: string; code?: string } | undefined;
+
+        // Check for banned account - prioritize this check
+        if (responseData?.code === 'ACCOUNT_BANNED' || responseData?.message?.toLowerCase().includes('banned')) {
+          const banReason = responseData?.message || 'Your account has been banned.';
+          const banMessage = banReason.includes('banned') 
+            ? banReason 
+            : `Your account has been banned. ${banReason ? `Reason: ${banReason}` : 'Please contact support for more information.'}`;
+          toast.error(banMessage, {
+            autoClose: 10000,
+          });
+          return;
+        }
 
         if (error.response?.status === 401) {
           // Could be wrong credentials or backend config issue
@@ -88,13 +100,35 @@ export default function LoginPage() {
           return;
         }
 
+        // Make error messages more descriptive
         if (responseData?.message) {
-          toast.error(responseData.message);
+          let descriptiveMessage = responseData.message;
+          const lowerMessage = responseData.message.toLowerCase();
+          
+          // Replace generic error codes with descriptive messages
+          if (lowerMessage.includes('spam')) {
+            descriptiveMessage = 'This action was flagged as spam. Please try again later or contact support if you believe this is an error.';
+          } else if (lowerMessage.includes('invalid') || lowerMessage.includes('credentials')) {
+            descriptiveMessage = 'Invalid username or password. Please check your credentials and try again.';
+          } else if (lowerMessage.includes('not found') || lowerMessage.includes('user not found')) {
+            descriptiveMessage = 'User not found. Please check your username and try again.';
+          } else if (lowerMessage.includes('email') && (lowerMessage.includes('verified') || lowerMessage.includes('verification'))) {
+            descriptiveMessage = 'Please verify your email address before logging in. Check your inbox for the verification link.';
+          } else if (lowerMessage === 'spam' || lowerMessage.trim() === 'spam') {
+            descriptiveMessage = 'This action was flagged as spam. Please try again later or contact support if you believe this is an error.';
+          }
+          
+          toast.error(descriptiveMessage);
           return;
         }
 
         if (responseData?.error) {
-          toast.error(responseData.error);
+          // Also check error field for spam
+          if (responseData.error.toLowerCase().includes('spam') || responseData.error.toLowerCase() === 'spam') {
+            toast.error('This action was flagged as spam. Please try again later or contact support if you believe this is an error.');
+          } else {
+            toast.error(responseData.error);
+          }
           return;
         }
 

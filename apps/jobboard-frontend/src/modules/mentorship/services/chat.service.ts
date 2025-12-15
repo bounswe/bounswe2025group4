@@ -17,18 +17,23 @@ export async function getChatHistory(conversationId: number): Promise<ChatMessag
   const response = await api.get<ChatMessageDTO[]>(`/chat/history/${conversationId}`);
   
   return response.data.map((dto): ChatMessage => ({
-    id: dto.id,
-    senderId: dto.senderId,
+    id: String(dto.id),
+    senderId: String(dto.senderId),
     senderName: dto.senderUsername || 'Unknown',
     senderAvatar: dto.senderAvatar,
     content: dto.content,
     timestamp: dto.timestamp,
+    // Use read status from backend exactly as it comes
     read: dto.read || false,
   }));
 }
 
+
 /**
  * WebSocket connection for real-time chat using STOMP over SockJS
+ * 
+ * WebSocket sadece "real-time mesaj push" için kullanılacak.
+ * Unread sayısı WS'den gelen event'e göre yönetilecek ama aktif ekranda unread artmayacak.
  */
 export class ChatWebSocket {
   private client: Client | null = null;
@@ -107,8 +112,8 @@ export class ChatWebSocket {
             try {
               const chatMessageDTO: ChatMessageDTO = JSON.parse(message.body);
               const chatMessage: ChatMessage = {
-                id: chatMessageDTO.id,
-                senderId: chatMessageDTO.senderId,
+                id: String(chatMessageDTO.id),
+                senderId: String(chatMessageDTO.senderId),
                 senderName: chatMessageDTO.senderUsername || 'Unknown',
                 senderAvatar: chatMessageDTO.senderAvatar,
                 content: chatMessageDTO.content,
@@ -159,6 +164,7 @@ export class ChatWebSocket {
     // Activate the client
     this.client.activate();
   }
+
 
   /**
    * Send a message via WebSocket
@@ -218,5 +224,30 @@ export class ChatWebSocket {
    */
   getConversationId(): number | null {
     return this.conversationId;
+  }
+
+  /**
+   * Send read sync to backend
+   * Marks all messages in the conversation as read
+   */
+  sendReadSync() {
+    if (!this.client?.active || !this.conversationId) {
+      console.warn('[ChatWebSocket] Cannot send read sync: not connected');
+      return;
+    }
+
+    try {
+      const destination = `/app/chat.readSync`;
+      const message = { conversationId: this.conversationId };
+
+      this.client.publish({
+        destination,
+        body: JSON.stringify(message),
+      });
+
+      console.log('[ChatWebSocket] Read sync sent:', { destination, conversationId: this.conversationId });
+    } catch (error) {
+      console.warn('[ChatWebSocket] Failed to send read sync:', error);
+    }
   }
 }

@@ -1,12 +1,14 @@
 import { Button } from "@shared/components/ui/button";
 import { Input } from "@shared/components/ui/input";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface CommentFormProps {
   onSubmit: (content: string) => void;
 }
 
 const CommentForm = ({ onSubmit }: CommentFormProps) => {
+  const { t } = useTranslation('common');
   const [content, setContent] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -22,9 +24,9 @@ const CommentForm = ({ onSubmit }: CommentFormProps) => {
       <Input
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="Write a comment..."
+        placeholder={t('forum.comment.addPlaceholder')}
       />
-      <Button type="submit">Comment</Button>
+      <Button type="submit">{t('forum.comment.submit')}</Button>
     </form>
   );
 };

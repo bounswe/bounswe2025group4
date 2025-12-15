@@ -11,6 +11,8 @@ import org.bounswe.jobboardbackend.workplace.model.EmployerWorkplace;
 import org.bounswe.jobboardbackend.workplace.model.enums.EthicalPolicy;
 import org.bounswe.jobboardbackend.workplace.model.enums.EmployerRole;
 import org.bounswe.jobboardbackend.workplace.repository.*;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.model.Role;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+
 @Service
 @RequiredArgsConstructor
 public class WorkplaceService {
@@ -36,9 +40,40 @@ public class WorkplaceService {
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewPolicyRatingRepository reviewPolicyRatingRepository;
+    private final ReviewReplyRepository reviewReplyRepository;
     private final ReviewService reviewService;
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final ActivityService activityService;
+    private final JobPostRepository jobPostRepository;
+
+    @Transactional
+    public void deleteUserData(Long userId) {
+        List<EmployerWorkplace> userWorkplaces = employerWorkplaceRepository.findByUser_Id(userId);
+
+        for (EmployerWorkplace ew : userWorkplaces) {
+            Long workplaceId = ew.getWorkplace().getId();
+
+            long employerCount = employerWorkplaceRepository.countByWorkplace_Id(workplaceId);
+
+            if (employerCount == 1) {
+                reviewReplyRepository.deleteAllByReview_Workplace_Id(workplaceId);
+                reviewRepository.deleteAllByWorkplace_Id(workplaceId);
+                jobPostRepository.deleteAllByWorkplaceId(workplaceId);
+                Workplace w = ew.getWorkplace();
+                if (w.getImageUrl() != null) {
+                    deleteImage(workplaceId, userId);
+                }
+                employerWorkplaceRepository.delete(ew);
+
+                workplaceRepository.delete(w);
+            }
+        }
+    }
+
+    private Double calcAvgRating(Long workplaceId) {
+        return reviewRepository.averageOverallByWorkplaceUsingPolicies(workplaceId);
+    }
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -159,8 +194,8 @@ public class WorkplaceService {
 
     // === CREATE ===
     @Transactional
-    public WorkplaceDetailResponse create(WorkplaceCreateRequest req, User currentUser) {
-        currentUser = userRepository.findById(currentUser.getId())
+    public WorkplaceDetailResponse create(WorkplaceCreateRequest req, Long currentUserId) {
+        User currentUser = userRepository.findById(currentUserId)
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
         if (!isEmployer(currentUser))
             throw new HandleException(ErrorCode.ACCESS_DENIED, "Employer role required");
@@ -185,6 +220,9 @@ public class WorkplaceService {
                 .role(EmployerRole.OWNER)
                 .build();
         employerWorkplaceRepository.save(ew);
+
+        activityService.logActivity(currentUser, ActivityType.CREATE_WORKPLACE,
+                wp.getId(), "Workplace");
 
         return toDetailResponse(wp, /* includeReviews */ false, /* reviewsLimit */ 0);
     }
@@ -244,11 +282,11 @@ public class WorkplaceService {
 
     // === UPDATE ===
     @Transactional
-    public WorkplaceDetailResponse update(Long id, WorkplaceUpdateRequest req, User currentUser) {
+    public WorkplaceDetailResponse update(Long id, WorkplaceUpdateRequest req, Long currentUserId) {
         Workplace wp = workplaceRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
 
-        assertEmployer(id, currentUser.getId());
+        assertEmployer(id, currentUserId);
         // TODO: bu şirkette employer olan herkes yapabiliyor bu işi, eğer sadece iş
         // yerini oluşturan kişi yapabilsin dersek değiştiririz
 
@@ -290,10 +328,10 @@ public class WorkplaceService {
 
     // === DELETE (soft) ===
     @Transactional
-    public void softDelete(Long id, User currentUser) {
+    public void softDelete(Long id, Long currentUserId) {
         Workplace wp = workplaceRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
-        assertOwner(id, currentUser.getId());
+        assertOwner(id, currentUserId);
         wp.setDeleted(true);
         workplaceRepository.save(wp);
     }
@@ -393,10 +431,6 @@ public class WorkplaceService {
                 .createdAt(wp.getCreatedAt())
                 .updatedAt(wp.getUpdatedAt())
                 .build();
-    }
-
-    private Double calcAvgRating(Long workplaceId) {
-        return reviewRepository.averageOverallByWorkplaceUsingPolicies(workplaceId);
     }
 
     private static Double oneDecimal(Double x) {

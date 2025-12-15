@@ -808,3 +808,52 @@ export const applicationHandlers = [
   }),
 ];
 
+// ============================================================================
+// DASHBOARD HANDLERS
+// ============================================================================
+
+export const dashboardHandlers = [
+  // Get community dashboard statistics
+  http.get(`${API_BASE_URL}/public/dashboard`, async () => {
+    return HttpResponse.json(
+      {
+        // User statistics
+        totalUsers: 100,
+        totalEmployers: 20,
+        totalJobSeekers: 80,
+
+        // Forum statistics
+        totalForumPosts: 25,
+        totalForumComments: 10,
+        newForumPostsThisWeek: 3,
+
+        // Job post statistics
+        totalJobPosts: 50,
+        remoteJobsCount: 20,
+        inclusiveJobsCount: 15,
+        newJobsThisWeekCount: 5,
+
+        // Application statistics
+        totalApplications: 200,
+        totalPendingApplications: 50,
+        totalAcceptedApplications: 120,
+        totalRejectedApplications: 30,
+
+        // Mentorship statistics
+        totalMentors: 30,
+        totalMentorshipRequests: 100,
+        acceptedMentorships: 60,
+        pendingMentorshipRequests: 30,
+        completedMentorships: 40,
+        declinedMentorshipRequests: 10,
+        closedMentorshipRequests: 0,
+        totalMentorReviews: 50,
+
+        // Resume review statistics
+        totalResumeReviews: 25,
+      },
+      { status: 200 }
+    );
+  }),
+];
+

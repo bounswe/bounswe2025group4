@@ -31,4 +31,6 @@ public interface EmployerWorkplaceRepository extends JpaRepository<EmployerWorkp
     void deleteByWorkplace_IdAndUser_Id(Long workplaceId, Long userId);
 
     void deleteAllByWorkplace_Id(Long workplaceId);
+
+    void deleteByUser_Id(Long userId);
 }

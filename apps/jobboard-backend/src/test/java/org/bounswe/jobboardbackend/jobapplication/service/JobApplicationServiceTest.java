@@ -42,14 +42,24 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class JobApplicationServiceTest {
 
-    @Mock private JobApplicationRepository applicationRepository;
-    @Mock private UserRepository userRepository;
-    @Mock private JobPostRepository jobPostRepository;
-    @Mock private WorkplaceService workplaceService;
-    @Mock private EmployerWorkplaceRepository employerWorkplaceRepository;
-    @Mock private WorkplaceRepository workplaceRepository;
-    @Mock private ApplicationEventPublisher eventPublisher;
-    @Mock private JobApplicationNotifier notifier;
+    @Mock
+    private JobApplicationRepository applicationRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private JobPostRepository jobPostRepository;
+    @Mock
+    private WorkplaceService workplaceService;
+    @Mock
+    private EmployerWorkplaceRepository employerWorkplaceRepository;
+    @Mock
+    private WorkplaceRepository workplaceRepository;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private JobApplicationNotifier notifier;
+    @Mock
+    private org.bounswe.jobboardbackend.activity.service.ActivityService activityService;
 
     @InjectMocks
     private JobApplicationService jobApplicationService;

@@ -47,8 +47,8 @@ export default function HomePage() {
   };
 
   const renderStatsSkeleton = () => (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4" aria-hidden="true">
-      {Array.from({ length: 4 }).map((_, index) => (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5" aria-hidden="true">
+      {Array.from({ length: 5 }).map((_, index) => (
         <Card key={`stats-skeleton-${index}`} className="overflow-hidden">
           <CardHeader className="pb-2">
             <div className="w-12 h-12 bg-primary/10 rounded-lg mb-4 animate-pulse" />
@@ -217,7 +217,7 @@ export default function HomePage() {
           {showStatsSkeleton && renderStatsSkeleton()}
 
           {stats && (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
               {/* Users Stats Card */}
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-2">
@@ -314,6 +314,38 @@ export default function HomePage() {
                       <span>{t('home.stats.applications.accepted')}</span>
                       <span className="font-medium text-green-600">
                         {formatNumber(stats.totalAcceptedApplications)}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Forum Stats Card */}
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-2">
+                  <div
+                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                    aria-hidden="true"
+                  >
+                    <MessageCircle className="text-primary size-6" />
+                  </div>
+                  <CardTitle className="text-lg">{t('home.stats.forum.title')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-primary mb-3">
+                    {formatNumber(stats.totalForumPosts)}
+                  </div>
+                  <div className="space-y-1 text-sm text-muted-foreground">
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.forum.comments')}</span>
+                      <span className="font-medium text-foreground">
+                        {formatNumber(stats.totalForumComments)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>{t('home.stats.forum.newThisWeek')}</span>
+                      <span className="font-medium text-green-600">
+                        +{formatNumber(stats.newForumPostsThisWeek)}
                       </span>
                     </div>
                   </div>
@@ -461,4 +493,3 @@ export default function HomePage() {
     </div>
   );
 }
-
