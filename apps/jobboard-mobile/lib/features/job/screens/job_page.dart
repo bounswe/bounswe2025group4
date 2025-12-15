@@ -420,6 +420,7 @@ class _JobPageState extends State<JobPage> with SingleTickerProviderStateMixin {
 
     return Scaffold(
       appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.jobPage_title),
         automaticallyImplyLeading: false,
         actions: [
           // Conditionally show the "My Applications" button for job seekers

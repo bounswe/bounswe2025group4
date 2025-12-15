@@ -8,6 +8,8 @@ import '../mentorship/screens/mentorship_page.dart';
 import '../profile/screens/profile_page.dart';
 import '../workplaces/screens/workplaces_page.dart';
 import '../../core/providers/quote_provider.dart';
+import '../../core/providers/auth_provider.dart';
+import '../../core/providers/notification_provider.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -65,7 +67,38 @@ class _MainScaffoldState extends State<MainScaffold> with TickerProviderStateMix
     // Fetch a random quote when the main scaffold loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<QuoteProvider>(context, listen: false).fetchRandomQuote();
+      
+      // Connect to notification WebSocket
+      _connectNotificationWebSocket();
     });
+  }
+  
+  /// Connect to notification WebSocket if user is logged in
+  void _connectNotificationWebSocket() {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final notificationProvider = Provider.of<NotificationProvider>(
+      context,
+      listen: false,
+    );
+    
+    if (authProvider.isLoggedIn &&
+        authProvider.token != null &&
+        authProvider.currentUser?.username != null) {
+      print('[MainScaffold] Connecting notification WebSocket...');
+      notificationProvider.connectWebSocket(
+        authProvider.token!,
+        authProvider.currentUser!.username,
+      );
+      
+      // Fetch notifications immediately if WebSocket is already connected
+      // This handles the case when user logs in while WebSocket is already active
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          print('[MainScaffold] Fetching notifications after login...');
+          notificationProvider.fetchNotifications();
+        }
+      });
+    }
   }
 
   @override
@@ -83,9 +116,6 @@ class _MainScaffoldState extends State<MainScaffold> with TickerProviderStateMix
     // print("Building MainScaffold. Current user role: $userRole"); // Debug print
 
     return Scaffold(
-      // AppBar can be added here if common to all pages,
-      // or within each individual page if they differ.
-      // appBar: AppBar(title: Text('Job Platform')),
       body: Center(
         // Display the widget corresponding to the selected index
         child: _widgetOptions.elementAt(_selectedIndex),

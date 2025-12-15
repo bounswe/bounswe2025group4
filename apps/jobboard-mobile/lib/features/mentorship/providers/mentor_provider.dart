@@ -250,9 +250,13 @@ class MentorProvider with ChangeNotifier {
     try {
       _currentUserMentorProfile = await _apiService.getMentorProfile(userId);
     } catch (e) {
-      // If backend returns 404 -> user is not a mentor yet
-      if (e.toString().contains('404')) {
+      // If backend returns 404 or "not found" -> user is not a mentor yet (this is normal)
+      final errorString = e.toString().toLowerCase();
+      if (errorString.contains('404') || 
+          errorString.contains('not found') ||
+          errorString.contains('mentor profile not found')) {
         _currentUserMentorProfile = null;
+        // This is normal for mentees, don't log as error
       } else {
         _error = e.toString();
         debugPrint('Error fetching current user mentor profile: $_error');
