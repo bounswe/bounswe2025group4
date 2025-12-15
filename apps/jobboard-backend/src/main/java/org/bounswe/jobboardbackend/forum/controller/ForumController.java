@@ -1,6 +1,7 @@
 package org.bounswe.jobboardbackend.forum.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,6 +39,14 @@ public class ForumController {
                                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
         }
 
+        private Long getUserIdOrNull(UserDetails userDetails) {
+                if (userDetails == null) {
+                        return null;
+                }
+                User user = getUser(userDetails);
+                return user.getId();
+        }
+
         @Operation(summary = "Create a Post", description = "Creates a new forum post. Authentication required.")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "201", description = "Post created successfully"),
@@ -51,23 +60,31 @@ public class ForumController {
                 return ResponseEntity.status(HttpStatus.CREATED).body(forumService.createPost(user, request));
         }
 
-        @Operation(summary = "List All Posts", description = "Retrieves all forum posts relative to the creation date.")
+        @Operation(summary = "List All Posts", description = "Retrieves all forum posts relative to the creation date. Includes user vote status if authenticated.")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Posts retrieved successfully")
         })
         @GetMapping("/posts")
-        public ResponseEntity<List<PostResponse>> findAllPosts() {
-                return ResponseEntity.ok(forumService.findAllPosts());
+        public ResponseEntity<List<PostResponse>> findPosts(
+                        @Parameter(description = "Optional user ID to filter posts by a specific user. If not provided, returns all posts.") @RequestParam(required = false) Long userId,
+                        @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+                Long currentUserId = getUserIdOrNull(userDetails);
+                if (userId != null) {
+                        return ResponseEntity.ok(forumService.findPostsByUserId(userId, currentUserId));
+                }
+                return ResponseEntity.ok(forumService.findAllPosts(currentUserId));
         }
 
-        @Operation(summary = "Get Post by ID", description = "Retrieves a specific forum post by its ID.")
+        @Operation(summary = "Get Post by ID", description = "Retrieves a specific forum post by its ID. Includes user vote status if authenticated.")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Post retrieved successfully"),
                         @ApiResponse(responseCode = "404", description = "Post not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{\"timestamp\": \"2023-10-01T12:00:00\", \"status\": 404, \"error\": \"Not Found\", \"code\": \"NOT_FOUND\", \"message\": \"Post not found\", \"path\": \"/api/forum/posts/1\" }")))
         })
         @GetMapping("/posts/{id}")
-        public ResponseEntity<PostResponse> findPostById(@PathVariable Long id) {
-                return ResponseEntity.ok(forumService.findPostById(id));
+        public ResponseEntity<PostResponse> findPostById(@PathVariable Long id,
+                        @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+                Long currentUserId = getUserIdOrNull(userDetails);
+                return ResponseEntity.ok(forumService.findPostById(id, currentUserId));
         }
 
         @Operation(summary = "Update a Post", description = "Updates an existing forum post. Only the author can update their post.")

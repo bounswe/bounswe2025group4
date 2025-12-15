@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import org.bounswe.jobboardbackend.forum.model.ForumPost;
+import org.bounswe.jobboardbackend.forum.repository.ForumPostUpvoteRepository;
+import org.bounswe.jobboardbackend.forum.repository.ForumPostDownvoteRepository;
 
 import java.time.Instant;
 import java.util.List;
@@ -48,9 +50,30 @@ public class PostResponse {
     @Schema(description = "List of comments on the post")
     private List<CommentResponse> comments;
 
+    @Schema(description = "Whether the current user has upvoted this post (null if user not authenticated)")
+    private Boolean hasUserUpvoted;
+
+    @Schema(description = "Whether the current user has downvoted this post (null if user not authenticated)")
+    private Boolean hasUserDownvoted;
+
     public static PostResponse from(ForumPost post, long upvoteCount, long downvoteCount,
             List<CommentResponse> comments) {
+        return from(post, upvoteCount, downvoteCount, comments, null, null, null);
+    }
+
+    public static PostResponse from(ForumPost post, long upvoteCount, long downvoteCount,
+            List<CommentResponse> comments, Long userId,
+            ForumPostUpvoteRepository upvoteRepo, ForumPostDownvoteRepository downvoteRepo) {
         boolean isBanned = Boolean.TRUE.equals(post.getAuthor().getIsBanned());
+
+        // Check user vote status if userId and repositories provided
+        Boolean hasUpvoted = null;
+        Boolean hasDownvoted = null;
+        if (userId != null && upvoteRepo != null && downvoteRepo != null) {
+            hasUpvoted = upvoteRepo.findByUserIdAndPostId(userId, post.getId()).isPresent();
+            hasDownvoted = downvoteRepo.findByUserIdAndPostId(userId, post.getId()).isPresent();
+        }
+
         return PostResponse.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -64,6 +87,8 @@ public class PostResponse {
                 .upvoteCount(upvoteCount)
                 .downvoteCount(downvoteCount)
                 .comments(comments)
+                .hasUserUpvoted(hasUpvoted)
+                .hasUserDownvoted(hasDownvoted)
                 .build();
     }
 }
