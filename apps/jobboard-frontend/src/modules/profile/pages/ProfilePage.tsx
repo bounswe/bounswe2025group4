@@ -15,6 +15,7 @@ import { SkillsSection } from '@modules/profile/components/profile/SkillsSection
 import { InterestsSection } from '@modules/profile/components/profile/InterestsSection';
 import { ActivityTab } from '@modules/profile/components/profile/ActivityTab';
 import { PostsTab } from '@modules/profile/components/profile/PostsTab';
+import { BadgesSection } from '@modules/profile/components/badges/BadgesSection';
 import {
   EditBioModal,
   ExperienceModal,
@@ -41,6 +42,7 @@ import {
   useSaveSkillMutationWithOptimistic,
   useUpdateBioMutationWithOptimistic,
 } from '@modules/profile/services/profile.service';
+import { useMyBadgesQuery, useUserBadgesQuery } from '@modules/profile/services/badge.service';
 import { profileKeys } from '@shared/lib/query-keys';
 import { normalizeApiError } from '@shared/utils/error-handler';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
@@ -71,6 +73,10 @@ export default function ProfilePage() {
   const myProfileQuery = useMyProfileQuery(isOwner);
   const publicProfileQuery = usePublicProfileQuery(viewedUserId, !isOwner);
   const profile = (isOwner ? myProfileQuery.data : publicProfileQuery.data) as Profile | PublicProfile | undefined;
+
+  const myBadgesQuery = useMyBadgesQuery(isOwner);
+  const userBadgesQuery = useUserBadgesQuery(viewedUserId, !isOwner);
+  const badgesQuery = isOwner ? myBadgesQuery : userBadgesQuery;
 
   const mockActivity: Activity[] = useMemo(() => [
     {
@@ -493,7 +499,7 @@ export default function ProfilePage() {
                 <span>•</span>
                 <span>42 {t('profile.header.posts')}</span>
                 <span>•</span>
-                <span>5 {t('profile.header.badges')}</span>
+                <span>{badgesQuery.data?.length || 0} {t('profile.header.badges')}</span>
               </div>
             </div>
           </div>
@@ -611,11 +617,18 @@ export default function ProfilePage() {
                       openModal('interest', interest);
                     }}
                   />
+
+                  <BadgesSection badges={badgesQuery.data} isLoading={badgesQuery.isLoading} />
                 </>
               ) : (
-                <div className="text-muted-foreground text-sm">
-                  {t('profile.public.note')}
-                </div>
+                <>
+                  <BadgesSection
+                    badges={badgesQuery.data}
+                    userId={viewedUserId}
+                    isPublicView
+                    isLoading={badgesQuery.isLoading}
+                  />
+                </>
               )}
             </div>
           </div>

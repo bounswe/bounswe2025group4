@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { setupServer } from 'msw/node';
-import { authHandlers, profileHandlers, API_BASE_URL, jobHandlers, applicationHandlers, dashboardHandlers } from './handlers';
+import { authHandlers, profileHandlers, badgeHandlers, API_BASE_URL, jobHandlers, applicationHandlers, dashboardHandlers } from './handlers';
 import { workplaceHandlers } from './workplace-handlers';
 import { mentorshipHandlers } from './mentorship-handlers';
 
@@ -31,6 +31,7 @@ vi.mock('@shared/lib/i18n', () => ({
 export const server = setupServer(
   ...authHandlers,
   ...profileHandlers,
+  ...badgeHandlers,
   ...workplaceHandlers,
   ...jobHandlers,
   ...applicationHandlers,
