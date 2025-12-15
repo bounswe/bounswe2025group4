@@ -773,7 +773,6 @@ class ReviewServiceTest {
                 when(reviewReplyRepository.findByReview_Id(300L)).thenReturn(Optional.of(reply));
                 when(reviewPolicyRatingRepository.findByReview_Id(300L))
                                 .thenReturn(List.of(rating1));
-                when(workplaceRepository.findById(workplaceId)).thenReturn(Optional.of(wp));
 
                 reviewService.deleteReview(workplaceId, 300L, user.getId(), false);
 
@@ -948,7 +947,6 @@ class ReviewServiceTest {
                 when(reviewReplyRepository.findByReview_Id(401L)).thenReturn(Optional.of(reply));
                 when(reviewPolicyRatingRepository.findByReview_Id(401L))
                                 .thenReturn(List.of(rating));
-                when(workplaceRepository.findById(workplaceId)).thenReturn(Optional.of(wp));
 
                 reviewService.deleteReview(workplaceId, 401L, admin.getId(), true);
 

@@ -11,6 +11,36 @@ vi.mock('react-toastify', () => ({
   },
 }));
 
+// Mock react-i18next
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'report.messageLabel': 'Explain why you are reporting this',
+        'report.messagePlaceholder': 'Please provide details...',
+        'report.errorEmpty': 'Please enter a message explaining the report.',
+        'report.errorFailed': 'Failed to submit report. Please try again.',
+        'report.success': 'Thank you, your report has been submitted.',
+        'report.type': 'Type',
+        'report.author': 'Author',
+        'report.reason': 'Reason',
+        'report.reasons.fake': 'Fake',
+        'report.reasons.spam': 'Spam',
+        'report.reasons.offensive': 'Offensive',
+        'report.reasons.other': 'Other',
+        'report.submit': 'Submit Report',
+        'report.submitting': 'Submitting...',
+        'common.cancel': 'Cancel',
+        'common.loading': 'Loading...',
+      };
+      return translations[key] || key;
+    },
+    i18n: {
+      changeLanguage: () => new Promise(() => {}),
+    },
+  }),
+}));
+
 describe('ReportModal', () => {
   const defaultProps = {
     open: true,

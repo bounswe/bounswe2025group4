@@ -1,6 +1,5 @@
 package org.bounswe.jobboardbackend.mentorship.service;
 
-
 import org.bounswe.jobboardbackend.mentorship.dto.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,4 +27,6 @@ public interface MentorshipService {
     void completeMentorship(Long resumeReviewId, Authentication auth);
     void closeMentorship(Long resumeReviewId, Authentication auth);
     List<MentorshipRequestDTO> getMentorshipRequestsOfMentor(Long mentorId, Long userId);
+
+    void deleteUserData(Long userId);
 }

@@ -72,4 +72,9 @@ public class NotificationService {
         n.setUpdatedAt(now);
         repository.save(n);
     }
+
+        @org.springframework.transaction.annotation.Transactional
+        public void deleteUserData(String username) {
+                repository.deleteByUsername(username);
+        }
 }

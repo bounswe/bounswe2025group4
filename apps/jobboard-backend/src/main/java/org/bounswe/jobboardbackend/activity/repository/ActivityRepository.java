@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
     Page<Activity> findByActorIdOrderByCreatedAtDesc(Long actorId, Pageable pageable);
+
+    void deleteByActorId(Long actorId);
 }

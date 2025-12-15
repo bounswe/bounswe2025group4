@@ -74,8 +74,9 @@ public class CommunityDashboardService {
         // 5. Forum Stats
         long forumPosts = forumPostRepository.count();
         long forumComments = forumCommentRepository.count();
-        long newForumPostsThisWeek = forumPostRepository
-                .countByCreatedAtAfter(java.time.Instant.now().minus(java.time.Duration.ofDays(7)));
+        long newForumPostsThisWeek = forumPostRepository.countByCreatedAtAfter(
+                java.time.Instant.now().minus(java.time.Duration.ofDays(7)));
+
 
         // update the cached stats
         this.cachedStats = DashboardStatsResponse.builder()

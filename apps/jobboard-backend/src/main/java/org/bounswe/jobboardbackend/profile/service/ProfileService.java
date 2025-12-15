@@ -132,6 +132,10 @@ public class ProfileService {
         return toProfileDto(profile);
     }
 
+    public void deleteProfileByUserId(Long userId) {
+        profileRepository.deleteByUserId(userId);
+    }
+
     @Transactional(readOnly = true)
     public PublicProfileResponseDto getPublicProfile(Long userId) {
         Profile p = profileRepository.findByUserId(userId)

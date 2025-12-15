@@ -18,4 +18,6 @@ public interface ForumPostRepository extends JpaRepository<ForumPost, Long> {
      * Used for dashboard statistics (e.g., posts this week).
      */
     long countByCreatedAtAfter(java.time.Instant date);
+
+    void deleteByAuthorId(Long authorId);
 }

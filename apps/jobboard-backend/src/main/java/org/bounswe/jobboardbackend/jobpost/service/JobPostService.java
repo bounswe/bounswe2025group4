@@ -253,4 +253,9 @@ public class JobPostService {
         }
     }
 
+    @Transactional
+    public void deleteUserData(Long userId) {
+        jobPostRepository.deleteByEmployerId(userId);
+    }
+
 }

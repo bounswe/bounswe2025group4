@@ -116,7 +116,14 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
     final formKey = GlobalKey<FormState>();
 
     String? selectedReason;
-    final reasons = ['Fake_Review', 'Spam', 'Offensive', 'Other'];
+    final reasons = [
+      'SPAM',
+      'FAKE',
+      'OFFENSIVE',
+      'HARASSMENT',
+      'MISINFORMATION',
+      'OTHER',
+    ];
 
     final result = await showDialog<bool>(
       context: context,
@@ -145,9 +152,18 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
                             ),
                             items:
                                 reasons.map((reason) {
+                                  // Convert UPPERCASE to Title Case for display
+                                  final displayText = reason
+                                      .split('_')
+                                      .map(
+                                        (word) =>
+                                            word[0] +
+                                            word.substring(1).toLowerCase(),
+                                      )
+                                      .join(' ');
                                   return DropdownMenuItem(
                                     value: reason,
-                                    child: Text(reason.replaceAll('_', ' ')),
+                                    child: Text(displayText),
                                   );
                                 }).toList(),
                             onChanged: (value) {
@@ -208,9 +224,9 @@ class _ReviewDetailPageState extends State<ReviewDetailPage> {
     if (_workplaceProvider == null) return;
 
     try {
-      final success = await _workplaceProvider!.reportWorkplaceReview(
-        workplaceId: widget.workplaceId,
-        reviewId: _review!.id,
+      final success = await _workplaceProvider!.reportContent(
+        entityType: 'REVIEW',
+        entityId: _review!.id,
         reasonType: selectedReason!,
         description: descriptionController.text.trim(),
       );
