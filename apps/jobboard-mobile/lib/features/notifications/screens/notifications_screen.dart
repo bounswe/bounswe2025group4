@@ -8,6 +8,7 @@ import '../../../core/services/api_service.dart';
 import '../../job/screens/job_details_screen.dart';
 import '../../mentorship/screens/direct_message_screen.dart';
 import '../../forum/screens/thread_detail_screen.dart';
+import '../../profile/screens/badges_page.dart';
 import '../widgets/notification_item.dart';
 
 /// Screen for displaying all notifications
@@ -270,7 +271,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           break;
 
         case NotificationType.AWARDED_BADGE:
-          _navigateToProfileTab(context);
+          _navigateToBadgesPage(context);
           break;
 
         case NotificationType.GENERAL:
@@ -343,6 +344,28 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   void _navigateToProfileTab(BuildContext context) {
     Provider.of<TabNavigationProvider>(context, listen: false).changeTab(3);
     Navigator.pop(context);
+  }
+
+  /// Navigate to badges page in profile tab
+  void _navigateToBadgesPage(BuildContext context) {
+    // First navigate to profile tab
+    Provider.of<TabNavigationProvider>(context, listen: false).changeTab(3);
+    // Close notifications screen
+    Navigator.pop(context);
+    // Navigate to badges page after a short delay to ensure profile tab is loaded
+    // We use WidgetsBinding to ensure the widget tree is rebuilt after pop
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Get the navigator from the current context
+      // After pop, we should be in MainScaffold context
+      final navigator = Navigator.maybeOf(context);
+      if (navigator != null) {
+        navigator.push(
+          MaterialPageRoute(
+            builder: (context) => const BadgesPage(),
+          ),
+        );
+      }
+    });
   }
 
   /// Navigate to workplaces tab in MainScaffold (index 4)
