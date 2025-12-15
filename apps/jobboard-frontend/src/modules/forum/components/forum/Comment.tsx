@@ -133,6 +133,7 @@ const Comment = ({ comment, isOwner = false, onEdit, onDelete, onLike, onDislike
           />
         </div>
       </CardContent>
+      </Card>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
