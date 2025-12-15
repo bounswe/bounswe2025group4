@@ -123,6 +123,11 @@ public class AuthController {
         return new ResponseEntity<>(authService.getUserDetails(auth), HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete Account", description = "Permanently deletes the currently authenticated user's account.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Account deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 401, \"error\": \"Unauthorized\", \"code\": \"USER_UNAUTHORIZED\", \"message\": \"Full authentication is required\", \"path\": \"/api/auth/me\" }")))
+    })
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/me")
     public ResponseEntity<MessageResponse> deleteAccount(Authentication auth) {
