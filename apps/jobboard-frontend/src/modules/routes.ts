@@ -11,6 +11,7 @@ import { mentorshipRoutes } from './mentorship/routes';
 import { forumRoutes } from './forum/routes';
 import { profileRoutes } from './profile/routes';
 import { adminRoutes } from './admin/routes';
+import { infoRoutes } from './info/routes';
 
 export const featureRoutes: RouteObject[] = [
   ...homeRoutes,
@@ -24,5 +25,6 @@ export const featureRoutes: RouteObject[] = [
   ...profileRoutes,
   ...adminRoutes,
   ...authRoutes,
+  ...infoRoutes,
 ];
 

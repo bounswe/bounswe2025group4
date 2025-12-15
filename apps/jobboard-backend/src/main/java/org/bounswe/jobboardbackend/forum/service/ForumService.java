@@ -67,16 +67,38 @@ public class ForumService {
 
     @Transactional(readOnly = true)
     public List<PostResponse> findAllPosts() {
+        return findAllPosts(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponse> findAllPosts(Long currentUserId) {
         return postRepository.findAll().stream()
-                .map(this::toPostResponse)
+                .map(post -> toPostResponse(post, currentUserId))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponse> findPostsByUserId(Long userId) {
+        return findPostsByUserId(userId, null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponse> findPostsByUserId(Long userId, Long currentUserId) {
+        return postRepository.findAllByAuthorIdOrderByCreatedAtDesc(userId).stream()
+                .map(post -> toPostResponse(post, currentUserId))
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public PostResponse findPostById(Long id) {
+        return findPostById(id, null);
+    }
+
+    @Transactional(readOnly = true)
+    public PostResponse findPostById(Long id, Long currentUserId) {
         ForumPost post = postRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Post not found"));
-        return toPostResponse(post);
+        return toPostResponse(post, currentUserId);
     }
 
     @Transactional
@@ -245,18 +267,26 @@ public class ForumService {
     }
 
     private CommentResponse toCommentResponse(ForumComment comment) {
+        return toCommentResponse(comment, null);
+    }
+
+    private CommentResponse toCommentResponse(ForumComment comment, Long userId) {
         long upvotes = upvoteRepository.countByCommentId(comment.getId());
         long downvotes = downvoteRepository.countByCommentId(comment.getId());
-        return CommentResponse.from(comment, upvotes, downvotes);
+        return CommentResponse.from(comment, upvotes, downvotes, userId, upvoteRepository, downvoteRepository);
     }
 
     private PostResponse toPostResponse(ForumPost post) {
+        return toPostResponse(post, null);
+    }
+
+    private PostResponse toPostResponse(ForumPost post, Long userId) {
         long upvotes = postUpvoteRepository.countByPostId(post.getId());
         long downvotes = postDownvoteRepository.countByPostId(post.getId());
         List<CommentResponse> comments = post.getComments().stream()
-                .map(this::toCommentResponse)
+                .map(comment -> toCommentResponse(comment, userId))
                 .collect(Collectors.toList());
-        return PostResponse.from(post, upvotes, downvotes, comments);
+        return PostResponse.from(post, upvotes, downvotes, comments, userId, postUpvoteRepository, postDownvoteRepository);
     }
 
     @Transactional

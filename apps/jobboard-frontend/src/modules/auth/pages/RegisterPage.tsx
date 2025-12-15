@@ -409,8 +409,8 @@ export default function RegisterPage() {
                 <Trans
                   i18nKey="auth.register.termsLabel"
                   components={{
-                    TermsLink: <a href="/terms" className="text-primary underline" />,
-                    PrivacyLink: <a href="/privacy" className="text-primary underline" />,
+                    TermsLink: <Link to="/terms" className="text-primary underline" />,
+                    PrivacyLink: <Link to="/privacy" className="text-primary underline" />,
                   }}
                 />
               </label>

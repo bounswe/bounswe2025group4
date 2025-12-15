@@ -1,7 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@shared/components/ui/button';
 import heroBackground from '@/assets/hero-background.jpg';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@shared/components/ui/card';
 import { Input } from '@shared/components/ui/input';
 import { useMediaQuery } from '@shared/hooks/useMediaQuery';
 import {
@@ -18,13 +24,18 @@ import {
 import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getDashboardStats, type DashboardStatsResponse } from '@modules/employer/services/dashboard.service';
+import {
+  getDashboardStats,
+  type DashboardStatsResponse,
+} from '@modules/employer/services/dashboard.service';
 import { dashboardKeys } from '@shared/lib/query-keys';
+import { useAuth } from '@/modules/auth/contexts/AuthContext';
 
 export default function HomePage() {
   const isMediumOrLarger = useMediaQuery('(min-width: 768px)');
   const navigate = useNavigate();
   const { t } = useTranslation('common');
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const {
     data: stats,
@@ -81,11 +92,11 @@ export default function HomePage() {
   const showStatsError = isStatsError && !stats;
 
   return (
-    <div className="min-h-screen">
+    <div>
       {/* Hero Section */}
       <section
         aria-label={t('home.hero.searchLabel')}
-        className="relative z-10 min-h-[500px] flex items-center justify-center bg-gradient-to-r from-slate-900 to-slate-700"
+        className="relative z-10 min-h-[480px] flex items-center justify-center bg-gradient-to-r from-slate-900 to-slate-700"
       >
         {/* Background overlay */}
         <div
@@ -141,7 +152,7 @@ export default function HomePage() {
             </form>
 
             {/* Non-profit opportunities button */}
-            <div className="mt-6 flex justify-center">
+            <div className="mt-8 flex justify-center">
               <div
                 className="group relative cursor-pointer"
                 onClick={() => navigate('/nonprofit-jobs')}
@@ -194,7 +205,7 @@ export default function HomePage() {
         <section
           id="stats-section"
           aria-labelledby="stats-heading"
-          className="container mx-auto px-4 py-16"
+          className="container mx-auto px-4 py-12"
         >
           <div className="text-center mb-12">
             <h2 id="stats-heading" className="text-3xl md:text-4xl font-bold mb-4">
@@ -208,7 +219,11 @@ export default function HomePage() {
           {showStatsError && (
             <div className="text-center py-12">
               <p className="text-muted-foreground mb-4">{t('home.stats.error')}</p>
-              <Button onClick={() => void refetchStats()} variant="outline" disabled={isStatsFetching}>
+              <Button
+                onClick={() => void refetchStats()}
+                variant="outline"
+                disabled={isStatsFetching}
+              >
                 {t('home.stats.retry')}
               </Button>
             </div>
@@ -393,102 +408,106 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* Features Section */}
-        <section aria-labelledby="features-heading" className="bg-muted/30 py-16">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 id="features-heading" className="text-3xl md:text-4xl font-bold mb-4">
-                {t('home.features.title')}
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t('home.features.subtitle')}
-              </p>
-            </div>
+        {!user && (
+          <>
+            {/* Features Section */}
+            <section aria-labelledby="features-heading" className="bg-muted/30 py-12">
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-12">
+                  <h2 id="features-heading" className="text-3xl md:text-4xl font-bold mb-4">
+                    {t('home.features.title')}
+                  </h2>
+                  <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                    {t('home.features.subtitle')}
+                  </p>
+                </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-                <CardHeader>
-                  <div
-                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
-                    aria-hidden="true"
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
+                    <CardHeader>
+                      <div
+                        className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                        aria-hidden="true"
+                      >
+                        <Heart className="text-primary size-6" />
+                      </div>
+                      <CardTitle>{t('home.features.ethical.title')}</CardTitle>
+                      <CardDescription>{t('home.features.ethical.description')}</CardDescription>
+                    </CardHeader>
+                  </Card>
+
+                  <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
+                    <CardHeader>
+                      <div
+                        className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                        aria-hidden="true"
+                      >
+                        <Globe className="text-primary size-6" />
+                      </div>
+                      <CardTitle>{t('home.features.inclusive.title')}</CardTitle>
+                      <CardDescription>{t('home.features.inclusive.description')}</CardDescription>
+                    </CardHeader>
+                  </Card>
+
+                  <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
+                    <CardHeader>
+                      <div
+                        className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                        aria-hidden="true"
+                      >
+                        <UserCheck className="text-primary size-6" />
+                      </div>
+                      <CardTitle>{t('home.features.mentorship.title')}</CardTitle>
+                      <CardDescription>{t('home.features.mentorship.description')}</CardDescription>
+                    </CardHeader>
+                  </Card>
+
+                  <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
+                    <CardHeader>
+                      <div
+                        className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
+                        aria-hidden="true"
+                      >
+                        <MessageCircle className="text-primary size-6" />
+                      </div>
+                      <CardTitle>{t('home.features.community.title')}</CardTitle>
+                      <CardDescription>{t('home.features.community.description')}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </div>
+              </div>
+            </section>
+
+            {/* CTA Section - Only visible to unauthorized users */}
+            <section aria-labelledby="cta-heading" className="bg-primary/5 py-16">
+              <div className="container mx-auto px-4 text-center">
+                <h2 id="cta-heading" className="text-3xl md:text-4xl font-bold mb-4">
+                  {t('home.cta.title')}
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+                  {t('home.cta.description')}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button
+                    size="lg"
+                    onClick={() => navigate('/register')}
+                    className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <Heart className="text-primary size-6" />
-                  </div>
-                  <CardTitle>{t('home.features.ethical.title')}</CardTitle>
-                  <CardDescription>{t('home.features.ethical.description')}</CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-                <CardHeader>
-                  <div
-                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
-                    aria-hidden="true"
+                    {t('home.cta.signUp')}
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={() => navigate('/login')}
+                    className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    <Globe className="text-primary size-6" />
-                  </div>
-                  <CardTitle>{t('home.features.inclusive.title')}</CardTitle>
-                  <CardDescription>{t('home.features.inclusive.description')}</CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-                <CardHeader>
-                  <div
-                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
-                    aria-hidden="true"
-                  >
-                    <UserCheck className="text-primary size-6" />
-                  </div>
-                  <CardTitle>{t('home.features.mentorship.title')}</CardTitle>
-                  <CardDescription>{t('home.features.mentorship.description')}</CardDescription>
-                </CardHeader>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-ring">
-                <CardHeader>
-                  <div
-                    className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4"
-                    aria-hidden="true"
-                  >
-                    <MessageCircle className="text-primary size-6" />
-                  </div>
-                  <CardTitle>{t('home.features.community.title')}</CardTitle>
-                  <CardDescription>{t('home.features.community.description')}</CardDescription>
-                </CardHeader>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section aria-labelledby="cta-heading" className="bg-primary/5 py-16">
-          <div className="container mx-auto px-4 text-center">
-            <h2 id="cta-heading" className="text-3xl md:text-4xl font-bold mb-4">
-              {t('home.cta.title')}
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              {t('home.cta.description')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                onClick={() => navigate('/register')}
-                className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                {t('home.cta.signUp')}
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => navigate('/login')}
-                className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                {t('home.cta.login')}
-              </Button>
-            </div>
-          </div>
-        </section>
+                    {t('home.cta.login')}
+                  </Button>
+                </div>
+              </div>
+            </section>
+          </>
+        )}
       </main>
     </div>
   );

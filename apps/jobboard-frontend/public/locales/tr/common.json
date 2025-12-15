@@ -1,47 +1,47 @@
 {
   "layout": {
-  "languageSwitcher": {
-    "label": "Dil",
-    "english": "İngilizce",
-    "turkish": "Türkçe",
-    "arabic": "Arapça"
-  },
-  "header": {
-    "brand": "Ethica Jobs",
-    "menu": "Menü",
-    "nav": {
-      "home": "Ana Sayfa",
+    "languageSwitcher": {
+      "label": "Dil",
+      "english": "İngilizce",
+      "turkish": "Türkçe",
+      "arabic": "Arapça"
+    },
+    "header": {
+      "brand": "Ethica Jobs",
+      "menu": "Menü",
+      "nav": {
+        "home": "Ana Sayfa",
         "jobs": "İş İlanları",
         "nonProfitJobs": "Gönüllülük",
         "volunteering": "Gönüllülük",
         "volunteerBrowse": "Gönüllülük Fırsatları",
-      "myApplications": "Başvurularım",
-      "mentorship": "Mentorluk",
+        "myApplications": "Başvurularım",
+        "mentorship": "Mentorluk",
         "myMentorships": "Mentorluklarım",
         "chat": "Sohbet",
-      "forum": "Forum",
+        "forum": "Forum",
         "employerDashboard": "İşveren Paneli",
         "workplaces": "İş Yerleri",
         "myWorkplaces": "İş Yerlerim",
         "browseWorkplaces": "İş Yerlerini Keşfet",
         "profile": "Profil",
         "settings": "Ayarlar"
-    },
-    "auth": {
-      "login": "Giriş Yap",
-      "signup": "Kayıt Ol",
-      "logout": "Çıkış Yap",
-      "profile": "Profil"
+      },
+      "auth": {
+        "login": "Giriş Yap",
+        "signup": "Kayıt Ol",
+        "logout": "Çıkış Yap",
+        "profile": "Profil"
       },
       "theme": "Tema",
       "language": "Dil"
-  },
-  "footer": {
-    "about": "Hakkımızda",
-    "contact": "İletişim",
-    "privacy": "Gizlilik Politikası",
-    "terms": "Kullanım Şartları",
-    "brandSuffix": "Ethica Jobs"
+    },
+    "footer": {
+      "about": "Hakkımızda",
+      "contact": "İletişim",
+      "privacy": "Gizlilik Politikası",
+      "terms": "Kullanım Şartları",
+      "brandSuffix": "Ethica Jobs"
     }
   },
   "common": {
@@ -65,7 +65,8 @@
       "previous": "Önceki",
       "next": "Sonraki",
       "pageInfo": "Sayfa {{page}} / {{total}}"
-    }
+    },
+    "report": "Şikayet Et"
   },
   "report": {
     "messageLabel": "Neden şikayet ettiğinizi açıklayın",
@@ -350,93 +351,93 @@
       "invitation": "Bugün Ethica Jobs'a katılın ve değerlerinize uygun, amaç odaklı kariyer fırsatlarını keşfedin!",
       "signUp": "Hesap Oluştur",
       "login": "Zaten hesabınız var mı? Giriş Yapın"
-  },
+    },
     "filters": {
-    "ethicalTags": "Etik Etiketler",
-    "selectEthicalTags": "Etik etiketleri seçin",
-    "salary": "Maaş Aralığı",
-    "salaryRangeValue": "${{min}}k - ${{max}}k",
-    "jobType": "İş Türü",
-    "workArrangement": "Çalışma Düzeni",
-    "remoteOnly": "Sadece Uzaktan",
-    "inclusivity": "Kapsayıcılık",
-    "disabilityInclusive": "Engelli Dostu Fırsatlar",
-    "companyName": "Şirket Adı",
-    "companyNamePlaceholder": "Şirket adına göre ara",
-    "jobTypeOptions": {
-      "fullTime": "Tam zamanlı",
-      "partTime": "Yarı zamanlı",
-      "contract": "Sözleşmeli"
-    },
-    "salaryEndpoint": "${{value}}k"
-  },
-    "tags": {
-    "select": "Etik etiketleri seçin",
-    "selectEthicalTags": "Etik Etiketleri Seçin",
-    "selectedCount": "{{count}} etiket seçildi",
-    "selectedCount_plural": "{{count}} etiket seçildi",
-    "clearAll": "Tümünü temizle",
-    "removeTag": "{{tag}} kaldır",
-    "categories": {
-      "compensationAndBenefits": "Ücret ve Yan Haklar",
-      "workLifeBalance": "İş-Yaşam Dengesi",
-      "diversityAndInclusion": "Çeşitlilik ve Kapsayıcılık",
-      "careerDevelopment": "Kariyer Gelişimi",
-      "environmentalAndSocialImpact": "Çevresel ve Sosyal Etki"
+      "ethicalTags": "Etik Etiketler",
+      "selectEthicalTags": "Etik etiketleri seçin",
+      "salary": "Maaş Aralığı",
+      "salaryRangeValue": "${{min}}k - ${{max}}k",
+      "jobType": "İş Türü",
+      "workArrangement": "Çalışma Düzeni",
+      "remoteOnly": "Sadece Uzaktan",
+      "inclusivity": "Kapsayıcılık",
+      "disabilityInclusive": "Engelli Dostu Fırsatlar",
+      "companyName": "Şirket Adı",
+      "companyNamePlaceholder": "Şirket adına göre ara",
+      "jobTypeOptions": {
+        "fullTime": "Tam zamanlı",
+        "partTime": "Yarı zamanlı",
+        "contract": "Sözleşmeli"
+      },
+      "salaryEndpoint": "${{value}}k"
     },
     "tags": {
-      "salaryTransparency": "Maaş Şeffaflığı",
-      "equalPayPolicy": "Eşit Ücret Politikası",
-      "livingWageEmployer": "Yaşanabilir Ücret İşvereni",
-      "comprehensiveHealthInsurance": "Kapsamlı Sağlık Sigortası",
-      "performanceBasedBonus": "Performansa Dayalı Bonus",
-      "retirementPlanSupport": "Emeklilik Planı Desteği",
-      "paidParentalLeave": "Ücretli Ebeveyn İzni",
-      "flexibleHours": "Esnek Çalışma Saatleri",
-      "remoteFriendly": "Uzaktan Çalışma Dostu",
-      "noAfterHoursWorkCulture": "Mesai Sonrası Çalışma Yok",
-      "mentalHealthSupport": "Ruh Sağlığı Desteği",
-      "generousPaidTimeOff": "Bol Ücretli İzin",
-      "inclusiveHiringPractices": "Kapsayıcı İşe Alım Uygulamaları",
-      "diverseLeadership": "Çeşitli Liderlik",
-      "lgbtqFriendlyWorkplace": "LGBTQ+ Dostu İşyeri",
-      "disabilityInclusiveWorkplace": "Engelli Dostu İşyeri",
-      "supportsWomenInLeadership": "Liderlikte Kadınları Destekler",
-      "mentorshipProgram": "Mentorluk Programı",
-      "learningDevelopmentBudget": "Öğrenme ve Gelişim Bütçesi",
-      "transparentPromotionPaths": "Şeffaf Terfi Yolları",
-      "internalMobility": "İç Mobilite",
-      "sustainabilityFocused": "Sürdürülebilirlik Odaklı",
-      "ethicalSupplyChain": "Etik Tedarik Zinciri",
-      "communityVolunteering": "Toplum Gönüllülüğü",
-      "certifiedBCorporation": "Sertifikalı B-Corporation"
-    }
-  },
+      "select": "Etik etiketleri seçin",
+      "selectEthicalTags": "Etik Etiketleri Seçin",
+      "selectedCount": "{{count}} etiket seçildi",
+      "selectedCount_plural": "{{count}} etiket seçildi",
+      "clearAll": "Tümünü temizle",
+      "removeTag": "{{tag}} kaldır",
+      "categories": {
+        "compensationAndBenefits": "Ücret ve Yan Haklar",
+        "workLifeBalance": "İş-Yaşam Dengesi",
+        "diversityAndInclusion": "Çeşitlilik ve Kapsayıcılık",
+        "careerDevelopment": "Kariyer Gelişimi",
+        "environmentalAndSocialImpact": "Çevresel ve Sosyal Etki"
+      },
+      "tags": {
+        "salaryTransparency": "Maaş Şeffaflığı",
+        "equalPayPolicy": "Eşit Ücret Politikası",
+        "livingWageEmployer": "Yaşanabilir Ücret İşvereni",
+        "comprehensiveHealthInsurance": "Kapsamlı Sağlık Sigortası",
+        "performanceBasedBonus": "Performansa Dayalı Bonus",
+        "retirementPlanSupport": "Emeklilik Planı Desteği",
+        "paidParentalLeave": "Ücretli Ebeveyn İzni",
+        "flexibleHours": "Esnek Çalışma Saatleri",
+        "remoteFriendly": "Uzaktan Çalışma Dostu",
+        "noAfterHoursWorkCulture": "Mesai Sonrası Çalışma Yok",
+        "mentalHealthSupport": "Ruh Sağlığı Desteği",
+        "generousPaidTimeOff": "Bol Ücretli İzin",
+        "inclusiveHiringPractices": "Kapsayıcı İşe Alım Uygulamaları",
+        "diverseLeadership": "Çeşitli Liderlik",
+        "lgbtqFriendlyWorkplace": "LGBTQ+ Dostu İşyeri",
+        "disabilityInclusiveWorkplace": "Engelli Dostu İşyeri",
+        "supportsWomenInLeadership": "Liderlikte Kadınları Destekler",
+        "mentorshipProgram": "Mentorluk Programı",
+        "learningDevelopmentBudget": "Öğrenme ve Gelişim Bütçesi",
+        "transparentPromotionPaths": "Şeffaf Terfi Yolları",
+        "internalMobility": "İç Mobilite",
+        "sustainabilityFocused": "Sürdürülebilirlik Odaklı",
+        "ethicalSupplyChain": "Etik Tedarik Zinciri",
+        "communityVolunteering": "Toplum Gönüllülüğü",
+        "certifiedBCorporation": "Sertifikalı B-Corporation"
+      }
+    },
     "card": {
-    "remote": "Uzaktan",
+      "remote": "Uzaktan",
       "inclusiveOpportunity": "Kapsayıcı Fırsat",
       "notSpecified": "Konum belirtilmemiş"
-  },
-  "mobileFilters": {
-    "open": "Filtreleri aç",
-    "title": "Filtreler",
-    "reset": "Sıfırla",
-    "apply": "Uygula"
-  },
+    },
+    "mobileFilters": {
+      "open": "Filtreleri aç",
+      "title": "Filtreler",
+      "reset": "Sıfırla",
+      "apply": "Uygula"
+    },
     "detail": {
-    "breadcrumb": {
-      "jobs": "İlanlar"
-    },
-    "error": {
-      "title": "İlan Yüklenemedi",
-      "missing": "İlan bulunamadı",
-      "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir.",
-      "fetch": "İlan detayları yüklenemedi. Lütfen daha sonra tekrar deneyin."
-    },
-    "backToJobs": "İlanlara Dön",
-    "applyNow": "Hemen Başvur",
-    "description": "İlan Açıklaması",
-    "ethicalPolicy": {
+      "breadcrumb": {
+        "jobs": "İlanlar"
+      },
+      "error": {
+        "title": "İlan Yüklenemedi",
+        "missing": "İlan bulunamadı",
+        "description": "Aradığınız ilan mevcut değil veya kaldırılmış olabilir.",
+        "fetch": "İlan detayları yüklenemedi. Lütfen daha sonra tekrar deneyin."
+      },
+      "backToJobs": "İlanlara Dön",
+      "applyNow": "Hemen Başvur",
+      "description": "İlan Açıklaması",
+      "ethicalPolicy": {
         "title": "Etik Etiketler ve Uyumluluk",
         "sourceNote": "Bu ilanın etik bilgileri şirket profilinden alınmıştır.",
         "overallScore": "Şirket etik puanı",
@@ -445,10 +446,10 @@
         "tagCount_plural": "{{count}} etik politika",
         "noPolicies": "Şirket henüz etik politikalarını paylaşmadı.",
         "inclusiveNote": "Şirket bu rolü kapsayıcı bir fırsat olarak işaretliyor."
-    },
-    "inclusiveOpportunity": "Kapsayıcı Fırsat",
-    "contact": {
-      "title": "İletişim Bilgileri"
+      },
+      "inclusiveOpportunity": "Kapsayıcı Fırsat",
+      "contact": {
+        "title": "İletişim Bilgileri"
       },
       "workplace": {
         "title": "Şirket Hakkında",
@@ -766,18 +767,18 @@
   },
   "employer": {
     "dashboard": {
-    "brand": "Ethical Careers",
-    "sidebar": {
-      "dashboard": "Panel",
-      "jobs": "İlanlar",
-      "profile": "Şirket Profili",
-      "settings": "Ayarlar",
-      "support": "Yardım ve Destek"
-    },
-    "title": "İşveren Paneli",
+      "brand": "Ethical Careers",
+      "sidebar": {
+        "dashboard": "Panel",
+        "jobs": "İlanlar",
+        "profile": "Şirket Profili",
+        "settings": "Ayarlar",
+        "support": "Yardım ve Destek"
+      },
+      "title": "İşveren Paneli",
       "subtitle": "İş ilanlarınızı ve iş yerlerinizi yönetin",
-    "currentPostings": "Mevcut İş İlanları",
-    "createJob": "Yeni İş İlanı Oluştur",
+      "currentPostings": "Mevcut İş İlanları",
+      "createJob": "Yeni İş İlanı Oluştur",
       "addWorkplace": "İş Yeri Ekle",
       "joinWorkplace": "İş Yerine Katıl",
       "unassignedJobs": "Atanmamış İlanlar",
@@ -791,26 +792,26 @@
         "createWorkplace": "İş Yeri Oluştur",
         "joinWorkplace": "İş Yerine Katıl"
       },
-    "loadingError": "İş ilanları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
-    "emptyState": "Henüz herhangi bir iş ilanı oluşturmadınız.",
-    "emptyCta": "İlk İlanınızı Oluşturun",
-    "table": {
-      "jobTitle": "İş Başlığı",
-      "status": "Durum",
-      "applications": "Başvurular",
-      "views": "Görüntülenme",
-      "actions": "İşlemler"
+      "loadingError": "İş ilanları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+      "emptyState": "Henüz herhangi bir iş ilanı oluşturmadınız.",
+      "emptyCta": "İlk İlanınızı Oluşturun",
+      "table": {
+        "jobTitle": "İş Başlığı",
+        "status": "Durum",
+        "applications": "Başvurular",
+        "views": "Görüntülenme",
+        "actions": "İşlemler"
+      },
+      "actions": {
+        "manage": "Yönet",
+        "view": "Görüntüle"
+      },
+      "statusLabels": {
+        "open": "Açık",
+        "active": "Aktif",
+        "paused": "Durduruldu"
+      }
     },
-    "actions": {
-      "manage": "Yönet",
-      "view": "Görüntüle"
-    },
-    "statusLabels": {
-      "open": "Açık",
-      "active": "Aktif",
-      "paused": "Durduruldu"
-    }
-  },
     "jobPostDetails": {
       "error": {
         "load": "İş detayları yüklenemedi. Lütfen daha sonra tekrar deneyin.",
@@ -969,9 +970,7 @@
     "title": "Forum",
     "subtitle": "Bilgi paylaşın, soru sorun ve toplulukla bağlantı kurun",
     "searchPlaceholder": "Gönderi, yazar veya etiket ara...",
-    "createThread": "Başlık Oluştur",
     "createNewThread": "Yeni bir başlık oluştur",
-    "titleLabel": "Başlık",
     "titlePlaceholder": "Başlık",
     "contentPlaceholder": "Gönderinizi buraya yazın...",
     "tagsPlaceholder": "Etiketler (virgülle ayırın)",
@@ -980,9 +979,14 @@
     "loadError": "Gönderiler yüklenemedi",
     "postNotFound": "Gönderi bulunamadı",
     "by": "Yazan",
+    "comment": "Yorum",
     "comments": "Yorumlar",
     "viewPost": "Gönderiyi gör",
     "topCommentFrom": "En iyi yorum",
+    "seeAllComments": "{{count}} yorumu gör",
+    "beFirstToComment": "Yorum yapan ilk kişi olun...",
+    "backToForum": "Foruma Geri Dön",
+    "voteError": "Oylama güncellenemedi",
     "deletePost": {
       "title": "Gönderiyi Sil",
       "description": "Bu gönderiyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
@@ -1409,7 +1413,7 @@
         }
       }
     },
-      "errors": {
+    "errors": {
       "timeout": "Bağlantı zaman aşımı. Lütfen backend sunucusunun çalıştığından emin olun.",
       "networkError": "Sunucuya bağlanılamıyor. Lütfen backend'in çalıştığını kontrol edin.",
       "loadFailed": "Mentorlar yüklenemedi. Lütfen daha sonra tekrar deneyin.",
@@ -1835,7 +1839,12 @@
       "replyLabel": "{{value}} yanıt",
       "repliesLabel": "{{value}} yanıt",
       "likeLabel": "{{value}} beğeni",
-      "likesLabel": "{{value}} beğeni"
+      "likesLabel": "{{value}} beğeni",
+      "noPosts": "Henüz gönderi yok",
+      "oneDayAgo": "1 gün önce",
+      "daysAgo": "{{days}} gün önce",
+      "weeksAgo": "{{weeks}} hafta önce",
+      "monthsAgo": "{{months}} ay önce"
     }
   },
   "reviews": {
@@ -1854,7 +1863,7 @@
     "anonymous": "Anonim",
     "postAnonymously": "Anonim olarak yayınla",
     "submitReview": "Değerlendirmeyi Gönder",
-      "submitting": "Gönderiliyor...",
+    "submitting": "Gönderiliyor...",
     "categories": {
       "culture": "Kültür",
       "benefits": "Yan Haklar",
@@ -1922,7 +1931,7 @@
     "aboutUs": "Hakkımızda",
     "ethicalPolicyCommitments": "Etik Politika Taahhütleri",
     "currentJobOpenings": "Güncel İş İlanları",
-        "viewJob": "İlanı Görüntüle",
+    "viewJob": "İlanı Görüntüle",
     "notFound": "Şirket Bulunamadı",
     "notFoundDescription": "Aradığınız şirket mevcut değil veya kaldırılmış."
   },
@@ -2043,5 +2052,295 @@
     "RESUME_FILE_CONTENT_TYPE_INVALID": "Geçersiz özgeçmiş dosya tipi.",
     "RESUME_FILE_UPLOAD_FAILED": "Özgeçmiş yükleme başarısız. Lütfen tekrar deneyin.",
     "RESUME_FILE_NOT_FOUND": "Özgeçmiş dosyası bulunamadı."
+  },
+  "admin": {
+    "reports": {
+      "title": "Rapor Yönetimi",
+      "subtitle": "Bildirilen içerik ve kullanıcıları inceleyin ve harekete geçin",
+      "searchPlaceholder": "Raporları ara...",
+      "tabs": {
+        "pending": "Bekleyen",
+        "resolved": "Çözümlendi",
+        "dismissed": "Reddedildi"
+      },
+      "table": {
+        "contentType": "İçerik Türü",
+        "reportedItem": "Bildirilen Öğe",
+        "reporter": "Bildiren",
+        "reason": "Sebep",
+        "date": "Tarih",
+        "actions": "İşlemler",
+        "view": "Görüntüle"
+      },
+      "entityTypes": {
+        "FORUM_POST": "Forum Gönderisi",
+        "FORUM_COMMENT": "Yorum",
+        "WORKPLACE": "İş Yeri",
+        "REVIEW": "İş Yeri Değerlendirmesi",
+        "REVIEW_REPLY": "Değerlendirme Yanıtı",
+        "JOB_POST": "İş İlanı",
+        "JOB_APPLICATION": "İş Başvurusu",
+        "PROFILE": "Profil",
+        "MENTOR": "Mentor"
+      },
+      "reasons": {
+        "SPAM": "Spam İçerik",
+        "FAKE": "Sahte Bilgi",
+        "OFFENSIVE": "Rahatsız Edici İçerik",
+        "HARASSMENT": "Taciz",
+        "MISINFORMATION": "Yanlış Bilgi",
+        "OTHER": "Diğer"
+      },
+      "status": {
+        "PENDING": "Bekleyen",
+        "APPROVED": "Çözümlendi",
+        "REJECTED": "Reddedildi",
+        "IGNORED": "Göz Ardı Edildi"
+      },
+      "details": {
+        "title": "İnceleme Detayları",
+        "contentUnderReview": "İncelenen İçerik",
+        "reporterInfo": "Bildiren Bilgisi",
+        "reporter": "Bildiren",
+        "reason": "Sebep",
+        "status": "Durum",
+        "selectReport": "Detayları görmek için bir rapor seçin"
+      },
+      "actions": {
+        "title": "Moderasyon İşlemleri",
+        "helper": "Bu rapor için bir işlem seçin",
+        "dismiss": "Reddet",
+        "remove": "Kaldır",
+        "banOnly": "Sadece Yasakla",
+        "both": "İkisi de"
+      },
+      "dialog": {
+        "dismiss": {
+          "title": "Raporu Reddet",
+          "description": "Bu rapor reddedildi olarak işaretlenecek. Bildirilen içerik veya kullanıcı üzerinde herhangi bir işlem yapılmayacak."
+        },
+        "remove": {
+          "title": "Sadece İçeriği Kaldır",
+          "description": "Bu işlem sadece bildirilen içeriği kaldıracak. Kullanıcı yasaklanmayacak."
+        },
+        "ban": {
+          "title": "Sadece Kullanıcıyı Yasakla",
+          "description": "Bu işlem içeriği oluşturan kullanıcıyı yasaklayacak. İçerik görünür kalacak."
+        },
+        "both": {
+          "title": "Kullanıcıyı Yasakla ve İçeriği Kaldır",
+          "description": "Bu işlem kullanıcıyı yasaklayacak VE bildirilen içeriği kaldıracak. Her iki işlem de uygulanacak."
+        },
+        "adminNote": {
+          "label": "Yönetici Notu (Opsiyonel)",
+          "placeholder": "Bu işlem hakkında bir not ekleyin..."
+        },
+        "banReason": {
+          "label": "Yasaklama Sebebi (Opsiyonel)",
+          "placeholder": "Bu kullanıcıyı yasaklama sebebi..."
+        },
+        "cancel": "İptal",
+        "confirm": "Onayla",
+        "processing": "İşleniyor..."
+      },
+      "resolve": {
+        "success": {
+          "default": "Rapor başarıyla çözümlendi",
+          "both": "Kullanıcı yasaklandı ve içerik başarıyla kaldırıldı",
+          "ban": "Kullanıcı başarıyla yasaklandı",
+          "remove": "İçerik başarıyla kaldırıldı",
+          "dismiss": "Rapor reddedildi"
+        },
+        "error": {
+          "default": "Rapor çözümlenemedi. Lütfen tekrar deneyin.",
+          "spam": "Bu içerik spam olarak bildirildi. Lütfen inceleyin ve uygun işlemi yapın.",
+          "fake": "Bu içerik sahte bilgi içerdiği bildirildi. Lütfen doğrulayın ve işlem yapın.",
+          "offensive": "Bu içerik rahatsız edici olarak bildirildi. Lütfen içeriği dikkatlice inceleyin.",
+          "harassment": "Bu içerik taciz olarak bildirildi. Bu ciddi bir ihlaldir.",
+          "misinformation": "Bu içerik yanlış bilgi olarak bildirildi. Lütfen gerçekleri doğrulayın."
+        }
+      },
+      "pagination": {
+        "pageInfo": "Sayfa {{page}} / {{totalPages}} (toplam {{totalElements}})"
+      },
+      "empty": {
+        "title": "Rapor bulunamadı",
+        "description": "Mevcut filtrelerinizle eşleşen rapor yok."
+      },
+      "loading": "Raporlar yükleniyor..."
+    }
+  },
+  "info": {
+    "about": {
+      "title": "Ethica Jobs Hakkında",
+      "subtitle": "İş arayanları, değerlerini paylaşan etik işverenlerle buluşturuyoruz",
+      "mission": {
+        "title": "Misyonumuz",
+        "content": "Ethica Jobs, etik uygulamalara, sosyal sorumluluğa ve olumlu iş yeri kültürlerine öncelik veren işverenlerle iş arayanları buluşturarak iş pazarını dönüştürmeye kendini adamıştır. Herkesin kişisel değerleriyle uyumlu olan ve topluma anlamlı katkılar sağlayan kuruluşlarda çalışmayı hak ettiğine inanıyoruz.",
+        "content2": "Platformumuz, çeşitlilik ve kapsayıcılığa, çevresel sürdürülebilirliğe, adil çalışma uygulamalarına ve toplumsal katılıma bağlı işverenleri vurgulayarak geleneksel iş panolarının ötesine geçiyor. İş arayanların zamanlarını ve yeteneklerini nereye yatıracakları konusunda bilinçli kararlar vermelerini sağlıyoruz."
+      },
+      "values": {
+        "title": "Temel Değerlerimiz",
+        "transparency": {
+          "title": "Şeffaflık",
+          "content": "İşverenler hakkında, etik taahhütleri, iş yeri uygulamaları ve toplumsal etkileri dahil olmak üzere net ve doğru bilgiler sağlıyoruz. İş arayanlar, katılmayı düşündükleri şirketler hakkında dürüstlüğü hak ediyor."
+        },
+        "inclusion": {
+          "title": "Kapsayıcılık ve Çeşitlilik",
+          "content": "Her biçimde çeşitliliği kucaklayan iş yerlerini kutluyor ve destekliyoruz. Kapsayıcı ekiplerin daha güçlü, daha yenilikçi ve karmaşık zorlukları çözmek için daha donanımlı olduğuna inanıyoruz."
+        },
+        "fairness": {
+          "title": "Adil Çalışma Uygulamaları",
+          "content": "Adil ücretler, güvenli çalışma koşulları, profesyonel gelişim fırsatları ve işçi haklarına saygı sunan işverenleri destekliyoruz. Herkes iş yerinde saygınlığı hak ediyor."
+        },
+        "community": {
+          "title": "Toplumsal Etki",
+          "content": "Topluluklarına geri veren, yerel girişimleri destekleyen ve olumlu sosyal değişim yaratan kuruluşları öne çıkarıyoruz. İşletmelerin ortak iyiliğe katkıda bulunma sorumluluğu olduğuna inanıyoruz."
+        }
+      },
+      "offer": {
+        "title": "Sunduklarımız",
+        "jobs": "Etik uygulamaları ve taahhütleri doğrulanmış işverenlerden seçilmiş iş ilanları",
+        "workplaces": "Şirket değerlerini, kültürünü ve etik girişimlerini gösteren detaylı iş yeri profilleri",
+        "mentorship": "İş arayanları alanlarında deneyimli profesyonellerle buluşturan mentorluk fırsatları",
+        "community": "Kariyer gelişimi, iş yeri etiği ve sektör trendlerini tartışmak için destekleyici bir topluluk forumu",
+        "volunteering": "Topluluklarında fark yaratan kar amacı gütmeyen kuruluşlarla gönüllülük fırsatları"
+      },
+      "closing": "Değerlerin önemli olduğu bir iş pazarı oluşturmak için bize katılın. Birlikte, yalnızca ekonomik olarak başarılı olmakla kalmayıp aynı zamanda daha iyi bir dünyaya katkıda bulunan iş yerleri yaratabiliriz."
+    },
+    "contact": {
+      "title": "İletişim",
+      "subtitle": "Sizden haber almak isteriz",
+      "intro": "Ethica Jobs'ta, hem iş arayanlar hem de işverenler için mümkün olan en iyi deneyimi sunmaya kendini adamış durumdayız. Sorularınız, geri bildirimleriniz veya yardıma ihtiyacınız olsun, yardımcı olmak için buradayız. Girdileriniz platformumuzu geliştirmemize ve topluluğumuzua daha iyi hizmet etmemize yardımcı olur.",
+      "general": {
+        "title": "Genel Sorular",
+        "description": "Platformumuz, özelliklerimiz veya nasıl başlayacağınız hakkında genel sorular için:",
+        "email": "info@ethicajobs.com"
+      },
+      "support": {
+        "title": "Teknik Destek",
+        "description": "Hesabınız, şifre sıfırlama veya teknik sorunlar konusunda yardıma mı ihtiyacınız var?",
+        "email": "support@ethicajobs.com"
+      },
+      "feedback": {
+        "title": "Geri Bildirim ve Öneriler",
+        "description": "Gelişmemize yardımcı olmak için fikirlerinizi, önerilerinizi veya geri bildirimlerinizi paylaşın:",
+        "email": "feedback@ethicajobs.com"
+      },
+      "bug": {
+        "title": "Hata Bildir",
+        "description": "Bir hata buldunuz mu veya sorun mu yaşıyorsunuz? Lütfen bize bildirin:",
+        "email": "bugs@ethicajobs.com"
+      },
+      "partnerships": {
+        "title": "İşveren Ortaklıkları",
+        "content": "Etik uygulamalara bağlı bir işveren misiniz ve değer odaklı iş arayanlarla bağlantı kurmak mı istiyorsunuz? Sizinle ortaklık yapmak isteriz. Kuruluşunuzun etik taahhüdünü sergilememize ve değerlerinizi paylaşan yetenekli bireyleri çekmemize nasıl yardımcı olabileceğimizi tartışmak için lütfen bizimle iletişime geçin.",
+        "email": "partnerships@ethicajobs.com"
+      },
+      "response": "Genellikle tüm sorulara 1-2 iş günü içinde yanıt veriyoruz. Sabrınız ve Ethica Jobs topluluğunun bir parçası olduğunuz için teşekkürler!"
+    },
+    "privacy": {
+      "title": "Gizlilik Politikası",
+      "lastUpdated": "Son Güncelleme: Ocak 2025",
+      "intro": {
+        "title": "Gizliliğe Bağlılığımız",
+        "content": "Ethica Jobs'ta gizliliğinizi ciddiye alıyoruz. Bu Gizlilik Politikası, platformumuzu kullandığınızda bilgilerinizi nasıl topladığımızı, kullandığımızı, açıkladığımızı ve koruduğumuzu açıklar. Kişisel verilerinizi korumaya ve uygulamalarımız hakkında şeffaf olmaya kararlıyız.",
+        "content2": "Ethica Jobs'ı kullanarak, bu politikaya uygun olarak bilgilerin toplanması ve kullanılmasını kabul edersiniz. Kişisel bilgilerinizi yalnızca bu Gizlilik Politikasında açıklandığı şekilde ve etik değerlerimizle tutarlı şekillerde kullanacağız."
+      },
+      "collect": {
+        "title": "Topladığımız Bilgiler",
+        "personal": {
+          "title": "Kişisel Bilgiler",
+          "content": "Bir hesap oluşturduğunuzda veya hizmetlerimizi kullandığınızda şunları toplayabiliriz:",
+          "name": "Ad, e-posta adresi ve iletişim bilgileri",
+          "profile": "İş deneyimi, eğitim ve beceriler dahil profil bilgileri",
+          "preferences": "Hesap tercihleri ve ayarları",
+          "credentials": "Kimlik doğrulama bilgileri (güvenli şekilde hashlenmiş)"
+        },
+        "usage": {
+          "title": "Kullanım Verileri",
+          "content": "Ziyaret edilen sayfalar, yapılan aramalar ve kullanılan özellikler dahil olmak üzere platformumuzla nasıl etkileşim kurduğunuz hakkında bilgileri otomatik olarak topluyoruz. Bu, hizmetlerimizi ve kullanıcı deneyimini iyileştirmemize yardımcı olur."
+        }
+      },
+      "use": {
+        "title": "Bilgilerinizi Nasıl Kullanıyoruz",
+        "service": "İş panomuzu ve ilgili hizmetleri sağlamak, sürdürmek ve iyileştirmek için",
+        "communication": "Hesabınız, başvurularınız ve önemli platform güncellemeleri hakkında sizinle iletişim kurmak için",
+        "matching": "Becerilere ve tercihlere göre iş arayanları ilgili fırsatlarla eşleştirmek için",
+        "analytics": "Kullanım kalıplarını analiz etmek ve kullanıcı deneyimini geliştirmek için",
+        "security": "Teknik sorunları, güvenlik tehditlerini veya dolandırıcılık faaliyetlerini tespit etmek, önlemek ve ele almak için"
+      },
+      "security": {
+        "title": "Veri Güvenliği",
+        "content": "Kişisel bilgilerinizi yetkisiz erişime, değişikliğe, ifşaya veya tahribe karşı korumak için uygun teknik ve örgütsel güvenlik önlemleri uyguluyoruz. Ancak, İnternet üzerinden aktarım veya elektronik depolama yöntemi %100 güvenli değildir.",
+        "content2": "Verilerinizi korumak için endüstri standardı şifreleme, güvenli kimlik doğrulama uygulamaları ve düzenli güvenlik denetimleri kullanıyoruz. Ayrıca, kişisel bilgilere erişimi, görevlerini yerine getirmesi gereken çalışanlar, yükleniciler ve hizmet sağlayıcılar ile sınırlandırıyoruz."
+      },
+      "rights": {
+        "title": "Gizlilik Haklarınız",
+        "intro": "Şu haklara sahipsiniz:",
+        "access": "Kişisel bilgilerinize erişmek ve gözden geçirmek",
+        "update": "Yanlış bilgileri güncellemek veya düzeltmek",
+        "delete": "Hesabınızın ve kişisel verilerinizin silinmesini talep etmek",
+        "export": "Verilerinizi taşınabilir bir formatta dışa aktarmak",
+        "optout": "Belirli iletişimlerden ve veri işleme faaliyetlerinden çıkmak"
+      },
+      "contact": {
+        "intro": "Bu Gizlilik Politikası hakkında sorularınız varsa veya gizlilik haklarınızı kullanmak istiyorsanız, lütfen bizimle iletişime geçin:",
+        "email": "privacy@ethicajobs.com"
+      }
+    },
+    "terms": {
+      "title": "Hizmet Şartları",
+      "lastUpdated": "Son Güncelleme: Ocak 2025",
+      "intro": {
+        "title": "Şartlara Anlaşma",
+        "content": "Ethica Jobs'a hoş geldiniz. Bu Hizmet Şartları (\"Şartlar\"), web sitemiz, mobil uygulamalarımız ve ilgili hizmetlerimiz (topluca \"Hizmet\") dahil olmak üzere platformumuza erişiminizi ve kullanımınızı yönetir. Ethica Jobs'a erişerek veya kullanarak bu Şartlara bağlı kalmayı kabul edersiniz.",
+        "content2": "Bu Şartlara katılmıyorsanız, lütfen Hizmetimizi kullanmayın. Bu Şartları istediğimiz zaman değiştirme hakkını saklı tutarız ve bu tür değişiklikler yayınlandığı anda yürürlüğe girer. Değişiklikler yayınlandıktan sonra Hizmeti kullanmaya devam etmeniz, değiştirilmiş Şartları kabul ettiğiniz anlamına gelir."
+      },
+      "responsibilities": {
+        "title": "Kullanıcı Sorumlulukları",
+        "accuracy": {
+          "title": "Doğru Bilgi",
+          "content": "Bir hesap oluştururken veya Hizmetimizi kullanırken doğru, güncel ve eksiksiz bilgiler sağlamayı kabul edersiniz. Hesap kimlik bilgilerinizin gizliliğini korumaktan ve hesabınız altında gerçekleşen tüm faaliyetlerden siz sorumlusunuz."
+        },
+        "conduct": {
+          "title": "Kabul Edilebilir Kullanım",
+          "intro": "Aşağıdakileri yapmayı kabul etmezsiniz:",
+          "spam": "Yanlış, yanıltıcı veya dolandırıcılık bilgileri yayınlamak",
+          "harassment": "Diğer kullanıcıları taciz etmek, tehdit etmek veya ayrımcılık yapmak",
+          "illegal": "Hizmeti herhangi bir yasa dışı veya yetkisiz amaç için kullanmak",
+          "violate": "Geçerli yasalara veya düzenlemelere aykırı davranmak",
+          "abuse": "Hizmete veya sunuculara müdahale etmek veya bunları bozmak"
+        }
+      },
+      "jobs": {
+        "title": "İş İlanları ve Başvurular",
+        "content": "Ethica Jobs, iş arayanları işverenlerle buluşturan bir platform olarak hizmet vermektedir. İstihdam garantisi vermiyoruz ve işverenlerin yaptığı işe alma kararlarından sorumlu değiliz. İş arayanlar, başvurmadan önce iş ilanlarının ve işverenlerin meşruiyetini doğrulamaktan sorumludur.",
+        "content2": "İşverenler, iş ilanlarının doğru olduğundan, geçerli istihdam yasalarına uygun olduğundan ve etik uygulamalara olan gerçek bağlılıklarını yansıttığından emin olmaktan sorumludur. Standartlarımıza veya bu Şartlara aykırı olan herhangi bir iş ilanını veya işveren profilini kaldırma hakkını saklı tutarız."
+      },
+      "ip": {
+        "title": "Fikri Mülkiyet",
+        "content": "Hizmet ve orijinal içeriği, özellikleri ve işlevselliği Ethica Jobs'a aittir ve uluslararası telif hakkı, marka ve diğer fikri mülkiyet yasalarıyla korunmaktadır. Önceden yazılı iznimiz olmadan Hizmetimizi çoğaltamaz, dağıtamaz, değiştiremez veya türev eserler oluşturamazsınız.",
+        "content2": "Platformumuzda yayınladığınız herhangi bir içeriğin mülkiyetini elinizde tutarsınız, ancak içerik yayınlayarak, Hizmetimizi işletmek ve tanıtmakla bağlantılı olarak içeriğinizi kullanma, görüntüleme ve dağıtma hakkı için Ethica Jobs'a dünya çapında, münhasır olmayan, telif hakkı ücretsiz bir lisans verirsiniz."
+      },
+      "disclaimer": {
+        "title": "Garanti Reddi",
+        "content": "Hizmet \"olduğu gibi\" ve \"mevcut olduğu şekilde\" herhangi bir tür açık veya zımni garanti olmaksızın sağlanmaktadır. Hizmetin kesintisiz, güvenli veya hatasız olacağını veya hataların düzeltileceğini garanti etmiyoruz.",
+        "content2": "Herhangi bir iş ilanının, işveren profilinin veya kullanıcı tarafından oluşturulan içeriğin doğruluğunu, eksiksizliğini veya güvenilirliğini garanti etmiyoruz. Hizmeti kendi riskiniz altında kullanırsınız."
+      },
+      "liability": {
+        "title": "Sorumluluk Sınırlaması",
+        "content": "Yasaların izin verdiği maksimum ölçüde, Ethica Jobs, Hizmetin kullanımınızdan kaynaklanan dolaylı, arızi, özel, sonuçsal veya cezai zararlardan veya doğrudan veya dolaylı olarak oluşan kâr veya gelir kayıplarından veya veri, kullanım, itibar veya diğer maddi olmayan kayıplardan sorumlu olmayacaktır."
+      },
+      "ethical": {
+        "title": "Etik Uygulamalara Bağlılığımız",
+        "content": "İş arayanları etik işverenlerle buluşturmaya adanmış bir platform olarak, kendimizi yüksek standartlara tabi tutuyoruz. Tüm kullanıcılara adil muamele, uygulamalarımızda şeffaflık ve çeşitlilik, kapsayıcılık ve sosyal sorumluluğu teşvik etmeye kararlıyız.",
+        "content2": "Tüm kullanıcıların—hem iş arayanlar hem de işverenler—etik davranışa olan bu bağlılığı paylaşmasını bekliyoruz. Bu ilkelerin ihlali, hesap askıya alma veya sonlandırmaya neden olabilir."
+      },
+      "contact": {
+        "intro": "Bu Hizmet Şartları hakkında sorularınız varsa, lütfen bizimle iletişime geçin:",
+        "email": "legal@ethicajobs.com"
+      }
+    }
   }
 }

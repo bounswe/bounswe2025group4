@@ -1,25 +1,18 @@
-import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardHeader, CardTitle } from '@shared/components/ui/card';
-import { Badge } from '@shared/components/ui/badge';
 import { Input } from '@shared/components/ui/input';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@shared/components/ui/dialog';
 import { Button } from '@shared/components/ui/button';
 import { Textarea } from '@shared/components/ui/textarea';
-import LikeDislikeButtons from '@modules/forum/components/forum/LikeDislikeButtons';
-import { useForumPostsQuery, deletePost, updatePost } from '@modules/forum/services/forum.service';
+import { Card, CardContent, CardHeader } from '@shared/components/ui/card';
+import { useForumPostsQuery, deletePost, updatePost, useCreateForumPostMutation } from '@modules/forum/services/forum.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { upvotePost, downvotePost, useCreateForumPostMutation } from '@modules/forum/services/forum.service';
 import { forumKeys } from '@shared/lib/query-keys';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
-import { Trash2, Pencil, ShieldAlert } from 'lucide-react';
 import { toast } from 'react-toastify';
 import type { ForumPostResponseDTO } from '@shared/types/api.types';
 import { useReportModal } from '@shared/hooks/useReportModal';
-import { reportForumPost } from '@modules/workplace/services/workplace-report.service';
-
-const truncate = (s: string, n = 250) => (s.length > n ? s.slice(0, n) + '…' : s);
+import PostCard from '@modules/forum/components/forum/PostCard';
 
 const ForumPage = () => {
   const { t } = useTranslation('common');
@@ -53,7 +46,7 @@ const ForumPage = () => {
   });
 
   const editMutation = useMutation({
-    mutationFn: ({ postId, data }: { postId: number; data: { title?: string; content?: string; tags?: string[] } }) => 
+    mutationFn: ({ postId, data }: { postId: number; data: { title?: string; content?: string; tags?: string[] } }) =>
       updatePost(postId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: forumKeys.posts });
@@ -72,74 +65,130 @@ const ForumPage = () => {
     setEditTagsInput(post.tags?.join(', ') || '');
   };
 
-  const upvoteMutation = useMutation({
-    mutationFn: (postId: number) => upvotePost(postId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: forumKeys.posts });
-      // also refresh post detail cache if opened
-      // note: forumKeys.post expects postId when invalidating; we don't have it here
-    },
-  });
-
-  const downvoteMutation = useMutation({
-    mutationFn: (postId: number) => downvotePost(postId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: forumKeys.posts });
-    },
-  });
-  
-  // Track per-post vote state minimally so we can show filled icons after server confirms
-  const [postVotes, setPostVotes] = useState<Record<number, 'none' | 'like' | 'dislike'>>({});
-  const [upvotingIds, setUpvotingIds] = useState<number[]>([]);
-  const [downvotingIds, setDownvotingIds] = useState<number[]>([]);
-
-  const setPostVote = (postId: number, vote: 'none' | 'like' | 'dislike') => {
-    setPostVotes((prev) => ({ ...prev, [postId]: vote }));
-  };
-
-  const setLoadingId = (setter: React.Dispatch<React.SetStateAction<number[]>>, id: number, add: boolean) => {
-    setter((prev) => (add ? [...prev, id] : prev.filter((x) => x !== id)));
-  };
-
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return posts;
-    return posts.filter((p) => {
-      return (
-        p.title.toLowerCase().includes(q) ||
-        p.content.toLowerCase().includes(q) ||
-        p.authorUsername.toLowerCase().includes(q) ||
-        p.tags?.some((t) => t.toLowerCase().includes(q))
-      );
+    const filteredPosts = q
+      ? posts.filter((p) => {
+          return (
+            p.title.toLowerCase().includes(q) ||
+            p.content.toLowerCase().includes(q) ||
+            p.authorUsername.toLowerCase().includes(q) ||
+            p.tags?.some((t) => t.toLowerCase().includes(q))
+          );
+        })
+      : posts;
+    
+    // Sort by createdAt descending (newest first)
+    return [...filteredPosts].sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
     });
   }, [posts, query]);
 
-  if (isLoading) return <div className="container mx-auto p-6">{t('forum.loading')}</div>;
+  const renderSkeleton = () => (
+    <div className="container mx-auto px-4 py-6 max-w-5xl" aria-busy="true">
+      <span className="sr-only">{t('forum.loading')}</span>
+
+      <div className="mb-4">
+        <div className="h-9 w-48 bg-muted rounded animate-pulse mb-3" aria-hidden="true" />
+        <div className="h-5 w-80 bg-muted rounded animate-pulse" aria-hidden="true" />
+      </div>
+
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" aria-hidden="true">
+        <div className="flex-1 h-10 w-full bg-muted rounded-md animate-pulse" />
+        <div className="h-10 w-44 bg-muted rounded-md animate-pulse" />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6" aria-hidden="true">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Card key={`forum-post-skeleton-${index}`} className="shadow-sm">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 space-y-3">
+                  <div className="h-5 w-56 bg-muted rounded animate-pulse" />
+                  <div className="h-8 w-4/5 bg-muted rounded animate-pulse" />
+                  <div className="flex gap-2">
+                    <div className="h-6 w-16 bg-muted rounded animate-pulse" />
+                    <div className="h-6 w-20 bg-muted rounded animate-pulse" />
+                    <div className="h-6 w-14 bg-muted rounded animate-pulse" />
+                  </div>
+                </div>
+                <div className="h-9 w-24 bg-muted rounded-md animate-pulse" />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="h-4 w-full bg-muted rounded animate-pulse" />
+                <div className="h-4 w-5/6 bg-muted rounded animate-pulse" />
+                <div className="h-4 w-2/3 bg-muted rounded animate-pulse" />
+              </div>
+              <div className="flex items-center justify-between pt-2 border-t">
+                <div className="h-9 w-44 bg-muted rounded-md animate-pulse" />
+                <div className="h-6 w-28 bg-muted rounded animate-pulse" />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+
+  if (isLoading) return renderSkeleton();
   if (isError) return <div className="container mx-auto p-6">{t('forum.loadError')}</div>;
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-5xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold mb-2">{t('forum.title')}</h1>
-        <p className="text-muted-foreground text-sm">{t('forum.subtitle')}</p>
+      <div className="mb-4">
+        <h1 className="text-3xl font-bold mb-2">{t('forum.title')}</h1>
+        <p className="text-muted-foreground text-base">{t('forum.subtitle')}</p>
       </div>
 
-      <div className="flex items-center justify-between gap-4 mb-4">
-        <Input className="flex-1" placeholder={t('forum.searchPlaceholder')} value={query} onChange={(e) => setQuery(e.target.value)} />
+      {/* Search + Create New Thread */}
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex-1">
+          <Input
+            className="text-base w-full bg-card"
+            placeholder={t('forum.searchPlaceholder')}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
-            <Button>{t('forum.createThread')}</Button>
+            <Button variant="default">
+              {t('forum.createNewThread')}
+            </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>{t('forum.createNewThread')}</DialogTitle>
+              <DialogTitle className="text-xl">{t('forum.createNewThread')}</DialogTitle>
             </DialogHeader>
-            <div className="space-y-3">
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('forum.titlePlaceholder')} />
-              <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder={t('forum.contentPlaceholder')} />
-              <Input value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder={t('forum.tagsPlaceholder')} />
+            <div className="space-y-4">
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder={t('forum.titlePlaceholder')}
+                className="text-base"
+              />
+              <Textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder={t('forum.contentPlaceholder')}
+                className="min-h-32 text-base"
+              />
+              <Input
+                value={tagsInput}
+                onChange={(e) => setTagsInput(e.target.value)}
+                placeholder={t('forum.tagsPlaceholder')}
+                className="text-base"
+              />
             </div>
             <DialogFooter>
+              <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
+                {t('common.cancel') || 'Cancel'}
+              </Button>
               <Button
                 onClick={async () => {
                   const tags = tagsInput.split(',').map((t) => t.trim()).filter(Boolean);
@@ -149,127 +198,38 @@ const ForumPage = () => {
                     setTitle('');
                     setContent('');
                     setTagsInput('');
-                  } catch (err) {
+                  } catch (_err) {
                     // error handled by mutation (toasts)
                   }
                 }}
+                disabled={createPostMutation.isPending}
               >
-                {t('forum.create')}
+                {createPostMutation.isPending ? t('common.creating') || 'Creating...' : t('forum.create')}
               </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      {/* Posts List */}
+      <div className="grid grid-cols-1 gap-6">
         {filtered.map((post) => {
-          const topComment = (post.comments || []).slice().sort((a, b) => b.upvoteCount - a.upvoteCount)[0];
+          // Get most upvoted comment
+          const topComment = (post.comments || [])
+            .slice()
+            .sort((a, b) => (b.upvoteCount - b.downvoteCount) - (a.upvoteCount - a.downvoteCount))[0];
+
           return (
-            <Card key={post.id} className="relative gap-4 py-4">
-              <CardHeader className="px-4">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <Link to={`/forum/${post.id}`}>
-                      <CardTitle className="text-lg hover:underline cursor-pointer">{post.title}</CardTitle>
-                    </Link>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <span>{t('forum.by')} <Link to={`/profile/${post.authorId}`} className="hover:underline text-primary">{post.authorUsername}</Link></span>
-                      <span>•</span>
-                      <span>{new Date(post.createdAt).toLocaleString()}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5 pt-2">
-                      {post.tags?.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs px-2 py-0.5">{tag}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="text-sm text-muted-foreground">{t('forum.comments')}: {post.commentCount}</div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="px-4 space-y-4">
-                <Link to={`/forum/${post.id}`} className="block">
-                  <p className="text-sm leading-relaxed hover:underline cursor-pointer">{truncate(post.content, 300)}</p>
-                </Link>
-
-                {topComment && (
-                  <div className="p-3 bg-muted rounded">
-                    <div className="text-xs text-muted-foreground">{t('forum.topCommentFrom')} {topComment.authorUsername}</div>
-                    <div className="text-sm">{truncate(topComment.content, 200)}</div>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <LikeDislikeButtons
-                      likes={post.upvoteCount}
-                      dislikes={post.downvoteCount}
-                      onLike={async () => {
-                        try {
-                          setLoadingId(setUpvotingIds, post.id, true);
-                          await upvoteMutation.mutateAsync(post.id);
-                          setPostVote(post.id, 'like');
-                        } finally {
-                          setLoadingId(setUpvotingIds, post.id, false);
-                        }
-                      }}
-                      onDislike={async () => {
-                        try {
-                          setLoadingId(setDownvotingIds, post.id, true);
-                          await downvoteMutation.mutateAsync(post.id);
-                          setPostVote(post.id, 'dislike');
-                        } finally {
-                          setLoadingId(setDownvotingIds, post.id, false);
-                        }
-                      }}
-                      likeLoading={upvotingIds.includes(post.id)}
-                      dislikeLoading={downvotingIds.includes(post.id)}
-                      activeLike={postVotes[post.id] === 'like'}
-                      activeDislike={postVotes[post.id] === 'dislike'}
-                    />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() =>
-                        openReport({
-                          title: t('forum.reportPost.title'),
-                          subtitle: t('forum.reportPost.subtitle', { author: post.authorUsername }),
-                          contextSnippet: post.content,
-                          reportType: 'Post',
-                          reportedName: post.authorUsername,
-                          onSubmit: async (message) => {
-                            await reportForumPost(post.id, message);
-                          },
-                        })
-                      }
-                    >
-                      <ShieldAlert className="h-4 w-4 text-red-500" />
-                    </Button>
-                    {user && user.id === post.authorId && (
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEditDialog(post)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => setDeletePostId(post.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <PostCard
+              key={post.id}
+              post={post}
+              topComment={topComment}
+              user={user}
+              onEdit={openEditDialog}
+              onDelete={(id) => setDeletePostId(id)}
+              openReport={openReport}
+              t={t}
+            />
           );
         })}
       </div>
@@ -306,23 +266,26 @@ const ForumPage = () => {
       <Dialog open={editingPost !== null} onOpenChange={(open) => !open && setEditingPost(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{t('forum.editPost.title')}</DialogTitle>
+            <DialogTitle className="text-xl">{t('forum.editPost.title')}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-3">
-            <Input 
-              value={editTitle} 
-              onChange={(e) => setEditTitle(e.target.value)} 
-              placeholder={t('forum.titlePlaceholder')} 
+          <div className="space-y-4">
+            <Input
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              placeholder={t('forum.titlePlaceholder')}
+              className="text-base"
             />
-            <Textarea 
-              value={editContent} 
-              onChange={(e) => setEditContent(e.target.value)} 
-              placeholder={t('forum.contentPlaceholder')} 
+            <Textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              placeholder={t('forum.contentPlaceholder')}
+              className="min-h-32 text-base"
             />
-            <Input 
-              value={editTagsInput} 
-              onChange={(e) => setEditTagsInput(e.target.value)} 
-              placeholder={t('forum.tagsPlaceholder')} 
+            <Input
+              value={editTagsInput}
+              onChange={(e) => setEditTagsInput(e.target.value)}
+              placeholder={t('forum.tagsPlaceholder')}
+              className="text-base"
             />
           </div>
           <DialogFooter>

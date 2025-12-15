@@ -1,5 +1,6 @@
 import { Button } from "@shared/components/ui/button";
-import { Input } from "@shared/components/ui/input";
+import { Textarea } from "@shared/components/ui/textarea";
+import { Card, CardContent } from "@shared/components/ui/card";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -20,14 +21,21 @@ const CommentForm = ({ onSubmit }: CommentFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-      <Input
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder={t('forum.comment.addPlaceholder')}
-      />
-      <Button type="submit">{t('forum.comment.submit')}</Button>
-    </form>
+    <Card className="shadow-sm">
+      <CardContent className="px-4 py-4">
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
+          <Textarea
+            className="bg-card text-base min-h-24 w-full"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder={t('forum.comment.addPlaceholder')}
+          />
+          <div className="flex justify-end">
+            <Button type="submit">{t('forum.comment.submit')}</Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

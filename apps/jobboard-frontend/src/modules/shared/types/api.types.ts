@@ -380,7 +380,7 @@ export interface CreateMessageDTO {
 export interface ForumCommentResponseDTO {
   id: number;
   content: string;
-  authorId: number;
+  authorId: number | null;
   authorUsername: string;
   postId: number;
   parentCommentId?: number | null;
@@ -388,6 +388,8 @@ export interface ForumCommentResponseDTO {
   updatedAt: string;
   upvoteCount: number;
   downvoteCount: number;
+  hasUserUpvoted?: boolean;
+  hasUserDownvoted?: boolean;
 }
 
 /**
@@ -397,7 +399,7 @@ export interface ForumPostResponseDTO {
   id: number;
   title: string;
   content: string;
-  authorId: number;
+  authorId: number | null;
   authorUsername: string;
   tags: string[];
   createdAt: string;
@@ -406,6 +408,8 @@ export interface ForumPostResponseDTO {
   upvoteCount: number;
   downvoteCount: number;
   comments: ForumCommentResponseDTO[];
+  hasUserUpvoted?: boolean;
+  hasUserDownvoted?: boolean;
 }
 
 /**
