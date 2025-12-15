@@ -773,7 +773,6 @@ class ReviewServiceTest {
                 when(reviewReplyRepository.findByReview_Id(300L)).thenReturn(Optional.of(reply));
                 when(reviewPolicyRatingRepository.findByReview_Id(300L))
                                 .thenReturn(List.of(rating1));
-                when(workplaceRepository.findById(workplaceId)).thenReturn(Optional.of(wp));
 
                 reviewService.deleteReview(workplaceId, 300L, user, false);
 
@@ -904,24 +903,6 @@ class ReviewServiceTest {
         }
 
         @Test
-        void deleteReview_whenWorkplaceNotFoundWhileUpdatingCount_throwsHandleException() {
-                Long workplaceId = 1L;
-                User user = sampleUser(10L);
-                Workplace wp = sampleWorkplace(workplaceId);
-                Review review = sampleReview(701L, wp, user);
-
-                when(reviewRepository.findById(701L)).thenReturn(Optional.of(review));
-                when(reviewReplyRepository.findByReview_Id(701L)).thenReturn(Optional.empty());
-                when(reviewPolicyRatingRepository.findByReview_Id(701L)).thenReturn(Collections.emptyList());
-                when(workplaceRepository.findById(workplaceId)).thenReturn(Optional.empty());
-
-                assertThatThrownBy(() -> reviewService.deleteReview(workplaceId, 701L, user, false))
-                                .isInstanceOf(HandleException.class)
-                                .extracting("code")
-                                .isEqualTo(ErrorCode.WORKPLACE_NOT_FOUND);
-        }
-
-        @Test
         void deleteReview_whenAdminDeletes_removesReviewAndRelatedEntities() {
                 Long workplaceId = 1L;
                 Workplace wp = sampleWorkplace(workplaceId);
@@ -947,7 +928,6 @@ class ReviewServiceTest {
                 when(reviewReplyRepository.findByReview_Id(401L)).thenReturn(Optional.of(reply));
                 when(reviewPolicyRatingRepository.findByReview_Id(401L))
                                 .thenReturn(List.of(rating));
-                when(workplaceRepository.findById(workplaceId)).thenReturn(Optional.of(wp));
 
                 reviewService.deleteReview(workplaceId, 401L, admin, true);
 
