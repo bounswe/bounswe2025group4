@@ -22,6 +22,11 @@ async function fetchPosts(): Promise<ForumPostResponseDTO[]> {
   return response.data;
 }
 
+async function fetchPostsByUserId(userId: number): Promise<ForumPostResponseDTO[]> {
+  const response = await api.get<ForumPostResponseDTO[]>(`/forum/posts/user/${userId}`);
+  return response.data;
+}
+
 async function fetchPost(postId: number): Promise<ForumPostResponseDTO> {
   const response = await api.get<ForumPostResponseDTO>(`/forum/posts/${postId}`);
   return response.data;
@@ -32,7 +37,10 @@ async function createPost(data: CreateForumPostRequest): Promise<ForumPostRespon
   return response.data;
 }
 
-async function updatePost(postId: number, data: UpdateForumPostRequest): Promise<ForumPostResponseDTO> {
+async function updatePost(
+  postId: number,
+  data: UpdateForumPostRequest,
+): Promise<ForumPostResponseDTO> {
   const response = await api.put<ForumPostResponseDTO>(`/forum/posts/${postId}`, data);
   return response.data;
 }
@@ -57,12 +65,18 @@ async function removePostDownvote(postId: number): Promise<void> {
   await api.delete(`/forum/posts/${postId}/downvote`);
 }
 
-async function createComment(postId: number, data: CreateForumCommentRequest): Promise<ForumCommentResponseDTO> {
+async function createComment(
+  postId: number,
+  data: CreateForumCommentRequest,
+): Promise<ForumCommentResponseDTO> {
   const response = await api.post<ForumCommentResponseDTO>(`/forum/posts/${postId}/comments`, data);
   return response.data;
 }
 
-async function updateComment(commentId: number, data: UpdateForumCommentRequest): Promise<ForumCommentResponseDTO> {
+async function updateComment(
+  commentId: number,
+  data: UpdateForumCommentRequest,
+): Promise<ForumCommentResponseDTO> {
   const response = await api.put<ForumCommentResponseDTO>(`/forum/comments/${commentId}`, data);
   return response.data;
 }
@@ -91,6 +105,7 @@ async function removeCommentDownvote(commentId: number): Promise<void> {
 export {
   fetchPosts as getForumPosts,
   fetchPost as getForumPost,
+  fetchPostsByUserId,
   createPost,
   updatePost,
   deletePost,
@@ -120,6 +135,13 @@ export const useForumPostQuery = (postId?: number, enabled = true) =>
     queryKey: postId ? forumKeys.post(postId) : forumKeys.post('missing'),
     queryFn: () => fetchPost(postId as number),
     enabled: Boolean(postId) && enabled,
+  });
+
+export const useUserPostsQuery = (userId?: number, enabled = true) =>
+  useQueryWithToast({
+    queryKey: userId ? forumKeys.userPosts(userId) : forumKeys.userPosts('missing'),
+    queryFn: () => fetchPostsByUserId(userId as number),
+    enabled: Boolean(userId) && enabled,
   });
 
 export const useCreateForumPostMutation = () => {
@@ -173,7 +195,10 @@ export const useTogglePostUpvoteMutation = (postId: number, action: 'upvote' | '
   });
 };
 
-export const useTogglePostDownvoteMutation = (postId: number, action: 'downvote' | 'removeDownvote') => {
+export const useTogglePostDownvoteMutation = (
+  postId: number,
+  action: 'downvote' | 'removeDownvote',
+) => {
   const queryClient = useQueryClient();
   const fn = action === 'downvote' ? () => downvotePost(postId) : () => removePostDownvote(postId);
   return useMutation({
@@ -222,9 +247,14 @@ export const useDeleteCommentMutation = (commentId: number, postId?: number) => 
   });
 };
 
-export const useToggleCommentUpvoteMutation = (commentId: number, postId?: number, action: 'upvote' | 'removeUpvote' = 'upvote') => {
+export const useToggleCommentUpvoteMutation = (
+  commentId: number,
+  postId?: number,
+  action: 'upvote' | 'removeUpvote' = 'upvote',
+) => {
   const queryClient = useQueryClient();
-  const fn = action === 'upvote' ? () => upvoteComment(commentId) : () => removeCommentUpvote(commentId);
+  const fn =
+    action === 'upvote' ? () => upvoteComment(commentId) : () => removeCommentUpvote(commentId);
   return useMutation({
     mutationFn: fn,
     onSuccess: () => {
@@ -234,9 +264,16 @@ export const useToggleCommentUpvoteMutation = (commentId: number, postId?: numbe
   });
 };
 
-export const useToggleCommentDownvoteMutation = (commentId: number, postId?: number, action: 'downvote' | 'removeDownvote' = 'downvote') => {
+export const useToggleCommentDownvoteMutation = (
+  commentId: number,
+  postId?: number,
+  action: 'downvote' | 'removeDownvote' = 'downvote',
+) => {
   const queryClient = useQueryClient();
-  const fn = action === 'downvote' ? () => downvoteComment(commentId) : () => removeCommentDownvote(commentId);
+  const fn =
+    action === 'downvote'
+      ? () => downvoteComment(commentId)
+      : () => removeCommentDownvote(commentId);
   return useMutation({
     mutationFn: fn,
     onSuccess: () => {

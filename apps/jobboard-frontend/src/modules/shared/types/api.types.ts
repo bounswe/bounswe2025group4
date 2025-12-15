@@ -388,6 +388,8 @@ export interface ForumCommentResponseDTO {
   updatedAt: string;
   upvoteCount: number;
   downvoteCount: number;
+  hasUserUpvoted?: boolean;
+  hasUserDownvoted?: boolean;
 }
 
 /**
@@ -406,6 +408,8 @@ export interface ForumPostResponseDTO {
   upvoteCount: number;
   downvoteCount: number;
   comments: ForumCommentResponseDTO[];
+  hasUserUpvoted?: boolean;
+  hasUserDownvoted?: boolean;
 }
 
 /**

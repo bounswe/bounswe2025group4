@@ -26,33 +26,33 @@ const LikeDislikeButtons = ({
   dislikeLoading = false,
   disabled = false,
 }: LikeDislikeButtonsProps) => {
-  const likeClass = `h-4 w-4 ${activeLike || likeLoading ? 'fill-current text-primary' : ''}`;
-  const dislikeClass = `h-4 w-4 ${activeDislike || dislikeLoading ? 'fill-current text-destructive' : ''}`;
+  const likeClass = `h-5 w-5 ${activeLike || likeLoading ? 'fill-current text-primary' : ''}`;
+  const dislikeClass = `h-5 w-5 ${activeDislike || dislikeLoading ? 'fill-current text-destructive' : ''}`;
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-3">
       <Button
         variant="ghost"
         size="sm"
         onClick={onLike}
-        className={`flex items-center gap-2 text-sm ${activeLike || likeLoading ? 'text-primary' : 'text-muted-foreground hover:text-primary'} transition-colors`}
+        className={`flex items-center gap-2 ${activeLike || likeLoading ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-primary hover:bg-primary/5'} transition-all`}
         aria-label="Like"
         disabled={disabled || likeLoading}
       >
         <ThumbsUp className={likeClass} />
-        <span className="text-xs font-medium">{likes}</span>
+        <span className="text-sm font-semibold">{likes}</span>
       </Button>
 
       <Button
         variant="ghost"
         size="sm"
         onClick={onDislike}
-        className={`flex items-center gap-2 text-sm ${activeDislike || dislikeLoading ? 'text-destructive' : 'text-muted-foreground hover:text-destructive'} transition-colors`}
+        className={`flex items-center gap-2 ${activeDislike || dislikeLoading ? 'text-destructive bg-destructive/10' : 'text-muted-foreground hover:text-destructive hover:bg-destructive/5'} transition-all`}
         aria-label="Dislike"
         disabled={disabled || dislikeLoading}
       >
         <ThumbsDown className={dislikeClass} />
-        <span className="text-xs font-medium">{dislikes}</span>
+        <span className="text-sm font-semibold">{dislikes}</span>
       </Button>
     </div>
   );

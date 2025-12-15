@@ -26,7 +26,16 @@ import {
   ImageUploadModal,
 } from '@modules/profile/components/profile/ProfileEditModals';
 import { DeleteAccountModal } from '@modules/profile/components/profile/DeleteAccountModal';
-import type { Profile, PublicProfile, Post, Experience, Education, Skill, Interest } from '@shared/types/profile.types';
+import type {
+  Profile,
+  PublicProfile,
+  Activity,
+  Experience,
+  Education,
+  Skill,
+  Interest,
+} from '@shared/types/profile.types';
+import type { ForumPostResponseDTO } from '@shared/types/api.types';
 import {
   profileService,
   useCreateProfileMutationWithToasts,
@@ -43,6 +52,7 @@ import {
   useUpdateBioMutationWithOptimistic,
 } from '@modules/profile/services/profile.service';
 import { useMyBadgesQuery, useUserBadgesQuery } from '@modules/profile/services/badge.service';
+import { useUserPostsQuery } from '@modules/forum/services/forum.service';
 import { profileKeys } from '@shared/lib/query-keys';
 import { normalizeApiError } from '@shared/utils/error-handler';
 import CenteredLoader from '@shared/components/common/CenteredLoader';
@@ -68,39 +78,21 @@ export default function ProfilePage() {
   const { openReport, ReportModalElement } = useReportModal();
 
   const viewedUserId = routeUserId ? Number(routeUserId) : undefined;
-  const isOwner = user ? (!viewedUserId || user.id === viewedUserId) : false;
+  const isOwner = user ? !viewedUserId || user.id === viewedUserId : false;
 
   const myProfileQuery = useMyProfileQuery(isOwner);
   const publicProfileQuery = usePublicProfileQuery(viewedUserId, !isOwner);
-  const profile = (isOwner ? myProfileQuery.data : publicProfileQuery.data) as Profile | PublicProfile | undefined;
+  const profile = (isOwner ? myProfileQuery.data : publicProfileQuery.data) as
+    | Profile
+    | PublicProfile
+    | undefined;
 
   const myBadgesQuery = useMyBadgesQuery(isOwner);
   const userBadgesQuery = useUserBadgesQuery(viewedUserId, !isOwner);
   const badgesQuery = isOwner ? myBadgesQuery : userBadgesQuery;
 
-  const mockPosts: Post[] = useMemo(() => [
-    {
-      id: 1,
-      title: 'User Research Techniques: A Comprehensive Guide',
-      date: '3 days ago',
-      replies: 12,
-      likes: 45,
-    },
-    {
-      id: 2,
-      title: 'My Design Journey: From Student to Professional',
-      date: '1 week ago',
-      replies: 8,
-      likes: 32,
-    },
-    {
-      id: 3,
-      title: 'Essential Daily Tools for Modern Designers',
-      date: '2 weeks ago',
-      replies: 24,
-      likes: 67,
-    },
-  ], []);
+  const targetUserId = viewedUserId || user?.id;
+  const userPostsQuery = useUserPostsQuery(targetUserId, Boolean(targetUserId));
 
   useEffect(() => {
     if (!isOwner) {
@@ -216,8 +208,11 @@ export default function ProfilePage() {
     if (type === 'interest') setEditingInterest(null);
   };
 
-
-  const handleCreateProfile = async (data: { firstName: string; lastName: string; bio?: string }) => {
+  const handleCreateProfile = async (data: {
+    firstName: string;
+    lastName: string;
+    bio?: string;
+  }) => {
     await createProfileMutation.mutateAsync(data);
     setShowCreateProfile(false);
   };
@@ -337,9 +332,7 @@ export default function ProfilePage() {
       <div className="max-w-5xl mx-auto space-y-6 py-16">
         <div className="bg-muted rounded-lg p-6 text-center">
           <p className="font-medium">{t('profile.page.emptyTitle')}</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            {t('profile.page.emptyDescription')}
-          </p>
+          <p className="text-sm text-muted-foreground mt-2">{t('profile.page.emptyDescription')}</p>
         </div>
       </div>
     );
@@ -386,7 +379,9 @@ export default function ProfilePage() {
                 ? () => {
                     openReport({
                       title: t('profile.report', { defaultValue: 'Report Profile' }),
-                      subtitle: t('profile.reportSubtitle', { defaultValue: 'Report this profile if it violates our guidelines' }),
+                      subtitle: t('profile.reportSubtitle', {
+                        defaultValue: 'Report this profile if it violates our guidelines',
+                      }),
                       contextSnippet: `${profile.firstName} ${profile.lastName}`,
                       reportType: 'Profile',
                       reportedName: `${profile.firstName} ${profile.lastName}`,
@@ -442,7 +437,9 @@ export default function ProfilePage() {
                     onClick={() => {
                       openReport({
                         title: t('profile.report', { defaultValue: 'Report Profile' }),
-                        subtitle: t('profile.reportSubtitle', { defaultValue: 'Report this profile if it violates our guidelines' }),
+                        subtitle: t('profile.reportSubtitle', {
+                          defaultValue: 'Report this profile if it violates our guidelines',
+                        }),
                         contextSnippet: `${publicProfile?.firstName} ${publicProfile?.lastName}`,
                         reportType: 'Profile',
                         reportedName: `${publicProfile?.firstName} ${publicProfile?.lastName}`,
@@ -460,7 +457,9 @@ export default function ProfilePage() {
                     title={t('profile.report', { defaultValue: 'Report' })}
                   >
                     <Flag className="h-4 w-4" />
-                    <span className="sr-only">{t('profile.report', { defaultValue: 'Report' })}</span>
+                    <span className="sr-only">
+                      {t('profile.report', { defaultValue: 'Report' })}
+                    </span>
                   </button>
                 )}
               </div>
@@ -468,7 +467,9 @@ export default function ProfilePage() {
               <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
                 {joinedLabel && <span>{joinedLabel}</span>}
                 <span>•</span>
-                <span>42 {t('profile.header.posts')}</span>
+                <span>
+                  {userPostsQuery.data?.length || 0} {t('profile.header.posts')}
+                </span>
                 <span>•</span>
                 <span>{badgesQuery.data?.length || 0} {t('profile.header.badges')}</span>
               </div>

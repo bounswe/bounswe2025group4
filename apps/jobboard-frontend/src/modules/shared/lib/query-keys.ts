@@ -76,6 +76,7 @@ export const forumKeys = {
   posts: ['forum', 'posts'] as const,
   postsList: (filters?: unknown) => [...forumKeys.posts, 'list', filters || {}] as const,
   post: (postId: number | string) => [...forumKeys.all, 'post', postId] as const,
+  userPosts: (userId: number | string) => [...forumKeys.all, 'user-posts', userId] as const,
   comment: (commentId: number | string) => [...forumKeys.all, 'comment', commentId] as const,
 };
 
