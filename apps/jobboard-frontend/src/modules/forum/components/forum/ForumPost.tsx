@@ -5,7 +5,7 @@ import Comment from "./Comment";
 import CommentForm from "./CommentForm";
 import LikeDislikeButtons from "./LikeDislikeButtons";
 import { useState } from "react";
-import { ShieldAlert } from 'lucide-react';
+import { Flag } from 'lucide-react';
 import { useReportModal } from '@shared/hooks/useReportModal';
 import { reportForumPost } from '@modules/workplace/services/workplace-report.service';
 
@@ -54,33 +54,36 @@ const ForumPost = ({
   const { openReport, ReportModalElement } = useReportModal();
 
   return (
-    <Card className="relative gap-4 py-4">
-      <div className="absolute top-3 right-3 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() =>
-            openReport({
-              title: 'Report Post',
-              subtitle: `Reporting post by ${post.author}`,
-              contextSnippet: post.content,
-              reportType: 'Post',
-              reportedName: post.author,
-              onSubmit: async (message) => {
-                await reportForumPost(Number(post.id), message);
-              },
-            })
-          }
-        >
-          <ShieldAlert className="h-5 w-5 text-red-500" />
-        </Button>
-        {ReportModalElement}
-      </div>
-      <CardHeader className="px-4">
-        <CardTitle className="text-xl pr-8">{post.title}</CardTitle>
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <span>By {post.author}</span>
-        </div>
+    <>
+      <Card className="gap-4 py-4">
+        <CardHeader className="px-4">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <CardTitle className="text-xl">{post.title}</CardTitle>
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground mt-1">
+                <span>By {post.author}</span>
+              </div>
+            </div>
+            <button
+              onClick={() =>
+                openReport({
+                  title: 'Report Post',
+                  subtitle: `Reporting post by ${post.author}`,
+                  contextSnippet: post.content,
+                  reportType: 'Post',
+                  reportedName: post.author,
+                  onSubmit: async (message) => {
+                    await reportForumPost(Number(post.id), message);
+                  },
+                })
+              }
+              className="text-muted-foreground hover:text-destructive transition-colors p-1"
+              title="Report Post"
+            >
+              <Flag className="h-4 w-4" />
+              <span className="sr-only">Report Post</span>
+            </button>
+          </div>
         <div className="flex flex-wrap gap-1.5 pt-2">
           {post.tags.map((tag) => (
             <Badge key={tag} variant="secondary" className="text-xs px-2 py-0.5">
@@ -140,7 +143,9 @@ const ForumPost = ({
           <CommentForm onSubmit={onCommentSubmit} />
         </div>
       </CardContent>
-    </Card>
+      </Card>
+      {ReportModalElement}
+    </>
   );
 };
 

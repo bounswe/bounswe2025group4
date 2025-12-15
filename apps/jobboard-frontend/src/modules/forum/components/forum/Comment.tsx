@@ -6,7 +6,7 @@ import { Card, CardContent } from "@shared/components/ui/card";
 import { Input } from '@shared/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@shared/components/ui/dialog';
 import LikeDislikeButtons from "./LikeDislikeButtons";
-import { ShieldAlert } from 'lucide-react';
+import { Flag } from 'lucide-react';
 import { useReportModal } from '@shared/hooks/useReportModal';
 import { reportForumComment } from '@modules/workplace/services/workplace-report.service';
 import { toast } from 'react-toastify';
@@ -52,42 +52,43 @@ const Comment = ({ comment, isOwner = false, onEdit, onDelete, onLike, onDislike
   };
 
   return (
-    <Card className="relative gap-3 py-3">
-      <CardContent className="px-3 space-y-2">
-        <div className="absolute top-2 right-2 z-10">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() =>
-              openReport({
-                title: 'Report Comment',
-                subtitle: `Reporting comment by ${comment.author}`,
-                contextSnippet: comment.content,
-                reportType: 'Comment',
-                reportedName: comment.author,
-                onSubmit: async (message) => {
-                  await reportForumComment(Number(comment.id), message);
-                },
-              })
-            }
-          >
-            <ShieldAlert className="h-5 w-5 text-red-500" />
-          </Button>
-          {ReportModalElement}
-        </div>
-        <div className="flex items-center justify-between pr-6">
-          <span className="font-semibold text-sm">{comment.author}</span>
-          {isOwner && (
-            <div className="flex items-center gap-1">
-              <Button variant="ghost" size="sm" onClick={() => setIsEditing(!isEditing)}>
-                {isEditing ? t('forum.comment.cancel') : t('forum.comment.edit')}
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => setIsDeleteDialogOpen(true)}>
-                {t('forum.comment.delete')}
-              </Button>
+    <>
+      <Card className="gap-3 py-3">
+        <CardContent className="px-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-sm">{comment.author}</span>
+            <div className="flex items-center gap-2">
+              {isOwner && (
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="sm" onClick={() => setIsEditing(!isEditing)}>
+                    {isEditing ? t('forum.comment.cancel') : t('forum.comment.edit')}
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setIsDeleteDialogOpen(true)}>
+                    {t('forum.comment.delete')}
+                  </Button>
+                </div>
+              )}
+              <button
+                onClick={() =>
+                  openReport({
+                    title: 'Report Comment',
+                    subtitle: `Reporting comment by ${comment.author}`,
+                    contextSnippet: comment.content,
+                    reportType: 'Comment',
+                    reportedName: comment.author,
+                    onSubmit: async (message) => {
+                      await reportForumComment(Number(comment.id), message);
+                    },
+                  })
+                }
+                className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                title="Report Comment"
+              >
+                <Flag className="h-4 w-4" />
+                <span className="sr-only">Report Comment</span>
+              </button>
             </div>
-          )}
-        </div>
+          </div>
         {isEditing ? (
           <div className="space-y-2">
             <Input
@@ -152,7 +153,8 @@ const Comment = ({ comment, isOwner = false, onEdit, onDelete, onLike, onDislike
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+      {ReportModalElement}
+    </>
   );
 };
 

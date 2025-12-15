@@ -462,10 +462,7 @@ export default function ProfilePage() {
                   <p className="text-muted-foreground mt-1">{currentRoleLabel}</p>
                 </div>
                 {viewedUserId && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
+                  <button
                     onClick={() => {
                       openReport({
                         title: t('profile.report', { defaultValue: 'Report Profile' }),
@@ -483,10 +480,12 @@ export default function ProfilePage() {
                         },
                       });
                     }}
+                    className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                    title={t('profile.report', { defaultValue: 'Report' })}
                   >
                     <Flag className="h-4 w-4" />
-                    {t('profile.report', { defaultValue: 'Report' })}
-                  </Button>
+                    <span className="sr-only">{t('profile.report', { defaultValue: 'Report' })}</span>
+                  </button>
                 )}
               </div>
 

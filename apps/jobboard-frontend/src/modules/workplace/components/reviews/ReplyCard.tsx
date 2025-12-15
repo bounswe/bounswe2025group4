@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDistanceToNow } from 'date-fns';
-import { Building2, MoreVertical, Pencil, Trash2 } from 'lucide-react';
+import { Building2, MoreVertical, Pencil, Trash2, Flag } from 'lucide-react';
 import { Button } from '@shared/components/ui/button';
 import {
   DropdownMenu,
@@ -19,6 +19,8 @@ import { ReplyFormDialog } from './ReplyFormDialog';
 import { deleteReply } from '@modules/workplace/services/reviews.service';
 import type { ReplyResponse } from '@shared/types/workplace.types';
 import { useAuth } from '@/modules/auth/contexts/AuthContext';
+import { useReportModal } from '@shared/hooks/useReportModal';
+import { reportWorkplaceReviewReply } from '@modules/workplace/services/workplace-report.service';
 
 interface ReplyCardProps {
   workplaceId: number;
@@ -39,8 +41,22 @@ export function ReplyCard({
   const { user } = useAuth();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { openReport, ReportModalElement } = useReportModal();
 
   const isOwner = user?.id === reply.employerUserId;
+
+  const handleReport = () => {
+    openReport({
+      title: t('reviews.report'),
+      subtitle: t('reviews.reply.reportSubtitle', { defaultValue: 'Report this reply if it violates our guidelines' }),
+      contextSnippet: reply.content,
+      reportType: 'Review Reply',
+      reportedName: t('reviews.reply.employerResponse'),
+      onSubmit: async (message, reason) => {
+        await reportWorkplaceReviewReply(workplaceId, reviewId, reply.id, message, reason);
+      },
+    });
+  };
 
   const handleDelete = async () => {
     if (!confirm(t('reviews.reply.confirmDelete'))) return;
@@ -88,34 +104,44 @@ export function ReplyCard({
               </div>
             </div>
 
-            {isOwner && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    disabled={isDeleting}
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
-                    <Pencil className="h-4 w-4 mr-2" />
-                    {t('common.edit')}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={handleDelete}
-                    className="text-destructive"
-                    disabled={isDeleting}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    {isDeleting ? t('common.deleting') : t('common.delete')}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            <div className="flex items-center gap-2">
+              {isOwner && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      disabled={isDeleting}
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+                      <Pencil className="h-4 w-4 mr-2" />
+                      {t('common.edit')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleDelete}
+                      className="text-destructive"
+                      disabled={isDeleting}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      {isDeleting ? t('common.deleting') : t('common.delete')}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              <button
+                onClick={handleReport}
+                className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                title={t('reviews.report')}
+              >
+                <Flag className="h-4 w-4" />
+                <span className="sr-only">{t('reviews.report')}</span>
+              </button>
+            </div>
           </div>
 
           <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
@@ -132,6 +158,7 @@ export function ReplyCard({
           onSuccess={handleEditSuccess}
         />
       )}
+      {ReportModalElement}
     </>
   );
 }

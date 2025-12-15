@@ -59,3 +59,18 @@ export async function reportUserProfile(userId: number, message: string, reason:
         description: message,
     });
 }
+
+export async function reportWorkplaceReviewReply(
+    _workplaceId: number,
+    reviewId: number,
+    replyId: number,
+    message: string,
+    reason: ReportReasonType = 'OTHER',
+) {
+    return createReport({
+        entityType: 'REVIEW_REPLY',
+        entityId: replyId,
+        reasonType: mapReportReason(reason),
+        description: message,
+    });
+}

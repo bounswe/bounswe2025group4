@@ -81,15 +81,14 @@ export function ProfileHeader({
 
           <div className="flex items-center gap-4">
             {showReport && onReport && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2"
+              <button
                 onClick={onReport}
+                className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                title={t('profile.report', { defaultValue: 'Report' })}
               >
                 <Flag className="h-4 w-4" />
-                {t('profile.report', { defaultValue: 'Report' })}
-              </Button>
+                <span className="sr-only">{t('profile.report', { defaultValue: 'Report' })}</span>
+              </button>
             )}
             <div className="flex gap-6 text-center">
             <div>
