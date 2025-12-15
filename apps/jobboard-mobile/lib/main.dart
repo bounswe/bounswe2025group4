@@ -6,6 +6,7 @@ import 'core/providers/quote_provider.dart';
 import 'core/providers/profile_provider.dart';
 import 'core/providers/font_size_provider.dart';
 import 'core/providers/locale_provider.dart';
+import 'core/providers/badge_provider.dart';
 import 'core/services/api_service.dart';
 import 'features/mentorship/providers/mentor_provider.dart';
 import 'features/mentorship/providers/chat_provider.dart';
@@ -51,19 +52,25 @@ void main() {
           previous!..updateApiService(apiService),
         ),
 
+        ChangeNotifierProxyProvider<ApiService, BadgeProvider>(
+          create: (context) => BadgeProvider(
+            Provider.of<ApiService>(context, listen: false),
+          ),
+          update: (context, apiService, previous) =>
+              previous ?? BadgeProvider(apiService),
+        ),
+
         Provider(
           create: (_) => StompChatService(),
         ),
 
         ChangeNotifierProvider<ChatProvider>(
-          create: (context) => ChatProvider(
-            chatService: context.read<StompChatService>(),
-            apiService: context.read<ApiService>(),
-          ),
+        create: (context) => ChatProvider(
+          chatService: context.read<StompChatService>(),
+          apiService: context.read<ApiService>(),
         ),
-
-
-      ],
+      ),
+    ],
       child: const MyApp(),
     ),
   );
