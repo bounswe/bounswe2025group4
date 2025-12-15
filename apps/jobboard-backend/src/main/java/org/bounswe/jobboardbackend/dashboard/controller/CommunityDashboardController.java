@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/public/dashboard")
 @RequiredArgsConstructor
-@PreAuthorize("isAuthenticated()")
 @Tag(name = "Community Dashboard", description = "Public API for community statistics")
 public class CommunityDashboardController {
 
