@@ -157,7 +157,7 @@ public class AuthService {
         String strRole = registerRequest.getRole();
 
         Role role = switch (strRole) {
-            case "ROLE_ADMIN" -> Role.ROLE_ADMIN; // TODO: Disabled for security
+//            case "ROLE_ADMIN" -> Role.ROLE_ADMIN; // Disabled for security
             case "ROLE_EMPLOYER" -> Role.ROLE_EMPLOYER;
             case "ROLE_JOBSEEKER" -> Role.ROLE_JOBSEEKER;
             default -> throw new HandleException(ErrorCode.ROLE_INVALID, "User has no role assigned");
