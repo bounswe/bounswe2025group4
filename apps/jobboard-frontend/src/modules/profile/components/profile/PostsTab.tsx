@@ -11,7 +11,7 @@ export function PostsTab({ posts }: PostsTabProps) {
   const navigate = useNavigate();
 
   const handlePostClick = (postId: number) => {
-    navigate(`/forum/post/${postId}`);
+    navigate(`/forum/${postId}`);
   };
 
   const formatDate = (dateString: string) => {
