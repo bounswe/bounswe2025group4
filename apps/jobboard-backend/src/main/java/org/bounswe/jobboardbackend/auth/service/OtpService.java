@@ -11,7 +11,6 @@ import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.auth.security.JwtUtils;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -21,9 +20,9 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class OtpService {
-    @Value("${app.env}")
-    private String appEnv;
-    private final EmailService emailService;
+//    @Value("${app.env}")
+//    private String appEnv;
+//    private final EmailService emailService;
     private final UserRepository userRepository;
     private final OtpRepository otpRepository;
     private final JwtUtils jwtUtils;
@@ -35,7 +34,8 @@ public class OtpService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
 
-        String otpCode = appEnv.equals("prod") ? generateOtp() : "000000";
+        //String otpCode = appEnv.equals("prod") ? generateOtp() : "000000";
+        String otpCode = "000000";
         LocalDateTime expiresAt = LocalDateTime.now().plus(OTP_EXPIRATION_TIME);
 
         otpRepository.deleteByUsername(username);
@@ -46,9 +46,9 @@ public class OtpService {
         otp.setExpiresAt(expiresAt);
         otp.setTemporaryToken(temporaryToken);
         otpRepository.save(otp);
-        if (appEnv.equals("prod")) {
-            emailService.sendOtpEmail(user.getEmail(), otpCode);
-        }
+//        if (appEnv.equals("prod")) {
+//            emailService.sendOtpEmail(user.getEmail(), otpCode);
+//        }
     }
 
 
