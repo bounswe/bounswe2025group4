@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthContext } from '@modules/auth/contexts/AuthContext';
+import { deleteAccount } from '@modules/auth/services/auth.service';
 import { useReportModal } from '@shared/hooks/useReportModal';
 import { createReport, mapReportReason } from '@shared/services/report.service';
 import { Flag } from 'lucide-react';
@@ -63,8 +64,9 @@ type SkillFormData = Omit<Skill, 'id'> & { id?: number };
 type InterestFormData = Omit<Interest, 'id'> & { id?: number };
 
 export default function ProfilePage() {
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
   const { userId: routeUserId } = useParams<{ userId?: string }>();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'about' | 'activity' | 'posts'>('about');
   const [showCreateProfile, setShowCreateProfile] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
@@ -298,12 +300,17 @@ export default function ProfilePage() {
   const handleDeleteAccount = async () => {
     try {
       setIsDeletingAccount(true);
-      await profileService.deleteAllProfileData();
-      queryClient.invalidateQueries({ queryKey: profileKeys.me });
+      await deleteAccount();
+      // Clear all queries since account is deleted
+      queryClient.clear();
+      // Logout the user
+      logout();
       toast.success(t('profile.notifications.deleteAccountSuccess'));
-      setShowCreateProfile(true);
-    } catch (_err) {
-      toast.error(t('profile.page.alerts.deleteFailed'));
+      // Navigate to home page
+      navigate('/');
+    } catch (err) {
+      const error = normalizeApiError(err);
+      toast.error(error.friendlyMessage || t('profile.page.alerts.deleteFailed'));
     } finally {
       setIsDeletingAccount(false);
     }
