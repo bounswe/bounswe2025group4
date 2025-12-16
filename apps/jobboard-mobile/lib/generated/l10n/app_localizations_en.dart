@@ -1799,6 +1799,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get badges_years => 'years';
 
   @override
+  String get badges_myBadges => 'My Badges';
+
+  @override
+  String get badges_earnedCount => 'Badges Earned';
+
+  @override
+  String get badges_locked => 'Locked';
+
+  @override
+  String get badges_notYetEarned => 'Not yet earned';
+
+  @override
+  String badges_earnedOn(String date) {
+    return 'Earned on $date';
+  }
+
+  @override
+  String badges_requirement(int count) {
+    return 'Requirement: $count';
+  }
+
+  @override
+  String get badges_close => 'Close';
+
+  @override
+  String get badges_tapToViewAll => 'Tap to view all badges';
+
+  @override
+  String badges_moreBadges(int count) {
+    return '+$count more badges';
+  }
+
+  @override
+  String get badges_noBadgesAvailable => 'No badges available';
+
+  @override
+  String get badges_failedToLoad => 'Failed to load badges';
+
+  @override
   String get common_notSpecified => 'Not specified';
 
   @override

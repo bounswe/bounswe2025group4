@@ -9,6 +9,7 @@ import 'workplace_detail_page.dart';
 import 'create_workplace_page.dart';
 import 'my_employer_workplaces_page.dart';
 import 'my_employer_requests_page.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 class WorkplacesPage extends StatefulWidget {
   const WorkplacesPage({super.key});
@@ -127,6 +128,7 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
         title: Text(AppLocalizations.of(context).workplaces_title),
         automaticallyImplyLeading: false,
         actions: [
+          const NotificationIconButton(),
           if (isEmployer) ...[
             IconButton(
               icon: const Icon(Icons.business_center),

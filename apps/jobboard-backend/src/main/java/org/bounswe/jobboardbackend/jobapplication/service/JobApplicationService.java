@@ -12,11 +12,16 @@ import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.notification.notifier.JobApplicationNotifier;
 import org.bounswe.jobboardbackend.workplace.service.WorkplaceService;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
 import org.bounswe.jobboardbackend.workplace.repository.WorkplaceRepository;
+import org.bounswe.jobboardbackend.badge.event.JobApplicationCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.JobApplicationApprovedEvent;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +48,9 @@ public class JobApplicationService {
     private final WorkplaceService workplaceService;
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final WorkplaceRepository workplaceRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final JobApplicationNotifier notifier;
+    private final ActivityService activityService;
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -60,18 +68,26 @@ public class JobApplicationService {
     // Google Cloud Storage client
     private final Storage storage = StorageOptions.getDefaultInstance().getService();
 
-    public JobApplicationService(JobApplicationRepository applicationRepository,
-                                 UserRepository userRepository,
-                                 JobPostRepository jobPostRepository,
-                                 WorkplaceService workplaceService,
-                                 EmployerWorkplaceRepository employerWorkplaceRepository,
-                                 WorkplaceRepository workplaceRepository) {
+    public JobApplicationService(
+        JobApplicationRepository applicationRepository,
+        UserRepository userRepository,
+        JobPostRepository jobPostRepository,
+        WorkplaceService workplaceService,
+        EmployerWorkplaceRepository employerWorkplaceRepository,
+        WorkplaceRepository workplaceRepository,
+        ApplicationEventPublisher eventPublisher,
+        JobApplicationNotifier notifier,
+        ActivityService activityService
+    ) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
         this.jobPostRepository = jobPostRepository;
         this.workplaceService = workplaceService;
         this.employerWorkplaceRepository = employerWorkplaceRepository;
         this.workplaceRepository = workplaceRepository;
+        this.eventPublisher = eventPublisher;
+        this.notifier = notifier;
+        this.activityService = activityService;
     }
 
     @Transactional(readOnly = true)
@@ -138,7 +154,16 @@ public class JobApplicationService {
                 .appliedDate(LocalDateTime.now())
                 .build();
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        notifier.notifyNewApplication(savedApplication);
+
+        // Publish event for badge system
+        eventPublisher.publishEvent(new JobApplicationCreatedEvent(jobSeeker.getId(), savedApplication.getId()));
+
+        activityService.logActivity(jobSeeker, ActivityType.APPLY_JOB, savedApplication.getId(), "JobApplication");
+
+        return toResponseDto(savedApplication);
     }
 
     @Transactional
@@ -158,7 +183,18 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        notifier.notifyApplicationApproved(savedApplication, employer);
+        
+        // Publish event for badge system
+        eventPublisher.publishEvent(
+            new JobApplicationApprovedEvent(application.getJobSeeker().getId(), savedApplication.getId())
+        );
+
+        activityService.logActivity(employer, ActivityType.APPROVE_APPLICATION, savedApplication.getId(), "JobApplication");
+
+        return toResponseDto(savedApplication);
     }
 
     @Transactional
@@ -178,7 +214,14 @@ public class JobApplicationService {
             application.setFeedback(feedback);
         }
 
-        return toResponseDto(applicationRepository.save(application));
+        JobApplication savedApplication = applicationRepository.save(application);
+
+        notifier.notifyApplicationRejected(savedApplication, employer);
+
+        activityService.logActivity(employer, ActivityType.REJECT_APPLICATION, savedApplication.getId(), "JobApplication");
+
+        return toResponseDto(savedApplication);
+
     }
 
     @Transactional
@@ -385,6 +428,19 @@ public class JobApplicationService {
             }
             application.setCvUrl(null);
             applicationRepository.save(application);
+        }
+    }
+
+    @Transactional
+    public void deleteUserData(Long userId) {
+        List<JobApplication> apps = applicationRepository.findByJobSeekerId(userId);
+        for (JobApplication app : apps) {
+            if (app.getCvUrl() != null) {
+                String objectName = extractObjectNameFromUrl(app.getCvUrl());
+                if (objectName != null)
+                    deleteFromGcs(objectName);
+            }
+            applicationRepository.delete(app);
         }
     }
 

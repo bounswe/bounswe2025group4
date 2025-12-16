@@ -1,6 +1,5 @@
 package org.bounswe.jobboardbackend.mentorship.repository;
 
-
 import org.bounswe.jobboardbackend.mentorship.dto.MentorshipDetailsDTO;
 import org.bounswe.jobboardbackend.mentorship.model.MentorshipRequest;
 import org.bounswe.jobboardbackend.mentorship.model.RequestStatus;
@@ -14,6 +13,8 @@ import java.util.List;
 @Repository
 public interface MentorshipRequestRepository extends JpaRepository<MentorshipRequest, Long> {
     List<MentorshipRequest> findByMentorId(Long mentorId);
+
+    void deleteAllByMentorId(Long mentorId);
 
     @Query("SELECT new org.bounswe.jobboardbackend.mentorship.dto.MentorshipDetailsDTO(" +
             "mr.id, mr.status, mr.createdAt, " +
@@ -31,4 +32,13 @@ public interface MentorshipRequestRepository extends JpaRepository<MentorshipReq
 
     // Dashboard stats methods
     long countByStatus(RequestStatus status);
+
+    // Badge methods
+    long countByMentorIdAndStatus(Long mentorId, RequestStatus status);
+    
+    long countByRequesterId(Long requesterId);
+    
+    long countByRequesterIdAndStatus(Long requesterId, RequestStatus status);
+
+    void deleteByRequesterId(Long requesterId);
 }

@@ -1806,6 +1806,45 @@ class AppLocalizationsTr extends AppLocalizations {
   String get badges_years => 'yıl';
 
   @override
+  String get badges_myBadges => 'Rozetlerim';
+
+  @override
+  String get badges_earnedCount => 'Kazanılan Rozetler';
+
+  @override
+  String get badges_locked => 'Kilitli';
+
+  @override
+  String get badges_notYetEarned => 'Henüz kazanılmadı';
+
+  @override
+  String badges_earnedOn(String date) {
+    return '$date tarihinde kazanıldı';
+  }
+
+  @override
+  String badges_requirement(int count) {
+    return 'Gereksinim: $count';
+  }
+
+  @override
+  String get badges_close => 'Kapat';
+
+  @override
+  String get badges_tapToViewAll => 'Tüm rozetleri görmek için dokunun';
+
+  @override
+  String badges_moreBadges(int count) {
+    return '+$count rozet daha';
+  }
+
+  @override
+  String get badges_noBadgesAvailable => 'Mevcut rozet yok';
+
+  @override
+  String get badges_failedToLoad => 'Rozetler yüklenemedi';
+
+  @override
   String get common_notSpecified => 'Belirtilmemiş';
 
   @override

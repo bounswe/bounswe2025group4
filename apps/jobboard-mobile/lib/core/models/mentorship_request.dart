@@ -3,7 +3,7 @@ import 'user.dart';
 enum MentorshipRequestStatus {
   PENDING,
   ACCEPTED,
-  REJECTED,
+  DECLINED,
   CANCELLED,
   COMPLETED,
   UNKNOWN,
@@ -17,8 +17,8 @@ MentorshipRequestStatus _parseStatus(String? raw) {
       return MentorshipRequestStatus.PENDING;
     case 'ACCEPTED':
       return MentorshipRequestStatus.ACCEPTED;
-    case 'REJECTED':
-      return MentorshipRequestStatus.REJECTED;
+    case 'DECLINED':
+      return MentorshipRequestStatus.DECLINED;
     case 'CANCELLED':
       return MentorshipRequestStatus.CANCELLED;
     case 'COMPLETED':
@@ -47,9 +47,12 @@ class MentorshipRequest {
 
   /// Extra mentee-view fields:
   final String? mentorUsername;
-  final int? resumeReviewId;
+  int? resumeReviewId;
   final String? reviewStatus;
-  final int? conversationId;
+  int? conversationId;
+  final String? motivation;
+
+  final String? responseMessage;
 
   MentorshipRequest({
     required this.id,
@@ -62,38 +65,37 @@ class MentorshipRequest {
     this.resumeReviewId,
     this.reviewStatus,
     this.conversationId,
+    this.motivation,
+    this.responseMessage,
 
   });
 
   factory MentorshipRequest.fromJson(Map<String, dynamic> json) {
-    // Mentee view (`mentorshipRequestId` etc.)
-    if (json.containsKey('mentorshipRequestId')) {
-      return MentorshipRequest(
-        id: json['mentorshipRequestId'].toString(),
-        requesterId: null, // not present here
-        requesterUsername: json['requesterUsername']?.toString() ?? '',
-        mentorId: json['mentorId']?.toString() ?? '',
-        status: _parseStatus(json['requestStatus']?.toString()),
-        createdAt: DateTime.parse(json['requestCreatedAt'] as String),
-        mentorUsername: json['mentorUsername']?.toString(),
-        resumeReviewId: json['resumeReviewId'] as int?,
-        reviewStatus: json['reviewStatus']?.toString(),
-        conversationId: json['conversationId'] as int?,
-      );
-    }
+    // Normalize ID
+    final id = (json['id'] ?? json['mentorshipRequestId']).toString();
 
-    // Generic request shape
+    // Normalize status
+    final rawStatus = json['status'] ?? json['requestStatus'];
+
+    // Normalize createdAt
+    final rawCreatedAt = json['createdAt'] ?? json['requestCreatedAt'];
+
     return MentorshipRequest(
-      id: json['id']?.toString() ?? '',
+      id: id,
       requesterId: json['requesterId']?.toString(),
-      requesterUsername: json['requesterUsername']?.toString() ?? '',
+      requesterUsername: json['requesterUsername']?.toString(),
       mentorId: json['mentorId']?.toString() ?? '',
-      status: _parseStatus(json['status']?.toString()),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      mentorUsername: null,
-      resumeReviewId: null,
-      reviewStatus: null,
-      conversationId: null,
+      status: _parseStatus(rawStatus?.toString()),
+      createdAt: DateTime.parse(rawCreatedAt as String),
+
+      // Optional / mentee-only fields
+      mentorUsername: json['mentorUsername']?.toString(),
+      resumeReviewId: json['resumeReviewId'] as int?,
+      reviewStatus: json['reviewStatus']?.toString(),
+      conversationId: json['conversationId'] as int?,
+      motivation: json['motivation']?.toString(),
+      responseMessage: json['responseMessage']?.toString(),
+
     );
   }
 
@@ -109,6 +111,9 @@ class MentorshipRequest {
       'resumeReviewId': resumeReviewId,
       'reviewStatus': reviewStatus,
       'conversationId': conversationId,
+      'motivation': motivation,
+      'responseMessage': responseMessage,
+
     };
   }
 }

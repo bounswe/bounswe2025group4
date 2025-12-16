@@ -10,10 +10,21 @@ import org.bounswe.jobboardbackend.forum.model.ForumComment;
 import org.bounswe.jobboardbackend.forum.model.ForumCommentDownvote;
 import org.bounswe.jobboardbackend.forum.model.ForumCommentUpvote;
 import org.bounswe.jobboardbackend.forum.model.ForumPost;
+import org.bounswe.jobboardbackend.forum.model.ForumPostDownvote;
+import org.bounswe.jobboardbackend.forum.model.ForumPostUpvote;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentDownvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumCommentUpvoteRepository;
+import org.bounswe.jobboardbackend.forum.repository.ForumPostDownvoteRepository;
 import org.bounswe.jobboardbackend.forum.repository.ForumPostRepository;
+import org.bounswe.jobboardbackend.forum.repository.ForumPostUpvoteRepository;
+import org.bounswe.jobboardbackend.badge.event.CommentCreatedEvent;
+import org.bounswe.jobboardbackend.badge.event.CommentUpvotedEvent;
+import org.bounswe.jobboardbackend.badge.event.ForumPostCreatedEvent;
+import org.bounswe.jobboardbackend.notification.notifier.ForumNotifier;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +40,11 @@ public class ForumService {
     private final ForumCommentRepository commentRepository;
     private final ForumCommentUpvoteRepository upvoteRepository;
     private final ForumCommentDownvoteRepository downvoteRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final ForumPostUpvoteRepository postUpvoteRepository;
+    private final ForumPostDownvoteRepository postDownvoteRepository;
+    private final ForumNotifier notifier;
+    private final ActivityService activityService;
 
     @Transactional
     public PostResponse createPost(User author, CreatePostRequest request) {
@@ -40,21 +56,49 @@ public class ForumService {
                 .build();
 
         ForumPost savedPost = postRepository.save(post);
-        return PostResponse.from(savedPost);
+
+        // Publish event for badge checking
+        eventPublisher.publishEvent(new ForumPostCreatedEvent(author.getId(), savedPost.getId()));
+
+        activityService.logActivity(author, ActivityType.CREATE_THREAD, savedPost.getId(), "ForumPost");
+
+        return toPostResponse(savedPost);
     }
 
     @Transactional(readOnly = true)
     public List<PostResponse> findAllPosts() {
+        return findAllPosts(null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponse> findAllPosts(Long currentUserId) {
         return postRepository.findAll().stream()
-                .map(PostResponse::from)
+                .map(post -> toPostResponse(post, currentUserId))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponse> findPostsByUserId(Long userId) {
+        return findPostsByUserId(userId, null);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostResponse> findPostsByUserId(Long userId, Long currentUserId) {
+        return postRepository.findAllByAuthorIdOrderByCreatedAtDesc(userId).stream()
+                .map(post -> toPostResponse(post, currentUserId))
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public PostResponse findPostById(Long id) {
+        return findPostById(id, null);
+    }
+
+    @Transactional(readOnly = true)
+    public PostResponse findPostById(Long id, Long currentUserId) {
         ForumPost post = postRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Post not found"));
-        return PostResponse.from(post);
+        return toPostResponse(post, currentUserId);
     }
 
     @Transactional
@@ -77,7 +121,10 @@ public class ForumService {
         }
 
         ForumPost updatedPost = postRepository.save(post);
-        return PostResponse.from(updatedPost);
+
+        activityService.logActivity(user, ActivityType.EDIT_THREAD, updatedPost.getId(), "ForumPost");
+
+        return toPostResponse(updatedPost);
     }
 
     @Transactional
@@ -91,6 +138,8 @@ public class ForumService {
         }
 
         postRepository.delete(post);
+
+        activityService.logActivity(user, ActivityType.DELETE_THREAD, id, "ForumPost");
     }
 
     @Transactional
@@ -114,6 +163,14 @@ public class ForumService {
                 .build();
 
         ForumComment savedComment = commentRepository.save(comment);
+
+        notifier.notifyNewComment(post, savedComment);
+
+        // Publish event for badge checking
+        eventPublisher.publishEvent(new CommentCreatedEvent(author.getId(), savedComment.getId(), postId));
+
+        activityService.logActivity(author, ActivityType.CREATE_COMMENT, savedComment.getId(), "ForumComment");
+
         return CommentResponse.from(savedComment, 0, 0);
     }
 
@@ -172,6 +229,9 @@ public class ForumService {
                 .comment(comment)
                 .build();
         upvoteRepository.save(upvote);
+
+        // Publish event for badge checking (for the comment author, not the voter)
+        eventPublisher.publishEvent(new CommentUpvotedEvent(comment.getAuthor().getId(), commentId));
     }
 
     @Transactional
@@ -207,8 +267,94 @@ public class ForumService {
     }
 
     private CommentResponse toCommentResponse(ForumComment comment) {
+        return toCommentResponse(comment, null);
+    }
+
+    private CommentResponse toCommentResponse(ForumComment comment, Long userId) {
         long upvotes = upvoteRepository.countByCommentId(comment.getId());
         long downvotes = downvoteRepository.countByCommentId(comment.getId());
-        return CommentResponse.from(comment, upvotes, downvotes);
+        return CommentResponse.from(comment, upvotes, downvotes, userId, upvoteRepository, downvoteRepository);
+    }
+
+    private PostResponse toPostResponse(ForumPost post) {
+        return toPostResponse(post, null);
+    }
+
+    private PostResponse toPostResponse(ForumPost post, Long userId) {
+        long upvotes = postUpvoteRepository.countByPostId(post.getId());
+        long downvotes = postDownvoteRepository.countByPostId(post.getId());
+        List<CommentResponse> comments = post.getComments().stream()
+                .map(comment -> toCommentResponse(comment, userId))
+                .collect(Collectors.toList());
+        return PostResponse.from(post, upvotes, downvotes, comments, userId, postUpvoteRepository, postDownvoteRepository);
+    }
+
+    @Transactional
+    public void upvotePost(Long postId, User user) {
+        ForumPost post = postRepository.findById(postId)
+                .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Post not found"));
+
+        if (postUpvoteRepository.findByUserIdAndPostId(user.getId(), postId).isPresent()) {
+            return;
+        }
+
+        postDownvoteRepository.findByUserIdAndPostId(user.getId(), postId)
+                .ifPresent(postDownvoteRepository::delete);
+
+        ForumPostUpvote upvote = ForumPostUpvote.builder()
+                .user(user)
+                .post(post)
+                .build();
+        postUpvoteRepository.save(upvote);
+
+        activityService.logActivity(user, ActivityType.UPVOTE_THREAD, postId, "ForumPost");
+    }
+
+    @Transactional
+    public void removePostUpvote(Long postId, User user) {
+        postUpvoteRepository.findByUserIdAndPostId(user.getId(), postId)
+                .ifPresent(postUpvoteRepository::delete);
+    }
+
+    @Transactional
+    public void downvotePost(Long postId, User user) {
+        ForumPost post = postRepository.findById(postId)
+                .orElseThrow(() -> new HandleException(ErrorCode.NOT_FOUND, "Post not found"));
+
+        if (postDownvoteRepository.findByUserIdAndPostId(user.getId(), postId).isPresent()) {
+            return;
+        }
+
+        postUpvoteRepository.findByUserIdAndPostId(user.getId(), postId)
+                .ifPresent(postUpvoteRepository::delete);
+
+        ForumPostDownvote downvote = ForumPostDownvote.builder()
+                .user(user)
+                .post(post)
+                .build();
+        postDownvoteRepository.save(downvote);
+
+        activityService.logActivity(user, ActivityType.DOWNVOTE_THREAD, postId, "ForumPost");
+    }
+
+    @Transactional
+    public void removePostDownvote(Long postId, User user) {
+        postDownvoteRepository.findByUserIdAndPostId(user.getId(), postId)
+                .ifPresent(postDownvoteRepository::delete);
+    }
+
+    @Transactional
+    public void deleteUserData(Long userId) {
+        // Delete votes
+        postUpvoteRepository.deleteByUserId(userId);
+        postDownvoteRepository.deleteByUserId(userId);
+        upvoteRepository.deleteByUserId(userId);
+        downvoteRepository.deleteByUserId(userId);
+
+        // Delete comments
+        commentRepository.deleteByAuthorId(userId);
+
+        // Delete posts (cascades to comments on that post)
+        postRepository.deleteByAuthorId(userId);
     }
 }

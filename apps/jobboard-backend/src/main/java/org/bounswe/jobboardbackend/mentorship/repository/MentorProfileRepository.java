@@ -6,11 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+import java.util.Optional;
 
 @Repository
 public interface MentorProfileRepository extends JpaRepository<MentorProfile, Long> {
     @Query("SELECT DISTINCT m FROM MentorProfile m LEFT JOIN FETCH m.mentorReviews")
     List<MentorProfile> findAllWithReviews();
+
+    Optional<MentorProfile> findByUserId(Long userId);
 
 }

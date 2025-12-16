@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/providers/profile_provider.dart';
+import '../../../core/providers/badge_provider.dart';
 import '../../../core/providers/font_size_provider.dart';
 import '../../../core/providers/locale_provider.dart';
 import '../../../core/providers/theme_provider.dart';
@@ -16,6 +17,7 @@ import '../widgets/editable_chip_list.dart';
 import '../widgets/badge_list.dart';
 import '../widgets/education_list.dart';
 import 'edit_profile_page.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -32,6 +34,10 @@ class _ProfilePageState extends State<ProfilePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final profileProvider = Provider.of<ProfileProvider>(
+        context,
+        listen: false,
+      );
+      final badgeProvider = Provider.of<BadgeProvider>(
         context,
         listen: false,
       );
@@ -60,6 +66,9 @@ class _ProfilePageState extends State<ProfilePage> {
       if (userId != null) {
         await profileProvider.fetchUserDetails(userId);
       }
+
+      // Fetch badges
+      await badgeProvider.fetchMyBadges();
     });
   }
 
@@ -83,6 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         automaticallyImplyLeading: false,
         actions: [
+          const NotificationIconButton(),
           if (!profileProvider.isLoading && profile != null)
             IconButton(
               icon: const Icon(Icons.edit),
@@ -144,7 +154,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         children: [
                           ElevatedButton(
                             onPressed: () async {
-                              await profileProvider.fetchMyProfile();
+                              final badgeProvider = Provider.of<BadgeProvider>(context, listen: false);
+                              
+                              await Future.wait([
+                                profileProvider.fetchMyProfile(),
+                                badgeProvider.fetchMyBadges(),
+                              ]);
                               
                               if (profileProvider.error?.contains('Profile not found') == true) {
                                 try {
@@ -168,7 +183,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 )
               : RefreshIndicator(
                 onRefresh: () async {
-                  await profileProvider.fetchMyProfile();
+                  final badgeProvider = Provider.of<BadgeProvider>(context, listen: false);
+                  
+                  await Future.wait([
+                    profileProvider.fetchMyProfile(),
+                    badgeProvider.fetchMyBadges(),
+                  ]);
                   
                   if (profileProvider.error?.contains('Profile not found') == true) {
                     try {
@@ -195,7 +215,10 @@ class _ProfilePageState extends State<ProfilePage> {
   ) {
     final profile = fullProfile.profile;
     final experiences = fullProfile.experience;
-    final badges = fullProfile.badges;
+    
+    // Get badges from BadgeProvider instead of ProfileProvider
+    final badgeProvider = Provider.of<BadgeProvider>(context);
+    final badges = badgeProvider.earnedBadges;
 
     return Scrollbar(
       thumbVisibility: true,

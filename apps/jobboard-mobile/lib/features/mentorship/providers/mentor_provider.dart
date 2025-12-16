@@ -1,6 +1,7 @@
 // lib/core/providers/mentor_provider.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/core/models/full_profile.dart';
 import 'package:mobile/core/models/mentor_profile.dart';
 import 'package:mobile/core/models/mentorship_request.dart';
 import 'package:mobile/core/services/api_service.dart';
@@ -13,6 +14,9 @@ class MentorProvider with ChangeNotifier {
   List<MentorshipRequest> _mentorRequests = [];
   List<MentorshipRequest> _menteeRequests = [];
   MentorProfile? _currentUserMentorProfile;
+  MentorshipRequest? _currentRequest;
+  FullProfile? _otherProfile;
+
 
   // Loading states
   bool _isLoadingMentors = false;
@@ -27,6 +31,8 @@ class MentorProvider with ChangeNotifier {
   List<MentorProfile> get availableMentors => _availableMentors;
   List<MentorshipRequest> get mentorRequests => _mentorRequests;
   List<MentorshipRequest> get menteeRequests => _menteeRequests;
+  MentorshipRequest? get currentRequest => _currentRequest;
+  FullProfile? get otherProfile => _otherProfile;
   MentorProfile? get currentUserMentorProfile => _currentUserMentorProfile;
   bool get isLoadingMentors => _isLoadingMentors;
   bool get isLoadingMentorRequests => _isLoadingMentorRequests;
@@ -59,6 +65,38 @@ class MentorProvider with ChangeNotifier {
     }
   }
 
+  Future<void> fetchMentorshipRequest(String requestId) async {
+    _error = null;
+    _currentRequest = null;
+    notifyListeners();
+    print("Fetching the mentorship request...");
+    try {
+      _currentRequest = await _apiService.getMentorshipRequest(requestId);
+    } catch (e) {
+      _error = e.toString();
+      debugPrint('Error fetching request: $_error');
+    } finally {
+      notifyListeners();
+    }
+  }
+
+
+  Future<void> getUserProfile(int userId) async {
+    _otherProfile = null;
+    _error = null;
+    notifyListeners();
+    print("Fetching the user's profile");
+    try {
+      _otherProfile = await _apiService.getUserProfile(userId);
+
+    } catch (e) {
+      _error = e.toString();
+      debugPrint('Error fetching user profile: $_error');
+    } finally {
+      notifyListeners();
+    }
+  }
+
   // REQUESTS WHERE CURRENT USER IS A MENTOR
   Future<void> fetchMentorRequests(String mentorId) async {
     _isLoadingMentorRequests = true;
@@ -69,12 +107,29 @@ class MentorProvider with ChangeNotifier {
       final rawRequests =
       await _apiService.getMentorshipRequestsAsMentor(mentorId);
 
-      // Enrich with requester usernames
-      for (var r in rawRequests) {
-        if (r.requesterId != null) {
-          final username = await _apiService.getUsernameForUser(r.requesterId!);
-          r.requesterUsername = username; // <-- assign here
+      for (final r in rawRequests) {
+
+        if (r.requesterId != null && r.requesterUsername == null) {
+          r.requesterUsername =
+          await _apiService.getUsernameForUser(r.requesterId!);
         }
+
+        if (r.status == MentorshipRequestStatus.ACCEPTED &&
+            r.requesterId != null &&
+            (r.conversationId == null || r.resumeReviewId == null)) {
+
+          final info = await resolveMentorshipInfoViaMentee(
+            menteeId: r.requesterId!,
+            mentorId: mentorId,
+            mentorshipRequestId: r.id,
+          );
+
+          if (info != null) {
+            r.conversationId = info.conversationId;
+            r.resumeReviewId = info.resumeReviewId;
+          }
+        }
+
       }
 
       _mentorRequests = rawRequests;
@@ -86,6 +141,7 @@ class MentorProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
 
   // REQUESTS WHERE CURRENT USER IS A MENTEE
   Future<void> fetchMenteeRequests(String menteeId) async {
@@ -106,13 +162,45 @@ class MentorProvider with ChangeNotifier {
     }
   }
 
+  Future<MentorshipLinkInfo?> resolveMentorshipInfoViaMentee({
+    required String menteeId,
+    required String mentorId,
+    required String mentorshipRequestId,
+  }) async {
+    try {
+      final menteeRequests =
+      await _apiService.getMentorshipRequestsAsMentee(menteeId);
+
+      for (final r in menteeRequests) {
+        final sameMentor = r.mentorId.toString() == mentorId;
+        final sameRequest =
+            r.id.toString() == mentorshipRequestId.toString();
+
+        if (sameMentor && sameRequest) {
+          return MentorshipLinkInfo(
+            conversationId: r.conversationId,
+            resumeReviewId: r.resumeReviewId,
+          );
+        }
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Failed to resolve mentorship info: $e');
+      return null;
+    }
+  }
+
+
+
   // CREATE MENTORSHIP REQUEST
   Future<bool> createMentorshipRequest({
     required int mentorId,
+    required String motivation
   }) async {
     try {
       final request = await _apiService.createMentorshipRequest(
         mentorId: mentorId,
+        motivation: motivation
       );
 
       // Add the new request to the mentee requests list (current user is mentee)
@@ -130,6 +218,7 @@ class MentorProvider with ChangeNotifier {
   Future<bool> respondToRequest({
     required String requestId,
     required bool accept,
+    String? responseMessage,
   }) async {
     _error = null;
     notifyListeners();
@@ -138,6 +227,7 @@ class MentorProvider with ChangeNotifier {
       final updatedRequest = await _apiService.respondToMentorshipRequest(
         requestId: requestId,
         accept: accept,
+        responseMessage: responseMessage,
       );
 
       _updateRequestInLists(updatedRequest);
@@ -160,9 +250,13 @@ class MentorProvider with ChangeNotifier {
     try {
       _currentUserMentorProfile = await _apiService.getMentorProfile(userId);
     } catch (e) {
-      // If backend returns 404 -> user is not a mentor yet
-      if (e.toString().contains('404')) {
+      // If backend returns 404 or "not found" -> user is not a mentor yet (this is normal)
+      final errorString = e.toString().toLowerCase();
+      if (errorString.contains('404') || 
+          errorString.contains('not found') ||
+          errorString.contains('mentor profile not found')) {
         _currentUserMentorProfile = null;
+        // This is normal for mentees, don't log as error
       } else {
         _error = e.toString();
         debugPrint('Error fetching current user mentor profile: $_error');
@@ -328,4 +422,11 @@ class MentorProvider with ChangeNotifier {
     _error = null;
     notifyListeners();
   }
+}
+
+class MentorshipLinkInfo {
+  final int? conversationId;
+  final int? resumeReviewId;
+
+  MentorshipLinkInfo({this.conversationId, this.resumeReviewId});
 }

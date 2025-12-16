@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
-import { AboutSection } from '@/components/profile/AboutSection';
+import { AboutSection } from '@modules/profile/components/profile/AboutSection';
 
-vi.mock('react-i18next', async () => await import('@/test/__mocks__/react-i18next'));
+vi.mock('react-i18next', async () => await import('@/__tests__/__mocks__/react-i18next'));
 
 describe('AboutSection (unit)', () => {
   it('renders bio text when provided', () => {

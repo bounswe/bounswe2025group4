@@ -3262,6 +3262,72 @@ abstract class AppLocalizations {
   /// **'years'**
   String get badges_years;
 
+  /// My badges page title
+  ///
+  /// In en, this message translates to:
+  /// **'My Badges'**
+  String get badges_myBadges;
+
+  /// Badges earned label
+  ///
+  /// In en, this message translates to:
+  /// **'Badges Earned'**
+  String get badges_earnedCount;
+
+  /// Locked badge label
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get badges_locked;
+
+  /// Not yet earned label
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet earned'**
+  String get badges_notYetEarned;
+
+  /// Earned on date label
+  ///
+  /// In en, this message translates to:
+  /// **'Earned on {date}'**
+  String badges_earnedOn(String date);
+
+  /// Requirement label
+  ///
+  /// In en, this message translates to:
+  /// **'Requirement: {count}'**
+  String badges_requirement(int count);
+
+  /// Close button
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get badges_close;
+
+  /// Tap to view all badges hint
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to view all badges'**
+  String get badges_tapToViewAll;
+
+  /// More badges indicator
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} more badges'**
+  String badges_moreBadges(int count);
+
+  /// No badges available message
+  ///
+  /// In en, this message translates to:
+  /// **'No badges available'**
+  String get badges_noBadgesAvailable;
+
+  /// Failed to load badges error
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load badges'**
+  String get badges_failedToLoad;
+
   /// Not specified message
   ///
   /// In en, this message translates to:

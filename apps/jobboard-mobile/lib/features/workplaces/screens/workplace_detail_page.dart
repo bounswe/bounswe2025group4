@@ -805,7 +805,14 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
     final formKey = GlobalKey<FormState>();
 
     String? selectedReason;
-    final reasons = ['Offensive', 'Fake', 'Spam', 'Other'];
+    final reasons = [
+      'SPAM',
+      'FAKE',
+      'OFFENSIVE',
+      'HARASSMENT',
+      'MISINFORMATION',
+      'OTHER',
+    ];
 
     final result = await showDialog<bool>(
       context: context,
@@ -834,9 +841,18 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
                             ),
                             items:
                                 reasons.map((reason) {
+                                  // Convert UPPERCASE to Title Case for display
+                                  final displayText = reason
+                                      .split('_')
+                                      .map(
+                                        (word) =>
+                                            word[0] +
+                                            word.substring(1).toLowerCase(),
+                                      )
+                                      .join(' ');
                                   return DropdownMenuItem(
                                     value: reason,
-                                    child: Text(reason),
+                                    child: Text(displayText),
                                   );
                                 }).toList(),
                             onChanged: (value) {
@@ -896,9 +912,10 @@ class _WorkplaceDetailPageState extends State<WorkplaceDetailPage> {
     if (selectedReason == null) return;
 
     try {
-      final success = await _workplaceProvider.reportWorkplace(
-        workplaceId: workplace.id,
-        reasonType: selectedReason!, // Safe to use ! after null check
+      final success = await _workplaceProvider.reportContent(
+        entityType: 'WORKPLACE',
+        entityId: workplace.id,
+        reasonType: selectedReason!,
         description: descriptionController.text.trim(),
       );
 

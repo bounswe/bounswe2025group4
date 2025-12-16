@@ -1788,6 +1788,45 @@ class AppLocalizationsAr extends AppLocalizations {
   String get badges_years => 'سنوات';
 
   @override
+  String get badges_myBadges => 'شاراتي';
+
+  @override
+  String get badges_earnedCount => 'الشارات المكتسبة';
+
+  @override
+  String get badges_locked => 'مقفل';
+
+  @override
+  String get badges_notYetEarned => 'لم يتم الحصول عليها بعد';
+
+  @override
+  String badges_earnedOn(String date) {
+    return 'تم الحصول عليها في $date';
+  }
+
+  @override
+  String badges_requirement(int count) {
+    return 'المتطلبات: $count';
+  }
+
+  @override
+  String get badges_close => 'إغلاق';
+
+  @override
+  String get badges_tapToViewAll => 'انقر لعرض جميع الشارات';
+
+  @override
+  String badges_moreBadges(int count) {
+    return '+$count شارة إضافية';
+  }
+
+  @override
+  String get badges_noBadgesAvailable => 'لا توجد شارات متاحة';
+
+  @override
+  String get badges_failedToLoad => 'فشل تحميل الشارات';
+
+  @override
   String get common_notSpecified => 'غير محدد';
 
   @override

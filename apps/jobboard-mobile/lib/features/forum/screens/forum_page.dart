@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../../core/models/discussion_thread.dart';
+import 'package:provider/provider.dart';
+import '../../../core/models/forum_post.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/services/api_service.dart';
 import '../widgets/thread_tile.dart';
 import 'create_thread_screen.dart';
 import 'thread_detail_screen.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import '../../../core/widgets/a11y.dart';
-import '../services/forum_mock_data.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 class ForumPage extends StatefulWidget {
   const ForumPage({super.key});
@@ -15,25 +18,39 @@ class ForumPage extends StatefulWidget {
 }
 
 class _ForumPageState extends State<ForumPage> {
-  List<DiscussionThread> _threads = [];
+  List<ForumPost> _posts = [];
   bool _isLoading = true;
   String? _errorMessage;
   List<String> _selectedTags = [];
   List<String> _allTags = [];
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+  late final ApiService _api;
 
   @override
   void initState() {
     super.initState();
-    _loadThreads();
+    _api = ApiService(authProvider: context.read<AuthProvider>());
+    _loadPosts();
     _loadTags();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadTags() async {
     try {
-      // Using mock data instead of API
-      final tags = await ForumMockData.fetchTags();
+      // Extract unique tags from all posts
+      final posts = await _api.fetchForumPosts();
+      final tagsSet = <String>{};
+      for (var post in posts) {
+        tagsSet.addAll(post.tags);
+      }
       setState(() {
-        _allTags = tags;
+        _allTags = tagsSet.toList()..sort();
       });
     } catch (e) {
       debugPrint('Failed to load tags: $e');
@@ -182,22 +199,44 @@ class _ForumPageState extends State<ForumPage> {
     );
   }
 
-  List<DiscussionThread> get _filteredThreads {
-    if (_selectedTags.isEmpty) return _threads;
-    return _threads
-        .where(
-          (thread) => thread.tags.any((tag) => _selectedTags.contains(tag)),
-        )
-        .toList();
+  List<ForumPost> get _filteredPosts {
+    var filtered = _posts;
+
+    // Filter by search query
+    if (_searchQuery.isNotEmpty) {
+      filtered =
+          filtered.where((post) {
+            return post.title.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ) ||
+                post.content.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ) ||
+                post.authorUsername.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                );
+          }).toList();
+    }
+
+    // Filter by tags
+    if (_selectedTags.isNotEmpty) {
+      filtered =
+          filtered
+              .where(
+                (post) => post.tags.any((tag) => _selectedTags.contains(tag)),
+              )
+              .toList();
+    }
+
+    return filtered;
   }
 
-  Future<void> _loadThreads() async {
+  Future<void> _loadPosts() async {
     setState(() => _isLoading = true);
     try {
-      // Using mock data instead of API
-      final threads = await ForumMockData.fetchThreads();
+      final posts = await _api.fetchForumPosts();
       setState(() {
-        _threads = threads;
+        _posts = posts;
         _errorMessage = null;
       });
     } catch (e) {
@@ -211,152 +250,367 @@ class _ForumPageState extends State<ForumPage> {
 
   @override
   Widget build(BuildContext ctx) {
+    final isDark = Theme.of(ctx).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? Colors.black : Colors.grey[50],
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(AppLocalizations.of(context)!.forumPage_title),
-      ),
-      body: Stack(
-        children: [
-          if (_isLoading)
-            const Center(child: CircularProgressIndicator())
-          else if (_errorMessage != null)
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.forumPage_loadError,
-                    style: const TextStyle(color: Colors.red),
+        elevation: 0,
+        backgroundColor: isDark ? Colors.grey[900] : Colors.white,
+        title: Text(
+          AppLocalizations.of(context)!.forumPage_title,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 28,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
+        actions: [
+          // Notification icon
+          const NotificationIconButton(),
+          // Filter button
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: IconButton(
+              onPressed: _showFilterModal,
+              icon: A11y(
+                label: AppLocalizations.of(context)!.forumPage_filter,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color:
+                        _selectedTags.isNotEmpty
+                            ? Colors.blue.withOpacity(0.1)
+                            : Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 12),
-                  ElevatedButton(
-                    onPressed: _loadThreads,
-                    child: Text(AppLocalizations.of(context)!.common_retry),
-                  ),
-                ],
-              ),
-            )
-          else if (_threads.isEmpty)
-            Center(
-              child: Text(
-                AppLocalizations.of(context)!.forumPage_noDiscussions,
-              ),
-            )
-          else ...[
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: ElevatedButton.icon(
-                      onPressed: _showFilterModal,
-                      icon: A11y(
-                        label: AppLocalizations.of(context)!.forumPage_filter,
-                        child: const Icon(Icons.filter_list),
-                      ),
-                      label: Text(
-                        AppLocalizations.of(context)!.forumPage_filter,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        foregroundColor: Colors.white,
-                      ),
+                  child: Badge(
+                    isLabelVisible: _selectedTags.isNotEmpty,
+                    label: Text('${_selectedTags.length}'),
+                    child: Icon(
+                      Icons.filter_list_rounded,
+                      color:
+                          _selectedTags.isNotEmpty
+                              ? Colors.blue
+                              : (isDark ? Colors.grey[400] : Colors.grey[700]),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: _loadThreads,
-                    child: Scrollbar(
-                      thumbVisibility: true,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.only(bottom: 100),
-                        itemCount: _filteredThreads.length,
-                        itemBuilder: (_, i) {
-                          final t = _filteredThreads[i];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            child: ThreadTile(
-                              thread: t,
-                              onTap: () async {
-                                final result = await Navigator.push(
-                                  ctx,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => ThreadDetailScreen(thread: t),
-                                  ),
-                                );
-                                if (result is DiscussionThread) {
-                                  setState(() {
-                                    final index = _threads.indexWhere(
-                                      (thread) => thread.id == result.id,
-                                    );
-                                    if (index != -1) {
-                                      _threads[index] = result;
-                                    }
-                                  });
-                                } else if (result == 'deleted') {
-                                  setState(() {
-                                    _threads.removeWhere(
-                                      (thread) => thread.id == t.id,
-                                    );
-                                  });
-                                }
-                              },
-                              onEdit: (updatedThread) {
-                                setState(() {
-                                  final index = _threads.indexWhere(
-                                    (th) => th.id == updatedThread.id,
-                                  );
-                                  if (index != -1) {
-                                    _threads[index] = updatedThread;
-                                  }
-                                });
-                              },
-                              onDelete: () {
-                                setState(() {
-                                  _threads.removeWhere((th) => th.id == t.id);
-                                });
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-          // Always show FAB
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatingActionButton(
-              child: A11y(
-                label: AppLocalizations.of(context)!.createThread_newTitle,
-                child: const Icon(Icons.add),
               ),
-              onPressed: () async {
-                final created = await Navigator.push<DiscussionThread>(
-                  ctx,
-                  MaterialPageRoute(builder: (_) => const CreateThreadScreen()),
-                );
-                if (created != null) {
-                  setState(() {
-                    _threads.insert(0, created);
-                  });
-                }
-              },
             ),
           ),
         ],
       ),
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _errorMessage != null
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline_rounded,
+                      size: 64,
+                      color: Colors.red[300],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      AppLocalizations.of(context)!.forumPage_loadError,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.grey[400] : Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: _loadPosts,
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: Text(AppLocalizations.of(context)!.common_retry),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+              : _posts.isEmpty
+              ? Stack(
+                children: [
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.forum_outlined,
+                          size: 64,
+                          color: isDark ? Colors.grey[700] : Colors.grey[300],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          AppLocalizations.of(context)!.forumPage_noDiscussions,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            final created = await Navigator.push<ForumPost>(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const CreateThreadScreen(),
+                              ),
+                            );
+                            if (created != null) {
+                              setState(() {
+                                _posts.insert(0, created);
+                              });
+                            }
+                          },
+                          icon: const Icon(Icons.add_rounded),
+                          label: const Text('Create First Post'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    right: 20,
+                    child: FloatingActionButton.extended(
+                      onPressed: () async {
+                        final created = await Navigator.push<ForumPost>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const CreateThreadScreen(),
+                          ),
+                        );
+                        if (created != null) {
+                          setState(() {
+                            _posts.insert(0, created);
+                          });
+                        }
+                      },
+                      backgroundColor: Colors.blue,
+                      elevation: 4,
+                      icon: const Icon(Icons.edit_rounded, color: Colors.white),
+                      label: const Text(
+                        'New Post',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+              : Column(
+                children: [
+                  // Search bar
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                    color: isDark ? Colors.grey[900] : Colors.white,
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (value) {
+                        setState(() {
+                          _searchQuery = value;
+                        });
+                      },
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Search posts...',
+                        hintStyle: TextStyle(
+                          color: isDark ? Colors.grey[600] : Colors.grey[400],
+                        ),
+                        prefixIcon: Icon(
+                          Icons.search_rounded,
+                          color: isDark ? Colors.grey[500] : Colors.grey[600],
+                        ),
+                        suffixIcon:
+                            _searchQuery.isNotEmpty
+                                ? IconButton(
+                                  icon: Icon(
+                                    Icons.clear_rounded,
+                                    color:
+                                        isDark
+                                            ? Colors.grey[500]
+                                            : Colors.grey[600],
+                                  ),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {
+                                      _searchQuery = '';
+                                    });
+                                  },
+                                )
+                                : null,
+                        filled: true,
+                        fillColor: isDark ? Colors.grey[850] : Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Posts list
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        _filteredPosts.isEmpty
+                            ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.search_off_rounded,
+                                    size: 64,
+                                    color:
+                                        isDark
+                                            ? Colors.grey[700]
+                                            : Colors.grey[300],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    _searchQuery.isNotEmpty
+                                        ? 'No posts found matching "$_searchQuery"'
+                                        : 'No posts match your filters',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color:
+                                          isDark
+                                              ? Colors.grey[400]
+                                              : Colors.grey[600],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            )
+                            : ListView.builder(
+                              padding: const EdgeInsets.only(
+                                top: 8,
+                                bottom: 100,
+                              ),
+                              itemCount: _filteredPosts.length,
+                              itemBuilder: (_, i) {
+                                final post = _filteredPosts[i];
+                                return ThreadTile(
+                                  post: post,
+                                  onTap: () async {
+                                    final result = await Navigator.push(
+                                      ctx,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) =>
+                                                ThreadDetailScreen(post: post),
+                                      ),
+                                    );
+
+                                    // Always refresh the posts list when returning from detail view
+                                    // to ensure comment counts, vote counts, and other data are up-to-date
+                                    if (result is ForumPost) {
+                                      // Post was updated, refresh entire list
+                                      _loadPosts();
+                                    } else if (result == 'deleted') {
+                                      // Post was deleted, refresh list
+                                      _loadPosts();
+                                    } else if (result == 'refresh') {
+                                      // Explicit refresh requested
+                                      _loadPosts();
+                                    } else if (result == null) {
+                                      // User just viewed the post (may have commented/voted)
+                                      // Refresh to get updated counts
+                                      _loadPosts();
+                                    }
+                                  },
+                                  onPostUpdated: (updatedPost) {
+                                    setState(() {
+                                      final index = _posts.indexWhere(
+                                        (p) => p.id == updatedPost.id,
+                                      );
+                                      if (index != -1) {
+                                        _posts[index] = updatedPost;
+                                      }
+                                    });
+                                  },
+                                  onDelete: () {
+                                    setState(() {
+                                      _posts.removeWhere(
+                                        (p) => p.id == post.id,
+                                      );
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                        Positioned(
+                          bottom: 20,
+                          right: 20,
+                          child: FloatingActionButton.extended(
+                            onPressed: () async {
+                              final created = await Navigator.push<ForumPost>(
+                                ctx,
+                                MaterialPageRoute(
+                                  builder: (_) => const CreateThreadScreen(),
+                                ),
+                              );
+                              if (created != null) {
+                                setState(() {
+                                  _posts.insert(0, created);
+                                });
+                              }
+                            },
+                            backgroundColor: Colors.blue,
+                            elevation: 4,
+                            icon: const Icon(
+                              Icons.edit_rounded,
+                              color: Colors.white,
+                            ),
+                            label: const Text(
+                              'New Post',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
     );
   }
 }

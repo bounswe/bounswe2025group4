@@ -11,6 +11,7 @@ import org.bounswe.jobboardbackend.jobapplication.model.JobApplicationStatus;
 import org.bounswe.jobboardbackend.jobapplication.repository.JobApplicationRepository;
 import org.bounswe.jobboardbackend.jobpost.model.JobPost;
 import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+import org.bounswe.jobboardbackend.notification.notifier.JobApplicationNotifier;
 import org.bounswe.jobboardbackend.workplace.dto.WorkplaceBriefResponse;
 import org.bounswe.jobboardbackend.workplace.model.Workplace;
 import org.bounswe.jobboardbackend.workplace.repository.EmployerWorkplaceRepository;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,12 +42,24 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class JobApplicationServiceTest {
 
-    @Mock private JobApplicationRepository applicationRepository;
-    @Mock private UserRepository userRepository;
-    @Mock private JobPostRepository jobPostRepository;
-    @Mock private WorkplaceService workplaceService;
-    @Mock private EmployerWorkplaceRepository employerWorkplaceRepository;
-    @Mock private WorkplaceRepository workplaceRepository;
+    @Mock
+    private JobApplicationRepository applicationRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private JobPostRepository jobPostRepository;
+    @Mock
+    private WorkplaceService workplaceService;
+    @Mock
+    private EmployerWorkplaceRepository employerWorkplaceRepository;
+    @Mock
+    private WorkplaceRepository workplaceRepository;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private JobApplicationNotifier notifier;
+    @Mock
+    private org.bounswe.jobboardbackend.activity.service.ActivityService activityService;
 
     @InjectMocks
     private JobApplicationService jobApplicationService;

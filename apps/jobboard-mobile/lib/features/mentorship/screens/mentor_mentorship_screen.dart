@@ -6,9 +6,12 @@ import '../providers/mentor_provider.dart';
 import '../widgets/mentee_card.dart';
 import '../widgets/mentorship_request_card.dart';
 import 'package:mobile/core/models/mentor_profile.dart';
+import 'package:mobile/features/mentorship/screens/mentorship_request_details_screen.dart';
+import 'package:mobile/features/mentorship/screens/direct_message_screen.dart';
 import 'package:mobile/core/models/user.dart';
 import 'package:mobile/core/models/user_type.dart';
 import '../../../generated/l10n/app_localizations.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 class MentorMentorshipScreen extends StatefulWidget {
   const MentorMentorshipScreen({super.key});
@@ -27,12 +30,35 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // Schedule the data loading after the initial build is complete
+    _tabController.addListener(() {
+      // Only act when the tab switch is finished
+      if (!_tabController.indexIsChanging) {
+        _onTabChanged(_tabController.index);
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadData();
-      print("Data loaded");
     });
   }
+
+  Future<void> _onTabChanged(int index) async {
+    if (!mounted) return;
+
+    final mentorProvider =
+    Provider.of<MentorProvider>(context, listen: false);
+    final authProvider =
+    Provider.of<AuthProvider>(context, listen: false);
+
+    final userId = authProvider.currentUser!.id;
+
+    // Tab 0 = Current Mentees
+    if (index == 0) {
+      await mentorProvider.fetchMentorRequests(userId);
+    }
+
+  }
+
 
   @override
   void dispose() {
@@ -135,6 +161,9 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.mentorScreen_title),
         automaticallyImplyLeading: false,
+        actions: const [
+          NotificationIconButton(),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: [
@@ -227,6 +256,9 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                         itemCount: acceptedRequests.length,
                         itemBuilder: (context, index) {
                           final request = acceptedRequests[index];
+                          final resumeReviewId = request.resumeReviewId;
+                          print("Resume review Id: $resumeReviewId");
+
                           final menteeLabel =
                               request.requesterUsername ??
                                   request.requesterId ??
@@ -234,16 +266,50 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                           return MenteeCard(
                             menteeLabel: menteeLabel,
                             onChatTap: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    AppLocalizations.of(context)!
-                                        .mentorScreen_openChat(
-                                        menteeLabel ?? 'Unknown',
-                                    ),
+                              final conversationId = request.conversationId;
+
+                              if (conversationId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Conversation not ready yet')),
+                                );
+                                return;
+                              }
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => DirectMessageScreen(
+                                    conversationId: conversationId,
+                                    peerName: menteeLabel,
+                                    resumeReviewId: resumeReviewId,
+                                    isMentor: true,
                                   ),
                                 ),
                               );
+                            },
+                            onComplete: resumeReviewId == null
+                                ? null
+                                : () async {
+                              final success = await mentorProvider
+                                  .completeMentorship(resumeReviewId);
+
+                              if (success && mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Mentorship completed')),
+                                );
+                                refresh();
+                              }
+                            },
+                            onCancel: resumeReviewId == null
+                                ? null
+                                : () async {
+                              final success = await mentorProvider
+                                  .cancelMentorship(resumeReviewId);
+
+                              if (success && mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Mentorship cancelled')),
+                                );
+                                refresh();
+                              }
                             },
                           );
                         },
@@ -322,6 +388,14 @@ class _MentorMentorshipScreenState extends State<MentorMentorshipScreen>
                             ),
                           );
                         }
+                      },
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MentorshipRequestDetailsScreen(requestId: request.id),
+                          ),
+                        );
                       },
                     );
                   },

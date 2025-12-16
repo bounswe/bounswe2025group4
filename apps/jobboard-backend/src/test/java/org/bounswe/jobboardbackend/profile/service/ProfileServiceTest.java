@@ -1,5 +1,6 @@
 package org.bounswe.jobboardbackend.profile.service;
 
+import org.bounswe.jobboardbackend.auth.model.PronounSet;
 import org.bounswe.jobboardbackend.auth.model.Role;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
@@ -45,6 +46,7 @@ class ProfileServiceTest {
                 .firstName("John")
                 .lastName("Doe")
                 .bio("Test bio")
+                .pronounSet("HE_THEY")
                 .build();
 
         Profile profile = Profile.builder()
@@ -53,6 +55,7 @@ class ProfileServiceTest {
                 .firstName("John")
                 .lastName("Doe")
                 .bio("Test bio")
+                .pronounSet(PronounSet.HE_THEY)
                 .build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -65,5 +68,6 @@ class ProfileServiceTest {
         assertThat(result.getFirstName()).isEqualTo("John");
         assertThat(result.getLastName()).isEqualTo("Doe");
         assertThat(result.getBio()).isEqualTo("Test bio");
+        assertThat(result.getPronounSet()).isEqualTo("HE_THEY");
     }
 }

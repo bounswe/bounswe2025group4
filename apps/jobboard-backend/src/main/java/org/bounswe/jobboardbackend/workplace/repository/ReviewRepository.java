@@ -15,7 +15,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Page<Review> findByWorkplace_IdAndOverallRatingIn(Long workplaceId, List<Double> ratings, Pageable pageable);
 
-    Page<Review> findByWorkplace_IdAndContentIsNotNullAndContentNot(Long workplaceId, String content, Pageable pageable);
+    Page<Review> findByWorkplace_IdAndContentIsNotNullAndContentNot(Long workplaceId, String content,
+            Pageable pageable);
 
     long countByWorkplace_Id(Long workplaceId);
 
@@ -27,4 +28,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByIdAndWorkplace_Id(Long id, Long workplaceId);
 
     boolean existsByWorkplace_IdAndUser_Id(Long workplaceId, Long userId);
+
+    List<Review> findByUserId(Long userId);
+
+    void deleteAllByWorkplace_Id(Long workplaceId);
 }

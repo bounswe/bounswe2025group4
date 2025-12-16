@@ -1,273 +1,88 @@
 {
-  "languageSwitcher": {
-    "label": "اللغة",
-    "english": "الإنجليزية",
-    "turkish": "التركية",
-    "arabic": "العربية"
-  },
-  "header": {
-    "brand": "Ethica Jobs",
-    "menu": "القائمة",
-    "nav": {
-      "home": "الرئيسية",
-      "jobs": "الوظائف",
-      "nonProfitJobs": "التطوع",
-      "myApplications": "طلباتي",
-      "myMentorships": "إرشاداتي",
-      "mentorship": "الإرشاد",
-      "forum": "المنتدى",
-      "employerDashboard": "لوحة صاحب العمل"
+  "layout": {
+    "languageSwitcher": {
+      "label": "اللغة",
+      "english": "الإنجليزية",
+      "turkish": "التركية",
+      "arabic": "العربية"
     },
-    "auth": {
-      "login": "تسجيل الدخول",
-      "signup": "إنشاء حساب",
-      "logout": "تسجيل الخروج",
-      "profile": "الملف الشخصي"
+    "header": {
+      "brand": "Ethica Jobs",
+      "menu": "القائمة",
+      "nav": {
+        "home": "الرئيسية",
+        "jobs": "الوظائف",
+        "nonProfitJobs": "التطوع",
+        "myApplications": "طلباتي",
+        "mentorship": "الإرشاد",
+        "myMentorships": "إرشاداتي",
+        "chat": "الدردشة",
+        "forum": "المنتدى",
+        "employerDashboard": "لوحة صاحب العمل",
+        "workplaces": "أماكن العمل",
+        "myWorkplaces": "أماكن عملي",
+        "browseWorkplaces": "تصفح أماكن العمل",
+        "profile": "الملف الشخصي",
+        "settings": "الإعدادات"
+      },
+      "auth": {
+        "login": "تسجيل الدخول",
+        "signup": "إنشاء حساب",
+        "logout": "تسجيل الخروج",
+        "profile": "الملف الشخصي"
+      },
+      "theme": "السمة",
+      "language": "اللغة"
+    },
+    "footer": {
+      "about": "من نحن",
+      "contact": "تواصل معنا",
+      "privacy": "سياسة الخصوصية",
+      "terms": "شروط الاستخدام",
+      "brandSuffix": "Ethica Jobs"
     }
   },
-  "footer": {
-    "about": "من نحن",
-    "contact": "تواصل معنا",
-    "privacy": "سياسة الخصوصية",
-    "terms": "شروط الاستخدام",
-    "brandSuffix": "Ethica Jobs"
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "goHome": "الذهاب إلى الصفحة الرئيسية",
+    "visitWebsite": "زيارة الموقع الإلكتروني",
+    "settings": "الإعدادات",
+    "employer": "صاحب عمل",
+    "employers": "أصحاب العمل",
+    "edited": "تم التعديل",
+    "cancel": "إلغاء",
+    "optional": "اختياري",
+    "search": "بحث",
+    "status": {
+      "pending": "قيد الانتظار",
+      "accepted": "مقبول",
+      "rejected": "مرفوض",
+      "unknown": "غير معروف"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "pageInfo": "الصفحة {{page}} من {{total}}"
+    },
+    "report": "إبلاغ"
   },
-  "home": {
-    "hero": {
-      "title": "ابحث عن مسار مهني يحقق رسالتك",
-      "subtitle": "تواصل مع الشركات التي تعطي الأولوية للأخلاق والاستدامة. اكتشف الفرص التي تنسجم مع قيمك وتُحدث أثرًا إيجابيًا في العالم.",
-      "searchLabel": "ابحث عن وظائف",
-      "searchPlaceholderDesktop": "ابحث عن وظائف، مثل «مهندس برمجيات»",
-      "searchPlaceholderMobile": "ابحث عن وظائف",
-      "searchButton": "بحث",
-      "discoverNonProfit": "اكتشف فرص المنظمات غير الربحية"
+  "report": {
+    "messageLabel": "اشرح سبب الإبلاغ",
+    "messagePlaceholder": "يرجى تقديم التفاصيل...",
+    "errorEmpty": "يرجى إدخال رسالة توضح سبب الإبلاغ.",
+    "errorFailed": "فشل إرسال البلاغ. يرجى المحاولة مرة أخرى.",
+    "success": "شكراً لك، تم إرسال بلاغك.",
+    "type": "النوع",
+    "author": "الكاتب",
+    "reason": "السبب",
+    "reasons": {
+      "fake": "مزيف",
+      "spam": "بريد مزعج",
+      "offensive": "مسيء",
+      "other": "أخرى"
     },
-    "quote": {
-      "title": "اقتباس اليوم الملهم",
-      "text": "المستقبل ملك لأولئك الذين يؤمنون بجمال أحلامهم.",
-      "author": "إليانور روزفلت"
-    },
-    "jobSeekers": {
-      "title": "للباحثين عن عمل",
-      "description": "ندعم رحلتك المهنية. نوفر الأدوات والموارد التي تحتاجها للعثور على وظيفة مُرضية ومتوافقة مع قيمك.",
-      "cards": {
-        "ethical": {
-          "title": "وظائف أخلاقية مختارة",
-          "description": "تصفّح قائمة من الوظائف لدى شركات ملتزمة بالممارسات الأخلاقية والمسؤولية الاجتماعية."
-        },
-        "resources": {
-          "title": "موارد تطوير مهني",
-          "description": "احصل على موارد لتحسين مهاراتك، بما في ذلك ورش عمل للسيرة الذاتية ونصائح للمقابلات وتوجيه مهني."
-        },
-        "community": {
-          "title": "مجتمع متعاون",
-          "description": "تواصل مع محترفين يشبهونك، وشارك خبراتك، وابنِ شبكة مع قادة أخلاقيين."
-        }
-      }
-    },
-    "employers": {
-      "title": "لأصحاب العمل",
-      "description": "ابنِ قوة عمل أفضل. تواصل مع المواهب التي تسعى لصنع فرق حقيقي.",
-      "cards": {
-        "talent": {
-          "title": "استقطب أفضل المواهب",
-          "description": "تواصل مع محترفين ملتزمين بصنع تأثير إيجابي."
-        },
-        "values": {
-          "title": "أبرز قيمك",
-          "description": "أظهر التزام شركتك بالأخلاق والاستدامة والأثر الاجتماعي."
-        },
-        "brand": {
-          "title": "عزّز قوة علامتك",
-          "description": "ارفع سمعتك واجذب العملاء الذين يقدّرون ممارسات الأعمال الأخلاقية."
-        }
-      }
-    },
-    "cta": {
-      "title": "انضم إلى مجتمع المسارات الأخلاقية",
-      "description": "سجّل اليوم وابدأ رحلتك نحو مسار مهني أكثر معنى وتأثيرًا.",
-      "button": "ابدأ الآن"
-    }
-  },
-  "jobs": {
-    "filtersHeading": "عوامل التصفية",
-    "searchPlaceholder": "مهندس برمجيات",
-    "searchAria": "ابحث عن وظائف",
-    "clearSearch": "مسح البحث",
-    "error": "تعذّر تحميل الوظائف. يرجى المحاولة لاحقًا.",
-    "retry": "أعد المحاولة",
-    "results": "{{count}} وظيفة متاحة",
-    "results_plural": "{{count}} وظائف متاحة",
-    "resultsDescription": "{{count}} فرصة تتوافق مع عوامل التصفية الحالية.",
-    "noResults": "لا توجد وظائف تطابق معاييرك.",
-    "resetFilters": "إعادة تعيين التصفية",
-    "authRequired": {
-      "title": "يتطلب حساب",
-      "description": "تحتاج إلى إنشاء حساب لعرض قوائم الوظائف والتقدم للوظائف.",
-      "invitation": "انضم إلى Ethica Jobs اليوم واكتشف فرص العمل الهادفة التي تتوافق مع قيمك!",
-      "signUp": "إنشاء حساب",
-      "login": "هل لديك حساب بالفعل؟ تسجيل الدخول"
-    }
-  },
-  "nonProfitJobs": {
-    "pageTitle": "فرص من أجل الخير العام",
-    "pageDescription": "ليس كل مكافأة نقدية. هذه الأدوار التطوعية والهادفة موجودة لإحداث فرق - للناس وللكوكب وللمستقبل. سواء كان زراعة الأشجار أو مساعدة المجتمعات المحلية أو المساهمة بمهاراتك في القضايا الاجتماعية، فإن كل عمل هنا يساهم في شيء أكبر من أنفسنا.",
-    "volunteerOpportunity": "تطوع",
-    "makingADifference": "إحداث فرق",
-    "features": {
-      "meaningful": "عمل ذو معنى",
-      "sustainable": "تأثير مستدام",
-      "community": "تركيز على المجتمع"
-    },
-    "availableOpportunities": "{{count}} فرصة متاحة",
-    "availableOpportunities_plural": "{{count}} فرصة متاحة",
-    "opportunitiesDescription": "{{count}} طريقة لإحداث تأثير إيجابي في مجتمعك وما وراءه.",
-    "noOpportunities": "لا توجد فرص تطوعية متاحة في الوقت الحالي",
-    "checkBackSoon": "تحقق مرة أخرى قريبًا للحصول على طرق جديدة لإحداث فرق في مجتمعك.",
-    "browseRegularJobs": "تصفح الوظائف العادية",
-    "volunteer": "التطوع",
-    "backToOpportunities": "العودة إلى الفرص",
-    "volunteerNow": "تطوع الآن",
-    "aboutOrganization": "حول المنظمة",
-    "opportunityDescription": "وصف الفرصة",
-    "makeADifferenceDescription": "انضم إلينا في إحداث تغيير ذي معنى من خلال العمل التطوعي الذي يحدث فرقًا حقيقيًا في المجتمعات والقضايا التي تهتم بها.",
-    "defaultDescription": "أحدث تأثيرًا ذا معنى من خلال العمل التطوعي الذي يساهم في الاستدامة البيئية وتنمية المجتمع ومبادرات العدالة الاجتماعية.",
-    "whatYouGain": {
-      "title": "ما ستكسبه",
-      "experience": "خبرة عملية قيمة في مجال اهتمامك",
-      "networking": "فرص التواصل مع أفراد متشابهين في التفكير",
-      "skills": "تطوير مهارات وكفاءات جديدة",
-      "impact": "مساهمة مباشرة في القضايا الاجتماعية ذات المعنى",
-      "purpose": "شعور بالهدف والإشباع الشخصي"
-    },
-    "authRequired": {
-      "description": "تحتاج إلى إنشاء حساب لعرض فرص التطوع والتواصل مع المنظمات ذات المعنى."
-    }
-  },
-  "jobFilters": {
-    "ethicalTags": "العلامات الأخلاقية",
-    "selectEthicalTags": "اختر العلامات الأخلاقية",
-    "salary": "نطاق الراتب",
-    "salaryRangeValue": "${{min}}k - ${{max}}k",
-    "jobType": "نوع الوظيفة",
-    "workArrangement": "ترتيب العمل",
-    "remoteOnly": "عن بُعد فقط",
-    "inclusivity": "الشمولية",
-    "disabilityInclusive": "فرص شاملة للأشخاص ذوي الإعاقة",
-    "companyName": "اسم الشركة",
-    "companyNamePlaceholder": "البحث باسم الشركة",
-    "jobTypeOptions": {
-      "fullTime": "دوام كامل",
-      "partTime": "دوام جزئي",
-      "contract": "عقد"
-    },
-    "salaryEndpoint": "${{value}}k"
-  },
-  "ethicalTags": {
-    "select": "اختر العلامات الأخلاقية",
-    "selectEthicalTags": "اختر العلامات الأخلاقية",
-    "selectedCount": "تم اختيار {{count}} علامة",
-    "selectedCount_plural": "تم اختيار {{count}} علامات",
-    "clearAll": "مسح الكل",
-    "removeTag": "إزالة {{tag}}",
-    "categories": {
-      "compensationAndBenefits": "التعويضات والمزايا",
-      "workLifeBalance": "توازن العمل والحياة",
-      "diversityAndInclusion": "التنوع والشمول",
-      "careerDevelopment": "التطوير المهني",
-      "environmentalAndSocialImpact": "التأثير البيئي والاجتماعي"
-    },
-    "tags": {
-      "salaryTransparency": "شفافية الرواتب",
-      "equalPayPolicy": "سياسة الأجر المتساوي",
-      "livingWageEmployer": "صاحب عمل يدفع أجراً معيشياً",
-      "comprehensiveHealthInsurance": "تأمين صحي شامل",
-      "performanceBasedBonus": "مكافأة على أساس الأداء",
-      "retirementPlanSupport": "دعم خطة التقاعد",
-      "paidParentalLeave": "إجازة والدية مدفوعة",
-      "flexibleHours": "ساعات عمل مرنة",
-      "remoteFriendly": "صديق للعمل عن بُعد",
-      "noAfterHoursWorkCulture": "لا ثقافة العمل بعد ساعات العمل",
-      "mentalHealthSupport": "دعم الصحة النفسية",
-      "generousPaidTimeOff": "إجازة مدفوعة سخية",
-      "inclusiveHiringPractices": "ممارسات توظيف شاملة",
-      "diverseLeadership": "قيادة متنوعة",
-      "lgbtqFriendlyWorkplace": "مكان عمل صديق لمجتمع LGBTQ+",
-      "disabilityInclusiveWorkplace": "مكان عمل شامل للأشخاص ذوي الإعاقة",
-      "supportsWomenInLeadership": "يدعم النساء في القيادة",
-      "mentorshipProgram": "برنامج الإرشاد",
-      "learningDevelopmentBudget": "ميزانية التعلم والتطوير",
-      "transparentPromotionPaths": "مسارات ترقية شفافة",
-      "internalMobility": "التنقل الداخلي",
-      "sustainabilityFocused": "مركّز على الاستدامة",
-      "ethicalSupplyChain": "سلسلة توريد أخلاقية",
-      "communityVolunteering": "التطوع المجتمعي",
-      "certifiedBCorporation": "شركة B معتمدة"
-    }
-  },
-  "jobCard": {
-    "remote": "عن بُعد",
-    "inclusiveOpportunity": "فرصة شاملة",
-    "notSpecified": "الموقع غير محدد"
-  },
-  "mobileFilters": {
-    "open": "فتح عوامل التصفية",
-    "title": "عوامل التصفية",
-    "reset": "إعادة تعيين",
-    "apply": "تطبيق"
-  },
-  "jobDetail": {
-    "breadcrumb": {
-      "jobs": "الوظائف"
-    },
-    "error": {
-      "title": "تعذّر تحميل الوظيفة",
-      "missing": "الوظيفة غير متاحة",
-      "description": "الوظيفة التي تبحث عنها غير موجودة أو تم حذفها.",
-      "fetch": "تعذّر تحميل تفاصيل الوظيفة. يرجى المحاولة لاحقًا."
-    },
-    "backToJobs": "العودة إلى الوظائف",
-    "applyNow": "قدّم الآن",
-    "description": "وصف الوظيفة",
-    "ethicalPolicy": {
-      "title": "العلامات الأخلاقية والامتثال"
-    },
-    "inclusiveOpportunity": "فرصة شاملة",
-    "contact": {
-      "title": "معلومات التواصل"
-    }
-  },
-  "employerDashboard": {
-    "brand": "Ethical Careers",
-    "sidebar": {
-      "dashboard": "لوحة التحكم",
-      "jobs": "الوظائف",
-      "profile": "ملف الشركة",
-      "settings": "الإعدادات",
-      "support": "المساعدة والدعم"
-    },
-    "title": "لوحة صاحب العمل",
-    "currentPostings": "الوظائف الحالية",
-    "createJob": "إنشاء وظيفة جديدة",
-    "loadingError": "تعذّر تحميل الوظائف. يرجى المحاولة لاحقًا.",
-    "emptyState": "لم تقم بإنشاء أي وظائف بعد.",
-    "emptyCta": "أنشئ أول وظيفة لك",
-    "table": {
-      "jobTitle": "المسمى الوظيفي",
-      "status": "الحالة",
-      "applications": "طلبات التوظيف",
-      "views": "المشاهدات",
-      "actions": "الإجراءات"
-    },
-    "actions": {
-      "manage": "إدارة",
-      "view": "عرض"
-    },
-    "statusLabels": {
-      "open": "مفتوح",
-      "active": "نشط",
-      "paused": "موقوف"
-    }
+    "submit": "إرسال البلاغ",
+    "submitting": "جارٍ الإرسال..."
   },
   "auth": {
     "login": {
@@ -285,6 +100,7 @@
       "errors": {
         "serviceUnavailable": "الخدمة غير متاحة مؤقتًا. يرجى المحاولة لاحقًا أو التواصل مع الدعم.",
         "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة. حاول مرة أخرى.",
+        "internalServerError": "خطأ في الخادم. يرجى المحاولة لاحقًا.",
         "generic": "فشلت عملية تسجيل الدخول. يرجى المحاولة لاحقًا."
       },
       "notifications": {
@@ -379,6 +195,1376 @@
       "success": "تم التحقق من OTP بنجاح! لقد سجلت الدخول الآن."
     }
   },
+  "home": {
+    "hero": {
+      "title": "ابحث عن مسار مهني يحقق رسالتك",
+      "subtitle": "تواصل مع الشركات التي تعطي الأولوية للأخلاق والاستدامة. اكتشف الفرص التي تنسجم مع قيمك وتُحدث أثرًا إيجابيًا في العالم.",
+      "searchLabel": "ابحث عن وظائف",
+      "searchPlaceholderDesktop": "ابحث عن وظائف، مثل «مهندس برمجيات»",
+      "searchPlaceholderMobile": "ابحث عن وظائف",
+      "searchButton": "بحث",
+      "discoverNonProfit": "اكتشف فرص المنظمات غير الربحية"
+    },
+    "quote": {
+      "title": "اقتباس اليوم الملهم",
+      "text": "المستقبل ملك لأولئك الذين يؤمنون بجمال أحلامهم.",
+      "author": "إليانور روزفلت"
+    },
+    "jobSeekers": {
+      "title": "للباحثين عن عمل",
+      "description": "ندعم رحلتك المهنية. نوفر الأدوات والموارد التي تحتاجها للعثور على وظيفة مُرضية ومتوافقة مع قيمك.",
+      "cards": {
+        "ethical": {
+          "title": "وظائف أخلاقية مختارة",
+          "description": "تصفّح قائمة من الوظائف لدى شركات ملتزمة بالممارسات الأخلاقية والمسؤولية الاجتماعية."
+        },
+        "resources": {
+          "title": "موارد تطوير مهني",
+          "description": "احصل على موارد لتحسين مهاراتك، بما في ذلك ورش عمل للسيرة الذاتية ونصائح للمقابلات وتوجيه مهني."
+        },
+        "community": {
+          "title": "مجتمع متعاون",
+          "description": "تواصل مع محترفين يشبهونك، وشارك خبراتك، وابنِ شبكة مع قادة أخلاقيين."
+        }
+      }
+    },
+    "employers": {
+      "title": "لأصحاب العمل",
+      "description": "ابنِ قوة عمل أفضل. تواصل مع المواهب التي تسعى لصنع فرق حقيقي.",
+      "cards": {
+        "talent": {
+          "title": "استقطب أفضل المواهب",
+          "description": "تواصل مع محترفين ملتزمين بصنع تأثير إيجابي."
+        },
+        "values": {
+          "title": "أبرز قيمك",
+          "description": "أظهر التزام شركتك بالأخلاق والاستدامة والأثر الاجتماعي."
+        },
+        "brand": {
+          "title": "عزّز قوة علامتك",
+          "description": "ارفع سمعتك واجذب العملاء الذين يقدّرون ممارسات الأعمال الأخلاقية."
+        }
+      }
+    },
+    "cta": {
+      "title": "انضم إلى مجتمع المسارات الأخلاقية",
+      "description": "سجّل اليوم وابدأ رحلتك نحو مسار مهني أكثر معنى وتأثيرًا.",
+      "button": "ابدأ الآن"
+    },
+    "stats": {
+      "title": "تأثير مجتمعنا",
+      "subtitle": "أرقام حقيقية تعرض مجتمعنا المتنامي من المحترفين الأخلاقيين وأصحاب العمل",
+      "loading": "جارٍ تحميل الإحصائيات...",
+      "error": "تعذّر تحميل الإحصائيات",
+      "retry": "أعد المحاولة",
+      "users": {
+        "title": "أعضاء المجتمع",
+        "total": "إجمالي الأعضاء",
+        "employers": "أصحاب العمل",
+        "jobSeekers": "الباحثون عن عمل"
+      },
+      "jobs": {
+        "title": "فرص العمل",
+        "total": "إجمالي الوظائف",
+        "remote": "الوظائف عن بُعد",
+        "inclusive": "الفرص الشاملة",
+        "newThisWeek": "جديد هذا الأسبوع"
+      },
+      "applications": {
+        "title": "الطلبات",
+        "total": "إجمالي الطلبات",
+        "pending": "قيد الانتظار",
+        "accepted": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "mentorship": {
+        "title": "برنامج الإرشاد",
+        "mentors": "المرشدون النشطون",
+        "accepted": "الإرشادات النشطة",
+        "pending": "الطلبات قيد الانتظار",
+        "completed": "مكتمل",
+        "reviews": "التقييمات المقدمة"
+      },
+      "forum": {
+        "title": "منشورات المنتدى",
+        "comments": "التعليقات",
+        "newThisWeek": "جديد هذا الأسبوع"
+      }
+    }
+  },
+  "jobs": {
+    "filtersHeading": "عوامل التصفية",
+    "searchPlaceholder": "مهندس برمجيات",
+    "searchAria": "ابحث عن وظائف",
+    "clearSearch": "مسح البحث",
+    "error": "تعذّر تحميل الوظائف. يرجى المحاولة لاحقًا.",
+    "retry": "أعد المحاولة",
+    "results": "{{count}} وظيفة متاحة",
+    "results_plural": "{{count}} وظائف متاحة",
+    "resultsDescription": "{{count}} فرصة تتوافق مع عوامل التصفية الحالية.",
+    "noResults": "لا توجد وظائف تطابق معاييرك.",
+    "resetFilters": "إعادة تعيين التصفية",
+    "tabs": {
+      "browse": "تصفح",
+      "myApplications": "طلباتي"
+    },
+    "myApplications": {
+      "authTitle": "سجّل الدخول لعرض طلباتك",
+      "authDescription": "سجّل الدخول كباحث عن عمل لعرض طلباتك وإدارتها."
+    },
+    "authRequired": {
+      "title": "يتطلب حساب",
+      "description": "تحتاج إلى إنشاء حساب لعرض قوائم الوظائف والتقدم للوظائف.",
+      "invitation": "انضم إلى Ethica Jobs اليوم واكتشف فرص العمل الهادفة التي تتوافق مع قيمك!",
+      "signUp": "إنشاء حساب",
+      "login": "هل لديك حساب بالفعل؟ تسجيل الدخول"
+    },
+    "filters": {
+      "ethicalTags": "العلامات الأخلاقية",
+      "selectEthicalTags": "اختر العلامات الأخلاقية",
+      "salary": "نطاق الراتب",
+      "salaryRangeValue": "${{min}}k - ${{max}}k",
+      "jobType": "نوع الوظيفة",
+      "workArrangement": "ترتيب العمل",
+      "remoteOnly": "عن بُعد فقط",
+      "inclusivity": "الشمولية",
+      "disabilityInclusive": "فرص شاملة للأشخاص ذوي الإعاقة",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "البحث باسم الشركة",
+      "jobTypeOptions": {
+        "fullTime": "دوام كامل",
+        "partTime": "دوام جزئي",
+        "contract": "عقد"
+      },
+      "salaryEndpoint": "${{value}}k"
+    },
+    "tags": {
+      "select": "اختر العلامات الأخلاقية",
+      "selectEthicalTags": "اختر العلامات الأخلاقية",
+      "selectedCount": "تم اختيار {{count}} علامة",
+      "selectedCount_plural": "تم اختيار {{count}} علامات",
+      "clearAll": "مسح الكل",
+      "removeTag": "إزالة {{tag}}",
+      "categories": {
+        "compensationAndBenefits": "التعويضات والمزايا",
+        "workLifeBalance": "توازن العمل والحياة",
+        "diversityAndInclusion": "التنوع والشمول",
+        "careerDevelopment": "التطوير المهني",
+        "environmentalAndSocialImpact": "التأثير البيئي والاجتماعي"
+      },
+      "tags": {
+        "salaryTransparency": "شفافية الرواتب",
+        "equalPayPolicy": "سياسة الأجر المتساوي",
+        "livingWageEmployer": "صاحب عمل يدفع أجراً معيشياً",
+        "comprehensiveHealthInsurance": "تأمين صحي شامل",
+        "performanceBasedBonus": "مكافأة على أساس الأداء",
+        "retirementPlanSupport": "دعم خطة التقاعد",
+        "paidParentalLeave": "إجازة والدية مدفوعة",
+        "flexibleHours": "ساعات عمل مرنة",
+        "remoteFriendly": "صديق للعمل عن بُعد",
+        "noAfterHoursWorkCulture": "لا ثقافة العمل بعد ساعات العمل",
+        "mentalHealthSupport": "دعم الصحة النفسية",
+        "generousPaidTimeOff": "إجازة مدفوعة سخية",
+        "inclusiveHiringPractices": "ممارسات توظيف شاملة",
+        "diverseLeadership": "قيادة متنوعة",
+        "lgbtqFriendlyWorkplace": "مكان عمل صديق لمجتمع LGBTQ+",
+        "disabilityInclusiveWorkplace": "مكان عمل شامل للأشخاص ذوي الإعاقة",
+        "supportsWomenInLeadership": "يدعم النساء في القيادة",
+        "mentorshipProgram": "برنامج الإرشاد",
+        "learningDevelopmentBudget": "ميزانية التعلم والتطوير",
+        "transparentPromotionPaths": "مسارات ترقية شفافة",
+        "internalMobility": "التنقل الداخلي",
+        "sustainabilityFocused": "مركّز على الاستدامة",
+        "ethicalSupplyChain": "سلسلة توريد أخلاقية",
+        "communityVolunteering": "التطوع المجتمعي",
+        "certifiedBCorporation": "شركة B معتمدة"
+      }
+    },
+    "card": {
+      "remote": "عن بُعد",
+      "inclusiveOpportunity": "فرصة شاملة",
+      "notSpecified": "الموقع غير محدد"
+    },
+    "mobileFilters": {
+      "open": "فتح عوامل التصفية",
+      "title": "عوامل التصفية",
+      "reset": "إعادة تعيين",
+      "apply": "تطبيق"
+    },
+    "detail": {
+      "breadcrumb": {
+        "jobs": "الوظائف"
+      },
+      "error": {
+        "title": "تعذّر تحميل الوظيفة",
+        "missing": "الوظيفة غير متاحة",
+        "description": "الوظيفة التي تبحث عنها غير موجودة أو تم حذفها.",
+        "fetch": "تعذّر تحميل تفاصيل الوظيفة. يرجى المحاولة لاحقًا."
+      },
+      "backToJobs": "العودة إلى الوظائف",
+      "applyNow": "قدّم الآن",
+      "description": "وصف الوظيفة",
+      "ethicalPolicy": {
+        "title": "العلامات الأخلاقية والامتثال",
+        "sourceNote": "المعلومات الأخلاقية لهذه الوظيفة تأتي من ملف الشركة.",
+        "overallScore": "تقييم الشركة الأخلاقي",
+        "ratingsTitle": "تقييمات السياسات الأخلاقية",
+        "tagCount": "{{count}} سياسة أخلاقية",
+        "tagCount_plural": "{{count}} سياسة أخلاقية",
+        "noPolicies": "لم تشارك الشركة سياساتها الأخلاقية بعد.",
+        "inclusiveNote": "تعتبر الشركة هذا الدور فرصة شاملة."
+      },
+      "inclusiveOpportunity": "فرصة شاملة",
+      "contact": {
+        "title": "معلومات التواصل"
+      },
+      "workplace": {
+        "title": "عن الشركة",
+        "sector": "القطاع",
+        "location": "الموقع",
+        "overallRating": "تقييم الشركة الأخلاقي"
+      }
+    }
+  },
+  "volunteering": {
+    "pageTitle": "فرص من أجل الخير العام",
+    "pageDescription": "ليس كل مكافأة نقدية. هذه الأدوار التطوعية والهادفة موجودة لإحداث فرق - للناس وللكوكب وللمستقبل. سواء كان زراعة الأشجار أو مساعدة المجتمعات المحلية أو المساهمة بمهاراتك في القضايا الاجتماعية، فإن كل عمل هنا يساهم في شيء أكبر من أنفسنا.",
+    "volunteerOpportunity": "تطوع",
+    "makingADifference": "إحداث فرق",
+    "features": {
+      "meaningful": "عمل ذو معنى",
+      "sustainable": "تأثير مستدام",
+      "community": "تركيز على المجتمع"
+    },
+    "availableOpportunities": "{{count}} فرصة متاحة",
+    "availableOpportunities_plural": "{{count}} فرصة متاحة",
+    "opportunitiesDescription": "{{count}} طريقة لإحداث تأثير إيجابي في مجتمعك وما وراءه.",
+    "noOpportunities": "لا توجد فرص تطوعية متاحة في الوقت الحالي",
+    "checkBackSoon": "تحقق مرة أخرى قريبًا للحصول على طرق جديدة لإحداث فرق في مجتمعك.",
+    "browseRegularJobs": "تصفح الوظائف العادية",
+    "volunteer": "التطوع",
+    "backToOpportunities": "العودة إلى الفرص",
+    "volunteerNow": "تطوع الآن",
+    "aboutOrganization": "حول المنظمة",
+    "opportunityDescription": "وصف الفرصة",
+    "makeADifferenceDescription": "انضم إلينا في إحداث تغيير ذي معنى من خلال العمل التطوعي الذي يحدث فرقًا حقيقيًا في المجتمعات والقضايا التي تهتم بها.",
+    "defaultDescription": "أحدث تأثيرًا ذا معنى من خلال العمل التطوعي الذي يساهم في الاستدامة البيئية وتنمية المجتمع ومبادرات العدالة الاجتماعية.",
+    "whatYouGain": {
+      "title": "ما ستكسبه",
+      "experience": "خبرة عملية قيمة في مجال اهتمامك",
+      "networking": "فرص التواصل مع أفراد متشابهين في التفكير",
+      "skills": "تطوير مهارات وكفاءات جديدة",
+      "impact": "مساهمة مباشرة في القضايا الاجتماعية ذات المعنى",
+      "purpose": "شعور بالهدف والإشباع الشخصي"
+    },
+    "authRequired": {
+      "description": "تحتاج إلى إنشاء حساب لعرض فرص التطوع والتواصل مع المنظمات ذات المعنى."
+    }
+  },
+  "applications": {
+    "job": {
+      "title": "التقديم على {{jobTitle}}",
+      "breadcrumb": {
+        "jobs": "الوظائف",
+        "apply": "التقديم"
+      },
+      "jobDetails": {
+        "title": "تفاصيل الوظيفة",
+        "company": "الشركة",
+        "location": "الموقع",
+        "salary": "الراتب",
+        "remote": "عن بعد",
+        "onSite": "في الموقع",
+        "postedOn": "نُشر في {{date}}"
+      },
+      "form": {
+        "title": "نموذج التقديم",
+        "coverLetter": {
+          "label": "خطاب التقديم (اختياري)",
+          "placeholder": "قدم نفسك واشرح لماذا أنت مرشح مثالي لهذا الدور...",
+          "characterCount": "{{count}} / 2000 حرف"
+        },
+        "specialNeeds": {
+          "label": "الاحتياجات الخاصة أو الترتيبات (اختياري)",
+          "placeholder": "أخبرنا إذا كنت بحاجة إلى أي ترتيبات خاصة...",
+          "characterCount": "{{count}} / 500 حرف"
+        },
+        "cv": {
+          "label": "رفع السيرة الذاتية",
+          "required": "السيرة الذاتية مطلوبة",
+          "dragDrop": "اسحب وأفلت سيرتك الذاتية هنا، أو انقر للتصفح",
+          "chooseFile": "اختر ملف",
+          "fileTypes": "PDF، DOC، DOCX حتى 10 ميجابايت",
+          "selected": "المحدد: {{fileName}}",
+          "change": "تغيير الملف",
+          "remove": "إزالة الملف"
+        },
+        "submit": "إرسال الطلب",
+        "submitting": "جارٍ الإرسال..."
+      },
+      "success": {
+        "title": "تم إرسال الطلب!",
+        "message": "تم إرسال طلبك بنجاح. سنخطرك بمجرد أن يراجع صاحب العمل طلبك.",
+        "viewApplications": "عرض طلباتي",
+        "backToJobs": "العودة إلى الوظائف"
+      },
+      "errors": {
+        "loadJob": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة مرة أخرى.",
+        "submitFailed": "فشل إرسال الطلب. يرجى المحاولة مرة أخرى.",
+        "uploadFailed": "فشل رفع السيرة الذاتية. يرجى المحاولة مرة أخرى.",
+        "fileTooLarge": "يجب أن يكون حجم الملف أقل من 10 ميجابايت",
+        "invalidFileType": "نوع ملف غير صالح. يرجى رفع PDF أو DOC أو DOCX",
+        "alreadyApplied": "لقد قدمت بالفعل على هذه الوظيفة."
+      },
+      "alreadyApplied": {
+        "title": "تم التقديم مسبقاً",
+        "message": "لقد قدمت بالفعل طلباً لهذه الوظيفة.",
+        "status": "حالة الطلب: {{status}}",
+        "viewApplication": "عرض الطلب",
+        "backToJobs": "العودة إلى الوظائف"
+      }
+    },
+    "list": {
+      "breadcrumbPrefix": "الطلبات لـ",
+      "backToJob": "العودة إلى الوظيفة",
+      "filters": "عوامل التصفية",
+      "searchPlaceholder": "ابحث بالاسم أو المسمى",
+      "status": {
+        "all": "كل الحالات",
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "sort": {
+        "recent": "الأحدث أولاً",
+        "oldest": "الأقدم أولاً",
+        "nameAz": "الاسم أ-ي",
+        "nameZa": "الاسم ي-أ"
+      },
+      "count": "{{count}} طلب",
+      "emptyTitle": "لا توجد طلبات تطابق عوامل التصفية",
+      "emptyDescription": "جرّب تعديل البحث أو حالة الطلب.",
+      "errorTitle": "تعذر تحميل الطلبات",
+      "errorDescription": "ارجع لصفحة الوظيفة وحاول مجددًا.",
+      "jobTitleFallback": "وظيفة",
+      "viewApplication": "عرض الطلب",
+      "viewAll": "عرض الطلبات",
+      "loading": "جارٍ تحميل الطلبات...",
+      "summary": "تم استلام {{count}} طلب"
+    },
+    "volunteer": {
+      "title": "تطوع في {{jobTitle}}",
+      "breadcrumb": {
+        "apply": "تقدم"
+      },
+      "opportunityDetails": {
+        "title": "تفاصيل فرصة التطوع",
+        "organization": "المنظمة",
+        "location": "الموقع",
+        "type": "النوع",
+        "volunteer": "فرصة تطوع",
+        "postedOn": "نُشرت في {{date}}"
+      },
+      "form": {
+        "title": "طلب التطوع",
+        "subtitle": "شارك شغفك بإحداث فرق وأخبرنا لماذا تريد التطوع مع هذه المنظمة.",
+        "motivationLetter": {
+          "label": "رسالة الدافع",
+          "placeholder": "أخبرنا لماذا تتحمس لهذه القضية وكيف تود المساهمة...",
+          "characterCount": "{{count}}/2000 حرف"
+        },
+        "specialNeeds": {
+          "label": "متطلبات إمكانية الوصول",
+          "placeholder": "يرجى وصف أي ترتيبات أو متطلبات إمكانية وصول قد تحتاجها...",
+          "characterCount": "{{count}}/500 حرف"
+        },
+        "cv": {
+          "label": "السيرة الذاتية",
+          "required": "يرجى تحميل سيرتك الذاتية",
+          "dragDrop": "اسحب وأفلت سيرتك الذاتية هنا أو انقر للتصفح",
+          "chooseFile": "اختر ملف",
+          "fileTypes": "PDF أو DOC أو DOCX حتى 10MB"
+        },
+        "submit": "إرسال طلب التطوع",
+        "submitting": "جاري الإرسال..."
+      },
+      "success": {
+        "message": "تم إرسال طلب التطوع بنجاح!"
+      },
+      "errors": {
+        "loadJob": "فشل تحميل تفاصيل فرصة التطوع",
+        "submitFailed": "فشل إرسال طلب التطوع. يرجى المحاولة مرة أخرى.",
+        "fileTooLarge": "يجب أن يكون حجم الملف أقل من 10MB",
+        "invalidFileType": "نوع ملف غير صالح. يرجى تحميل PDF أو DOC أو DOCX",
+        "alreadyApplied": "لقد تقدمت بالفعل لهذه فرصة التطوع."
+      }
+    },
+    "review": {
+      "noCv": "لم يتم العثور على سيرة ذاتية لهذا الطلب",
+      "error": {
+        "load": "فشل تحميل تفاصيل الطلب. يرجى المحاولة مرة أخرى.",
+        "approve": "فشل قبول الطلب. يرجى المحاولة مرة أخرى.",
+        "reject": "فشل رفض الطلب. يرجى المحاولة مرة أخرى.",
+        "title": "خطأ في تحميل الطلب"
+      },
+      "success": {
+        "approve": "تم قبول الطلب بنجاح.",
+        "reject": "تم رفض الطلب بنجاح."
+      },
+      "applied": {
+        "today": "اليوم",
+        "yesterday": "قبل يوم واحد",
+        "daysAgo": "قبل {{count}} أيام"
+      },
+      "backToJob": "العودة إلى الوظيفة",
+      "title": "طلب لوظيفة {{jobTitle}}",
+      "atCompany": "في {{company}}",
+      "applicantInfo": "معلومات مقدم الطلب",
+      "status": "الحالة",
+      "coverLetter": "خطاب التقديم",
+      "specialNeeds": "الاحتياجات الخاصة أو التسهيلات",
+      "cv": "السيرة الذاتية",
+      "loadingCv": "جارٍ تحميل السيرة الذاتية...",
+      "resumeOf": "سيرة {{name}} الذاتية",
+      "downloadToView": "انقر فوق تنزيل لعرض السيرة الذاتية",
+      "download": "تنزيل",
+      "noCvAttached": "لا توجد سيرة ذاتية مرفقة بهذا الطلب",
+      "existingFeedback": "الملاحظات الحالية",
+      "decision": "القرار",
+      "feedback": "ملاحظات (اختياري)",
+      "feedbackPlaceholder": "قدم ملاحظات لمقدم الطلب",
+      "processing": "جارٍ المعالجة...",
+      "reject": "رفض",
+      "approve": "قبول"
+    },
+    "mine": {
+      "title": "طلباتي",
+      "subtitle": "تتبع وإدارة طلبات الوظائف الخاصة بك",
+      "filters": {
+        "all": "الكل",
+        "pending": "قيد الانتظار",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "stats": {
+        "total": "إجمالي الطلبات",
+        "pending": "قيد الانتظار",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "applicationCard": {
+        "appliedOn": "تم التقديم في {{date}}",
+        "status": {
+          "PENDING": "قيد الانتظar",
+          "APPROVED": "مقبول",
+          "REJECTED": "مرفوض"
+        },
+        "actions": {
+          "viewDetails": "عرض التفاصيل",
+          "viewJob": "عرض الوظيفة",
+          "downloadCV": "تنزيل السيرة الذاتية",
+          "withdraw": "سحب الطلب"
+        },
+        "salary": "${{min}}k - ${{max}}k",
+        "remote": "عن بعد",
+        "onSite": "في الموقع"
+      },
+      "details": {
+        "title": "تفاصيل الطلب",
+        "coverLetter": "خطاب التقديم",
+        "specialNeeds": "الاحتياجات الخاصة",
+        "feedback": "ملاحظات صاحب العمل",
+        "noFeedback": "لا توجد ملاحظات بعد",
+        "cv": "السيرة الذاتية",
+        "downloadCV": "تنزيل السيرة الذاتية",
+        "status": "الحالة",
+        "appliedDate": "تاريخ التقديم",
+        "close": "إغلاق"
+      },
+      "empty": {
+        "title": "لا توجد طلبات بعد",
+        "message": "لم تتقدم لأي وظائف بعد. تصفح الوظائف المتاحة وابدأ بالتقديم!",
+        "browseJobs": "تصفح الوظائف"
+      },
+      "withdraw": {
+        "title": "سحب الطلب",
+        "message": "هل أنت متأكد من أنك تريد سحب هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.",
+        "confirm": "نعم، سحب",
+        "success": "تم سحب الطلب بنجاح",
+        "error": "فشل سحب الطلب. يرجى المحاولة مرة أخرى."
+      },
+      "errors": {
+        "loadFailed": "فشل تحميل الطلبات. يرجى المحاولة مرة أخرى.",
+        "deleteFailed": "فشل حذف الطلب. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "list": {
+      "back": "العودة إلى صفحة الوظيفة",
+      "jobErrorTitle": "لم يتم العثور على الوظيفة",
+      "jobErrorMessage": "تعذر تحميل هذه الوظيفة.",
+      "backToDashboard": "العودة للوحة التحكم",
+      "permissionDenied": "لا يمكنك عرض هذه الطلبات",
+      "permissionHint": "فقط أصحاب العمل في هذا مكان العمل يمكنهم رؤية الطلبات.",
+      "backToJob": "العودة إلى إعلان الوظيفة",
+      "title": "الطلبات لـ {{title}}",
+      "subtitle": "راجع وأدر كل الطلبات في مكان واحد.",
+      "postedOn": "تاريخ النشر",
+      "viewJob": "عرض الوظيفة",
+      "stats": {
+        "total": "الإجمالي",
+        "pending": "قيد المراجعة",
+        "approved": "مقبول",
+        "rejected": "مرفوض"
+      },
+      "searchPlaceholder": "ابحث بالاسم أو خطاب التغطية أو الاحتياجات",
+      "sort": {
+        "title": "ترتيب الطلبات",
+        "newest": "الأحدث أولاً",
+        "oldest": "الأقدم أولاً",
+        "nameAsc": "الاسم أ-ي",
+        "nameDesc": "الاسم ي-أ"
+      },
+      "emptyTitle": "لا توجد طلبات بعد",
+      "emptySubtitle": "شارك إعلانك لبدء تلقي الطلبات.",
+      "hasNeeds": "احتياجات خاصة مذكورة",
+      "hasCoverLetter": "خطاب تغطية",
+      "appliedOn": "تم التقديم في {{date}}",
+      "review": "مراجعة الطلب"
+    }
+  },
+  "employer": {
+    "dashboard": {
+      "brand": "Ethical Careers",
+      "sidebar": {
+        "dashboard": "لوحة التحكم",
+        "jobs": "الوظائف",
+        "profile": "ملف الشركة",
+        "settings": "الإعدادات",
+        "support": "المساعدة والدعم"
+      },
+      "title": "لوحة صاحب العمل",
+      "subtitle": "أدِر إعلانات الوظائف وأماكن العمل الخاصة بك",
+      "currentPostings": "الوظائف الحالية",
+      "createJob": "إنشاء وظيفة جديدة",
+      "addWorkplace": "إضافة مكان عمل",
+      "joinWorkplace": "الانضمام إلى مكان عمل",
+      "unassignedJobs": "وظائف غير مخصصة",
+      "jobCount": "وظائف",
+      "jobCount_one": "وظيفة",
+      "noJobsInWorkplace": "لا توجد وظائف بعد",
+      "createJobForWorkplace": "أنشئ أول وظيفة لك",
+      "noWorkplaces": {
+        "title": "لا توجد أماكن عمل بعد",
+        "description": "أنشئ مكان عمل أو انضم إلى مكان قائم لبدء نشر الوظائف.",
+        "createWorkplace": "إنشاء مكان عمل",
+        "joinWorkplace": "الانضمام إلى مكان عمل"
+      },
+      "loadingError": "تعذّر تحميل الوظائف. يرجى المحاولة لاحقًا.",
+      "emptyState": "لم تقم بإنشاء أي وظائف بعد.",
+      "emptyCta": "أنشئ أول وظيفة لك",
+      "table": {
+        "jobTitle": "المسمى الوظيفي",
+        "status": "الحالة",
+        "applications": "طلبات التوظيف",
+        "views": "المشاهدات",
+        "actions": "الإجراءات"
+      },
+      "actions": {
+        "manage": "إدارة",
+        "view": "عرض"
+      },
+      "statusLabels": {
+        "open": "مفتوح",
+        "active": "نشط",
+        "paused": "موقوف"
+      }
+    },
+    "jobPostDetails": {
+      "error": {
+        "load": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة لاحقًا.",
+        "title": "خطأ في تحميل الوظيفة",
+        "notFound": "الوظيفة غير موجودة",
+        "description": "الوظيفة التي تبحث عنها غير موجودة أو تم إزالتها."
+      },
+      "loadError": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة لاحقًا.",
+      "applied": {
+        "today": "تم التقديم اليوم",
+        "yesterday": "تم التقديم أمس",
+        "daysAgo": "تم التقديم منذ {{count}} يوم"
+      },
+      "backToDashboard": "العودة للوحة التحكم",
+      "breadcrumb": {
+        "jobs": "الوظائف"
+      },
+      "editJobPost": "تعديل الوظيفة",
+      "save": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ...",
+      "submitError": "تعذر تحديث الوظيفة. يرجى المحاولة لاحقًا.",
+      "cancel": "إلغاء",
+      "jobDescription": "وصف الوظيفة",
+      "salaryRange": "نطاق الراتب",
+      "location": "الموقع",
+      "remote": "عن بُعد",
+      "contact": "معلومات التواصل",
+      "ethicalPolicies": "السياسات الأخلاقية",
+      "inclusiveOpportunity": "فرصة شاملة",
+      "inclusiveOpportunityDescription": "هذه الوظيفة ترحب بالمرشحين من خلفيات متنوعة.",
+      "applicationsReceived": "الطلبات المستلمة ({{count}})",
+      "noApplications": "لا توجد طلبات بعد.",
+      "viewApplication": "عرض الطلب"
+    },
+    "createJob": {
+      "title": "إنشاء إعلان وظيفة",
+      "subtitle": "انشر فرصة عمل جديدة وابحث عن المرشح المثالي",
+      "workplace": "مكان العمل",
+      "workplaceDescription": "اختر مكان العمل الذي تنتمي إليه هذه الوظيفة",
+      "workplaceRequired": "يرجى اختيار مكان عمل لهذا الإعلان",
+      "noWorkplaces": {
+        "title": "لا توجد أماكن عمل متاحة",
+        "description": "تحتاج إلى الانضمام إلى مكان عمل لإنشاء إعلان. أنشئ مكانًا جديدًا أو اطلب الانضمام.",
+        "createWorkplace": "إنشاء مكان عمل",
+        "joinWorkplace": "الانضمام إلى مكان عمل"
+      },
+      "jobTitle": "المسمى الوظيفي",
+      "jobTitlePlaceholder": "مثال: مهندس برمجيات أول",
+      "jobDescription": "وصف الوظيفة",
+      "jobDescriptionPlaceholder": "صف الدور والمسؤوليات والمتطلبات...",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "اسم شركتك",
+      "location": "الموقع",
+      "locationPlaceholder": "مثال: الرياض، السعودية أو عن بُعد",
+      "remoteWork": "العمل عن بُعد متاح",
+      "remoteWorkDescription": "حدد هذا الخيار إذا كانت هذه الوظيفة توفر خيارات العمل عن بُعد",
+      "nonProfit": "منظمة غير ربحية",
+      "nonProfitDescription": "حدد هذا كفرصة تطوعية من منظمة غير ربحية تركز على التأثير الاجتماعي",
+      "salaryRange": "نطاق الراتب",
+      "minimum": "الحد الأدنى",
+      "maximum": "الحد الأقصى",
+      "minSalaryPlaceholder": "مثال: 80000",
+      "maxSalaryPlaceholder": "مثال: 120000",
+      "contactEmail": "البريد الإلكتروني للتواصل",
+      "contactEmailPlaceholder": "hiring@company.com",
+      "ethicalTags": "العلامات الأخلاقية",
+      "ethicalTagsDescription": "اختر العلامات التي تمثل قيم وممارسات شركتك",
+      "ethicalTagsPlaceholder": "اختر العلامات الأخلاقية",
+      "inclusiveOpportunity": "فرصة شاملة للأشخاص ذوي الإعاقة",
+      "inclusiveOpportunityDescription": "حدد هذه الوظيفة كفرصة شاملة، ترحب بالمرشحين من خلفيات وقدرات متنوعة",
+      "submit": "نشر الإعلان الوظيفي",
+      "submitting": "جارٍ النشر...",
+      "saving": "جارٍ الحفظ...",
+      "submitError": "فشل إنشاء إعلان الوظيفة. يرجى المحاولة مرة أخرى.",
+      "submitSuccess": "تم إنشاء إعلان الوظيفة بنجاح!"
+    },
+    "workplaces": {
+      "title": "أماكن عملي",
+      "description": "أدر أماكن عملك واستجب للمراجعات",
+      "viewApplications": "عرض الطلبات",
+      "newWorkplace": "مكان عمل جديد",
+      "loadError": "تعذر تحميل أماكن العمل. يرجى المحاولة مرة أخرى.",
+      "empty": {
+        "title": "لا توجد أماكن عمل بعد",
+        "description": "أنشئ أول مكان عمل لك أو اطلب الانضمام إلى مكان قائم"
+      },
+      "addNew": {
+        "title": "إضافة مكان عمل جديد",
+        "description": "أنشئ مكان عمل جديد أو انضم إلى مكان موجود"
+      },
+      "applicationsModal": {
+        "title": "طلبات أماكن عملي",
+        "description": "اعرض حالة طلباتك لإدارة الأماكن.",
+        "loadError": "تعذر تحميل طلباتك.",
+        "noApplications": "لم تتقدم لأي مكان عمل بعد.",
+        "appliedOn": "تم التقديم في {{date}}",
+        "note": "ملاحظة: {{note}}",
+        "updatedOn": "تم التحديث في {{date}}"
+      },
+      "status": {
+        "pending": "قيد الانتظار",
+        "accepted": "مقبول",
+        "rejected": "مرفوض",
+        "unknown": "غير معروف"
+      },
+      "workplaceLabel": "مكان العمل",
+      "page": {
+        "loadError": "تعذر تحميل أماكن عملك"
+      }
+    }
+  },
+  "workplaces": {
+    "title": "أماكن العمل",
+    "description": "استكشف أماكن العمل للتعرف على الثقافة والتقييمات",
+    "tabs": {
+      "browse": "استعراض",
+      "my": "أماكن عملي"
+    },
+    "searchTitle": "البحث عن أماكن العمل",
+    "searchPlaceholder": "أدخل اسم الشركة...",
+    "searching": "جاري البحث...",
+    "search": "بحث",
+    "loadError": "تعذر تحميل أماكن العمل. يرجى المحاولة مرة أخرى.",
+    "loading": "جارٍ التحميل...",
+    "workplacesFound": "{{count}} مكان عمل تم العثور عليه",
+    "workplacesFound_plural": "{{count}} أماكن عمل تم العثور عليها",
+    "empty": {
+      "title": "لم يتم العثور على أماكن عمل",
+      "adjustFilters": "جرّب تعديل الفلاتر أو البحث",
+      "noWorkplaces": "لا توجد أماكن عمل حالياً"
+    },
+    "filters": {
+      "title": "الفلاتر",
+      "clear": "مسح",
+      "clearFilters": "مسح الفلاتر",
+      "sector": "القطاع",
+      "allSectors": "جميع القطاعات",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع...",
+      "sortBy": "ترتيب حسب",
+      "sortOptions": {
+        "default": "افتراضي",
+        "nameDesc": "الاسم (من ي إلى أ)",
+        "nameAsc": "الاسم (من أ إلى ي)",
+        "reviewCountDesc": "عدد المراجعات (من الأعلى إلى الأدنى)",
+        "reviewCountAsc": "عدد المراجعات (من الأدنى إلى الأعلى)",
+        "ratingDesc": "التقييم (من الأعلى إلى الأدنى)",
+        "ratingAsc": "التقييم (من الأدنى إلى الأعلى)"
+      },
+      "minRating": "الحد الأدنى للتقييم",
+      "anyRating": "أي",
+      "ratingWithValue": "{{rating}}★"
+    }
+  },
+  "forum": {
+    "tabs": {
+      "browse": "تصفح المواضيع",
+      "create": "إنشاء موضوع",
+      "mine": "منشوراتي"
+    },
+    "title": "المنتدى",
+    "subtitle": "شارك المعرفة، اطرح الأسئلة، وتواصل مع المجتمع",
+    "searchPlaceholder": "ابحث في المنشورات أو الكتّاب أو الوسوم...",
+    "createNewThread": "إنشاء موضوع جديد",
+    "titlePlaceholder": "العنوان",
+    "contentPlaceholder": "اكتب منشورك هنا...",
+    "tagsPlaceholder": "الوسوم (مفصولة بفواصل)",
+    "create": "إنشاء",
+    "loading": "جارٍ التحميل...",
+    "loadError": "فشل تحميل المنشورات",
+    "postNotFound": "المنشور غير موجود",
+    "by": "بواسطة",
+    "comment": "تعليق",
+    "comments": "التعليقات",
+    "viewPost": "عرض المنشور",
+    "topCommentFrom": "أفضل تعليق من",
+    "seeAllComments": "عرض كل {{count}} تعليق",
+    "beFirstToComment": "كن أول من يعلّق...",
+    "backToForum": "العودة إلى المنتدى",
+    "voteError": "فشل تحديث التصويت",
+    "deletePost": {
+      "title": "حذف المنشور",
+      "description": "هل أنت متأكد من حذف هذا المنشور؟ لا يمكن التراجع عن هذا الإجراء.",
+      "cancel": "إلغاء",
+      "confirm": "حذف",
+      "deleting": "جارٍ الحذف...",
+      "success": "تم حذف المنشور بنجاح",
+      "error": "فشل حذف المنشور"
+    },
+    "editPost": {
+      "title": "تعديل المنشور",
+      "save": "حفظ التغييرات",
+      "saving": "جارٍ الحفظ...",
+      "success": "تم تحديث المنشور بنجاح",
+      "error": "فشل تحديث المنشور"
+    },
+    "reportPost": {
+      "title": "الإبلاغ عن المنشور",
+      "subtitle": "الإبلاغ عن منشور بواسطة {{author}}"
+    },
+    "comment": {
+      "title": "التعليقات",
+      "edit": "تعديل",
+      "cancel": "إلغاء",
+      "save": "حفظ",
+      "delete": "حذف",
+      "deleteTitle": "حذف التعليق",
+      "deleteDescription": "هل أنت متأكد من حذف هذا التعليق؟ لا يمكن التراجع عن هذا الإجراء.",
+      "addPlaceholder": "أضف تعليقاً...",
+      "submit": "إرسال",
+      "addSuccess": "تمت إضافة التعليق بنجاح",
+      "addError": "فشل إضافة التعليق",
+      "editSuccess": "تم تحديث التعليق بنجاح",
+      "deleteSuccess": "تم حذف التعليق بنجاح"
+    },
+    "post": {
+      "createSuccess": "تم إنشاء المنشور بنجاح"
+    }
+  },
+  "workplace": {
+    "selector": {
+      "placeholder": "اختر مكان عمل",
+      "noWorkplaces": "لا توجد أماكن عمل متاحة",
+      "fetchError": "تعذر تحميل أماكن العمل"
+    },
+    "newModal": {
+      "title": "مكان عمل جديد",
+      "description": "اختر كيف تريد إضافة مكان عمل لحسابك",
+      "createWorkplace": "إنشاء مكان عمل",
+      "joinWorkplace": "الانضمام إلى مكان عمل",
+      "createWorkplaceDescription": "أنشئ وادِر مكان عملك",
+      "joinWorkplaceDescription": "اطلب الانضمام إلى مكان عمل موجود"
+    },
+    "createModal": {
+      "title": "إنشاء مكان عمل",
+      "description": "أضف شركتك إلى المنصة وابدأ بناء سمعتك",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "أدخل اسم الشركة",
+      "sector": "القطاع",
+      "sectorPlaceholder": "مثلاً: تقنية، صحة",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع",
+      "website": "الموقع الإلكتروني",
+      "shortDescription": "وصف قصير",
+      "detailedDescription": "وصف تفصيلي",
+      "websitePlaceholder": "https://www.example.com",
+      "submit": "إنشاء مكان العمل",
+      "workplaceCreated": "تم إنشاء مكان العمل!",
+      "workplaceCreatedMessage": "تم إنشاء مكان العمل بنجاح.",
+      "errors": {
+        "companyNameRequired": "اسم الشركة مطلوب",
+        "sectorRequired": "القطاع مطلوب",
+        "locationRequired": "الموقع مطلوب",
+        "ethicalTagsRequired": "مطلوب علامة أخلاقية واحدة على الأقل",
+        "websiteInvalid": "يجب أن يكون رابطًا صالحًا"
+      },
+      "creating": "جارٍ الإنشاء...",
+      "redirecting": "يتم تحويلك إلى مكان العمل الجديد..."
+    },
+    "joinModal": {
+      "title": "انضم إلى مكان عمل",
+      "searchPlaceholder": "البحث عن أماكن العمل...",
+      "requestTitle": "طلب الانضمام",
+      "noteLabel": "ملاحظة للمسؤولين",
+      "notePlaceholder": "رسالة اختيارية تشرح سبب رغبتك في الانضمام...",
+      "submitRequest": "إرسال الطلب",
+      "submittingRequest": "جارٍ الإرسال...",
+      "back": "رجوع",
+      "alreadyMember": "أنت بالفعل صاحب عمل في هذا المكان",
+      "requestSubmitted": "تم إرسال الطلب",
+      "requestSubmittedMessage": "تم إرسال طلب الانضمام إلى {{company}}. سيتم إعلامك بعد المراجعة.",
+      "close": "إغلاق"
+    },
+    "settings": "الإعدادات",
+    "profile": {
+      "title": "ملف مكان العمل",
+      "notFound": "مكان العمل غير موجود",
+      "notFoundDescription": "مكان العمل الذي تبحث عنه غير موجود أو تمت إزالته.",
+      "aboutCompany": "عن الشركة",
+      "ethicalCommitments": "الالتزامات الأخلاقية",
+      "employers": "أصحاب العمل",
+      "manageRequests": "إدارة الطلبات",
+      "currentJobOpenings": "الوظائف الحالية",
+      "noJobOpenings": "لا توجد وظائف حالياً",
+      "viewAllJobs": "عرض كل {{count}} وظيفة"
+    },
+    "manageRequests": "إدارة الطلبات"
+  },
+  "sectors": {
+    "technology": "التقنية",
+    "healthcare": "الرعاية الصحية",
+    "education": "التعليم",
+    "finance": "المالية",
+    "creativearts": "الفنون الإبداعية",
+    "manufacturing": "التصنيع",
+    "retail": "التجزئة",
+    "consulting": "الاستشارات",
+    "nonprofit": "غير ربحي",
+    "other": "أخرى"
+  },
+  "workplace": {
+    "createModal": {
+      "title": "إنشاء مكان عمل",
+      "description": "أضف شركتك وابدأ بناء سمعتها",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "أدخل اسم الشركة",
+      "sector": "القطاع",
+      "sectorPlaceholder": "مثال: تقنية، رعاية صحية",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع",
+      "website": "الموقع الإلكتروني",
+      "shortDescription": "وصف مختصر",
+      "detailedDescription": "وصف تفصيلي",
+      "websitePlaceholder": "https://www.example.com",
+      "ethicalTagsLabel": "العلامات الأخلاقية",
+      "ethicalTagsHelper": "اختر العلامات التي تمثل التزامات شركتك الأخلاقية",
+      "shortDescriptionHint": "(بحد أقصى 300 حرف)",
+      "shortDescriptionPlaceholder": "سطر قصير أو ملخص",
+      "detailedDescriptionHint": "(بحد أقصى 4000 حرف)",
+      "detailedDescriptionPlaceholder": "أخبرنا عن رسالة شركتك وقيمها وثقافتها",
+      "submit": "إنشاء مكان العمل",
+      "workplaceCreated": "تم إنشاء مكان العمل!",
+      "workplaceCreatedMessage": "تم إنشاء مكان عملك بنجاح.",
+      "creating": "جارٍ الإنشاء...",
+      "redirecting": "يتم تحويلك إلى مكان العمل الجديد...",
+      "errors": {
+        "companyNameRequired": "اسم الشركة مطلوب",
+        "sectorRequired": "القطاع مطلوب",
+        "locationRequired": "الموقع مطلوب",
+        "ethicalTagsRequired": "يجب اختيار علامة أخلاقية واحدة على الأقل",
+        "websiteInvalid": "يجب أن يكون رابطاً صالحاً"
+      }
+    },
+    "joinModal": {
+      "title": "الانضمام إلى مكان عمل",
+      "searchDescription": "ابحث عن أماكن العمل وأرسل طلب انضمام.",
+      "searchPlaceholder": "ابحث عن أماكن العمل...",
+      "filters": "عوامل التصفية",
+      "clear": "مسح",
+      "searching": "جارٍ البحث...",
+      "search": "بحث",
+      "sector": "القطاع",
+      "allSectors": "جميع القطاعات",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع...",
+      "sortBy": "ترتيب حسب",
+      "sortOptions": {
+        "default": "افتراضي",
+        "ratingDesc": "التقييم (من الأعلى للأدنى)",
+        "ratingAsc": "التقييم (من الأدنى للأعلى)",
+        "nameAsc": "الاسم (أ إلى ي)",
+        "nameDesc": "الاسم (ي إلى أ)"
+      },
+      "minimumRating": "أدنى تقييم",
+      "anyRating": "أي قيمة",
+      "ratingMinLabel": "0★",
+      "ratingMaxLabel": "5★",
+      "searchResults": "تم العثور على {{count}} مكان عمل",
+      "noWorkplacesFound": "لا توجد أماكن عمل تطابق عوامل التصفية.",
+      "clearFiltersAndShowAll": "مسح عوامل التصفية وإظهار الكل",
+      "requestTitle": "طلب انضمام",
+      "requestDescription": "أضف ملاحظة قصيرة لطلب الانضمام إلى هذا المكان.",
+      "selectedWorkplace": "مكان العمل المختار",
+      "noteLabel": "ملاحظة للمسؤولين",
+      "noteMaxLength": "بحد أقصى 500 حرف",
+      "notePlaceholder": "رسالة اختيارية تشرح سبب رغبتك في الانضمام إلى هذا المكان...",
+      "submitRequest": "إرسال الطلب",
+      "submittingRequest": "جارٍ الإرسال...",
+      "back": "رجوع",
+      "alreadyMember": "أنت بالفعل صاحب عمل في هذا المكان",
+      "requestSubmitted": "تم إرسال الطلب",
+      "requestSubmittedMessage": "تم إرسال طلب الانضمام إلى {{company}} بنجاح. سيتم إعلامك عند المراجعة.",
+      "closing": "سيتم الإغلاق خلال لحظات...",
+      "close": "إغلاق"
+    },
+    "settings": {
+      "label": "الإعدادات",
+      "failedToLoad": "تعذر تحميل إعدادات مكان العمل.",
+      "notFound": {
+        "title": "مكان العمل غير موجود",
+        "description": "مكان العمل الذي تبحث عنه غير موجود أو تم حذفه.",
+        "goToWorkplaces": "الذهاب إلى أماكن العمل"
+      },
+      "backToWorkplace": "العودة إلى مكان العمل",
+      "title": "إعدادات مكان العمل",
+      "subtitle": "حدّث معلومات مكان العمل وقم بإدارتها",
+      "updateSuccess": "تم تحديث مكان العمل بنجاح.",
+      "companyLogo": "شعار الشركة",
+      "imagePreviewAlt": "معاينة صورة مكان العمل",
+      "changeImage": "تغيير الصورة",
+      "uploadImage": "رفع صورة",
+      "uploading": "جارٍ الرفع...",
+      "saveImage": "حفظ الصورة",
+      "imageGuidelines": "مستحسن: صورة مربعة لا تقل عن 200×200 بكسل",
+      "basicInformation": "المعلومات الأساسية",
+      "companyName": "اسم الشركة",
+      "companyNamePlaceholder": "أدخل اسم الشركة",
+      "sector": "القطاع",
+      "sectorPlaceholder": "مثال: تقنية، رعاية صحية",
+      "location": "الموقع",
+      "locationPlaceholder": "أدخل الموقع",
+      "website": "الموقع الإلكتروني",
+      "websitePlaceholder": "https://www.example.com",
+      "description": "الوصف",
+      "shortDescription": "وصف مختصر",
+      "shortDescriptionPlaceholder": "سطر قصير أو ملخص",
+      "shortDescriptionHint": "(بحد أقصى 300 حرف)",
+      "detailedDescription": "وصف تفصيلي",
+      "detailedDescriptionPlaceholder": "أخبرنا عن رسالة شركتك وقيمها وثقافتها",
+      "detailedDescriptionHint": "(بحد أقصى 4000 حرف)",
+      "ethicalTags": "العلامات الأخلاقية",
+      "ethicalTagsHelper": "اختر العلامات التي تمثل التزامات شركتك الأخلاقية",
+      "cancel": "إلغاء",
+      "saving": "جارٍ الحفظ...",
+      "saveChanges": "حفظ التغييرات",
+      "dangerZone": {
+        "title": "منطقة الخطر",
+        "deleteDescription": "حذف مكان العمل إجراء نهائي ولا يمكن التراجع عنه.",
+        "deleteButton": "حذف مكان العمل",
+        "deleteFailed": "فشل حذف مكان العمل. يرجى المحاولة مرة أخرى.",
+        "confirmTitle": "تأكيد الحذف",
+        "confirmDescription": "هذا الإجراء لا يمكن التراجع عنه. يرجى التأكيد بكتابة اسم مكان العمل.",
+        "confirmWarning": "اكتب اسم مكان العمل بالضبط للتأكيد.",
+        "confirmPlaceholder": "اكتب اسم مكان العمل للتأكيد",
+        "confirmCancel": "إلغاء",
+        "confirmButton": "نعم، احذف مكان العمل",
+        "confirmHelper": "يرجى كتابة اسم مكان العمل بالضبط للتأكيد",
+        "deleting": "جارٍ الحذف..."
+      }
+    },
+    "profile": {
+      "title": "ملف مكان العمل",
+      "notFound": "لم يتم العثور على مكان العمل",
+      "notFoundDescription": "مكان العمل الذي تبحث عنه غير موجود أو تم حذفه.",
+      "aboutCompany": "عن الشركة",
+      "ethicalCommitments": "الالتزامات الأخلاقية",
+      "employers": "أصحاب العمل",
+      "manageRequests": "إدارة الطلبات",
+      "currentJobOpenings": "الوظائف المتاحة حالياً",
+      "noJobOpenings": "لا توجد وظائف حالياً",
+      "viewAllJobs": "عرض جميع {{count}} وظيفة",
+      "reportWorkplace": "الإبلاغ عن مكان العمل"
+    },
+    "manageRequests": "إدارة الطلبات",
+    "roles": {
+      "owner": "المالك",
+      "manager": "المدير"
+    }
+  },
+  "mentorship": {
+    "title": "ابحث عن مرشد",
+    "tabs": {
+      "browse": "تصفح",
+      "my": "إرشاداتي",
+      "chat": "محادثة",
+      "myProfile": "عرض ملفي كمرشد"
+    },
+    "subtitle": "اعثر على مرشدين ذوي خبرة لدعم مسارك",
+    "searchPlaceholder": "ابحث عن مرشدين بالاسم أو الخبرة...",
+    "noResults": "لم يتم العثور على مرشدين. جرّب تعديل البحث.",
+    "becomeMentor": "كن مرشداً",
+    "viewMyProfile": "عرض ملفي",
+    "authRequired": {
+      "title": "يتطلب حساب",
+      "description": "تحتاج إلى إنشاء حساب لعرض المرشدين وطلب الإرشاد. انضم إلى Ethica Jobs اليوم وتواصل مع المحترفين ذوي الخبرة!",
+      "invitation": "أنشئ حسابك المجاني الآن وابدأ رحلة الإرشاد الخاصة بك.",
+      "viewMore": "سجل لعرض جميع المرشدين المتاحين",
+      "signUp": "إنشاء حساب",
+      "login": "هل لديك حساب بالفعل؟ تسجيل الدخول"
+    },
+    "card": {
+      "reviews": "تقييمات",
+      "mentoring": "إرشاد",
+      "hour": "ساعة",
+      "more": "المزيد",
+      "viewProfile": "عرض الملف الشخصي",
+      "request": "طلب",
+      "requested": "تم الطلب",
+      "full": "ممتلئ"
+    },
+    "createMentorProfile": {
+      "title": "كن مرشدًا",
+      "subtitle": "أنشئ ملفك كمرشد لمساعدة الآخرين على التطور",
+      "expertise": "مجال الخبرة",
+      "expertiseHint": "أضف مجالات خبرتك (مثلاً: React، TypeScript، إدارة المنتج)",
+      "expertisePlaceholder": "أدخل مجال الخبرة",
+      "expertiseRequired": "يرجى إضافة مجال خبرة واحد على الأقل",
+      "profileIncompleteTitle": "أكمل ملفك أولاً",
+      "profileIncompleteMessage": "يرجى إكمال ملفك (إضافة نبذة) قبل أن تصبح مرشدًا.",
+      "completeProfile": "أكمل الملف",
+      "profileRequired": "يرجى إكمال ملفك أولاً",
+      "profileBioRequired": "يرجى إضافة نبذة إلى ملفك أولاً",
+      "add": "إضافة",
+      "bio": "حول",
+      "bioHint": "أخبر المتدربين المحتملين عن نفسك ونهجك في الإرشاد",
+      "bioPlaceholder": "لدي 10 سنوات خبرة في تطوير البرمجيات وأحب مساعدة المطورين الجدد...",
+      "bioRequired": "حقل حول مطلوب",
+      "experience": "الخبرة",
+      "experienceHint": "صف خبرتك المهنية وخلفيتك",
+      "experiencePlaceholder": "10+ سنوات في تطوير البرمجيات، عملت في...",
+      "education": "التعليم",
+      "educationHint": "خلفيتك التعليمية",
+      "educationPlaceholder": "مثال: ماجستير علوم الحاسب",
+      "languages": "اللغات",
+      "languagesHint": "اللغات التي تستطيع الإرشاد بها",
+      "languagesPlaceholder": "أدخل اللغة",
+      "achievements": "الإنجازات الرئيسية",
+      "achievementsHint": "أضف إنجازاتك ومساهماتك البارزة",
+      "achievementsPlaceholder": "مثال: قدت تطوير منتج كبير، نشرت مقالات",
+      "linkedinUrl": "رابط LinkedIn",
+      "linkedinUrlPlaceholder": "https://linkedin.com/in/yourprofile",
+      "githubUrl": "رابط GitHub",
+      "githubUrlPlaceholder": "https://github.com/yourusername",
+      "websiteUrl": "رابط الموقع",
+      "websiteUrlPlaceholder": "https://yourwebsite.com",
+      "hourlyRate": "الأجر بالساعة (اختياري)",
+      "hourlyRateHint": "إذا كنت تتقاضى مقابل الإرشاد، اذكر الأجر بالساعة",
+      "hourlyRatePlaceholder": "مثال: 150",
+      "availability": "التوفر",
+      "availabilityHint": "متى تكون متاحًا لجلسات الإرشاد؟",
+      "availabilityPlaceholder": "مثال: مساءات أيام الأسبوع، عطلات نهاية الأسبوع",
+      "selectDays": "اختر الأيام المتاحة",
+      "timeStart": "وقت البداية",
+      "timeEnd": "وقت النهاية",
+      "days": {
+        "monday": "الاثنين",
+        "tuesday": "الثلاثاء",
+        "wednesday": "الأربعاء",
+        "thursday": "الخميس",
+        "friday": "الجمعة",
+        "saturday": "السبت",
+        "sunday": "الأحد"
+      },
+      "maxMentees": "الحد الأقصى للمتدربين",
+      "maxMenteesHint": "كم متدربًا يمكنك الإشراف عليهم في نفس الوقت؟",
+      "maxMenteesPlaceholder": "مثال: 5",
+      "maxMenteesInvalid": "يرجى إدخال رقم صالح (بحد أدنى 1)",
+      "step1Title": "معلومات أساسية",
+      "step2Title": "تفاصيل إضافية",
+      "next": "التالي",
+      "back": "رجوع",
+      "submit": "إنشاء ملف المرشد",
+      "submitting": "جارٍ الإنشاء...",
+      "update": "تحديث الملف",
+      "updating": "جارٍ التحديث...",
+      "editTitle": "تعديل ملف المرشد",
+      "editSubtitle": "حدّث معلومات ملف المرشد",
+      "updateSuccess": "تم تحديث ملف المرشد بنجاح!",
+      "errorLoading": "فشل تحميل ملف المرشد",
+      "cancel": "إلغاء",
+      "success": "تم إنشاء ملف المرشد بنجاح!",
+      "error": "فشل إنشاء ملف المرشد",
+      "checking": "جارٍ التحقق من وجود ملف سابق...",
+      "alreadyExists": "لديك بالفعل ملف مرشد. يرجى تحديث الملف الحالي.",
+      "alreadyExistsTitle": "ملف المرشد موجود مسبقًا",
+      "alreadyExistsMessage": "لديك بالفعل ملف مرشد. للتحديث استخدم خيار التعديل.",
+      "viewProfile": "عرض ملفي",
+      "backToMentors": "العودة إلى المرشدين"
+    },
+    "profile": {
+      "reviews": "تقييمات",
+      "remote": "عن بُعد",
+      "hour": "ساعة",
+      "website": "الموقع الإلكتروني",
+      "requestMentorship": "طلب الإرشاد",
+      "unavailable": "غير متاح حالياً",
+      "viewProfile": "عرض الملف الشخصي",
+      "about": "نبذة عني",
+      "experience": "الخبرة",
+      "keyAchievements": "الإنجازات الرئيسية",
+      "education": "التعليم",
+      "specialties": "التخصصات",
+      "languages": "اللغات",
+      "reviewsTitle": "التقييمات ({{count}})",
+      "mentorshipStats": "إحصائيات الإرشاد",
+      "currentMentees": "المتدربون الحاليون",
+      "totalReviews": "إجمالي التقييمات",
+      "averageRating": "متوسط التقييم",
+      "skillsTechnologies": "المهارات والتقنيات",
+      "requests": "طلبات الإرشاد",
+      "mentorshipRequests": "طلبات الإرشاد",
+      "pendingRequests": "طلبات قيد الانتظار",
+      "viewAllRequests": "عرض كل الطلبات",
+      "noPendingRequests": "لا توجد طلبات قيد الانتظار",
+      "activeMentees": "متدربون نشطون",
+      "chat": "الدردشة",
+      "viewAllMentees": "عرض كل المتدربين",
+      "noActiveMentees": "لا يوجد متدربون نشطون بعد.",
+      "notFound": "ملف المرشد غير موجود.",
+      "viewMentorship": "عرض إرشادي",
+      "noSpecialties": "لا توجد تخصصات محددة",
+      "noLanguages": "لا توجد لغات محددة",
+      "complete": "إنهاء",
+      "completing": "جارٍ الإنهاء...",
+      "completeSuccess": "تم إنهاء الإرشاد بنجاح!",
+      "completedMentorships": "الإرشادات المكتملة",
+      "alreadyRequested": "لديك بالفعل طلب إرشاد معلّق أو نشط مع هذا المرشد.",
+      "requested": "تم الطلب",
+      "requestSent": "تم إرسال طلب الإرشاد بنجاح!",
+      "requestError": "تعذر إرسال طلب الإرشاد",
+      "requesting": "جارٍ الإرسال...",
+      "reviewResume": "مراجعة السيرة الذاتية",
+      "editProfile": "تعديل الملف"
+    },
+    "resumeReview": {
+      "title": {
+        "mentee": "تحميل السيرة الذاتية",
+        "mentor": "مراجعة السيرة الذاتية"
+      },
+      "subtitle": {
+        "mentee": "حمّل سيرتك الذاتية لمراجعة المرشد",
+        "mentor": "راجع سيرة المتدرب وقدّم ملاحظات"
+      },
+      "breadcrumb": {
+        "myMentorships": "إرشاداتي",
+        "resumeReview": "مراجعة السيرة الذاتية"
+      },
+      "back": "رجوع",
+      "backToMentorships": "العودة إلى إرشاداتي",
+      "notFound": "مراجعة السيرة الذاتية غير موجودة",
+      "status": {
+        "active": "نشط",
+        "completed": "مكتمل",
+        "closed": "مغلق"
+      },
+      "openChat": "فتح المحادثة",
+      "resume": "السيرة الذاتية",
+      "downloadResume": "تحميل السيرة الذاتية",
+      "noResume": "لم يتم تحميل سيرة ذاتية بعد",
+      "selectFile": "اختر ملفًا",
+      "upload": "تحميل السيرة الذاتية",
+      "uploadNew": "تحميل سيرة جديدة",
+      "uploading": "جارٍ التحميل...",
+      "feedback": "ملاحظات",
+      "writeFeedback": "اكتب ملاحظاتك",
+      "feedbackPlaceholder": "قدّم ملاحظات بنّاءة حول السيرة الذاتية...",
+      "saveFeedback": "حفظ الملاحظات",
+      "saving": "جارٍ الحفظ...",
+      "currentFeedback": "الملاحظات الحالية:",
+      "feedbackFromMentor": "ملاحظات من مرشدك:",
+      "waitingForFeedback": "بانتظار ملاحظات المرشد...",
+      "feedbackNote": "ملاحظة: ميزة الملاحظات قادمة قريبًا. يرجى مشاركة الملاحظات عبر الدردشة في الوقت الحالي.",
+      "feedback.info": "ميزة الملاحظات قادمة قريبًا. يرجى مشاركة الملاحظات عبر الدردشة في الوقت الحالي.",
+      "noFeedback": "لا توجد ملاحظات بعد",
+      "actions": "الإجراءات",
+      "complete": "إنهاء الإرشاد",
+      "completing": "جارٍ الإنهاء...",
+      "close": "إغلاق الإرشاد",
+      "closing": "جارٍ الإغلاق...",
+      "success": {
+        "upload": "تم تحميل السيرة الذاتية بنجاح!",
+        "feedback": "تم حفظ الملاحظات بنجاح!",
+        "complete": "تم إنهاء الإرشاد بنجاح!",
+        "close": "تم إغلاق الإرشاد بنجاح!"
+      },
+      "error": {
+        "load": "فشل تحميل مراجعة السيرة الذاتية",
+        "upload": "فشل تحميل السيرة الذاتية",
+        "feedback": "فشل حفظ الملاحظات",
+        "invalidFileType": "نوع الملف غير صالح. يرجى تحميل ملفات PDF أو DOC أو DOCX.",
+        "fileTooLarge": "يجب أن يكون حجم الملف أقل من 10MB.",
+        "complete": "تعذر إنهاء الإرشاد",
+        "close": "تعذر إغلاق الإرشاد"
+      },
+      "info": {
+        "title": {
+          "mentee": "حول تحميل السيرة الذاتية",
+          "mentor": "حول مراجعة السيرة الذاتية"
+        },
+        "description": {
+          "mentee": "حمّل سيرتك الذاتية ليقوم المرشد بمراجعتها. يمكنك تحديثها في أي وقت.",
+          "mentor": "راجع سيرة المتدرب وقدّم ملاحظات. عند الانتهاء يمكنك إنهاء أو إغلاق الإرشاد."
+        }
+      }
+    },
+    "errors": {
+      "timeout": "انتهت مهلة الاتصال. يرجى التأكد من أن خادم الخلفية يعمل.",
+      "networkError": "لا يمكن الاتصال بالخادم. يرجى التأكد من أن الخلفية تعمل.",
+      "loadFailed": "تعذر تحميل المرشدين. يرجى المحاولة لاحقًا.",
+      "loadMentorshipsFailed": "تعذر تحميل الإرشادات. يرجى المحاولة لاحقًا.",
+      "completeFailed": "تعذر إنهاء الإرشاد. يرجى المحاولة لاحقًا.",
+      "reviewFailed": "تعذر إرسال التقييم. يرجى المحاولة لاحقًا.",
+      "genericError": "حدث خطأ. يرجى المحاولة لاحقًا."
+    },
+    "request": {
+      "backToProfile": "العودة إلى ملف المرشد",
+      "title": "طلب الإرشاد",
+      "subtitle": "أرسل طلب إرشاد إلى {{mentorName}}",
+      "reviews": "تقييمات",
+      "mentoring": "إرشاد",
+      "specialties": "التخصصات",
+      "fullCapacity": "هذا المرشد في الطاقة القصوى حالياً",
+      "formTitle": "طلب الإرشاد",
+      "formDescription": "أخبر المرشد عن أهدافك وما تأمل تحقيقه من خلال الإرشاد.",
+      "messageLabel": "رسالة إلى المرشد",
+      "messagePlaceholder": "مرحباً، أنا مهتم بتعلم React و TypeScript. لدي بعض الخبرة في JavaScript ولكني أرغب في تحسين مهاراتي في بناء التطبيقات القابلة للتطوير...",
+      "messageHint": "قدم نفسك واشرح سبب اهتمامك بالإرشاد مع هذا المرشد.",
+      "goalsLabel": "أهداف التعلم",
+      "goalsPlaceholder": "1. إتقان React hooks وإدارة الحالة\n2. تعلم أفضل ممارسات TypeScript\n3. تحسين مهارات تصميم الأنظمة\n4. التحضير لمقابلات المطورين الكبار",
+      "goalsHint": "اذكر أهدافك التعليمية المحددة وما تريد تحقيقه.",
+      "durationLabel": "مدة الإرشاد المتوقعة",
+      "durationPlaceholder": "مثلاً: 3 أشهر، 6 أشهر، سنة واحدة",
+      "timeLabel": "وقت الاجتماع المفضل",
+      "timePlaceholder": "مثلاً: عطلات نهاية الأسبوع، أمسيات أيام الأسبوع، مرن",
+      "resumeLabel": "رابط السيرة الذاتية (اختياري)",
+      "resumePlaceholder": "https://your-resume.com أو رابط Google Drive",
+      "resumeHint": "شارك سيرتك الذاتية لمساعدة المرشد على فهم خلفيتك بشكل أفضل.",
+      "sendRequest": "إرسال طلب الإرشاد",
+      "sendingRequest": "جارٍ الإرسال...",
+      "successMessage": "تم إرسال طلب الإرشاد بنجاح!",
+      "errorMessage": "فشل إرسال طلب الإرشاد. يرجى المحاولة مرة أخرى.",
+      "alreadyExists": "لديك بالفعل طلب قيد الانتظار أو مقبول لهذا المرشد.",
+      "alreadyExistsMessage": "لديك بالفعل طلب إرشاد قيد الانتظار أو نشط مع هذا المرشد. يرجى التحقق من صفحة إرشاداتي.",
+      "userNotAuthenticated": "يجب تسجيل الدخول لإرسال طلب الإرشاد",
+      "description": "أخبر المرشد عن أهدافك وما تأمل تحقيقه من خلال الإرشاد.",
+      "motivation": "الدافع",
+      "motivationPlaceholder": "يرجى شرح سبب رغبتك في الحصول على الإرشاد من هذا المرشد وما تأمل تحقيقه...",
+      "motivationHint": "شارك أهدافك وتوقعاتك وما تأمل تعلمه من هذا الإرشاد.",
+      "motivationRequired": "يرجى تقديم رسالة دافع لطلب الإرشاد الخاص بك."
+    },
+    "myMentorships": {
+      "title": "إرشاداتي",
+      "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة الخاصة بك",
+      "successMessage": "تم إرسال طلب الإرشاد بنجاح إلى {{mentorName}}!",
+      "asMentor": "كمرشد",
+      "asMentee": "كمنتجي",
+      "active": "نشط",
+      "pending": "قيد الانتظار",
+      "completed": "مكتمل",
+      "rejected": "مرفوض",
+      "status": {
+        "active": "نشط",
+        "pending": "قيد الانتظار",
+        "completed": "مكتمل",
+        "rejected": "مرفوض",
+        "accepted": "مقبول"
+      },
+      "noActive": "لا توجد إرشادات نشطة",
+      "noActiveDesc": "ليس لديك إرشادات نشطة بعد. ابحث عن مرشد للبدء!",
+      "noPending": "لا توجد طلبات قيد الانتظار",
+      "noPendingDesc": "ليس لديك طلبات إرشاد قيد الانتظار.",
+      "noCompleted": "لا توجد إرشادات مكتملة",
+      "noCompletedDesc": "لم تكمل أي إرشادات بعد.",
+      "noRejected": "لا توجد طلبات مرفوضة",
+      "noRejectedDesc": "ليس لديك طلبات إرشاد مرفوضة.",
+      "findMentors": "البحث عن مرشدين",
+      "started": "بدأ",
+      "accepted": "مقبول",
+      "completedDate": "مكتمل",
+      "duration": "المدة",
+      "learningGoals": "أهداف التعلم",
+      "openChat": "فتح المحادثة",
+      "writeReview": "كتابة تقييم",
+      "viewProfile": "عرض الملف الشخصي",
+      "uploadResume": "تحميل السيرة الذاتية",
+      "waitingForResponse": "في انتظار الرد",
+      "viewDetails": "عرض التفاصيل",
+      "complete": "إنهاء الإرشاد",
+      "completing": "جارٍ الإنهاء...",
+      "completeSuccess": "تم إنهاء الإرشاد بنجاح! يمكنك الآن كتابة تقييم.",
+      "completeError": "لا يمكن إنهاء الإرشاد: لم يتم العثور على معرف التقييم"
+    },
+    "mentorRequests": {
+      "title": "طلبات الإرشاد",
+      "subtitle": "اعرض وأدر طلبات الإرشاد من المتدربين",
+      "pending": "قيد الانتظار",
+      "accepted": "مقبول",
+      "rejected": "مرفوض",
+      "mentee": "المتدرب",
+      "requested": "تم الطلب",
+      "accept": "قبول",
+      "reject": "رفض",
+      "processing": "جارٍ المعالجة...",
+      "acceptSuccess": "تم قبول الطلب بنجاح!",
+      "rejectSuccess": "تم رفض الطلب.",
+      "acceptedMessage": "لقد قبلت طلب الإرشاد هذا.",
+      "rejectedMessage": "لقد رفضت طلب الإرشاد هذا.",
+      "noPending": "لا توجد طلبات قيد الانتظار",
+      "noPendingDesc": "ليس لديك أي طلبات إرشاد قيد الانتظار.",
+      "noAccepted": "لا توجد طلبات مقبولة",
+      "noAcceptedDesc": "لم تقبل أي طلبات إرشاد بعد.",
+      "noRejected": "لا توجد طلبات مرفوضة",
+      "noRejectedDesc": "ليس لديك أي طلبات إرشاد مرفوضة.",
+      "viewProfile": "عرض الملف الشخصي"
+    }
+  },
   "profile": {
     "tabs": {
       "about": "نبذة",
@@ -388,7 +1574,7 @@
     "page": {
       "loadErrorTitle": "تعذّر تحميل الملف الشخصي",
       "emptyTitle": "لم يتم العثور على ملف شخصي",
-      "emptyDescription": "يرجى إنشاء ملفك الشخصي للمتابعة",
+      "emptyDescription": "المستخدم أو ملفه الشخصي غير متاح أو ربما تم حذفه.",
       "dangerZone": {
         "title": "حذف بيانات الحساب",
         "description": "سيتم حذف جميع بيانات ملفك الشخصي نهائيًا (متوافق مع GDPR/KVKK). لا يمكن التراجع عن هذا الإجراء.",
@@ -414,7 +1600,6 @@
     },
     "actions": {
       "add": "إضافة",
-      "cancel": "إلغاء",
       "saveChanges": "حفظ التغييرات",
       "continue": "متابعة",
       "back": "رجوع"
@@ -588,7 +1773,6 @@
       },
       "compliance": "يتم هذا الإجراء بما يتوافق مع لوائح حماية البيانات GDPR/KVKK.",
       "buttons": {
-        "cancel": "إلغاء",
         "continue": "متابعة",
         "back": "رجوع",
         "delete": "حذف كل البيانات",
@@ -630,352 +1814,23 @@
       "replyLabel": "{{value}} رد",
       "repliesLabel": "{{value}} ردود",
       "likeLabel": "{{value}} إعجاب",
-      "likesLabel": "{{value}} إعجابات"
-    }
-  },
-  "jobApplication": {
-    "title": "التقديم على {{jobTitle}}",
-    "breadcrumb": {
-      "jobs": "الوظائف",
-      "apply": "التقديم"
+      "likesLabel": "{{value}} إعجابات",
+      "noPosts": "لا توجد منشورات بعد",
+      "oneDayAgo": "يوم واحد مضى",
+      "daysAgo": "{{days}} أيام مضت",
+      "weeksAgo": "{{weeks}} أسابيع مضت",
+      "monthsAgo": "{{months}} أشهر مضت"
     },
-    "jobDetails": {
-      "title": "تفاصيل الوظيفة",
-      "company": "الشركة",
-      "location": "الموقع",
-      "salary": "الراتب",
-      "remote": "عن بعد",
-      "onSite": "في الموقع",
-      "postedOn": "نُشر في {{date}}"
-    },
-    "form": {
-      "title": "نموذج التقديم",
-      "coverLetter": {
-        "label": "خطاب التقديم (اختياري)",
-        "placeholder": "قدم نفسك واشرح لماذا أنت مرشح مثالي لهذا الدور...",
-        "characterCount": "{{count}} / 2000 حرف"
-      },
-      "specialNeeds": {
-        "label": "الاحتياجات الخاصة أو الترتيبات (اختياري)",
-        "placeholder": "أخبرنا إذا كنت بحاجة إلى أي ترتيبات خاصة...",
-        "characterCount": "{{count}} / 500 حرف"
-      },
-      "cv": {
-        "label": "رفع السيرة الذاتية",
-        "required": "السيرة الذاتية مطلوبة",
-        "dragDrop": "اسحب وأفلت سيرتك الذاتية هنا، أو انقر للتصفح",
-        "chooseFile": "اختر ملف",
-        "fileTypes": "PDF، DOC، DOCX حتى 10 ميجابايت",
-        "selected": "المحدد: {{fileName}}",
-        "change": "تغيير الملف",
-        "remove": "إزالة الملف"
-      },
-      "submit": "إرسال الطلب",
-      "submitting": "جارٍ الإرسال...",
-      "cancel": "إلغاء"
-    },
-    "success": {
-      "title": "تم إرسال الطلب!",
-      "message": "تم إرسال طلبك بنجاح. سنخطرك بمجرد أن يراجع صاحب العمل طلبك.",
-      "viewApplications": "عرض طلباتي",
-      "backToJobs": "العودة إلى الوظائف"
-    },
-    "errors": {
-      "loadJob": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة مرة أخرى.",
-      "submitFailed": "فشل إرسال الطلب. يرجى المحاولة مرة أخرى.",
-      "uploadFailed": "فشل رفع السيرة الذاتية. يرجى المحاولة مرة أخرى.",
-      "fileTooLarge": "يجب أن يكون حجم الملف أقل من 10 ميجابايت",
-      "invalidFileType": "نوع ملف غير صالح. يرجى رفع PDF أو DOC أو DOCX",
-      "alreadyApplied": "لقد قدمت بالفعل على هذه الوظيفة."
-    },
-    "alreadyApplied": {
-      "title": "تم التقديم مسبقاً",
-      "message": "لقد قدمت بالفعل طلباً لهذه الوظيفة.",
-      "status": "حالة الطلب: {{status}}",
-      "viewApplication": "عرض الطلب",
-      "backToJobs": "العودة إلى الوظائف"
-    }
-  },
-  "nonProfitApplication": {
-    "title": "تطوع في {{jobTitle}}",
-    "breadcrumb": {
-      "apply": "تقدم"
-    },
-    "opportunityDetails": {
-      "title": "تفاصيل فرصة التطوع",
-      "organization": "المنظمة",
-      "location": "الموقع",
-      "type": "النوع",
-      "volunteer": "فرصة تطوع",
-      "postedOn": "نُشرت في {{date}}"
-    },
-    "form": {
-      "title": "طلب التطوع",
-      "subtitle": "شارك شغفك بإحداث فرق وأخبرنا لماذا تريد التطوع مع هذه المنظمة.",
-      "motivationLetter": {
-        "label": "رسالة الدافع",
-        "placeholder": "أخبرنا لماذا تتحمس لهذه القضية وكيف تود المساهمة...",
-        "characterCount": "{{count}}/2000 حرف"
-      },
-      "specialNeeds": {
-        "label": "متطلبات إمكانية الوصول",
-        "placeholder": "يرجى وصف أي ترتيبات أو متطلبات إمكانية وصول قد تحتاجها...",
-        "characterCount": "{{count}}/500 حرف"
-      },
-      "cv": {
-        "label": "السيرة الذاتية",
-        "required": "يرجى تحميل سيرتك الذاتية",
-        "dragDrop": "اسحب وأفلت سيرتك الذاتية هنا أو انقر للتصفح",
-        "chooseFile": "اختر ملف",
-        "fileTypes": "PDF أو DOC أو DOCX حتى 10MB"
-      },
-      "cancel": "إلغاء",
-      "submit": "إرسال طلب التطوع",
-      "submitting": "جاري الإرسال..."
-    },
-    "success": {
-      "message": "تم إرسال طلب التطوع بنجاح!"
-    },
-    "errors": {
-      "loadJob": "فشل تحميل تفاصيل فرصة التطوع",
-      "submitFailed": "فشل إرسال طلب التطوع. يرجى المحاولة مرة أخرى.",
-      "fileTooLarge": "يجب أن يكون حجم الملف أقل من 10MB",
-      "invalidFileType": "نوع ملف غير صالح. يرجى تحميل PDF أو DOC أو DOCX",
-      "alreadyApplied": "لقد تقدمت بالفعل لهذه فرصة التطوع."
-    }
-  },
-  "myMentorships": {
-    "title": "إرشاداتي",
-    "subtitle": "تتبع طلبات الإرشاد والإرشادات النشطة الخاصة بك",
-    "active": "نشط",
-    "pending": "قيد الانتظار",
-    "completed": "مكتمل",
-    "rejected": "مرفوض",
-    "status": {
-      "active": "نشط",
-      "pending": "قيد الانتظار",
-      "completed": "مكتمل",
-      "rejected": "مرفوض"
-    },
-    "noActive": "لا توجد إرشادات نشطة",
-    "noActiveDesc": "ليس لديك إرشادات نشطة بعد. ابحث عن مرشد للبدء!",
-    "noPending": "لا توجد طلبات قيد الانتظار",
-    "noPendingDesc": "ليس لديك طلبات إرشاد قيد الانتظار.",
-    "noCompleted": "لا توجد إرشادات مكتملة",
-    "noCompletedDesc": "لم تكمل أي إرشادات بعد.",
-    "noRejected": "لا توجد طلبات مرفوضة",
-    "noRejectedDesc": "ليس لديك طلبات إرشاد مرفوضة.",
-    "findMentors": "البحث عن مرشدين",
-    "started": "بدأ",
-    "accepted": "مقبول",
-    "completedDate": "مكتمل",
-    "duration": "المدة",
-    "learningGoals": "أهداف التعلم",
-    "openChat": "فتح المحادثة",
-    "writeReview": "كتابة تقييم",
-    "waitingForResponse": "في انتظار الرد",
-    "viewDetails": "عرض التفاصيل"
-  },
-  "myApplications": {
-    "title": "طلباتي",
-    "subtitle": "تتبع وإدارة طلبات الوظائف الخاصة بك",
-    "filters": {
-      "all": "الكل",
-      "pending": "قيد الانتظار",
-      "approved": "مقبول",
-      "rejected": "مرفوض"
-    },
-    "stats": {
-      "total": "إجمالي الطلبات",
-      "pending": "قيد الانتظار",
-      "approved": "مقبول",
-      "rejected": "مرفوض"
-    },
-    "applicationCard": {
-      "appliedOn": "تم التقديم في {{date}}",
-      "status": {
-        "PENDING": "قيد الانتظar",
-        "APPROVED": "مقبول",
-        "REJECTED": "مرفوض"
-      },
-      "actions": {
-        "viewDetails": "عرض التفاصيل",
-        "viewJob": "عرض الوظيفة",
-        "downloadCV": "تنزيل السيرة الذاتية",
-        "withdraw": "سحب الطلب"
-      },
-      "salary": "${{min}}k - ${{max}}k",
-      "remote": "عن بعد",
-      "onSite": "في الموقع"
-    },
-    "details": {
-      "title": "تفاصيل الطلب",
-      "coverLetter": "خطاب التقديم",
-      "specialNeeds": "الاحتياجات الخاصة",
-      "feedback": "ملاحظات صاحب العمل",
-      "noFeedback": "لا توجد ملاحظات بعد",
-      "cv": "السيرة الذاتية",
-      "downloadCV": "تنزيل السيرة الذاتية",
-      "status": "الحالة",
-      "appliedDate": "تاريخ التقديم",
-      "close": "إغلاق"
-    },
-    "empty": {
-      "title": "لا توجد طلبات بعد",
-      "message": "لم تتقدم لأي وظائف بعد. تصفح الوظائف المتاحة وابدأ بالتقديم!",
-      "browseJobs": "تصفح الوظائف"
-    },
-    "withdraw": {
-      "title": "سحب الطلب",
-      "message": "هل أنت متأكد من أنك تريد سحب هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.",
-      "confirm": "نعم، سحب",
-      "cancel": "إلغاء",
-      "success": "تم سحب الطلب بنجاح",
-      "error": "فشل سحب الطلب. يرجى المحاولة مرة أخرى."
-    },
-    "errors": {
-      "loadFailed": "فشل تحميل الطلبات. يرجى المحاولة مرة أخرى.",
-      "deleteFailed": "فشل حذف الطلب. يرجى المحاولة مرة أخرى."
-    }
-  },
-  "jobApplicationReview": {
-    "noCv": "لم يتم العثور على سيرة ذاتية لهذا الطلب",
-    "error": {
-      "load": "فشل تحميل تفاصيل الطلب. يرجى المحاولة مرة أخرى.",
-      "approve": "فشل قبول الطلب. يرجى المحاولة مرة أخرى.",
-      "reject": "فشل رفض الطلب. يرجى المحاولة مرة أخرى.",
-      "title": "خطأ في تحميل الطلب"
-    },
-    "success": {
-      "approve": "تم قبول الطلب بنجاح.",
-      "reject": "تم رفض الطلب بنجاح."
-    },
-    "applied": {
-      "today": "اليوم",
-      "yesterday": "قبل يوم واحد",
-      "daysAgo": "قبل {{count}} أيام"
-    },
-    "backToJob": "العودة إلى الوظيفة",
-    "title": "طلب لوظيفة {{jobTitle}}",
-    "atCompany": "في {{company}}",
-    "applicantInfo": "معلومات مقدم الطلب",
-    "status": "الحالة",
-    "coverLetter": "خطاب التقديم",
-    "specialNeeds": "الاحتياجات الخاصة أو التسهيلات",
-    "cv": "السيرة الذاتية",
-    "loadingCv": "جارٍ تحميل السيرة الذاتية...",
-    "resumeOf": "سيرة {{name}} الذاتية",
-    "downloadToView": "انقر فوق تنزيل لعرض السيرة الذاتية",
-    "download": "تنزيل",
-    "noCvAttached": "لا توجد سيرة ذاتية مرفقة بهذا الطلب",
-    "existingFeedback": "الملاحظات الحالية",
-    "decision": "القرار",
-    "feedback": "ملاحظات (اختياري)",
-    "feedbackPlaceholder": "قدم ملاحظات لمقدم الطلب",
-    "processing": "جارٍ المعالجة...",
-    "reject": "رفض",
-    "approve": "قبول"
-  },
-  "createJob": {
-    "title": "إنشاء إعلان وظيفة",
-    "subtitle": "انشر فرصة عمل جديدة وابحث عن المرشح المثالي",
-    "jobTitle": "المسمى الوظيفي",
-    "jobTitlePlaceholder": "مثال: مهندس برمجيات أول",
-    "jobDescription": "وصف الوظيفة",
-    "jobDescriptionPlaceholder": "صف الدور والمسؤوليات والمتطلبات...",
-    "companyName": "اسم الشركة",
-    "companyNamePlaceholder": "اسم شركتك",
-    "location": "الموقع",
-    "locationPlaceholder": "مثال: الرياض، السعودية أو عن بُعد",
-    "remoteWork": "العمل عن بُعد متاح",
-    "remoteWorkDescription": "حدد هذا الخيار إذا كانت هذه الوظيفة توفر خيارات العمل عن بُعد",
-    "nonProfit": "منظمة غير ربحية",
-    "nonProfitDescription": "حدد هذا كفرصة تطوعية من منظمة غير ربحية تركز على التأثير الاجتماعي",
-    "salaryRange": "نطاق الراتب",
-    "minimum": "الحد الأدنى",
-    "maximum": "الحد الأقصى",
-    "minSalaryPlaceholder": "مثال: 80000",
-    "maxSalaryPlaceholder": "مثال: 120000",
-    "contactEmail": "البريد الإلكتروني للتواصل",
-    "contactEmailPlaceholder": "hiring@company.com",
-    "ethicalTags": "العلامات الأخلاقية",
-    "ethicalTagsDescription": "اختر العلامات التي تمثل قيم وممارسات شركتك",
-    "ethicalTagsPlaceholder": "اختر العلامات الأخلاقية",
-    "inclusiveOpportunity": "فرصة شاملة للأشخاص ذوي الإعاقة",
-    "inclusiveOpportunityDescription": "حدد هذه الوظيفة كفرصة شاملة، ترحب بالمرشحين من خلفيات وقدرات متنوعة",
-    "submit": "نشر الإعلان الوظيفي",
-    "submitting": "جارٍ النشر...",
-    "submitError": "فشل إنشاء إعلان الوظيفة. يرجى المحاولة مرة أخرى.",
-    "submitSuccess": "تم إنشاء إعلان الوظيفة بنجاح!"
-  },
-  "mentorship": {
-    "title": "ابحث عن مرشد",
-    "authRequired": {
-      "title": "يتطلب حساب",
-      "description": "تحتاج إلى إنشاء حساب لعرض المرشدين وطلب الإرشاد. انضم إلى Ethica Jobs اليوم وتواصل مع المحترفين ذوي الخبرة!",
-      "invitation": "أنشئ حسابك المجاني الآن وابدأ رحلة الإرشاد الخاصة بك.",
-      "viewMore": "سجل لعرض جميع المرشدين المتاحين",
-      "signUp": "إنشاء حساب",
-      "login": "هل لديك حساب بالفعل؟ تسجيل الدخول"
-    },
-    "card": {
-      "reviews": "تقييمات",
-      "mentoring": "إرشاد",
-      "hour": "ساعة",
-      "more": "المزيد",
-      "viewProfile": "عرض الملف الشخصي",
-      "request": "طلب",
-      "full": "ممتلئ"
-    },
-    "profile": {
-      "reviews": "تقييمات",
-      "remote": "عن بُعد",
-      "hour": "ساعة",
-      "website": "الموقع الإلكتروني",
-      "requestMentorship": "طلب الإرشاد",
-      "unavailable": "غير متاح حالياً",
-      "viewProfile": "عرض الملف الشخصي",
-      "about": "نبذة عني",
-      "experience": "الخبرة",
-      "keyAchievements": "الإنجازات الرئيسية",
-      "education": "التعليم",
-      "specialties": "التخصصات",
-      "languages": "اللغات",
-      "reviewsTitle": "التقييمات ({{count}})",
-      "mentorshipStats": "إحصائيات الإرشاد",
-      "currentMentees": "المتدربون الحاليون",
-      "totalReviews": "إجمالي التقييمات",
-      "averageRating": "متوسط التقييم",
-      "skillsTechnologies": "المهارات والتقنيات"
-    },
-    "request": {
-      "backToProfile": "العودة إلى ملف المرشد",
-      "title": "طلب الإرشاد",
-      "subtitle": "أرسل طلب إرشاد إلى {{mentorName}}",
-      "reviews": "تقييمات",
-      "mentoring": "إرشاد",
-      "specialties": "التخصصات",
-      "fullCapacity": "هذا المرشد في الطاقة القصوى حالياً",
-      "formTitle": "طلب الإرشاد",
-      "formDescription": "أخبر المرشد عن أهدافك وما تأمل تحقيقه من خلال الإرشاد.",
-      "messageLabel": "رسالة إلى المرشد",
-      "messagePlaceholder": "مرحباً، أنا مهتم بتعلم React و TypeScript. لدي بعض الخبرة في JavaScript ولكني أرغب في تحسين مهاراتي في بناء التطبيقات القابلة للتطوير...",
-      "messageHint": "قدم نفسك واشرح سبب اهتمامك بالإرشاد مع هذا المرشد.",
-      "goalsLabel": "أهداف التعلم",
-      "goalsPlaceholder": "1. إتقان React hooks وإدارة الحالة\n2. تعلم أفضل ممارسات TypeScript\n3. تحسين مهارات تصميم الأنظمة\n4. التحضير لمقابلات المطورين الكبار",
-      "goalsHint": "اذكر أهدافك التعليمية المحددة وما تريد تحقيقه.",
-      "durationLabel": "مدة الإرشاد المتوقعة",
-      "durationPlaceholder": "مثلاً: 3 أشهر، 6 أشهر، سنة واحدة",
-      "timeLabel": "وقت الاجتماع المفضل",
-      "timePlaceholder": "مثلاً: عطلات نهاية الأسبوع، أمسيات أيام الأسبوع، مرن",
-      "sendRequest": "إرسال طلب الإرشاد",
-      "sendingRequest": "جارٍ الإرسال...",
-      "cancel": "إلغاء",
-      "successMessage": "تم إرسال طلب الإرشاد بنجاح!",
-      "errorMessage": "فشل إرسال طلب الإرشاد. يرجى المحاولة مرة أخرى."
+    "activity": {
+      "downloading": "جارٍ التحميل...",
+      "downloadData": "تحميل بياناتي"
     }
   },
   "reviews": {
+    "reviewTitle": "تقييم",
+    "rateEthicalPolicies": "قيّم السياسات الأخلاقية",
+    "rateAtLeastOne": "يرجى تقييم سياسة أخلاقية واحدة على الأقل",
+    "titlePlaceholder": "مثال: تجربتي في {{company}}",
     "workplaceReviews": "تقييمات مكان العمل",
     "writeReview": "اكتب تقييماً",
     "writeReviewFor": "اكتب تقييماً لـ {{company}}",
@@ -988,7 +1843,6 @@
     "postAnonymously": "انشر بشكل مجهول",
     "submitReview": "إرسال التقييم",
     "submitting": "جارٍ الإرسال...",
-    "cancel": "إلغاء",
     "categories": {
       "culture": "الثقافة",
       "benefits": "المزايا",
@@ -1002,6 +1856,7 @@
     "recentComments": "التعليقات الأخيرة",
     "recentReviews": "التقييمات الأخيرة",
     "sortBy": "ترتيب التقييمات",
+    "sortByRating": "ترتيب حسب التقييم",
     "sortOptions": {
       "ratingDesc": "التقييم (من الأعلى إلى الأدنى)",
       "ratingAsc": "التقييم (من الأدنى إلى الأعلى)"
@@ -1016,6 +1871,13 @@
     "loadMore": "تحميل المزيد",
     "loading": "جارٍ التحميل...",
     "helpful": "مفيد",
+    "toggleHelpful": "وضع علامة مفيد",
+    "helpfulMarked": "تم وضع علامة مفيد",
+    "helpfulMarkedDescription": "تساعد ملاحظاتك الآخرين في العثور على تقييمات مفيدة",
+    "helpfulRemoved": "تمت إزالة علامة مفيد",
+    "helpfulRemovedDescription": "لقد أزلت تصويتك المفيد",
+    "helpfulError": "فشل تحديث التصويت المفيد",
+    "helpfulErrorDescription": "يرجى المحاولة مرة أخرى لاحقًا",
     "report": "إبلاغ",
     "today": "اليوم",
     "yesterday": "أمس",
@@ -1051,11 +1913,6 @@
     "notFound": "الشركة غير موجودة",
     "notFoundDescription": "الشركة التي تبحث عنها غير موجودة أو تم إزالتها."
   },
-  "common": {
-    "loading": "جارٍ التحميل...",
-    "goHome": "الذهاب إلى الصفحة الرئيسية",
-    "edited": "تم التعديل"
-  },
   "chat": {
     "conversations": "المحادثات",
     "noConversations": "لا توجد محادثات بعد",
@@ -1081,9 +1938,387 @@
     "roleMentor": "مرشد",
     "roleMentee": "مسترشد",
     "selectConversation": "اختر محادثة",
-    "selectConversationDesc": "اختر محادثة من القائمة للبدء في الدردشة"
+    "selectConversationDesc": "اختر محادثة من القائمة للبدء في الدردشة",
+    "connectionNotReady": "اتصال الدردشة غير جاهز. سيتم إرسال الرسالة عند الاتصال.",
+    "connectionError": "خطأ في اتصال الدردشة",
+    "sendError": "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.",
+    "connected": "تم الاتصال بالدردشة!",
+    "disconnected": "انقطع اتصال الدردشة.",
+    "loadError": "فشل تحميل الدردشة. يرجى المحاولة لاحقًا.",
+    "notReady": "الدردشة ليست جاهزة بعد. يرجى الانتظار قليلاً ثم المحاولة.",
+    "authRequired": "يجب تسجيل الدخول لاستخدام الدردشة",
+    "noConversationsDesc": "تحتاج إلى وجود إرشاد نشط لبدء الدردشة."
+    },
+    "notifications": {
+    "title": "الإشعارات",
+    "ariaLabel": "الإشعارات",
+    "loading": "جاري تحميل الإشعارات...",
+    "empty": "أنت مواكب لكل شيء. لا توجد إشعارات بعد.",
+    "unread": "{{count}} غير مقروء",
+    "upToDate": "محدَّث",
+    "markAllAsRead": "تحديد الكل كمقروء",
+    "footer": "أحدث الإشعارات تظهر أولاً."
   },
-  "public": {
-    "note": "هذا الملف الشخصي العام - إمكانيات التعديل غير متاحة"
+  "errors": {
+    "DEFAULT": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "VALIDATION_FAILED": "بعض الحقول تحتاج إلى انتباهك.",
+    "MALFORMED_JSON": "تنسيق الطلب غير صالح.",
+    "METHOD_NOT_ALLOWED": "هذا الإجراء غير مسموح.",
+    "ACCESS_DENIED": "ليست لديك صلاحية لتنفيذ هذا الإجراء.",
+    "AUTHENTICATION_FAILED": "فشلت المصادقة.",
+    "RESOURCE_CONFLICT": "هذا الإجراء يتعارض مع مورد موجود.",
+    "NOT_FOUND": "المورد المطلوب غير موجود.",
+    "INTERNAL_ERROR": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "USER_NOT_FOUND": "المستخدم غير موجود.",
+    "EMAIL_NOT_VERIFIED": "يرجى تأكيد بريدك الإلكتروني قبل المتابعة.",
+    "INVALID_CREDENTIALS": "اسم المستخدم أو كلمة المرور غير صحيحة.",
+    "USER_UNAUTHORIZED": "يرجى تسجيل الدخول للمتابعة.",
+    "USER_ALREADY_EXISTS": "المستخدم موجود بالفعل.",
+    "USERNAME_ALREADY_USED": "اسم المستخدم مستخدم بالفعل.",
+    "EMAIL_ALREADY_USED": "البريد الإلكتروني مستخدم بالفعل.",
+    "ROLE_INVALID": "حسابك لا يملك الدور المطلوب.",
+    "EMPLOYER_ALREADY_ASSIGNED": "تم تعيين صاحب العمل لهذا المكان بالفعل.",
+    "EMPLOYER_REQUEST_ALREADY_EXISTS": "لقد قدمت بالفعل طلبًا للانضمام إلى مكان العمل هذا.",
+    "EMPLOYER_REQUEST_NOT_FOUND": "لم يتم العثور على طلب صاحب العمل.",
+    "EMPLOYER_REQUEST_ALREADY_RESOLVED": "تمت معالجة طلب صاحب العمل هذا بالفعل.",
+    "EMPLOYER_REQUEST_INVALID_ACTION": "هذا الإجراء غير صالح لحالة الطلب الحالية.",
+    "EMPLOYER_REQUEST_NO_APPLICANT": "لا يوجد متقدم مرتبط بهذا الطلب.",
+    "EMPLOYER_LINK_NOT_FOUND": "رابط صاحب العمل غير موجود.",
+    "WORKPLACE_OWNER_MINIMUM_REQUIRED": "مطلوب وجود مالك واحد على الأقل لمكان العمل.",
+    "CURRENT_PASSWORD_INVALID": "كلمة المرور الحالية غير صحيحة.",
+    "PASSWORD_SAME_AS_OLD": "يجب أن تختلف كلمة المرور الجديدة عن القديمة.",
+    "PROFILE_NOT_FOUND": "الملف الشخصي غير موجود.",
+    "PROFILE_ALREADY_EXISTS": "الملف الشخصي موجود بالفعل.",
+    "WORKPLACE_NOT_FOUND": "مكان العمل غير موجود.",
+    "WORKPLACE_ALREADY_EXISTS": "مكان العمل موجود بالفعل.",
+    "REVIEW_NOT_FOUND": "لم يتم العثور على التقييم.",
+    "REVIEW_ALREADY_EXISTS": "لقد أضفت تقييمًا بالفعل.",
+    "REPLY_ALREADY_EXISTS": "لقد أرسلت ردًا على هذا التقييم بالفعل.",
+    "REPLY_NOT_FOUND": "لم يتم العثور على الرد.",
+    "WORKPLACE_UNAUTHORIZED": "ليست لديك صلاحية لهذا مكان العمل.",
+    "VALIDATION_ERROR": "بعض الحقول فشلت في التحقق.",
+    "EDUCATION_NOT_FOUND": "سجل التعليم غير موجود.",
+    "EXPERIENCE_NOT_FOUND": "سجل الخبرة غير موجود.",
+    "SKILL_NOT_FOUND": "المهارة غير موجودة.",
+    "INTEREST_NOT_FOUND": "الاهتمام غير موجود.",
+    "IMAGE_FILE_REQUIRED": "يرجى رفع ملف صورة.",
+    "IMAGE_CONTENT_TYPE_INVALID": "نوع ملف الصورة غير صالح.",
+    "IMAGE_UPLOAD_FAILED": "فشل رفع الصورة. يرجى المحاولة مرة أخرى.",
+    "INVALID_TOKEN": "الجلسة غير صالحة، يرجى تسجيل الدخول مرة أخرى.",
+    "TOKEN_EXPIRED": "انتهت صلاحية جلستك، يرجى تسجيل الدخول مرة أخرى.",
+    "BAD_REQUEST": "الطلب غير صالح. يرجى التحقق من البيانات.",
+    "JOB_APPLICATION_NOT_FOUND": "طلب الوظيفة غير موجود.",
+    "APPLICATION_ALREADY_EXISTS": "لقد تقدمت لهذه الوظيفة بالفعل.",
+    "MISSING_FILTER_PARAMETER": "يوجد عامل تصفية مطلوب مفقود.",
+    "JOB_POST_NOT_FOUND": "إعلان الوظيفة غير موجود.",
+    "JOB_POST_FORBIDDEN": "لا يُسمح لك بإدارة إعلان الوظيفة هذا.",
+    "JOB_POST_CORRUPT": "بيانات إعلان الوظيفة تالفة. يرجى التواصل مع الدعم.",
+    "CHAT_NOT_LINKED_TO_REVIEW": "المحادثة غير مرتبطة بالتقييم المحدد.",
+    "CONVERSATION_NOT_FOUND": "المحادثة غير موجودة.",
+    "MENTORSHIP_NOT_ACTIVE": "الإرشاد غير نشط.",
+    "RESUME_REVIEW_NOT_FOUND": "مراجعة السيرة الذاتية غير موجودة.",
+    "REQUEST_NOT_FOUND": "الطلب غير موجود.",
+    "REVIEW_NOT_COMPLETED": "لم يكتمل التقييم بعد.",
+    "UNAUTHORIZED_REVIEW_ACCESS": "لا تملك صلاحية للوصول إلى هذا التقييم.",
+    "REQUEST_ALREADY_PROCESSED": "تمت معالجة هذا الطلب بالفعل.",
+    "MENTOR_UNAVAILABLE": "المرشد غير متاح.",
+    "ACTIVE_MENTORSHIP_EXIST": "يوجد إرشاد نشط بالفعل.",
+    "MENTEE_CAPACITY_CONFLICT": "طاقة المرشد ممتلئة.",
+    "MENTOR_PROFILE_NOT_FOUND": "ملف المرشد غير موجود.",
+    "MENTOR_PROFILE_ALREADY_EXISTS": "لقد أنشأت ملف مرشد بالفعل.",
+    "RESUME_FILE_REQUIRED": "ملف السيرة الذاتية مطلوب.",
+    "RESUME_FILE_CONTENT_TYPE_INVALID": "نوع ملف السيرة الذاتية غير صالح.",
+    "RESUME_FILE_UPLOAD_FAILED": "فشل رفع السيرة الذاتية. يرجى المحاولة مرة أخرى.",
+    "RESUME_FILE_NOT_FOUND": "ملف السيرة الذاتية غير موجود."
+  },
+  "admin": {
+    "reports": {
+      "title": "إدارة البلاغات",
+      "subtitle": "مراجعة واتخاذ إجراءات بشأن المحتوى والمستخدمين المبلغ عنهم",
+      "searchPlaceholder": "البحث في البلاغات...",
+      "tabs": {
+        "pending": "قيد الانتظار",
+        "resolved": "تم الحل",
+        "dismissed": "مرفوض"
+      },
+      "table": {
+        "contentType": "نوع المحتوى",
+        "reportedItem": "العنصر المبلغ عنه",
+        "reporter": "المبلغ",
+        "reason": "السبب",
+        "date": "التاريخ",
+        "actions": "الإجراءات",
+        "view": "عرض"
+      },
+      "entityTypes": {
+        "FORUM_POST": "منشور المنتدى",
+        "FORUM_COMMENT": "تعليق",
+        "WORKPLACE": "مكان العمل",
+        "REVIEW": "تقييم مكان العمل",
+        "REVIEW_REPLY": "رد على التقييم",
+        "JOB_POST": "إعلان وظيفة",
+        "JOB_APPLICATION": "طلب وظيفة",
+        "PROFILE": "الملف الشخصي",
+        "MENTOR": "مرشد"
+      },
+      "reasons": {
+        "SPAM": "محتوى غير مرغوب فيه",
+        "FAKE": "معلومات مزيفة",
+        "OFFENSIVE": "محتوى مسيء",
+        "HARASSMENT": "تحرش",
+        "MISINFORMATION": "معلومات خاطئة",
+        "OTHER": "أخرى"
+      },
+      "status": {
+        "PENDING": "قيد الانتظار",
+        "APPROVED": "تم الحل",
+        "REJECTED": "مرفوض",
+        "IGNORED": "تم التجاهل"
+      },
+      "details": {
+        "title": "تفاصيل التحقيق",
+        "contentUnderReview": "المحتوى قيد المراجعة",
+        "reporterInfo": "معلومات المبلغ",
+        "reporter": "المبلغ",
+        "reason": "السبب",
+        "status": "الحالة",
+        "selectReport": "حدد بلاغًا لعرض التفاصيل"
+      },
+      "actions": {
+        "title": "إجراءات الإشراف",
+        "helper": "اختر إجراءً لاتخاذه على هذا البلاغ",
+        "dismiss": "رفض",
+        "remove": "إزالة",
+        "banOnly": "حظر فقط",
+        "both": "كلاهما"
+      },
+      "dialog": {
+        "dismiss": {
+          "title": "رفض البلاغ",
+          "description": "سيتم وضع علامة على هذا البلاغ على أنه مرفوض. لن يتم اتخاذ أي إجراء على المحتوى أو المستخدم المبلغ عنه."
+        },
+        "remove": {
+          "title": "إزالة المحتوى فقط",
+          "description": "سيؤدي هذا إلى إزالة المحتوى المبلغ عنه فقط. لن يتم حظر المستخدم."
+        },
+        "ban": {
+          "title": "حظر المستخدم فقط",
+          "description": "سيؤدي هذا إلى حظر المستخدم الذي أنشأ المحتوى. سيبقى المحتوى مرئيًا."
+        },
+        "both": {
+          "title": "حظر المستخدم وإزالة المحتوى",
+          "description": "سيؤدي هذا إلى حظر المستخدم وإزالة المحتوى المبلغ عنه. سيتم تطبيق كلا الإجراءين."
+        },
+        "adminNote": {
+          "label": "ملاحظة المسؤول (اختياري)",
+          "placeholder": "أضف ملاحظة حول هذا الإجراء..."
+        },
+        "banReason": {
+          "label": "سبب الحظر (اختياري)",
+          "placeholder": "سبب حظر هذا المستخدم..."
+        },
+        "cancel": "إلغاء",
+        "confirm": "تأكيد",
+        "processing": "جارٍ المعالجة..."
+      },
+      "resolve": {
+        "success": {
+          "default": "تم حل البلاغ بنجاح",
+          "both": "تم حظر المستخدم وإزالة المحتوى بنجاح",
+          "ban": "تم حظر المستخدم بنجاح",
+          "remove": "تمت إزالة المحتوى بنجاح",
+          "dismiss": "تم رفض البلاغ"
+        },
+        "error": {
+          "default": "فشل حل البلاغ. يرجى المحاولة مرة أخرى.",
+          "spam": "تم الإبلاغ عن هذا المحتوى على أنه غير مرغوب فيه. يرجى المراجعة واتخاذ الإجراء المناسب.",
+          "fake": "تم الإبلاغ عن أن هذا المحتوى يحتوي على معلومات مزيفة. يرجى التحقق واتخاذ الإجراء.",
+          "offensive": "تم الإبلاغ عن هذا المحتوى على أنه مسيء. يرجى مراجعة المحتوى بعناية.",
+          "harassment": "تم الإبلاغ عن هذا المحتوى للتحرش. هذا انتهاك خطير.",
+          "misinformation": "تم الإبلاغ عن هذا المحتوى على أنه معلومات خاطئة. يرجى التحقق من الحقائق."
+        }
+      },
+      "pagination": {
+        "pageInfo": "صفحة {{page}} من {{totalPages}} (إجمالي {{totalElements}})"
+      },
+      "empty": {
+        "title": "لم يتم العثور على بلاغات",
+        "description": "لا توجد بلاغات تطابق المرشحات الحالية."
+      },
+      "loading": "جارٍ تحميل البلاغات..."
+    }
+  },
+  "info": {
+    "about": {
+      "title": "حول Ethica Jobs",
+      "subtitle": "ربط الباحثين عن عمل بأصحاب العمل الأخلاقيين الذين يشاركونهم قيمهم",
+      "mission": {
+        "title": "مهمتنا",
+        "content": "تلتزم Ethica Jobs بتحويل سوق العمل من خلال ربط الباحثين عن عمل بأصحاب العمل الذين يضعون الأولوية للممارسات الأخلاقية والمسؤولية الاجتماعية وثقافات العمل الإيجابية. نؤمن بأن الجميع يستحق العمل في مؤسسات تتماشى مع قيمهم الشخصية وتساهم بشكل ذي معنى في المجتمع.",
+        "content2": "تتجاوز منصتنا لوحات العمل التقليدية من خلال تسليط الضوء على أصحاب العمل الملتزمين بالتنوع والشمولية والاستدامة البيئية والممارسات العمالية العادلة والمشاركة المجتمعية. نحن نمكّن الباحثين عن عمل لاتخاذ قرارات مستنيرة حول المكان الذي يستثمرون فيه وقتهم ومواهبهم."
+      },
+      "values": {
+        "title": "قيمنا الأساسية",
+        "transparency": {
+          "title": "الشفافية",
+          "content": "نوفر معلومات واضحة ودقيقة حول أصحاب العمل، بما في ذلك التزاماتهم الأخلاقية وممارسات مكان العمل وتأثيرهم المجتمعي. يستحق الباحثون عن العمل الصدق حول الشركات التي يفكرون في الانضمام إليها."
+        },
+        "inclusion": {
+          "title": "الشمولية والتنوع",
+          "content": "نحتفي ونروج لأماكن العمل التي تحتضن التنوع بجميع أشكاله. نؤمن بأن الفرق الشاملة أقوى وأكثر ابتكاراً وأفضل تجهيزاً لحل التحديات المعقدة."
+        },
+        "fairness": {
+          "title": "الممارسات العمالية العادلة",
+          "content": "ندعم أصحاب العمل الذين يقدمون أجوراً عادلة وظروف عمل آمنة وفرصاً للنمو المهني واحتراماً لحقوق العمال. الجميع يستحق الكرامة في مكان العمل."
+        },
+        "community": {
+          "title": "التأثير المجتمعي",
+          "content": "نبرز المنظمات التي تعطي مرة أخرى لمجتمعاتها ويدعمون المبادرات المحلية ويخلقون تغييراً اجتماعياً إيجابياً. نؤمن بأن للشركات مسؤولية للمساهمة في الصالح العام."
+        }
+      },
+      "offer": {
+        "title": "ما نقدمه",
+        "jobs": "قوائم وظائف منتقاة من أصحاب عمل تم التحقق من ممارساتهم الأخلاقية والتزاماتهم",
+        "workplaces": "ملفات تعريف تفصيلية لأماكن العمل تعرض قيم الشركة وثقافتها ومبادراتها الأخلاقية",
+        "mentorship": "فرص إرشاد تربط الباحثين عن عمل بالمتخصصين ذوي الخبرة في مجالهم",
+        "community": "منتدى مجتمعي داعم لمناقشة التطوير المهني وأخلاقيات مكان العمل واتجاهات الصناعة",
+        "volunteering": "فرص تطوع مع منظمات غير ربحية تحدث فرقاً في مجتمعاتها"
+      },
+      "closing": "انضم إلينا في بناء سوق عمل حيث القيم مهمة. معاً، يمكننا إنشاء أماكن عمل لا تنجح اقتصادياً فحسب بل تساهم أيضاً في عالم أفضل."
+    },
+    "contact": {
+      "title": "اتصل بنا",
+      "subtitle": "نحب أن نسمع منك",
+      "intro": "في Ethica Jobs، نحن ملتزمون بتوفير أفضل تجربة ممكنة للباحثين عن عمل وأصحاب العمل على حد سواء. سواء كان لديك أسئلة أو ملاحظات أو تحتاج إلى مساعدة، نحن هنا للمساعدة. مساهماتك تساعدنا على تحسين منصتنا وخدمة مجتمعنا بشكل أفضل.",
+      "general": {
+        "title": "الاستفسارات العامة",
+        "description": "للأسئلة العامة حول منصتنا أو الميزات أو كيفية البدء:",
+        "email": "info@ethicajobs.com"
+      },
+      "support": {
+        "title": "الدعم الفني",
+        "description": "تحتاج مساعدة في حسابك أو إعادة تعيين كلمة المرور أو المشاكل التقنية؟",
+        "email": "support@ethicajobs.com"
+      },
+      "feedback": {
+        "title": "الملاحظات والاقتراحات",
+        "description": "شارك أفكارك أو اقتراحاتك أو ملاحظاتك لمساعدتنا على التحسين:",
+        "email": "feedback@ethicajobs.com"
+      },
+      "bug": {
+        "title": "الإبلاغ عن خطأ",
+        "description": "وجدت خطأ أو تواجه مشاكل؟ يرجى إعلامنا:",
+        "email": "bugs@ethicajobs.com"
+      },
+      "partnerships": {
+        "title": "شراكات أصحاب العمل",
+        "content": "هل أنت صاحب عمل ملتزم بالممارسات الأخلاقية وتبحث عن التواصل مع الباحثين عن عمل مدفوعين بالقيم؟ نحن نحب أن نتعاون معك. يرجى التواصل لمناقشة كيف يمكننا المساعدة في عرض التزام مؤسستك بالأخلاق وجذب الأفراد الموهوبين الذين يشاركونك قيمك.",
+        "email": "partnerships@ethicajobs.com"
+      },
+      "response": "عادة ما نرد على جميع الاستفسارات في غضون 1-2 يوم عمل. شكراً لصبرك ولأنك جزء من مجتمع Ethica Jobs!"
+    },
+    "privacy": {
+      "title": "سياسة الخصوصية",
+      "lastUpdated": "آخر تحديث: يناير 2025",
+      "intro": {
+        "title": "التزامنا بالخصوصية",
+        "content": "في Ethica Jobs، نأخذ خصوصيتك على محمل الجد. توضح سياسة الخصوصية هذه كيف نجمع معلوماتك ونستخدمها ونكشف عنها ونحميها عند استخدام منصتنا. نحن ملتزمون بحماية بياناتك الشخصية والشفافية حول ممارساتنا.",
+        "content2": "باستخدام Ethica Jobs، أنت توافق على جمع واستخدام المعلومات وفقاً لهذه السياسة. سنستخدم معلوماتك الشخصية فقط كما هو موضح في سياسة الخصوصية هذه وبطرق تتماشى مع قيمنا الأخلاقية."
+      },
+      "collect": {
+        "title": "المعلومات التي نجمعها",
+        "personal": {
+          "title": "المعلومات الشخصية",
+          "content": "عند إنشاء حساب أو استخدام خدماتنا، قد نجمع:",
+          "name": "الاسم وعنوان البريد الإلكتروني ومعلومات الاتصال",
+          "profile": "معلومات الملف الشخصي، بما في ذلك الخبرة العملية والتعليم والمهارات",
+          "preferences": "تفضيلات الحساب والإعدادات",
+          "credentials": "بيانات الاعتماد للمصادقة (مشفرة بشكل آمن)"
+        },
+        "usage": {
+          "title": "بيانات الاستخدام",
+          "content": "نجمع تلقائياً معلومات حول كيفية تفاعلك مع منصتنا، بما في ذلك الصفحات التي تمت زيارتها والبحوث التي تم إجراؤها والميزات المستخدمة. هذا يساعدنا على تحسين خدماتنا وتجربة المستخدم."
+        }
+      },
+      "use": {
+        "title": "كيف نستخدم معلوماتك",
+        "service": "لتوفير وصيانة وتحسين لوحة الوظائف وخدماتنا ذات الصلة",
+        "communication": "للتواصل معك حول حسابك وطلباتك وتحديثات المنصة المهمة",
+        "matching": "لمطابقة الباحثين عن عمل مع الفرص ذات الصلة بناءً على المهارات والتفضيلات",
+        "analytics": "لتحليل أنماط الاستخدام وتحسين تجربة المستخدم",
+        "security": "لاكتشاف ومنع ومعالجة المشاكل التقنية والتهديدات الأمنية أو الأنشطة الاحتيالية"
+      },
+      "security": {
+        "title": "أمان البيانات",
+        "content": "نطبق التدابير الأمنية التقنية والتنظيمية المناسبة لحماية معلوماتك الشخصية ضد الوصول غير المصرح به أو التعديل أو الكشف أو التدمير. ومع ذلك، لا توجد طريقة إرسال عبر الإنترنت أو تخزين إلكتروني آمنة بنسبة 100%.",
+        "content2": "نستخدم التشفير المعياري للصناعة وممارسات المصادقة الآمنة ومراجعات الأمان المنتظمة لحماية بياناتك. كما أننا نحد من الوصول إلى المعلومات الشخصية للموظفين والمتعاقدين وموفري الخدمات الذين يحتاجون إليها لأداء واجباتهم."
+      },
+      "rights": {
+        "title": "حقوق الخصوصية الخاصة بك",
+        "intro": "لديك الحق في:",
+        "access": "الوصول إلى معلوماتك الشخصية ومراجعتها",
+        "update": "تحديث أو تصحيح المعلومات غير الدقيقة",
+        "delete": "طلب حذف حسابك وبياناتك الشخصية",
+        "export": "تصدير بياناتك بتنسيق محمول",
+        "optout": "الانسحاب من اتصالات وأنشطة معالجة البيانات معينة"
+      },
+      "contact": {
+        "intro": "إذا كانت لديك أسئلة حول سياسة الخصوصية هذه أو ترغب في ممارسة حقوق الخصوصية الخاصة بك، يرجى الاتصال بنا على:",
+        "email": "privacy@ethicajobs.com"
+      }
+    },
+    "terms": {
+      "title": "شروط الخدمة",
+      "lastUpdated": "آخر تحديث: يناير 2025",
+      "intro": {
+        "title": "الموافقة على الشروط",
+        "content": "مرحباً بك في Ethica Jobs. تحكم شروط الخدمة هذه (\"الشروط\") وصولك إلى منصتنا واستخدامها، بما في ذلك موقعنا الإلكتروني وتطبيقاتنا المحمولة والخدمات ذات الصلة (تُجمع باسم \"الخدمة\"). بالوصول إلى Ethica Jobs أو استخدامه، أنت توافق على الالتزام بهذه الشروط.",
+        "content2": "إذا كنت لا توافق على هذه الشروط، يرجى عدم استخدام خدمتنا. نحتفظ بالحق في تعديل هذه الشروط في أي وقت، وستصبح هذه التعديلات سارية فور النشر. استمرارك في استخدام الخدمة بعد نشر التغييرات يعني موافقتك على الشروط المعدلة."
+      },
+      "responsibilities": {
+        "title": "مسؤوليات المستخدم",
+        "accuracy": {
+          "title": "معلومات دقيقة",
+          "content": "أنت توافق على تقديم معلومات دقيقة وحديثة وكاملة عند إنشاء حساب أو استخدام خدمتنا. أنت مسؤول عن الحفاظ على سرية بيانات اعتماد حسابك وعن جميع الأنشطة التي تحدث تحت حسابك."
+        },
+        "conduct": {
+          "title": "الاستخدام المقبول",
+          "intro": "أنت توافق على عدم:",
+          "spam": "نشر معلومات كاذبة أو مضللة أو احتيالية",
+          "harassment": "مضايقة أو تهديد أو التمييز ضد المستخدمين الآخرين",
+          "illegal": "استخدام الخدمة لأي غرض غير قانوني أو غير مصرح به",
+          "violate": "انتهاك أي قوانين أو لوائح سارية",
+          "abuse": "التدخل في الخدمة أو الخوادم أو تعطيلها"
+        }
+      },
+      "jobs": {
+        "title": "قوائم الوظائف والطلبات",
+        "content": "تعمل Ethica Jobs كمنصة تربط الباحثين عن عمل بأصحاب العمل. نحن لا نضمن التوظيف، ولسنا مسؤولين عن قرارات التوظيف التي يتخذها أصحاب العمل. الباحثون عن عمل مسؤولون عن التحقق من شرعية قوائم الوظائف وأصحاب العمل قبل التقديم.",
+        "content2": "أصحاب العمل مسؤولون عن ضمان دقة قوائم الوظائف الخاصة بهم وامتثالها لقوانين التوظيف السارية وتعكس التزامهم الحقيقي بالممارسات الأخلاقية. نحتفظ بالحق في إزالة أي قائمة وظائف أو ملف تعريف صاحب عمل ينتهك معاييرنا أو هذه الشروط."
+      },
+      "ip": {
+        "title": "الملكية الفكرية",
+        "content": "الخدمة ومحتواها الأصلي وميزاتها ووظائفها مملوكة لـ Ethica Jobs ومحمية بقوانين حقوق النشر والعلامات التجارية والملكية الفكرية الدولية الأخرى. لا يجوز لك نسخ أو توزيع أو تعديل أو إنشاء أعمال مشتقة من خدمتنا دون موافقتنا الكتابية المسبقة.",
+        "content2": "تحتفظ بملكية أي محتوى تنشره على منصتنا، ولكن بنشر المحتوى، فإنك تمنح Ethica Jobs ترخيصاً عالمياً غير حصري وبدون رسوم ملكية لاستخدام وعرض وتوزيع محتواك فيما يتعلق بتشغيل وترويج خدمتنا."
+      },
+      "disclaimer": {
+        "title": "إخلاء المسؤولية من الضمانات",
+        "content": "تُقدم الخدمة \"كما هي\" و\"كما هو متاح\" دون ضمانات من أي نوع، صريحة أو ضمنية. نحن لا نضمن أن الخدمة ستكون غير منقطعة أو آمنة أو خالية من الأخطاء، أو أن العيوب سيتم تصحيحها.",
+        "content2": "نحن لا نضمن دقة أو اكتمال أو موثوقية أي قوائم وظائف أو ملفات تعريف أصحاب العمل أو المحتوى الذي ينشئه المستخدمون. أنت تستخدم الخدمة على مسؤوليتك الخاصة."
+      },
+      "liability": {
+        "title": "تقييد المسؤولية",
+        "content": "إلى الحد الأقصى المسموح به بموجب القانون، لن تكون Ethica Jobs مسؤولة عن أي أضرار غير مباشرة أو عرضية أو خاصة أو تبعية أو عقابية، أو أي خسارة في الأرباح أو الإيرادات، سواء تم تكبدها بشكل مباشر أو غير مباشر، أو أي خسارة في البيانات أو الاستخدام أو السمعة أو الخسائر غير الملموسة الأخرى الناتجة عن استخدامك للخدمة."
+      },
+      "ethical": {
+        "title": "التزامنا بالممارسات الأخلاقية",
+        "content": "كمنصة مكرسة لربط الباحثين عن عمل بأصحاب العمل الأخلاقيين، نحن نلتزم بمعايير عالية. نحن ملتزمون بالمعاملة العادلة لجميع المستخدمين والشفافية في ممارساتنا وتعزيز التنوع والشمولية والمسؤولية الاجتماعية.",
+        "content2": "نتوقع من جميع المستخدمين—الباحثين عن عمل وأصحاب العمل—مشاركة هذا الالتزام بالسلوك الأخلاقي. قد يؤدي انتهاك هذه المبادئ إلى تعليق الحساب أو إنهائه."
+      },
+      "contact": {
+        "intro": "إذا كانت لديك أسئلة حول شروط الخدمة هذه، يرجى الاتصال بنا على:",
+        "email": "legal@ethicajobs.com"
+      }
+    }
   }
 }

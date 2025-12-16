@@ -1,6 +1,7 @@
 package org.bounswe.jobboardbackend.profile.service;
 
 import lombok.RequiredArgsConstructor;
+import org.bounswe.jobboardbackend.auth.model.PronounSet;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.repository.UserRepository;
 import org.bounswe.jobboardbackend.exception.ErrorCode;
@@ -8,6 +9,8 @@ import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.profile.dto.*;
 import org.bounswe.jobboardbackend.profile.model.*;
 import org.bounswe.jobboardbackend.profile.repository.*;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +37,7 @@ public class ProfileService {
     private final ExperienceRepository experienceRepository;
     private final SkillRepository skillRepository;
     private final InterestRepository interestRepository;
+    private final ActivityService activityService;
 
     private static void requireNotBlank(String value, String field) {
         if (value == null || value.trim().isEmpty()) {
@@ -90,6 +94,7 @@ public class ProfileService {
                 .firstName(dto.getFirstName())
                 .lastName(dto.getLastName())
                 .bio(dto.getBio())
+                .pronounSet(PronounSet.valueOf(dto.getPronounSet().toUpperCase()))
                 .imageUrl(null)
                 .build();
 
@@ -120,8 +125,15 @@ public class ProfileService {
         if (dto.getFirstName() != null) profile.setFirstName(dto.getFirstName());
         if (dto.getLastName()  != null) profile.setLastName(dto.getLastName());
         if (dto.getBio()       != null) profile.setBio(dto.getBio());
+        if (dto.getPronounSet()       != null) profile.setPronounSet(PronounSet.valueOf(dto.getPronounSet().toUpperCase()));
+
+        activityService.logActivity(profile.getUser(), ActivityType.UPDATE_PROFILE, profile.getId(), "Profile");
 
         return toProfileDto(profile);
+    }
+
+    public void deleteProfileByUserId(Long userId) {
+        profileRepository.deleteByUserId(userId);
     }
 
     @Transactional(readOnly = true)
@@ -134,6 +146,7 @@ public class ProfileService {
                 .firstName(p.getFirstName())
                 .lastName(p.getLastName())
                 .bio(p.getBio())
+                .pronounSet(String.valueOf(p.getPronounSet()))
                 .imageUrl(p.getImageUrl())
                 .educations(p.getEducations().stream().map(this::toEducationDto).collect(Collectors.toList()))
                 .experiences(p.getExperiences().stream().map(this::toExperienceDto).collect(Collectors.toList()))
@@ -502,12 +515,12 @@ public class ProfileService {
                 .firstName(p.getFirstName())
                 .lastName(p.getLastName())
                 .bio(p.getBio())
+                .pronounSet(String.valueOf(p.getPronounSet()))
                 .imageUrl(p.getImageUrl())
                 .educations(p.getEducations().stream().map(this::toEducationDto).collect(java.util.stream.Collectors.toList()))
                 .experiences(p.getExperiences().stream().map(this::toExperienceDto).collect(java.util.stream.Collectors.toList()))
                 .skills(p.getSkills().stream().map(this::toSkillDto).collect(java.util.stream.Collectors.toList()))
                 .interests(p.getInterests().stream().map(this::toInterestDto).collect(java.util.stream.Collectors.toList()))
-                .badges(null)
                 .createdAt(p.getCreatedAt())
                 .updatedAt(p.getUpdatedAt())
                 .build();

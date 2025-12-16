@@ -8,5 +8,9 @@ import java.util.Optional;
 public interface ReviewReplyRepository extends JpaRepository<ReviewReply, Long> {
     Optional<ReviewReply> findByReview_Id(Long reviewId);
 
+    void deleteByEmployerUserId(Long employerUserId);
+
     boolean existsByReview_Id(Long reviewId);
+
+    void deleteAllByReview_Workplace_Id(Long workplaceId);
 }

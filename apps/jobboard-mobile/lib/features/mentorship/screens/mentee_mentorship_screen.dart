@@ -12,6 +12,7 @@ import './direct_message_screen.dart';
 import './mentor_profile_screen.dart';
 import '../../../generated/l10n/app_localizations.dart';
 import 'package:collection/collection.dart';
+import '../../../core/widgets/notification_icon_button.dart';
 
 /// -------------------- FIND MENTORS TAB --------------------
 class FindMentorsTab extends StatefulWidget {
@@ -93,6 +94,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   }
 
   void _showRequestMentorshipDialog(String mentorId, String mentorName) {
+    final TextEditingController motivationController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -101,9 +103,14 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
             mentorName,
           ),
         ),
-        //content: Text(
-        //  AppLocalizations.of(context)!.menteeScreen_provideMessage,
-        //),
+        content: TextField(
+          controller: motivationController,
+          maxLines: 4,
+          decoration: const InputDecoration(
+            hintText: "Why do you want this mentorship?",
+            border: OutlineInputBorder(),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -112,9 +119,27 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
           ),
           TextButton(
             onPressed: () {
-              _handleRequestMentorship(mentorId, mentorName);
+              final motivation = motivationController.text.trim();
+
+              if (motivation.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        "Please write your motivation to continue."
+                    ),
+                  ),
+                );
+                return;
+              }
+
+              _handleRequestMentorship(
+                mentorId,
+                mentorName,
+                motivation,
+              );
               Navigator.pop(context);
             },
+
             style: TextButton.styleFrom(foregroundColor: Colors.blue),
             child: Text(AppLocalizations.of(context)!.menteeScreen_sendRequest),
           ),
@@ -126,6 +151,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
   Future<void> _handleRequestMentorship(
       String mentorId,
       String mentorName,
+      String motivation,
       ) async {
     final mentorProvider = Provider.of<MentorProvider>(
       context,
@@ -144,6 +170,7 @@ class _FindMentorsTabState extends State<FindMentorsTab> {
 
       final success = await mentorProvider.createMentorshipRequest(
         mentorId: numericMentorId,
+        motivation: motivation,
       );
 
       if (success && mounted) {
@@ -329,14 +356,23 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
     await mentorProvider.fetchMenteeRequests(authProvider.currentUser!.id);
   }
 
-  void _navigateToDirectMessage(String mentorId, String mentorName, int? resumeReviewId) {
+  void _navigateToDirectMessage({
+    required int conversationId,
+    required String mentorName,
+    int? resumeReviewId,
+  }) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>
-            DirectMessageScreen(mentorId: mentorId, mentorName: mentorName, resumeReviewId: resumeReviewId),
+        builder: (context) => DirectMessageScreen(
+          conversationId: conversationId,
+          peerName: mentorName,
+          resumeReviewId: resumeReviewId,
+          isMentor: false,
+        ),
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -478,11 +514,21 @@ class _MyMentorshipsTabState extends State<MyMentorshipsTab> {
                   mentorId: req.mentorId,
                   mentorName: mentorName,
                   mentorRole: null,
-                  onTap: () => _navigateToDirectMessage(
-                    req.mentorId,
-                    mentorName,
-                    req.resumeReviewId,
-                  ),
+                  onTap: () {
+                    if (req.conversationId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Conversation not available yet")),
+                      );
+                      return;
+                    }
+
+                    _navigateToDirectMessage(
+                      conversationId: req.conversationId!,
+                      mentorName: mentorName,
+                      resumeReviewId: req.resumeReviewId,
+                    );
+                  },
+
 
 
                   onCompleteTap: req.resumeReviewId != null
@@ -711,6 +757,7 @@ class _MenteeMentorshipScreenState extends State<MenteeMentorshipScreen>
         title: Text(AppLocalizations.of(context)!.mentorshipPage_title),
         automaticallyImplyLeading: false,
         actions: [
+          const NotificationIconButton(),
           if (showBecomeMentorButton)
             TextButton(
               onPressed: () => _showBecomeMentorDialog(context),

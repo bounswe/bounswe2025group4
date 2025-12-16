@@ -6,10 +6,13 @@ import org.bounswe.jobboardbackend.exception.ErrorCode;
 import org.bounswe.jobboardbackend.exception.HandleException;
 import org.bounswe.jobboardbackend.workplace.dto.*;
 import org.bounswe.jobboardbackend.workplace.model.Workplace;
+import org.bounswe.jobboardbackend.workplace.model.Review;
 import org.bounswe.jobboardbackend.workplace.model.EmployerWorkplace;
 import org.bounswe.jobboardbackend.workplace.model.enums.EthicalPolicy;
 import org.bounswe.jobboardbackend.workplace.model.enums.EmployerRole;
 import org.bounswe.jobboardbackend.workplace.repository.*;
+import org.bounswe.jobboardbackend.activity.service.ActivityService;
+import org.bounswe.jobboardbackend.activity.model.ActivityType;
 import org.bounswe.jobboardbackend.auth.model.User;
 import org.bounswe.jobboardbackend.auth.model.Role;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +30,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.bounswe.jobboardbackend.jobpost.repository.JobPostRepository;
+
 @Service
 @RequiredArgsConstructor
 public class WorkplaceService {
@@ -35,8 +40,40 @@ public class WorkplaceService {
     private final EmployerWorkplaceRepository employerWorkplaceRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewPolicyRatingRepository reviewPolicyRatingRepository;
+    private final ReviewReplyRepository reviewReplyRepository;
+    private final ReviewService reviewService;
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final ActivityService activityService;
+    private final JobPostRepository jobPostRepository;
+
+    @Transactional
+    public void deleteUserData(Long userId) {
+        List<EmployerWorkplace> userWorkplaces = employerWorkplaceRepository.findByUser_Id(userId);
+
+        for (EmployerWorkplace ew : userWorkplaces) {
+            Long workplaceId = ew.getWorkplace().getId();
+
+            long employerCount = employerWorkplaceRepository.countByWorkplace_Id(workplaceId);
+
+            if (employerCount == 1) {
+                reviewReplyRepository.deleteAllByReview_Workplace_Id(workplaceId);
+                reviewRepository.deleteAllByWorkplace_Id(workplaceId);
+                jobPostRepository.deleteAllByWorkplaceId(workplaceId);
+                Workplace w = ew.getWorkplace();
+                if (w.getImageUrl() != null) {
+                    deleteImage(workplaceId, userId);
+                }
+                employerWorkplaceRepository.delete(ew);
+
+                workplaceRepository.delete(w);
+            }
+        }
+    }
+
+    private Double calcAvgRating(Long workplaceId) {
+        return reviewRepository.averageOverallByWorkplaceUsingPolicies(workplaceId);
+    }
 
     // === GCS config ===
     @Value("${app.gcs.bucket:bounswe-jobboard}")
@@ -89,14 +126,14 @@ public class WorkplaceService {
                     BlobInfo.newBuilder(gcsBucket, objectName).build(),
                     15, TimeUnit.MINUTES,
                     Storage.SignUrlOption.withV4Signature(),
-                    Storage.SignUrlOption.httpMethod(HttpMethod.GET)
-            );
+                    Storage.SignUrlOption.httpMethod(HttpMethod.GET));
             return signed.toString();
         }
     }
 
     private void deleteFromGcs(String objectName) {
-        if (objectName == null) return;
+        if (objectName == null)
+            return;
         try {
             storage.delete(gcsBucket, objectName);
         } catch (StorageException ignore) {
@@ -157,9 +194,11 @@ public class WorkplaceService {
 
     // === CREATE ===
     @Transactional
-    public WorkplaceDetailResponse create(WorkplaceCreateRequest req, User currentUser) {
-        currentUser = userRepository.findById(currentUser.getId()).orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
-        if (!isEmployer(currentUser)) throw new HandleException(ErrorCode.ACCESS_DENIED, "Employer role required");
+    public WorkplaceDetailResponse create(WorkplaceCreateRequest req, Long currentUserId) {
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new HandleException(ErrorCode.USER_NOT_FOUND, "User not found"));
+        if (!isEmployer(currentUser))
+            throw new HandleException(ErrorCode.ACCESS_DENIED, "Employer role required");
         Workplace wp = Workplace.builder()
                 .companyName(req.getCompanyName())
                 .sector(req.getSector())
@@ -167,8 +206,9 @@ public class WorkplaceService {
                 .shortDescription(req.getShortDescription())
                 .detailedDescription(req.getDetailedDescription())
                 .website(req.getWebsite())
-                //.photoUrl(req.getPhotoUrl())
-                .ethicalTags(req.getEthicalTags() == null ? new HashSet<>() : req.getEthicalTags().stream().map(EthicalPolicy::fromLabel).collect(Collectors.toSet()))
+                // .photoUrl(req.getPhotoUrl())
+                .ethicalTags(req.getEthicalTags() == null ? new HashSet<>()
+                        : req.getEthicalTags().stream().map(EthicalPolicy::fromLabel).collect(Collectors.toSet()))
                 .deleted(false)
                 .build();
 
@@ -181,7 +221,10 @@ public class WorkplaceService {
                 .build();
         employerWorkplaceRepository.save(ew);
 
-        return toDetailResponse(wp, /*includeReviews*/ false, /*reviewsLimit*/ 0);
+        activityService.logActivity(currentUser, ActivityType.CREATE_WORKPLACE,
+                wp.getId(), "Workplace");
+
+        return toDetailResponse(wp, /* includeReviews */ false, /* reviewsLimit */ 0);
     }
 
     // === LIST (brief) ===
@@ -205,19 +248,26 @@ public class WorkplaceService {
 
         List<WorkplaceBriefResponse> items = pageRes.getContent().stream()
                 .map(this::toBriefResponse)
-                .filter(wb -> ethicalTag == null || (wb.getEthicalTags() != null && wb.getEthicalTags().contains(ethicalTag)))
+                .filter(wb -> ethicalTag == null
+                        || (wb.getEthicalTags() != null && wb.getEthicalTags().contains(ethicalTag)))
                 .filter(wb -> minRating == null || (wb.getOverallAvg() != null && wb.getOverallAvg() >= minRating))
                 .collect(Collectors.toList());
         if ("ratingDesc".equals(sortBy)) {
-            items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsLast(Comparator.reverseOrder())));
+            items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg,
+                    Comparator.nullsLast(Comparator.reverseOrder())));
         } else if ("ratingAsc".equals(sortBy)) {
-            items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsFirst(Comparator.naturalOrder())));
+            items.sort(Comparator.comparing(WorkplaceBriefResponse::getOverallAvg,
+                    Comparator.nullsFirst(Comparator.naturalOrder())));
         } else if ("reviewCountDesc".equals(sortBy)) {
-            items.sort(Comparator.comparing(WorkplaceBriefResponse::getReviewCount, Comparator.nullsLast(Comparator.reverseOrder()))
-                    .thenComparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsLast(Comparator.reverseOrder())));
+            items.sort(Comparator
+                    .comparing(WorkplaceBriefResponse::getReviewCount, Comparator.nullsLast(Comparator.reverseOrder()))
+                    .thenComparing(WorkplaceBriefResponse::getOverallAvg,
+                            Comparator.nullsLast(Comparator.reverseOrder())));
         } else if ("reviewCountAsc".equals(sortBy)) {
-            items.sort(Comparator.comparing(WorkplaceBriefResponse::getReviewCount, Comparator.nullsLast(Comparator.naturalOrder()))
-                .thenComparing(WorkplaceBriefResponse::getOverallAvg, Comparator.nullsFirst(Comparator.naturalOrder())));
+            items.sort(Comparator
+                    .comparing(WorkplaceBriefResponse::getReviewCount, Comparator.nullsLast(Comparator.naturalOrder()))
+                    .thenComparing(WorkplaceBriefResponse::getOverallAvg,
+                            Comparator.nullsFirst(Comparator.naturalOrder())));
         }
         return PaginatedResponse.of(items, pageRes.getNumber(), pageRes.getSize(), pageRes.getTotalElements());
     }
@@ -232,21 +282,30 @@ public class WorkplaceService {
 
     // === UPDATE ===
     @Transactional
-    public WorkplaceDetailResponse update(Long id, WorkplaceUpdateRequest req, User currentUser) {
+    public WorkplaceDetailResponse update(Long id, WorkplaceUpdateRequest req, Long currentUserId) {
         Workplace wp = workplaceRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
 
-        assertEmployer(id, currentUser.getId());
-        // TODO: bu şirkette employer olan herkes yapabiliyor bu işi, eğer sadece iş yerini oluşturan kişi yapabilsin dersek değiştiririz
+        assertEmployer(id, currentUserId);
+        // TODO: bu şirkette employer olan herkes yapabiliyor bu işi, eğer sadece iş
+        // yerini oluşturan kişi yapabilsin dersek değiştiririz
 
-        if (req.getCompanyName() != null) wp.setCompanyName(req.getCompanyName());
-        if (req.getSector() != null) wp.setSector(req.getSector());
-        if (req.getLocation() != null) wp.setLocation(req.getLocation());
-        if (req.getShortDescription() != null) wp.setShortDescription(req.getShortDescription());
-        if (req.getDetailedDescription() != null) wp.setDetailedDescription(req.getDetailedDescription());
-        if (req.getWebsite() != null) wp.setWebsite(req.getWebsite());
-        if (req.getEthicalTags() != null) { wp.setEthicalTags(req.getEthicalTags().stream().map(EthicalPolicy::fromLabel).collect(Collectors.toSet())); }
-        //if (req.getPhotoUrl() != null) wp.setImageUrl(req.getPhotoUrl());
+        if (req.getCompanyName() != null)
+            wp.setCompanyName(req.getCompanyName());
+        if (req.getSector() != null)
+            wp.setSector(req.getSector());
+        if (req.getLocation() != null)
+            wp.setLocation(req.getLocation());
+        if (req.getShortDescription() != null)
+            wp.setShortDescription(req.getShortDescription());
+        if (req.getDetailedDescription() != null)
+            wp.setDetailedDescription(req.getDetailedDescription());
+        if (req.getWebsite() != null)
+            wp.setWebsite(req.getWebsite());
+        if (req.getEthicalTags() != null) {
+            wp.setEthicalTags(req.getEthicalTags().stream().map(EthicalPolicy::fromLabel).collect(Collectors.toSet()));
+        }
+        // if (req.getPhotoUrl() != null) wp.setImageUrl(req.getPhotoUrl());
 
         workplaceRepository.save(wp);
         return toDetailResponse(wp, false, 0);
@@ -269,10 +328,10 @@ public class WorkplaceService {
 
     // === DELETE (soft) ===
     @Transactional
-    public void softDelete(Long id, User currentUser) {
+    public void softDelete(Long id, Long currentUserId) {
         Workplace wp = workplaceRepository.findById(id)
                 .orElseThrow(() -> new HandleException(ErrorCode.WORKPLACE_NOT_FOUND, "Workplace not found"));
-        assertOwner(id, currentUser.getId());
+        assertOwner(id, currentUserId);
         wp.setDeleted(true);
         workplaceRepository.save(wp);
     }
@@ -305,8 +364,7 @@ public class WorkplaceService {
                 .filter(row -> row[1] != null)
                 .collect(Collectors.toMap(
                         row -> ((EthicalPolicy) row[0]).getLabel(),
-                        row -> oneDecimal(((Number) row[1]).doubleValue())
-                ));
+                        row -> oneDecimal(((Number) row[1]).doubleValue())));
     }
 
     public WorkplaceBriefResponse toBriefResponse(Workplace wp) {
@@ -319,7 +377,8 @@ public class WorkplaceService {
                 .sector(wp.getSector())
                 .location(wp.getLocation())
                 .shortDescription(wp.getShortDescription())
-                .ethicalTags(wp.getEthicalTags() == null ? List.of() : wp.getEthicalTags().stream().map(EthicalPolicy::getLabel).collect(Collectors.toList()))
+                .ethicalTags(wp.getEthicalTags() == null ? List.of()
+                        : wp.getEthicalTags().stream().map(EthicalPolicy::getLabel).collect(Collectors.toList()))
                 .ethicalAverages(policyAvg)
                 .overallAvg(avg)
                 .reviewCount(wp.getReviewCount())
@@ -346,21 +405,11 @@ public class WorkplaceService {
 
         List<ReviewResponse> reviews = List.of();
         if (includeReviews) {
-            Page<org.bounswe.jobboardbackend.workplace.model.Review> page = reviewRepository.findByWorkplace_Id(
-                    wp.getId(), PageRequest.of(0, Math.max(1, reviewsLimit == 0 ? 3 : reviewsLimit))
-            );
-            reviews = page.getContent().stream().map(r -> ReviewResponse.builder()
-                    .id(r.getId())
-                    .workplaceId(wp.getId())
-                    .userId(r.getUser().getId())
-                    .title(r.getTitle())
-                    .content(r.getContent())
-                    .overallRating(r.getOverallRating())
-                    .anonymous(r.isAnonymous())
-                    .helpfulCount(r.getHelpfulCount())
-                    .createdAt(r.getCreatedAt())
-                    .updatedAt(r.getUpdatedAt())
-                    .build()).toList();
+            Page<Review> page = reviewRepository.findByWorkplace_Id(
+                    wp.getId(), PageRequest.of(0, Math.max(1, reviewsLimit == 0 ? 3 : reviewsLimit)));
+            reviews = page.getContent().stream()
+                    .map(r -> reviewService.toResponse(r, false))
+                    .toList();
         }
 
         return WorkplaceDetailResponse.builder()
@@ -372,7 +421,8 @@ public class WorkplaceService {
                 .shortDescription(wp.getShortDescription())
                 .detailedDescription(wp.getDetailedDescription())
                 .website(wp.getWebsite())
-                .ethicalTags(wp.getEthicalTags() == null ? List.of() : wp.getEthicalTags().stream().map(EthicalPolicy::getLabel).collect(Collectors.toList()))
+                .ethicalTags(wp.getEthicalTags() == null ? List.of()
+                        : wp.getEthicalTags().stream().map(EthicalPolicy::getLabel).collect(Collectors.toList()))
                 .overallAvg(avg)
                 .ethicalAverages(policyAvg)
                 .recentReviews(reviews)
@@ -383,23 +433,23 @@ public class WorkplaceService {
                 .build();
     }
 
-    private Double calcAvgRating(Long workplaceId) {
-        return reviewRepository.averageOverallByWorkplaceUsingPolicies(workplaceId);
-    }
-
     private static Double oneDecimal(Double x) {
-        if (x == null) return null;
+        if (x == null)
+            return null;
         return Math.round(x * 10.0) / 10.0;
     }
 
     private void assertEmployer(Long workplaceId, Long userId) {
         boolean ok = employerWorkplaceRepository.existsByWorkplace_IdAndUser_Id(workplaceId, userId);
-        if (!ok) throw new HandleException(ErrorCode.ACCESS_DENIED, "Not an employer of this workplace");
+        if (!ok)
+            throw new HandleException(ErrorCode.ACCESS_DENIED, "Not an employer of this workplace");
     }
+
     private void assertOwner(Long workplaceId, Long userId) {
         boolean ok = employerWorkplaceRepository.existsByWorkplace_IdAndUser_IdAndRole(
                 workplaceId, userId, EmployerRole.OWNER);
-        if (!ok) throw new HandleException(ErrorCode.ACCESS_DENIED, "Not the owner of this workplace");
+        if (!ok)
+            throw new HandleException(ErrorCode.ACCESS_DENIED, "Not the owner of this workplace");
     }
 
     private boolean isEmployer(User u) {

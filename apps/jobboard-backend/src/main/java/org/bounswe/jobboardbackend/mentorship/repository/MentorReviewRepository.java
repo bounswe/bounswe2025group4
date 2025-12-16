@@ -6,4 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MentorReviewRepository extends JpaRepository<MentorReview, Long> {
+    
+    // Badge methods
+    long countByReviewerId(Long reviewerId);
+
+    void deleteByReviewerId(Long reviewerId);
 }

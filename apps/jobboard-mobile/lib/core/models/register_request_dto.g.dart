@@ -11,8 +11,12 @@ _$RegisterRequestDtoImpl _$$RegisterRequestDtoImplFromJson(
 ) => _$RegisterRequestDtoImpl(
   username: json['username'] as String,
   email: json['email'] as String,
-  password: json['password'] as String,
   role: $enumDecode(_$UserTypeEnumMap, json['role']),
+  password: json['password'] as String,
+  firstName: json['firstName'] as String,
+  lastName: json['lastName'] as String,
+  pronounSet: json['pronounSet'] as String,
+  bio: json['bio'] as String,
 );
 
 Map<String, dynamic> _$$RegisterRequestDtoImplToJson(
@@ -20,8 +24,12 @@ Map<String, dynamic> _$$RegisterRequestDtoImplToJson(
 ) => <String, dynamic>{
   'username': instance.username,
   'email': instance.email,
-  'password': instance.password,
   'role': _$UserTypeEnumMap[instance.role]!,
+  'password': instance.password,
+  'firstName': instance.firstName,
+  'lastName': instance.lastName,
+  'pronounSet': instance.pronounSet,
+  'bio': instance.bio,
 };
 
 const _$UserTypeEnumMap = {

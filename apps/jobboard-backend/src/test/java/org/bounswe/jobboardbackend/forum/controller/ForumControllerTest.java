@@ -10,10 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,10 +32,10 @@ class ForumControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private ForumService forumService;
 
-    @MockBean
+    @MockitoBean
     private UserRepository userRepository;
 
     @Autowired
@@ -67,7 +68,14 @@ class ForumControllerTest {
     @Test
     @WithMockUser
     void getAllPosts_ShouldReturnOk() throws Exception {
-        when(forumService.findAllPosts()).thenReturn(List.of(PostResponse.builder().build()));
+
+        User mockUser = new User();
+        mockUser.setId(99L);
+        mockUser.setUsername("user");
+        
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(mockUser));
+        
+        when(forumService.findAllPosts(any())).thenReturn(List.of(PostResponse.builder().build()));
 
         mockMvc.perform(get("/api/forum/posts"))
                 .andExpect(status().isOk())
@@ -77,11 +85,17 @@ class ForumControllerTest {
     @Test
     @WithMockUser
     void getPostById_ShouldReturnOk() throws Exception {
+        User mockUser = new User();
+        mockUser.setId(99L);
+        mockUser.setUsername("user");
+
+        when(userRepository.findByUsername("user")).thenReturn(Optional.of(mockUser));
+
         PostResponse response = PostResponse.builder()
                 .id(1L)
                 .build();
-
-        when(forumService.findPostById(1L)).thenReturn(response);
+        
+        when(forumService.findPostById(eq(1L), any())).thenReturn(response);
 
         mockMvc.perform(get("/api/forum/posts/1"))
                 .andExpect(status().isOk())

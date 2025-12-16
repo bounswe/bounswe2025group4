@@ -1,17 +1,28 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import WorkplacesPage from '@/pages/WorkplacesPage';
-import { describe, it, expect } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { describe, it, expect, vi } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
-import { server } from '@/test/setup';
+import { server } from '@/__tests__/setup';
 import { http, HttpResponse } from 'msw';
-import { API_BASE_URL } from '@/test/handlers';
+import { API_BASE_URL } from '@/__tests__/handlers';
+
+vi.mock('@/modules/auth/contexts/AuthContext', () => ({
+  useAuth: () => ({ user: null, isAuthenticated: false }),
+}));
+
+import WorkplacesPage from '@modules/workplace/pages/WorkplacesPage';
 
 describe('WorkplacesPage Integration', () => {
   const renderPage = () => {
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
     return render(
-      <BrowserRouter>
-        <WorkplacesPage />
-      </BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <WorkplacesPage />
+        </BrowserRouter>
+      </QueryClientProvider>
     );
   };
 
@@ -30,13 +41,8 @@ describe('WorkplacesPage Integration', () => {
   it('fetches and displays workplaces', async () => {
     renderPage();
 
-    // Wait for loading to finish
-    await waitFor(() => {
-      expect(screen.queryByRole('status')).not.toBeInTheDocument();
-    });
-
-    // Check if mock workplaces are displayed
-    expect(screen.getByText('Tech Corp')).toBeInTheDocument();
+    // Wait for workplaces to render
+    expect(await screen.findByText('Tech Corp')).toBeInTheDocument();
     expect(screen.getByText('Green Energy Inc')).toBeInTheDocument();
   });
 
@@ -119,9 +125,7 @@ describe('WorkplacesPage Integration', () => {
 
     renderPage();
 
-    await waitFor(() => {
-      expect(screen.getByText('workplaces.loadError')).toBeInTheDocument();
-    });
+    expect(await screen.findAllByText(/Something went wrong/i)).toBeTruthy();
     
     const retryButton = screen.getByRole('button', { name: /Try Again/i });
     expect(retryButton).toBeInTheDocument();

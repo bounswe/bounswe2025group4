@@ -1,14 +1,15 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { http, HttpResponse } from 'msw';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { server } from '@/test/setup';
-import { API_BASE_URL } from '@/test/handlers';
-import PublicProfilePage from '@/pages/PublicProfilePage';
-import type { PublicProfile } from '@/types/profile.types';
-import { I18nProvider } from '@/providers/I18nProvider';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { useAuthStore } from '@/stores/authStore';
+import { server } from '@/__tests__/setup';
+import { API_BASE_URL } from '@/__tests__/handlers';
+import ProfilePage from '@modules/profile/pages/ProfilePage';
+import type { PublicProfile } from '@shared/types/profile.types';
+import { I18nProvider } from '@shared/providers/I18nProvider';
+import { AuthProvider } from '@/modules/auth/contexts/AuthContext';
+import { useAuthStore } from '@shared/stores/authStore';
 import { ToastContainer } from 'react-toastify';
 
 // Mock react-toastify to prevent console errors in tests
@@ -21,7 +22,7 @@ vi.mock('react-toastify', () => ({
 }));
 
 // Mock CenteredLoader component
-vi.mock('@/components/CenteredLoader', () => ({
+vi.mock('@shared/components/common/CenteredLoader', () => ({
   default: () => <div data-testid="centered-loader">Loading...</div>,
 }));
 
@@ -53,6 +54,8 @@ describe('Public Profile Route Integration', () => {
         endDate: undefined
       }
     ],
+    skills: [],
+    interests: [],
     badges: []
   };
 
@@ -66,7 +69,7 @@ describe('Public Profile Route Integration', () => {
       [
         {
           path: '/profile/:userId',
-          element: <PublicProfilePage />,
+          element: <ProfilePage />,
         },
         {
           path: '/profile',
@@ -87,17 +90,25 @@ describe('Public Profile Route Integration', () => {
     );
   };
 
-  const renderWithRouter = (router: any) => {
+  const renderWithRouter = (router: ReturnType<typeof createRouterWithProfile>) => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
     // Clear auth store state before rendering to ensure clean test environment
     useAuthStore.getState().clearSession();
     
     return render(
-      <I18nProvider>
-        <AuthProvider>
-          <RouterProvider router={router} />
-          <ToastContainer />
-        </AuthProvider>
-      </I18nProvider>
+      <QueryClientProvider client={queryClient}>
+        <I18nProvider>
+          <AuthProvider>
+            <RouterProvider router={router} />
+            <ToastContainer />
+          </AuthProvider>
+        </I18nProvider>
+      </QueryClientProvider>
     );
   };
 
@@ -189,7 +200,7 @@ describe('Public Profile Route Integration', () => {
       // Assert
       await waitFor(() => {
         expect(screen.getByText('Alice Johnson')).toBeInTheDocument();
-        expect(screen.getByText('profile.public.note')).toBeInTheDocument();
+        expect(screen.getByText(/profile\.header\.badges/)).toBeInTheDocument();
       });
 
       // Should not render private profile elements
@@ -202,7 +213,7 @@ describe('Public Profile Route Integration', () => {
         [
           {
             path: '/profile/:userId',
-            element: <PublicProfilePage />,
+            element: <ProfilePage />,
           },
           {
             path: '/profile',
@@ -243,11 +254,10 @@ describe('Public Profile Route Integration', () => {
 
       // Assert - URL should remain intact during tab switches
       expect(router.state.location.pathname).toBe('/profile/456');
-      
-      // Tab navigation shouldn't change URL
-      const activityTab = screen.getByRole('button', { name: 'profile.tabs.activity' });
-      expect(activityTab).toBeInTheDocument();
-      
+
+      // Activity tab should not be present in public view
+      expect(screen.queryByRole('button', { name: 'profile.tabs.activity' })).not.toBeInTheDocument();
+
       // URL should still be the same
       expect(router.state.location.pathname).toBe('/profile/456');
     });
@@ -264,7 +274,7 @@ describe('Public Profile Route Integration', () => {
         [
           {
             path: '/profile/:userId',
-            element: <PublicProfilePage />,
+            element: <ProfilePage />,
           },
           {
             path: '/',
@@ -285,7 +295,9 @@ describe('Public Profile Route Integration', () => {
       });
 
       // Simulate back navigation
-      router.navigate(-1);
+      await act(async () => {
+        await router.navigate(-1);
+      });
 
       // Assert
       await waitFor(() => {
@@ -303,7 +315,7 @@ describe('Public Profile Route Integration', () => {
         [
           {
             path: '/profile/:userId',
-            element: <PublicProfilePage />,
+            element: <ProfilePage />,
           },
         ],
         {
