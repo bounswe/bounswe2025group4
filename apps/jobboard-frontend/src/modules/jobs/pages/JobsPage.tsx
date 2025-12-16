@@ -48,7 +48,7 @@ function convertJobPostToJob(jobPost: JobPostResponse): Job {
       ethicalTags: [],
       ethicalAverages: {},
     },
-    location: jobPost.remote ? 'Remote' : jobPost.location,
+    remote: jobPost.remote,
     type,
     minSalary: Math.floor(jobPost.minSalary / 1000), // Convert to 'k' format
     maxSalary: Math.floor(jobPost.maxSalary / 1000),

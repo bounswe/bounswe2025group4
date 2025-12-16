@@ -84,7 +84,7 @@ export type Job = {
   title: string;
   description?: string;
   workplace: WorkplaceBriefResponse;
-  location: string;
+  remote: boolean;
   type: JobType[];
   minSalary: number;
   maxSalary: number;

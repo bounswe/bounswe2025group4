@@ -161,10 +161,11 @@ export {
 };
 
 // Hooks
-export const useMyWorkplacesQuery = () =>
+export const useMyWorkplacesQuery = (enabled = true) =>
   useQueryWithToast<EmployerWorkplaceBrief[]>({
     queryKey: employerKeys.workplaces,
     queryFn: fetchMyWorkplaces,
+    enabled,
   });
 
 export const useWorkplaceEmployersQuery = (workplaceId?: number, enabled = true) =>

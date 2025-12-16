@@ -42,8 +42,6 @@ export function JobCard({ job }: JobCardProps) {
     return t(`jobs.tags.tags.${key ?? tag}`, tag);
   });
   const jobTypes = job.type.map((type) => t(jobTypeLabelKeyMap[type] ?? type));
-  const location =
-    job.location.toLowerCase() === 'remote' ? t('jobs.card.remote') : job.location;
 
   return (
     <Card
@@ -121,7 +119,7 @@ export function JobCard({ job }: JobCardProps) {
             </span>
             <span className="flex items-center gap-1">
               <MapPin className="size-4 text-primary" aria-hidden />
-              {location}
+              {job.remote ? t('jobs.card.remote') : job.workplace.location}
             </span>
           </div>
         </div>

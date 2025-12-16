@@ -17,7 +17,7 @@ vi.mock('react-router-dom', async () => {
 const baseJob: Job = {
   id: '1',
   title: 'Principal Engineer',
-  location: 'Remote',
+  remote: true,
   type: ['Full-time'],
   minSalary: 150,
   maxSalary: 200,

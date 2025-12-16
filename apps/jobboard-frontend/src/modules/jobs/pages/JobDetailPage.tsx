@@ -102,14 +102,18 @@ export default function JobDetailPage() {
     });
   }, [jobView]);
 
-  const myWorkplacesQuery = useMyWorkplacesQuery();
+  const isEmployerRole = user?.role === 'ROLE_EMPLOYER';
+  const isJobSeeker = user?.role === 'ROLE_JOBSEEKER';
+  
+  // Only fetch workplaces if user is authenticated, is an employer, and job data is loaded
+  const shouldFetchWorkplaces = Boolean(isAuthenticated && isEmployerRole && jobView?.workplace?.id);
+  const myWorkplacesQuery = useMyWorkplacesQuery(shouldFetchWorkplaces);
+  
   const isEmployerForWorkplace = useMemo(() => {
     if (!jobView?.workplace?.id) return false;
     return (myWorkplacesQuery.data ?? []).some((wp) => wp.workplace.id === jobView.workplace.id);
   }, [jobView?.workplace?.id, myWorkplacesQuery.data]);
 
-  const isEmployerRole = user?.role === 'ROLE_EMPLOYER';
-  const isJobSeeker = user?.role === 'ROLE_JOBSEEKER';
   const canEdit = Boolean(isEmployerRole && isEmployerForWorkplace);
   const showApplyButton = Boolean(isJobSeeker);
 

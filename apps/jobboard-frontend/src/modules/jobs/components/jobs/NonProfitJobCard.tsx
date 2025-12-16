@@ -24,9 +24,9 @@ export function NonProfitJobCard({ job }: NonProfitJobCardProps) {
     .map((tag) => t(`jobs.tags.tags.${TAG_TO_KEY_MAP[tag as keyof typeof TAG_TO_KEY_MAP]}`, tag));
   
   // Handle location display with fallbacks
-  const location = job.location?.toLowerCase() === 'remote' 
+  const location = job.remote 
     ? t('jobs.card.remote') 
-    : job.location || job.workplace.location || t('jobs.card.notSpecified');
+    : job.workplace.location || t('jobs.card.notSpecified');
 
   return (
     <Card

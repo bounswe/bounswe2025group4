@@ -23,7 +23,7 @@ describe('JobCard', () => {
       companyName: 'Tech Corp',
       imageUrl: 'https://example.com/logo.png',
       sector: 'Technology',
-      location: 'San Francisco',
+      location: 'San Francisco, CA',
       shortDescription: 'A tech company',
       overallAvg: 4.5,
       ethicalTags: ['Salary Transparency', 'Remote-Friendly'],
@@ -32,7 +32,7 @@ describe('JobCard', () => {
         'Remote-Friendly': 4.3,
       },
     },
-    location: 'San Francisco, CA',
+    remote: false,
     type: ['Full-time'],
     minSalary: 100,
     maxSalary: 150,
@@ -141,14 +141,29 @@ describe('JobCard', () => {
     expect(screen.queryByText('jobs.card.inclusiveOpportunity')).not.toBeInTheDocument();
   });
 
-  it('displays "Remote" when location is "remote"', () => {
+  it('displays "Remote" when job is remote', () => {
     const job = createMockJobForCard({
-      location: 'remote',
+      remote: true,
     });
 
     renderWithProviders(<JobCard job={job} />);
 
     expect(screen.getByText('jobs.card.remote')).toBeInTheDocument();
+  });
+
+  it('displays workplace location when job is not remote', () => {
+    const job = createMockJobForCard({
+      remote: false,
+      workplace: {
+        ...createMockJobForCard().workplace,
+        location: 'New York, NY',
+      },
+    });
+
+    renderWithProviders(<JobCard job={job} />);
+
+    expect(screen.getByText('New York, NY')).toBeInTheDocument();
+    expect(screen.queryByText('jobs.card.remote')).not.toBeInTheDocument();
   });
 
   it('displays multiple job types correctly', () => {
@@ -287,7 +302,11 @@ describe('JobCard', () => {
 
   it('handles international location names', () => {
     const job = createMockJobForCard({
-      location: 'São Paulo, Brasil',
+      remote: false,
+      workplace: {
+        ...createMockJobForCard().workplace,
+        location: 'São Paulo, Brasil',
+      },
     });
 
     renderWithProviders(<JobCard job={job} />);

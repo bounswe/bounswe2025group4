@@ -19,12 +19,21 @@ function convertJobPostToJob(jobPost: JobPostResponse): Job {
     id: jobPost.id.toString(),
     title: jobPost.title,
     description: jobPost.description,
-    workplace: jobPost.workplace,
-    location: jobPost.remote ? 'Remote' : jobPost.location,
+    workplace: jobPost.workplace || {
+      id: 0,
+      companyName: 'Unknown Organization',
+      sector: 'Non-profit',
+      location: 'Unknown',
+      shortDescription: undefined,
+      overallAvg: 0,
+      ethicalTags: [],
+      ethicalAverages: {},
+    },
+    remote: jobPost.remote,
     type: ['Contract'], // Using 'Contract' type for volunteer/nonprofit positions
     minSalary: 0, // Non-profit jobs don't have salary
     maxSalary: 0,
-    logoUrl: jobPost.workplace.imageUrl,
+    logoUrl: jobPost.workplace?.imageUrl,
     inclusiveOpportunity: jobPost.inclusiveOpportunity,
     nonProfit: jobPost.nonProfit,
   };
