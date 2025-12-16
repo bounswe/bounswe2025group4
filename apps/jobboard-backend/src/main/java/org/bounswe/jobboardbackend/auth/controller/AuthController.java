@@ -31,7 +31,9 @@ public class AuthController {
     @Operation(summary = "Initiate Login", description = "Initiates the login process by validating credentials and potentially sending an OTP.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login initiated successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 400, \"error\": \"Bad Request\", \"code\": \"INVALID_CREDENTIALS\", \"message\": \"Invalid username or password\", \"path\": \"/api/auth/login\" }")))
+            @ApiResponse(responseCode = "401", description = "Email not verified", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 401, \"error\": \"Unauthorized\", \"code\": \"EMAIL_NOT_VERIFIED\", \"message\": \"Email not verified. Please verify your email.\", \"path\": \"/api/auth/login\" }"))),
+            @ApiResponse(responseCode = "403", description = "Account banned", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 403, \"error\": \"Forbidden\", \"code\": \"ACCOUNT_BANNED\", \"message\": \"Your account has been banned.\", \"path\": \"/api/auth/login\" }"))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 404, \"error\": \"Not Found\", \"code\": \"USER_NOT_FOUND\", \"message\": \"User not found. Please check your username.\", \"path\": \"/api/auth/login\" }")))
     })
     @PostMapping("/login")
     public ResponseEntity<OtpRequestResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -43,7 +45,10 @@ public class AuthController {
     @Operation(summary = "Verify OTP", description = "Verifies the OTP sent to the user and issues a JWT if successful.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OTP verified, JWT issued"),
-            @ApiResponse(responseCode = "400", description = "Invalid OTP or credentials", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 400, \"error\": \"Bad Request\", \"code\": \"INVALID_TOKEN\", \"message\": \"Invalid or expired token\", \"path\": \"/api/auth/login/verify\" }")))
+            @ApiResponse(responseCode = "400", description = "Invalid OTP or token", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 400, \"error\": \"Bad Request\", \"code\": \"INVALID_TOKEN\", \"message\": \"Invalid or expired token\", \"path\": \"/api/auth/login/verify\" }"))),
+            @ApiResponse(responseCode = "401", description = "Email not verified", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 401, \"error\": \"Unauthorized\", \"code\": \"EMAIL_NOT_VERIFIED\", \"message\": \"Email not verified. Please verify your email.\", \"path\": \"/api/auth/login/verify\" }"))),
+            @ApiResponse(responseCode = "403", description = "Account banned", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 403, \"error\": \"Forbidden\", \"code\": \"ACCOUNT_BANNED\", \"message\": \"Your account has been banned.\", \"path\": \"/api/auth/login/verify\" }"))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 404, \"error\": \"Not Found\", \"code\": \"USER_NOT_FOUND\", \"message\": \"User not found\", \"path\": \"/api/auth/login/verify\" }")))
     })
     @PostMapping("/login/verify")
     public ResponseEntity<JwtResponse> verifyOtp(@Valid @RequestBody OtpVerifyRequest otpVerifyRequest) {
@@ -53,7 +58,9 @@ public class AuthController {
     @Operation(summary = "Register User", description = "Registers a new user and sends a verification email.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User registered successfully, verification email sent"),
-            @ApiResponse(responseCode = "400", description = "Invalid registration data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 400, \"error\": \"Bad Request\", \"code\": \"USER_ALREADY_EXISTS\", \"message\": \"User already exists with verified email\", \"path\": \"/api/auth/register\" }")))
+            @ApiResponse(responseCode = "400", description = "Invalid registration data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 400, \"error\": \"Bad Request\", \"code\": \"VALIDATION_FAILED\", \"message\": \"Validation failed\", \"path\": \"/api/auth/register\" }"))),
+            @ApiResponse(responseCode = "401", description = "Invalid role", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 401, \"error\": \"Unauthorized\", \"code\": \"ROLE_INVALID\", \"message\": \"User has no role assigned\", \"path\": \"/api/auth/register\" }"))),
+            @ApiResponse(responseCode = "409", description = "User already exists", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 409, \"error\": \"Conflict\", \"code\": \"USER_ALREADY_EXISTS\", \"message\": \"User already exists with verified email\", \"path\": \"/api/auth/register\" }")))
     })
     @PostMapping("/register")
     public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
@@ -65,7 +72,8 @@ public class AuthController {
     @Operation(summary = "Verify Email", description = "Verifies the user's email address using a token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Email verified successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid or expired token", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 400, \"error\": \"Bad Request\", \"code\": \"INVALID_TOKEN\", \"message\": \"Invalid token\", \"path\": \"/api/auth/verify-email\" }")))
+            @ApiResponse(responseCode = "400", description = "Invalid or expired token", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 400, \"error\": \"Bad Request\", \"code\": \"INVALID_TOKEN\", \"message\": \"Invalid token\", \"path\": \"/api/auth/verify-email\" }"))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 404, \"error\": \"Not Found\", \"code\": \"USER_NOT_FOUND\", \"message\": \"User not found\", \"path\": \"/api/auth/verify-email\" }")))
     })
     @PostMapping("/verify-email")
     public ResponseEntity<MessageResponse> verifyEmail(@Valid @RequestBody VerifyRequest verifyRequest) {
@@ -78,7 +86,9 @@ public class AuthController {
     @Operation(summary = "Request Password Reset", description = "Requests a password reset link to be sent to the user's email.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Reset link request processed"),
-            @ApiResponse(responseCode = "400", description = "Invalid email format", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 400, \"error\": \"Bad Request\", \"code\": \"USER_NOT_FOUND\", \"message\": \"User not found\", \"path\": \"/api/auth/password-reset\" }")))
+            @ApiResponse(responseCode = "400", description = "Invalid email format", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 400, \"error\": \"Bad Request\", \"code\": \"VALIDATION_FAILED\", \"message\": \"Invalid email format\", \"path\": \"/api/auth/password-reset\" }"))),
+            @ApiResponse(responseCode = "401", description = "Email not verified", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 401, \"error\": \"Unauthorized\", \"code\": \"EMAIL_NOT_VERIFIED\", \"message\": \"Email not verified.\", \"path\": \"/api/auth/password-reset\" }"))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(value = "{ \"timestamp\": \"2023-10-01T12:00:00\", \"status\": 404, \"error\": \"Not Found\", \"code\": \"USER_NOT_FOUND\", \"message\": \"User not found\", \"path\": \"/api/auth/password-reset\" }")))
     })
     @PostMapping("/password-reset")
     public ResponseEntity<MessageResponse> requestReset(@Valid @RequestBody PasswordResetRequest resetRequest) {

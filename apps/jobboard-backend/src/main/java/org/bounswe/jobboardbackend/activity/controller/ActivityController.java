@@ -30,7 +30,7 @@ public class ActivityController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<Page<Activity>> getUserActivities(
             @Parameter(description = "ID of the user") @PathVariable Long userId,
-            @Parameter(description = "Pagination information") Pageable pageable) {
+            @Parameter(hidden = true) Pageable pageable) {
         return ResponseEntity.ok(activityService.getActivitiesByActor(userId, pageable));
     }
 }
