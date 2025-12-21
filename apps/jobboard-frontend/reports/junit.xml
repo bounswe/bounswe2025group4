@@ -1,0 +1,1685 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="204" failures="0" errors="0" time="81.5199454">
+    <testsuite name="src/__tests__/integration/HomePageDashboardStats.test.tsx" timestamp="2025-12-21T02:34:22.949Z" hostname="DESKTOP-6RADH0P" tests="1" failures="0" errors="0" skipped="0" time="0.3867756">
+        <testcase classname="src/__tests__/integration/HomePageDashboardStats.test.tsx" name="HomePage community dashboard stats &gt; renders forum statistics from dashboard endpoint" time="0.3769642">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/integration/PublicProfileRoute.test.tsx" timestamp="2025-12-21T02:34:22.963Z" hostname="DESKTOP-6RADH0P" tests="9" failures="0" errors="0" skipped="0" time="0.8511314">
+        <testcase classname="src/__tests__/integration/PublicProfileRoute.test.tsx" name="Public Profile Route Integration &gt; Route Parameter Handling &gt; correctly extracts userId from URL and passes to component" time="0.2034056">
+        </testcase>
+        <testcase classname="src/__tests__/integration/PublicProfileRoute.test.tsx" name="Public Profile Route Integration &gt; Route Parameter Handling &gt; handles numeric user IDs correctly" time="0.0647609">
+        </testcase>
+        <testcase classname="src/__tests__/integration/PublicProfileRoute.test.tsx" name="Public Profile Route Integration &gt; Route Parameter Handling &gt; handles large user IDs correctly" time="0.0454704">
+        </testcase>
+        <testcase classname="src/__tests__/integration/PublicProfileRoute.test.tsx" name="Public Profile Route Integration &gt; Route vs Private Profile Distinction &gt; renders PublicProfilePage for /profile/:userId routes" time="0.0493179">
+        </testcase>
+        <testcase classname="src/__tests__/integration/PublicProfileRoute.test.tsx" name="Public Profile Route Integration &gt; Route vs Private Profile Distinction &gt; would render different component for /profile route (without userId)" time="0.0035636">
+        </testcase>
+        <testcase classname="src/__tests__/integration/PublicProfileRoute.test.tsx" name="Public Profile Route Integration &gt; Navigation and URL Updates &gt; maintains URL parameters during tab navigation" time="0.2279226">
+        </testcase>
+        <testcase classname="src/__tests__/integration/PublicProfileRoute.test.tsx" name="Public Profile Route Integration &gt; Navigation and URL Updates &gt; handles browser back/forward navigation" time="0.0628681">
+        </testcase>
+        <testcase classname="src/__tests__/integration/PublicProfileRoute.test.tsx" name="Public Profile Route Integration &gt; Route Parameter Edge Cases &gt; handles empty user ID parameter gracefully" time="0.0104882">
+            <system-err>
+No routes matched location &quot;/profile/&quot; 
+Error handled by React Router default ErrorBoundary: ErrorResponseImpl {
+  status: [33m404[39m,
+  statusText: [32m&apos;Not Found&apos;[39m,
+  internal: [33mtrue[39m,
+  data: [32m&apos;Error: No route matches URL &quot;/profile/&quot;&apos;[39m,
+  error: Error: No route matches URL &quot;/profile/&quot;
+      at getInternalRouterError [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/react-router@7.9.4_react-do_6b018ceab44ad2666891e706c5f8716c/node_modules/[4mreact-router[24m/dist/development/chunk-OIYGIGL5.mjs:4652:5[90m)[39m
+      at createRouter [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/react-router@7.9.4_react-do_6b018ceab44ad2666891e706c5f8716c/node_modules/[4mreact-router[24m/dist/development/chunk-OIYGIGL5.mjs:1025:17[90m)[39m
+      at Proxy.createMemoryRouter [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/react-router@7.9.4_react-do_6b018ceab44ad2666891e706c5f8716c/node_modules/[4mreact-router[24m/dist/development/chunk-OIYGIGL5.mjs:5637:10[90m)[39m
+      at C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/src/__tests__/integration/PublicProfileRoute.test.tsx:314:22
+      at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:157:11
+      at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:753:26
+      at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1636:20
+      at new Promise (&lt;anonymous&gt;)
+      at runWithTimeout [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1602:10[90m)[39m
+      at runTest [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1309:12[90m)[39m
+}
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/integration/PublicProfileRoute.test.tsx" name="Public Profile Route Integration &gt; Loading State Management in Route Context &gt; shows loading state immediately when route is accessed" time="0.1762055">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/services/profileService.getPublicProfile.test.ts" timestamp="2025-12-21T02:34:22.968Z" hostname="DESKTOP-6RADH0P" tests="8" failures="0" errors="0" skipped="0" time="0.1016523">
+        <testcase classname="src/__tests__/services/profileService.getPublicProfile.test.ts" name="Profile Service - getPublicProfile &gt; successful requests &gt; should fetch public profile successfully" time="0.0446378">
+        </testcase>
+        <testcase classname="src/__tests__/services/profileService.getPublicProfile.test.ts" name="Profile Service - getPublicProfile &gt; successful requests &gt; should handle public profile without optional fields" time="0.0083061">
+        </testcase>
+        <testcase classname="src/__tests__/services/profileService.getPublicProfile.test.ts" name="Profile Service - getPublicProfile &gt; error handling &gt; should handle 404 user not found" time="0.0129749">
+        </testcase>
+        <testcase classname="src/__tests__/services/profileService.getPublicProfile.test.ts" name="Profile Service - getPublicProfile &gt; error handling &gt; should handle 500 server error" time="0.0058399">
+        </testcase>
+        <testcase classname="src/__tests__/services/profileService.getPublicProfile.test.ts" name="Profile Service - getPublicProfile &gt; error handling &gt; should handle network errors" time="0.004845">
+        </testcase>
+        <testcase classname="src/__tests__/services/profileService.getPublicProfile.test.ts" name="Profile Service - getPublicProfile &gt; error handling &gt; should handle malformed response data" time="0.0042376">
+        </testcase>
+        <testcase classname="src/__tests__/services/profileService.getPublicProfile.test.ts" name="Profile Service - getPublicProfile &gt; request parameters &gt; should send correct user ID in URL path" time="0.0041553">
+        </testcase>
+        <testcase classname="src/__tests__/services/profileService.getPublicProfile.test.ts" name="Profile Service - getPublicProfile &gt; request parameters &gt; should handle large user IDs correctly" time="0.0075351">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/auth/pages/LoginPage.test.tsx" timestamp="2025-12-21T02:34:22.970Z" hostname="DESKTOP-6RADH0P" tests="4" failures="0" errors="0" skipped="0" time="3.3459027">
+        <testcase classname="src/__tests__/auth/pages/LoginPage.test.tsx" name="LoginPage &gt; signs in successfully and navigates home" time="1.5665646">
+        </testcase>
+        <testcase classname="src/__tests__/auth/pages/LoginPage.test.tsx" name="LoginPage &gt; redirects to OTP verification when temporary token is returned" time="0.9173723">
+        </testcase>
+        <testcase classname="src/__tests__/auth/pages/LoginPage.test.tsx" name="LoginPage &gt; surfaces invalid credential errors from the API" time="0.7505629">
+        </testcase>
+        <testcase classname="src/__tests__/auth/pages/LoginPage.test.tsx" name="LoginPage &gt; shows success message when provided via navigation state" time="0.1018508">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/auth/pages/RegisterPage.test.tsx" timestamp="2025-12-21T02:34:22.972Z" hostname="DESKTOP-6RADH0P" tests="3" failures="0" errors="0" skipped="0" time="9.6635318">
+        <testcase classname="src/__tests__/auth/pages/RegisterPage.test.tsx" name="RegisterPage &gt; shows a success message when registration completes" time="3.6194618">
+        </testcase>
+        <testcase classname="src/__tests__/auth/pages/RegisterPage.test.tsx" name="RegisterPage &gt; maps backend duplicate email errors to localized copy" time="2.9467549">
+        </testcase>
+        <testcase classname="src/__tests__/auth/pages/RegisterPage.test.tsx" name="RegisterPage &gt; shows a service unavailable message on 401 responses" time="3.0877477">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/auth/pages/ResetPasswordPage.test.tsx" timestamp="2025-12-21T02:34:22.973Z" hostname="DESKTOP-6RADH0P" tests="3" failures="0" errors="0" skipped="0" time="2.9417113">
+        <testcase classname="src/__tests__/auth/pages/ResetPasswordPage.test.tsx" name="ResetPasswordPage &gt; requires a token in the query string" time="0.1287486">
+        </testcase>
+        <testcase classname="src/__tests__/auth/pages/ResetPasswordPage.test.tsx" name="ResetPasswordPage &gt; submits a new password and redirects to login with success message" time="1.5461646">
+        </testcase>
+        <testcase classname="src/__tests__/auth/pages/ResetPasswordPage.test.tsx" name="ResetPasswordPage &gt; shows translated error when backend rejects password reuse" time="1.2568696">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" timestamp="2025-12-21T02:34:22.974Z" hostname="DESKTOP-6RADH0P" tests="20" failures="0" errors="0" skipped="1" time="6.1315193">
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; redirects when user is not authenticated" time="0.1157963">
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; shows loading state during data fetch" time="0">
+            <skipped/>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; displays empty state when user belongs to no workplaces" time="0.1807383">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; renders job list with title, status badges, and application counts" time="1.2635533">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; navigates to create job page on button click" time="0.1815391">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; navigates to manage job page when clicking job row" time="0.4430056">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; handles API errors gracefully with error message" time="0.3678295">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; defaults application count to 0 if fetch fails" time="0.3589178">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; displays correct status badge variants (OPEN, ACTIVE, PAUSED)" time="0.0983337">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; handles parallel application count fetches for multiple jobs" time="0.127558">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; displays very long job titles correctly" time="0.107902">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; handles large number of jobs" time="0.4980319">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; displays high application counts correctly" time="0.1169236">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; retries loading jobs when retry button is clicked" time="0.3676358">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; displays jobs with special characters in title" time="0.107676">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; navigates to create job from empty state button" time="0.2090541">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; shows correct application count when some jobs have applications and others do not" time="0.5038698">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; handles jobs with missing or undefined fields gracefully" time="0.085818">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; displays multiple manage buttons for multiple jobs" time="0.4713669">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/employer/pages/EmployerDashboardPage.test.tsx" name="EmployerDashboardPage &gt; navigates to correct job when clicking different manage buttons" time="0.5138928">
+            <system-err>
+An update to EmployerDashboardPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to AuthProvider inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/jobs/pages/JobsPage.test.tsx" timestamp="2025-12-21T02:34:22.981Z" hostname="DESKTOP-6RADH0P" tests="4" failures="0" errors="0" skipped="0" time="2.2626555">
+        <testcase classname="src/__tests__/jobs/pages/JobsPage.test.tsx" name="JobsPage integration &gt; renders jobs from the API" time="0.5990989">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/pages/JobsPage.test.tsx" name="JobsPage integration &gt; applies search queries to API requests and filters results" time="1.0520653">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/pages/JobsPage.test.tsx" name="JobsPage integration &gt; shows an auth prompt when the jobs API responds with 401" time="0.5286387">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/pages/JobsPage.test.tsx" name="JobsPage integration &gt; hides workplaces tab for employer users" time="0.0709669">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/profile/pages/ProfilePage.test.tsx" timestamp="2025-12-21T02:34:22.983Z" hostname="DESKTOP-6RADH0P" tests="4" failures="0" errors="0" skipped="0" time="4.4100049">
+        <testcase classname="src/__tests__/profile/pages/ProfilePage.test.tsx" name="ProfilePage &gt; renders owner profile with editable sections and danger zone" time="1.9829288">
+        </testcase>
+        <testcase classname="src/__tests__/profile/pages/ProfilePage.test.tsx" name="ProfilePage &gt; switches tabs to show activity and posts content" time="1.3219131">
+        </testcase>
+        <testcase classname="src/__tests__/profile/pages/ProfilePage.test.tsx" name="ProfilePage &gt; renders public view for other users without edit controls" time="0.2150688">
+        </testcase>
+        <testcase classname="src/__tests__/profile/pages/ProfilePage.test.tsx" name="ProfilePage &gt; shows create profile modal when owner profile is missing and submits data" time="0.8807701">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/profile/components/AboutSection.test.tsx" timestamp="2025-12-21T02:34:22.984Z" hostname="DESKTOP-6RADH0P" tests="3" failures="0" errors="0" skipped="0" time="0.6318295">
+        <testcase classname="src/__tests__/profile/components/AboutSection.test.tsx" name="AboutSection (unit) &gt; renders bio text when provided" time="0.1118143">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/AboutSection.test.tsx" name="AboutSection (unit) &gt; shows add-bio prompt and triggers edit when no bio" time="0.3995058">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/AboutSection.test.tsx" name="AboutSection (unit) &gt; calls onEdit when edit button is pressed" time="0.1093117">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/profile/components/ProfileHeader.test.tsx" timestamp="2025-12-21T02:34:22.985Z" hostname="DESKTOP-6RADH0P" tests="3" failures="0" errors="0" skipped="0" time="0.1560385">
+        <testcase classname="src/__tests__/profile/components/ProfileHeader.test.tsx" name="ProfileHeader (unit) &gt; renders core fields and uses translation keys with current role" time="0.1157623">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/ProfileHeader.test.tsx" name="ProfileHeader (unit) &gt; falls back to open to opportunities copy when no active job" time="0.0135327">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/ProfileHeader.test.tsx" name="ProfileHeader (unit) &gt; calls edit image handler when button is clicked" time="0.0185504">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/profile/components/PublicViewMode.test.tsx" timestamp="2025-12-21T02:34:22.986Z" hostname="DESKTOP-6RADH0P" tests="19" failures="0" errors="0" skipped="0" time="0.5764775">
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; AboutSection &gt; hides edit button when isPublicView is true" time="0.085522">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; AboutSection &gt; shows edit button when isPublicView is false" time="0.0446924">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; AboutSection &gt; shows &quot;no bio&quot; message when bio is empty in public view" time="0.0088">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; AboutSection &gt; shows &quot;add bio&quot; prompt when bio is empty in private view" time="0.0149105">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; AboutSection &gt; handles undefined bio in public view" time="0.0135405">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; ExperienceSection &gt; hides add experience button when isPublicView is true" time="0.0663163">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; ExperienceSection &gt; shows add experience button when isPublicView is false" time="0.0419612">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; ExperienceSection &gt; hides individual edit buttons for experiences in public view" time="0.0396581">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; ExperienceSection &gt; shows individual edit buttons for experiences in private view" time="0.0371895">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; ExperienceSection &gt; shows &quot;no experience&quot; message when experiences array is empty in public view" time="0.0051998">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; ExperienceSection &gt; shows &quot;add experience&quot; prompt when experiences array is empty in private view" time="0.0107706">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; EducationSection &gt; hides add education button when isPublicView is true" time="0.0262297">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; EducationSection &gt; shows add education button when isPublicView is false" time="0.0297532">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; EducationSection &gt; hides individual edit buttons for education in public view" time="0.0176839">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; EducationSection &gt; shows individual edit buttons for education in private view" time="0.0290244">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; EducationSection &gt; shows &quot;no education&quot; message when educations array is empty in public view" time="0.005621">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; EducationSection &gt; shows &quot;add education&quot; prompt when educations array is empty in private view" time="0.0106188">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; Component Integration - Public View Consistency &gt; all components consistently hide edit functionality in public view" time="0.0337801">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/PublicViewMode.test.tsx" name="Profile Components - Public View Mode &gt; Component Integration - Public View Consistency &gt; all components consistently show edit functionality in private view" time="0.0449334">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/profile/components/SkillsSection.test.tsx" timestamp="2025-12-21T02:34:22.995Z" hostname="DESKTOP-6RADH0P" tests="3" failures="0" errors="0" skipped="0" time="0.9093458">
+        <testcase classname="src/__tests__/profile/components/SkillsSection.test.tsx" name="SkillsSection (unit) &gt; renders skills and edit buttons" time="0.1196114">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/SkillsSection.test.tsx" name="SkillsSection (unit) &gt; invokes onEdit for a skill" time="0.4845124">
+        </testcase>
+        <testcase classname="src/__tests__/profile/components/SkillsSection.test.tsx" name="SkillsSection (unit) &gt; shows empty state and handles add actions" time="0.2940984">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/shared/hooks/useReportModal.test.tsx" timestamp="2025-12-21T02:34:22.997Z" hostname="DESKTOP-6RADH0P" tests="2" failures="0" errors="0" skipped="0" time="0.1058709">
+        <testcase classname="src/__tests__/shared/hooks/useReportModal.test.tsx" name="useReportModal &gt; keeps the modal mounted but closed by default" time="0.0870037">
+        </testcase>
+        <testcase classname="src/__tests__/shared/hooks/useReportModal.test.tsx" name="useReportModal &gt; closes the modal without unmounting" time="0.009418">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/shared/hooks/useReviewHelpful.test.tsx" timestamp="2025-12-21T02:34:22.998Z" hostname="DESKTOP-6RADH0P" tests="4" failures="0" errors="0" skipped="0" time="0.0548388">
+        <testcase classname="src/__tests__/shared/hooks/useReviewHelpful.test.tsx" name="useReviewHelpful &gt; initializes from provided count and helpfulByUser" time="0.0309313">
+        </testcase>
+        <testcase classname="src/__tests__/shared/hooks/useReviewHelpful.test.tsx" name="useReviewHelpful &gt; marks helpful and syncs response state" time="0.0050117">
+        </testcase>
+        <testcase classname="src/__tests__/shared/hooks/useReviewHelpful.test.tsx" name="useReviewHelpful &gt; removes helpful when user clicks again" time="0.003253">
+        </testcase>
+        <testcase classname="src/__tests__/shared/hooks/useReviewHelpful.test.tsx" name="useReviewHelpful &gt; reverts optimistic update on error" time="0.0072195">
+            <system-err>
+Failed to toggle helpful vote: Error: network
+    at C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/src/__tests__/shared/hooks/useReviewHelpful.test.tsx:113:45
+    at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:157:11
+    at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:753:26
+    at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1636:20
+    at new Promise (&lt;anonymous&gt;)
+    at runWithTimeout [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1602:10[90m)[39m
+    at runTest [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1309:12[90m)[39m
+    at runSuite [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1468:8[90m)[39m
+    at runSuite [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1468:8[90m)[39m
+    at runFiles [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1526:3[90m)[39m
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/workplace/components/CreateWorkplaceModal.test.tsx" timestamp="2025-12-21T02:34:22.999Z" hostname="DESKTOP-6RADH0P" tests="4" failures="0" errors="0" skipped="0" time="2.3136696">
+        <testcase classname="src/__tests__/workplace/components/CreateWorkplaceModal.test.tsx" name="CreateWorkplaceModal &gt; renders form fields correctly" time="0.7431287">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/CreateWorkplaceModal.test.tsx" name="CreateWorkplaceModal &gt; validates required fields" time="0.4673717">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/CreateWorkplaceModal.test.tsx" name="CreateWorkplaceModal &gt; submits form with valid data" time="0.5081727">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/CreateWorkplaceModal.test.tsx" name="CreateWorkplaceModal &gt; handles API errors" time="0.5855036">
+            <system-err>
+Failed to create workplace: Error: API Error
+    at C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/src/__tests__/workplace/components/CreateWorkplaceModal.test.tsx:114:67
+    at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:157:11
+    at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:753:26
+    at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1636:20
+    at new Promise (&lt;anonymous&gt;)
+    at runWithTimeout [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1602:10[90m)[39m
+    at runTest [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1309:12[90m)[39m
+    at runSuite [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1468:8[90m)[39m
+    at runSuite [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1468:8[90m)[39m
+    at runFiles [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1526:3[90m)[39m
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/workplace/components/EmployerWorkplaceCard.test.tsx" timestamp="2025-12-21T02:34:23.000Z" hostname="DESKTOP-6RADH0P" tests="4" failures="0" errors="0" skipped="0" time="1.0603774">
+        <testcase classname="src/__tests__/workplace/components/EmployerWorkplaceCard.test.tsx" name="EmployerWorkplaceCard &gt; renders workplace information" time="0.2089925">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/EmployerWorkplaceCard.test.tsx" name="EmployerWorkplaceCard &gt; renders role badge" time="0.0422169">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/EmployerWorkplaceCard.test.tsx" name="EmployerWorkplaceCard &gt; renders action buttons" time="0.5510993">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/EmployerWorkplaceCard.test.tsx" name="EmployerWorkplaceCard &gt; links point to correct locations" time="0.2483526">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/workplace/components/NewWorkplaceModal.test.tsx" timestamp="2025-12-21T02:34:23.002Z" hostname="DESKTOP-6RADH0P" tests="4" failures="0" errors="0" skipped="0" time="1.0537776">
+        <testcase classname="src/__tests__/workplace/components/NewWorkplaceModal.test.tsx" name="NewWorkplaceModal &gt; renders correctly when open" time="0.6868339">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/NewWorkplaceModal.test.tsx" name="NewWorkplaceModal &gt; does not render when closed" time="0.0058278">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/NewWorkplaceModal.test.tsx" name="NewWorkplaceModal &gt; calls onCreateWorkplace when Create card is clicked" time="0.1902688">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/NewWorkplaceModal.test.tsx" name="NewWorkplaceModal &gt; calls onJoinWorkplace when Join card is clicked" time="0.1544219">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/workplace/components/WorkplaceCard.test.tsx" timestamp="2025-12-21T02:34:23.003Z" hostname="DESKTOP-6RADH0P" tests="5" failures="0" errors="0" skipped="0" time="0.6707864">
+        <testcase classname="src/__tests__/workplace/components/WorkplaceCard.test.tsx" name="WorkplaceCard &gt; renders workplace information correctly" time="0.1817833">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/WorkplaceCard.test.tsx" name="WorkplaceCard &gt; renders ethical tags" time="0.0435639">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/WorkplaceCard.test.tsx" name="WorkplaceCard &gt; renders placeholder image when imageUrl is missing" time="0.0349923">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/WorkplaceCard.test.tsx" name="WorkplaceCard &gt; navigates to workplace detail on click" time="0.3480097">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/components/WorkplaceCard.test.tsx" name="WorkplaceCard &gt; calls onClick handler if provided" time="0.0523634">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/workplace/integration/CreateWorkplaceFlow.test.tsx" timestamp="2025-12-21T02:34:23.005Z" hostname="DESKTOP-6RADH0P" tests="1" failures="0" errors="0" skipped="0" time="3.5178911">
+        <testcase classname="src/__tests__/workplace/integration/CreateWorkplaceFlow.test.tsx" name="CreateWorkplaceFlow Integration &gt; completes the create workplace flow" time="3.5082979">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/workplace/integration/EmployerWorkplacesPage.test.tsx" timestamp="2025-12-21T02:34:23.005Z" hostname="DESKTOP-6RADH0P" tests="6" failures="0" errors="0" skipped="0" time="4.6351322">
+        <testcase classname="src/__tests__/workplace/integration/EmployerWorkplacesPage.test.tsx" name="EmployerWorkplacesPage Integration &gt; renders page title and description" time="0.8596403">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/EmployerWorkplacesPage.test.tsx" name="EmployerWorkplacesPage Integration &gt; fetches and displays employer workplaces" time="0.3573751">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/EmployerWorkplacesPage.test.tsx" name="EmployerWorkplacesPage Integration &gt; opens new workplace modal" time="1.0478052">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/EmployerWorkplacesPage.test.tsx" name="EmployerWorkplacesPage Integration &gt; opens create workplace modal from selection" time="1.1686791">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/EmployerWorkplacesPage.test.tsx" name="EmployerWorkplacesPage Integration &gt; opens join workplace modal from selection" time="1.0977542">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/EmployerWorkplacesPage.test.tsx" name="EmployerWorkplacesPage Integration &gt; displays empty state when no workplaces" time="0.0914687">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/workplace/integration/WorkplaceProfilePage.test.tsx" timestamp="2025-12-21T02:34:23.007Z" hostname="DESKTOP-6RADH0P" tests="8" failures="0" errors="0" skipped="0" time="8.7032172">
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceProfilePage.test.tsx" name="WorkplaceProfilePage Integration &gt; renders workplace details" time="0.8370168">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceProfilePage.test.tsx" name="WorkplaceProfilePage Integration &gt; displays ethical tags" time="0.3388754">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceProfilePage.test.tsx" name="WorkplaceProfilePage Integration &gt; displays reviews section" time="0.4264381">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceProfilePage.test.tsx" name="WorkplaceProfilePage Integration &gt; handles not found state" time="0.0958505">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceProfilePage.test.tsx" name="WorkplaceProfilePage Integration &gt; displays employers list" time="0.3227375">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceProfilePage.test.tsx" name="WorkplaceProfilePage Integration &gt; renders helpful initial state from API" time="1.8949732">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceProfilePage.test.tsx" name="WorkplaceProfilePage Integration &gt; toggles helpful on and off in the page" time="3.1480902">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceProfilePage.test.tsx" name="WorkplaceProfilePage Integration &gt; rolls back helpful count on error" time="1.628727">
+            <system-err>
+Failed to toggle helpful vote: AxiosError: Request failed with status code 500
+    at settle [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/core/settle.js:19:12[90m)[39m
+    at XMLHttpRequest.onloadend [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/adapters/xhr.js:59:7[90m)[39m
+    at XMLHttpRequest.methodCall [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:354:20[90m)[39m
+    at Proxy.&lt;anonymous&gt; [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:177:29[90m)[39m
+    at XMLHttpRequestController.trigger [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:652:16[90m)[39m
+    at finalizeResponse [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:506:12[90m)[39m
+    at XMLHttpRequestController.respondWith [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:533:7[90m)[39m
+    at Object.respondWith [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:762:13[90m)[39m
+    at Axios.request [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/core/Axios.js:45:41[90m)[39m
+    at markReviewHelpful (C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/src/modules/workplace/services/reviews.service.ts:101:20) {
+  code: [32m&apos;ERR_BAD_RESPONSE&apos;[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m&apos;xhr&apos;[39m, [32m&apos;http&apos;[39m, [32m&apos;fetch&apos;[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m30000[39m,
+    xsrfCookieName: [32m&apos;XSRF-TOKEN&apos;[39m,
+    xsrfHeaderName: [32m&apos;X-XSRF-TOKEN&apos;[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m&apos;application/json, text/plain, */*&apos;[39m,
+      [32m&apos;Content-Type&apos;[39m: [32m&apos;application/json&apos;[39m
+    },
+    baseURL: [32m&apos;https://api.example.com/api&apos;[39m,
+    method: [32m&apos;post&apos;[39m,
+    url: [32m&apos;/workplace/1/review/401/helpful&apos;[39m,
+    allowAbsoluteUrls: [33mtrue[39m,
+    data: [90mundefined[39m
+  },
+  request: XMLHttpRequest {
+    open: [36m[Function: open][39m,
+    setRequestHeader: [36m[Function: setRequestHeader][39m,
+    send: [36m[Function: send][39m,
+    abort: [36m[Function: abort][39m,
+    getResponseHeader: [36m[Function (anonymous)][39m,
+    getAllResponseHeaders: [36m[Function (anonymous)][39m,
+    overrideMimeType: [36m[Function: overrideMimeType][39m,
+    onreadystatechange: [36m[Getter/Setter][39m,
+    readyState: [33m4[39m,
+    timeout: [36m[Getter/Setter][39m,
+    withCredentials: [36m[Getter/Setter][39m,
+    upload: XMLHttpRequestUpload {},
+    responseURL: [32m&apos;https://api.example.com/api/workplace/1/review/401/helpful&apos;[39m,
+    status: [33m500[39m,
+    statusText: [32m&apos;Internal Server Error&apos;[39m,
+    responseType: [36m[Getter/Setter][39m,
+    response: [36m[Getter][39m,
+    responseText: [36m[Getter][39m,
+    responseXML: [36m[Getter][39m,
+    UNSENT: [33m0[39m,
+    OPENED: [33m1[39m,
+    HEADERS_RECEIVED: [33m2[39m,
+    LOADING: [33m3[39m,
+    DONE: [33m4[39m,
+    [[32mSymbol(SameObject caches)[39m]: [Object: null prototype] { upload: XMLHttpRequestUpload {} }
+  },
+  response: {
+    data: [32m&apos;&apos;[39m,
+    status: [33m500[39m,
+    statusText: [32m&apos;Internal Server Error&apos;[39m,
+    headers: Object [AxiosHeaders] {},
+    config: {
+      transitional: [36m[Object][39m,
+      adapter: [36m[Array][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m30000[39m,
+      xsrfCookieName: [32m&apos;XSRF-TOKEN&apos;[39m,
+      xsrfHeaderName: [32m&apos;X-XSRF-TOKEN&apos;[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      baseURL: [32m&apos;https://api.example.com/api&apos;[39m,
+      method: [32m&apos;post&apos;[39m,
+      url: [32m&apos;/workplace/1/review/401/helpful&apos;[39m,
+      allowAbsoluteUrls: [33mtrue[39m,
+      data: [90mundefined[39m
+    },
+    request: XMLHttpRequest {
+      open: [36m[Function: open][39m,
+      setRequestHeader: [36m[Function: setRequestHeader][39m,
+      send: [36m[Function: send][39m,
+      abort: [36m[Function: abort][39m,
+      getResponseHeader: [36m[Function (anonymous)][39m,
+      getAllResponseHeaders: [36m[Function (anonymous)][39m,
+      overrideMimeType: [36m[Function: overrideMimeType][39m,
+      onreadystatechange: [36m[Getter/Setter][39m,
+      readyState: [33m4[39m,
+      timeout: [36m[Getter/Setter][39m,
+      withCredentials: [36m[Getter/Setter][39m,
+      upload: XMLHttpRequestUpload {},
+      responseURL: [32m&apos;https://api.example.com/api/workplace/1/review/401/helpful&apos;[39m,
+      status: [33m500[39m,
+      statusText: [32m&apos;Internal Server Error&apos;[39m,
+      responseType: [36m[Getter/Setter][39m,
+      response: [36m[Getter][39m,
+      responseText: [36m[Getter][39m,
+      responseXML: [36m[Getter][39m,
+      UNSENT: [33m0[39m,
+      OPENED: [33m1[39m,
+      HEADERS_RECEIVED: [33m2[39m,
+      LOADING: [33m3[39m,
+      DONE: [33m4[39m,
+      [[32mSymbol(SameObject caches)[39m]: [36m[Object: null prototype][39m
+    }
+  },
+  status: [33m500[39m,
+  normalizedError: {
+    status: [33m500[39m,
+    code: [90mundefined[39m,
+    error: [90mundefined[39m,
+    message: [32m&apos;Request failed with status code 500&apos;[39m,
+    path: [90mundefined[39m,
+    violations: [],
+    friendlyMessage: [32m&apos;Something went wrong. Please try again.&apos;[39m
+  }
+}
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/workplace/integration/WorkplaceSettingsPage.test.tsx" timestamp="2025-12-21T02:34:23.010Z" hostname="DESKTOP-6RADH0P" tests="8" failures="0" errors="0" skipped="0" time="4.2502421">
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceSettingsPage.test.tsx" name="WorkplaceSettingsPage Integration &gt; renders settings form with workplace data" time="0.354942">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceSettingsPage.test.tsx" name="WorkplaceSettingsPage Integration &gt; updates workplace information" time="1.0117774">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceSettingsPage.test.tsx" name="WorkplaceSettingsPage Integration &gt; handles image upload" time="0.3087313">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceSettingsPage.test.tsx" name="WorkplaceSettingsPage Integration &gt; shows delete workplace button in danger zone" time="0.1347474">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceSettingsPage.test.tsx" name="WorkplaceSettingsPage Integration &gt; opens delete confirmation dialog when delete button is clicked" time="0.3798347">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceSettingsPage.test.tsx" name="WorkplaceSettingsPage Integration &gt; delete button is disabled until correct workplace name is entered" time="0.8432586">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceSettingsPage.test.tsx" name="WorkplaceSettingsPage Integration &gt; deletes workplace when confirmed with correct name" time="0.7612229">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplaceSettingsPage.test.tsx" name="WorkplaceSettingsPage Integration &gt; closes delete dialog when cancel is clicked" time="0.445109">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/workplace/integration/WorkplacesPage.test.tsx" timestamp="2025-12-21T02:34:23.013Z" hostname="DESKTOP-6RADH0P" tests="6" failures="0" errors="0" skipped="0" time="1.5556446">
+        <testcase classname="src/__tests__/workplace/integration/WorkplacesPage.test.tsx" name="WorkplacesPage Integration &gt; renders page title and description" time="0.2349349">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplacesPage.test.tsx" name="WorkplacesPage Integration &gt; fetches and displays workplaces" time="0.2583463">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplacesPage.test.tsx" name="WorkplacesPage Integration &gt; handles search functionality" time="0.1585518">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplacesPage.test.tsx" name="WorkplacesPage Integration &gt; handles filter toggling" time="0.3348616">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplacesPage.test.tsx" name="WorkplacesPage Integration &gt; displays empty state when no results found" time="0.0447323">
+        </testcase>
+        <testcase classname="src/__tests__/workplace/integration/WorkplacesPage.test.tsx" name="WorkplacesPage Integration &gt; handles API errors gracefully" time="0.5153034">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" timestamp="2025-12-21T02:34:23.015Z" hostname="DESKTOP-6RADH0P" tests="22" failures="0" errors="0" skipped="0" time="5.6692319">
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; shows loading state while fetching application" time="0.5591038">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; displays application details correctly after successful fetch" time="0.3078737">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; displays cover letter when present" time="0.1191498">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; does not display cover letter section when not present" time="0.098933">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; displays special needs when present" time="0.1159351">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; does not display special needs section when not present" time="0.0658672">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; displays CV download button when CV is available" time="0.4140898">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; displays no CV message when CV is not available" time="0.0649702">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; shows loading state for CV while fetching" time="0.0605754">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; allows typing feedback in textarea" time="0.2110181">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; approves application successfully" time="0.2498207">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; approves application with feedback" time="1.1101887">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; rejects application successfully" time="0.1987744">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; rejects application with feedback" time="1.1533131">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; shows error toast on approval failure" time="0.2058261">
+            <system-err>
+Error approving application: AxiosError: Request failed with status code 500
+    at settle [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/core/settle.js:19:12[90m)[39m
+    at XMLHttpRequest.onloadend [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/adapters/xhr.js:59:7[90m)[39m
+    at XMLHttpRequest.methodCall [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:354:20[90m)[39m
+    at Proxy.&lt;anonymous&gt; [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:177:29[90m)[39m
+    at XMLHttpRequestController.trigger [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:652:16[90m)[39m
+    at finalizeResponse [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:506:12[90m)[39m
+    at readNextResponseBodyChunk [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:518:11[90m)[39m
+    at Axios.request [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/core/Axios.js:45:41[90m)[39m
+    at approveApplication (C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/src/modules/jobs/applications/services/applications.service.ts:83:20) {
+  code: [32m&apos;ERR_BAD_RESPONSE&apos;[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m&apos;xhr&apos;[39m, [32m&apos;http&apos;[39m, [32m&apos;fetch&apos;[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m30000[39m,
+    xsrfCookieName: [32m&apos;XSRF-TOKEN&apos;[39m,
+    xsrfHeaderName: [32m&apos;X-XSRF-TOKEN&apos;[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m&apos;application/json, text/plain, */*&apos;[39m,
+      [32m&apos;Content-Type&apos;[39m: [32m&apos;application/json&apos;[39m
+    },
+    baseURL: [32m&apos;https://api.example.com/api&apos;[39m,
+    method: [32m&apos;put&apos;[39m,
+    url: [32m&apos;/applications/1/approve&apos;[39m,
+    data: [32m&apos;{}&apos;[39m,
+    allowAbsoluteUrls: [33mtrue[39m
+  },
+  request: XMLHttpRequest {
+    open: [36m[Function: open][39m,
+    setRequestHeader: [36m[Function: setRequestHeader][39m,
+    send: [36m[Function: send][39m,
+    abort: [36m[Function: abort][39m,
+    getResponseHeader: [36m[Function (anonymous)][39m,
+    getAllResponseHeaders: [36m[Function (anonymous)][39m,
+    overrideMimeType: [36m[Function: overrideMimeType][39m,
+    onreadystatechange: [36m[Getter/Setter][39m,
+    readyState: [33m4[39m,
+    timeout: [36m[Getter/Setter][39m,
+    withCredentials: [36m[Getter/Setter][39m,
+    upload: XMLHttpRequestUpload {},
+    responseURL: [32m&apos;https://api.example.com/api/applications/1/approve&apos;[39m,
+    status: [33m500[39m,
+    statusText: [32m&apos;Internal Server Error&apos;[39m,
+    responseType: [36m[Getter/Setter][39m,
+    response: [36m[Getter][39m,
+    responseText: [36m[Getter][39m,
+    responseXML: [36m[Getter][39m,
+    UNSENT: [33m0[39m,
+    OPENED: [33m1[39m,
+    HEADERS_RECEIVED: [33m2[39m,
+    LOADING: [33m3[39m,
+    DONE: [33m4[39m,
+    [[32mSymbol(SameObject caches)[39m]: [Object: null prototype] { upload: XMLHttpRequestUpload {} }
+  },
+  response: {
+    data: { message: [32m&apos;Server error&apos;[39m },
+    status: [33m500[39m,
+    statusText: [32m&apos;Internal Server Error&apos;[39m,
+    headers: Object [AxiosHeaders] {
+      [32m&apos;content-length&apos;[39m: [32m&apos;26&apos;[39m,
+      [32m&apos;content-type&apos;[39m: [32m&apos;application/json&apos;[39m
+    },
+    config: {
+      transitional: [36m[Object][39m,
+      adapter: [36m[Array][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m30000[39m,
+      xsrfCookieName: [32m&apos;XSRF-TOKEN&apos;[39m,
+      xsrfHeaderName: [32m&apos;X-XSRF-TOKEN&apos;[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      baseURL: [32m&apos;https://api.example.com/api&apos;[39m,
+      method: [32m&apos;put&apos;[39m,
+      url: [32m&apos;/applications/1/approve&apos;[39m,
+      data: [32m&apos;{}&apos;[39m,
+      allowAbsoluteUrls: [33mtrue[39m
+    },
+    request: XMLHttpRequest {
+      open: [36m[Function: open][39m,
+      setRequestHeader: [36m[Function: setRequestHeader][39m,
+      send: [36m[Function: send][39m,
+      abort: [36m[Function: abort][39m,
+      getResponseHeader: [36m[Function (anonymous)][39m,
+      getAllResponseHeaders: [36m[Function (anonymous)][39m,
+      overrideMimeType: [36m[Function: overrideMimeType][39m,
+      onreadystatechange: [36m[Getter/Setter][39m,
+      readyState: [33m4[39m,
+      timeout: [36m[Getter/Setter][39m,
+      withCredentials: [36m[Getter/Setter][39m,
+      upload: XMLHttpRequestUpload {},
+      responseURL: [32m&apos;https://api.example.com/api/applications/1/approve&apos;[39m,
+      status: [33m500[39m,
+      statusText: [32m&apos;Internal Server Error&apos;[39m,
+      responseType: [36m[Getter/Setter][39m,
+      response: [36m[Getter][39m,
+      responseText: [36m[Getter][39m,
+      responseXML: [36m[Getter][39m,
+      UNSENT: [33m0[39m,
+      OPENED: [33m1[39m,
+      HEADERS_RECEIVED: [33m2[39m,
+      LOADING: [33m3[39m,
+      DONE: [33m4[39m,
+      [[32mSymbol(SameObject caches)[39m]: [36m[Object: null prototype][39m
+    }
+  },
+  status: [33m500[39m,
+  normalizedError: {
+    status: [33m500[39m,
+    code: [90mundefined[39m,
+    error: [90mundefined[39m,
+    message: [32m&apos;Server error&apos;[39m,
+    path: [90mundefined[39m,
+    violations: [],
+    friendlyMessage: [32m&apos;Server error&apos;[39m
+  }
+}
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; shows error toast on rejection failure" time="0.2961225">
+            <system-err>
+Error rejecting application: AxiosError: Request failed with status code 500
+    at settle [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/core/settle.js:19:12[90m)[39m
+    at XMLHttpRequest.onloadend [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/adapters/xhr.js:59:7[90m)[39m
+    at XMLHttpRequest.methodCall [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:354:20[90m)[39m
+    at Proxy.&lt;anonymous&gt; [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:177:29[90m)[39m
+    at XMLHttpRequestController.trigger [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:652:16[90m)[39m
+    at finalizeResponse [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:506:12[90m)[39m
+    at readNextResponseBodyChunk [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:518:11[90m)[39m
+    at Axios.request [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/core/Axios.js:45:41[90m)[39m
+    at rejectApplication (C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/src/modules/jobs/applications/services/applications.service.ts:96:20) {
+  code: [32m&apos;ERR_BAD_RESPONSE&apos;[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m&apos;xhr&apos;[39m, [32m&apos;http&apos;[39m, [32m&apos;fetch&apos;[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m30000[39m,
+    xsrfCookieName: [32m&apos;XSRF-TOKEN&apos;[39m,
+    xsrfHeaderName: [32m&apos;X-XSRF-TOKEN&apos;[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m&apos;application/json, text/plain, */*&apos;[39m,
+      [32m&apos;Content-Type&apos;[39m: [32m&apos;application/json&apos;[39m
+    },
+    baseURL: [32m&apos;https://api.example.com/api&apos;[39m,
+    method: [32m&apos;put&apos;[39m,
+    url: [32m&apos;/applications/1/reject&apos;[39m,
+    data: [32m&apos;{}&apos;[39m,
+    allowAbsoluteUrls: [33mtrue[39m
+  },
+  request: XMLHttpRequest {
+    open: [36m[Function: open][39m,
+    setRequestHeader: [36m[Function: setRequestHeader][39m,
+    send: [36m[Function: send][39m,
+    abort: [36m[Function: abort][39m,
+    getResponseHeader: [36m[Function (anonymous)][39m,
+    getAllResponseHeaders: [36m[Function (anonymous)][39m,
+    overrideMimeType: [36m[Function: overrideMimeType][39m,
+    onreadystatechange: [36m[Getter/Setter][39m,
+    readyState: [33m4[39m,
+    timeout: [36m[Getter/Setter][39m,
+    withCredentials: [36m[Getter/Setter][39m,
+    upload: XMLHttpRequestUpload {},
+    responseURL: [32m&apos;https://api.example.com/api/applications/1/reject&apos;[39m,
+    status: [33m500[39m,
+    statusText: [32m&apos;Internal Server Error&apos;[39m,
+    responseType: [36m[Getter/Setter][39m,
+    response: [36m[Getter][39m,
+    responseText: [36m[Getter][39m,
+    responseXML: [36m[Getter][39m,
+    UNSENT: [33m0[39m,
+    OPENED: [33m1[39m,
+    HEADERS_RECEIVED: [33m2[39m,
+    LOADING: [33m3[39m,
+    DONE: [33m4[39m,
+    [[32mSymbol(SameObject caches)[39m]: [Object: null prototype] { upload: XMLHttpRequestUpload {} }
+  },
+  response: {
+    data: { message: [32m&apos;Server error&apos;[39m },
+    status: [33m500[39m,
+    statusText: [32m&apos;Internal Server Error&apos;[39m,
+    headers: Object [AxiosHeaders] {
+      [32m&apos;content-length&apos;[39m: [32m&apos;26&apos;[39m,
+      [32m&apos;content-type&apos;[39m: [32m&apos;application/json&apos;[39m
+    },
+    config: {
+      transitional: [36m[Object][39m,
+      adapter: [36m[Array][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m30000[39m,
+      xsrfCookieName: [32m&apos;XSRF-TOKEN&apos;[39m,
+      xsrfHeaderName: [32m&apos;X-XSRF-TOKEN&apos;[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      baseURL: [32m&apos;https://api.example.com/api&apos;[39m,
+      method: [32m&apos;put&apos;[39m,
+      url: [32m&apos;/applications/1/reject&apos;[39m,
+      data: [32m&apos;{}&apos;[39m,
+      allowAbsoluteUrls: [33mtrue[39m
+    },
+    request: XMLHttpRequest {
+      open: [36m[Function: open][39m,
+      setRequestHeader: [36m[Function: setRequestHeader][39m,
+      send: [36m[Function: send][39m,
+      abort: [36m[Function: abort][39m,
+      getResponseHeader: [36m[Function (anonymous)][39m,
+      getAllResponseHeaders: [36m[Function (anonymous)][39m,
+      overrideMimeType: [36m[Function: overrideMimeType][39m,
+      onreadystatechange: [36m[Getter/Setter][39m,
+      readyState: [33m4[39m,
+      timeout: [36m[Getter/Setter][39m,
+      withCredentials: [36m[Getter/Setter][39m,
+      upload: XMLHttpRequestUpload {},
+      responseURL: [32m&apos;https://api.example.com/api/applications/1/reject&apos;[39m,
+      status: [33m500[39m,
+      statusText: [32m&apos;Internal Server Error&apos;[39m,
+      responseType: [36m[Getter/Setter][39m,
+      response: [36m[Getter][39m,
+      responseText: [36m[Getter][39m,
+      responseXML: [36m[Getter][39m,
+      UNSENT: [33m0[39m,
+      OPENED: [33m1[39m,
+      HEADERS_RECEIVED: [33m2[39m,
+      LOADING: [33m3[39m,
+      DONE: [33m4[39m,
+      [[32mSymbol(SameObject caches)[39m]: [36m[Object: null prototype][39m
+    }
+  },
+  status: [33m500[39m,
+  normalizedError: {
+    status: [33m500[39m,
+    code: [90mundefined[39m,
+    error: [90mundefined[39m,
+    message: [32m&apos;Server error&apos;[39m,
+    path: [90mundefined[39m,
+    violations: [],
+    friendlyMessage: [32m&apos;Server error&apos;[39m
+  }
+}
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; displays error page when application fetch fails" time="0.0640425">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; navigates back to job when Back to Job button is clicked" time="0.0574013">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; generates correct avatar initials for applicant name" time="0.0739938">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; displays application status correctly" time="0.0607261">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; handles very long cover letters correctly" time="0.0874749">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/applications/pages/JobApplicationReviewPage.test.tsx" name="JobApplicationReviewPage &gt; preserves whitespace in cover letter and special needs" time="0.0715032">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/jobs/components/jobs/JobCard.test.tsx" timestamp="2025-12-21T02:34:23.021Z" hostname="DESKTOP-6RADH0P" tests="5" failures="0" errors="0" skipped="0" time="0.2827565">
+        <testcase classname="src/__tests__/jobs/components/jobs/JobCard.test.tsx" name="JobCard &gt; renders core job details with salary and inclusive badge" time="0.1693615">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/components/jobs/JobCard.test.tsx" name="JobCard &gt; shows up to three ethical tags and an overflow counter" time="0.0301821">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/components/jobs/JobCard.test.tsx" name="JobCard &gt; navigates to job details when the card is clicked" time="0.0320791">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/components/jobs/JobCard.test.tsx" name="JobCard &gt; navigates to workplace without triggering card navigation" time="0.018888">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/components/jobs/JobCard.test.tsx" name="JobCard &gt; omits inclusive badge when the job is not marked inclusive" time="0.0228552">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/jobs/components/jobs/JobFilters.test.tsx" timestamp="2025-12-21T02:34:23.023Z" hostname="DESKTOP-6RADH0P" tests="4" failures="0" errors="0" skipped="0" time="0.2051725">
+        <testcase classname="src/__tests__/jobs/components/jobs/JobFilters.test.tsx" name="JobFilters &gt; renders filter fields with current values" time="0.1281252">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/components/jobs/JobFilters.test.tsx" name="JobFilters &gt; updates ethical tags when selection changes" time="0.0240389">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/components/jobs/JobFilters.test.tsx" name="JobFilters &gt; updates salary range when slider value changes" time="0.0148608">
+        </testcase>
+        <testcase classname="src/__tests__/jobs/components/jobs/JobFilters.test.tsx" name="JobFilters &gt; updates checkbox filters and company name" time="0.028944">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/shared/components/report/ReportModal.test.tsx" timestamp="2025-12-21T02:34:23.024Z" hostname="DESKTOP-6RADH0P" tests="8" failures="0" errors="0" skipped="0" time="5.8392826">
+        <testcase classname="src/__tests__/shared/components/report/ReportModal.test.tsx" name="ReportModal &gt; renders correctly with required props" time="0.9462314">
+            <system-err>
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/shared/components/report/ReportModal.test.tsx" name="ReportModal &gt; renders subtitle and context snippet when provided" time="0.2144465">
+        </testcase>
+        <testcase classname="src/__tests__/shared/components/report/ReportModal.test.tsx" name="ReportModal &gt; renders reportType and reportedName when provided" time="0.1632448">
+            <system-err>
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/shared/components/report/ReportModal.test.tsx" name="ReportModal &gt; validates empty message on submit" time="0.2677632">
+            <system-err>
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/shared/components/report/ReportModal.test.tsx" name="ReportModal &gt; calls onSubmit with message when valid" time="1.821553">
+            <system-err>
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/shared/components/report/ReportModal.test.tsx" name="ReportModal &gt; calls onSubmit with selected reason" time="1.3342816">
+            <system-err>
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/shared/components/report/ReportModal.test.tsx" name="ReportModal &gt; handles submission error" time="0.8567606">
+            <system-err>
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+Report submission failed: Error: Failed
+    at C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/src/__tests__/shared/components/report/ReportModal.test.tsx:133:48
+    at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:157:11
+    at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:753:26
+    at [90mfile:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1636:20
+    at new Promise (&lt;anonymous&gt;)
+    at runWithTimeout [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1602:10[90m)[39m
+    at runTest [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1309:12[90m)[39m
+    at runSuite [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1468:8[90m)[39m
+    at runSuite [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1468:8[90m)[39m
+    at runFiles [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@vitest+runner@4.0.8/node_modules/[4m@vitest[24m/runner/dist/index.js:1526:3[90m)[39m
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/shared/components/report/ReportModal.test.tsx" name="ReportModal &gt; closes modal on cancel" time="0.2253534">
+            <system-err>
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/modules/shared/components/common/__tests__/jobs/CreateJobPostModal.test.tsx" timestamp="2025-12-21T02:34:23.027Z" hostname="DESKTOP-6RADH0P" tests="3" failures="0" errors="0" skipped="0" time="7.6887064">
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/CreateJobPostModal.test.tsx" name="CreateJobPostModal &gt; renders correctly when open" time="0.6999248">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/CreateJobPostModal.test.tsx" name="CreateJobPostModal &gt; submits form with valid data" time="3.3011147">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/CreateJobPostModal.test.tsx" name="CreateJobPostModal &gt; shows error on submission failure" time="3.6773506">
+            <system-err>
+Error creating job: AxiosError: Request failed with status code 500
+    at settle [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/core/settle.js:19:12[90m)[39m
+    at XMLHttpRequest.onloadend [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/adapters/xhr.js:59:7[90m)[39m
+    at XMLHttpRequest.methodCall [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:354:20[90m)[39m
+    at Proxy.&lt;anonymous&gt; [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:177:29[90m)[39m
+    at XMLHttpRequestController.trigger [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:652:16[90m)[39m
+    at finalizeResponse [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:506:12[90m)[39m
+    at readNextResponseBodyChunk [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/@mswjs+interceptors@0.40.0/node_modules/[4m@mswjs[24m/interceptors/lib/node/chunk-5V3SIIW2.mjs:518:11[90m)[39m
+    at Axios.request [90m(file:///C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/[39mnode_modules/[4m.pnpm[24m/axios@1.12.2/node_modules/[4maxios[24m/lib/core/Axios.js:45:41[90m)[39m
+    at createJob (C:/Users/Yagiz/Desktop/bounswe2025group4/apps/jobboard-frontend/src/modules/jobs/services/jobs.service.ts:79:20) {
+  code: [32m&apos;ERR_BAD_RESPONSE&apos;[39m,
+  config: {
+    transitional: {
+      silentJSONParsing: [33mtrue[39m,
+      forcedJSONParsing: [33mtrue[39m,
+      clarifyTimeoutError: [33mfalse[39m
+    },
+    adapter: [ [32m&apos;xhr&apos;[39m, [32m&apos;http&apos;[39m, [32m&apos;fetch&apos;[39m ],
+    transformRequest: [ [36m[Function: transformRequest][39m ],
+    transformResponse: [ [36m[Function: transformResponse][39m ],
+    timeout: [33m30000[39m,
+    xsrfCookieName: [32m&apos;XSRF-TOKEN&apos;[39m,
+    xsrfHeaderName: [32m&apos;X-XSRF-TOKEN&apos;[39m,
+    maxContentLength: [33m-1[39m,
+    maxBodyLength: [33m-1[39m,
+    env: { FormData: [36m[Function [FormData]][39m, Blob: [36m[class Blob][39m },
+    validateStatus: [36m[Function: validateStatus][39m,
+    headers: Object [AxiosHeaders] {
+      Accept: [32m&apos;application/json, text/plain, */*&apos;[39m,
+      [32m&apos;Content-Type&apos;[39m: [32m&apos;application/json&apos;[39m
+    },
+    baseURL: [32m&apos;https://api.example.com/api&apos;[39m,
+    method: [32m&apos;post&apos;[39m,
+    url: [32m&apos;/jobs&apos;[39m,
+    data: [32m&apos;{&quot;title&quot;:&quot;Software Engineer&quot;,&quot;description&quot;:&quot;Great job&quot;,&quot;workplaceId&quot;:1,&quot;remote&quot;:false,&quot;minSalary&quot;:100000,&quot;maxSalary&quot;:150000,&quot;contact&quot;:&quot;hr@tech.com&quot;,&quot;inclusiveOpportunity&quot;:false,&quot;nonProfit&quot;:false}&apos;[39m,
+    allowAbsoluteUrls: [33mtrue[39m
+  },
+  request: XMLHttpRequest {
+    open: [36m[Function: open][39m,
+    setRequestHeader: [36m[Function: setRequestHeader][39m,
+    send: [36m[Function: send][39m,
+    abort: [36m[Function: abort][39m,
+    getResponseHeader: [36m[Function (anonymous)][39m,
+    getAllResponseHeaders: [36m[Function (anonymous)][39m,
+    overrideMimeType: [36m[Function: overrideMimeType][39m,
+    onreadystatechange: [36m[Getter/Setter][39m,
+    readyState: [33m4[39m,
+    timeout: [36m[Getter/Setter][39m,
+    withCredentials: [36m[Getter/Setter][39m,
+    upload: XMLHttpRequestUpload {},
+    responseURL: [32m&apos;https://api.example.com/api/jobs&apos;[39m,
+    status: [33m500[39m,
+    statusText: [32m&apos;Internal Server Error&apos;[39m,
+    responseType: [36m[Getter/Setter][39m,
+    response: [36m[Getter][39m,
+    responseText: [36m[Getter][39m,
+    responseXML: [36m[Getter][39m,
+    UNSENT: [33m0[39m,
+    OPENED: [33m1[39m,
+    HEADERS_RECEIVED: [33m2[39m,
+    LOADING: [33m3[39m,
+    DONE: [33m4[39m,
+    [[32mSymbol(SameObject caches)[39m]: [Object: null prototype] { upload: XMLHttpRequestUpload {} }
+  },
+  response: {
+    data: { message: [32m&apos;Error&apos;[39m },
+    status: [33m500[39m,
+    statusText: [32m&apos;Internal Server Error&apos;[39m,
+    headers: Object [AxiosHeaders] {
+      [32m&apos;content-length&apos;[39m: [32m&apos;19&apos;[39m,
+      [32m&apos;content-type&apos;[39m: [32m&apos;application/json&apos;[39m
+    },
+    config: {
+      transitional: [36m[Object][39m,
+      adapter: [36m[Array][39m,
+      transformRequest: [36m[Array][39m,
+      transformResponse: [36m[Array][39m,
+      timeout: [33m30000[39m,
+      xsrfCookieName: [32m&apos;XSRF-TOKEN&apos;[39m,
+      xsrfHeaderName: [32m&apos;X-XSRF-TOKEN&apos;[39m,
+      maxContentLength: [33m-1[39m,
+      maxBodyLength: [33m-1[39m,
+      env: [36m[Object][39m,
+      validateStatus: [36m[Function: validateStatus][39m,
+      headers: [36m[Object [AxiosHeaders]][39m,
+      baseURL: [32m&apos;https://api.example.com/api&apos;[39m,
+      method: [32m&apos;post&apos;[39m,
+      url: [32m&apos;/jobs&apos;[39m,
+      data: [32m&apos;{&quot;title&quot;:&quot;Software Engineer&quot;,&quot;description&quot;:&quot;Great job&quot;,&quot;workplaceId&quot;:1,&quot;remote&quot;:false,&quot;minSalary&quot;:100000,&quot;maxSalary&quot;:150000,&quot;contact&quot;:&quot;hr@tech.com&quot;,&quot;inclusiveOpportunity&quot;:false,&quot;nonProfit&quot;:false}&apos;[39m,
+      allowAbsoluteUrls: [33mtrue[39m
+    },
+    request: XMLHttpRequest {
+      open: [36m[Function: open][39m,
+      setRequestHeader: [36m[Function: setRequestHeader][39m,
+      send: [36m[Function: send][39m,
+      abort: [36m[Function: abort][39m,
+      getResponseHeader: [36m[Function (anonymous)][39m,
+      getAllResponseHeaders: [36m[Function (anonymous)][39m,
+      overrideMimeType: [36m[Function: overrideMimeType][39m,
+      onreadystatechange: [36m[Getter/Setter][39m,
+      readyState: [33m4[39m,
+      timeout: [36m[Getter/Setter][39m,
+      withCredentials: [36m[Getter/Setter][39m,
+      upload: XMLHttpRequestUpload {},
+      responseURL: [32m&apos;https://api.example.com/api/jobs&apos;[39m,
+      status: [33m500[39m,
+      statusText: [32m&apos;Internal Server Error&apos;[39m,
+      responseType: [36m[Getter/Setter][39m,
+      response: [36m[Getter][39m,
+      responseText: [36m[Getter][39m,
+      responseXML: [36m[Getter][39m,
+      UNSENT: [33m0[39m,
+      OPENED: [33m1[39m,
+      HEADERS_RECEIVED: [33m2[39m,
+      LOADING: [33m3[39m,
+      DONE: [33m4[39m,
+      [[32mSymbol(SameObject caches)[39m]: [36m[Object: null prototype][39m
+    }
+  },
+  status: [33m500[39m,
+  normalizedError: {
+    status: [33m500[39m,
+    code: [90mundefined[39m,
+    error: [90mundefined[39m,
+    message: [32m&apos;Error&apos;[39m,
+    path: [90mundefined[39m,
+    violations: [],
+    friendlyMessage: [32m&apos;Error&apos;[39m
+  }
+}
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" timestamp="2025-12-21T02:34:23.029Z" hostname="DESKTOP-6RADH0P" tests="26" failures="0" errors="0" skipped="0" time="1.5447715">
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; renders job card with complete data" time="0.1763828">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; renders job card with minimal data" time="0.0254948">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; displays ethical tags correctly" time="0.024363">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; shows truncated ethical tags with count badge when more than 3" time="0.0344628">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; displays inclusive opportunity badge when enabled" time="0.0237902">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; does not display inclusive opportunity badge when disabled" time="0.0205727">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; displays &quot;Remote&quot; when job is remote" time="0.0390913">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; displays workplace location when job is not remote" time="0.0251229">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; displays multiple job types correctly" time="0.0200602">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; navigates to job detail page when card is clicked" time="0.3980931">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; navigates to workplace page when company name is clicked" time="0.2074843">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; navigates to workplace page when company logo is clicked" time="0.1293688">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; does not navigate to job detail when clicking company name" time="0.1570262">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; generates correct avatar fallback for company name" time="0.0201871">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; handles very long job titles correctly" time="0.0206546">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; handles special characters in job title and company" time="0.0207571">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; formats salary correctly" time="0.0182346">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; handles very large salary values" time="0.0211921">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; handles international location names" time="0.0228759">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; displays job type as Part-time" time="0.0178385">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; displays job type as Contract" time="0.0176705">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; handles empty ethical tags array" time="0.0155026">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; displays company logo when imageUrl is provided" time="0.0208463">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; renders all job types separated by slash" time="0.0183077">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; applies hover effect classes" time="0.0209071">
+        </testcase>
+        <testcase classname="src/modules/shared/components/common/__tests__/jobs/JobCard.test.tsx" name="JobCard &gt; has correct ARIA attributes for accessibility" time="0.0170956">
+        </testcase>
+    </testsuite>
+</testsuites>

@@ -48,6 +48,14 @@ export default defineConfig({
       '**/tests/e2e/**',
       'tests/e2e/**',
     ],
+    reporters: [
+      'default',
+      'junit',
+      'html',
+    ],
+    outputFile: {
+      junit: 'reports/junit.xml',
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
