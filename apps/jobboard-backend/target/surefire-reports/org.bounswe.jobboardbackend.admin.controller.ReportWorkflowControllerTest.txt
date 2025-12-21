@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.bounswe.jobboardbackend.admin.controller.ReportWorkflowControllerTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.773 s -- in org.bounswe.jobboardbackend.admin.controller.ReportWorkflowControllerTest

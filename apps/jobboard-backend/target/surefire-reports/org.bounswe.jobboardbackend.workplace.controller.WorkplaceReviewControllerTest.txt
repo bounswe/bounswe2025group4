@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.bounswe.jobboardbackend.workplace.controller.WorkplaceReviewControllerTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.162 s -- in org.bounswe.jobboardbackend.workplace.controller.WorkplaceReviewControllerTest

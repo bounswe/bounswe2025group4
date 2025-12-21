@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: jobboard-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  mail:
+    host: smtp.sendgrid.net
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          from: ${APP_MAIL_FROM}
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+server:
+  port: 8080
+  forward-headers-strategy: framework
+
+app:
+  env: ${APP_ENV}
+  jwtSecret: ${APP_JWT_SECRET}
+  jwtExpirationInMs: 864000000
+  verifyEmailUrl: ${APP_VERIFY_EMAIL_URL}
+  resetPasswordUrl: ${APP_RESET_PASSWORD_URL}
+
+  gcs:
+    bucket: ${APP_GCS_BUCKET}
+    publicBaseUrl: https://storage.googleapis.com
+    public: true
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS}
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    display-request-duration: true
+    doc-expansion: none # none | list | full
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
